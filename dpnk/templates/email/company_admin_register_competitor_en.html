@@ -1,18 +1,16 @@
-{% autoescape off %}
+{% extends "email/base.html" %}
+{% load i18n %}
 
-A message for {{ user_attendance }}, a candidate for the company coordinator role in {{ company }} in the {{ user_attendance.campaign }} competition.
+{% language lang_code %}
 
-Hello,
-
-you have just applied for the company coordinator role for {{ company }}. If you are not aware of this, let us please know as soon as possible.
-
-Given the open character of the competition, anyone from your team can apply, so please be patient and wait while we verify your application.
-For the purposes of verifying your identity, representatives of the main organizer, Auto*Mat, may get in touch with you, especially if you don't know any of them personally. We will send you an e-mail once your application has been approved.
-
-Thank you for supporting your colleagues in the {{ user_attendance.campaign }} competition and we look forward to further cooperation.
-
-Your {{ user_attendance.campaign }} organization team
-
----
-{{ user_attendance.campaign.email_footer }}
-{% endautoescape %}
+{% block content %}
+<p>
+Hello, brave {{ user_attendance.userprofile.first_name }}
+</p><p>
+thank You for applying. We wish Your dream will come true and You will become the {{ company }} company coordinator.
+</p><p>
+First, we want to know You better. Maybe somebody from our team will contact You so keep the phone fully charged.
+</p><p>
+Please be patient. In the end of the process we will send You a resolution e-mail.
+{% endblock %}
+{% endlanguage %}

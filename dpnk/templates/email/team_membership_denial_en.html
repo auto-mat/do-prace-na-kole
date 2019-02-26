@@ -1,23 +1,20 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
-{% language user_attendance.userprofile.language %}
-A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
+{% language lang_code %}
+{% block content %}
+<p>
+Sad news, {{user_attendance.campaign.name}}
+</p><p>
+{{ denier }} declined Your membership in the {{user_attendance.team.name}} team with these reasons: {{reason}}.
+</p><p>
+Don't get off your bike.
+<br/>
+Just pick another team or create Your own instead.
+</p>
 
-Hello,
+{% url 'zmenit_tym' as button_link %}
+{% include "./button.html" with button_text="Change team" %}
 
-unfortunately, your membership in the {{user_attendance.team.name}} team has just been declined by {{ denier }} for the following reason: {{reason}}
-You will have to sign in to edit your profile on
-{% block profile_link %}
-{{ absolute_uri }}{% url 'zmenit_tym' %}
 {% endblock %}
-and choose another team or set up your own. So cheer up and come on!
-
-Thank you for your interest and we look forward to seeing you during the competition!
-
-Your {{ user_attendance.campaign }} organization team
-
----
-{{ user_attendance.campaign.email_footer }}
 {% endlanguage %}
-{% endautoescape %}

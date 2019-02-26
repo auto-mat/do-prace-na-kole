@@ -1,23 +1,9 @@
-{% autoescape off %}
-
-A message for {{ user_attendance }} {% if user_attendance.team %}from the {{user_attendance.team.name}}{% endif %} team in the {{ user_attendance.campaign }}competition.
-
-Dear {{ user_attendance.campaign }} participant,
-
-your start fee payment has been confirmed. {% if user_attendance.campaign.club_membership_integration %}Whether you paid yourself or are a member of the Friends Club, you can consider this sorted out. {% endif %}
-
-You can now focus on preparations for the competition and so we have some tips for you:
-
-• If it is your first time cycling in the city, please make use of our advice for urban cycling.
-• If you are competitive, find some strong opponents and convince them to take part.
-• Check out the competition categories in your city.
-
-{% if user_attendance.campaign.has_any_tshirt %}You can also look forward to our start pack with a T-shirt!{% endif %}
-
-We really appreciate your decision to participate in the competition and we look forward to seeing you in the streets of your city{% if user_attendance.campaign.has_any_tshirt %} with the competition T-shirt on{% endif %}!
-
-Your {{ user_attendance.campaign }}organization team
-
----
-{{ user_attendance.campaign.email_footer }}
-{% endautoescape %}
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Good news, {{ user_attendance.userprofile.first_name }}
+</p><p>
+Your participation fee payment for {{ user_attendance.campaign }} competition is comfirmed.
+We are looking forward to sending You a starting pack with a T-shirt.
+</p>
+{% endblock %}

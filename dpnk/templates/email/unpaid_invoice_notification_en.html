@@ -1,21 +1,17 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
+{% language lang_code %}
+{% block content %}
 
 {% language lang_code %}
-A message for company coordinators from {{ user_attendance.team.subsidiary.company.name }} taking part in {{ user_attendance.campaign }}.
-
-Dear coordinator,
-
-according to our records, you have yet to pay the following invoice (due date {{invoice.taxable_date}}):
-
-You will find complete invoice overview at {{ absolute_uri }}{% url 'invoices' %}
-
-Direct download link is {{ invoice_url }}
-
-Greetings from the entire Auto*Mat team and wishes for a happy journey.
-
----
-{{ user_attendance.campaign.email_footer }}
-
+<p>
+Is everything OK, {{user_attendance.campaign.name}}?
+</p><p>
+We haven't get Your payment for the team invoice {{ invoice_url }} with the due date {{invoice.taxable_date}}.
+</p><p>
+{% include "./button.html" with button_text="Manage my payments" button_link=invoice_url %}
+</p><p>
+You can also check all invoices in <a href="{{ absolute_uri }}{% url 'invoices' %}">Your profile</a>.
+</p>
+{% endblock %}
 {% endlanguage %}
-{% endautoescape %}

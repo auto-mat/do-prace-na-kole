@@ -1,29 +1,26 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
 {% language lang_code %}
-{% if invited %}
-A message for {{ invited.userprofile }} {% if invited.team %}from the {{invited.team.name}} team {% endif %}in the {{ invited.campaign }} competition.
-{% endif %}
-
-Hello,
-
-Your colleague {{ inviting.userprofile }} would like to have you in the {{inviting.team.name}} team. Do you know why? Send them an e-mail and ask. Here is their e-mail address: {{ inviting.userprofile.user.email }}.
-
-Are you in? This link takes you to a simple pre-filled form.
-{% block register_link %}
-{% if not invited %}
-{{ absolute_uri }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
-{% else %}
-{{ absolute_uri }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
-{% endif %}
+{% block header %}
+Pozvánka do soutěže
 {% endblock %}
-(If the link isn't working, paste and copy it into your favourite browser.)
 
-Many happy kilometers!
-Your {{ inviting.campaign }} team
+{% block content %}
+Good news!
+</p><p>
+Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with You in the {{inviting.team.name}} team.
+</p>
 
----
-{{ inviting.campaign.email_footer }}
+{% if not invited %}
+{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% else %}
+{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% endif %}
+{% include "./button.html" with button_text="Let's Ride" %}
+
+<p>
+Need more information? Respond directly to Your fellow colleague at <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
+</p>
+{% endblock %}
 {% endlanguage %}
-{% endautoescape %}

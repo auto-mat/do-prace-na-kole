@@ -1,15 +1,15 @@
-{% autoescape off %}
+{% extends "email/base.html" %}
+{% load i18n %}
 
-A message for {{ company_admin.userprofile }} from the {{ company_admin.campaign }} competition.
+{% language lang_code %}
 
-Hello, 
-
-Your application for the role of a company coordinator hasn't been confirmed. If you don't know why and nobody has contacted you, please contact us and ask for an explanation.
-
-Thank you for the support of {{ company_admin.campaign }}!
-
-Your {{ company_admin.campaign }} organization team
-
----
-{{ company_admin.campaign.email_footer }}
-{% endautoescape %}
+{% block content %}
+<p>
+Sad news, {{ user_attendance.userprofile.first_name }}
+</p><p>
+as You already know, we cannot make You a (company) company coordinator.
+Nobody have told you about that? Please contact us for futher details.
+</p>
+</p>
+{% endblock %}
+{% endlanguage %}

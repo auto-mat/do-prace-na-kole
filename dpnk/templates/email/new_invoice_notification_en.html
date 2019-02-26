@@ -1,22 +1,18 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
 {% language lang_code %}
-A message for company coordinators from {{ user_attendance.team.subsidiary.company.name }} taking part in {{ user_attendance.campaign }}.
+{% block header %}
+<p>
+Hello, {{ user_attendance.userprofile.first_name }}
+</p><p>
+Your (company) company invoice {{ invoice_url }} for the (soutěž) competition is ready. Please check it before the due date{{invoice.taxable_date}}.
+</p>
+{% url 'invoices' as button_link %}
+{% include "./button.html" with button_text="Check &amp; Pay" button_link=invoice_url %}
 
-Dear coordinator,
-
-your invoice has been created. Please pay it by the due date {{invoice.taxable_date}}:
-
-You will find complete invoice overview at {{ absolute_uri }}{% url 'invoices' %}
-
-Direct download link is {{ invoice_url }}
-
-
-Greetings from the entire Auto*Mat team and wishes for a happy journey.
-
----
-{{ user_attendance.campaign.email_footer }}
-
+<p>
+All invoices are guarded in Your <a href="{{ absolute_uri }}{% url 'invoices' %}">profile</a>.
+</p>
+{% endblock %}
 {% endlanguage %}
-{% endautoescape %}

@@ -1,22 +1,29 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
 {% language lang_code %}
-A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
+{% block content %}
+<p>
+Welcome to the {{user_attendance.campaign.name}} competition!
+</p><p>
+Our ride begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
+</p><p>
+Before you head off, there are still some stuff you need to do.
+Check the profile. There You will track Your bike trips every day.
+</p>
 
-Welcome to the {{user_attendance.campaign.name}} competition! Before you head off, please check all the steps on: {% block profile_link %}
-{{ absolute_uri }}{% url 'upravit_profil' %}
+{% url 'upravit_profil' as button_link %}
+{% include "./button.html" with button_text="Complete my profile" %}
+
+<p>
+That could be much more interesting if You compare Your results with fellow coworkers. Send them an invitation to Your team.
+</p>
+
+{% url 'pozvanky' as button_link %}
+{% include "./button.html" with button_text="Invite people" %}
+
+<p>
+Do You have some questions? Let us know at <a href="mailto:{{user_attendance.campaign.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
+</p>
 {% endblock %}
-
-Competition begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
-Your log-in e-mail is {{ email }}. We don't mention your password here for security reasons but you can renew it anytime on {{ absolute_uri }}{% url 'password_change' %} Have you already got an opponent? The competition will be more interesting for you if people you know also join in. Who would you like to challenge? Colleagues from your or another team? Your suppliers or customers? Or will you challenge your business competitors?
-
-Please, check your personal profile from time to time on
-{{ absolute_uri }}{% url 'profil' %}
-, which will serve as your personal guidepost until the end of the competition - you can modify your personal details there, select your competition categories and track your bike trips. If there is anything you are unsure about, please contact us at <{{user_attendance.campaign.contact_email}}>.
-
-Thank you for your interest and we look forward to seeing you during the competition!
-
-Your {{ user_attendance.campaign }} organization team
 {% endlanguage %}
-{% endautoescape %}

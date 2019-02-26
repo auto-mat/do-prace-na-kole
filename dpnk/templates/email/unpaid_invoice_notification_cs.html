@@ -13,7 +13,7 @@ udělejte si prosím čas na zpracování faktury {{ invoice_url }}. Její splat
 {% include "./button.html" with button_text="Vyřídit fakturu" button_link=invoice_url %}
 
 <p>
-Všechny faktury můžete zkontrolovat na Vašem <a href="https://{{ invoice.campaign.slug }}.{{ SITE_URL }}{% url 'invoices' %}">profilu</a>.
+Všechny faktury můžete zkontrolovat na Vašem <a href="{{ absolute_uri }}{% url 'invoices' %}">profilu</a>.
 </p>
 {% endblock %}
 {% endlanguage %}

@@ -1,21 +1,15 @@
-{% load i18n %}
-{% autoescape off %}
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Good news, {{user_attendance.campaign.name}}!
+</p><p>
+You are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
+</p>
 
-{% language user_attendance.userprofile.language %}
-A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
+{% url 'login' as button_link %}
+{% include "./button.html" with button_text="Sign up as a team member" %}
 
-Hello,
-
-your membership in the {{user_attendance.team.name}} team has just been approved. You can sign in to your profile using
-{% block profile_link %}
-{{ absolute_uri }}{% url 'login' %}
+<p>
+Welcome to the {{user_attendance.campaign.name}} competition!
+</p>
 {% endblock %}
-
-Thank you for your interest and we look forward to seeing you during the competition!
-
-Your {{ user_attendance.campaign }} organization team
-
----
-{{ user_attendance.campaign.email_footer }}
-{% endlanguage %}
-{% endautoescape %}

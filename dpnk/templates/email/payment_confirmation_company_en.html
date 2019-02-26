@@ -1,17 +1,10 @@
-{% autoescape off %}
-
-A message for {{ user_attendance }} from the {{user_attendance.team.name}} team in the {{ user_attendance.campaign }} competition from {{ company }}.
-
-Hello,
-
-the {{ company }} company coordinator has just confirmed the payment of your participation fee in the {{ user_attendance.campaign }} competition.
-
-From now on you don't have to worry about the participation fee because {{ company }} will make a payment for multiple participants. Even if the invoice is not paid by the official end of registration, we will consider you a legitimate participant.
-You can also look forward to a starting pack with a T-shirt!
-
-Thank you for your registration and we will keep fingers crossed for you not only during the competition itself but especially in the regular and long-term use of your bike to get to work and back.
-Your {{ user_attendance.campaign }} organization team
-
----
-{{ user_attendance.campaign.email_footer }}
-{% endautoescape %}
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Your everyday ride has begun, {{ user_attendance.userprofile.first_name }}!
+</p><p>
+The {{ company }} company coordinator just confirmed the payment of your participation fee in the {{ user_attendance.campaign }} competition. That's a nice start.
+</p><p>
+We are looking forward to sending You a starting pack with a T-shirt.
+</p>
+{% endblock %}

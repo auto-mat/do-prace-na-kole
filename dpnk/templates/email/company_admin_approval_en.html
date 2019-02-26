@@ -1,23 +1,25 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
-{% language company_admin.userprofile.language %}
-A message for {{ company_admin.userprofile }}, a company coordinator in {{ company }} in the {{ company_admin.campaign }} competition.
+{% language lang_code %}
+{% block content %}
+<p>
+Congratulations, {{ user_attendance.userprofile.first_name }}
+</p><p>
+You are the {{ company }} company coordinator.
+</p>
 
-Hello,
+{% url 'company_admin_pay_for_users' as button_link %}
+{% include "./button.html" with button_text="Sign up" %}
 
-you've just become a {{ company }} company coordinator. 
-You can sign in to the {{ company_admin.campaign }} registration system.
-
-First, please fill in the organisation billing details on URL {{ absolute_uri }}{% url 'edit_company' %} These details will be used to send your company an invoice when the registration is completed.
-Than you will be able to accept payments for participants from your organisation who you should include in the joint invoice. This will be done at {{ absolute_uri }}{% url 'company_admin_pay_for_users' %}
-During the registration process, more and more participants will sign in so you will have to check the status several times. 
-
-Thank you for your support of {{ company_admin.campaign }} and we look forward to further cooperation.
-
-Your {{ company_admin.campaign }} organization team
-
----
-{{ company_admin.campaign.email_footer }}
+<p>
+However, with great power comes great responsibility.
+</p><p>
+First, please fill in the organisation <a href="{{ absolute_uri }}{% url 'edit_company' %}">billing details</a> so we can send Your company an invoice after the registration.
+</p><p>
+Second, please <a href="{{ absolute_uri }}{% url 'company_admin_pay_for_users' %}" >accept payments</a> for participants from your organisation and include them in the joint <a href="{{ absolute_uri }}{% url 'invoices' %}" >invoice</a>.
+</p><p>
+These days, more and more participants will be signing in so try to check the status several times.
+</p>
+{% endblock %}
 {% endlanguage %}
-{% endautoescape %}

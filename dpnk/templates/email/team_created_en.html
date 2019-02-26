@@ -1,36 +1,28 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
-{% language user_attendance.userprofile.language %}
-A message for {{ user_attendance.userprofile }}, the founder of the {{team_name}} team in the {{ user_attendance.campaign }} competition.
+{% language lang_code %}
+{% block content %}
+<p>
+Time to hit the road, {{ user_attendance.userprofile.first_name }}!
+</p><p>
+Your team {{team_name}} is ready to go.
+</p><p>
+Check Your <a href="{{ absolute_uri }}{% url 'login' %}">profile</a> and invite Your coworkers to join the team.
+</p>
 
-Hello,
+{% url 'pozvanky' as button_link %}
+{% include "./button.html" with button_text="Invite" %}
 
-Your team {{team_name}} has just been created.
+<p>
+Do you have a company coordinator?
+</p><p>
+You can ask the employer to support Your team by paying the starting fee or creating a company competition so You can compare Your skills to the whole company. Sounds like a moving teambuilding, right?
+</p><p>
+Became a company coordinator and get these things done for Your coworkers. We let You participate in the competition for free as a thank you note.
+</p>
 
-You can invite your colleagues to join your team on
-{% block invite_link %}
-{{ absolute_uri }}{% url 'pozvanky' %}
+{% url 'company_admin_application' as button_link %}
+{% include "./button.html" with button_text="Become s company coordinator" %}
+
 {% endblock %}
-
-If you'd like to ask your colleagues to set up their own team, refer them to {{ absolute_uri }}.
-
-You can sign in to your profile through
-{% block profile_link %}
-{{ absolute_uri }}{% url 'login' %}
-{% endblock %}
-
-Your employer can support your team by paying the start fee for you or even by announcing the Bike to Work campaign for your whole company. This means that you will compete with participants not only in the participating city but also with all the employees of your organization irrespective of their location. How to do this? Please contact the responsible person (head of the CSR department, head of internal communications, head of PR, director etc.) and suggest these option or refer them to the following website:
-{{ absolute_uri }}{% url 'company_admin_application' %}
-
-Thank you for your interest and we look forward to seeing you during the competition!
-
-Your {{ user_attendance.campaign }} organization team
-
-P.S. It's really worth it to engage your employer in the competition - it means more competitors, an ideal team-building activity, participation paid by the employer and excellent PR!
-
----
-{{ user_attendance.campaign.email_footer }}
-{% endlanguage %}
-
-{% endautoescape %}
