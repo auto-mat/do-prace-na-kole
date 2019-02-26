@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oxygen Reignite</title>
+  <title>{{ user_attendance.campaign.name }} - {{ subject }}</title>
 
   <style type="text/css">
     /* Take care of image borders and formatting, client hacks */
@@ -315,8 +315,8 @@
                       <a href=""><img width="274" height="40" src="https://www.dopracenakole.cz/dopracenakole_logo.png" alt="logo"></a>
                     </td>
                     <td class="pull-right mobile-header-padding-right" style="color: #4d4d4d;">
-                      <a href=""><img width="44" height="47" src="https://twitter.com/dopracenakole" alt="twitter" /></a>
-                      <a href=""><img width="38" height="47" src="https://www.facebook.com/dopracenakole/" alt="facebook" /></a>
+                      <a href="https://twitter.com/dopracenakole"><img width="44" height="47" src="http://s3.amazonaws.com/swu-filepicker/k8D8A7SLRuetZspHxsJk_social_08.gif" alt="twitter" /></a>
+                      <a href="https://www.facebook.com/dopracenakole/"><img width="38" height="47" src="http://s3.amazonaws.com/swu-filepicker/LMPMj7JSRoCWypAvzaN3_social_09.gif" alt="facebook" /></a>
                     </td>
                   </tr>
                 </table>
@@ -337,7 +337,7 @@
         <table cellspacing="0" cellpadding="0" width="600" class="w320">
           <tr>
             <td class="header-lg">
-               {% block header %}{% endblock %}
+               {% block header %}{{ subject|title }}{% endblock %}
             </td>
           </tr>
           <tr>

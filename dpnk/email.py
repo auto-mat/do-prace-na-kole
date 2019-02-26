@@ -246,16 +246,18 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, a
         campaign = user_attendance.campaign
     if email is None:
         email = userprofile.user.email
+    subject = _(subject, userprofile.language)
     context = {
         'user_attendance': user_attendance,
         'absolute_uri': util.get_base_url(slug=user_attendance.campaign.slug),
         'email': email,
         'lang_code': userprofile.language,
+        'subject': subject,
     }
     context.update(extra_context)
     template = get_template('email/' + template_path % userprofile.language)
     message = template.render(context)
-    subject = str(campaign) + " - " + _(subject, userprofile.language)
+    subject = str(campaign) + " - " + subject
 
     # with open('dpnk-test-messages/%s.html' % subject, "w") as f:
     #     f.write(message)

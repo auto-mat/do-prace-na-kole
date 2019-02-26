@@ -10,7 +10,7 @@ Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 tým {{team_name}} stojí na startovní čáře a čeká na Váš povel.
 </p>
 
-{{ absolute_uri }}{% url 'pozvanky' as button_link %}
+{% url 'pozvanky' as button_link %}
 {% include "./button.html" with button_text="Pozvat kolegy do týmu" %}
 
 <p><h4>
@@ -23,7 +23,7 @@ Když se zaměstnavatel nadchne pro vaši věc, může vyhlásit dokonce <b>celo
 Přihlaste se o funkci firemního koordinátora a domluvte se s vedením na podpoře Vašeho týmu v soutěži.
 </p>
 
-{{ absolute_uri }}{% url 'company_admin_application' as button_link %}
+{% url 'company_admin_application' as button_link %}
 {% include "./button.html" with button_text="Chci se stát firemním koordinátorem" %}
 {% endblock %}
 {% endlanguage %}

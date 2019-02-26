@@ -10,7 +10,7 @@ nastal čas na malé účetní kolečko.
 Připravili jsme účastnickou fakturu pro Vaši společnost {{ user_attendance.team.subsidiary.company.name }} v soutěži {{ user_attendance.campaign.name }}.
 </p>
 
-{{ absolute_uri }}{% url 'invoices' as button_link %}
+{% url 'invoices' as button_link %}
 {% include "./button.html" with button_text="Stáhnout fakturu" button_link=invoice_url %}
 
 <p>

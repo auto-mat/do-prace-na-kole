@@ -1,13 +1,15 @@
-{% autoescape off %}
+{% extends "email/base.html" %}
+{% load i18n %}
 
-Zpráva pro {{ company_admin.userprofile }} ze soutěže {{ company_admin.campaign }}.
+{% language user_attendance.userprofile.language %}
 
-Dobrý den,
-Vaše žádost o funkci koordinátora organizace nebyla potvrzena. Pokud nevíte proč a nikdo Vás nekontaktoval, obraťte se prosím na nás s žádostí o vysvětlení.
-Děkujeme Vám za podporu soutěže {{ company_admin.campaign }}!
-Váš organizační tým soutěže {{ company_admin.campaign }}
-
----
-{{ company_admin.campaign.email_footer }}
-
-{% endautoescape %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+sesedněte z kola, máme pro Vás důležitou zprávu. Nemohli jsme potvrdit Vaši přihlášku na firemního koordinátora.
+</p><p>
+Nikdo Vás nekontaktoval s vysvětlením? To není správné. Ozvěte se nám prosím co nejdříve na <a href="{{user_attendance.campaign.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
+</p>
+{% endblock %}
+{% endlanguage %}

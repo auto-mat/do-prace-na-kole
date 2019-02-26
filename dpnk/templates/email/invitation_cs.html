@@ -15,9 +15,9 @@ Proto Vám posílá pozvánku do svého týmu {{inviting.team.name}} v soutěž
 </p>
 
 {% if not invited %}
-{{ absolute_uri }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
 {% else %}
-{{ absolute_uri }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
 {% endif %}
 {% include "./button.html" with button_text="Chci šlápnout do pedálů" %}
 

@@ -55,8 +55,8 @@ class TestEmails(TestCase):
         self.subsidiary = Subsidiary.objects.create(company=self.company, city=self.city)
         self.team = Team.objects.create(name="Testing team", campaign=self.campaign, subsidiary=self.subsidiary)
 
-        self.user = User.objects.create(first_name="Testing", last_name="User", username="user1", email="user1@email.com")
-        self.userprofile = UserProfile.objects.create(user=self.user)
+        self.user = User.objects.create(first_name="Test", last_name="User", username="user1", email="user1@email.com")
+        self.userprofile = UserProfile.objects.create(sex='male', user=self.user)
         self.user_attendance = UserAttendance.objects.create(
             userprofile=self.userprofile,
             campaign=self.campaign,
@@ -282,7 +282,7 @@ class TestEmails(TestCase):
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            message = "Zpráva pro Testing User ze soutěže Testing campaign 1."
+            message = "Dobrý den, Teste"
         else:
             message = "A message for Testing User from the Testing campaign 1 competition."
         self.assertTrue(message in msg.body)

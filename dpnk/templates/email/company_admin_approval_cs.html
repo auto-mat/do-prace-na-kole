@@ -12,7 +12,7 @@ Nyní zastupujete společnost {{ company }} jako firemní koordinátor.
 Nezapomeňte, s velkou mocí přichází velká zodpovědnost. Vaši lidé na Vás spoléhají.
 </p>
 
-{{ absolute_uri }}{% url 'profil' as button_link %}
+{% url 'company_structure' as button_link %}
 {% include "./button.html" with button_text="Chci se přihlásit jako firemní koordinátor" %}
 
 <p>

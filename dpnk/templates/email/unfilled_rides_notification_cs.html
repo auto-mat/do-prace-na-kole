@@ -10,13 +10,11 @@ Vaši kolegové si zatím brousí řídítka na vítězství.
 Nezapomeňte: s pravidelností nejdál dojedeš.
 </p>
 
-{{ absolute_uri }}{% url 'pozvanky' as button_link %}
-{% include "./button.html" with button_text="Pozvat kolegy do týmu" %}
+{% url 'profil' as button_link %}
+{% include "./button.html" with button_text="Vyplnit jízdy" %}
 
 <p>
 Jízdy můžete vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpětně, tak hurá do kalendáře.
-potvrzujeme Vaše členství v týmu {{user_attendance.team.name}}.
-Můžete společně šlápnout do pedálů.
 </p>
 
 {% endblock %}
