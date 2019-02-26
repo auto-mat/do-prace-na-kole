@@ -52,6 +52,8 @@ from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from smart_selects.form_fields import ChainedModelChoiceField
 
+import photologue
+
 from . import email, models, util
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy, mark_safe_lazy
@@ -578,7 +580,7 @@ class InviteForm(SubmitMixin, forms.Form):
         return ret_val
 
 
-class TeamAdminForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
+class TeamSettingsForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
     initial_fields = ("campaign",)
     required_css_class = 'required'
     error_css_class = 'error'
@@ -586,6 +588,22 @@ class TeamAdminForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
     class Meta:
         model = models.Team
         fields = ('name', 'campaign')
+
+
+class PhotoForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+    galleries = forms.ModelMultipleChoiceField(queryset=photologue.models.Gallery.objects.all())
+
+    def save(self, *args, **kwargs):
+        returnv = super().save(*args, **kwargs)
+        for gallery in self.data['galleries']:
+            self.instance.galleries.add(gallery)
+        return returnv
+
+    class Meta:
+        model = photologue.models.Photo
+        fields = ('image', 'title', 'slug', 'is_public')
 
 
 class PaymentTypeForm(PrevNextMixin, forms.Form):

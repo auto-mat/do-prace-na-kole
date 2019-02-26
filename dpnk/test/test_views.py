@@ -123,8 +123,18 @@ class CompetitionsViewTests(ViewsLogon):
     def test_edit_team(self):
         address = reverse('edit_team')
         response = self.client.get(address)
-        self.assertContains(response, 'Upravit název týmu')
+        self.assertContains(response, 'Upravit údaje týmu')
         self.assertContains(response, 'Testing team 1')
+
+    def test_upload_team_photo(self):
+        address = reverse('upload_team_photo')
+        with open('dpnk/test_files/DSC00002.JPG', 'rb') as fd:
+            post_data = {
+                'image': fd,
+            }
+            response = self.client.post(address, post_data)
+        self.assertEqual(response.status, 200)
+
 
     def test_daily_chart(self):
         address = reverse(views.daily_chart)

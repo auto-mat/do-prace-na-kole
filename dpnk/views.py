@@ -91,7 +91,8 @@ from .forms import (
     RegistrationAccessFormDPNK,
     RegistrationFormDPNK,
     RegistrationProfileUpdateForm,
-    TeamAdminForm,
+    TeamSettingsForm,
+    PhotoForm,
     TrackUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
@@ -1519,16 +1520,17 @@ class UpdateTeam(
         LoginRequiredMixin,
         UpdateView,
 ):
-    template_name = 'base_generic_form.html'
-    form_class = TeamAdminForm
+    template_name = 'registration/edit_team.html'
+    form_class = TeamSettingsForm
     success_url = reverse_lazy('team_members')
-    title = _("Upravit název týmu")
+    title = _("Upravit údaje týmu")
     registration_phase = 'zmenit_tym'
-    success_message = _("Název týmu úspěšně změněn na %(name)s")
+    success_message = _("Změna úspěšna")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
+        context_data['team'] = self.user_attendance.team
         return context_data
 
     def get_object(self):
@@ -1536,6 +1538,27 @@ class UpdateTeam(
 
     def get_initial(self):
         return {'campaign': self.campaign}
+
+
+class UploadTeamPhoto(
+        UserAttendanceViewMixin,
+        View,
+):
+    def post(self, *args, **kwargs):
+        #import pudb;pudb.set_trace()
+        slug = "team_%s_photo_%s" % (self.user_attendance.team.pk, self.user_attendance.team.get_gallery().photo_count(public=False))
+        form_data = {
+            'galleries': [self.user_attendance.team.get_gallery()],
+            'slug': slug,
+            'title': slug,
+            'is_public': False,
+        }
+        form = PhotoForm(form_data, self.request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("Success")
+        else:
+            return HttpResponse(form.errors, status=400)
 
 
 class TeamMembers(
@@ -1627,6 +1650,7 @@ class TeamMembers(
             ])
         context_data['unapproved_users'] = unapproved_users
         context_data['registration_phase'] = self.registration_phase
+        context_data['team'] = team
         return context_data
 
 

@@ -307,6 +307,8 @@ INSTALLED_APPS = (
     'social_django',
     'fm',
     # 'cachalot',
+    'photologue',
+    'sortedm2m',
 )
 
 ECC_PROVIDER_CODE = "DK"

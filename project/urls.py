@@ -30,6 +30,7 @@ urlpatterns = [
     url(r"^su/", include("django_su.urls")),
     url(r'^selectable/', include('selectable.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^photologue/', include('photologue.urls', namespace='photologue')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^nested_admin/', include('nested_admin.urls')),
     url(r'^rest/', include(router.urls)),
