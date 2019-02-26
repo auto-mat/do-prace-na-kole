@@ -21,8 +21,10 @@ import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core import mail
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from dpnk import email
 from dpnk.models import Campaign, City, Company, CompanyAdmin, Phase, Subsidiary, Team, UserAttendance, UserProfile
@@ -36,14 +38,15 @@ def language_url_infix(language):
 
 
 # Uncoment this to check to generate email files in /tmp/dpnk-test-messages
-# from django.test.utils import override_settings
-# @override_settings(
-#     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend',
-#     EMAIL_FILE_PATH = '/tmp/dpnk-test-messages',
-# )
+@override_settings(
+    # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend',
+    # EMAIL_FILE_PATH = '/tmp/dpnk-test-messages',
+    SITE_ID=123,
+)
 class TestEmails(TestCase):
     def setUp(self):
-        self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="testing_campaign_1")
+        Site.objects.create(domain="dopracenakole.cz", id=123)
+        self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="dpnk")
         self.phase = Phase.objects.create(
             date_from=datetime.date(year=2010, month=10, day=20),
             date_to=datetime.date(year=2010, month=11, day=20),
@@ -94,7 +97,9 @@ class TestEmails(TestCase):
         email.approval_request_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - žádost o ověření členství")
+        self.assertInHTML('<td class="header-lg">Žádost O Ověření Členství</td>', mail.outbox[0].alternatives[0][0])
         self.assertEqual(mail.outbox[1].subject, "Testing campaign 1 - membership verification request")
+        self.assertInHTML('<td class="header-lg">Membership Verification Request</td>', mail.outbox[1].alternatives[0][0])
         self.assertEqual(mail.outbox[0].to[0], "user2@email.com")
         self.assertEqual(mail.outbox[1].to[0], "user3@email.com")
 
@@ -107,7 +112,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.example.com%s/tym/%s/user1@email.com/' % (
+        link = 'https://dpnk.dopracenakole.cz%s/tym/%s/user1@email.com/' % (
             language_url_infix(self.userprofile.language),
             self.user_attendance.team.invitation_token,
         )
@@ -122,9 +127,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation / potvrzení registrace")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.example.com%s/' % (
-            language_url_infix(self.userprofile.language),
-        )
+        link = 'https://dpnk.dopracenakole.cz%s/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
 
     def test_unfilled_rides_notification(self):
@@ -136,9 +139,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(str(msg.subject), "Testing campaign 1 - Unfilled rides notification")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.example.com%s/' % (
-            language_url_infix(self.userprofile.language),
-        )
+        link = 'https://dpnk.dopracenakole.cz%s/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
             message = "za posledních 5 dní jste si nevyplnil/a jízdy"
@@ -169,9 +170,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - Team membership DENIED")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.example.com%s/tym/' % (
-            language_url_infix(self.userprofile.language),
-        )
+        link = 'https://dpnk.dopracenakole.cz%s/tym/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
 
     def test_send_team_created_mail(self):
@@ -183,9 +182,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - team creation confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.example.com%s/pozvanky/' % (
-            language_url_infix(self.userprofile.language),
-        )
+        link = 'https://dpnk.dopracenakole.cz%s/pozvanky/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
 
     def test_send_invitation_mail(self):
@@ -198,11 +195,11 @@ class TestEmails(TestCase):
             self.assertEqual(msg.subject, "Testing campaign 1 - you've been invited to join a team / pozvánka do týmu")
         self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(msg.to[0], "email@email.com")
-        link_cs = 'https://testing_campaign_1.example.com%s/registrace/%s/email@email.com/' % (
+        link_cs = 'https://dpnk.dopracenakole.cz%s/registrace/%s/email@email.com/' % (
             self.user_attendance.team.invitation_token,
         )
         self.assertTrue(link_cs in msg.body)
-        link_en = 'https://testing_campaign_1.example.com%s/en/registrace/%s/email@email.com/' % (
+        link_en = 'https://dpnk.dopracenakole.cz%s/en/registrace/%s/email@email.com/' % (
             self.user_attendance.team.invitation_token,
         )
         self.assertTrue(link_en in msg.body)
@@ -262,9 +259,7 @@ class TestEmails(TestCase):
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - Company Coordinator - company administration approval")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
-        link = 'https://testing_campaign_1.example.com%s/spolecnost/editovat_spolecnost/' % (
-            language_url_infix(self.userprofile.language),
-        )
+        link = 'https://dpnk.dopracenakole.cz%s/spolecnost/editovat_spolecnost/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
             message = "Zpráva pro Testing User, firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1"
