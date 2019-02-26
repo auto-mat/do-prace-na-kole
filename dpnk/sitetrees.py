@@ -8,7 +8,7 @@ sitetrees = (
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
                     item('Změnit heslo', 'password_change', title_en='Change password'),
                     item('Změnit tým', 'zmenit_tym', title_en='Change team'),
-                    item('Změnit triko', 'zmenit_triko', title_en='Change t-shirt'),
+                    item('Triko', 'zmenit_triko', title_en='T-shirts'),
                     item('Platba', 'typ_platby', title_en='Payment'),
                 ],
             ),
