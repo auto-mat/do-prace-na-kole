@@ -51,38 +51,24 @@ def approval_request_mail(user_attendance):
         }
         campaign_mail(
             team_member,
-            _("žádost o ověření členství"),
+            _("Máte nového člena"),
             'approval_request_%s.html',
             context,
         )
 
 
-def invitation_register_mail(inviting, invited):
-    context = {
-        'inviting': inviting,
-        'invited': invited,
-    }
-    campaign_mail(
-        invited,
-        _("potvrzení registrace"),
-        'invitation_%s.html',
-        context,
-    )
-
-
 def register_mail(user_attendance):
     campaign_mail(
         user_attendance,
-        _("potvrzení registrace"),
+        _("Potvrzení registrace"),
         'registration_%s.html',
-        all_langs=True,
     )
 
 
 def team_membership_approval_mail(user_attendance):
     campaign_mail(
         user_attendance,
-        _("potvrzení ověření členství v týmu"),
+        _("Jste členem týmu"),
         'team_membership_approval_%s.html',
     )
 
@@ -94,7 +80,7 @@ def team_membership_denial_mail(user_attendance, denier, reason):
     }
     campaign_mail(
         user_attendance,
-        _("ZAMÍTNUTÍ členství v týmu"),
+        _("Nemůžete se přidat k týmu"),
         'team_membership_denial_%s.html',
         context,
     )
@@ -106,22 +92,22 @@ def team_created_mail(user_attendance, team_name):
     }
     campaign_mail(
         user_attendance,
-        _("potvrzení vytvoření týmu"),
+        _("Máte nový tým"),
         'team_created_%s.html',
         context,
     )
 
 
-def invitation_mail(user_attendance, email):
+def invitation_mail(user_attendance, email, invited=None):
     context = {
         'inviting': user_attendance,
+        'invited': invited,
     }
     campaign_mail(
         user_attendance,
-        _("pozvánka do týmu"),
+        _("Pozvánka"),
         'invitation_%s.html',
         context,
-        all_langs=True,
         email=email,
     )
 
@@ -129,7 +115,7 @@ def invitation_mail(user_attendance, email):
 def payment_confirmation_mail(user_attendance):
     campaign_mail(
         user_attendance,
-        _("přijetí platby"),
+        _("Startovné je uhrazeno"),
         'payment_confirmation_%s.html',
     )
 
@@ -140,7 +126,7 @@ def payment_confirmation_company_mail(user_attendance):
     }
     campaign_mail(
         user_attendance,
-        _("přijetí platby"),
+        _("Jste ve hře"),
         'payment_confirmation_company_%s.html',
         context,
     )
@@ -152,7 +138,7 @@ def company_admin_register_competitor_mail(user_attendance):
     }
     campaign_mail(
         user_attendance,
-        _("firemní koordinátor - potvrzení registrace"),
+        _("Potvrzení registrace firemního koordinátora"),
         'company_admin_register_competitor_%s.html',
         context,
     )
@@ -176,7 +162,7 @@ def company_admin_mail(company_admin, subject, template):
 def company_admin_register_no_competitor_mail(company_admin):
     company_admin_mail(
         company_admin,
-        _("firemní koordinátor - potvrzení registrace"),
+        _("Potvrzení registrace firemního koordinátora"),
         'company_admin_register_competitor_%s.html',
     )
 
@@ -184,7 +170,7 @@ def company_admin_register_no_competitor_mail(company_admin):
 def company_admin_approval_mail(company_admin):
     company_admin_mail(
         company_admin,
-        _("firemní koordinátor - schválení správcovství organizace"),
+        _("Jste firemní koordinátor"),
         'company_admin_approval_%s.html',
     )
 
@@ -192,7 +178,7 @@ def company_admin_approval_mail(company_admin):
 def company_admin_rejected_mail(company_admin):
     company_admin_mail(
         company_admin,
-        _("firemní koordinátor - zamítnutí správcovství organizace"),
+        _("Špatné zprávy"),
         'company_admin_rejected_%s.html',
     )
 
@@ -200,7 +186,7 @@ def company_admin_rejected_mail(company_admin):
 def unfilled_rides_mail(user_attendance, days_unfilled):
     campaign_mail(
         user_attendance,
-        _("připomenutí nevyplněných jízd"),
+        _("Poslední šance doplnit jízdy"),
         'unfilled_rides_notification_%s.html',
         {'days_unfilled': days_unfilled},
     )
@@ -209,7 +195,7 @@ def unfilled_rides_mail(user_attendance, days_unfilled):
 def new_invoice_mail(invoice):
     invoice_mail(
         invoice,
-        _("byla Vám vystavena faktura"),
+        _("Nová faktura vystavena"),
         'new_invoice_notification_%s.html',
     )
 
@@ -217,7 +203,7 @@ def new_invoice_mail(invoice):
 def unpaid_invoice_mail(invoice):
     invoice_mail(
         invoice,
-        _("připomenutí nezaplacené faktury"),
+        _("Nezaplacená faktura"),
         'unpaid_invoice_notification_%s.html',
     )
 
@@ -236,7 +222,7 @@ def invoice_mail(invoice, subject, template):
             )
 
 
-def campaign_mail(user_attendance, subject, template_path, extra_context=None, all_langs=False, email=None, userprofile=None, campaign=None):
+def campaign_mail(user_attendance, subject, template_path, extra_context=None, email=None, userprofile=None, campaign=None):
     if extra_context is None:
         extra_context = {}
     if userprofile is None:
@@ -245,7 +231,7 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, a
         campaign = user_attendance.campaign
     if email is None:
         email = userprofile.user.email
-    subject = _(subject, userprofile.language)
+    subject = "[" + str(campaign) + "] " + _(subject, userprofile.language)
     context = {
         'user_attendance': user_attendance,
         'absolute_uri': util.get_base_url(slug=user_attendance.campaign.slug),
@@ -256,7 +242,6 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, a
     context.update(extra_context)
     template = get_template('email/' + template_path % userprofile.language)
     message = template.render(context)
-    subject = str(campaign) + " - " + subject
 
     # Uncoment this to check to generate email files in dpnk-test-messages
     # with open('dpnk-test-messages/%s.html' % template_path % userprofile.language, "w") as f:

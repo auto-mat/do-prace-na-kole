@@ -4,7 +4,7 @@
 {% block content %}
 {% language lang_code %}
 <p>
-Good news!
+Good news{% if invited %} {{ invited.userprofile.first_name }}{% endif %}!
 </p><p>
 Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with You in the {{inviting.team.name}} team.
 </p>

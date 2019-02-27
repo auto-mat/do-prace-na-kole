@@ -459,60 +459,68 @@ msgid "Vystavování faktur nemáte povoleno"
 msgstr "Making invoices not permitted "
 
 #: dpnk/email.py:51
-msgid "žádost o ověření členství"
-msgstr "membership verification request"
+msgid "Máte nového člena"
+msgstr "New Team Member"
 
-#: dpnk/email.py:64 dpnk/email.py:73
-msgid "potvrzení registrace"
-msgstr "registration confirmation"
+#: dpnk/email.py:64
+msgid "Pozvánka"
+msgstr "Invitation"
+
+#: dpnk/email.py:73
+msgid "Potvrzení registrace"
+msgstr "Registration Confirmation"
 
 #: dpnk/email.py:82
-msgid "potvrzení ověření členství v týmu"
-msgstr "team membership verification confirmation"
+msgid "Jste členem týmu"
+msgstr "You're a Team Member"
 
 #: dpnk/email.py:94
-msgid "ZAMÍTNUTÍ členství v týmu"
-msgstr "Team membership DENIED"
+msgid "Nemůžete se přidat k týmu"
+msgstr "You Can't Join the Team"
 
 #: dpnk/email.py:106
-msgid "potvrzení vytvoření týmu"
-msgstr "team creation confirmation"
+msgid "Máte nový tým"
+msgstr "Your New Team"
 
 #: dpnk/email.py:118
 msgid "pozvánka do týmu"
 msgstr "you've been invited to join a team"
 
-#: dpnk/email.py:129 dpnk/email.py:140
-msgid "přijetí platby"
-msgstr "payment received"
+#: dpnk/email.py:129
+msgid "Jste ve hře"
+msgstr "You're on Track"
+
+#: dpnk/email.py:140
+msgid "Startovné je uhrazeno"
+msgstr "Participation Fee Accepted"
 
 #: dpnk/email.py:136
 msgid "(není vybraná)"
 msgstr "(not selected)"
 
 #: dpnk/email.py:152 dpnk/email.py:176
-msgid "firemní koordinátor - potvrzení registrace"
-msgstr "Company Coordinator - registration confirmation"
+msgid "Potvrzení registrace firemního koordinátora"
+msgstr "Company Coordinator Registration Accepted"
 
 #: dpnk/email.py:184
-msgid "firemní koordinátor - schválení správcovství organizace"
-msgstr "Company Coordinator - company administration approval"
+msgid "Jste firemní koordinátor"
+msgstr "You Are Company Coordinator"
 
 #: dpnk/email.py:192
-msgid "firemní koordinátor - zamítnutí správcovství organizace"
-msgstr "Company Coordinator - administrative role denied"
+msgid "Špatné zprávy"
+msgstr "Sad News"
 
 #: dpnk/email.py:200
-msgid "připomenutí nevyplněných jízd"
-msgstr "Unfilled rides notification"
+msgid "Poslední šance doplnit jízdy"
+msgstr "Last Chance to Get on Track"
 
 #: dpnk/email.py:209
-msgid "byla Vám vystavena faktura"
-msgstr "Your invoice has been prepared"
+msgid "Nová faktura vystavena"
+msgstr "New Invoice Issued"
 
 #: dpnk/email.py:217
-msgid "připomenutí nezaplacené faktury"
-msgstr "reminder about unpaid invoice"
+msgid "Nezaplacená faktura"
+msgstr "Unpaid Invoice"
 
 #: dpnk/exceptions.py:46
 msgid "Přístup odepřen"

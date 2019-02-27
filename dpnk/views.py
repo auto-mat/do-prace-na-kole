@@ -79,7 +79,6 @@ from . import vacations
 from .email import (
     approval_request_mail,
     invitation_mail,
-    invitation_register_mail,
     team_created_mail,
     team_membership_approval_mail,
     team_membership_denial_mail,
@@ -1494,7 +1493,7 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
                             fail_silently=True,
                         )
                     else:
-                        invitation_register_mail(self.user_attendance, invited_user_attendance)
+                        invitation_mail(self.user_attendance, invited_user_attendance.userprofile.user.email, invited_user_attendance)
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
