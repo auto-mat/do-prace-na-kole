@@ -960,7 +960,7 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
 
 class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_members.html'
-    title = _("Výsledky členů týmu")
+    title = _("")
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))

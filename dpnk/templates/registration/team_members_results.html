@@ -5,6 +5,7 @@
 
 {% block content %}
 <h3>{% trans "Výsledky týmu" %} {{ user_attendance.team.name }}</h3>
+<h4>{% trans "Týmová pravidelnost" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%</h4>
 <table class="table table-bordered" id="team_members_table">
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>
@@ -44,9 +45,7 @@
       </tr>
    {% endfor %}
 </table>
-{% trans "Pravidelnost celkem" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
-<p><small>
-*{% blocktrans with minimum_rides_base=user_attendance.campaign.minimum_rides_base %}Do konce soutěže je potřeba urazit alespoň {{ minimum_rides_base }} cest.{% endblocktrans %}
-{% trans "Počet cest u označených soutěžících byl zvýšen poměrově k tomuto číslu." %}
+   <p><small>
+   {% blocktrans with minimum_rides_base=user_attendance.campaign.minimum_rides_base %}Do konce soutěže musíte urazit alespoň {{ minimum_rides_base }} cest, aby Vaše pravidelnost byla stoprocentní.{% endblocktrans %}
 </small></p>
 {% endblock %}

@@ -4,7 +4,10 @@
 {% load avatar_tags %}
 
 {% block form_intro %}
-<a class="btn btn-default" href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
+<a href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
+<br/>
+<br/>
+<a class="btn btn-default" href="{% url "other_team_members_results" %}">{% trans "Výsledky členů týmu" %}</a>
 {% endblock %}
 
 {% block form %}

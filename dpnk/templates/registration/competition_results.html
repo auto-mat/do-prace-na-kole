@@ -12,7 +12,7 @@
 	{{ block.super }}
 	{% get_current_language as current_language_code %}
 	<h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
-	<i> {{ competition.type_string|safe }} </i>
+	{{ competition.type_string|safe }}
 
 	{% if competition.rules %}
 	{% endif %}

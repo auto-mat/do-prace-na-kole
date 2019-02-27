@@ -6,7 +6,7 @@ sitetrees = (
             item('Zapsat jízdu!', 'profil', title_en='Enter ride!'),
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
-                    item('Změnit heslo', 'password_change', title_en='Change password'),
+                    item('Změnit osobní údaje', 'edit_profile_detailed', title_en='Profile'),
                     item('Změnit tým', 'zmenit_tym', title_en='Change team'),
                     item('Změnit triko', 'zmenit_triko', title_en='Change t-shirt'),
                     item('Platba', 'typ_platby', title_en='Payment'),
@@ -14,11 +14,11 @@ sitetrees = (
             ),
             item('Tým', 'team_members', title_en='Team'),
             item(
-                'Výsledky', 'other_team_members_results', title_en='Results', children=[
+                'Výsledky', None, title_en='Results', children=[
                     item('Pravidelnostní soutěže', 'competitions', title_en='Regularity competitions'),
                     item('Výkonnostní soutěže', 'length_competitions', title_en='Performance competitions'),
-                    item('Diplomy', 'diplomas', title_en='Diplomas'),
-                    item('Ostatní', 'questionnaire_competitions', title_en='Other'),
+                    item('Ostatní soutěže', 'questionnaire_competitions', title_en='Other competitions'),
+                    item('Minulé ročníky', 'diplomas', title_en='Previous years'),
                 ],
             ),
         ],
@@ -28,16 +28,15 @@ sitetrees = (
             item('Zapsat jízdu!', 'profil', title_en='Enter ride!'),
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
-                    item('Změnit heslo', 'password_change', title_en='Change password'),
                     item('Změnit společnost', 'zmenit_tym', title_en='Change company'),
                 ],
             ),
             item(
-                'Výsledky', 'competitions', title_en='Results', children=[
+                'Výsledky', None, title_en='Results', children=[
                     item('Pravidelnostní soutěže', 'competitions', title_en='Regularity competitions'),
                     item('Výkonnostní soutěže', 'length_competitions', title_en='Performance competitions'),
-                    item('Diplomy', 'diplomas', title_en='Diplomas'),
-                    item('Ostatní', 'questionnaire_competitions', title_en='Other'),
+                    item('Ostatní soutěže', 'questionnaire_competitions', title_en='Other competitions'),
+                    item('Minulé ročníky', 'diplomas', title_en='Previous years'),
                 ],
             ),
         ],
@@ -70,8 +69,8 @@ sitetrees = (
     tree(
         'company_coordinator_menu', 'Menu firemního koordinátora', items=[
             item(
-                'Firemní koordinátor', 'company_admin_pay_for_users', title_en='Company coordinator', children=[
-                    item('Společnost', 'company_structure'),
+                'Firemní koordinátor', None, title_en='Company coordinator', children=[
+                    item('Pobočky', 'company_structure'),
                     item('Adresa společnosti', 'edit_company'),
                     item('Startovné', 'company_admin_pay_for_users'),
                     item('Faktury', 'invoices'),

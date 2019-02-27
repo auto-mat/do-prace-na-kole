@@ -7,12 +7,9 @@
   {% if competitions %}
   {% for competition in competitions %}
     <h4>{{ competition.name }}</h4>
-    <i> {{ competition.type_string | safe }} </i>
+    {{ competition.type_string.strip | safe |capfirst}}
     <br/>
-    <i>
-       {% if competition.date_from %}{% trans "od" %} {{ competition.date_from }}{% endif %}
-       {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
-    </i>
+    {% if competition.date_from %}{{ competition.date_from }}{% endif %} - {% if competition.date_to %}{{ competition.date_to }}{% endif %}
     <br/>
     {% if competition.has_started %}
        {% if competition.competition_type != 'questionnaire' or competition.has_finished %}
