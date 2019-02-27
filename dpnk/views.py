@@ -947,6 +947,10 @@ class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredM
     pass
 
 
+class RegistrationCompleteUserAttendanceView(RegistrationCompleteMixin, UserAttendanceView):
+    pass
+
+
 class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "registration/package.html"
     title = _("Sledování balíčku")

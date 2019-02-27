@@ -133,8 +133,7 @@ class CompetitionsViewTests(ViewsLogon):
                 'image': fd,
             }
             response = self.client.post(address, post_data)
-        self.assertEqual(response.status, 200)
-
+        self.assertEqual(response.status_code, 200)
 
     def test_daily_chart(self):
         address = reverse(views.daily_chart)
@@ -231,28 +230,6 @@ class CompetitionsViewTests(ViewsLogon):
         response = self.client.get(address)
         self.assertRedirects(response, reverse('profil'), status_code=302)
 
-    @patch('slumber.API')
-    def test_dont_allow_adding_rides(self, slumber_api):
-        slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get.return_value = self.feed_value
-        cityincampaign = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign)
-        cityincampaign.allow_adding_rides = False
-        cityincampaign.save()
-
-        address = reverse('profil')
-        response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-info">Zde jste si zadávali své jízdy.</div>', html=True)
-
-    @override_settings(
-        FAKE_DATE=datetime.date(2000, 11, 20),
-    )
-    @patch('slumber.API')
-    def test_rides_before_time(self, slumber_api):
-        slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get.return_value = self.feed_value
-
-        response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<div class="alert alert-info">Zde si budete od 1. listopadu 2010 zadávat své jízdy.</div>', html=True)
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
@@ -273,17 +250,6 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-
-    @patch('slumber.API')
-    def test_registration_access(self, slumber_api):
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        user_attendance.payments().delete()
-        util.rebuild_denorm_models([user_attendance])
-        slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get.return_value = []
-        address = reverse('profil')
-        response = self.client.get(address)
-        self.assertRedirects(response, reverse('typ_platby'))
 
     def test_chaining(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
@@ -984,22 +950,6 @@ class TestRidesView(ViewsLogonMommy):
             city=user_attendance.team.subsidiary.city,
         )
         return user_attendance
-
-    @patch('slumber.API')
-    def test_dpnk_minimum_rides_base(self, slumber_api):
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-
-        response = self.client.get(reverse('profil'), follow=True)
-        self.assertContains(
-            response,
-            "<small>"
-            "*Do konce soutěže je potřeba urazit alespoň 10000 cest. "
-            "Počet Vašich cest byl tedy zvýšen poměrově k tomuto číslu na 886 cest."
-            "</small>",
-            html=True,
-        )
 
 
 class TestRegisterCompanyView(ViewsLogonMommy):
@@ -2466,208 +2416,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=8),
-    )
-    @patch('slumber.API')
-    def test_dpnk_rides_view_key_error(self, slumber_api):
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-        "Test if the rides saves, when between loading and sending the form date changes."
-        "The non-active days should not be saved, but active days should be saved"
-        post_data = {
-            'form-TOTAL_FORMS': '2',
-            'form-INITIAL_FORMS': '2',
-            'form-MIN_NUM_FORMS': '0',
-            'form-MAX_NUM_FORMS': '1000',
-            'form-0-id': 101,
-            'form-0-commute_mode': 3,
-            'form-0-distance': '6',
-            'form-0-direction': 'trip_from',
-            'form-0-user_attendance': 1115,
-            'form-0-date': '2010-11-01',
-            'initial-form-0-date': '2010-11-01',
-            'form-1-id': 103,
-            'form-1-commute_mode': 1,
-            'form-1-distance': '34',
-            'form-1-direction': 'trip_from',
-            'form-1-user_attendance': 1115,
-            'form-1-date': '2010-11-02',
-            'initial-form-1-date': '2010-11-02',
-            'submit': 'Odeslat',
-        }
-        response = self.client.post(reverse('profil'), post_data, follow=True)
-        self.assertContains(response, 'form-0-commute_mode')
-        self.assertContains(response, 'form-3-commute_mode')
-        self.assertContains(response, '<th colspan="2" scope="row" class="date"> út 2. 11. <span>2010</span> </th>', html=True)
-        self.assertContains(response, '<th colspan="2" scope="row" class="date"> st 3. 11. <span>2010</span></th>', html=True)
-        self.assertEqual(self.user_attendance.user_trips.count(), 5)
-        self.assertEqual(models.Trip.objects.get(pk=101).distance, 5)
-        self.assertEqual(models.Trip.objects.get(pk=103).distance, 34)
-
-        denorm.flush()
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.trip_length_total, 39.0)
-        self.assertEqual(user_attendance.team.get_length(), 13.0)
-
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=1),
-    )
-    @patch('slumber.API')
-    def test_dpnk_rides_view_key_error_km(self, slumber_api):
-        """ Test, that if user sends "6,0 km", the application wont fail. """
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-        post_data = {
-            'form-TOTAL_FORMS': '2',
-            'form-INITIAL_FORMS': '1',
-            'form-MIN_NUM_FORMS': '0',
-            'form-MAX_NUM_FORMS': '1000',
-            'form-0-id': 101,
-            'form-0-commute_mode': 2,
-            'form-0-distance': '6,0 km',
-            'form-0-direction': 'trip_from',
-            'form-0-user_attendance': 1115,
-            'form-0-date': '2010-11-01',
-            'initial-form-0-date': '2010-11-01',
-            'form-1-id': None,
-            'form-1-commute_mode': 1,
-            'form-1-distance': '34',
-            'form-1-direction': 'trip_to',
-            'form-1-user_attendance': 1115,
-            'form-1-date': '2010-11-01',
-            'initial-form-1-date': '2010-11-01',
-            'submit': 'Uložit jízdy',
-        }
-        response = self.client.post(reverse('profil'), post_data, follow=True)
-        self.assertContains(
-            response,
-            '<div class="form-group is-invalid">'
-            '<label for="id_form-0-distance">Vzdálenost (km)</label>'
-            '<input type="number" name="form-0-distance" value="6,0 km" step="any" class="form-control is-invalid" '
-            'placeholder="Vzdálenost (km)" title="" id="id_form-0-distance" />'
-            '<div class="invalid-feedback">Zadejte číslo.</div >'
-            '</div>',
-            html=True,
-        )
-
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=1),
-    )
-    @patch('slumber.API')
-    def test_dpnk_rides_view_key_error_not_enough_km_by_foot(self, slumber_api):
-        """ Test, that if user sends "1,2 km", it is too few when choosen type by foot. """
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-        post_data = {
-            'form-TOTAL_FORMS': '1',
-            'form-INITIAL_FORMS': '1',
-            'form-MIN_NUM_FORMS': '0',
-            'form-MAX_NUM_FORMS': '1000',
-            'form-0-id': 101,
-            'form-0-commute_mode': 2,
-            'form-0-distance': '1,2',
-            'form-0-direction': 'trip_from',
-            'form-0-user_attendance': 1115,
-            'form-0-date': '2010-11-01',
-            'initial-form-0-date': '2010-11-01',
-            'initial-form-1-date': '2010-11-01',
-            'submit': 'Uložit jízdy',
-        }
-        response = self.client.post(reverse('profil'), post_data, follow=True)
-        self.assertContains(
-            response,
-            '<button class="close" type="button" data-dismiss="alert" aria-label="close">&#215;</button>',
-            html=True,
-        )
-
-    @patch('slumber.API')
-    def test_dpnk_rides_view(self, slumber_api):
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-        response = self.client.get(reverse('profil'))
-        self.assertContains(response, 'form-0-commute_mode')
-        self.assertContains(response, 'form-1-commute_mode')
-        self.assertEqual(self.user_attendance.user_trips.count(), 5)
-        post_data = {
-            'form-TOTAL_FORMS': '4',
-            'form-INITIAL_FORMS': '2',
-            'form-MIN_NUM_FORMS': '0',
-            'form-MAX_NUM_FORMS': '1000',
-            'form-0-id': 101,
-            'form-0-commute_mode': 2,
-            'form-0-distance': '28.89',
-            'form-0-direction': 'trip_to',
-            'form-0-user_attendance': 1115,
-            'form-0-date': '2010-11-01',
-            'initial-form-0-date': '2010-11-01',
-            'form-2-id': '',
-            'form-2-commute_mode': 1,
-            'form-2-distance': '2,34',
-            'form-2-direction': 'trip_from',
-            'form-2-user_attendance': 1115,
-            'form-2-date': '2010-11-01',
-            'initial-form-2-date': '2010-11-01',
-            'form-3-id': '',
-            'form-3-commute_mode': 4,
-            'form-3-distance': '',
-            'form-3-direction': 'trip_to',
-            'form-3-user_attendance': 1115,
-            'form-3-date': '2010-11-02',
-            'initial-form-3-date': '2010-11-02',
-            'form-1-id': 103,
-            'form-1-commute_mode': 3,
-            'form-1-distance': '3',
-            'form-1-direction': 'trip_from',
-            'form-1-user_attendance': 1116,
-            'form-1-date': '2010-11-04',
-            'initial-form-1-date': '2010-11-04',
-            'submit': 'Odeslat',
-        }
-        response = self.client.post(reverse('profil'), post_data, follow=True)
-        self.assertContains(response, 'form-1-commute_mode')
-        self.assertContains(
-            response,
-            '<td>Uražená započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</td>',
-            html=True,
-        )
-        self.assertContains(
-            response,
-            '<td>Pravidelnost: 66,7&nbsp;%</td>',
-            html=True,
-        )
-        self.assertContains(
-            response,
-            '<td>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/emisni_kalkulacka/">Emisní kalkulačka</a>)</td>',
-            html=True,
-        )
-        self.assertEqual(self.user_attendance.user_trips.count(), 7)
-        self.assertEqual(models.Trip.objects.get(pk=101).distance, 28.89)
-
-        trip1 = models.Trip.objects.get(pk=103)
-        self.assertEqual(trip1.distance, 3)
-        self.assertEqual(trip1.user_attendance.pk, 1115)
-        self.assertEqual(trip1.commute_mode.slug, "by_other_vehicle")
-        self.assertEqual(trip1.date, datetime.date(year=2010, month=11, day=2))
-
-        trip2 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=1), direction='trip_from')
-        self.assertEqual(trip2.commute_mode.slug, 'bicycle')
-        self.assertEqual(trip2.user_attendance.pk, 1115)
-        self.assertEqual(trip2.distance, 2.34)
-
-        trip3 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=2), direction='trip_to')
-        self.assertEqual(trip3.commute_mode.slug, 'no_work')
-        self.assertEqual(trip3.user_attendance.pk, 1115)
-        self.assertEqual(trip3.distance, None)
-
-        denorm.flush()
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.trip_length_total, 31.23)
-        self.assertEqual(user_attendance.team.get_length(), 10.41)
 
     def test_dpnk_views_create_trip(self):
         date = datetime.date(year=2010, month=11, day=2)
@@ -2680,11 +2428,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
                 'date': date,
                 'commute_mode': 1,
                 'user_attendance': self.user_attendance.pk,
-                'origin': reverse('profil'),
+                'origin': reverse('calendar'),
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse("profil"))
+        self.assertRedirects(response, reverse("calendar"))
         trip = models.Trip.objects.get(date=date, direction=direction, user_attendance=self.user_attendance)
         self.assertEqual(trip.distance, 13.32)
 
@@ -2815,4 +2563,4 @@ class ViewsTestsUnregistered(DenormMixin, ClearCacheMixin, TestCase):
         name, kwargs = view
         address = reverse(name, kwargs=kwargs)
         response = self.client.get(address)
-        self.assertRedirects(response, reverse("typ_platby"))
+        self.assertRedirects(response, reverse("typ_platby"), msg_prefix="%s did not redirect to 'typ_platby'" % address)

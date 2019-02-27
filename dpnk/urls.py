@@ -301,7 +301,7 @@ urlpatterns = [
     ),
     url(
         r'^$',
-        views.UserAttendanceView.as_view(
+        views.RegistrationCompleteUserAttendanceView.as_view(
             template_name="registration/landing.html",
             title=_("Základní stránka"),
         ),
