@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 six = "*"
-Django = "==2.0.9"
+Django = "==2.0.13"
 django-import-export = "*"
 django-smart-selects = "==1.5.3"
 psycopg2 = "*"
