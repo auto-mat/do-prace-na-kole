@@ -12,12 +12,13 @@ tým {{team_name}} stojí na startovní čáře a čeká na Váš povel.
 {% url 'pozvanky' as button_link %}
 {% include "./button.html" with button_text="Pozvat kolegy do týmu" %}
 
-<p><h4>
+<h4>
 Máte <a href="{{ absolute_uri }}{% url 'company_admin_application' %}">firemního koordinátora</a>?
-</h4></p><p>
+</h4>
+<p>
 Zapojte do soutěže vedení společnosti a nechte si od něj uhradit startovné.
 </p><p>
-Když se zaměstnavatel nadchne pro vaši věc, může vyhlásit dokonce <b>celofiremní kampaň</b> {{ user_attendance.campaign }} a Vy budete mít příležitost porovnat své síly s kolegy ze všech firemních poboček. To zní lépe než malé pivo a šunkové chlebíčky na pravidelném pátečním teambuildingu, co myslíte?
+Když se zaměstnavatel nadchne pro vaši věc, může vyhlásit dokonce <b>vnitrofiremní soutěž</b> a Vy budete mít příležitost porovnat své síly s kolegy ze všech firemních poboček. To zní lépe než malé pivo a šunkové chlebíčky na pravidelném pátečním teambuildingu, co myslíte?
 </p><p>
 Přihlaste se o funkci firemního koordinátora a domluvte se s vedením na podpoře Vašeho týmu v soutěži.
 </p>

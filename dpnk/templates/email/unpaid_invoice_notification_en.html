@@ -3,12 +3,15 @@
 {% block content %}
 {% language lang_code %}
 <p>
-Is everything OK, {{user_attendance.campaign.name}}?
+Is everything OK, {{ user_attendance.userprofile.first_name }}?
 </p><p>
-We haven't get Your payment for the team invoice {{ invoice_url }} with the due date {{invoice.taxable_date}}.
-</p><p>
-{% include "./button.html" with button_text="Manage my payments" button_link=invoice_url %}
-</p><p>
+We haven't get Your payment for the team invoice issued on {{ invoice.exposure_date }} with the due date {{invoice.taxable_date}}.
+</p>
+
+{% url 'invoices' as button_link %}
+{% include "./button.html" with button_text="Manage my payments" %}
+
+<p>
 You can also check all invoices in <a href="{{ absolute_uri }}{% url 'invoices' %}">Your profile</a>.
 </p>
 {% endlanguage %}

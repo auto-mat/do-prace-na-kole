@@ -17,13 +17,13 @@ Desatero doporučení před startem.
    </li><li>
  Nastartujte fyzičku. Připravte svá stehna na pravidelnou ranní jízdu.
    </li><li>
- Zapamatujte si svůj přihlašovací e-mail {{ email }}.
+      Zapamatujte si svůj přihlašovací e-mail <b>{{ email }}</b>.
    </li><li>
  Zapamatujte si, že soutěž začíná {{ user_attendance.campaign.competition_phase.date_from }} a končí {{ user_attendance.campaign.competition_phase.date_to }}.
    </li><li>
  Své jízdy si pravidelně zaznamenávejte v <a href="{{ absolute_uri }}{% url 'profil' %}">profilu</a>.
    </li><li>
- Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda z Vyšehradského kopečku.
+ Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
    </li><li>
  Nezapomeňte sledovat, jak si vede <a href="{{ absolute_uri }}{% url 'team_members' %}">Váš tým</a>.
    </li><li>
@@ -34,7 +34,7 @@ Desatero doporučení před startem.
 </ul>
 
 <p>
-   Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="{{user_attendance.campaign.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
+   Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="mailto:{{user_attendance.campaign.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
 </p>
 {% endlanguage %}
 {% endblock %}

@@ -27,7 +27,9 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from dpnk import email
-from dpnk.models import Campaign, City, Company, CompanyAdmin, Phase, Subsidiary, Team, UserAttendance, UserProfile
+from dpnk.models import Campaign, City, Company, CompanyAdmin, Invoice, Phase, Subsidiary, Team, UserAttendance, UserProfile
+
+from lxml import etree
 
 
 def language_url_infix(language):
@@ -55,16 +57,10 @@ Za finanční a mediální podporu děkujeme generálnímu logistickému partner
 Velvyslanectví Nizozemského království, společnostem OP TIGER, CK Kudrna, Ortlieb, Hello bank! a mediálnímu partnerům RunCzech,
 Běhej․com, Kolo pro život, Dopravní Jednička, Radio Wave, iVelo, Wavemaker,Youradio a Cykloserver,  Urban cyclers,
 Kondice, Superlife, Prazdroj Lidem
-</p><p>
-Přihlášení do vašeho profilu: <a href="https://dpnk.dopracenakole.cz/">https://dpnk.dopracenakole.cz/</a>
-<br/>
-Uživatelská podpora: kontakt@dopracenakole.cz
 </p>
-
-             <strong>Auto*Mat, z. s.</strong> <br />
-            <a href="https://auto-mat.cz">www.auto-mat.cz</a><br />
-            telefon: 212 240 666<br />
-            Vodičkova 36, 110 00 Praha 1<br />
+            <strong>Soutěž zaštiťuje nezisková organizace <a href="https://www.auto-mat.cz">Auto*Mat</a></strong> <br />
+            Neváhejte nás kontaktovat na e-mail <a href="mailto:kontakt@dopracenakole.cz">kontakt@dopracenakole.cz</a><br/>
+            nebo zavolejte na telefon 234&nbsp;697&nbsp;810<br />
         """)
         self.phase = Phase.objects.create(
             date_from=datetime.date(year=2010, month=10, day=20),
@@ -110,17 +106,22 @@ Uživatelská podpora: kontakt@dopracenakole.cz
             campaign=self.campaign,
             company_admin_approved='undecided',
         )
+        self.invoice = Invoice.objects.create(company=self.company, campaign=self.campaign)
+
+        self.parser = etree.XMLParser(resolve_entities=False)
         mail.outbox = []
 
     def test_send_approval_request_mail(self):
         email.approval_request_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - žádost o ověření členství")
-        self.assertInHTML('<td class="header-lg">Žádost O Ověření Členství</td>', mail.outbox[0].alternatives[0][0])
+        self.assertInHTML('<title>Testing campaign 1 - žádost o ověření členství</title>', mail.outbox[0].alternatives[0][0])
         self.assertEqual(mail.outbox[1].subject, "Testing campaign 1 - membership verification request")
-        self.assertInHTML('<td class="header-lg">Membership Verification Request</td>', mail.outbox[1].alternatives[0][0])
+        self.assertInHTML('<title>Testing campaign 1 - membership verification request</title>', mail.outbox[1].alternatives[0][0])
         self.assertEqual(mail.outbox[0].to[0], "user2@email.com")
         self.assertEqual(mail.outbox[1].to[0], "user3@email.com")
+        etree.fromstring(mail.outbox[0].alternatives[0][0], self.parser)
+        etree.fromstring(mail.outbox[1].alternatives[0][0], self.parser)
 
     def test_send_invitation_register_mail(self):
         email.invitation_register_mail(self.user_attendance, self.user_attendance)
@@ -136,18 +137,33 @@ Uživatelská podpora: kontakt@dopracenakole.cz
             self.user_attendance.team.invitation_token,
         )
         self.assertTrue(link in msg.body)
+        if self.userprofile.language == 'cs':
+            html_message = (
+                '<p>Test User si myslí, že je dnes perfektní den pro jízdu na kole. '
+                'Proto Vám posílá pozvánku do svého týmu Testing team v soutěži Testing campaign 1.</p>'
+            )
+        else:
+            html_message = '<p>Fellow colleague Test User wants to ride the bicycle with You in the Testing team team.</p>'
+        self.assertInHTML(html_message, msg.alternatives[0][0])
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_register_mail(self):
         email.register_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace / registration confirmation")
+            self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace")
         else:
-            self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation / potvrzení registrace")
+            self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
         link = 'https://dpnk.dopracenakole.cz%s/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
+        if self.userprofile.language == 'cs':
+            html_message = '<li>Zapamatujte si, že soutěž začíná 20. října 2010 a končí 20. listopadu 2010.</li>'
+        else:
+            html_message = '<p>Our ride begins at Oct. 20, 2010 and finishes at Nov. 20, 2010.</p>'
+        self.assertInHTML(html_message, msg.alternatives[0][0])
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_unfilled_rides_notification(self):
         email.unfilled_rides_mail(self.user_attendance, 5)
@@ -170,15 +186,18 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         else:
             message = "You can fill in the rides only for 7 days"
         self.assertTrue(message in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_team_membership_approval_mail(self):
         email.team_membership_approval_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení ověření členství v týmu")
+            self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení ověření členství v týmu")
         else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - team membership verification confirmation")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+            self.assertEqual(msg.subject, "Testing campaign 1 - team membership verification confirmation")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_team_membership_denial_mail(self):
         email.team_membership_denial_mail(self.user_attendance, self.user_attendance, "reason of denial")
@@ -191,6 +210,7 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         self.assertEqual(msg.to[0], "user1@email.com")
         link = 'https://dpnk.dopracenakole.cz%s/tym/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_team_created_mail(self):
         email.team_created_mail(self.user_attendance, 'Foo team')
@@ -203,43 +223,46 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         self.assertEqual(msg.to[0], "user1@email.com")
         link = 'https://dpnk.dopracenakole.cz%s/pozvanky/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_invitation_mail(self):
         email.invitation_mail(self.user_attendance, "email@email.com")
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(msg.subject, "Testing campaign 1 - pozvánka do týmu / you've been invited to join a team")
+            self.assertEqual(msg.subject, "Testing campaign 1 - pozvánka do týmu")
         else:
-            self.assertEqual(msg.subject, "Testing campaign 1 - you've been invited to join a team / pozvánka do týmu")
+            self.assertEqual(msg.subject, "Testing campaign 1 - you've been invited to join a team")
         self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(msg.to[0], "email@email.com")
-        link_cs = 'https://dpnk.dopracenakole.cz%s/registrace/%s/email@email.com/' % (
+        link = 'https://dpnk.dopracenakole.cz%s/registrace/%s/email@email.com/' % (
+            language_url_infix(self.userprofile.language),
             self.user_attendance.team.invitation_token,
         )
-        self.assertTrue(link_cs in msg.body)
-        link_en = 'https://dpnk.dopracenakole.cz%s/en/registrace/%s/email@email.com/' % (
-            self.user_attendance.team.invitation_token,
-        )
-        self.assertTrue(link_en in msg.body)
+        self.assertTrue(link in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_payment_confirmation_mail(self):
         email.payment_confirmation_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
+            self.assertEqual(msg.subject, "Testing campaign 1 - přijetí platby")
         else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - payment received")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+            self.assertEqual(msg.subject, "Testing campaign 1 - payment received")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_payment_confirmation_company_mail(self):
         email.payment_confirmation_company_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
+            self.assertEqual(msg.subject, "Testing campaign 1 - přijetí platby")
         else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - payment received")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+            self.assertEqual(msg.subject, "Testing campaign 1 - payment received")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_company_admin_register_competitor_mail(self):
         email.company_admin_register_competitor_mail(self.user_attendance)
@@ -250,6 +273,7 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - Company Coordinator - registration confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_company_admin_register_no_competitor_mail(self):
         email.company_admin_register_no_competitor_mail(self.company_admin)
@@ -265,6 +289,7 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         else:
             message = "Hello, brave Test\n\nthank You for applying. We wish Your dream will come true and You will become"
         self.assertTrue(message in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_company_admin_approval_mail(self):
         email.company_admin_approval_mail(self.company_admin)
@@ -282,6 +307,7 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         else:
             message = "Congratulations, Test\n\nYou are the Testing Company company coordinator."
         self.assertTrue(message in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
     def test_send_company_admin_rejected_mail(self):
         email.company_admin_rejected_mail(self.company_admin)
@@ -297,6 +323,39 @@ Uživatelská podpora: kontakt@dopracenakole.cz
         else:
             message = "Sad news, Test\n\nas You already know, we cannot make You a Testing campaign 1 company"
         self.assertTrue(message in msg.body)
+        etree.fromstring(msg.alternatives[0][0], self.parser)
+
+    def test_new_invoice_mail(self):
+        email.new_invoice_mail(self.invoice)
+        self.assertEqual(len(mail.outbox), 1)
+        if self.userprofile.language == 'cs':
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - byla Vám vystavena faktura")
+        else:
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - Your invoice has been prepared")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        if self.userprofile.language == 'cs':
+            html_message = '<p>Kompletní přehled faktur najdete ve svém <a href="https://dpnk.dopracenakole.cz/faktury/">profilu</a>.</p>'
+        else:
+            html_message = '<p>All invoices are guarded in Your <a href="https://dpnk.dopracenakole.cz/en/faktury/">profile</a>.</p>'
+        self.assertInHTML(html_message, msg.alternatives[0][0])
+        etree.fromstring(msg.alternatives[0][0], self.parser)
+
+    def test_unpaid_invoice_mail(self):
+        email.unpaid_invoice_mail(self.invoice)
+        self.assertEqual(len(mail.outbox), 1)
+        if self.userprofile.language == 'cs':
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - připomenutí nezaplacené faktury")
+        else:
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - reminder about unpaid invoice")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        if self.userprofile.language == 'cs':
+            html_message = '<p>Všechny faktury můžete zkontrolovat na Vašem <a href="https://dpnk.dopracenakole.cz/faktury/">profilu</a>.</p>'
+        else:
+            html_message = '<p>You can also check all invoices in <a href="https://dpnk.dopracenakole.cz/en/faktury/">Your profile</a>.</p>'
+        self.assertInHTML(html_message, msg.alternatives[0][0])
+        etree.fromstring(msg.alternatives[0][0], self.parser)
 
 
 class TestEmailsEn(TestEmails):

@@ -11,7 +11,7 @@ Připravili jsme účastnickou fakturu pro Vaši společnost {{ user_attendance.
 </p>
 
 {% url 'invoices' as button_link %}
-{% include "./button.html" with button_text="Stáhnout fakturu" button_link=invoice_url %}
+{% include "./button.html" with button_text="Stáhnout fakturu" %}
 
 <p>
 Kompletní přehled faktur najdete ve svém <a href="{{ absolute_uri }}{% url 'invoices' %}">profilu</a>.

@@ -332,29 +332,11 @@
     </td>
   </tr>
   <tr>
-    <td  valign="top" width="100%" style="background-color: #FF6F61;" class="content-padding">
-      <center>
-        <table cellspacing="0" cellpadding="0" width="600" class="w320">
-          <tr>
-            <td class="header-lg">
-               {% block header %}{{ subject|title }}{% endblock %}
-            </td>
-          </tr>
-        </table>
-      </center>
-    </td>
-  </tr>
-  <tr>
     <td align="center" valign="top" width="100%" style="background-color: #fff; height: 100px;">
-      <center>
         <table cellspacing="0" cellpadding="0" width="600" class="w320">
           <tr>
-            <td style="padding: 25px">
+            <td>
                {% block content %}{% endblock %}
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 25px">
             {% if lang_code == "en" %}
                <p><b>
                Thank You for supporting sustainable urban mobility.
@@ -362,27 +344,30 @@
                Enjoy Your everyday ride!
                </b></p>
                <p>
-               {{ user_attendance.campaign.name }} organization team
+               Organization team <a href="{{ user_attendance.campaign.web }}">{{ user_attendance.campaign.name }}</a>
                </p>
             {% else %}
                <p><b>
                Děkujeme za podporu udržitelné mobility ve městech a přejeme hodně radosti z jízdy na kole!
                </b></p>
                <p>
-               Organizační tým soutěže {{ user_attendance.campaign.name }}
+               Organizační tým soutěže <a href="{{ user_attendance.campaign.web }}">{{ user_attendance.campaign.name }}</a>
                </p>
             {% endif %}
             </td>
           </tr>
         </table>
-      </center>
     </td>
   </tr>
   <tr>
-    <td align="center" valign="top" width="100%" style="background-color: #f7f7f7; height: 100px;padding-top:1rem">
-      <center>
-        {% block footer %}{{ user_attendance.campaign.email_footer|safe }}{% endblock %}
-      </center>
+    <td align="center" valign="top" width="100%" style="background-color: #f7f7f7; height: 100px">
+        <table cellspacing="0" cellpadding="0" width="600" class="w320">
+          <tr>
+            <td>
+               {% block footer %}{{ user_attendance.campaign.email_footer|safe }}{% endblock %}
+            </td>
+          </tr>
+        </table>
     </td>
   </tr>
 </table>

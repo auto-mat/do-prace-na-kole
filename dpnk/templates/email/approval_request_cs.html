@@ -8,8 +8,13 @@ Hezký den, {{ team_member.userprofile.first_name_vokativ }}
 Váš tým v soutěži {{ new_user.campaign.name }} začíná být velmi populární.
 </p><p>
 Právě teď {{ new_user.userprofile.name }} pošilhává po volném místečku ve Vašem pelotonu {{ new_user.team.name }}.
-</p><p>
-Pokud chcete, aby Váš tým měl o dvě kolečka navíc, potvrďte členství nováčka v <a href="{{ absolute_uri }}{% url 'team_members' %}">profilu</a>.
+</p>
+
+{% url 'team_members' as button_link %}
+{% include "./button.html" with button_text="Přidat člena" %}
+
+<p>
+Pokud nechcete, aby Váš tým měl o dvě kolečka navíc, můžete členství nováčka <a href="{{ absolute_uri }}{% url 'team_members' %}">zamítnout</a>.
 </p>
 {% endblock %}
 {% endlanguage %}

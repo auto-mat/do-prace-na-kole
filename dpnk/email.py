@@ -224,7 +224,6 @@ def unpaid_invoice_mail(invoice):
 
 def invoice_mail(invoice, subject, template):
     extra_context = {
-        'invoice_url': invoice.invoice_pdf.url,
         'invoice': invoice,
     }
     if not invoice.paid():
@@ -266,7 +265,6 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, a
     email = EmailMultiAlternatives(
         subject=subject,
         body=txt_summary,
-        from_email='Klub pratel Auto*Matu <kp@auto-mat.cz>',
         to=[email],
     )
     email.attach_alternative(message, "text/html")

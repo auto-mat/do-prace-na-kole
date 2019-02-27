@@ -5,10 +5,11 @@
 <p>
 Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
-udělejte si prosím čas na zpracování faktury {{ invoice_url }}. Její splatnost je pouze do {{invoice.taxable_date}}.
+udělejte si prosím čas na zpracování faktury ze dne {{ invoice.exposure_date }}. Její splatnost je pouze do {{invoice.taxable_date}}.
 </p>
 
-{% include "./button.html" with button_text="Vyřídit fakturu" button_link=invoice_url %}
+{% url 'invoices' as button_link %}
+{% include "./button.html" with button_text="Vyřídit fakturu" %}
 
 <p>
 Všechny faktury můžete zkontrolovat na Vašem <a href="{{ absolute_uri }}{% url 'invoices' %}">profilu</a>.
