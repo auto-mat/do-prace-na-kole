@@ -234,7 +234,7 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, e
     subject = "[" + str(campaign) + "] " + _(subject, userprofile.language)
     context = {
         'user_attendance': user_attendance,
-        'absolute_uri': util.get_base_url(slug=user_attendance.campaign.slug),
+        'absolute_uri': util.get_base_url(slug=(user_attendance.campaign if user_attendance else campaign).slug),
         'email': email,
         'lang_code': userprofile.language,
         'subject': subject,
