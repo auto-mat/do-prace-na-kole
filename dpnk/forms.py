@@ -935,6 +935,7 @@ class UserProfileUpdateForm(RegistrationUserProfileUpdateForm):
     class Meta(RegistrationUserProfileUpdateForm.Meta):
         fields = (
             'occupation',
+            'sex',
             'age_group',
             'mailing_opt_in',
         )
