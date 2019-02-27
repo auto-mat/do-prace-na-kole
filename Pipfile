@@ -86,23 +86,23 @@ django-bleach = "*"
 sqlparse = "*"
 django-appconf = "*"
 social-auth-app-django = "*"
-django-admin-view-permission = {git = "https://github.com/auto-mat/django-admin-view-permission.git", ref = "request-arg", editable = true} # Remove after https://github.com/ctxis/django-admin-view-permission/pull/62 is merged
+django-admin-view-permission = {git = "https://github.com/auto-mat/django-admin-view-permission.git", editable = true, ref = "request-arg"} # Remove after https://github.com/ctxis/django-admin-view-permission/pull/62 is merged
 svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git", editable = true}
-django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains", ref = "django20", editable = true}
-django-advanced-filters = {git = "https://github.com/PetrDlouhy/django-advanced-filters.git", ref = "develop", editable = true}
-stravalib = {git = "https://github.com/hozn/stravalib", ref = "master", editable = true}
+django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains", editable = true, ref = "django20"}
+django-advanced-filters = {git = "https://github.com/PetrDlouhy/django-advanced-filters.git", editable = true, ref = "develop"}
+stravalib = {git = "https://github.com/hozn/stravalib", editable = true, ref = "master"}
 django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor", editable = true}
-django-selectable = {git = "https://github.com/PetrDlouhy/django-selectable.git", ref = "mergeup", editable = true}  # For the Django 2.0 fixes, for search splitted by whitespaces
-django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", ref = "develop", editable = true}
-django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git", ref = "2.0", editable = true}
-django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation", ref = "patch-the-issue-with-django2", editable = true}
+django-selectable = {git = "https://github.com/PetrDlouhy/django-selectable.git", editable = true, ref = "mergeup"}  # For the Django 2.0 fixes, for search splitted by whitespaces
+django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", editable = true, ref = "develop"}
+django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git", editable = true, ref = "2.0"}
+django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation", editable = true, ref = "patch-the-issue-with-django2"}
 django_polymorphic = "*"
 Unidecode = "*"
 Pillow = "*"
 easy-thumbnails = "*"
 SQLAlchemy = "*"
 django_celery_beat = "*"
-django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", ref = "mergeup", editable = true}
+django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", editable = true, ref = "mergeup"}
 "PyPDF2" = "*"
 "django-scribbler-django2.0" = "*"
 "django-bootstrap4" = "*"
