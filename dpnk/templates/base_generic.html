@@ -109,6 +109,9 @@
 									{% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
 								{% endblock %}
 
+                        {% block second_menu %}
+                        {% endblock %}
+
 								{% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
 									 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 								{% endif %}

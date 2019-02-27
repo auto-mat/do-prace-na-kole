@@ -10,14 +10,6 @@
 {% block main_menu %}
    {% if user_attendance.entered_competition %}
       {{ block.super }}
-   {% else %}
-   <ul class="register">
-      <li>
-         <a href="{% url 'upravit_profil' %}">
-            {% trans "Registrace" %}
-         </a>
-      </li>
-   </ul>
    {% endif %}
 {% endblock %}
 
