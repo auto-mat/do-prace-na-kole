@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 six = "*"
-Django = "==2.0.13"
+Django = "<2.1"
 django-import-export = "*"
 django-smart-selects = "==1.5.3"
 psycopg2 = "*"
@@ -110,7 +110,7 @@ django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.gi
 tornado = "<6"
 
 [requires]
-python_version = "3.5"
+python_version = "3.6"
 
 [dev-packages]
 coverage = "*"
