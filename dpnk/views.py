@@ -243,7 +243,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
 class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
-    title = _("Registrujte se prosím")
+    title = _("")
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -258,7 +258,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'upravit_profil'
-    title = _("Registrujte se prosím")
+    title = _("")
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}

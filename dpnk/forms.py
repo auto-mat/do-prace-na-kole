@@ -131,15 +131,16 @@ class CampaignMixin(object):
 
 
 def social_html(login=True):
-    # action_word = _("Přihlásit") if login else _("Registrovat")
+    action_word = _("Přihlásit přes") if login else _("Registrovat přes")
     return HTML(
         format_html_lazy(
-            '<label class="socialLabel">Přihlásit přes</label><a class="btn google" href="{{% url "social:begin" "google-oauth2" %}}">'
+            '<label class="socialLabel">{}</label><a class="btn google" href="{{% url "social:begin" "google-oauth2" %}}">'
             'Google'
             '</a>'
             '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
             'Facebook'
-            '</a>'
+            '</a>',
+            action_word,
         ),
     )
 
