@@ -2,10 +2,17 @@
 {% load dpnk_tags %}
 {% load i18n %}
 {% load avatar_tags %}
+{% load static %}
 
 {% block form_intro %}
-<a href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
-<br/>
+<a href="{% url "edit_team" %}" class="btn primary float-right"><i class="fa fa-pencil"></i></a>
+{% if team.lead_photo %}
+<img src="{{team.lead_photo.image.url}}"/>
+{% else %}
+<div style="background-color: darkgreen">
+<img src="{% static "img/dpnk_logo.svg" %}"/>
+</div>
+{% endif %}
 <br/>
 <a class="btn btn-default" href="{% url "other_team_members_results" %}">{% trans "Výsledky členů týmu" %}</a>
 {% endblock %}

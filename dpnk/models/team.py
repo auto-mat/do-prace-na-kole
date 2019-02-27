@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import os
 import logging
 import random
 import string
@@ -29,7 +30,10 @@ from denorm import denormalized, depend_on_related
 from django import forms
 from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+
+import photologue.models
 
 from .phase import Phase
 from .subsidiary import Subsidiary
@@ -78,6 +82,31 @@ class Team(models.Model):
         blank=False,
         on_delete=models.CASCADE,
     )
+    gallery = models.ForeignKey(
+        photologue.models.Gallery,
+        verbose_name=_("Galerie týmových fotek"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+
+    def get_gallery(self):
+        if self.gallery:
+            return self.gallery
+        title_slug = "team-%s-photos" % self.pk
+        self.gallery = photologue.models.Gallery.objects.create(
+            title=title_slug,
+            slug=title_slug,
+            is_public=False
+        )
+        self.save()
+        return self.gallery
+
+    def lead_photo(self):
+        try:
+            return self.get_gallery().photos.order_by('-date_added')[0]
+        except IndexError:
+            return None
 
     @denormalized(
         models.IntegerField,

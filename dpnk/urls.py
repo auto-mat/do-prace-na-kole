@@ -53,6 +53,11 @@ urlpatterns = [
         name="edit_team",
     ),
     url(
+        r'^upload_team_photo/$',
+        views.UploadTeamPhoto.as_view(),
+        name="upload_team_photo",
+    ),
+    url(
         r'^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)/$$',
         views.ConfirmTeamInvitationView.as_view(),
         name="change_team_invitation",
@@ -296,7 +301,7 @@ urlpatterns = [
     ),
     url(
         r'^$',
-        views.UserAttendanceView.as_view(
+        views.RegistrationCompleteUserAttendanceView.as_view(
             template_name="registration/landing.html",
             title=_("Základní stránka"),
         ),

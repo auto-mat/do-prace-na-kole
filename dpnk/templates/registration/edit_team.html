@@ -1,0 +1,29 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extrahead %}
+<link href="{% static "bow/dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+{% crispy form %}
+<br/>
+Týmové fotky:
+        <form class="dropzone" id="team_photo_upload" action="{% url 'upload_team_photo' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="fallback">
+                <input name="image" type="file"/>
+                <input type="submit" value="{% trans 'Odeslat' %}"/>
+            </div>
+        </form>
+        <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
+        <script>
+         dz = $('#team_photo_upload').dropzone({
+             dictDefaultMessage: "{% trans "Nahravejte týmové fotky kliknutím zde" %}",
+             uploadMultiple: false,
+             paramName: "image",
+         });
+        </script>
+{% endblock %}

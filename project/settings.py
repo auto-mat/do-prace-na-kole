@@ -112,8 +112,9 @@ AWS_ACCESS_KEY_ID = os.environ.get('DPNK_AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY')
 AWS_S3_HOST = os.environ.get('DPNK_AWS_S3_HOST', 's3-eu-west-1.amazonaws.com')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('DPNK_AWS_STORAGE_BUCKET_NAME', 'dpnk')
-AWS_QUERYSTRING_AUTH = os.environ.get('AWS_QUERYSTRING_AUTH', False)
+AWS_QUERYSTRING_AUTH = os.environ.get('AWS_QUERYSTRING_AUTH', True)
 AWS_QUERYSTRING_EXPIRE = os.environ.get('AWS_QUERYSTRING_EXPIRE', 60 * 60 * 24 * 365 * 10)
+AWS_DEFAULT_ACL = "private"
 
 if AWS_ACCESS_KEY_ID:
     THUMBNAIL_DEFAULT_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -306,6 +307,8 @@ INSTALLED_APPS = (
     'social_django',
     'fm',
     # 'cachalot',
+    'photologue',
+    'sortedm2m',
 )
 
 ECC_PROVIDER_CODE = "DK"
