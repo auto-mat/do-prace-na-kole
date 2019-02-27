@@ -298,7 +298,7 @@ urlpatterns = [
         r'^$',
         views.UserAttendanceView.as_view(
             template_name="registration/landing.html",
-            title=_("Zakladní stranka"),
+            title=_("Základní stránka"),
         ),
         name="profil",
     ),
