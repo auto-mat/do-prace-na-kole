@@ -78,7 +78,7 @@ class TestSendUnfilledRidesNotification(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - připomenutí nevyplněných jízd")
+        self.assertEqual(str(mail.outbox[0].subject), "[Testing campaign] Poslední šance doplnit jízdy")
 
     def test_notification_with_rides(self):
         """ Test that no email is send, if the user has recent rides """
@@ -248,7 +248,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - připomenutí nezaplacené faktury")
+        self.assertEqual(str(mail.outbox[0].subject), "[Testing campaign] Nezaplacená faktura")
 
     def test_english_notification(self):
         """ Test that email is sent, if the invoice hasn't been paid in 14 days """
@@ -268,7 +268,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - reminder about unpaid invoice")
+        self.assertEqual(str(mail.outbox[0].subject), "[Testing campaign] Unpaid Invoice")
 
     def test_notification_not_set_when_not_stale(self):
         """ Test that email is not sent, if 14 days hasn't passed"""

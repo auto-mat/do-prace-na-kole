@@ -26,8 +26,6 @@ from django_admin_smoke_tests import tests as smoke_tests
 
 from model_mommy import mommy
 
-import photologue.admin
-
 import settings
 
 
@@ -36,8 +34,7 @@ import settings
 )
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
     fixtures = []
-    exclude_apps = ['djcelery', 'dpnk', 't_shirt_delivery', 'avatar']
-    exclude_modeladmins = [photologue.admin.GalleryAdmin]  # THIS DOESN'T WORK! :O
+    exclude_apps = ['djcelery', 'dpnk', 't_shirt_delivery', 'avatar', 'photologue']
 
     def setUp(self):
         super().setUp()
