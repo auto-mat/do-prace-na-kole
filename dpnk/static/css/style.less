@@ -68,6 +68,9 @@ input[type="radio"], input[type="checkbox"]{
   border-color:@quartus;
   box-shadow: 0 0 0 0 transparent;
 }
+.input-group{
+  background:@lightgrey;
+}
 form{
   // display: flex;
   // flex-wrap: wrap;
@@ -109,6 +112,11 @@ form{
 .registrace, .registration_access, .login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
   form{
     width:66.66%;
+  }
+}
+.modal-body{
+  form{
+    width:100%;
   }
 }
 .registerme, .remindme, .register_coordinator{
@@ -439,13 +447,15 @@ label{
   margin-left:.2rem;
 }
 .field-row{
-  width: 50%;
-  float: left;
-  &:nth-child(odd){
-    padding-right:@wg/2;
-  }
-  &:nth-child(even){
-    padding-left:@wg/2;
+  .form-group{
+    width: 50%;
+    float: left;
+    &:nth-child(odd){
+      padding-right:@wg/2;
+    }
+    &:nth-child(even){
+      padding-left:@wg/2;
+    }
   }
 }
 .help-block, .form-text{
@@ -456,6 +466,11 @@ label{
   color:darken(@grey, 20%);
   display:inline-block;
   font-size:@fsize*.8;
+  .anim2;
+  &:hover{
+    color:#000 !important;
+    .anim2;
+  }
 }
 .invalid-feedback{
   margin:0;
@@ -599,6 +614,9 @@ label{
   }
 }
 @media all and (max-width: 480px) {
+  .help-block, .form-text{
+    color:#000 !important;
+  }
   .login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
     form{
       width:100%;
