@@ -6,19 +6,23 @@
 {% block form %}
 <div class="container">
    <div class="row">
-   <div class="col-md-6">
-      {{ block.super }}
-   </div>
-   <div class="col-md-3">
-      <a href="{% url 'avatar_change' %}">{% avatar request.user 150 %}</a>
-      <br/>
-      <a href="{% url 'avatar_change' %}"><i class="fa fa-edit"></i></a>
-      <a href="{% url 'avatar_change' %}">{% trans "Změnit obrázek" %}</a>
-      </a>
-      <br/>
-      <br/>
-      <a class="btn" href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a>
-   </div>
+      <div class="col-md-9">
+         <div class="aholder">
+            <a href="{% url 'avatar_change' %}">
+               {% avatar request.user 150 %}
+            </a>
+            <a href="{% url 'avatar_change' %}">
+               <i class="fa fa-edit"></i>
+            </a>
+            <a href="{% url 'avatar_change' %}">
+               {% trans "Změnit obrázek" %}
+            </a>
+            <a class="btn btn-sm password_change" href="{% url 'password_change' %}">
+               {% trans "Změnit heslo" %}
+            </a>
+         </div>
+         {{ block.super }}
+      </div>
    </div>
 </div>
 {% endblock %}

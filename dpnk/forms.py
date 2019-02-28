@@ -195,7 +195,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             social_html(True),
             HTML('<a class="remindme" href="{%% url "password_reset" %%}">%s</a>' % _("Obnovit heslo")),
             HTML('<a class="registerme" href="{%% url "registration_access" %%}">%s</a>' % _("Registrovat")),
-            HTML('<a class="remindme" href="{%% url "register_admin" %%}">%s</a>' % _("Registrovat firemního koordinátora")),
+            HTML('<a class="register_coordinator" href="{%% url "register_admin" %%}">%s</a>' % _("Registrovat firemního koordinátora")),
         )
         self.fields['username'].label = _("E-mail")
         return ret_val
@@ -482,11 +482,11 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "registration-access-form"
         self.helper.layout = Layout(
+            HTML('<p class="welcome_message">'),
             HTML("Děkujeme že se chcete účastnit soutěže. Začněte registraci zadáním e-mailu."),
             HTML('<br/>'),
             HTML("Pokud s námi nejedete poprvé, zadejte stejný e-mail jako v minulém roce a pokračujte rovnou na přihlášení."),
-            HTML('<br/>'),
-            HTML('<br/>'),
+            HTML('<p/>'),
             'email',
             Submit('submit', _('Pokračovat')),
             social_html(False),
