@@ -283,6 +283,8 @@ def create_post_request(factory, user_attendance, post_data={}, address="", subd
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(ClearCacheMixin, TestCase):
+    fixtures = ['sites']
+
     def setUp(self):
         self.factory = RequestFactory()
         self.company = mommy.make("Company")

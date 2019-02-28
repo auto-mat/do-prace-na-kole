@@ -181,11 +181,15 @@ class UserProfile(models.Model):
 
     def first_name_vokativ(self):
         woman = self.sex != "male"
-        return vokativ(self.first_name(), last_name=False, woman=woman).title()
+        first_name = self.first_name()
+        if len(first_name) > 0:
+            return vokativ(first_name, last_name=False, woman=woman).title()
 
     def last_name_vokativ(self):
         woman = self.sex != "male"
-        return vokativ(self.last_name(), last_name=True, woman=woman).title()
+        last_name = self.last_name()
+        if len(last_name) > 0:
+            return vokativ(last_name, last_name=True, woman=woman).title()
 
     def name(self, cs_vokativ=False):
         if self.nickname:

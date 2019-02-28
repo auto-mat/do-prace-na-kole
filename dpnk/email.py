@@ -150,12 +150,10 @@ def company_admin_mail(company_admin, subject, template):
         'company': company_admin.administrated_company,
     }
     campaign_mail(
-        company_admin.user_attendance(),
+        company_admin,
         subject,
         template,
         context,
-        userprofile=company_admin.userprofile,
-        campaign=company_admin.campaign,
     )
 
 
@@ -222,13 +220,9 @@ def invoice_mail(invoice, subject, template):
             )
 
 
-def campaign_mail(user_attendance, subject, template_path, extra_context=None, email=None, userprofile=None, campaign=None):
-    if extra_context is None:
-        extra_context = {}
-    if userprofile is None:
-        userprofile = user_attendance.userprofile
-    if campaign is None:
-        campaign = user_attendance.campaign
+def campaign_mail(user_attendance, subject, template_path, extra_context={}, email=None):
+    userprofile = user_attendance.userprofile
+    campaign = user_attendance.campaign
     if email is None:
         email = userprofile.user.email
     subject = "[" + str(campaign) + "] " + _(subject, userprofile.language)
