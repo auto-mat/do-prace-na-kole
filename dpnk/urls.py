@@ -159,12 +159,12 @@ urlpatterns = [
         name="competition-results-city",
     ),
     url(
-        r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^vysledky_souteze/(?P<competition_slug>[^&]+)/$',
         views_results.CompetitionResultsView.as_view(),
         name="competition_results",
     ),
     url(
-        r'^vysledky_souteze_json/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^vysledky_souteze_json/(?P<competition_slug>[^&]+)/$',
         views_results.CompetitionResultListJson.as_view(),
         name='competition_result_list_json',
     ),
