@@ -7,7 +7,20 @@
 <div id="landing_page_intro">
     {% scribble 'landing_page_before_start' %}
     {% load i18n %}
-    <p>{% trans "blah blah blah." %}</p>
+      <p>
+      Vítejte v dalším ročníku soutěže!
+      </p>
+      <p>
+      Tento rok jsme se na Vás opravdu důkladně připravovali. Tento web i <a href="https://www.dopracenakole.cz">stránky Auto*Matu</a> jsou čerstvé jako ranní projížďka kolem farmářského trhu.
+        </p>
+      <p>
+      Další velké překvapení najdete přímo TADY začátkem soutěže na prvního máje.
+        </p>
+      <p>
+      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href="{% url 'upravit_profil' %}">doplňte profil</a> a <a href="{% url 'pozvanky' %}">pozvěte kolegy do svého týmu</a>.
+      </p>
+
+      <img src="https://www.dopracenakole.cz/devel/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
     {% endscribble %}
 </div>
 {% endblock %}
