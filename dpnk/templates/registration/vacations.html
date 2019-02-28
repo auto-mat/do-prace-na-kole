@@ -13,15 +13,13 @@
 {% endblock %}
 {% block form %}
 {% url "profil" as profile %}
-{% blocktrans %}
 <p>
 Do kalendáře si každý den zapisujte své jízdy.
 </p><p>
-V průběhu soutěže od {{ campaign.competition_phase.date_from }} do {{ campaign.competition_phase.date_to }} budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
+V průběhu soutěže {% if campaign.competition_phase.date_from %}od {{ campaign.competition_phase.date_from }} {% endif %}{% if campaign.competition_phase.date_to %}do {{ campaign.competition_phase.date_to }} {% endif %}budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
 </p><p>
 Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
 </p>
-{% endblocktrans %}
 <br/>
 {% get_current_language as LANGUAGE_CODE %}
 <div id='calendar'></div>
