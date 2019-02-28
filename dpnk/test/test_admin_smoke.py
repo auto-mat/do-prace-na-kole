@@ -34,7 +34,7 @@ from dpnk.test.util import print_response  # noqa
 )
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
-    exclude_apps = ['djcelery', 'coupons', 'avatar']
+    exclude_apps = ['djcelery', 'coupons', 'avatar', 'photologue']
 
     def setUp(self):
         super().setUp()
