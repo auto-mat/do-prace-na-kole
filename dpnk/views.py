@@ -87,12 +87,12 @@ from .forms import (
     ChangeTeamForm,
     InviteForm,
     PaymentTypeForm,
+    PhotoForm,
     ProfileUpdateForm,
     RegistrationAccessFormDPNK,
     RegistrationFormDPNK,
     RegistrationProfileUpdateForm,
     TeamSettingsForm,
-    PhotoForm,
     TrackUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
@@ -1549,7 +1549,6 @@ class UploadTeamPhoto(
         View,
 ):
     def post(self, *args, **kwargs):
-        #import pudb;pudb.set_trace()
         slug = "team_%s_photo_%s" % (self.user_attendance.team.pk, self.user_attendance.team.get_gallery().photo_count(public=False))
         form_data = {
             'galleries': [self.user_attendance.team.get_gallery()],

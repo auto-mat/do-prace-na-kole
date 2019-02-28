@@ -230,7 +230,6 @@ class CompetitionsViewTests(ViewsLogon):
         response = self.client.get(address)
         self.assertRedirects(response, reverse('profil'), status_code=302)
 
-
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
         slumber_instance = slumber_api.return_value
@@ -2415,7 +2414,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL, html=True)
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
-
 
     def test_dpnk_views_create_trip(self):
         date = datetime.date(year=2010, month=11, day=2)

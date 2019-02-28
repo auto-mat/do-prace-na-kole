@@ -45,23 +45,27 @@ def language_url_infix(language):
 class TestEmails(TestCase):
     def setUp(self):
         Site.objects.create(domain="dopracenakole.cz", id=123)
-        self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="dpnk", email_footer="""
-        <p>
-Soutěž Do práce na kole 2019 pořádá spolek Auto*Mat ve spolupráci s Pavel Bednařík/Olomouc, Brdonoš/Příbram,
-BajkAzyl/Hradec Králové, Cyklisté Liberecka, CykloBudějovice, Cykloklub Kučera/Znojmo, CykloZlín, HAGA Pardubice,
-Hranická rozvojová agentura, Plzeň na kole, z.s., SlibyChyby/Jihlava, Nadace Partnerství/Brno,
-O-KOLO Hradiště a dále městskými úřady: Břeclav, Hradec Králové, Ostrava, Jihlava, Jindřichův Hradec, Karviná, Most,
-Nový Jičín, Říčany, Třebíč, Rožnov pod Radhoštěm, Ústí nad Labem, Znojmo a Žďár nad Sázavou.
-</p><p>
-Za finanční a mediální podporu děkujeme generálnímu logistickému partnerovi společnosti GLS CZ, Magistrátu hlavního města Prahy,
-Velvyslanectví Nizozemského království, společnostem OP TIGER, CK Kudrna, Ortlieb, Hello bank! a mediálnímu partnerům RunCzech,
-Běhej․com, Kolo pro život, Dopravní Jednička, Radio Wave, iVelo, Wavemaker,Youradio a Cykloserver,  Urban cyclers,
-Kondice, Superlife, Prazdroj Lidem
-</p>
-            <strong>Soutěž zaštiťuje nezisková organizace <a href="https://www.auto-mat.cz">Auto*Mat</a></strong> <br />
-            Neváhejte nás kontaktovat na e-mail <a href="mailto:kontakt@dopracenakole.cz">kontakt@dopracenakole.cz</a><br/>
-            nebo zavolejte na telefon 234&nbsp;697&nbsp;810<br />
-        """)
+        self.campaign = Campaign.objects.create(
+            name="Testing campaign 1",
+            slug="dpnk",
+            email_footer="""
+                <p>
+                Soutěž Do práce na kole 2019 pořádá spolek Auto*Mat ve spolupráci s Pavel Bednařík/Olomouc, Brdonoš/Příbram,
+                BajkAzyl/Hradec Králové, Cyklisté Liberecka, CykloBudějovice, Cykloklub Kučera/Znojmo, CykloZlín, HAGA Pardubice,
+                Hranická rozvojová agentura, Plzeň na kole, z.s., SlibyChyby/Jihlava, Nadace Partnerství/Brno,
+                O-KOLO Hradiště a dále městskými úřady: Břeclav, Hradec Králové, Ostrava, Jihlava, Jindřichův Hradec, Karviná, Most,
+                Nový Jičín, Říčany, Třebíč, Rožnov pod Radhoštěm, Ústí nad Labem, Znojmo a Žďár nad Sázavou.
+                </p><p>
+                Za finanční a mediální podporu děkujeme generálnímu logistickému partnerovi společnosti GLS CZ, Magistrátu hlavního města Prahy,
+                Velvyslanectví Nizozemského království, společnostem OP TIGER, CK Kudrna, Ortlieb, Hello bank! a mediálnímu partnerům RunCzech,
+                Běhej․com, Kolo pro život, Dopravní Jednička, Radio Wave, iVelo, Wavemaker,Youradio a Cykloserver,  Urban cyclers,
+                Kondice, Superlife, Prazdroj Lidem
+                </p>
+                <strong>Soutěž zaštiťuje nezisková organizace <a href="https://www.auto-mat.cz">Auto*Mat</a></strong> <br />
+                Neváhejte nás kontaktovat na e-mail <a href="mailto:kontakt@dopracenakole.cz">kontakt@dopracenakole.cz</a><br/>
+                nebo zavolejte na telefon 234&nbsp;697&nbsp;810<br />
+            """,
+        )
         self.phase = Phase.objects.create(
             date_from=datetime.date(year=2010, month=10, day=20),
             date_to=datetime.date(year=2010, month=11, day=20),

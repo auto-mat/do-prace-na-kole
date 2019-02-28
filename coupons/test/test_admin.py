@@ -22,11 +22,11 @@ import datetime
 from django.test import Client
 from django.test.utils import override_settings
 
-import photologue.admin
-
 from django_admin_smoke_tests import tests as smoke_tests
 
 from model_mommy import mommy
+
+import photologue.admin
 
 import settings
 
@@ -37,7 +37,7 @@ import settings
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
     fixtures = []
     exclude_apps = ['djcelery', 'dpnk', 't_shirt_delivery', 'avatar']
-    exclude_modeladmins = [photologue.admin.GalleryAdmin] # THIS DOESN'T WORK! :O
+    exclude_modeladmins = [photologue.admin.GalleryAdmin]  # THIS DOESN'T WORK! :O
 
     def setUp(self):
         super().setUp()

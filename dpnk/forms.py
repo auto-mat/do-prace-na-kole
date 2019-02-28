@@ -46,13 +46,13 @@ from initial_field import InitialFieldsMixin
 
 from leaflet.forms.widgets import LeafletWidget
 
+import photologue
+
 import registration.forms
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from smart_selects.form_fields import ChainedModelChoiceField
-
-import photologue
 
 from . import email, models, util
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
