@@ -213,7 +213,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.request',
                 'django.template.context_processors.debug',
-                'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
                 'settings_context_processor.context_processors.settings',
                 # This is causing lots of database hits on every request and probaly isn't needed:

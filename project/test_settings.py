@@ -66,7 +66,6 @@ for mid in UNUSED_MIDDLEWARES:
     except ValueError:
         pass
 
-SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
