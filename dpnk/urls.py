@@ -97,6 +97,11 @@ urlpatterns = [
         name="zaslat_zadost_clenstvi",
     ),
     url(
+        r'^jizdy$',
+        views.RidesView.as_view(),
+        name="rides",
+    ),
+    url(
         r'^jizdy-podrobne/$',
         views.RidesDetailsView.as_view(),
         name="rides_details",

@@ -7,7 +7,7 @@
   {% if competitions %}
   {% for competition in competitions %}
     <h4>{{ competition.name }}</h4>
-    {{ competition.type_string.strip | safe |capfirst}}
+    <span class="type-string">{{ competition.type_string.strip | safe |capfirst}}</span>
     <br/>
     {% if competition.date_from %}{{ competition.date_from }}{% endif %} - {% if competition.date_to %}{{ competition.date_to }}{% endif %}
     <br/>

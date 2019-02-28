@@ -614,10 +614,10 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(len(mail.outbox), 3)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - schválení správcovství organizace')
+        self.assertEqual(str(msg.subject), '[Testing campaign] Jste firemní koordinátor')
         msg = mail.outbox[1]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - potvrzení registrace')
+        self.assertEqual(str(msg.subject), '[Testing campaign] Potvrzení registrace firemního koordinátora')
 
     def test_dpnk_company_admin_registration_existing(self):
         user = models.User.objects.get(username='test1')
@@ -1533,7 +1533,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - potvrzení registrace')
+        self.assertEqual(str(msg.subject), '[Testing campaign] Pozvánka')
 
     def test_dpnk_team_invitation_same_team(self):
         post_data = {
@@ -1545,7 +1545,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test2@test.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - potvrzení ověření členství v týmu')
+        self.assertEqual(str(msg.subject), '[Testing campaign] Jste členem týmu')
 
     def test_dpnk_team_invitation_unknown(self):
         post_data = {
@@ -1557,7 +1557,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
-        self.assertEqual(str(msg.subject), "Testing campaign - pozvánka do týmu / you've been invited to join a team")
+        self.assertEqual(str(msg.subject), "[Testing campaign] Pozvánka")
 
     def test_dpnk_team_no_team(self):
         """ Test, that invitation shows warning if the team is not set """
@@ -1888,7 +1888,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - žádost o ověření členství')
+        self.assertEqual(str(msg.subject), '[Testing campaign] Máte nového člena')
 
     @patch('dpnk.forms.logger')
     def test_team_out_of_campaign(self, mock_logger):
@@ -2037,7 +2037,7 @@ class RegistrationMixinTests(ViewsLogon):
         m = MagicMock()
         m.feed.get.return_value = []
         slumber_api.return_value = m
-        response = self.client.get(reverse('profil'))
+        response = self.client.get(reverse('rides'))
         self.assertContains(
             response,
             "Nezapomeňte vyplnit odpovědi v následujících soutěžích: "
@@ -2058,7 +2058,7 @@ class RegistrationMixinTests(ViewsLogon):
         ]
         slumber_api.return_value = m
         models.Voucher.objects.create(user_attendance=self.user_attendance, token="1234")
-        response = self.client.get(reverse('profil'))
+        response = self.client.get(reverse('rides'))
         self.assertContains(response, "<h3>Vouchery</h3>", html=True)
         self.assertContains(response, "<tr> <td> ReKola </td> <td> 1234 </td> </tr>", html=True)
 
@@ -2071,7 +2071,7 @@ class RegistrationMixinTests(ViewsLogon):
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'undecided'
         ca.save()
-        response = self.client.get(reverse('profil'))
+        response = self.client.get(reverse('rides'))
         denorm.flush()
         self.assertContains(response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení.")
 
@@ -2084,7 +2084,7 @@ class RegistrationMixinTests(ViewsLogon):
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'denied'
         ca.save()
-        response = self.client.get(reverse('profil'))
+        response = self.client.get(reverse('rides'))
         self.assertContains(response, "Vaše žádost o funkci koordinátora organizace byla zamítnuta.")
 
 
@@ -2464,7 +2464,12 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
-        self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
+        self.assertContains(
+            response,
+            '<span class="type-string">Vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company '
+            'pro cesty s prostředky Kolo, Chůze/běh</span>',
+            html=True,
+        )
         self.assertContains(response, '<p>1. místo z 1 organizací</p>', html=True)
 
     def test_dpnk_length_competitions_page(self):
@@ -2475,7 +2480,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
         response = self.client.get(reverse('length_competitions'))
-        self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
+        self.assertContains(
+            response,
+            '<span class="type-string">Soutěž na vzdálenost jednotlivců ve městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</span>',
+            html=True,
+        )
 
     def test_dpnk_competitions_page_change(self):
         response = self.client.get(reverse('competitions'))
@@ -2486,7 +2495,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
         self.assertContains(
             response,
-            '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</i>',
+            '<span class="type-string">Soutěž na vzdálenost jednotlivců  '
+            've městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</span>',
             html=True,
         )
 
@@ -2494,7 +2504,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('questionnaire_competitions'))
         self.assertContains(response, '<h4>Dotazník</h4>', html=True)
         self.assertContains(response, '<a href="/otazka/quest/">Vyplnit odpovědi</a>', html=True)
-        self.assertContains(response, '<i>dotazník týmů  ve městě Testing city</i>', html=True)
+        self.assertContains(response, '<span class="type-string">Dotazník týmů  ve městě Testing city</span>', html=True)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2009, month=11, day=20),
@@ -2515,7 +2525,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
         response = self.client.get(reverse('questionnaire_competitions'))
-        self.assertContains(response, '<i>dotazník jednotlivců</i>', html=True)
+        self.assertContains(response, '<span class="type-string">Dotazník jednotlivců</span>', html=True)
         self.assertContains(response, "<p>16,2b.</p>", html=True)
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)

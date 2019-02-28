@@ -139,7 +139,7 @@ class TestSave(TransactionTestCase):
         self.assertEqual(payment.status, 1005)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - přijetí platby')
+        self.assertEqual(str(msg.subject), '[Testing campaign] Jste ve hře')
         ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
 
     def test_invoice_raises_sequence_number_overrun(self):
