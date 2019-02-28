@@ -611,7 +611,7 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(user.get_full_name(), "Company Admin")
         self.assertEqual(models.UserProfile.objects.get(user=user).telephone, '123456789')
         self.assertEqual(models.CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
-        self.assertEqual(len(mail.outbox), 3)
+        self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
         self.assertEqual(str(msg.subject), '[Testing campaign] Jste firemní koordinátor')
@@ -643,7 +643,7 @@ class ViewsTests(DenormMixin, TestCase):
             'password2': 'password11',
         }
         response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse('registration_complete'))
         user = models.User.objects.get(email='test1@test.cz')
         self.assertNotEqual(user, None)
         self.assertNotEqual(models.UserProfile.objects.get(user=user), None)
@@ -774,7 +774,7 @@ class RegistrationViewTests(TestCase):
             'password2': 'password11',
         }
         response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse('registration_complete'))
         user = models.User.objects.get(email='test1@test.cz')
         self.assertNotEqual(user, None)
         self.assertNotEqual(models.UserProfile.objects.get(user=user), None)
@@ -800,13 +800,16 @@ class RegistrationViewTests(TestCase):
             'password2': 'password11',
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse('registration_complete'))
+        user = models.User.objects.get(email='test1@test.cz')
+        user.is_active = True
+        user.save()
+        response = self.client.post(reverse('upravit_profil'), post_data, follow=True)
         self.assertContains(
             response,
             '<div class="alert alert-danger">Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.</div>',
             html=True,
         )
-        user = models.User.objects.get(email='test1@test.cz')
         ua = models.UserAttendance.objects.get(userprofile__user=user)
         self.assertEqual(ua.team, None)
 

@@ -510,14 +510,15 @@ class EmailUsernameMixin(object):
         return cleaned_data
 
 
-class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
+class RegistrationBaseForm(EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
     add_social_login = True
 
     username = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, request=None, invitation_token=None, campaign=None, *args, **kwargs):
-        self.campaign = campaign
+        if not hasattr(self, 'campaign'):
+            self.campaign = campaign
         self.invitation_token = invitation_token
         self.request = request
         self.helper = FormHelper()
@@ -552,6 +553,12 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
             )
         return self.cleaned_data['email']
 
+    class Meta:
+        model = User
+        fields = ('email', 'password1', 'password2', 'username')
+
+
+class RegistrationFormDPNK(RegistrationBaseForm):
     def save(self):
         new_user = super().save()
         userprofile = models.UserProfile.objects.create(user=new_user)
@@ -571,10 +578,6 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
         if team:
             views.approve_for_team(self.request, user_attendance, "", True, False)
         return new_user
-
-    class Meta:
-        model = User
-        fields = ('email', 'password1', 'password2', 'username')
 
 
 class InviteForm(SubmitMixin, forms.Form):

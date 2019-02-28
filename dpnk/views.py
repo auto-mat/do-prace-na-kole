@@ -264,6 +264,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
         kwargs = super().get_form_kwargs()
         kwargs['invitation_token'] = self.kwargs.get('token', None)
         kwargs['campaign'] = self.campaign
+        kwargs['request'] = self.request
         return kwargs
 
     def get_initial(self):

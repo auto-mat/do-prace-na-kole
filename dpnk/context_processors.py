@@ -27,5 +27,5 @@ def user_attendance(request):
     return {
         'user_attendance': user_attendance,
         'campaign': campaign,
-        'absolute_uri': util.get_base_url(slug=campaign.slug),
+        'absolute_uri': util.get_base_url(slug=campaign.slug) if campaign else None,
     }

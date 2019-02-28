@@ -31,7 +31,7 @@ from selectable.forms.widgets import AutoCompleteSelectWidget
 from table_select_widget import TableSelectMultiple
 
 from . import models
-from .forms import AddressForm, RegistrationFormDPNK, SubmitMixin, UserAttendanceUpdateForm
+from .forms import AddressForm, RegistrationBaseForm, SubmitMixin, UserAttendanceUpdateForm
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 
 
@@ -175,7 +175,7 @@ class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
         self.helper.form_id = "fa-company-admin-form"
 
 
-class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationFormDPNK):
+class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
     add_social_login = False
 
     administrated_company = forms.ModelChoiceField(

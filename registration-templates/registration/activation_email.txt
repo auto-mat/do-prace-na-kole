@@ -1,53 +1,22 @@
 {% load i18n %}
-{% blocktrans with site_name=site.name %}
-You (or someone pretending to be you) have asked to register an account at
-{{ site_name }}.  If this wasn't you, please ignore this email
-and your address will be removed from our records.
-{% endblocktrans %}
-{% blocktrans %}
-To activate this account, please click the following link within the next
-{{ expiration_days }} days:
-{% endblocktrans %}
 
-http://{{site.domain}}{% url 'registration_activate' activation_key %}
-ssdfsad
+Vítejte mezi námi!
 
-{% blocktrans with site_name=site.name %}
-Sincerely,
-{{ site_name }} Management
-{% endblocktrans %}
+Registrace do soutěže {{ campaign }} vypadá dobře. Jízda Vašeho života už je na spadnutí. Máte o ni zájem? Potvrďte!
 
+Potvrdit emailovou adresu:
+{% url 'registration_activate' activation_key %}
 
-{% comment %}
-**registration/activation_email.txt**
+Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero doporučení před startem:
 
-Used to generate the text body of the activation email. Should display a
-link the user can click to activate the account. This template has the
-following context:
+* Vypucujte kolo. Kdo řetěz maže, ten jede.
+* Nastartujte fyzičku. Připravte svá stehna na pravidelnou ranní jízdu.
+* Zapamatujte si svůj přihlašovací e-mail {{ user.email }}>
+* Zapamatujte si, že soutěž začíná {{ campaign.competition_phase.date_from }} a končí {{ campaign.competition_phase.date_to }}.
+* Své jízdy si pravidelně zaznamenávejte v profilu ({{ absolute_uri }}{% url 'profil' %}).
+* Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
+* Nezapomeňte <a href="{{ absolute_uri }}{% url 'pozvanky' %}">pozvat kolegy</a> do svého týmu.
+* Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených aplikací ({{campaign.web}}/aplikace).
+* Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem webu ({{campaign.web}}).
 
-``activation_key``
-    The activation key for the new account.
-
-``expiration_days``
-    The number of days remaining during which the account may be
-    activated.
-
-``site``
-    An object representing the site on which the user registered;
-    depending on whether ``django.contrib.sites`` is installed, this
-    may be an instance of either ``django.contrib.sites.models.Site``
-    (if the sites application is installed) or
-    ``django.contrib.sites.requests.RequestSite`` (if not). Consult `the
-    documentation for the Django sites framework
-    <http://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_ for
-    details regarding these objects' interfaces.
-
-``user``
-    The new user account
-
-``request``
-    ``HttpRequest`` instance for better flexibility.
-    For example it can be used to compute absolute register URL:
-
-        {{ request.scheme }}://{{ request.get_host }}{% url 'registration_activate' activation_key %}
-{% endcomment %}
+Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="mailto:{{campaign.contact_email}}">{{campaign.contact_email}}</a>.
