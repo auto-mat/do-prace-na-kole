@@ -41,6 +41,6 @@ copy . .
 run DPNK_SECRET_KEY="fake_key" python manage.py collectstatic --noinput
 
 EXPOSE 8000
-RUN mkdir media logs
+RUN mkdir media logs -p
 VOLUME ["logs", "media"]
 ENTRYPOINT ["./docker-entrypoint.sh"]
