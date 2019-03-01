@@ -909,7 +909,7 @@ class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, 
 
 
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
-    template_name = 'base_generic_form.html'
+    template_name = 'base_generic_registration_form.html'
     title = _('Stav registrace')
     opening_message = mark_safe_lazy(
         format_html(
