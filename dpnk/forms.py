@@ -242,8 +242,8 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         self.helper.layout = Layout(
             'city' if 'city' in self.fields else None,
             'address_recipient',
-            Fieldset('', 'address_street', 'address_city', css_class="field-row"),
-            Fieldset('', 'address_street_number', 'address_psc', css_class="field-row"),
+            Fieldset('', 'address_street', 'address_street_number', css_class="field-row"),
+            Fieldset('', 'address_city', 'address_psc', css_class="field-row"),
         )
 
     class Meta:
@@ -288,8 +288,8 @@ class RegisterSubsidiaryForm(AddressForm):
             'company',
             'city',
             'address_recipient',
-            Fieldset('', 'address_street', 'address_city', css_class="field-row"),
-            Fieldset('', 'address_street_number', 'address_psc', css_class="field-row"),
+            Fieldset('', 'address_street', 'address_street_number', css_class="field-row"),
+            Fieldset('', 'address_city', 'address_psc', css_class="field-row"),
         )
 
     class Meta:
