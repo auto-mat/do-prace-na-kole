@@ -182,6 +182,7 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
             lookup_class='dpnk.lookups.CompanyLookup',
             attrs={
                 'class': "autocompletewidget form-control textinput textInput form-control",
+                'name': 'admin_compny',
             },
         ),
         queryset=Company.objects.all(),
