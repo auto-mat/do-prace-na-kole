@@ -141,7 +141,7 @@ class SubsidiaryForm(SubmitMixin, AddressForm):
         return ret_val
 
 
-class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
+class CompanyAdminForm(UserAttendanceUpdateForm):
     motivation_company_admin = forms.CharField(
         label=_("S kým máme tu čest?"),
         help_text=_(
@@ -176,8 +176,6 @@ class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
 
 
 class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
-    add_social_login = False
-
     administrated_company = forms.ModelChoiceField(
         label=_("Název společnosti"),
         widget=AutoCompleteSelectWidget(

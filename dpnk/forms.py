@@ -511,8 +511,8 @@ class EmailUsernameMixin(object):
 
 
 class RegistrationBaseForm(EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
+    submit_text = _('Registrovat')
     required_css_class = 'required'
-    add_social_login = True
 
     username = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -524,11 +524,6 @@ class RegistrationBaseForm(EmailUsernameMixin, registration.forms.RegistrationFo
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "registration-form"
-        self.helper.layout = Layout(
-            *self._meta.fields,
-            Submit('submit', _('Registrovat')),
-            social_html(False) if self.add_social_login else None,
-        )
 
         super().__init__(*args, **kwargs)
 
@@ -559,6 +554,15 @@ class RegistrationBaseForm(EmailUsernameMixin, registration.forms.RegistrationFo
 
 
 class RegistrationFormDPNK(RegistrationBaseForm):
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            *self._meta.fields,
+            Submit('submit', _('Registrovat')),
+            social_html(False),
+        )
+        return ret_val
+
     def save(self):
         new_user = super().save()
         userprofile = models.UserProfile.objects.create(user=new_user)
