@@ -19,13 +19,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import base64
 import os
 import re
 import sys
+import unicodedata
 
 import django.conf.locale
 from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils import Choices
@@ -638,3 +641,11 @@ AVATAR_PROVIDERS = (
     'avatar.providers.GravatarAvatarProvider',
     'avatar.providers.DefaultAvatarProvider',
 )
+
+
+def photologue_path(instance, filename):
+    fn = unicodedata.normalize('NFKD', force_text(filename)).encode('ascii', 'ignore').decode('ascii')
+    return os.path.join('photologue', 'photos', base64.b64encode(os.urandom(18)).decode('utf8') + fn)
+
+
+PHOTOLOGUE_PATH = photologue_path
