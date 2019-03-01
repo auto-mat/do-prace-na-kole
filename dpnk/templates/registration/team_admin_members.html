@@ -3,15 +3,12 @@
 {% load i18n %}
 {% load avatar_tags %}
 {% load static %}
-{% load photologue_tags %}
 
 {% block form_intro %}
-<div style="width:80%">
+<div style="width:300px">
 <a href="{% url "edit_team" %}" class="btn primary float-right"><i class="fa fa-pencil"></i></a>
 {% if team.lead_photo %}
-<a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
-    <img src="{{team.lead_photo.get_display_url}}"/>
-</a>
+<img src="{{team.lead_photo.image.url}}"/>
 {% else %}
 <div style="background-color: lightgrey">
 <img src="{% static "img/dpnk_logo.svg" %}"/>
