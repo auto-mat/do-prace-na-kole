@@ -159,32 +159,27 @@ urlpatterns = [
         name="competition-results-city",
     ),
     url(
-        r'^vysledky_souteze/(?P<competition_slug>[^&]+)/$',
+        r'^vysledky_souteze/(?P<competition_slug>[^&/]+)/$',
         views_results.CompetitionResultsView.as_view(),
         name="competition_results",
     ),
     url(
-        r'^vysledky_souteze_json/(?P<competition_slug>[^&]+)/$',
-        views_results.CompetitionResultListJson.as_view(),
-        name='competition_result_list_json',
-    ),
-    url(
-        r'^export_vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/(?P<extension>[0-9A-Za-z_\-]+)$',
+        r'^export_vysledky_souteze/(?P<competition_slug>[^&/]+)/(?P<extension>[0-9A-Za-z_\-]+)$',
         views_results.ExportCompetitionResults.as_view(),
         name='export_competition_results',
     ),
     url(
-        r'^export_vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/(?P<extension>[0-9A-Za-z_\-]+)/(?P<organization>[0-9]+)$',
+        r'^export_vysledky_souteze/(?P<competition_slug>[^&/]+)/(?P<extension>[0-9A-Za-z_\-]+)/(?P<organization>[0-9]+)$',
         views_results.ExportCompetitionResults.as_view(),
         name='export_competition_results',
     ),
     url(
-        r'^vysledky_souteze_json/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^vysledky_souteze_json/(?P<competition_slug>[^&/]+)/$',
         views_results.CompetitionResultListJson.as_view(),
         name='competition_result_list_json',
     ),
     url(
-        r'^questionnaire_answers/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^questionnaire_answers/(?P<competition_slug>[^&/]+)/$',
         views.QuestionnaireAnswersAllView.as_view(),
         name="questionnaire_answers_all",
     ),
@@ -279,12 +274,12 @@ urlpatterns = [
         views.CombinedTracksKMLView.as_view(),
     ),
     url(
-        r'^trip/(?P<date>[^&]+)/(?P<direction>[^&]+)$',
+        r'^trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
         views.view_edit_trip,
         name="trip",
     ),
     url(
-        r'^trip_geojson/(?P<date>[^&]+)/(?P<direction>[^&]+)$',
+        r'^trip_geojson/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
         views.TripGeoJsonView.as_view(),
         name="trip_geojson",
     ),
@@ -330,7 +325,7 @@ urlpatterns = [
         name='company_admin_application',
     ),
     url(
-        r'^spolecnost/soutez/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^spolecnost/soutez/(?P<competition_slug>[^&/]+)/$',
         company_admin_views.CompanyCompetitionView.as_view(),
         name="company_admin_competition",
     ),
@@ -460,17 +455,17 @@ urlpatterns = [
         name='admin_questions',
     ),
     url(
-        r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
+        r'^admin/dotaznik_odpovedi/(?P<competition_slug>[^&/]+)$',
         questionnaire_answers,
         name='admin_questionnaire_answers',
     ),
     url(
-        r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^admin/dotaznik/(?P<competition_slug>[^&/]+)/$',
         questionnaire_results,
         name='admin_questionnaire_results',
     ),
     url(
-        r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        r'^admin/losovani/(?P<competition_slug>[^&/]+)/$',
         views.DrawResultsView.as_view(),
         name="admin_draw_results",
     ),
