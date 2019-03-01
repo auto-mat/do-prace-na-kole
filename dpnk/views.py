@@ -1448,7 +1448,13 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
     form_class = InviteForm
     title = _('Pozvěte další kolegy do svého týmu')
     registration_phase = "zmenit_tym"
-    success_url = reverse_lazy('pozvanky')
+    next_url = reverse_lazy('zmenit_triko')
+
+    def get_success_url(self):
+        if self.user_attendance.entered_competition():
+            return reverse_lazy('team_members')
+        else:
+            return reverse_lazy('zmenit_triko')
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
@@ -1461,6 +1467,7 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user_attendance'] = self.user_attendance
+        kwargs['success_url'] = self.get_success_url()
         return kwargs
 
     def form_valid(self, form):
@@ -1494,9 +1501,7 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
                     invitation_mail(self.user_attendance, email)
                     messages.add_message(self.request, messages.SUCCESS, _("Odeslána pozvánka na e-mail %s") % email, fail_silently=True)
 
-        invite_success_url = self.request.session.get('invite_success_url')
-        self.request.session['invite_success_url'] = None
-        return redirect(invite_success_url or self.success_url)
+        return super().form_valid(form)
 
 
 class UpdateTeam(
