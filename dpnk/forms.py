@@ -106,7 +106,8 @@ class PrevNextMixin(object):
     submit_text = _('Hotovo')
 
     def show_edit_form(self):
-        return False
+        if getattr(self, 'instance', False):
+            return self.instance.entered_competition()
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -359,9 +360,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         queryset=models.Team.objects.all(),
         required=True,
     )
-
-    def show_edit_form(self):
-        return self.instance.team_complete()
 
     def clean(self):
         cleaned_data = super().clean()

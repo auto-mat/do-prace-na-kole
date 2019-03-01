@@ -72,9 +72,6 @@ class TShirtUpdateForm(PrevNextMixin, MultiModelForm):
         ('userattendance', ShirtUserAttendanceForm),
     ])
 
-    def show_edit_form(self):
-        return self.instances['userattendance'].tshirt_complete()
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_class = "noAsterisks"
