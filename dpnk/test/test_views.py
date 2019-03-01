@@ -1752,8 +1752,8 @@ class ChangeTeamViewTests(TestCase):
 
         self.assertContains(
             response,
-            '<input type="text" name="company_0" value="Foo company lasts" '
-            'data-selectable-allow-new="false" id="id_company_0" autocomplete="off"'
+            '<input type="text" name="company_0" name="compny" value="Foo company lasts" '
+            'data-selectable-allow-new="false" id="id_company_0" autocomplete="off" '
             'class="autocompletewidget form-control" data-selectable-type="text" '
             'required data-selectable-url="/selectable/dpnk-companylookup/" />',
             html=True,
