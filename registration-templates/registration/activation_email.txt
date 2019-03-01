@@ -5,7 +5,7 @@ Vítejte mezi námi!
 Registrace do soutěže {{ campaign }} vypadá dobře. Jízda Vašeho života už je na spadnutí. Máte o ni zájem? Potvrďte!
 
 Potvrdit emailovou adresu:
-{% url 'registration_activate' activation_key %}
+{{absolute_uri}}{% url 'registration_activate' activation_key %}
 
 Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero doporučení před startem:
 
