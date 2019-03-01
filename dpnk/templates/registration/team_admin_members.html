@@ -5,14 +5,17 @@
 {% load static %}
 
 {% block form_intro %}
+<div style="width:300px">
 <a href="{% url "edit_team" %}" class="btn primary float-right"><i class="fa fa-pencil"></i></a>
 {% if team.lead_photo %}
 <img src="{{team.lead_photo.image.url}}"/>
 {% else %}
-<div style="background-color: darkgreen">
+<div style="background-color: lightgrey">
 <img src="{% static "img/dpnk_logo.svg" %}"/>
 </div>
 {% endif %}
+</div>
+
 <br/>
 <a class="btn btn-default" href="{% url "other_team_members_results" %}">{% trans "Výsledky členů týmu" %}</a>
 {% endblock %}
