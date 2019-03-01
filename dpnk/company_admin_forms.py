@@ -141,7 +141,7 @@ class SubsidiaryForm(SubmitMixin, AddressForm):
         return ret_val
 
 
-class CompanyAdminForm(UserAttendanceUpdateForm):
+class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
     motivation_company_admin = forms.CharField(
         label=_("S kým máme tu čest?"),
         help_text=_(
