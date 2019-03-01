@@ -1,6 +1,45 @@
-{% extends "fm/modal.html" %}
 {% load i18n %}
+{% load static %}
+{% load fm_tags %}
+<div tabindex="-1" role="dialog" aria-hidden="true" id="fm-modal" class="fm-modal modal">
+    <div class="modal-loader" style="display: none;">
+        <img class="modal-loader-img" src="{% static "fm/img/loading-bars.svg" %}">
+    </div>
+    <div class="modal-dialog modal-content">
+        <div data-dismiss="modal" class="close-modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-offset-2">
+                    <div class="modal-wrapper" style="display: none;">
+                        <div class="modal-head"></div>
+                        <div class="modal-body"></div>
+                        <div class="modal-buttons">
+                            <button data-dismiss="modal" class="btn btn-default" type="button"><i class="fa fa-times"></i>
+                                {% trans 'Cancel' %}
+                            </button>
+                            <button class="btn btn-primary" type="submit">
+                                {% trans 'OK' %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<link rel="stylesheet" href="{% static "fm/css/modal.css" %}?v={% fm_version %}" />
+<script type="text/javascript" src="{% static "fm/js/fm.js" %}?v={% fm_version %}"></script>
+
+{% comment %}
+We needed to remove the 'col-lg-8' css class, otherwise only this would be needed:
+
+{% extends "fm/modal.html" %}
 {# We swap the buttons order #}
 {% block modal_buttons %}
 	<button data-dismiss="modal" class="btn btn-default" type="button"><i class="fa fa-times"></i>
@@ -9,3 +48,4 @@
 	<button class="btn btn-primary modal-ok" type="submit" data-fm-default-ok="{% trans 'OK' %}">
 	</button>
 {% endblock %}
+{% endcomment %}
