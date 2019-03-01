@@ -106,7 +106,8 @@ class PrevNextMixin(object):
     submit_text = _('Hotovo')
 
     def show_edit_form(self):
-        return False
+        if getattr(self, 'instance', False):
+            return self.instance.entered_competition()
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -360,9 +361,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         required=True,
     )
 
-    def show_edit_form(self):
-        return self.instance.team_complete()
-
     def clean(self):
         cleaned_data = super().clean()
 
@@ -589,7 +587,7 @@ class InviteForm(SubmitMixin, forms.Form):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    def __init__(self, user_attendance, *args, **kwargs):
+    def __init__(self, user_attendance, success_url, *args, **kwargs):
         self.user_attendance = user_attendance
         if self.user_attendance.campaign.max_team_members and self.user_attendance.team:
             self.free_capacity = self.user_attendance.campaign.max_team_members - self.user_attendance.team.member_count
@@ -608,7 +606,7 @@ class InviteForm(SubmitMixin, forms.Form):
         self.helper.form_class = "dirty-check"
         self.helper.form_id = "invite-form"
         self.helper.add_input(
-            Button('submit', _('Přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
+            Button('submit', _('Přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(success_url)),
         )
         self.helper.add_input(Submit('submit', _('Odeslat pozvánku')))
         for field in self.fields.values():

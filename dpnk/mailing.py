@@ -228,7 +228,10 @@ def add_user(user_attendance):
         update_mailing_id(user_attendance, None, None)
         raise
     else:
-        logger.info(u'User %s with email %s added to mailing list with id %s, custom_fields: %s' % (user, user.email, mailing_id, custom_fields))
+        logger.info(
+            'User added to mailing list',
+            extra={'user': user, 'email': user.email, 'mailing_id': mailing_id, 'custom_fields': custom_fields},
+        )
         update_mailing_id(user_attendance, mailing_id, mailing_hash)
 
 
@@ -248,8 +251,8 @@ def update_user(user_attendance, ignore_hash):
         if ignore_hash or userprofile.mailing_hash != mailing_hash:
             new_mailing_id = mailing.update(mailing_id, user.email, custom_fields)
             logger.info(
-                u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' %
-                (userprofile, userprofile.user, user.email, mailing_id, custom_fields),
+                'User updated in mailing list',
+                extra={'userprofile': userprofile, 'user': user, 'email': user.email, 'mailing_id': mailing_id, 'custom_fields': custom_fields},
             )
             update_mailing_id(user_attendance, new_mailing_id, mailing_hash)
     except createsend.BadRequest as e:
@@ -257,8 +260,8 @@ def update_user(user_attendance, ignore_hash):
             add_user(user_attendance)
     except slumber.exceptions.HttpNotFoundError:
         add_user(user_attendance)
-    except Exception:
-        logger.exception("Problem occured during mailing list record actualization")
+    except Exception as e:
+        logger.exception("Problem occured during mailing list record update", extra={'content': getattr(e, 'content', '')})
         update_mailing_id(user_attendance, None, None)
         raise
 
@@ -277,12 +280,12 @@ def delete_user(user_attendance):
     # Unregister from mailing list
     try:
         new_mailing_id = mailing.delete(mailing_id, user.email)
-    except Exception:
-        logger.exception("Problem occured during mailing list record actualization")
+    except Exception as e:
+        logger.exception("Problem occured during mailing list record deletion", extra={'content': getattr(e, 'content', '')})
         update_mailing_id(user_attendance, None, None)
         raise
     else:
-        logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
+        logger.info('User deleted from mailing list', extra={'user': user, 'email': user.email, 'mailing_id': mailing_id})
         update_mailing_id(user_attendance, new_mailing_id, None)
 
 
@@ -298,8 +301,8 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
                 add_user(user_attendance)
         else:
             delete_user(user_attendance)
-    except Exception:
-        logger.exception("Problem occured during mailing list record actualization")
+    except Exception as e:
+        logger.exception("Problem occured during mailing list record actualization", extra={'content': getattr(e, 'content', '')})
 
 
 class MailingThread(threading.Thread):
