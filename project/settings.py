@@ -378,6 +378,7 @@ SERVER_EMAIL = 'kontakt@dopracenakole.cz'
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
+REGISTRATION_AUTO_LOGIN = True
 DJANGO_URL = ''
 USE_DJANGO_JQUERY = True
 JQUERY_URL = None
