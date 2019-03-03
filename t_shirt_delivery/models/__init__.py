@@ -20,6 +20,7 @@
 
 """Import all models."""
 from .delivery_batch import DeliveryBatch
+from .delivery_batch_deadline import DeliveryBatchDeadline
 from .package_transaction import PackageTransaction
 from .subsidiary_box import SubsidiaryBox
 from .t_shirt_size import TShirtSize
@@ -27,6 +28,7 @@ from .team_package import TeamPackage
 
 __all__ = (
     DeliveryBatch,
+    DeliveryBatchDeadline,
     PackageTransaction,
     SubsidiaryBox,
     TShirtSize,
