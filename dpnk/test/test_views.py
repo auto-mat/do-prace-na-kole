@@ -1993,7 +1993,6 @@ class RegistrationMixinTests(ViewsLogon):
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Jste sám/sama v týmu")
-        self.assertContains(response, '<a href="/upravit_trasu/">Vyplnit typickou trasu</a>', html=True)
 
     def test_dpnk_registration_unapproved_users(self):
         for team_member in self.user_attendance.team.all_members():
