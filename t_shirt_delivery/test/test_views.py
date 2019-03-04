@@ -26,6 +26,8 @@ from django.urls import reverse
 from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 from dpnk.test.util import print_response  # noqa
 
+from freezegun import freeze_time
+
 from model_mommy import mommy
 
 from price_level.models import PriceLevel
@@ -122,3 +124,16 @@ class ViewsTestsLogon(TestCase):
             '</label>',
             html=True,
         )
+
+    @freeze_time("2010-11-20 12:00")
+    def test_dpnk_t_shirt_size_deadline(self):
+        mommy.make(
+            "DeliveryBatchDeadline",
+            campaign=testing_campaign,
+            deadline="2019-01-01",
+            delivery_from="2019-02-01",
+            delivery_to="2019-03-01",
+        )
+        response = self.client.get(reverse('zmenit_triko'))
+        print_response(response)
+        self.assertContains(response, 'Účastníkům zaregistrovaným do 1. ledna 2019')
