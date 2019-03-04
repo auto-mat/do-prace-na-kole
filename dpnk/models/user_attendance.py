@@ -497,7 +497,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def company_coordinator_emails(self):
         company_admins = self.get_asociated_company_admin()
         if company_admins:
-            return format_html_join(" nebo ", '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
+            return format_html_join(_(" nebo "), '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
         else:
             return format_html(
                 '<a href="mailto:kontakt@dopracenakole.cz?subject={subject}">kontakt@dopracenakole.cz</a>',
