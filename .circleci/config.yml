@@ -11,7 +11,7 @@ jobs:
       - run: apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
       - run: npm install -g less bower
       - run: bower --allow-root install
-      - run: pip install 'Django<2.1' coveralls django_coverage_plugin
+      - run: pip install 'Django<2.1' "coveralls==1.5.1" django_coverage_plugin
       - run: django-admin compilemessages
       - run: cd dpnk/static/css && lessc style.less style.css
       - run: echo "${CIRCLE_BRANCH} 2017.${CIRCLE_BUILD_NUM}" > dpnk/static/version.txt
