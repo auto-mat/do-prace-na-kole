@@ -58,7 +58,10 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['next_batch'] = DeliveryBatchDeadline.objects.forthcoming(campaign=self.user_attendance.campaign)
+        try:
+            context['next_batch'] = DeliveryBatchDeadline.objects.forthcoming(campaign=self.user_attendance.campaign)
+        except DeliveryBatchDeadline.DoesNotExist:
+            pass
         return context
 
     def dispatch(self, request, *args, **kwargs):

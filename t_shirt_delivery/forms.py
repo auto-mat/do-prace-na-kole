@@ -22,6 +22,7 @@ from collections import OrderedDict
 from betterforms.multiform import MultiModelForm
 
 from django import forms
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk.forms import PrevNextMixin
@@ -37,6 +38,13 @@ class ShirtUserAttendanceForm(forms.ModelForm):
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
         self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
         self.fields['t_shirt_size'].label = _("Vyberte velikost trika")
+        self.fields['t_shirt_size'].help_text = format_html(
+            "Podívejte se do {}.",
+            format_html(
+                "<a target='_blank' href='http://www.dopracenakole.cz/trika'>{}</a>",
+                _("tabulky velikostí"),
+            ),
+        )
         return ret_val
 
     class Meta:
