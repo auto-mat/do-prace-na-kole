@@ -7,9 +7,11 @@
 <p>
 {% trans "Jaká velikost bude v květnu ta pravá? Je čas si vybrat." %}
 </p><p>
-{% blocktrans with deadline=next_batch.deadline.date delivery_from=next_batch.delivery_from.date delivery_to=next_batch.delivery_to.date%}
+{% if next_batch.deadline %}
+{% blocktrans with deadline=next_batch.deadline.date delivery_from=next_batch.delivery_from.date delivery_to=next_batch.delivery_to.date %}
 Účastníkům zaregistrovaným do {{ deadline }} budeme trika i nákrčníky hromadně odesílat od {{ delivery_from }} do {{ delivery_to }}. Jednoho dne pak na Vaši pracovní adresu zaklepe balík s triky pro všechny členy týmu.
 {% endblocktrans %}
+{% endif %}
 </p><p>
 {% blocktrans with emails=user_attendance.company_coordinator_emails %}
 Zkontrolujte si tedy pečlivě doručovací adresu společnosti. Případnou chybu nahlaste na e-mail {{ emails }}.
