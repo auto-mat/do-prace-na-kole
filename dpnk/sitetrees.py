@@ -3,12 +3,12 @@ from sitetree.utils import item, tree
 sitetrees = (
     tree(
         'maintree', 'Hlavní menu', items=[
-            item('Zapsat jízdu!', 'calendar', title_en='Enter ride!'),
+            item('Zapsat jízdu!', 'calendar', title_en='Take rides!'),
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
-                    item('Změnit osobní údaje', 'edit_profile_detailed', title_en='Profile'),
-                    item('Změnit tým', 'zmenit_tym', title_en='Change team'),
-                    item('Triko', 'zmenit_triko', title_en='T-shirts'),
+                    item('Změnit osobní údaje', 'edit_profile_detailed', title_en='Change personal details'),
+                    item('Změnit tým', 'zmenit_tym', title_en='Change Team'),
+                    item('Triko', 'zmenit_triko', title_en='Change T-shirts'),
                     item('Platba', 'typ_platby', title_en='Payment'),
                 ],
             ),
@@ -70,13 +70,13 @@ sitetrees = (
         'company_coordinator_menu', 'Menu firemního koordinátora', items=[
             item(
                 'Firemní koordinátor', None, title_en='Company coordinator', children=[
-                    item('Pobočky', 'company_structure'),
-                    item('Adresa společnosti', 'edit_company'),
-                    item('Startovné', 'company_admin_pay_for_users'),
-                    item('Faktury', 'invoices'),
-                    item('Soutěže', 'company_admin_related_competitions'),
-                    item('Firemní soutěže', 'company_admin_competitions'),
-                    item('Vypsat soutěž', 'company_admin_competition'),
+                    item('Pobočky', 'company_structure', title_en='Branch offices'),
+                    item('Adresa společnosti', 'edit_company', title_en='Company address'),
+                    item('Startovné', 'company_admin_pay_for_users', title_en='Participant fee'),
+                    item('Faktury', 'invoices', title_en='Invoices'),
+                    item('Soutěže', 'company_admin_related_competitions', title_en='Competitions'),
+                    item('Firemní soutěže', 'company_admin_competitions', title_en='Company competitions'),
+                    item('Vypsat soutěž', 'company_admin_competition', title_en='Enroll competition'),
                 ],
             ),
         ],

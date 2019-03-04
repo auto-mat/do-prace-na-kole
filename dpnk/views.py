@@ -129,7 +129,7 @@ class ProfileRedirectMixin(object):
 
 
 class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
-    title = _("")
+    title = ""
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
@@ -244,7 +244,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
 class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
-    title = _("")
+    title = ""
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -258,7 +258,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
-    title = _("")
+    title = ""
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -722,7 +722,7 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
     success_message = _("Tabulka jízd úspěšně změněna")
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
-    title = _('')
+    title = ""
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -848,7 +848,7 @@ class RidesDetailsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMe
 
 
 class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView):
-    title = _("Zapsat jízdu!")
+    title = _("Zapište svou jízdu do kalendáře")
     template_name = 'registration/vacations.html'
     registration_phase = 'profile_view'
 
@@ -950,7 +950,7 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
 
 class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_members.html'
-    title = _("")
+    title = ""
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))

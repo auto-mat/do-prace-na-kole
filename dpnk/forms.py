@@ -644,7 +644,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
     no_dirty = True
     next_text = _('Zaplatit')
     payment_type = forms.ChoiceField(
-        label=_(""),
+        label="",
         widget=forms.RadioSelect(),
     )
 
@@ -927,7 +927,7 @@ class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
             'last_name',
         )
         help_texts = {
-            'email': _("E-mail slouží jako přihlašovací jméno"),
+            'email': _("E-mail slouží jako přihlašovací jméno."),
         }
 
 

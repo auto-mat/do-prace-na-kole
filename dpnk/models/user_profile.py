@@ -114,7 +114,7 @@ class UserProfile(models.Model):
     )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
-        help_text=_("Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií"),
+        help_text=_("Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií."),
         choices=GENDER,
         max_length=50,
         null=True,

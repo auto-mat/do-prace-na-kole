@@ -60,8 +60,7 @@ class UserAttendanceMiddleware(MiddlewareMixin):
                     from django.conf import settings
                     current_site = Site.objects.get(pk=int(settings.SITE_ID))
                     raise Http404(
-                        _(
-                            """Could not read subdomain.
+                        """Could not read subdomain.
 Ensure that you have DPNK_SITE_ID set correctly.
 
 Current SITE_ID is %s. Which points to site %s.
@@ -75,7 +74,6 @@ Current sites are
 Note: after updating the sites list in the admin interface, server
 restart is requried.
 """ % (settings.SITE_ID, str(current_site), "\n\n".join(["domain: %s id: %s" % (site.domain, str(site.id)) for site in Site.objects.all()])),
-                        ),
                     )
 
                 raise Http404(_("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
