@@ -23,16 +23,15 @@ from crispy_forms.layout import HTML, Layout, Submit
 from django import forms
 from django.contrib.auth import views as django_views
 from django.contrib.auth.backends import ModelBackend
-from django.db.models import Q
-from django.utils.html import format_html
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.urls import reverse, reverse_lazy
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
-from .string_lazy import format_html_lazy
 from .forms import SubmitMixin, social_html
+from .string_lazy import format_html_lazy
 
 
 class EmailModelBackend(ModelBackend):
