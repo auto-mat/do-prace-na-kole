@@ -17,15 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import HTML, Layout, Submit
 
 from django import forms
 from django.contrib.auth import views as django_views
 from django.contrib.auth.backends import ModelBackend
+from django.db.models import Q
+from django.utils.html import format_html
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
-from .forms import SubmitMixin
+from .string_lazy import format_html_lazy
+from .forms import SubmitMixin, social_html
 
 
 class EmailModelBackend(ModelBackend):
@@ -46,6 +53,76 @@ class SetPasswordForm(SubmitMixin, SetPasswordForm):
     pass
 
 
+def clean_email(email):
+    user = User.objects.filter(Q(email__iexact=email) | Q(username=email)).first()
+    if user:
+        if not user.is_active:
+            raise forms.ValidationError(
+                format_html(
+                    _("Problém na trase! Sesedněte z kola a nejprve svůj účet {}."),
+                    format_html(
+                        "<a href='{activate_url}'>{activate_text}</a>",
+                        activate_url=reverse('registration_resend_activation'),
+                        activate_text=_("aktivujte"),
+                    ),
+                ),
+            )
+        return email
+    else:
+        error_text = format_html(
+            "{text}"
+            "<br/>"
+            "<a href='{register}'>{register_text}</a>",
+            text=_("Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. "),
+            password=reverse('password_reset'),
+            register=reverse('registrace', args=(email,)),
+            register_text=_("Jsem tu poprvé a chci se registrovat."),
+        )
+        raise forms.ValidationError(error_text)
+
+
+class AuthenticationFormDPNK(AuthenticationForm):
+    error_messages = {
+        'invalid_login': {
+            'password': format_html_lazy(
+                "{}"
+                "<br/>"
+                '<a href="{}">{}</a>',
+                _(
+                    "Problém na trase! Sesedněte z kola a zkontrolujte si heslo. "
+                    "Dejte pozor na malá a velká písmena.",
+                ),
+                reverse_lazy("password_reset"),
+                _("Nepamatujete si heslo?"),
+            ),
+        },
+        'inactive': _("This account is inactive."),
+    }
+
+    def clean_username(self):
+        """
+        Validate that the email is not already in use.
+        """
+        username = self.cleaned_data['username']
+        return clean_email(username)
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "authentication-form"
+        self.helper.layout = Layout(
+            'username', 'password',
+            Submit('submit', _('Přihlásit')),
+            social_html(True),
+            HTML('<a class="remindme" href="{%% url "password_reset" %%}">%s</a>' % _("Obnovit heslo")),
+            HTML('<a class="registerme" href="{%% url "registration_access" %%}">%s</a>' % _("Registrovat")),
+            HTML('<a class="register_coordinator" href="{%% url "register_admin" %%}">%s</a>' % _("Registrovat firemního koordinátora")),
+        )
+        self.fields['username'].label = _("E-mail")
+        return ret_val
+
+
 class PasswordResetForm(SubmitMixin, PasswordResetForm):
     submit_text = _('Obnovit heslo')
 
@@ -56,10 +133,8 @@ class PasswordResetForm(SubmitMixin, PasswordResetForm):
         """
         Validate that the email is not already in use.
         """
-        if User.objects.filter(email__iexact=self.cleaned_data['email']).exists():
-            return self.cleaned_data['email']
-        else:
-            raise forms.ValidationError(_(u"Tento e-mail v systému není zanesen."))
+        email = self.cleaned_data['email']
+        clean_email(email)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

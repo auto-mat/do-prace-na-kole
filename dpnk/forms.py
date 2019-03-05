@@ -30,12 +30,11 @@ from crispy_forms.layout import Button, Div, Field, Fieldset, HTML, Layout, Subm
 
 from django import forms
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -147,60 +146,6 @@ def social_html(login=True):
             action_word,
         ),
     )
-
-
-class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
-    error_messages = {
-        'invalid_login': {
-            'password': format_html_lazy(
-                "{}"
-                "<br/>"
-                '<a href="{}">{}</a>',
-                _(
-                    "Problém na trase! Sesedněte z kola a zkontrolujte si heslo. "
-                    "Dejte pozor na malá a velká písmena.",
-                ),
-                reverse_lazy("password_reset"),
-                _("Nepamatujete si heslo?"),
-            ),
-        },
-        'inactive': _("This account is inactive."),
-    }
-
-    def clean_username(self):
-        """
-        Validate that the email is not already in use.
-        """
-        username = self.cleaned_data['username']
-        if User.objects.filter(Q(email__iexact=username) | Q(username=username)).exists():
-            return username
-        else:
-            error_text = format_html(
-                "{text}"
-                "<br/>"
-                "<a href='{regitster}'>{register_text}</a>",  # regitster .. opravdu?
-                text=_("Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. "),
-                password=reverse('password_reset'),
-                regitster=reverse('registrace', args=(username,)),
-                register_text=_("Jsem tu poprvé a chci se registrovat."),
-            )
-            raise forms.ValidationError(error_text)
-
-    def __init__(self, *args, **kwargs):
-        ret_val = super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = "noAsterisks"
-        self.helper.form_id = "authentication-form"
-        self.helper.layout = Layout(
-            'username', 'password',
-            Submit('submit', _('Přihlásit')),
-            social_html(True),
-            HTML('<a class="remindme" href="{%% url "password_reset" %%}">%s</a>' % _("Obnovit heslo")),
-            HTML('<a class="registerme" href="{%% url "registration_access" %%}">%s</a>' % _("Registrovat")),
-            HTML('<a class="register_coordinator" href="{%% url "register_admin" %%}">%s</a>' % _("Registrovat firemního koordinátora")),
-        )
-        self.fields['username'].label = _("E-mail")
-        return ret_val
 
 
 class RegisterCompanyForm(forms.ModelForm):

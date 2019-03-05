@@ -24,7 +24,6 @@ from django.utils.translation import ugettext_lazy as _
 from . import auth
 from . import company_admin_views
 from . import views, views_results
-from .forms import AuthenticationFormDPNK
 from .views import answers, questionnaire_answers, questionnaire_results, questions
 urlpatterns = [
     url(
@@ -377,7 +376,7 @@ urlpatterns = [
     url(
         r'^login/(?P<initial_email>[^&]+)/$$',
         views.DPNKLoginView.as_view(
-            form_class=AuthenticationFormDPNK,
+            form_class=auth.AuthenticationFormDPNK,
             template_name='base_generic_form.html',
         ),
         name='login',
@@ -385,7 +384,7 @@ urlpatterns = [
     url(
         r'^login/?$',
         views.DPNKLoginView.as_view(
-            form_class=AuthenticationFormDPNK,
+            form_class=auth.AuthenticationFormDPNK,
             template_name='base_generic_form.html',
         ),
         name='login',
