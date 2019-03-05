@@ -21,6 +21,14 @@ class StravaAccountAdmin(admin.ModelAdmin):
         'user',
     )
 
+    search_fields = (
+        'user__username',
+        'user__first_name',
+        'strava_username',
+        'first_name',
+        'last_name',
+    )
+
     list_display = (
         'user',
         'strava_username',
