@@ -19,4 +19,4 @@ Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero d
 * Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených aplikací ({{campaign.web}}/aplikace).
 * Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem webu ({{campaign.web}}).
 
-Jakékoliv další otázky rádi zodpovíme na e-mailu {{campaign.contact_email}}.
+Jakékoliv další otázky rádi zodpovíme na e-mailu {{campaign.contact_email}}
