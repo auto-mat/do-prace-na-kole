@@ -5,7 +5,7 @@ Vítejte mezi námi!
 Registrace do soutěže {{ campaign }} vypadá dobře. Jízda Vašeho života už je na spadnutí. Máte o ni zájem? Potvrďte!
 
 Potvrdit emailovou adresu:
-{% url 'registration_activate' activation_key %}
+{{ absolute_uri }}{% url 'registration_activate' activation_key %}
 
 Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero doporučení před startem:
 
@@ -15,8 +15,8 @@ Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero d
 * Zapamatujte si, že soutěž začíná {{ campaign.competition_phase.date_from }} a končí {{ campaign.competition_phase.date_to }}.
 * Své jízdy si pravidelně zaznamenávejte v profilu ({{ absolute_uri }}{% url 'profil' %}).
 * Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
-* Nezapomeňte <a href="{{ absolute_uri }}{% url 'pozvanky' %}">pozvat kolegy</a> do svého týmu.
+* Nezapomeňte pozvat kolegy ({{ absolute_uri }}{% url 'pozvanky' %}) do svého týmu.
 * Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených aplikací ({{campaign.web}}/aplikace).
 * Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem webu ({{campaign.web}}).
 
-Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="mailto:{{campaign.contact_email}}">{{campaign.contact_email}}</a>.
+Jakékoliv další otázky rádi zodpovíme na e-mailu {{campaign.contact_email}}.
