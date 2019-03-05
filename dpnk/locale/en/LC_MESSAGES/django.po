@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-04 16:46+0100\n"
+"POT-Creation-Date: 2019-03-05 12:59+0100\n"
 "PO-Revision-Date: 2019-03-04 15:40+0058\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -224,32 +224,24 @@ msgid "Nemá účast v kampani"
 msgstr "Hasn't user attendance?"
 
 #: auth.py:50 forms.py:198
-#, fuzzy
-#| msgid "Obnova hesla"
 msgid "Obnovit heslo"
-msgstr "Password reset"
+msgstr "Reset password"
 
 #: auth.py:62
 msgid "Tento e-mail v systému není zanesen."
 msgstr "This e-mail is not registered in our system"
 
 #: auth.py:67
-#, fuzzy
-#| msgid "Zadejte pohlaví"
 msgid "Zadejte e-mail"
-msgstr "Fill in your gender"
+msgstr "Fill in your e-mail"
 
 #: auth.py:79
-#, fuzzy
-#| msgid ""
-#| "V případě, že se dosud přihlašujete pouze přes sociální sítě, nechte "
-#| "prázdné"
 msgid "V případě registrace přes sociální sítě nechte pole prázdné."
-msgstr "If you log in via a social network account, leave blank"
+msgstr "If you log in via a social network account leave blank"
 
 #: auth.py:80 forms.py:531
 msgid "Heslo musí mít minimálně 6 znaků a obsahovat alespoň jedno písmeno."
-msgstr ""
+msgstr "Password must have at least 6 character and one letter."
 
 #: company_admin_forms.py:39
 msgid "Vybrat"
@@ -303,7 +295,7 @@ msgstr "Tip: Use shift for range selection."
 
 #: company_admin_forms.py:100 forms.py:106 forms.py:1048
 msgid "Hotovo"
-msgstr ""
+msgstr "Done"
 
 #: company_admin_forms.py:112 models/address.py:117
 msgid "Adresát na faktuře"
@@ -389,10 +381,8 @@ msgid ""
 msgstr "Payment for %s competitors confirmed. They can compete from now."
 
 #: company_admin_views.py:107
-#, fuzzy
-#| msgid "Startovné je uhrazeno"
 msgid "Startovné"
-msgstr "Participation Fee Accepted"
+msgstr "Participation Fee"
 
 #: company_admin_views.py:134
 msgid "Potvrzování plateb nemáte povoleno"
@@ -437,10 +427,8 @@ msgid "Upravit adresu pobočky"
 msgstr "Edit subsidiary details"
 
 #: company_admin_views.py:259
-#, fuzzy
-#| msgid "Vnitrofiremní soutěže"
 msgid "Vypsat firemní soutěž"
-msgstr "Is company competitions"
+msgstr "Enroll company competition"
 
 #: company_admin_views.py:274
 msgid "K editování této soutěže nemáte oprávnění."
@@ -461,10 +449,8 @@ msgid "Dosažen maximální počet soutěží"
 msgstr "Maximum number of competitions per company exceeded."
 
 #: company_admin_views.py:289
-#, fuzzy
-#| msgid "Vnitrofiremní soutěže"
 msgid "Firemní soutěže"
-msgstr "Is company competitions"
+msgstr "Company competitions"
 
 #: company_admin_views.py:301 models/invoice.py:51
 msgid "Faktury"
@@ -635,14 +621,12 @@ msgid "Zpět"
 msgstr "Back"
 
 #: forms.py:138
-#, fuzzy
-#| msgid "Přihlásit"
 msgid "Přihlásit přes"
-msgstr "Login"
+msgstr "Login by"
 
 #: forms.py:138
 msgid "Registrovat přes"
-msgstr ""
+msgstr "Register by"
 
 #: forms.py:160
 msgid ""
@@ -672,13 +656,11 @@ msgstr "Login"
 
 #: forms.py:199 forms.py:513 forms.py:560
 msgid "Registrovat"
-msgstr ""
+msgstr "Register"
 
 #: forms.py:200
-#, fuzzy
-#| msgid "Využijte registraci firemního koordinátora"
 msgid "Registrovat firemního koordinátora"
-msgstr "Use company coordinator registration form"
+msgstr "Register company coordinator"
 
 #: forms.py:268
 msgid "Začněte psát název společnosti a vyberte si z nabídky."
@@ -1416,20 +1398,16 @@ msgid "Soutěžní kategorie"
 msgstr "Competition category"
 
 #: models/competition.py:72
-#, fuzzy
-#| msgid "Konec soutěže"
 msgid "Název soutěže"
-msgstr "End of competition"
+msgstr "Competition name"
 
 #: models/competition.py:90
-#, fuzzy
-#| msgid "Odkaz na stránku soutěže"
 msgid "Odkaz na web soutěže"
 msgstr "Competition page link"
 
 #: models/competition.py:91
 msgid "Na webu budou podrobná pravidla o soutěži."
-msgstr ""
+msgstr "Website with detailed competition rules."
 
 #: models/competition.py:96
 msgid "Datum začátku soutěže"
@@ -1479,21 +1457,15 @@ msgstr ""
 "Please select other options only if you know their purpose."
 
 #: models/competition.py:128
-#, fuzzy
-#| msgid "Módy dopravy"
 msgid "Způsoby dopravy"
 msgstr "Transportation mode"
 
 #: models/competition.py:129
-#, fuzzy
-#| msgid ""
-#| "Můžete vybrat víc položek pomocí klávesy shift. Většina soutěží je "
-#| "vypsána jako kolo + chůze/běh"
 msgid ""
 "Můžete vybrat víc položek pomocí klávesy control. Většina soutěží je vypsána "
 "jako kolo + pěšky"
 msgstr ""
-"You can choose more items by clicking with shift key. Most of competitions "
+"You can choose more items by clicking with control key. Most of competitions "
 "are bicycle + walk/run"
 
 #: models/competition.py:135
@@ -2785,6 +2757,26 @@ msgstr ""
 "You don't have any competition participants for whom it would be possible to "
 "generate an invoice"
 
+#: templates/company_admin/invoices.html:4
+msgid "Při placení startovného postupujte následovně"
+msgstr "When paying, please follow these steps"
+
+#: templates/company_admin/invoices.html:6
+msgid "Pro každou fakturu vytvořte samostatný převod."
+msgstr "For every invoice please create an individual transfer."
+
+#: templates/company_admin/invoices.html:7
+msgid "Pečlivě z faktury opište <b>číslo účtu</b>."
+msgstr "You will find the <b>account number</b> in the invoice."
+
+#: templates/company_admin/invoices.html:8
+msgid ""
+"Zadejte <b>variabilní symbol</b>. V opačném případě neručíme za její úspěšné "
+"přijetí."
+msgstr ""
+"Do not forget the <b>variable symbol</b>.  In opposite situation we cannot "
+"promise you a successful transfer."
+
 #: templates/company_admin/invoices.html:14
 msgid "Soubor s fakturou"
 msgstr "File with invoice"
@@ -2833,11 +2825,11 @@ msgstr "unapproved team membership"
 msgid "Exportovat účastníky za mojí společnost"
 msgstr "Export my companies participants"
 
-#: templates/fm/modal.html:23 templates/fm/modal1.html:26
+#: templates/fm/modal.html:23
 msgid "Cancel"
 msgstr ""
 
-#: templates/fm/modal.html:26 templates/fm/modal1.html:23
+#: templates/fm/modal.html:26
 msgid "OK"
 msgstr ""
 
@@ -3659,10 +3651,8 @@ msgid "Zamítnout"
 msgstr "Deny"
 
 #: templates/registration/team_admin_members.html:86
-#, fuzzy
-#| msgid "Máte nového člena"
 msgid "Pozvat nové členy"
-msgstr "New Team Member"
+msgstr "Invite new members"
 
 #: templates/registration/team_members.html:10
 #: templates/registration/team_members_results.html:11
@@ -3927,7 +3917,7 @@ msgstr ""
 
 #: views.py:354
 msgid "Vaši platbu jsme úspěšně přijali."
-msgstr ""
+msgstr "Your payment was successfully accepted."
 
 #: views.py:356
 #, fuzzy
@@ -3937,7 +3927,7 @@ msgstr "Participation Fee Accepted"
 
 #: views.py:360
 msgid "Děkujeme!"
-msgstr ""
+msgstr "Thank You!"
 
 #: views.py:366
 #, python-brace-format
@@ -4056,16 +4046,12 @@ msgid "Pravidla soutěží"
 msgstr "Competitions rules"
 
 #: views.py:1018
-#, fuzzy
-#| msgid "Výsledky pravidelnostních a výkonnostních soutěží"
 msgid "Výsledky výkonnostních soutěží"
-msgstr "Results of regularity and performance competitions"
+msgstr "Results of performance competitions"
 
 #: views.py:1024
-#, fuzzy
-#| msgid "Výsledky pravidelnostních a výkonnostních soutěží"
 msgid "Výsledky pravidelnostních soutěží"
-msgstr "Results of regularity and performance competitions"
+msgstr "Results of regularity competitions"
 
 #: views.py:1030
 msgid "Výsledky dotazníkových soutěží a soutěží na kreativitu"
@@ -4240,7 +4226,7 @@ msgstr "Payment successful"
 #: views.py:1569
 #, python-format
 msgid "Tým %s"
-msgstr ""
+msgstr "Team %s"
 
 #: views.py:1585
 msgid ""

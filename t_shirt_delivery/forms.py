@@ -39,10 +39,10 @@ class ShirtUserAttendanceForm(forms.ModelForm):
         self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
         self.fields['t_shirt_size'].label = _("Vyberte velikost trika")
         self.fields['t_shirt_size'].help_text = format_html(
-            "Podívejte se do {}.",
+            _("Podívejte se na {}."),
             format_html(
                 "<a target='_blank' href='http://www.dopracenakole.cz/trika'>{}</a>",
-                _("tabulky velikostí"),
+                _("vzhled a velikosti triček"),
             ),
         )
         return ret_val
