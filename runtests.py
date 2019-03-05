@@ -33,7 +33,7 @@ from django.conf import settings
 
 from django_nose import NoseTestSuiteRunner
 
-from project import test_settings
+from project.settings import test as test_settings
 
 
 if not settings.configured:
