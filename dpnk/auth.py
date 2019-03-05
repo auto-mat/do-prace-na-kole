@@ -30,7 +30,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
-from .forms import SubmitMixin, social_html
+from .forms import CampaignMixin, SubmitMixin, social_html
 from .string_lazy import format_html_lazy
 
 
@@ -80,7 +80,7 @@ def clean_email(email):
         raise forms.ValidationError(error_text)
 
 
-class AuthenticationFormDPNK(AuthenticationForm):
+class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
     error_messages = {
         'invalid_login': {
             'password': format_html_lazy(
