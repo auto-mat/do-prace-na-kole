@@ -22,6 +22,8 @@
 
 import logging
 
+from braces.views import LoginRequiredMixin
+
 from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView
@@ -33,7 +35,11 @@ from . import forms
 logger = logging.getLogger(__name__)
 
 
-class DiscountCouponView(RegistrationViewMixin, FormView):
+class DiscountCouponView(
+        LoginRequiredMixin,
+        RegistrationViewMixin,
+        FormView,
+):
     template_name = 'base_generic_registration_form.html'
     form_class = forms.DiscountCouponForm
     success_url = reverse_lazy('typ_platby')
