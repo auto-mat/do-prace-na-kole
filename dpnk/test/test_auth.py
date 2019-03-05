@@ -67,7 +67,12 @@ class TestPasswordForms(ViewsLogonMommy):
             'email': 'unknown@test.cz',
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "<strong>Tento e-mail v systému není zanesen.</strong>", html=True)
+        self.assertContains(
+            response,
+            "<strong>Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. <br/> "
+            "<a href='/registrace/unknown@test.cz/'>Jsem tu poprvé a chci se registrovat.</a></strong>",
+            html=True,
+        )
 
     def test_password_reset_confirm(self):
         user = mommy.make("User", email='test@test.cz')

@@ -133,7 +133,7 @@ class PasswordResetForm(SubmitMixin, PasswordResetForm):
         Validate that the email is not already in use.
         """
         email = self.cleaned_data['email']
-        clean_email(email)
+        return clean_email(email)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
