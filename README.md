@@ -69,11 +69,6 @@ Setting up the database
 Launching the development webserver
 ------------------------------------
 
-In one window launch the livereload server
-
-    $ sudo docker exec -it dopracenakole_web_1 bash
-    $ python manage.py livereload --host 0.0.0.0
-    
 And in another window launch the development webserver
 
     $ sudo docker exec -it dopracenakole_web_1 bash

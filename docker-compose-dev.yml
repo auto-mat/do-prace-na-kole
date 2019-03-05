@@ -6,7 +6,24 @@ services:
    dockerfile: DockerfileDev
   entrypoint: /bin/bash
   ports:
-   - "8021:8000"
+    - "8021:8000"
+  links:
+   - postgres
+   - redis
+  tty: true
+  stdin_open: true
+  working_dir: /app-v/
+  user: test
+  volumes:
+   - ./:/app-v/
+   - ./pipenv:/home/test
+  env_file: docker.env
+ livereload:
+  build:
+   context: .
+   dockerfile: DockerfileDev
+  entrypoint: python manage.py livereload --host 0.0.0.0
+  ports:
    - "35729:35729"
   links:
    - postgres
