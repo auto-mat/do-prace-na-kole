@@ -31,6 +31,7 @@ jobs:
          command: docker build -t dopracenakole .
       - run:
          name: Deploy test Docker image
+         command: |
             if [ "$DOCKER_USER" != "" ] ; then
               TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
               docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:$TAG
