@@ -30,6 +30,16 @@ jobs:
          name: Build Docker image
          command: docker build -t dopracenakole .
       - run:
+         name: Deploy test Docker image
+            if [ "$DOCKER_USER" != "" ] ; then
+              TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:$TAG
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:latest
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker push petrdlouhy/dopracenakole-testing:$TAG
+              docker push petrdlouhy/dopracenakole-testing:latest
+            fi
+      - run:
          name: Start PostGIS container
          command: |
             docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis:9.6
@@ -37,7 +47,6 @@ jobs:
          name: Start RabbitMQ container
          command: |
             docker run -d --hostname dpnk-rabbit --name dpnk-rabbit rabbitmq
-
       - run:
          name: Test Docker container in Django 2.0
          command: |
@@ -55,24 +64,19 @@ jobs:
                --link dpnk-postgres:postgres \
                --name dpnk-test \
                dopracenakole
-
       - deploy:
           name: Deploy master branch
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              POST_FIX=""
-            else
-              POST_FIX="-testing"
+              if [ "$DOCKER_USER" != "" ] ; then
+                TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
+                docker tag dopracenakole:latest petrdlouhy/dopracenakole:$TAG
+                docker tag dopracenakole:latest petrdlouhy/dopracenakole:latest
+                docker login -u $DOCKER_USER -p $DOCKER_PASS
+                docker push petrdlouhy/dopracenakole:$TAG
+                docker push petrdlouhy/dopracenakole:latest
+              fi
             fi
-            if [ "$DOCKER_USER" != "" ] ; then
-              TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole$POST_FIX:$TAG
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole$POST_FIX:latest
-              docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker push petrdlouhy/dopracenakole$POST_FIX:$TAG
-              docker push petrdlouhy/dopracenakole$POST_FIX:latest
-            fi
-
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
       - run: cp /tmp/reports/ . -R
       - run: cp /tmp/reports/.coverage .
