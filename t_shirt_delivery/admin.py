@@ -460,6 +460,25 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
         )
 
 
+@admin.register(models.DeliveryBatchDeadline)
+class DeliveryBatchDeadlineAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'campaign',
+        'deadline',
+        'delivery_from',
+        'delivery_to',
+    ]
+
+    readonly_fields = [
+        'author',
+        'updated_by',
+        'created',
+    ]
+
+    list_filter = (CampaignFilter,)
+
+
 class UserAttendanceToBatch(UserAttendance):
     class Meta:
         verbose_name = _(u"Uživatel na dávku objednávek")

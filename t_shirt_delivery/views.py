@@ -32,6 +32,7 @@ from dpnk.models import UserAttendance
 from dpnk.views import RegistrationViewMixin
 
 from .forms import TShirtUpdateForm
+from .models import DeliveryBatchDeadline
 
 
 class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
@@ -45,15 +46,23 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.tshirt_complete():
-            return _('Změňte velikost soutěžního tričko')
+            return _('Změňte velikost soutěžního trička')
         else:
-            return _('Vyberte velikost soutěžního tričko')
+            return _('Vyberte velikost soutěžního trička')
 
     def get_object(self):
         return {
             'userprofile': self.user_attendance.userprofile,
             'userattendance': self.user_attendance,
         }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            context['next_batch'] = DeliveryBatchDeadline.objects.forthcoming(campaign=self.user_attendance.campaign)
+        except DeliveryBatchDeadline.DoesNotExist:
+            pass
+        return context
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:

@@ -8,19 +8,29 @@
     {% scribble 'landing_page_before_start' %}
     {% load i18n %}
       <p>
+      {% blocktrans %}
       Vítejte v dalším ročníku soutěže!
+      {% endblocktrans %}
       </p>
       <p>
-      Tento rok jsme se na Vás opravdu důkladně připravovali. Tento web i <a href="https://www.dopracenakole.cz">stránky Auto*Matu</a> jsou čerstvé jako ranní projížďka kolem farmářského trhu.
-        </p>
+      {% blocktrans %}
+      Tento rok jsme se na Vás opravdu důkladně připravovali. Tento web i <a href="https://www.dopracenakole.cz">stránky Do práce na kole</a> jsou čerstvé jako ranní projížďka kolem farmářského trhu.
+      {% endblocktrans %}
+      </p>
       <p>
+      {% blocktrans %}
       Další velké překvapení najdete přímo TADY začátkem soutěže na prvního máje.
+      {% endblocktrans %}
         </p>
       <p>
-      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href="{% url 'upravit_profil' %}">doplňte profil</a> a <a href="{% url 'pozvanky' %}">pozvěte kolegy do svého týmu</a>.
+      {% url 'upravit_profil' as profile_url %}
+      {% url 'pozvanky' as invitation_url %}
+      {% blocktrans %}
+      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href="{{ profile_url }}">doplňte profil</a> a <a href="{{ invitation_url }}">pozvěte kolegy do svého týmu</a>.
+      {% endblocktrans %}
       </p>
 
-      <img src="https://www.dopracenakole.cz/devel/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
+      <img src="https://www.dopracenakole.cz/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
     {% endscribble %}
 </div>
 {% endblock %}

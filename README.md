@@ -24,30 +24,9 @@ Check out and setup repo
 Create a docker.env file
 ------------------------
 
-    DPNK_SECRET_KEY=lkjkljfdseioj
-    DPNK_DB_NAME=dpnk
-    DPNK_DB_USER=dpnk
-    DPNK_DB_PASSWORD=foobar
-    DPNK_DB_HOST=postgres
-    GUNICORN_NUM_WORKERS=1
-    DPNK_ALLOWED_HOSTS=.localhost
-    DPNK_DEBUG=True
-    DPNK_SECURE_SSL_REDIRECT=False
-    DPNK_CSRF_COOKIE_SECURE=False
-    DPNK_SECURE_SSL_REDIRECT=False
-    DPNK_SESSION_COOKIE_SECURE=False
-    DPNK_SITE_ID=1
-    DPNK_EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-    STRAVA_CLIENT_ID=<some-id>
-    STRAVA_CLIENT_SECRET=<some-secret>
-
-Create `settings_local.py` by copying settings_local_sample_docker.py
--------------------------------------------------------------------
-
-    $ cd project
-    $ cp settings_local_sample_docker.py settings_local.py
-    $ cd ..
-
+    $ cp docker.env.sample docker.env
+    $ $EDITOR docker.env
+    
 Building the docker images
 --------------------------
 
@@ -69,11 +48,6 @@ Setting up the database
 Launching the development webserver
 ------------------------------------
 
-In one window launch the livereload server
-
-    $ sudo docker exec -it dopracenakole_web_1 bash
-    $ python manage.py livereload --host 0.0.0.0
-    
 And in another window launch the development webserver
 
     $ sudo docker exec -it dopracenakole_web_1 bash

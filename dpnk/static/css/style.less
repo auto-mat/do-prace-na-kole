@@ -185,7 +185,7 @@ label{
 }
 .authetificated{
   .content{
-    margin-top: 9.6rem;
+    margin-top: 4rem;
   }
 }
 .notAuthetificated{
@@ -257,7 +257,6 @@ label{
       color:#fff;
       text-decoration:none;
       display:block;
-      text-transform: capitalize;
       font-weight:100;
       padding:@wg/4 @wg;
       &:hover, &[aria-expanded="true"], &.active{
@@ -276,6 +275,7 @@ label{
     .nick{
       text-align:center;
       margin:@wg 0;
+      word-wrap: break-word;
       a{
         font-weight:800;
         color:@primary;
@@ -355,6 +355,7 @@ label{
 }
 .navbar{
   padding:0;
+  text-transform: capitalize;
 }
 .navbar-expand-lg, .navbar-expand-md, .navbar-expand-sm{
   .navbar-collapse{
@@ -609,7 +610,7 @@ label{
 @media all and (min-width: 576px) {
   .authetificated{
     .content{
-      margin-top: 9.6rem;
+      margin-top: 4rem;
     }
   }
   .navbar-toggler{
@@ -620,7 +621,7 @@ label{
   .help-block, .form-text{
     color:#000 !important;
   }
-  .login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
+  .registration_access, .login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
     form{
       width:100%;
       margin:0;

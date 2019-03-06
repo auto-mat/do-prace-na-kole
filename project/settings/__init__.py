@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
-# Author: Petr Dlouhý <petr.dlouhy@email.cz>
+# Author: Petr Dlouhý <petr.dlouhy@emial.cz>, Timothy Hobbs
 #
-# Copyright (C) 2017 o.s. Auto*Mat
+# Copyright (C) 2019 Auto*Mat, z. s.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,19 +17,4 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-"""Import all models."""
-from .delivery_batch import DeliveryBatch
-from .delivery_batch_deadline import DeliveryBatchDeadline
-from .package_transaction import PackageTransaction
-from .subsidiary_box import SubsidiaryBox
-from .t_shirt_size import TShirtSize
-from .team_package import TeamPackage
-
-__all__ = (
-    DeliveryBatch,
-    DeliveryBatchDeadline,
-    PackageTransaction,
-    SubsidiaryBox,
-    TShirtSize,
-    TeamPackage,
-)
+from .base import *  # noqa

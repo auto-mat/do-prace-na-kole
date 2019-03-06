@@ -20,8 +20,8 @@
 
 import os
 
-from .settings import *  # noqa
-from .settings import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
+from .base import *  # noqa
+from .base import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
 
 ADMINS = (
     ('', ''),

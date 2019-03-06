@@ -1,22 +1,25 @@
 {% extends "base_generic_registration_form.html" %}
 {% load i18n %}
 {% load dpnk_tags %}
-
-{% block messages %}
-{% trans "Zvolte si správnou velikost soutěžního trička a šlápněte do pedálů!" %}
-{{ block.super }}
-{% endblock %}
+{% load scribbler_tags %}
 
 {% block form_intro %}
-<h3>{% trans "Zkontrolujte doručovací adresu společnosti" %}</h3>
-{% trans "Startovní balíček s týmovými tričky hromadně zasíláme na Vaší pracovní adresu." %}
-<br/>
+<p>
+{% trans "Jaká velikost bude v květnu ta pravá? Je čas si vybrat." %}
+</p><p>
+{% if next_batch.deadline %}
+{% blocktrans with deadline=next_batch.deadline.date delivery_from=next_batch.delivery_from.date delivery_to=next_batch.delivery_to.date %}
+Účastníkům zaregistrovaným do {{ deadline }} budeme trika i nákrčníky hromadně odesílat od {{ delivery_from }} do {{ delivery_to }}. Jednoho dne pak na Vaši pracovní adresu zaklepe balík s triky pro všechny členy týmu.
+{% endblocktrans %}
+{% endif %}
+</p><p>
+{% blocktrans with emails=user_attendance.company_coordinator_emails %}
+Zkontrolujte si tedy pečlivě doručovací adresu společnosti. Případnou chybu nahlaste na e-mail {{ emails }}.
+{% endblocktrans %}
+</p>
 <pre>
 {{ user_attendance.team.subsidiary.company }}
 {{ user_attendance.team.subsidiary }}
 </pre>
-{% blocktrans with emails=user_attendance.company_coordinator_emails %}
-Zkontrolujte prosím adresu společnosti, případnou chybu nahlaste na e-mail {{ emails }}.
-{% endblocktrans %}
 {{ block.super }}
 {% endblock %}

@@ -112,6 +112,7 @@ class CompanyForm(SubmitMixin, AddressForm):
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
         self.fields['address_recipient'].help_text = _("Zadejte pokud potřebujete mít na faktuře jiného adresáta, než název společnosti")
         self.fields['ico'].required = True
+        self.helper.layout.insert(1, 'name')
         self.helper.layout.append('ico')
         self.helper.layout.append('dic')
         self.helper.form_id = "fa-company-address-form"

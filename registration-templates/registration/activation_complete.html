@@ -12,6 +12,12 @@
          Přihlásit
       </a>
     </div>
+    {% else %}
+    <div class="holder">
+       <a class="btn" href="{% url 'upravit_profil' %}">
+         Pokračovat v registraci
+      </a>
+    </div>
     {% endif %}
 </p>
 {% endblock %}

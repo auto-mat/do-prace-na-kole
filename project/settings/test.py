@@ -19,8 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import os
 
-from .settings import *  # noqa
-from .settings import INSTALLED_APPS, LOGGING, MIDDLEWARE, TEMPLATES
+from .base import *  # noqa
+from .base import INSTALLED_APPS, LOGGING, MIDDLEWARE, TEMPLATES
 
 ADMINS = (
     ('', ''),

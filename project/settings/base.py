@@ -38,7 +38,8 @@ def normpath(*args):
     return os.path.normpath(os.path.abspath(os.path.join(*args)))
 
 
-PROJECT_ROOT = normpath(__file__, "..", "..")
+PROJECT_ROOT = normpath(__file__, "..", "..", "..")
+BASE_DIR = PROJECT_ROOT
 
 sys.path.append(normpath(PROJECT_ROOT, "project"))
 
@@ -378,6 +379,7 @@ SERVER_EMAIL = 'kontakt@dopracenakole.cz'
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
+REGISTRATION_AUTO_LOGIN = True
 DJANGO_URL = ''
 USE_DJANGO_JQUERY = True
 JQUERY_URL = None
