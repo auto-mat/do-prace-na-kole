@@ -1,0 +1,10 @@
+#!/bin/sh
+sudo docker-compose down
+sudo docker-compose rm
+if [ -e worker ]; then
+    sudo DOCKER_POSTFIX=$(cat postfix) TAG="latest" docker-compose up  dpnk-worker dpnk-beat
+elif [ -e web ]; then
+    sudo DOCKER_POSTFIX=$(cat postfix) TAG="latest" docker-compose up  dpnk-web
+else
+    sudo DOCKER_POSTFIX=$(cat postfix) TAG="latest" docker-compose up
+fi

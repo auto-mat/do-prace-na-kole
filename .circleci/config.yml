@@ -34,11 +34,11 @@ jobs:
          command: |
             if [ "$DOCKER_USER" != "" ] ; then
               TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:$TAG
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:latest
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole-test:$TAG
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole-test:latest
               docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker push petrdlouhy/dopracenakole-testing:$TAG
-              docker push petrdlouhy/dopracenakole-testing:latest
+              docker push petrdlouhy/dopracenakole-test:$TAG
+              docker push petrdlouhy/dopracenakole-test:latest
             fi
       - run:
          name: Start PostGIS container
@@ -71,11 +71,11 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               if [ "$DOCKER_USER" != "" ] ; then
                 TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
-                docker tag dopracenakole:latest petrdlouhy/dopracenakole:$TAG
-                docker tag dopracenakole:latest petrdlouhy/dopracenakole:latest
+                docker tag dopracenakole:latest petrdlouhy/dopracenakole-prod:$TAG
+                docker tag dopracenakole:latest petrdlouhy/dopracenakole-prod:latest
                 docker login -u $DOCKER_USER -p $DOCKER_PASS
-                docker push petrdlouhy/dopracenakole:$TAG
-                docker push petrdlouhy/dopracenakole:latest
+                docker push petrdlouhy/dopracenakole-prod:$TAG
+                docker push petrdlouhy/dopracenakole-prod:latest
               fi
             fi
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports

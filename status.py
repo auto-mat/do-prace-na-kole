@@ -9,6 +9,22 @@ states = {
     'running': [],
     'initializing': [],
 }
+
+
+def get_container_listing(ip):
+    container_listing = ""
+    try:
+        container_listing_raw = subprocess.check_output(["ssh", "-oStrictHostKeyChecking=no", "ubuntu@" + ip, "--", "sudo", "docker", "ps", "--format", "{{.Names}}"]).decode("utf-8") # noqa
+        for container in container_listing_raw.splitlines():
+            try:
+                container_listing += '\n\t\t%s %s' % (container, ' '.join(subprocess.check_output(["ssh", "-oStrictHostKeyChecking=no", "ubuntu@" + ip, "--", "sudo", "docker", "exec", container, "cat", "static/version.txt"]).decode("utf-8").splitlines())) # noqa
+            except subprocess.CalledProcessError:
+                container_listing += '\n\t\t' + container
+    except subprocess.CalledProcessError:
+        container_listing = ""
+    return container_listing
+
+
 for instance in instances["Reservations"]:
     i = instance["Instances"][0]
     groupName = ""
@@ -24,13 +40,12 @@ for instance in instances["Reservations"]:
         continue
     try:
         ip = i["PublicIpAddress"]
-        container_listing = subprocess.check_output(["ssh", "-oStrictHostKeyChecking=no", "ubuntu@" + ip, "--", "sudo", "docker", "ps", "--format", "{{.Image}}\ {{.Names}}"]).decode("utf-8") # noqa
-        container_listing = '\n\t\t'.join(container_listing.splitlines())
+        container_listing = get_container_listing(ip)
     except KeyError:
         ip = "no_ip"
         container_listing = "\n"
     states[state].append(
-        "%s %s %s\n\t\t%s" % (
+        "%s %s %s%s" % (
             groupName,
             state,
             ip,
