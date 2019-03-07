@@ -7,6 +7,7 @@ instances = json.loads(subprocess.check_output(["aws", "ec2", "describe-instance
 
 states = collections.OrderedDict([
     ('terminated', []),
+    ('stopped', []),
     ('pending', []),
     ('initializing', []),
     ('running', []),
