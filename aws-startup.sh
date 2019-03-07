@@ -9,7 +9,7 @@ if [ "${POSTFIX}" == "-test" ]; then
 elif  [ "${POSTFIX}" == "-prod" ]; then
     BRANCH="master"
 fi
-wget 'https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/$BRANCH/docker-compose.yml'
-wget 'https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/$BRANCH/restart_docker_server'
+wget https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/$BRANCH/docker-compose.yml
+wget https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/$BRANCH/restart_docker_server
 chmod +x restart_docker_server
 sh restart_docker_server
