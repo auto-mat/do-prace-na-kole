@@ -1,14 +1,16 @@
 #!/usr/bin/python3
+import collections
 import json
 import subprocess
 
 instances = json.loads(subprocess.check_output(["aws", "ec2", "describe-instances"]).decode("utf-8"))
 
-states = {
-    'terminated': [],
-    'running': [],
-    'initializing': [],
-}
+states = collections.OrderedDict([
+    ('terminated', []),
+    ('pending', []),
+    ('initializing', []),
+    ('running', []),
+])
 
 
 def get_container_listing(ip):
