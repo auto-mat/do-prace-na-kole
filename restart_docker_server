@@ -1,10 +1,13 @@
-#!/bin/sh
-sudo docker-compose down
-sudo docker-compose rm
+#!/bin/bash
+DOCKER_POSTFIX=$(cat postfix)
+TAG="latest"
+echo $DOCKER_POSTFIX
+sudo env TAG=$TAG DOCKER_POSTFIX=$DOCKER_POSTFIX  docker-compose down
+sudo env TAG=$TAG DOCKER_POSTFIX=$DOCKER_POSTFIX  docker-compose rm
 if [ -e worker ]; then
-    sudo DOCKER_POSTFIX=$(cat postfix) TAG="latest" docker-compose up  dpnk-worker dpnk-beat
+    sudo env TAG=$TAG DOCKER_POSTFIX=$DOCKER_POSTFIX docker-compose up  dpnk-worker dpnk-beat
 elif [ -e web ]; then
-    sudo DOCKER_POSTFIX=$(cat postfix) TAG="latest" docker-compose up  dpnk-web
+    sudo env TAG=$TAG DOCKER_POSTFIX=$DOCKER_POSTFIX docker-compose up  dpnk-web
 else
-    sudo DOCKER_POSTFIX=$(cat postfix) TAG="latest" docker-compose up
+    sudo env TAG=$TAG DOCKER_POSTFIX=$DOCKER_POSTFIX docker-compose up
 fi
