@@ -4,7 +4,6 @@ maintainer Automat
 
 run apt-get update && apt-get install -y \
    binutils \
-   build-essential \
    gdal-bin \
    gettext \
    git \
