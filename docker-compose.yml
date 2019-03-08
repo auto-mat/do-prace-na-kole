@@ -2,9 +2,6 @@
 dpnk-web:
  hostname: dpnk-web
  image: "auto0mat/dopracenakole${DOCKER_POSTFIX}:${TAG}"
- ports:
-  - "80:8000"
-  - "5555:5555"
  env_file:
   - ./docker.env
 
@@ -13,6 +10,7 @@ dpnk-worker:
  hostname: dpnk-worker
  entrypoint: /home/aplikace/docker-celery-entrypoint.sh
  image: "auto0mat/dopracenakole${DOCKER_POSTFIX}:${TAG}"
+ net: "host"
  env_file:
   - ./docker.env
 
@@ -21,5 +19,6 @@ dpnk-beat:
  hostname: dpnk-beat
  entrypoint: /home/aplikace/docker-celerybeat-entrypoint.sh
  image: "auto0mat/dopracenakole${DOCKER_POSTFIX}:${TAG}"
+ net: "host"
  env_file:
   - ./docker.env
