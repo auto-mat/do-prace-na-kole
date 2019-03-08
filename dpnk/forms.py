@@ -210,7 +210,7 @@ company_field = forms.ModelChoiceField(
     ),
     required=True,
     help_text=_(
-        "Začněte psát název společnosti a vyberte si z nabídky.",
+        "Začněte psát název společnosti a pak si vyberte z nabídky.",
     ),
 )
 

@@ -663,8 +663,8 @@ msgid "Registrovat firemního koordinátora"
 msgstr "Register company coordinator"
 
 #: forms.py:268
-msgid "Začněte psát název společnosti a vyberte si z nabídky."
-msgstr "Start writing company details and select from the dropdown."
+msgid "Začněte psát název společnosti a pak si vyberte z nabídky."
+msgstr "Start writing company details and then select from the dropdown."
 
 #: forms.py:314
 msgid "Zvolte jméno, pod kterým bude Váš tým bojovat."

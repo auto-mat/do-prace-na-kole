@@ -18,6 +18,10 @@
   {% include "fm/modal.html" %}
   <script type="text/javascript">
       $(function() {
+          $( "#id_company_0" ).on( "djselectablechange", function( event, ui ) {
+             $("#id_company_0").toggleClass("is-invalid", $('#id_company_1').val() == "");
+             $("#hint_id_company").toggleClass("invalid-feedback", $('#id_company_1').val() == "");
+          });
           updateSubsidiary = function(event, ui) {
              $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
              $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
