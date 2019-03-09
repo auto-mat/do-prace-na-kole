@@ -124,7 +124,7 @@ form{
 .form-inline{
   align-items:flex-start;
 }
-.registrace, .registration_access, .login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
+.login.notAuthetificated, .registrace, .registration_access, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
   form{
     width:66.66%;
   }
@@ -134,8 +134,25 @@ form{
     width:100%;
   }
 }
-.registerme, .remindme, .register_coordinator{
-  margin:@wg @wg 0 0;
+.registerme,  .register_coordinator{
+  &.btn{
+    font-size: 0.9rem;
+    margin: @wg 0 0 0;
+    display:inline-block;
+    background:@ternary;
+    color:#fff;
+    &:hover{
+      color:#fff;
+      background:spin(@ternary, 10%);
+    }
+  }
+}
+.register_coordinator{
+  float:right;
+}
+.remindme,{
+  margin:@wg*0.5 @wg 0 0;
+  font-size:.9rem;
   display:inline-block;
   opacity:.5;
   text-decoration:none;
@@ -143,13 +160,6 @@ form{
     opacity:1;
     color:#000;
     text-decoration:none;
-  }
-}
-.register_coordinator{
-  display:block;
-  color:#fff;
-  &:hover{
-    color:#fff;
   }
 }
 .welcome_message{
@@ -244,6 +254,11 @@ label{
     input[type="submit"]{
       width:100%;
       background-color:@secondary;
+    }
+  }
+  &.doskoly{
+    form{
+      background-image:url("../img/dpnk_logo_bundle2.svg");
     }
   }
 }

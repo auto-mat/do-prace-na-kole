@@ -113,10 +113,10 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
         self.helper.layout = Layout(
             'username', 'password',
             Submit('submit', _('Přihlásit')),
-            social_html(True),
             HTML('<a class="remindme" href="{%% url "password_reset" %%}">%s</a>' % _("Obnovit heslo")),
-            HTML('<a class="registerme" href="{%% url "registration_access" %%}">%s</a>' % _("Registrovat")),
-            HTML('<a class="register_coordinator" href="{%% url "register_admin" %%}">%s</a>' % _("Registrovat firemního koordinátora")),
+            social_html(True),
+            HTML('<a class="registerme btn" href="{%% url "registration_access" %%}">%s</a>' % _("Registrovat")),
+            HTML('<a class="register_coordinator btn" href="{%% url "register_admin" %%}">%s</a>' % _("Registrovat firemního koordinátora")),
         )
         self.fields['username'].label = _("E-mail")
         return ret_val

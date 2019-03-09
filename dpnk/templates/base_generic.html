@@ -11,7 +11,7 @@
 {% get_current_language as current_language_code %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
 <head>
-	<title>{% block title %}{% if campaign %}{{ campaign.name }}{% endif %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
+	<title>{% block title %} {{ campaign.name }} {% if title %} - {{ title }}{% endif %}{% endblock %}</title>
 	<link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}">
 	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32">
 	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16">
@@ -55,7 +55,7 @@
 	{% endblock %}
 
 </head>
-<body class="django_administrace {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}{% if user.is_authenticated %} authetificated{% else %} notAuthetificated{% endif %}">
+<body class="django_administrace {% if campaign %}vsechno_je_to_kampan{% endif %} {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}{% if user.is_authenticated %} authetificated{% else %} notAuthetificated{% endif %}">
 {% gtm %}
 	<div class="container">
 		<div class="row">
