@@ -1,62 +1,12 @@
+{% extends "base.html" %}
 {% load i18n %}
 {% load static %}
-{% load gtm_tags %}
 {% load dpnk_tags %}
-{% load raven %}
 {% load scribbler_tags %}
 {% load sitetree %}
 {% load avatar_tags %}
-<!DOCTYPE html>
-{% get_available_languages as languages %}
-{% get_current_language as current_language_code %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
-<head>
-	<title>{% block title %} {{ campaign.name }} {% if title %} - {{ title }}{% endif %}{% endblock %}</title>
-	<link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}">
-	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32">
-	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16">
-	<link rel="manifest" href="{% static "img/favicon/manifest.json" %}">
-	<link rel="mask-icon" href="{% static "img/favicon/safari-pinned-tab.svg" %}" color="#5bbad5">
-	<meta name="theme-color" content="#1ea04f">
-	{% block default_head %}
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.min.js"%}"></script>
-		<script type="text/javascript" src="{% static "bow/jquery-ui/jquery-ui.min.js"%}"></script>
-		<script type="text/javascript" src="{% static "bow/jquery.are-you-sure/jquery.are-you-sure.js"%}"></script>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-		<script type="text/javascript" src="{% static "bootstrap/bootstrap.min.js"%}"></script>
-		<script type="text/javascript" src="{% static "js/form_functions.js"%}"></script>
-		<script type="text/javascript" src="{% static 'scribbler/js/scribbler-min.js' %}"></script>
-		<script type="text/javascript" src="https://cdn.ravenjs.com/3.24.0/raven.min.js"></script>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-		<script>
-
-		Raven.config('http:{% sentry_public_dsn %}').install();
-		{% if user.is_authenticated %}
-			Raven.setUserContext({
-				email: '{{ user.email }}',
-				id: '{{ user.id }}'
-			})
-		{% endif %}
-		</script>
-
-		<link href="{% static 'scribbler/css/scribbler.css' %}" rel="stylesheet">
-		<link href="{% static "bow/lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
-		<link href="{% static "bootstrap/bootstrap.min.css"%}" rel="stylesheet" media="screen">
-		<link href="{% static "bow/jquery-ui/themes/base/jquery-ui.min.css"%}" rel="stylesheet" media="screen">
-		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C300%2C600%2C400&#038;subset=latin%2Clatin-ext&#038;ver=4.1.1' type='text/css' media='all' />
-		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
-    <link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
-	{% endblock %}
-
-	{% block extrahead %}
-	{% endblock %}
-
-</head>
-<body class="django_administrace {% if campaign %}vsechno_je_to_kampan{% endif %} {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}{% if user.is_authenticated %} authetificated{% else %} notAuthetificated{% endif %}">
-{% gtm %}
+{% block body %}
 	<div class="container">
 		<div class="row">
 			{# sidebar #}
@@ -202,21 +152,4 @@
 			</div>
 	</div>
 </div>
-
-<script>
-	jQuery(document).ready(function($) {  
-		// deactivate unfulfilled links
-		$('.readonly').click(function (e) {
-			e.preventDefault();
-		});
-		$('.readonly').keydown(function (e) {
-			e.preventDefault();
-		});
-
-	});
-</script>
-<script type="text/javascript" src="{% static "bow/lightbox2/dist/js/lightbox.min.js"%}"></script>
-</body>
-{% block afterbody %}
 {% endblock %}
-</html>
