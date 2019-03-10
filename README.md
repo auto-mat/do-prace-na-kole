@@ -35,7 +35,7 @@ Building the docker images
 Launching the docker-compose containers
 ---------------------------------------
 
-    $ sudo docker-compose -f docker-compose-dev.yml up
+    $ sudo docker-compose up
 
 Setting up the database
 ---------------------
@@ -77,7 +77,7 @@ Once you have your test environment working, it's a good idea to back up your da
 
 First stop docker compose
 
-    $ docker-compose -f docker-compose-dev.yml down
+    $ docker-compose down
 
 Then copy db folder
 
