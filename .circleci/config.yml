@@ -65,19 +65,6 @@ jobs:
                --link dpnk-postgres:postgres \
                --name dpnk-test \
                dopracenakole
-      - deploy:
-          name: Deploy master branch
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              if [ "$DOCKER_USER" != "" ] ; then
-                TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
-                docker tag dopracenakole:latest auto0mat/dopracenakole-prod:$TAG
-                docker tag dopracenakole:latest auto0mat/dopracenakole-prod:latest
-                docker login -u $DOCKER_USER -p $DOCKER_PASS
-                docker push auto0mat/dopracenakole-prod:$TAG
-                docker push auto0mat/dopracenakole-prod:latest
-              fi
-            fi
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
       - run: cp /tmp/reports/ . -R
       - run: cp /tmp/reports/.coverage .
