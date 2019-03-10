@@ -255,7 +255,7 @@ class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedi
 
 
 class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrationPhaseMixin, ProfileRedirectMixin, SimpleRegistrationView):
-    template_name = 'base_generic_form.html'
+    template_name = 'base_login.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
     title = ""
