@@ -1,0 +1,6 @@
+#!/bin/bash
+docker pull auto0mat/dopracenakole-test:latest
+docker tag auto0mat/dopracenakole-test:latest auto0mat/dopracenakole-prod:latest
+docker push auto0mat/dopracenakole-prod:latest
+./status.py
+echo Now run the ./restart_prod <ip> address for each running production instance to deploy. Multiple IPs can be listed if necessary (if there are migrations that would break the old version and a gradual deployment is not desired. You can run status.py at any time to see what versions each EC2 instance is on.

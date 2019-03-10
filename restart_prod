@@ -1,0 +1,5 @@
+#!/bin/bash
+for var in "$@"
+do
+    ssh ubuntu@"$var" nohup bash /home/ubuntu/restart_docker_containers
+done
