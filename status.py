@@ -16,6 +16,7 @@ states = collections.OrderedDict([
 
 def get_container_listing(ip):
     container_listing = ""
+    print("Getting container listing and versions for ip:", ip)
     try:
         container_listing_raw = subprocess.check_output(["ssh", "-oStrictHostKeyChecking=no", "ubuntu@" + ip, "--", "sudo", "docker", "ps", "--format", "{{.Names}}"]).decode("utf-8") # noqa
         for container in container_listing_raw.splitlines():
