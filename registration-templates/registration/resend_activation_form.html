@@ -1,7 +1,8 @@
 {% extends "registration/registration_base.html" %}
 {% load i18n %}
+{% load bootstrap4 %}
 
-{% block title %}{% trans "Znovu poslat aktivační e-mail" %}{% endblock %}
+{% block title %} - {% trans "Znovu poslat aktivační e-mail" %}{% endblock %}
 
 {% block content %}
 {% blocktrans %}
@@ -11,7 +12,9 @@ Pro znovuodeslání aktivačního e-mailu zadejte adresu.
 {% endblocktrans %}
 <form method="post" action="">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="{% trans 'Submit' %}" />
+    {% bootstrap_form form %}
+    {% buttons %}
+    <input type="submit" class="btn btn-primary" name="{% trans 'Submit' %}"/>
+    {% endbuttons %}
 </form>
 {% endblock %}
