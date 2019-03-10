@@ -48,13 +48,30 @@ class Campaign(Pricable, models.Model):
             ("can_see_application_links", "Can see application links"),
         )
         ordering = ('-id', )
-        unique_together = ('mailing_list_type', 'mailing_list_id')
+        unique_together = [
+            ('mailing_list_type', 'mailing_list_id'),
+            ('campaign_type', 'year'),
+        ]
 
+    campaign_type = models.ForeignKey(
+        'CampaignType',
+        verbose_name=_("Typ kampaně"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
     name = models.CharField(
         unique=True,
         verbose_name=_(u"Jméno kampaně"),
         max_length=60,
         null=False,
+    )
+    year = models.CharField(
+        unique=False,
+        verbose_name=_("Ročník kampaně"),
+        max_length=60,
+        null=False,
+        default=datetime.datetime.now().year,
     )
     slug = models.SlugField(
         unique=True,

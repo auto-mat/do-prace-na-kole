@@ -1321,10 +1321,19 @@ class TShirtSizeInline(SortableInlineAdminMixin, TranslationTabularInline):
     extra = 0
 
 
+@admin.register(models.CampaignType)
+class CampaignTypeAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+    )
+
+
 @admin.register(models.Campaign)
 class CampaignAdmin(admin.ModelAdmin):
     list_display = (
         'name',
+        'campaign_type',
+        'year',
         'slug',
         'slug_identifier',
         'mailing_list_id',

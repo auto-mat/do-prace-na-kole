@@ -29,6 +29,7 @@ from rest_framework.authtoken.models import Token
 
 from .address import Address, get_address_string
 from .campaign import Campaign
+from .campaign_type import CampaignType
 from .city import City
 from .city_in_campaign import CityInCampaign
 from .commute_mode import CommuteMode
@@ -57,6 +58,7 @@ from .. import mailing
 __all__ = (
     Address,
     Campaign,
+    CampaignType,
     CityInCampaign,
     City,
     CommuteMode,
