@@ -313,6 +313,7 @@ INSTALLED_APPS = (
     # 'cachalot',
     'photologue',
     'sortedm2m',
+    'dj_anonymizer',
 )
 
 ECC_PROVIDER_CODE = "DK"

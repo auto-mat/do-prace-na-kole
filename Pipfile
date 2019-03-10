@@ -109,6 +109,8 @@ django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.gi
 "django-bootstrap4" = "*"
 "html2text" = "*"
 tornado = "<6"
+dj_anonymizer = "*"
+faker = "*"
 
 [requires]
 python_version = "3.6"
