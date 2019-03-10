@@ -111,6 +111,7 @@ django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.gi
 tornado = "<6"
 dj_anonymizer = "*"
 faker = "*"
+django-colorfield = "*"
 
 [requires]
 python_version = "3.6"

@@ -308,6 +308,7 @@ INSTALLED_APPS = (
     'sitetree',
     'sitetree_modeltranslation',
     'likes',
+    'colorfield',
     'social_django',
     'fm',
     # 'cachalot',

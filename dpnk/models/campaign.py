@@ -22,6 +22,8 @@ import datetime
 
 from cache_utils.decorators import cached
 
+from colorfield.fields import ColorField
+
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
@@ -83,6 +85,10 @@ class Campaign(Pricable, models.Model):
         verbose_name="Identifikátor kampaně",
         blank=True,
         null=True,
+    )
+    main_color = ColorField(
+        default='#1EA04F',
+        verbose_name="Hlavní barva kampaně",
     )
     previous_campaign = models.ForeignKey(
         'Campaign',
