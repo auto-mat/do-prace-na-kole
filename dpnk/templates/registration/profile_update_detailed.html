@@ -4,6 +4,15 @@
 {% load avatar_tags %}
 
 {% block form %}
+{% if not user_attendance.get_asociated_company_admin.exists %}
+<a class="btn btn-sm btn-default password_change" href="{% url 'company_admin_application' %}">
+    {% trans "Chci se stát firemním koordinátorem" %}
+</a>
+<br/><br/>
+{% else %}
+{% trans "Vaším firemním koordinátorem je" %}: {{ user_attendance.company_coordinator_emails }}
+<br/><br/>
+{% endif %}
 <div class="container">
    <div class="row">
       <div class="col-md-9">
