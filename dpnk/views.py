@@ -242,7 +242,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
 
 
 class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
-    template_name = 'base_generic_form.html'
+    template_name = 'base_login.html'
     form_class = RegistrationAccessFormDPNK
     title = ""
 

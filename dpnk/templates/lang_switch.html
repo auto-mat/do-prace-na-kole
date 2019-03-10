@@ -1,0 +1,15 @@
+{% load dpnk_tags %}
+<div class="lang_switch">
+	<ul>
+		{% block langchanger %}
+			{% for lang_code, lang_name in languages %}
+				{% if campaign.language_prefixes in lang_code or campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
+					<li class="{% if lang_code == current_language_code %}active{% endif %}">
+      {% change_lang lang_code as redirect_url %}
+						  <a href="{% url 'switch_lang' %}?redirect={{redirect_url | urlencode }}&lang={{ lang_code }}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:campaign.language_prefixes|upper }}</a>
+					</li>
+				{% endif %}
+			{% endfor %}
+		{% endblock %}
+	</ul>
+</div>

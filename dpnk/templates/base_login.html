@@ -2,12 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-<div class="container">
+<div class="container standalone-login-form">
    <div class="row">
    <div class="col-12 col-sm-3 sidebar">
    </div>
    <div class="col-12 col-sm-9 content">
       <div class="inner">
+      <h1>
+         {{ campaign.name }}
+      </h1>
+      {% include "lang_switch.html" %}
       {% block caption %}
          {% if title %}
             <h2>
@@ -15,12 +19,12 @@
             </h2>
          {% endif %}
       {% endblock %}
+      {% block content %}
       {% block form %}
          {% if form %}
             {% crispy form %}
          {% endif %}
       {% endblock %}
-      {% block content %}
       {% endblock %}
       </div>
    </div>
