@@ -50,6 +50,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
                 ('userprofile__nickname', _("Přezdívka")),
                 ('userprofile__user__email', _("E-mail")),
                 ('team__subsidiary__city', _("Město")),
+                ('created', _("Čas registrace")),
             ],
             enable_shift_select=True,
             enable_datatables=True,
