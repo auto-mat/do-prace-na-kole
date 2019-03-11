@@ -36,7 +36,7 @@ from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice,
 
 
 class SelectUsersPayForm(SubmitMixin, forms.Form):
-    submit_text = _('Vybrat')
+    submit_text = _('Schválit')
     paing_for = forms.ModelMultipleChoiceField(
         UserAttendance.objects.none(),
         label=_("Vyberte týmové hráče, za které Vaše společnost zaplatí startovné."),
