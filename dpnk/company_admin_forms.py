@@ -37,7 +37,7 @@ from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice,
 
 class SelectUsersPayForm(SubmitMixin, forms.Form):
     submit_text = _('Schválit')
-    paing_for = forms.ModelMultipleChoiceField(
+    paying_for = forms.ModelMultipleChoiceField(
         UserAttendance.objects.none(),
         label=_("Vyberte týmové hráče, za které Vaše společnost zaplatí startovné."),
         required=False,
@@ -81,17 +81,17 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         )
 
         ret_val = super().__init__(*args, **kwargs)
-        self.fields['paing_for'].queryset = queryset
+        self.fields['paying_for'].queryset = queryset
         self.helper.form_class = "dirty-check"
         self.helper.form_id = "fa-select-users-pay-form"
         self.helper.layout = Layout(
             HTML("<div class='text-info'>"),
             HTML(_("Tip: Použijte shift pro výběr rozsahu položek.")),
             HTML("</div><br/>"),
-            'paing_for',
+            'paying_for',
         )
 
-        self.fields['paing_for'].widget.datatable_options = {
+        self.fields['paying_for'].widget.datatable_options = {
             'language': {'url': static("/js/datatables-plugins/i18n/%s.json" % request.LANGUAGE_CODE)},
         }
         return ret_val

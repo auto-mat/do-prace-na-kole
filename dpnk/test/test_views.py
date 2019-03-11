@@ -929,14 +929,14 @@ class ViewsLogonMommy(TestCase):
 )
 class TestRidesView(ViewsLogonMommy):
     def get_user_attendance(self):
-        testing_campaing = campaign_get_or_create(
+        testing_campaign = campaign_get_or_create(
             slug="testing-campaign",
             name='Testing campaign',
             minimum_rides_base=10000,
             track_required=False,
         )
         user_attendance = UserAttendanceRecipe.make(
-            campaign=testing_campaing,
+            campaign=testing_campaign,
             userprofile__sex='male',
             userprofile__user__first_name='Foo',
             userprofile__user__last_name='User',
@@ -948,7 +948,7 @@ class TestRidesView(ViewsLogonMommy):
         )
         mommy.make(
             'CityInCampaign',
-            campaign=testing_campaing,
+            campaign=testing_campaign,
             city=user_attendance.team.subsidiary.city,
         )
         return user_attendance
@@ -1413,7 +1413,7 @@ class ViewsTestsLogon(ViewsLogon):
             '<tr>'
             '<td>'
             '<input class="tableselectmultiple selectable-checkbox form-check-input" '
-            'id="id_paing_for_0" name="paing_for" type="checkbox" value="2115"/>'
+            'id="id_paying_for_0" name="paying_for" type="checkbox" value="2115"/>'
             '</td>'
             '<td>%s</td>'
             '<td>Registered</td>'
@@ -1425,7 +1425,7 @@ class ViewsTestsLogon(ViewsLogon):
             html=True,
         )
         post_data = {
-            'paing_for': '2115',
+            'paying_for': '2115',
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('company_admin_pay_for_users'), post_data, follow=True)

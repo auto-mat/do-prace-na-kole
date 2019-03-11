@@ -112,9 +112,9 @@ class SelectUsersPayView(
         }
 
     def form_valid(self, form):
-        paing_for = form.cleaned_data['paing_for']
+        paying_for = form.cleaned_data['paying_for']
         self.confirmed_count = 0
-        for user_attendance in paing_for:
+        for user_attendance in paying_for:
             for payment in user_attendance.payments().all():
                 if payment.pay_type == 'fc':
                     self.confirmed_count += 1
