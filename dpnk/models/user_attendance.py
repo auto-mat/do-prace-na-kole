@@ -274,7 +274,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if self.representative_payment:
             pay_type = self.representative_payment.pay_type
             if pay_type:
-                return Payment.PAY_TYPES_DICT[pay_type].upper()
+                return Payment.PAY_TYPES_DICT[pay_type]
 
     def get_competitions(self, competition_types=None):
         from .. import results

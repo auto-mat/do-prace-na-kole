@@ -39,7 +39,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/change_tshirt.html'
     form_class = TShirtUpdateForm
     model = UserAttendance
-    success_message = _(u"Velikost trička úspěšně nastavena")
+    success_message = _("Uložili jsme si Vaší velikost")
     next_url = 'typ_platby'
     prev_url = 'zmenit_tym'
     registration_phase = "zmenit_triko"

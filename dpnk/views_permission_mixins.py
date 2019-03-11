@@ -134,9 +134,15 @@ class MustBeApprovedForTeamMixin(MustHaveTeamMixin):
         ):
             raise exceptions.TemplatePermissionDenied(
                 format_html_lazy(
-                    _("Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
-                    team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
+                    _("Tým {team} rebeluje proti Vašemu členství. Je načase {link}, kteří si Vás budou vážit."),
+                    link=format_html_lazy(
+                        "<a href='{address}'>{link_title}</a>",
+                        link_title=_("si najít opravdové parťáky"),
+                        address=reverse("zmenit_tym"),
+                    ),
+                    team=request.user_attendance.team.name,
                 ),
+                title=_("Slyšíme cinkání klíčů"),
                 template_name=getattr(self, 'template_name', None),
             )
         return super().dispatch(request, *args, **kwargs)

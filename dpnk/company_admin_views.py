@@ -103,7 +103,7 @@ class SelectUsersPayView(
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
-    success_message = _("Potvrzena platba za %s soutěžících, kteří od teď mohou bez obav soutěžit.")
+    success_message = _("Od teď mohou schválení hráči soutěžit.")
     title = _("Startovné")
 
     def get_initial(self):
@@ -167,7 +167,7 @@ class SelectUsersPayView(
         return ret_val
 
     def get_success_message(self, cleaned_data):
-        return self.success_message % self.confirmed_count
+        return self.success_message
 
 
 class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):

@@ -78,7 +78,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                     self.user_attendance.team and \
                     self.user_attendance.team.unapproved_member_count and \
                     self.user_attendance.team.unapproved_member_count > 0:
-                messages.warning(
+                messages.error(
                     request,
                     mark_safe(
                         _('Ve Vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
@@ -86,33 +86,33 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                 )
             elif self.user_attendance.is_libero():
                 # TODO: get WP slug for city
-                messages.warning(
+                messages.error(
                     request,
                     format_html(
                         _(
-                            'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
-                            ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do Vašeho týmu, pokud jste tak již učinil/a, '
-                            'vyčkejte na potvrzující e-mail a schvalte jejich členství v týmu.</li>'
-                            '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
-                            '<li>Pokud nemůžete sehnat spolupracovníky, '
-                            ' <a href="https://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
+                            '<b>Opusťte svoji pevnost osamění.</b><br/>'
+                            'Když <a href="{invite_url}">nepozvete parťáky do týmu</a>, '
+                            'zůstanete na ocet s možností účastnit se pouze v soutěžích jednotlivců. '
+                            'Také se můžete <a href="{join_team_url}">přidat k jinému týmu</a>. Čím víc členů, tím víc zábavy!'
                         ),
                         invite_url=reverse('pozvanky'),
                         join_team_url=reverse('zmenit_tym'),
                         city=self.user_attendance.team.subsidiary.city.slug,
                     ),
+                    # extra_tags="tagsss",
                 )
 
         if self.registration_phase == 'registration_uncomplete':
             if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
-                    messages.warning(
+                    messages.error(
                         request,
                         format_html(
                             _(
-                                "Vaši kolegové v týmu {team} ještě musí potvrdit Vaše členství."
-                                " Pokud to trvá podezřele dlouho, můžete zkusit"
-                                " <a href='{address}'>znovu požádat o ověření členství</a>."),
+                                "<b>Podpořte týmového ducha.</b><br/>"
+                                "Vaši kolegové v týmu {team} ještě nepotvrdili Vaše členství. "
+                                "<a href='{address}'>Je na čase je trochu popostrčit</a>."
+                            ),
                             team=self.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
                         ),
                     )
@@ -127,14 +127,14 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                     )
 
             if not self.user_attendance.has_paid():
-                messages.info(
+                messages.error(
                     request,
                     format_html(
                         _(
-                            'Vaše platba typu {payment_type} ještě nebyla vyřízena. '
+                            '<b>Pořádek dělá přátele.</b><br/>'
+                            'Vaše platba ({payment_type}) je stále v řízení. '
                             'Počkejte prosím na její schválení. '
-                            'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>. '
-                            'Po schválení bude registrace dokončena a my Vám tuto skutečnost potvrdíme e-mailem.',
+                            'Nebo si <a href="{url}">vyberte jiný způsob platby</a>.'
                         ),
                         payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby'),
                     ),
@@ -150,11 +150,11 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         q.name
                     ) for q in self.user_attendance.unanswered_questionnaires().all()),
                 )
-                messages.info(request, format_html(_('Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!'), competitions))
+                messages.error(request, format_html(_('Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!'), competitions))
 
         company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
-            messages.warning(request, _('Vaše žádost o funkci koordinátora organizace čeká na vyřízení.'))
+            messages.error(request, _('Vaše žádost o funkci koordinátora organizace čeká na vyřízení.'))
         if company_admin and company_admin.company_admin_approved == 'denied':
             messages.error(request, _('Vaše žádost o funkci koordinátora organizace byla zamítnuta.'))
         return ret_val

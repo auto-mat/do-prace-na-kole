@@ -96,7 +96,6 @@ from .forms import (
     TrackUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
-from .string_lazy import mark_safe_lazy
 from .views_mixins import (
     CampaignFormKwargsMixin,
     CampaignParameterMixin,
@@ -277,7 +276,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
     success_url = reverse_lazy('zmenit_tym')
     registration_phase = 'zmenit_tym'
     title = _("Pozvánka do týmu")
-    success_message = _("Tým úspěšně změněn")
+    success_message = _("A jste v jiném týmu!")
 
     def get_initial(self):
         return {
@@ -376,7 +375,7 @@ class PaymentTypeView(
                         ),
                     ),
                     self.template_name,
-                    title=_("Dobrá hospodyňka pro kolo i přes plot skočí."),
+                    title=_("Dobrá hospodyňka pro kolo i přes plot skočí"),
                     error_level="warning",
                 )
         return super().dispatch(request, *args, **kwargs)
@@ -910,13 +909,10 @@ class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, 
 
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_registration_form.html'
-    title = _('Stav registrace')
-    opening_message = mark_safe_lazy(
-        format_html(
-            '<b class="text-warning">{}</b><br/>{}',
-            _("Vaše registrace není kompletní."),
-            _("K dokončení registrace bude ještě nutné vyřešit několik věcí:"),
-        ),
+    title = _('Nastal čas seřídit kolo a vyřešit drobné papírování…')
+    opening_message = _(
+        "Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. "
+        "Stačí si ještě poradit s pár maličkostmi a dostanete se na startovací čáru."
     )
     registration_phase = 'registration_uncomplete'
 
@@ -1064,7 +1060,7 @@ class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, Lo
     template_name = 'registration/profile_update.html'
     form_class = RegistrationProfileUpdateForm
     model = UserProfile
-    success_message = _("Soutěžní údaje úspěšně upraveny")
+    success_message = _("Vaše osobní údaje jsme pečlivě uložili.")
     next_url = "zmenit_tym"
     registration_phase = "upravit_profil"
     title = _("Vyplňte soutěžní údaje")
@@ -1434,7 +1430,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
 
 class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/request_team_approval.html'
-    title = _("Znovu odeslat žádost o členství")
+    title = _("Žádost o ověření členství byla odeslána")
     registration_phase = "zmenit_tym"
 
     def dispatch(self, request, *args, **kwargs):
@@ -1519,7 +1515,7 @@ class UpdateTeam(
     success_url = reverse_lazy('team_members')
     title = _("Upravit údaje týmu")
     registration_phase = 'zmenit_tym'
-    success_message = _("Změna úspěšna")
+    success_message = _("Hurá! Povedlo se.")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)

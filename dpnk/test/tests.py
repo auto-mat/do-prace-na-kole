@@ -398,7 +398,7 @@ class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.save()
         call_command('denorm_flush')
-        self.assertEqual(user_attendance.payment_type_string(), "ORGANIZACE PLATÍ FAKTUROU")
+        self.assertEqual(user_attendance.payment_type_string(), "platba přes firemního koordinátora")
 
     def test_payment_type_string_none_type(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)

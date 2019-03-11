@@ -241,7 +241,7 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             approved_for_team='undecided',
         )
         mixin = MustBeApprovedForTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Vaše členství v týmu Foo team nebylo odsouhlaseno."):
+        with self.assertRaisesRegex(PermissionDenied, "Tým Foo team rebeluje proti Vašemu členství."):
             mixin.dispatch(self.request)
 
     def test_team_denied(self):
@@ -253,7 +253,7 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             approved_for_team='denied',
         )
         mixin = MustBeApprovedForTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Vaše členství v týmu Foo team nebylo odsouhlaseno."):
+        with self.assertRaisesRegex(PermissionDenied, "Tým Foo team rebeluje proti Vašemu členství."):
             mixin.dispatch(self.request)
 
     def test_no_user_attendance(self):

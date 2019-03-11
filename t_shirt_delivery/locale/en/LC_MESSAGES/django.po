@@ -78,14 +78,14 @@ msgid ""
 "href='{}?box__id__exact={}&amp;dispatched__exact=0'>zobrazit seznam "
 "nesestavených balíčků</a>"
 msgstr ""
-"This box contains packages, that was not marked as assebled: <a href='{}?"
-"box__id__exact={}&amp;dispatched__exact=0'>show list of unassebled packages</"
+"This box contains packages, that was not marked as assembled: <a href='{}?"
+"box__id__exact={}&amp;dispatched__exact=0'>show list of unassembled packages</"
 "a>"
 
 #: admin_views.py:66
 #, python-format
 msgid "Balíček/krabice zařazen jako sestavený: %s"
-msgstr "Package/box was marked as assebled: %s"
+msgstr "Package/box was marked as assembled: %s"
 
 #: admin_views.py:74
 msgid "Balíček/krabice nebyl nalezen."
@@ -93,11 +93,11 @@ msgstr "Package/box was not found"
 
 #: admin_views.py:80
 msgid "Zařadit balíky k sestavení"
-msgstr "Mark packages as assebled"
+msgstr "Mark packages as assembled"
 
 #: filters.py:26 models/subsidiary_box.py:143
 msgid "Všechny balíčky vyřízeny"
-msgstr "All packages assebled"
+msgstr "All packages assembled"
 
 #: filters.py:31
 msgid "Ano"
@@ -112,16 +112,12 @@ msgid "Vyberte velikost trika"
 msgstr "Choose t-shirt size"
 
 #: forms.py:42
-#, fuzzy
-#| msgid "Podívejte se do {}."
 msgid "Podívejte se na {}."
-msgstr "Check out {}."
+msgstr "I want to see the {}."
 
 #: forms.py:45
-#, fuzzy
-#| msgid "Velikosti trička"
 msgid "vzhled a velikosti triček"
-msgstr "T-shirt size"
+msgstr "T-shirt design and check the sizes"
 
 #: forms.py:58
 msgid "Vyplňte telefonní číslo"
@@ -314,15 +310,15 @@ msgstr "Choose T-shirt size"
 #: views.py:72
 #, python-brace-format
 msgid "Nejdříve se {join_team} a pak si vyberte tričko."
-msgstr ""
+msgstr "{join_team} and then select a T-shirt"
 
 #: views.py:76
 msgid "přidejte k týmu"
-msgstr "join the team"
+msgstr "Join the team"
 
 #: views.py:80
 msgid "Buďte týmovým hráčem!"
-msgstr ""
+msgstr "Be a team player!"
 
 #: views.py:85
 msgid "Vaše tričko již je na cestě k Vám, už se na něj můžete těšit."

@@ -10,7 +10,7 @@
 {% block content %}
 {% crispy form %}
 <br/>
-Týmové fotky:
+{% trans "Týmové fotky" %}:
         <form class="dropzone" id="team_photo_upload" action="{% url 'upload_team_photo' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="fallback">
@@ -21,7 +21,7 @@ Týmové fotky:
         <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
         <script>
          dz = $('#team_photo_upload').dropzone({
-             dictDefaultMessage: "{% trans "Nahravejte týmové fotky kliknutím zde" %}",
+             dictDefaultMessage: "{% trans "Fotky nahrajete přetažením, nebo kliknutím" %}",
              uploadMultiple: false,
              paramName: "image",
          });

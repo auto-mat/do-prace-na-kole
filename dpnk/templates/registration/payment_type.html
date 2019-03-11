@@ -71,6 +71,7 @@ $(function(){
 });
 </script>
 <div id="description_switcher">
+   <br/>
    <div class="description_switcher_div description company_description" style="display:none">
       <h3>{% trans "Platba startovného zaměstnavatelem" %}</h3>
       {% for company_admin in user_attendance.get_asociated_company_admin_with_payments %}
@@ -103,16 +104,14 @@ $(function(){
 </span>
 <div class="description_switcher_div description pay_description pay_beneficiary_description">
    <div id="beneficiary-motivation" class="beneficiary-show" style="display:none">
-   {% scribble 'beneficiary_payment' %}
-   {% load i18n %}
-   {% trans "Děkujeme, že nám pomáháte zlepšovat cyklistické podmínky ve městech." %}
-   {% endscribble %}
+   {% trans "Děkujeme, že se zajímáte o veřejný prostor." %}
    </div>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
    <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();
    </script>
+   <br/>
    <input type="button" name="prev" value="{% trans "Předchozí" %}" class="btn btn-default" id="button-id-prev" onclick="window.location.href='{% url prev_url %}'">
    <input type="submit" class="btn btn-primary" value="{% trans "Zaplatit" %}"/>
 </form>

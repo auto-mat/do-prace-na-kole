@@ -152,7 +152,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_team_approval_request(self):
         address = reverse('zaslat_zadost_clenstvi')
         response = self.client.get(address)
-        self.assertContains(response, 'Žádost o ověření členství byla odeslána.')
+        self.assertContains(response, '<h2>Žádost o ověření členství byla odeslána</h2>', html=True)
         self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test2@test.cz'])
@@ -1305,7 +1305,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(
             response,
-            '<div class="alert alert-success">Tým úspěšně změněn</div>',
+            '<div class="alert alert-success">A jste v jiném týmu!</div>',
             html=True,
         )
 
@@ -1994,7 +1994,7 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
-        self.assertContains(response, "Jste sám/sama v týmu")
+        self.assertContains(response, "<b>Opusťte svoji pevnost osamění.</b>", html=True)
 
     def test_dpnk_registration_unapproved_users(self):
         for team_member in self.user_attendance.team.all_members():
@@ -2034,7 +2034,7 @@ class RegistrationMixinTests(ViewsLogon):
             payment.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
-        self.assertContains(response, "Vaše platba typu ORGANIZACE PLATÍ FAKTUROU ještě nebyla vyřízena.")
+        self.assertContains(response, "Vaše platba (platba přes firemního koordinátora) je stále v řízení.")
 
     @patch('slumber.API')
     def test_dpnk_registration_questionnaire(self, slumber_api):
@@ -2152,7 +2152,7 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing User 1")
         self.assertContains(response, "test@test.cz")
-        self.assertContains(response, "organizace platí fakturou")
+        self.assertContains(response, "platba přes firemního koordinátora")
         self.assertContains(response, "(Platba přijata)")
 
     def test_dpnk_views_track_gpx_file(self):
