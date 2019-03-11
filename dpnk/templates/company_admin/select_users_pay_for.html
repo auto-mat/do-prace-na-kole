@@ -2,8 +2,15 @@
 {% load i18n %}
 
 {% block extrahead %}
-{% include "datatables_header.html" %}
 {{ block.super }}
+{% include "datatables_header.html" %}
+<style>
+ .form-check-input { 
+     position: relative; 
+     margin-left: 0.5rem;
+ }
+</style>
+
 {% endblock %}
 {% block form %}
 {{ block.super }}
