@@ -6,10 +6,11 @@
 
 {% block content %}
 {% blocktrans %}
-
 Pro znovuodeslání aktivačního e-mailu zadejte adresu.
-
 {% endblocktrans %}
+{% endblock %}
+
+{% block form %}
 <form method="post" action="">
     {% csrf_token %}
     {% bootstrap_form form %}

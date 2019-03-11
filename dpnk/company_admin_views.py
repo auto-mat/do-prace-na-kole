@@ -182,7 +182,7 @@ class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixi
 
 
 class CompanyAdminApplicationView(CampaignFormKwargsMixin, TitleViewMixin, CompanyAdminMixin, RegistrationView):
-    template_name = 'base_generic_form.html'
+    template_name = 'base_login.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = reverse_lazy('company_structure')
