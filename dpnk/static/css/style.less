@@ -85,6 +85,44 @@ input[type="radio"], input[type="checkbox"]{
 .input-group{
   background:@lightgrey;
 }
+.form_head{
+  background-color:@primary;
+  color:#fff;
+  margin-left:@wg;
+  width: 66.66%;
+  p{
+    margin:0 1rem 1rem 1rem;
+  }
+  h1, h3{
+    text-align:center;
+    margin-bottom:0;
+    padding:@wg;
+  }
+  h1 + h3{
+    margin:0 @wg;
+    padding:0 @wg @wg @wg;
+  }
+  .lang_switch{
+    height:0;
+  }
+}
+.lang_switch{
+  font-size:@wg*0.9;
+  float: right;
+  ul{
+    padding:0;
+    margin:@wg*.85 @wg 0 0;
+    li{
+      display:inline-block;
+      border:0;
+      a{
+        text-decoration:none;
+        padding:0 0 0 @wg*.4;
+        color:darken(#fff, 10%);
+      }
+    }
+  }
+}
 form{
   // display: flex;
   // flex-wrap: wrap;
@@ -163,13 +201,8 @@ form{
   }
 }
 .welcome_message{
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
-  // .form-group{
-  //   width: 50%;
-  //   padding:0 @wg/2;
-  // }
-
 .homepage.profil, .team_members{
   form{
     width: 100%;
@@ -213,6 +246,7 @@ label{
 .notAuthetificated{
   .inner{
     padding:0;
+    width:100%;
   }
   .content{
     display:flex;
@@ -237,12 +271,12 @@ label{
 
   form{
     background-color:@primary;
-    background-image:url("../img/dpnk_logo_bundle.svg");
+    background-image:url("../img/dpnk_logo.svg");
     background-repeat:no-repeat;
-    background-position:center @wg*2;
-    background-size: 60%;
+    background-position:center 0;
+    background-size: 60px;
     margin-left: @wg;
-    padding:@wg*6 @wg*3 @wg*2 @wg*3;
+    padding:@wg*3 @wg*3 @wg*2 @wg*3;
     color:#fff;
     label{
       font-size:@fsize*0.9;
@@ -254,11 +288,6 @@ label{
     input[type="submit"]{
       width:100%;
       background-color:@secondary;
-    }
-  }
-  &.doskoly{
-    form{
-      background-image:url("../img/dpnk_logo_bundle2.svg");
     }
   }
 }
@@ -306,23 +335,6 @@ label{
       a{
         font-weight:800;
         color:@primary;
-      }
-    }
-  }
-  .lang_switch{
-    font-size:@wg*0.9;
-    float: right;
-    ul{
-      padding:0;
-      margin:@wg*.85 @wg 0 0;
-      li{
-        display:inline-block;
-        border:0;
-        a{
-          text-decoration:none;
-          padding:0 0 0 @wg*.4;
-          color:darken(#fff, 10%);
-        }
       }
     }
   }

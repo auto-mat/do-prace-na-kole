@@ -2,32 +2,32 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-<div class="container standalone-login-form">
-   <div class="row">
-   <div class="col-12 col-sm-3 sidebar">
-   </div>
-   <div class="col-12 col-sm-9 content">
-      <div class="inner">
-      <h1>
-         {{ campaign.campaign_type.name }}
-      </h1>
-      {% include "lang_switch.html" %}
-      {% block caption %}
-         {% if title %}
-            <h2>
-               {{ title }}
-            </h2>
-         {% endif %}
-      {% endblock %}
-      {% block content %}
-      {% block form %}
-         {% if form %}
-            {% crispy form %}
-         {% endif %}
-      {% endblock %}
-      {% endblock %}
+   <div class="container standalone-login-form">
+      <div class="row">
+         <div class="col-12 offset-sm-3 col-sm-9 content">
+            <div class="inner">
+               <div class="form_head">
+                  {% include "lang_switch.html" %}
+                  <h1>
+                     {{ campaign.campaign_type.name }}
+                  </h1>
+                  {% block caption %}
+                     {% if title %}
+                        <h3>
+                           {{ title }}
+                        </h3>
+                     {% endif %}
+                  {% endblock %}
+                  {% block content %}
+                  {% endblock %}
+               </div>
+               {% block form %}
+                  {% if form %}
+                     {% crispy form %}
+                  {% endif %}
+               {% endblock %}
+            </div>
+         </div>
       </div>
    </div>
-   </div>
-</div>
 {% endblock %}
