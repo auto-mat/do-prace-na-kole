@@ -1,6 +1,10 @@
 #!/bin/bash
-docker pull auto0mat/dopracenakole-test:latest
-docker tag auto0mat/dopracenakole-test:latest auto0mat/dopracenakole-prod:latest
+if [ -z "$1" ]; then 
+   echo "You need to pass the image tag of the image you wish to deploy. This will be int the form Y.<build-number> you can find the build number using the status.py command."
+   exit
+fi
+docker pull auto0mat/dopracenakole-test:$1
+docker tag auto0mat/dopracenakole-test:$1 auto0mat/dopracenakole-prod:latest
 docker push auto0mat/dopracenakole-prod:latest
 ./status.py
 echo Now run the ./restart_containers_on_server <ip> address for each running production instance to deploy. Multiple IPs can be listed if necessary (if there are migrations that would break the old version and a gradual deployment is not desired. You can run status.py at any time to see what versions each EC2 instance is on.
