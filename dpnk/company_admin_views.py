@@ -141,7 +141,7 @@ class SelectUsersPayView(
             'representative_payment',
         )
         context_data["total_approved_count"] = len(context_data["approved"])
-        context_data["total_approved_amount"] = sum([ua.company_admission_fee() for ua in context_data["approved"]])
+        context_data["total_approved_amount"] = sum([ua.company_admission_fee() for ua in context_data["approved"]]) # noqa
         return context_data
 
     def dispatch(self, request, *args, **kwargs):
