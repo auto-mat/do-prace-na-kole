@@ -454,6 +454,12 @@ class CompetitionForm(forms.ModelForm):
             'rules': RedactorEditor(),
         }
 
+    def save(self, *args, **kwargs):
+        competition = super().save(*args, **kwargs)
+        if not hasattr(competition, 'campaign'):
+            competition.campaign = self.request.campaign
+        return competition
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not hasattr(self.instance, 'campaign'):
