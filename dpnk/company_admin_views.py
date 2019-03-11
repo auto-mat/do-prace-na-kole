@@ -41,7 +41,7 @@ from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm,
 )
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
-from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
+from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserAttendance, UserProfile
 from .views import RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
@@ -123,8 +123,26 @@ class SelectUsersPayView(
                     payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
                     payment.save()
                     break
-        logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
+        logger.info("Company admin %s is paying for following users: %s" % (self.request.user, map(lambda x: x, paying_for)))
         return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        company_admin = self.company_admin
+        context_data["approved"] = UserAttendance.objects.filter(
+            team__subsidiary__company=company_admin.administrated_company,
+            campaign=company_admin.campaign,
+            userprofile__user__is_active=True,
+            representative_payment__pay_type='fc',
+            payment_status='done',
+        ).select_related(
+            'userprofile__user',
+            'team__subsidiary__city',
+            'representative_payment',
+        )
+        context_data["total_approved_count"] = len(context_data["approved"])
+        context_data["total_approved_amount"] = sum([ua.company_admission_fee() for ua in context_data["approved"]])
+        return context_data
 
     def dispatch(self, request, *args, **kwargs):
         ret_val = super().dispatch(request, *args, **kwargs)

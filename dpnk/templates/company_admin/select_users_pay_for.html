@@ -1,6 +1,43 @@
 {% extends "base_generic_form.html" %}
+{% load i18n %}
 
 {% block extrahead %}
 {% include "datatables_header.html" %}
 {{ block.super }}
+{% endblock %}
+{% block form %}
+{% if approved %}
+{{ block.super }}
+<br/>
+<br/>
+<b> {% trans "Jíž schválené" %}: </b>
+<br/>
+<br/>
+<table class="table table-hover">
+    <tr>
+        <th>{% trans "Částka" %}</th>
+        <th>{% trans "Jméno" %}</th>
+        <th>{% trans "Příjmení" %}</th>
+        <th>{% trans "Přezdívka" %}</th>
+        <th>{% trans "E-mail" %}</th>
+        <th>{% trans "Město" %}</th>
+        <th>{% trans "Čas registrace" %}</th>
+    </tr>
+    <tr>
+    {% for ua in approved %}
+    <td>{{ua.company_admission_fee_intcomma}}</td>
+    <td>{{ua.userprofile.user.first_name}}</td>
+    <td>{{ua.userprofile.user.last_name}}</td>
+    <td>{{ua.userprofile.nickname}}</td>
+    <td>{{ua.userprofile.user.email}}</td>
+    <td>{{ua.team.subsidiary.city}}</td>
+    <td>{{ua.created}}</td>
+    {% endfor %}
+    </tr>
+</table>
+{% trans "Celkem schválených" %}: {{total_approved_count}}<br/>
+{% trans "Schválená částka celkém" %}: {{total_approved_amount}} Kč.<br/>
+<br/>
+<br/>
+{% endif %}
 {% endblock %}
