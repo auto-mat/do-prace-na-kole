@@ -86,7 +86,6 @@ from .filters import (
     ActiveCityFilter,
     BadTrackFilter,
     CampaignFilter,
-    CityCampaignFilter,
     EmailFilter,
     HasReactionFilter,
     ICOFilter,
@@ -219,7 +218,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
     list_filter = [
-        CityCampaignFilter,
+        "subsidiaries__teams__campaign",
         'subsidiaries__city',
         'active',
         ICOFilter,
