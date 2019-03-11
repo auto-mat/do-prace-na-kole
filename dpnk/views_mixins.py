@@ -49,8 +49,9 @@ class CompanyAdminMixin(SuccessMessageMixin):
             "Poté zajistíte hromadnou platbu přes fakturu. <a href='http://www.dopracenakole.cz/firemni-koordinator'>Jak na to?</a>."
             "</p>"
             "<p>"
-            "Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a naše speciální slevy pro "
-            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>firemní koordinátory</a>."
+            "Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a "
+            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>velkou moc</a>, "
+            "se kterou přichází velká zodpovědost."
             "</p>"
         ),
     )
