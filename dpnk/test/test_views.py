@@ -1408,6 +1408,7 @@ class ViewsTestsLogon(ViewsLogon):
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
         response = self.client.get(reverse('company_admin_pay_for_users'))
+        print_response(response)
         self.assertContains(
             response,
             '<tr>'
@@ -1421,6 +1422,7 @@ class ViewsTestsLogon(ViewsLogon):
             '<td></td>'
             '<td>test-registered@test.cz</td>'
             '<td>Testing city</td>'
+            '<td>2015-11-12 18:18:40.223000</td>'
             '</tr>' % (str(amount).replace(".", ",")),
             html=True,
         )
