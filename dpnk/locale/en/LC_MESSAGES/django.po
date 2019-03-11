@@ -1393,7 +1393,7 @@ msgstr "Performance"
 #: dpnk/templates/registration/diplomas.html:35
 #: dpnk/templates/registration/rides.html:48
 msgid "Pravidelnost"
-msgstr "Regularity"
+msgstr "Frequency"
 
 #: dpnk/models/competition.py:59
 msgid "Jednotliví soutěžící"
@@ -1454,7 +1454,7 @@ msgid ""
 "cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."
 msgstr ""
 "Determines whether the competition will be performance based (distance "
-"based) or regularity based. The option \"Questionnaire\" is for creative "
+"based) or frequency based. The option \"Questionnaire\" is for creative "
 "categories, cyclo-employer of the year and other questionnaires; it is "
 "necessary to define questions."
 
@@ -1644,7 +1644,7 @@ msgstr "questionnaire"
 
 #: dpnk/models/competition.py:387
 msgid "soutěž na pravidelnost"
-msgstr "regularity competition"
+msgstr "frequency competition"
 
 #: dpnk/models/competition.py:388
 msgid "soutěž na vzdálenost"
@@ -3569,7 +3569,7 @@ msgstr ""
 
 #: dpnk/templates/registration/rides.html:68
 msgid "Pravidelnost vašeho týmu"
-msgstr "Regularity of your team"
+msgstr "Frequency of your team"
 
 #: dpnk/templates/registration/rides.html:68
 msgid "Přehled o vašem týmu"
@@ -3698,7 +3698,7 @@ msgstr "Results of team"
 #, fuzzy
 #| msgid "Pravidelnost"
 msgid "Týmová pravidelnost"
-msgstr "Regularity"
+msgstr "Team frequency"
 
 #: dpnk/templates/registration/team_members_results.html:12
 msgid "Po&shy;čet jízd"
@@ -3753,7 +3753,7 @@ msgid ""
 "pravidelnost, která Vás dovede k vítězství.\n"
 msgstr ""
 ". You will enrol all Your rides. We will watch the results and count the "
-"overall regularity which is the key to success.\n"
+"overall frequency which is the key to success.\n"
 
 #: dpnk/templates/registration/vacations.html:25
 msgid ""
@@ -4075,7 +4075,7 @@ msgstr "Results of performance competitions"
 
 #: dpnk/views.py:1024
 msgid "Výsledky pravidelnostních soutěží"
-msgstr "Results of regularity competitions"
+msgstr "Results of frequency competitions"
 
 #: dpnk/views.py:1030
 msgid "Výsledky dotazníkových soutěží a soutěží na kreativitu"
@@ -4895,7 +4895,7 @@ msgstr ""
 #~ msgstr "Creative competitions submissions"
 
 #~ msgid "Pravidenost"
-#~ msgstr "Regularity"
+#~ msgstr "Frequency"
 
 #~ msgid "Nyní jste odhlášeni."
 #~ msgstr "Now you are logged out"
@@ -4967,7 +4967,7 @@ msgstr ""
 #~ msgstr "Fill in rides"
 
 #~ msgid "Pravidelnost celkem"
-#~ msgstr "Regularity in total"
+#~ msgstr "Frequency in total"
 
 #~ msgid ""
 #~ "Počet cest u označených soutěžících byl zvýšen poměrově k tomuto číslu."
