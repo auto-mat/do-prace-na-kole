@@ -205,7 +205,7 @@ company_field = forms.ModelChoiceField(
         attrs={
             'autocomplete': 'off',
             'class': "autocompletewidget form-control",
-            'name': 'compny',
+            'name': 'company',
         },
     ),
     required=True,
