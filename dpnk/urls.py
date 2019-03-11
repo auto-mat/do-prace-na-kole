@@ -302,7 +302,7 @@ urlpatterns = [
         r'^$',
         views.RegistrationCompleteUserAttendanceView.as_view(
             template_name="registration/landing.html",
-            title=_("Vážení cyklisté"),
+            title=_("Vítejte v dalším ročníku soutěže!"),
         ),
         name="profil",
     ),
