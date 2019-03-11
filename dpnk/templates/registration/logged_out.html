@@ -1,10 +1,14 @@
 {% extends "base_login.html" %}
 {% load i18n %}
 
+
+{% block caption %}
+   <h3>{% trans "Děkujeme za dnešní luxusní jízdu!" %}</h3>
+{% endblock %}
+
 {% block content %}
 	<div class="logoutmessage">
 		<div class="inner">
-			<h2>Děkujeme za dnešní luxusní jízdu!</h2>
 			{% trans "Naleštěte si pedály, uvidíme se zase zítra na startovní čáře." %}
 			<div class="holder">
 				<a class="btn" href="/login">
