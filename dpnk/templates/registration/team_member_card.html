@@ -1,0 +1,56 @@
+{% load avatar_tags %}
+{% load dpnk_tags %}
+{% load i18n %}
+<div id="id-{{ team_member.userprofile.user }}-team-member" class="col-12 col-md-4 member-item">
+   <div class="avatar_holder" id="_{{ team_member.id }}">
+      <span>
+         {% avatar team_member.userprofile.user 200 %}
+      </span>
+   </div>
+   <style>
+      .avatar_holder#_{{ team_member.id }} span{
+         background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, #fff {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
+      }
+   </style>
+   <h2>
+      {{ team_member.userprofile }}
+   </h2>
+   {% if include_approve_buttons %}
+   {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.userprofile.user.id %}
+   {% endif %}
+   <div class="userdata">
+         <div>
+            <div>
+               <b>{% trans "Jméno" %}</b>: {{ team_member.userprofile }}
+            </div><div>
+               <b>{% trans "E-mail" %}</b>: {{ team_member.userprofile.user.email }}
+            </div><div>
+               <b>{% trans "Platba" %}</b>: {{ team_member.get_payment_status_display }}
+            </div><div>
+               <b>{% trans "Telefon" %}</b>: {{ team_member.userprofile.telephone }}
+            </div><div>
+               <b>{% trans "Stav týmu" %}</b>: {{ team_member.get_approved_for_team_display }}
+            </div>
+            <div>
+               <b>{% trans "Typ plaby" %}</b>: {{ team_member.payment_type_string }}
+            </div>
+            <div>
+               <b>{% trans "Stav plaby" %}</b>: {{ team_member.get_payment_status_display }}
+            </div>
+         </div>
+   </div>
+
+   {% if include_approve_buttons %}
+   {% if team_member.approved_for_team == 'undecided' or team_member.approved_for_team == 'denied' %}
+      <div class="actions">
+         <button class="submit submit_once btn btn-sm btn-primary" type="submit" id="approve-{{team_member.id}}" name="approve" value="approve-{{team_member.id}}">{% trans "Přijmout do týmu" %}</button>
+         {% if team_member.approved_for_team == 'undecided' %}
+            <br/>
+            <label for="reason-{{team_member.id}}">{% trans "Důvod odmítnutí" %}</label>
+            <input id="reason-{{team_member.id}}" name="reason-{{team_member.id}}" type="text"/>
+            <button class="submit submit_once btn btn-sm btn-primary" type="submit" id="deny-{{team_member.id}}" name="approve" value="deny-{{team_member.id}}">{% trans "Zamítnout" %}</button>
+         {% endif %}
+      </div>
+   {% endif %}
+   {% endif %}
+</div>

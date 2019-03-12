@@ -275,6 +275,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
             pay_type = self.representative_payment.pay_type
             if pay_type:
                 return Payment.PAY_TYPES_DICT[pay_type]
+        return _("žádná platba")
 
     def get_competitions(self, competition_types=None):
         from .. import results

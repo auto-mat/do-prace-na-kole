@@ -195,6 +195,12 @@ def unquote_html(value):
 
 
 @register.filter
+def addstr(arg1, arg2):
+    """concatenate arg1 & arg2"""
+    return str(arg1) + str(arg2)
+
+
+@register.filter
 def round_number(value, decimal_places=1):
     try:
         return round(value, decimal_places)

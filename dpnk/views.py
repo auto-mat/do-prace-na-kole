@@ -1624,21 +1624,7 @@ class TeamMembers(
                 'title': _("Není vybraný tým"),
             }
 
-        unapproved_users = []
-        for self.user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):
-            userprofile = self.user_attendance.userprofile
-            unapproved_users.append([
-                ('state', None, self.user_attendance.approved_for_team),
-                ('id', None, str(self.user_attendance.id)),
-                ('class', None, self.user_attendance.payment_class()),
-                ('name', _("Jméno"), str(userprofile)),
-                ('user', None, userprofile.user),
-                ('email', _("E-mail"), userprofile.user.email),
-                ('payment_description', _("Platba"), self.user_attendance.get_payment_status_display()),
-                ('telephone', _("Telefon"), userprofile.telephone),
-                ('state_name', _("Stav"), str(self.user_attendance.get_approved_for_team_display())),
-            ])
-        context_data['unapproved_users'] = unapproved_users
+        context_data['team_members'] = UserAttendance.objects.filter(team=team, userprofile__user__is_active=True)
         context_data['registration_phase'] = self.registration_phase
         context_data['team'] = team
         return context_data

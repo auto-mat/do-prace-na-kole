@@ -21,39 +21,8 @@
                      {{ team.name }}
                   </h5>
                   <div>
-                  {% for user in team.users.all %}
-                     {% if user.userprofile.user.is_active %}
-                        <div class="_user">
-                           <b class="_name">
-                              {{ user.userprofile.name_for_trusted }}
-                           </b>
-                           {{ user.userprofile.user.email }} -
-                           {% if user.representative_payment %}
-                              {% if user.representative_payment.pay_type == 'fc' %}
-                                 <div class="
-                                 {% if user.representative_payment.status == Status.NEW %}
-                                    text-danger
-                                 {% elif user.representative_payment.status == Status.COMPANY_ACCEPTS %}
-                                    text-warning
-                                 {% elif user.representative_payment.status == Status.INVOICE_MADE %}
-                                    text-warning
-                                 {% elif user.representative_payment.status == Status.INVOICE_PAID %}
-                                    text-success
-                                 {% endif %}
-                                 ">
-                                    {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
-                                 </div>
-                              {% else %}
-                                 {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
-                              {% endif %}
-                           {% else %}
-                              {% trans "žádná platba" %}
-                           {% endif %}
-                           {% if user.approved_for_team != 'approved' %}
-                              - <span class="text-danger">{% trans "neschválené členství v týmu" %}</span>
-                           {% endif %}
-                        </div>
-                     {% endif %}
+                  {% for team_member in team.users.all %}
+                     {% include "registration/team_member_card.html" with include_payment_state=True%}
                   {% endfor %}
                {% endif %}
             </div>
