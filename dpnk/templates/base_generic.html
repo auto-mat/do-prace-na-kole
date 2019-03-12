@@ -25,7 +25,7 @@
 							{# dynamic progress circle #}
 							<style>
 								.avatar_holder#_{{ user_attendance.id }} a{
-									background: conic-gradient(#FF6F61 0% {{ user_attendance.frequency|floatformat:"0" }}%, #fff {{ user_attendance.frequency|floatformat:"0"  }}% 100%);
+									background: conic-gradient(#FF6F61 0% {{ user_attendance.get_frequency_percentage|floatformat:"0" }}%, #fff {{ user_attendance.get_frequency_percentage|floatformat:"0"  }}% 100%);
 								}
 							</style>
 							<h4 class="nick">
