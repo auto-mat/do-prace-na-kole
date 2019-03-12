@@ -243,6 +243,7 @@ label{
   padding:@wg;
 }
 .authetificated{
+  background: linear-gradient(to right, rgba(230,230,230,1) 0%,rgba(230,230,230,1) 20%,rgba(255,255,255,1) 20%,rgba(255,255,255,1) 100%,rgba(255,255,255,1) 100%); 
   .content{
     margin-top: 4rem;
   }
@@ -302,6 +303,9 @@ label{
     min-height:100vh;
     color: #fff;
     line-height: @wg*2.2;
+    .lang_switch{
+      .lang_switch;
+    }
     ul{
       li{
         list-style:none;
@@ -442,6 +446,11 @@ label{
 .avatar_holder{
   padding:0 @wg*4.5;
   text-align:center;
+  a{
+    &:hover{
+      opacity:.7;
+    }
+  }
   a, span{
     display:inline-block;
     overflow: hidden;
@@ -660,6 +669,9 @@ label{
   }
 }
 @media all and (max-width: 480px) {
+  .authetificated{
+    background:transparent;
+  }
   .help-block, .form-text{
     color:#000 !important;
   }
