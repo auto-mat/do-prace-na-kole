@@ -35,7 +35,7 @@
     <td>{{ua.company_admission_fee_intcomma}}</td>
     <td>{{ua.userprofile.user.first_name}}</td>
     <td>{{ua.userprofile.user.last_name}}</td>
-    <td>{{ua.userprofile.nickname}}</td>
+    <td>{% if ua.userprofile.nickname %}{{ua.userprofile.nickname}}{% endif %}</td>
     <td>{{ua.userprofile.user.email}}</td>
     <td>{{ua.team.subsidiary.city}}</td>
     <td>{{ua.created}}</td>
