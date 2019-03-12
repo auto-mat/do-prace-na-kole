@@ -62,6 +62,7 @@ def campaign_get_or_create(**kwargs):
 testing_campaign = campaign_get_or_create(
     slug="testing-campaign",
     name='Testing campaign',
+    campaign_type__name="Testing campaign",
 )
 
 UserAttendanceRecipe = Recipe(

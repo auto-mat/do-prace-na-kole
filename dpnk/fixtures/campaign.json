@@ -12,6 +12,7 @@
             "minimum_percentage": 66,
             "minimum_rides_base": 25,
             "name": "Testing campaign - last year",
+            "year": 2018,
             "package_depth": 35,
             "package_height": 1,
             "package_weight": 0.25,
@@ -20,11 +21,19 @@
             "slug": "testing-campaign-ly",
             "tracking_number_first": 0,
             "tracking_number_last": 999999999,
+            "campaign_type": 5338,
             "track_required": true,
             "trip_plus_distance": 5
         },
         "model": "dpnk.campaign",
         "pk": 338
+    },
+    {
+        "fields": {
+           "name": "Testing campaign"
+        },
+        "model": "dpnk.campaigntype",
+        "pk": 5338
     },
     {
         "fields": {
@@ -37,6 +46,7 @@
             "mailing_list_enabled": null,
             "mailing_list_id": "12345abcde",
             "minimum_percentage": 66,
+            "year": 2019,
             "minimum_rides_base": 25,
             "name": "Testing campaign",
             "package_depth": 35,
@@ -44,6 +54,7 @@
             "package_weight": 0.25,
             "package_width": 26,
             "previous_campaign": 338,
+            "campaign_type": 5338,
             "slug": "testing-campaign",
             "tracking_number_first": 1111111,
             "tracking_number_last": 999999999,
