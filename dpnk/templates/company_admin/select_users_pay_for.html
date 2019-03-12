@@ -30,8 +30,8 @@
         <th>{% trans "Město" %}</th>
         <th>{% trans "Čas registrace" %}</th>
     </tr>
-    <tr>
     {% for ua in approved %}
+    <tr>
     <td>{{ua.company_admission_fee_intcomma}}</td>
     <td>{{ua.userprofile.user.first_name}}</td>
     <td>{{ua.userprofile.user.last_name}}</td>
@@ -39,8 +39,8 @@
     <td>{{ua.userprofile.user.email}}</td>
     <td>{{ua.team.subsidiary.city}}</td>
     <td>{{ua.created}}</td>
-    {% endfor %}
     </tr>
+    {% endfor %}
 </table>
 {% trans "Celkem schválených" %}: {{total_approved_count}}<br/>
 {% trans "Schválená částka celkém" %}: {{total_approved_amount}} Kč.<br/>
