@@ -10,6 +10,7 @@ sitetrees = (
                     item('Změnit tým', 'zmenit_tym', title_en='Change Team'),
                     item('Triko', 'zmenit_triko', title_en='Change T-shirts'),
                     item('Platba', 'typ_platby', title_en='Payment'),
+                    item('Aplikace', 'application', title_en='Applications'),
                 ],
             ),
             item('Tým', 'team_members', title_en='Team'),
@@ -29,6 +30,7 @@ sitetrees = (
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
                     item('Změnit společnost', 'zmenit_tym', title_en='Change company'),
+                    item('Aplikace', 'application', title_en='Applications'),
                 ],
             ),
             item(
