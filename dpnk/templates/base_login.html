@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% load crispy_forms_tags %}
 
@@ -12,7 +13,8 @@
                <div class="form_head">
                   {% include "lang_switch.html" %}
                   <h1>
-                     {{ campaign.campaign_type.name }}
+                     <img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
+                     {{ campaign.campaign_type.name|upper }}
                   </h1>
                   {% block caption %}
                      {% if title %}
