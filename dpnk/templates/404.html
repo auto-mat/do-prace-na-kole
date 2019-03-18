@@ -1,23 +1,24 @@
-{% extends "base_generic.html" %}
+{% extends "base_login.html" %}
 {% load i18n %}
 
 {% block langchanger %}{% endblock %}
 
-{% block title %}{% trans "DPNK" %} - stránka nenalezena - 404{% endblock %}
-{% block caption %}Stránka nenalezena{% endblock %}
+{% block title %} - stránka nenalezena - 404{% endblock %}
+
+{% block caption %}
+<h1>
+{% trans "Kdopak tu loupe perníček, místo aby sportoval." %}
+</h1>
+{% endblock %}
 
 {% block content %}
 <p>
-{% trans "Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde být měla, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující stránka'>kontakt@dopracenakole.cz</a>" %}
-</p><p>
-<div class='alert alert-danger'>{{ exception }}</div>
-</p><p>
-{% if messages %}
-   <ul class="messages">
-      {% for message in messages %}
-         <li>{{ message }}</li>
-      {% endfor %}
-   </ul>
-{% endif %}
+{% trans "Dejte pozor. Právě bloudíte hlubokým lesem v zóně 404. Vraťte se zpátky na trasu." %}
 </p>
+<div class="holder">
+   <a class="btn" href="{% url 'profil' %}">
+     Chci domů
+  </a>
+</div>
+<br/>
 {% endblock %}
