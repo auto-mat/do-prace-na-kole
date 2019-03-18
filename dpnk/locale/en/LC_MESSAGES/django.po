@@ -3258,9 +3258,13 @@ msgstr ""
 "missing information</a> and <a href=\"%(invitation_url)s\">invite colleagues "
 "to Your team</a>."
 
+#: templates/registration/logged_out.html:6
+msgid "Děkujeme za dnešní luxusní jízdu!"
+msgstr "Thank You for today’s splendid ride."
+
 #: templates/registration/logged_out.html:8
 msgid "Naleštěte si pedály, uvidíme se zase zítra na startovní čáře."
-msgstr ""
+msgstr "See You tomorrow morning – same time!"
 
 #: templates/registration/package.html:7
 msgid "Datum přijetí k sestavení: "
