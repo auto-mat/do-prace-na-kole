@@ -1,11 +1,19 @@
 {% extends "registration/registration_base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Account Activated" %}{% endblock %}
+{% block title %} - {% trans "Účet aktivován" %}{% endblock %}
 
-{% block regcaption %}
+{% block content %}
 <p>
-    {% trans "Váš účet je nyní aktivní." %}
+    {% blocktrans %}
+    Malý krok pro člověka, velká jízda pro cyklistu, běžce, koloběžce či chodce právě začíná.
+    Vítejte ve svém soutěžním profilu!
+    {% endblocktrans %}
+</p><p>
+    {% blocktrans %}
+    A teď alou dokončit registraci. Tedy až si vychutnáte sklenku šampaňského na oslavu podpory udržitelného rozvoje svého města.
+    {% endblocktrans %}
+</p><p>
     {% if not user.is_authenticated %}
     <div class="holder">
       <a class="btn" href="/login">
@@ -20,6 +28,7 @@
     </div>
     {% endif %}
 </p>
+<br/>
 {% endblock %}
 
 

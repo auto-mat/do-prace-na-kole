@@ -51,7 +51,7 @@
 	{% endblock %}
 
 </head>
-<body class="django_administrace {% if campaign %}vsechno_je_to_kampan{% endif %} {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}{% if user.is_authenticated %} authetificated{% else %} notAuthetificated{% endif %}">
+<body class="django_administrace {% if campaign %}vsechno_je_to_kampan{% endif %} {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %} {% if user.is_authenticated %}authetificated{% else %}notAuthetificated{% endif %} {% block body-class %}{% endblock %}">
 {% gtm %}
 {% block body %}{% endblock %}
 <script>
