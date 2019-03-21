@@ -63,6 +63,9 @@ testing_campaign = campaign_get_or_create(
     slug="testing-campaign",
     name='Testing campaign',
     campaign_type__name="Testing campaign",
+    mailing_list_type='campaign_monitor',
+    mailing_list_id='12345abcde',
+    pk=339,
 )
 
 UserAttendanceRecipe = Recipe(
