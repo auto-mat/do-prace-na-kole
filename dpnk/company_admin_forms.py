@@ -140,6 +140,7 @@ class SubsidiaryForm(SubmitMixin, AddressForm):
         company_admin = initial['company_admin']
         ret_val = super().__init__(*args, **kwargs)
         self.fields['city'].queryset = City.objects.filter(cityincampaign__campaign=company_admin.campaign)
+        self.helper.layout.extend(['box_addressee_name', 'box_addressee_telephone', 'box_addressee_email'])
         return ret_val
 
 
