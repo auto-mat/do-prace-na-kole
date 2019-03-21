@@ -310,6 +310,11 @@ urlpatterns = [
         r'^status/$',
         views.status,
     ),
+    url(
+        r'^switch_lang/$',
+        views.SwitchLang.as_view(),
+        name="switch_lang",
+    ),
 
 
     # company admin:

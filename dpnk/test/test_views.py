@@ -2539,6 +2539,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('length_competitions'))
         self.assertContains(response, "<p>161,9&nbsp;km</p>", html=True)
 
+    def test_switch_language(self):
+        self.assertEquals(self.user_attendance.userprofile.language, 'cs')
+        response = self.client.get(reverse('switch_lang') + "?redirect=/&lang=en")
+        self.assertRedirects(response, "/")
+        self.user_attendance.userprofile.refresh_from_db()
+        self.assertEquals(self.user_attendance.userprofile.language, 'en')
+        response = self.client.get(reverse('switch_lang') + "?redirect=/&lang=garbage")
+        self.assertRedirects(response, "/")
+        self.user_attendance.userprofile.refresh_from_db()
+        self.assertEquals(self.user_attendance.userprofile.language, 'en')
+
 
 @override_settings(
     SITE_ID=2,

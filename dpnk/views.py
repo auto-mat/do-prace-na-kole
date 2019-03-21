@@ -94,6 +94,7 @@ from .forms import (
     RegistrationProfileUpdateForm,
     TeamSettingsForm,
     TrackUpdateForm,
+    UserProfileLanguageUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
 from .views_mixins import (
@@ -1957,3 +1958,15 @@ def status(request):
     status_page = str(datetime.datetime.now()) + '\n'
     status_page += socket.gethostname()
     return HttpResponse(status_page)
+
+
+class SwitchLang(LoginRequiredMixin, View):
+    def dispatch(self, *args, **kwargs):
+        user_profile = UserProfile.objects.get(user=self.request.user)
+        form = UserProfileLanguageUpdateForm(
+            data={"language": self.request.GET.get('lang', None)},
+            instance=user_profile,
+        )
+        if form.is_valid():
+            form.save()
+        return redirect(self.request.GET['redirect'])
