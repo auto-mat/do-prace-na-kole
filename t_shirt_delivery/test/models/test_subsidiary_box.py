@@ -77,6 +77,7 @@ class TestSubsidiaryBox(TestCase):
             package_width=0.5,
             package_height=0.5,
             package_depth=0.5,
+            year=2018,
         )
         subsidiary_box = mommy.make(
             'SubsidiaryBox',
@@ -98,7 +99,7 @@ class TestSubsidiaryBox(TestCase):
         self.assertEqual(subsidiary_box.get_volume(), 0.25)
 
     def test_get_representative_user_attendance(self):
-        campaign = CampaignRecipe.make()
+        campaign = CampaignRecipe.make(year=2018)
         user_attendance = UserAttendanceRecipe.make(
             campaign=campaign,
             userprofile__user__first_name="Foo",
@@ -130,7 +131,7 @@ class TestSubsidiaryBox(TestCase):
         )
 
     def test_get_representative_user_attendance_subsidiary_addressee(self):
-        campaign = CampaignRecipe.make()
+        campaign = CampaignRecipe.make(year=2018)
         subsidiary_box = mommy.make(
             'SubsidiaryBox',
             subsidiary__box_addressee_name="Foo name",
@@ -148,7 +149,7 @@ class TestSubsidiaryBox(TestCase):
         )
 
     def test_get_representative_user_attendance_no_package_transaction(self):
-        campaign = CampaignRecipe.make()
+        campaign = CampaignRecipe.make(year=2018)
         subsidiary_box = mommy.make(
             'SubsidiaryBox',
             teampackage_set=[
@@ -168,7 +169,7 @@ class TestSubsidiaryBox(TestCase):
         )
 
     def test_get_representative_user_attendance_no_teampackage(self):
-        campaign = CampaignRecipe.make()
+        campaign = CampaignRecipe.make(year=2018)
         subsidiary_box = mommy.make(
             'SubsidiaryBox',
             delivery_batch__campaign=campaign,

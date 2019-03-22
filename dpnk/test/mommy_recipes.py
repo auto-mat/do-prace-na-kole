@@ -20,7 +20,7 @@
 import datetime
 
 
-from dpnk.models import Campaign, UserAttendance
+from dpnk.models import Campaign, CampaignType, UserAttendance
 
 from model_mommy.recipe import Recipe, related
 
@@ -42,9 +42,24 @@ RegistrationPhaseRecipe = Recipe(
     date_from=None,
     date_to=None,
 )
+CampaignTypeRecipe = Recipe("dpnk.CampaignType")
+
+
+def campaign_type_get_or_create(**kwargs):
+    def get_campaign_type():
+        try:
+            campaign_type = CampaignType.objects.get(**kwargs)
+        except CampaignType.DoesNotExist:
+            campaign_type = CampaignTypeRecipe.make(**kwargs)
+        return campaign_type
+
+    return get_campaign_type
+
+
 CampaignRecipe = Recipe(
     "Campaign",
     phase_set=related(PhaseRecipe, EntryPhaseRecipe, RegistrationPhaseRecipe),
+    campaign_type=campaign_type_get_or_create(name="Testing campaign"),
 )
 
 
@@ -62,9 +77,9 @@ def campaign_get_or_create(**kwargs):
 testing_campaign = campaign_get_or_create(
     slug="testing-campaign",
     name='Testing campaign',
-    campaign_type__name="Testing campaign",
     mailing_list_type='campaign_monitor',
     mailing_list_id='12345abcde',
+    year=2019,
     pk=339,
 )
 

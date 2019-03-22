@@ -43,7 +43,15 @@ import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
-from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe, UserAttendanceRecipe, campaign_get_or_create, testing_campaign
+from .mommy_recipes import (
+    CampaignRecipe,
+    PriceLevelRecipe,
+    UserAttendancePaidRecipe,
+    UserAttendanceRecipe,
+    campaign_get_or_create,
+    campaign_type_get_or_create,
+    testing_campaign,
+)
 
 
 @override_settings(
@@ -698,7 +706,7 @@ class RegistrationPhaseTests(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
-        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign")
+        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type_get_or_create(name="Testing campaign"))
 
     def test_dpnk_registration_no_phase(self):
         response = self.client.get(reverse('registrace'))
@@ -1738,7 +1746,7 @@ class ChangeTeamViewTests(TestCase):
 
     def test_get_previous(self):
         """ Test that team with same name as in last year is preselected """
-        previous_campaign = CampaignRecipe.make()
+        previous_campaign = CampaignRecipe.make(year=2018)
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
         UserAttendanceRecipe.make(
@@ -1763,7 +1771,7 @@ class ChangeTeamViewTests(TestCase):
 
     def test_get_previous_none_team(self):
         """ Test that team with same name asi in last year doesn't exist, no team is preselected """
-        previous_campaign = CampaignRecipe.make()
+        previous_campaign = CampaignRecipe.make(year=2018)
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
         UserAttendanceRecipe.make(
@@ -1785,8 +1793,8 @@ class ChangeTeamViewTests(TestCase):
 
     def test_get_previous_different_company(self):
         """ Test that team with same name asi in last year exists, but is in different company, no team is preselected """
-        previous_campaign = CampaignRecipe.make()
-        previous_campaign = CampaignRecipe.make()
+        previous_campaign = CampaignRecipe.make(year=2018)
+        previous_campaign = CampaignRecipe.make(year=2017)
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
         UserAttendanceRecipe.make(

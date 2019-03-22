@@ -36,6 +36,7 @@ class TestBatchCsv(TestCase):
             package_width=0.5,
             package_height=0.5,
             package_depth=0.5,
+            year=2018,
         )
         user_attendance = UserAttendanceRecipe.make(
             campaign=campaign,
