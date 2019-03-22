@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load scribbler_tags %}
 {% load gtm_tags %}
 {% load raven %}
 <!DOCTYPE html>
@@ -53,7 +54,22 @@
 </head>
 <body class="django_administrace {% if campaign %}vsechno_je_to_kampan{% endif %} {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %} {% if user.is_authenticated %}authetificated{% else %}notAuthetificated{% endif %} {% block body-class %}{% endblock %}">
 {% gtm %}
-{% block body %}{% endblock %}
+{% block body %}
+{% block error %}
+   {% if fullpage_error_message %}
+      <div class="alert alert-{% if fullpage_error_level %}{{ fullpage_error_level }}{% else %}danger{% endif %}">
+         {{ fullpage_error_message }}
+      </div>
+   {% else %}
+      {% scribble 'before_content' %}{% endscribble %}
+         {% block content %}
+         {% endblock %}
+         {% block extracontent %}
+         {% endblock %}
+      {% scribble 'after_content' %}{% endscribble %}
+   {% endif %}
+{% endblock %}
+{% endblock %}
 <script>
 	jQuery(document).ready(function($) {  
 		// deactivate unfulfilled links
