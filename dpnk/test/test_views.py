@@ -49,7 +49,7 @@ from .mommy_recipes import (
     UserAttendancePaidRecipe,
     UserAttendanceRecipe,
     campaign_get_or_create,
-    campaign_type_get_or_create,
+    campaign_type,
     testing_campaign,
 )
 
@@ -706,7 +706,7 @@ class RegistrationPhaseTests(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
-        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type_get_or_create(name="Testing campaign"))
+        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type)
 
     def test_dpnk_registration_no_phase(self):
         response = self.client.get(reverse('registrace'))

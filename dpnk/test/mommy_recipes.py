@@ -56,10 +56,13 @@ def campaign_type_get_or_create(**kwargs):
     return get_campaign_type
 
 
+campaign_type = campaign_type_get_or_create(name="Testing campaign")
+
+
 CampaignRecipe = Recipe(
     "Campaign",
     phase_set=related(PhaseRecipe, EntryPhaseRecipe, RegistrationPhaseRecipe),
-    campaign_type=campaign_type_get_or_create(name="Testing campaign"),
+    campaign_type=campaign_type,
 )
 
 
