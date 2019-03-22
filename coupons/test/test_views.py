@@ -23,6 +23,7 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from dpnk.test.mommy_recipes import campaign_type
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
@@ -36,7 +37,7 @@ import settings
 class DiscountCouponViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign")
+        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type)
         mommy.make(
             "dpnk.Phase",
             phase_type="registration",

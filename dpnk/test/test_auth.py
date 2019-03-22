@@ -30,6 +30,8 @@ from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
 
+from .mommy_recipes import campaign_type
+
 
 class TestPasswordForms(ViewsLogonMommy):
     def test_password_recovery(self):
@@ -102,7 +104,6 @@ class TestPasswordForms(ViewsLogonMommy):
         address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
         response1 = self.client.get(address)
         response = self.client.post(response1.url, {"new_password1": "a", "new_password2": "a"})
-        print_response(response)
         self.assertContains(
             response,
             '<strong>Heslo je příliš krátké. Musí mít délku aspoň 6 znaků.</strong>',
@@ -129,7 +130,7 @@ class TestPasswordForms(ViewsLogonMommy):
 
 class TestEmailBackend(TestCase):
     def setUp(self):
-        mommy.make("Campaign", slug='testing-campaign')
+        mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type)
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
 
     def test_login_by_email(self):

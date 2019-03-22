@@ -14,13 +14,23 @@
                   {% include "lang_switch.html" %}
                   <h1>
                      <img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
+                     {% if campaign %}
                      {{ campaign.campaign_type.name|upper }}
+                     {% else %}
+                     {{ request.subdomain|upper }}
+                     {% endif %}
                   </h1>
                   {% block caption %}
                      {% if title %}
                         <h3>
                            {{ title }}
                         </h3>
+                     {% endif %}
+                  {% endblock %}
+                  {% block messages %}
+                     {% include "messages_include.html" %}
+                     {% if message %}
+                        {{ message }}
                      {% endif %}
                   {% endblock %}
                   {% block error %}

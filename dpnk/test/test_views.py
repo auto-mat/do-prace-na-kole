@@ -2160,7 +2160,7 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "Testing User 1")
         self.assertContains(response, "test@test.cz")
         self.assertContains(response, "platba přes firemního koordinátora")
-        self.assertContains(response, "(Platba přijata)")
+        self.assertContains(response, "<div><b>Stav plaby</b>: zaplaceno</div>", html=True)
 
     def test_dpnk_views_track_gpx_file(self):
         address = reverse('upravit_trasu')
