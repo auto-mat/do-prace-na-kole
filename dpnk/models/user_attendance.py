@@ -309,7 +309,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if day:
             return self.get_frequency(day) * 100
         else:
-            return self.frequency * 100
+            frequency = self.frequency if self.frequency is not None else 0
+            return frequency * 100
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
