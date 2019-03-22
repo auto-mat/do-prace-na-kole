@@ -15,7 +15,7 @@ from model_mommy import mommy
 
 from rest_framework.authtoken.models import Token
 
-from .mommy_recipes import PriceLevelRecipe, UserAttendancePaidRecipe, testing_campaign
+from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe
 
 
 @override_settings(
@@ -24,8 +24,18 @@ from .mommy_recipes import PriceLevelRecipe, UserAttendancePaidRecipe, testing_c
     SSLIFY_ADMIN_DISABLE=True,
 )
 class MailingTests(DenormMixin, TestCase):
+    maxDiff = 10000
+
     def setUp(self):
         super().setUp()
+        self.campaign = CampaignRecipe.make(
+            slug="testing-campaign",
+            name='Testing campaign',
+            mailing_list_type='campaign_monitor',
+            mailing_list_id='12345abcde',
+            pk=339,
+            year=2019,
+        )
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
@@ -44,7 +54,7 @@ class MailingTests(DenormMixin, TestCase):
         mommy.make(
             'CompanyAdmin',
             userprofile=self.user_attendance.userprofile,
-            campaign=testing_campaign,
+            campaign=self.campaign,
             company_admin_approved='approved',
         )
 
@@ -56,6 +66,7 @@ class MailingTests(DenormMixin, TestCase):
         self.user_attendance.refresh_from_db()
         self.user_attendance.team.refresh_from_db()
         self.user_attendance.userprofile.user.refresh_from_db()
+        self.campaign.refresh_from_db()
 
     custom_fields = [
         OrderedDict((('Key', 'Mesto'), ('Value', 'testing-city'))),

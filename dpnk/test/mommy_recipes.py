@@ -77,10 +77,7 @@ def campaign_get_or_create(**kwargs):
 testing_campaign = campaign_get_or_create(
     slug="testing-campaign",
     name='Testing campaign',
-    mailing_list_type='campaign_monitor',
-    mailing_list_id='12345abcde',
     year=2019,
-    pk=339,
 )
 
 UserAttendanceRecipe = Recipe(
