@@ -16,7 +16,7 @@
       {{ team_member.userprofile }}
    </h2>
    {% if include_approve_buttons %}
-   {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.userprofile.user.id %}
+   {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.id %}
    {% endif %}
    <div class="userdata">
          <div>
