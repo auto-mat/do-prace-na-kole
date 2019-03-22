@@ -403,7 +403,7 @@ class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
     def test_payment_type_string_none_type(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.representative_payment = models.Payment(pay_type=None)
-        self.assertEqual(user_attendance.payment_type_string(), None)
+        self.assertEqual(user_attendance.payment_type_string(), "žádná platba")
 
 
 class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
