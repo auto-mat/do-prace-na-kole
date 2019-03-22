@@ -1416,7 +1416,6 @@ class ViewsTestsLogon(ViewsLogon):
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
         response = self.client.get(reverse('company_admin_pay_for_users'))
-        print_response(response)
         self.assertContains(
             response,
             '<tr>'
