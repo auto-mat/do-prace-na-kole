@@ -812,7 +812,6 @@ class RegistrationViewTests(TestCase):
         user = models.User.objects.get(email='test1@test.cz')
         user.is_active = True
         user.save()
-        response = self.client.post(reverse('upravit_profil'), post_data, follow=True)
         self.assertContains(
             response,
             '<div class="alert alert-danger">Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.</div>',
