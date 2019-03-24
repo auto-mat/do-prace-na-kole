@@ -1948,11 +1948,12 @@ def status(request):
 
 class SwitchLang(LoginRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
-        user_profile = UserProfile.objects.get(user=self.request.user)
-        form = UserProfileLanguageUpdateForm(
-            data={"language": self.request.GET.get('lang', None)},
-            instance=user_profile,
-        )
-        if form.is_valid():
-            form.save()
+        if not self.request.user.is_anonymous:
+            user_profile = UserProfile.objects.get(user=self.request.user)
+            form = UserProfileLanguageUpdateForm(
+                data={"language": self.request.GET.get('lang', None)},
+                instance=user_profile,
+            )
+            if form.is_valid():
+                form.save()
         return redirect(self.request.GET['redirect'])
