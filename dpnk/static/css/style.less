@@ -150,6 +150,7 @@ form{
 ._subsidiary{
   margin-top:@wg;
   h5{
+    margin-left:@wg;
     margin-top:@wg;
   }
   ._user{
@@ -467,17 +468,45 @@ label{
     }
   }
 }
+._subs_item{
+  margin-top:@wg;
+  padding:@wg;
+  border-top:1px solid @quartus;
+  background:darken(#fff, 5%);
+  .btn{
+    margin-top:@wg/2;
+  }
+}
+.exportme{
+  background-color:@lightgrey;
+  padding:@wg;
+}
+._team{
+  display:flex;
+}
 .member-item{
-  margin:@wg 0;
-  h2{
+  background:darken(@white, 5%);
+  display: inline-block;
+  box-shadow: inset 0 0 2px #fff;
+  h4{
+    padding:0 @wg;
     text-align:center;
+    word-wrap: break-word;
+    min-height: 3rem;
+  }
+  .user_head{
+    background-color:@quintus;
+    color:#fff;
+    padding:@wg*2 0 @wg 0;
+    box-shadow: inset 0 0 2px #fff;
   }
   .userdata{
     border-top:1px solid @quartus;
-    padding:@wg @wg/2;
-    margin:0 @wg/2;
-    background:darken(@white, 5%);
+    padding:@wg;
     font-size:.8rem;
+    div{
+      margin-bottom:@wg/2;
+    }
   }
   .actions{
     padding:0 @wg*.62;
@@ -704,6 +733,9 @@ label{
       padding:0;
       width:20%;
       margin-left:@wg;
+      a{
+        box-shadow: 0 0 1px #fff;
+      }
     }
   }
 }

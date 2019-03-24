@@ -5,21 +5,30 @@
 {% load softhyphen_tags %}
 
 {% block content %}
-<table class="table table-bordered" id="team_members_table">
-   <tr>
-      <th>{% trans "Jmé&shy;no" %}</th>
-      <th>{% trans "E&shy;mail" %}</div></th>
-      <th>{% trans "Člen&shy;ství v tý&shy;mu" %}</th>
-      <th>{% trans "Pla&shy;tba" %}</th>
-   </tr>
-   {% for member in team_members %}
+   <table class="table table-bordered" id="team_members_table">
       <tr>
-      <td>{{ member|softhyphen:"cs-CZ" }}</td>
-      <td><div style="word-break: break-all;">{{ member.userprofile.user.email }}</div></td>
-      <td>
-         {{ member.get_approved_for_team_display|softhyphen:"cs-CZ" }}
-      </td>
-      <td><span class="text-{{ member.payment.class }}">{{ member.payment.status_description|softhyphen:"cs-CZ" }}</span></td>
-   {% endfor %}
-</table>
+         <th>{% trans "Jmé&shy;no" %}</th>
+         <th>{% trans "E&shy;mail" %}</div></th>
+         <th>{% trans "Člen&shy;ství v tý&shy;mu" %}</th>
+         <th>{% trans "Pla&shy;tba" %}</th>
+      </tr>
+      {% for member in team_members %}
+         <tr>
+            <td>
+               {{ member|softhyphen:"cs-CZ" }}
+            </td>
+            <td>
+               <div style="word-break: break-all;">
+                  {{ member.userprofile.user.email }}
+               </div>
+            </td>
+            <td>
+               {{ member.get_approved_for_team_display|softhyphen:"cs-CZ" }}
+            </td>
+            <td>
+               <span class="text-{{ member.payment.class }}">{{ member.payment.status_description|softhyphen:"cs-CZ" }}</span>
+            </td>
+         </tr>
+      {% endfor %}
+   </table>
 {% endblock %}

@@ -3,35 +3,44 @@
 {% load i18n %}
 
 {% block form %}
-<b>{{ company }}</b><br/>
-{{ company_address }}
-<div class="_subsidiary">
-   {% for subsidiary in subsidiaries.all %}
-      <div>
-         {{ subsidiary }}
-      </div>
-      <a class="btn btn-default btn-sm" href="{% url 'edit_subsidiary' subsidiary.pk %}">
-         {% trans "upravit" %}
-      </a>
-      <div>
-         {% for team in subsidiary.teams.all %}
-            <div class="_team">
+   <div class="_subs_item">
+      <h1>
+         {{ company }}
+      </h1>
+      {{ company_address }}
+   </div>
+   <div class="_subsidiary">
+      {% for subsidiary in subsidiaries.all %}
+         <div class="_subs_item">
+            <h3>
+               {{ subsidiary }}
+            </h3>
+            <a class="btn btn-default btn-sm" href="{% url 'edit_subsidiary' subsidiary.pk %}">
+               {% trans "upravit" %}
+            </a>
+         </div>
+         <div>
+            {% for team in subsidiary.teams.all %}
                {% if team.campaign == campaign %}
                   <h5>
                      {{ team.name }}
                   </h5>
-                  <div>
-                  {% for team_member in team.users.all %}
-                     {% include "registration/team_member_card.html" with include_payment_state=True%}
-                  {% endfor %}
                {% endif %}
-            </div>
-         {% endfor %}
+               <div class="_team row">
+                  {% if team.campaign == campaign %}
+                     {% for team_member in team.users.all %}
+                        {% include "registration/team_member_card.html" with include_payment_state=True%}
+                     {% endfor %}
+                  {% endif %}
+               </div>
+            {% endfor %}
+         </div>
+      {% endfor %}
+   </div>
+   <div class="exportme">
+      {% trans "Exportovat účastníky za mojí společnost" %}:
+      <a class="btn btn-default btn-sm" href="{% url "company_export" extension="csv" %}">CSV</a>
+      <a class="btn btn-default btn-sm" href="{% url "company_export" extension="ods" %}">ODS</a>
+      <a class="btn btn-default btn-sm" href="{% url "company_export" extension="xls" %}">XLS</a>
       </div>
-   {% endfor %}
-</div>
-{% trans "Exportovat účastníky za mojí společnost" %}: <br>
-<a class="btn btn-default btn-sm" href="{% url "company_export" extension="csv" %}">CSV</a>
-<a class="btn btn-default btn-sm" href="{% url "company_export" extension="ods" %}">ODS</a>
-<a class="btn btn-default btn-sm" href="{% url "company_export" extension="xls" %}">XLS</a>
 {% endblock %}
