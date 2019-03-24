@@ -34,11 +34,6 @@
                      {% endif %}
                   {% endblock %}
                   {% block error %}
-                  {% block content %}
-                  {% if opening_message %}
-                  {{ opening_message }}
-                  {% endif %}
-                  {% endblock %}
                   {{ block.super }}
                   {% endblock %}
                </div>

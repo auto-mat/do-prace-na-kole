@@ -63,6 +63,9 @@
    {% else %}
       {% scribble 'before_content' %}{% endscribble %}
          {% block content %}
+            {% if opening_message %}
+            {{ opening_message }}
+            {% endif %}
          {% endblock %}
          {% block extracontent %}
          {% endblock %}
