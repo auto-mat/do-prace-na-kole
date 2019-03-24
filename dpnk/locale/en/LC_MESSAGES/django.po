@@ -748,7 +748,7 @@ msgstr ""
 
 #: forms.py:424
 msgid "Zadejte svůj e-mail"
-msgstr ""
+msgstr "Fill in your e-mail address"
 
 #: forms.py:425 forms.py:474
 msgid ""
@@ -757,12 +757,13 @@ msgstr ""
 
 #: forms.py:475
 msgid "Vyberte heslo"
-msgstr ""
+msgstr "Choose password"
 
 #: forms.py:477
 msgid ""
 "Zadejte vybrané heslo ještě jednou. Teď máte jistotu, že je napsané správně."
 msgstr ""
+"Please, fill in your password once more. Now we are sure, that it is correct."
 
 #: forms.py:484
 #, python-format
