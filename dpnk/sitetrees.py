@@ -29,7 +29,7 @@ sitetrees = (
             item('Zapsat jízdu!', 'calendar', title_en='Enter ride!'),
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
-                    item('Změnit společnost', 'zmenit_tym', title_en='Change Company'),
+                    item('Změnit společnost', 'zmenit_tym', title_en='Change Company', title_dsnkcs='Změnit školu'),
                     item('Aplikace', 'application', title_en='Applications'),
                 ],
             ),
@@ -73,7 +73,7 @@ sitetrees = (
             item(
                 'Firemní koordinátor', None, title_en='Company Coordinator', children=[
                     item('Pobočky', 'company_structure', title_en='Branch Offices'),
-                    item('Adresa společnosti', 'edit_company', title_en='Company Address'),
+                    item('Adresa společnosti', 'edit_company', title_en='Company Address', title_dsnkcs='Adresa školy'),
                     item('Startovné', 'company_admin_pay_for_users', title_en='Participant Fee'),
                     item('Faktury', 'invoices', title_en='Invoices'),
                     item('Soutěže', 'company_admin_related_competitions', title_en='Competitions'),
