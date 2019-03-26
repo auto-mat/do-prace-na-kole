@@ -26,6 +26,7 @@ from colorfield.fields import ColorField
 
 from denorm import denormalized, depend_on_related
 
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
@@ -320,6 +321,16 @@ class Campaign(Pricable, models.Model):
         default='',
         on_delete=models.SET_NULL,
     )
+
+    def get_language_prefix(self):
+        if self.language_prefixes == 'dpnk':
+            return ''
+        return self.language_prefixes
+
+    def get_available_languages(self):
+        if self.language_prefixes == 'dpnk':
+            return ((k, v) for k, v in settings.LANGUAGES if len(k) == 2)
+        return ((k, v) for k, v in settings.LANGUAGES if k.startswith(self.get_language_prefix()))
 
     def sitetree_postfix_maintree(self):
         if self.sitetree_postfix:

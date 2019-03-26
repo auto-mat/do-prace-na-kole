@@ -19,7 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.sites.models import Site
 from django.http import Http404
+from django.utils import translation
 from django.utils.deprecation import MiddlewareMixin
+from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Campaign, UserAttendance
@@ -54,6 +56,13 @@ class UserAttendanceMiddleware(MiddlewareMixin):
 
         try:
             request.campaign = Campaign.objects.get(slug=campaign_slug)
+
+            # Change language, if not available in campaign
+            available_language_codes = list(zip(*request.campaign.get_available_languages()))[0]
+            if get_language() not in available_language_codes:
+                new_language = available_language_codes[0]
+                translation.activate(new_language)
+                request.session[translation.LANGUAGE_SESSION_KEY] = new_language
         except Campaign.DoesNotExist:
             if '/admin/' not in request.path:  # We want to make admin accessible to be able to set campaigns.
                 if campaign_slug is None:
