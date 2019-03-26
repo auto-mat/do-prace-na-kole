@@ -88,9 +88,23 @@ class ViewsTestsLogon(TestCase):
         self.assertRedirects(response, reverse("typ_platby"), target_status_code=200)
 
     def test_dpnk_t_shirt_size_shipped(self):
-        mommy.make("PackageTransaction", status=20002, t_shirt_size=self.t_shirt_size, user_attendance=self.user_attendance)
+        mommy.make(
+            "PackageTransaction",
+            status=20002,
+            t_shirt_size=self.t_shirt_size,
+            user_attendance=self.user_attendance,
+            team_package__box__carrier_identification=123456,
+            team_package__box__subsidiary=mommy.make(
+                "Subsidiary",
+                address_street="Foo street",
+                address_city="Foo City",
+                city__name="Foo c City",
+                company=mommy.make("Company", name="Foo company"),
+            ),
+        )
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "Vaše tričko již je na cestě k Vám, už se na něj můžete těšit.", status_code=403)
+        self.assertContains(response, "<h2>Vaše triko je již na cestě</h2>", html=True)
+        self.assertContains(response, "<pre>Foo company Foo street, Foo City - Foo c City</pre>", html=True)
 
     @patch('slumber.API')
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_mock):
@@ -135,5 +149,4 @@ class ViewsTestsLogon(TestCase):
             delivery_to="2019-03-01",
         )
         response = self.client.get(reverse('zmenit_triko'))
-        print_response(response)
         self.assertContains(response, 'Účastníkům zaregistrovaným do 1. ledna 2019')

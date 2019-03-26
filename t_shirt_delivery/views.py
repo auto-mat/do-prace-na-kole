@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import datetime
 
 from braces.views import LoginRequiredMixin
 
@@ -25,6 +26,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 
 from dpnk import exceptions
@@ -33,6 +35,24 @@ from dpnk.views import RegistrationViewMixin
 
 from .forms import TShirtUpdateForm
 from .models import DeliveryBatchDeadline
+
+
+class TShirtDeliveryView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
+    template_name = 'registration/tshirt_delivery.html'
+    title = _("Vaše triko je již na cestě")
+    registration_phase = "zmenit_triko"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            batch_created = self.user_attendance.package_shipped().team_package.box.delivery_batch.created
+            context['batch_created'] = batch_created
+            batch_delivery = DeliveryBatchDeadline.objects.previous(batch_created, campaign=self.user_attendance.campaign).delivery_to
+            if datetime.datetime.now() <= batch_delivery:
+                context['batch_delivery'] = batch_delivery.date()
+        except DeliveryBatchDeadline.DoesNotExist:
+            pass
+        return context
 
 
 class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
@@ -81,12 +101,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                     error_level="warning",
                 )
             if request.user_attendance.package_shipped():
-                raise exceptions.TemplatePermissionDenied(
-                    _("Vaše tričko již je na cestě k Vám, už se na něj můžete těšit."),
-                    self.template_name,
-                    title=_("Hurá!"),
-                    error_level="success",
-                )
+                raise NotImplementedError("This should never be reached - it should be already treated in view function")
 
             if not request.user_attendance.campaign.has_any_tshirt:
                 if request.user_attendance.has_admission_fee():
@@ -94,3 +109,9 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 else:
                     return redirect(reverse('profil'))
         return super().dispatch(request, *args, **kwargs)
+
+
+def tshirt_view(request, *args, **kwargs):
+    if request.user_attendance.package_shipped():
+        return TShirtDeliveryView.as_view()(request, *args, **kwargs)
+    return ChangeTShirtView.as_view()(request, *args, **kwargs)

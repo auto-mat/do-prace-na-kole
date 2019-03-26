@@ -10,6 +10,9 @@ class DeadlineQuerySet(models.QuerySet):
     def forthcoming(self, campaign=None):
         return self.filter(campaign=campaign, deadline__gte=datetime.datetime.now()).earliest('deadline')
 
+    def previous(self, date, campaign=None):
+        return self.filter(campaign=campaign, deadline__lte=date).latest('deadline')
+
 
 @with_author
 class DeliveryBatchDeadline(models.Model):

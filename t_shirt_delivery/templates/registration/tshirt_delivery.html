@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if user_attendance.package_shipped %}
+   <br/>
+   {% blocktrans %}
+      Snažíme se šetřit životní prostředí, a proto trika posíláme vždy hromadně. Nejbližší zásilku, ve které bude i vaše triko odešleme co nejdříve.
+   {% endblocktrans %}
+   {% if batch_delivery %}
+      {% blocktrans %}Balíček dorazí kolem {{ batch_delivery }} na následující adresu.{% endblocktrans %}
+   {% else %}
+      {% blocktrans %}Balíček by každou chvílí měl dorazit na následující adresu.{% endblocktrans %}
+   {% endif %}
+   <br/>
+   <br/>
+   <pre>
+   {% if user_attendance.package_shipped.team_package.box.subsidiary.box_addressee_name %}{{ user_attendance.package_shipped.team_package.box.subsidiary.box_addressee_name }}{% endif %}
+   {{ user_attendance.package_shipped.team_package.box.subsidiary.company }}
+   {{ user_attendance.package_shipped.team_package.box.subsidiary }}
+   </pre>
+   {% if user_attendance.package_shipped.box_tracking_link %}
+      {% trans "Zásilku můžete sledovat pomocí trackovacího čísla" %} {{ user_attendance.package_shipped.box_tracking_link }}.
+   {% endif %}
+{% endif %}
+{% endblock %}

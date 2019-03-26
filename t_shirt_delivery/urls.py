@@ -27,7 +27,7 @@ from . import admin_views, views
 urlpatterns = [
     url(
         r'^zmenit_triko/$',
-        views.ChangeTShirtView.as_view(),
+        views.tshirt_view,
         {'success_url': 'typ_platby'},
         name="zmenit_triko",
     ),
