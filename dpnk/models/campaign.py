@@ -382,6 +382,15 @@ class Campaign(Pricable, models.Model):
             'payment_created',
         ).distinct()
 
+    def get_complementary_school_campaign(self):
+        return Campaign.objects.get(year=self.year, campaign_type__slug='skoly')
+
+    def get_complementary_main_campaign(self):
+        return Campaign.objects.get(year=self.year, campaign_type__slug='dpnk')
+
+    def get_base_url(self, request=None):
+        return util.get_base_url(request, self.slug)
+
     def get_directions(self):
         if self.recreational:
             return ('trip_to', 'trip_from', 'recreational')

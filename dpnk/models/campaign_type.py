@@ -9,6 +9,11 @@ class CampaignType(models.Model):
         max_length=60,
         null=False,
     )
+    slug = models.SlugField(
+        unique=True,
+        verbose_name="Identifikátor typu kampaně",
+        blank=True,
+    )
 
     def __str__(self):
         return self.name
