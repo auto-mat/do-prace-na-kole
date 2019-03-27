@@ -433,7 +433,7 @@ msgstr ""
 #: company_admin_views.py:158
 #, python-format
 msgid "Než schválíte startovné za Vaše zaměstnance, %s."
-msgstr ""
+msgstr "Než schválíte startovné za Vaše žáky, %s."
 
 #: company_admin_views.py:161
 msgid "vyplňte prosím IČO společnosti"
@@ -790,6 +790,10 @@ msgid ""
 "ustanovit zástupce, který za ní bude schvalovat platby ve Vaší organizaci."
 "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"
 msgstr ""
+"Váše škola {employer} nemá zvoleného firemního koordinátora nebo "
+"neumožňuje platbu za žáky. Vaše organizace bude muset nejprve "
+"ustanovit zástupce, který za ní bude schvalovat platby ve Vaší organizaci."
+"<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"
 
 #: forms.py:621
 msgid "Zaplatím běžné startovné."
@@ -1289,11 +1293,11 @@ msgstr "Schválena funkce koordinátora školy"
 
 #: models/company_admin.py:63
 msgid "Zaměstnanecká pozice"
-msgstr ""
+msgstr "Pozice ve škole"
 
 #: models/company_admin.py:64
 msgid "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"
-msgstr "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"
+msgstr "Napište nám prosím, jakou zastáváte ve Vaší škole pozici"
 
 #: models/company_admin.py:74
 msgid "Koordinovaná organizace"
@@ -1309,7 +1313,7 @@ msgstr ""
 
 #: models/company_admin.py:100
 msgid "Uživatel potvrdil, že bude plati za zaměstnance."
-msgstr ""
+msgstr "Uživatel potvrdil, že bude plati za žáky."
 
 #: models/competition.py:53
 msgid "Výkonnost"
@@ -3172,7 +3176,7 @@ msgstr ""
 
 #: templates/registration/payment_type.html:76
 msgid "Platba startovného zaměstnavatelem"
-msgstr ""
+msgstr "Platba startovného školou"
 
 #: templates/registration/payment_type.html:79
 msgid "Startovné za mě platí: "
@@ -3191,6 +3195,8 @@ msgid ""
 "Je nám líto. Váš zaměstnavatel buď nemá zvoleného firemního koordinátora "
 "nebo neumožňuje platbu startovného."
 msgstr ""
+"Je nám líto. Váše škola buď nemá zvoleného školního koordinátora "
+"nebo neumožňuje platbu startovného."
 
 #: templates/registration/payment_type.html:87
 msgid "Chci se sám stát koordinátorem své organizace."
@@ -3992,6 +3998,14 @@ msgid ""
 "na vděk svých kolegů a <a href='http://www.dopracenakole.cz/firemni-"
 "koordinator'>velkou moc</a>, se kterou přichází velká zodpovědost.</p>"
 msgstr ""
+"<p>Chcete se stát velitelem svého školního týmu? Nemusíte aktivně soutěžit, "
+"staňte se školním koordinátorem. </p><p>Pomáhejte žákům ze svého týmu se "
+"všemi náležitostmi ohledně uhrazení startovného.</p><p>Vaší úlohou bude "
+"požádat školu, aby startovné za Váš tým uhradil. Poté zajistíte "
+"hromadnou platbu přes fakturu. <a href='http://www.dopracenakole.cz/firemni-"
+"koordinator'>Jak na to?</a>.</p><p>Nezůstanete bez odměny. Těšit se můžete "
+"na vděk svých kolegů a <a href='http://www.dopracenakole.cz/firemni-"
+"koordinator'>velkou moc</a>, se kterou přichází velká zodpovědost.</p>"
 
 #: views_mixins.py:84
 msgid ""
