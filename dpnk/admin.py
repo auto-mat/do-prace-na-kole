@@ -1325,6 +1325,7 @@ class TShirtSizeInline(SortableInlineAdminMixin, TranslationTabularInline):
 class CampaignTypeAdmin(admin.ModelAdmin):
     list_display = (
         'name',
+        'slug',
     )
 
 
