@@ -61,23 +61,15 @@ sitetrees = (
         ],
     ),
     tree(
-        'unlogged_menu', 'Menu pro nezalogované', items=[
-            item('Přihlásit', 'login', title_en='Login'),
-            item('Registrovat', 'registration_access', title_en='Register'),
-            item('Registrovat firemního koordinátora', 'logout', title_en='Register Company Coordinator'),
-            item('Zapomenuté heslo', 'password_reset', title_en='Forgotten Password'),
-        ],
-    ),
-    tree(
         'company_coordinator_menu', 'Menu firemního koordinátora', items=[
             item(
-                'Firemní koordinátor', None, title_en='Company Coordinator', children=[
+                'Firemní koordinátor', None, title_en='Company Coordinator', title_dsnkcs="Školní koordinátor", children=[
                     item('Pobočky', 'company_structure', title_en='Branch Offices'),
                     item('Adresa společnosti', 'edit_company', title_en='Company Address', title_dsnkcs='Adresa školy'),
                     item('Startovné', 'company_admin_pay_for_users', title_en='Participant Fee'),
                     item('Faktury', 'invoices', title_en='Invoices'),
                     item('Soutěže', 'company_admin_related_competitions', title_en='Competitions'),
-                    item('Firemní soutěže', 'company_admin_competitions', title_en='Company Competitions'),
+                    item('Firemní soutěže', 'company_admin_competitions', title_en='Company Competitions', title_dsnkcs="Školní soutěže"),
                     item('Vypsat soutěž', 'company_admin_competition', title_en='Enroll Competition'),
                 ],
             ),
