@@ -394,10 +394,16 @@ class Campaign(Pricable, models.Model):
         ).distinct()
 
     def get_complementary_school_campaign(self):
-        return Campaign.objects.get(year=self.year, campaign_type__slug='skoly')
+        try:
+            return Campaign.objects.get(year=self.year, campaign_type__slug='skoly')
+        except Campaign.DoesNotExist:
+            return None
 
     def get_complementary_main_campaign(self):
-        return Campaign.objects.get(year=self.year, campaign_type__slug='dpnk')
+        try:
+            return Campaign.objects.get(year=self.year, campaign_type__slug='dpnk')
+        except Campaign.DoesNotExist:
+            return None
 
     def get_base_url(self, request=None):
         return util.get_base_url(request, self.slug)

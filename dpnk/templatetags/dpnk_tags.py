@@ -180,7 +180,8 @@ def change_lang(context, lang=None, *args, **kwargs):
 
 @register.simple_tag(takes_context=True)
 def campaign_base_url(context, campaign):
-    return campaign.get_base_url(context['request'])
+    if hasattr(campaign, 'get_base_url'):
+        return campaign.get_base_url(context['request'])
 
 
 @register.simple_tag(takes_context=False)
