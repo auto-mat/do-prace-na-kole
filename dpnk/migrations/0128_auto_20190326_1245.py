@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='campaigntype',
             name='slug',
-            field=models.SlugField(blank=True, unique=True, verbose_name='Identifikátor typu kampaně'),
+            field=models.SlugField(blank=True, verbose_name='Identifikátor typu kampaně'),
         ),
         migrations.AlterField(
             model_name='payment',
