@@ -21,9 +21,9 @@ import html.parser
 import logging
 
 from django import template
-from django.urls import NoReverseMatch, Resolver404, resolve, reverse
+from django.urls import translate_url
 from django.utils.formats import get_format
-from django.utils.translation import activate, get_language
+from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 
 import requests
@@ -159,23 +159,7 @@ def change_lang(context, lang=None, *args, **kwargs):
         return "/%s" % lang
 
     path = context['request'].path
-    try:
-        url_parts = resolve(path)
-    except Resolver404:
-        logger.exception(u'Error in change lang function', extra={'resolved_path': path})
-        return "/%s" % lang
-
-    url = path
-    cur_language = get_language()
-    try:
-        activate(lang)
-        url = reverse(url_parts.view_name, kwargs=url_parts.kwargs)
-    except NoReverseMatch:
-        pass
-    finally:
-        activate(cur_language)
-
-    return "%s" % url
+    return translate_url(path, lang)
 
 
 @register.simple_tag(takes_context=True)
