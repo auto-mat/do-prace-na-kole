@@ -112,6 +112,6 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
 
 def tshirt_view(request, *args, **kwargs):
-    if request.user_attendance.package_shipped():
+    if request.user_attendance and request.user_attendance.package_shipped():
         return TShirtDeliveryView.as_view()(request, *args, **kwargs)
     return ChangeTShirtView.as_view()(request, *args, **kwargs)
