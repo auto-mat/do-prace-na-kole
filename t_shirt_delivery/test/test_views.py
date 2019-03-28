@@ -150,3 +150,9 @@ class ViewsTestsLogon(TestCase):
         )
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(response, 'Účastníkům zaregistrovaným do 1. ledna 2019')
+
+    def test_dpnk_team_invitation_logout(self):
+        self.client.logout()
+        response = self.client.get(reverse('zmenit_triko'))
+        print_response(response)
+        self.assertRedirects(response, "/login?next=/zmenit_triko/", target_status_code=200)
