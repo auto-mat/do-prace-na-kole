@@ -370,7 +370,6 @@ class ChangeLangTests(TestCase):
         request = self.factory.get("test")
         context = Context({'request': request})
         response = template.render(context)
-        mock_logger.exception.assert_called_with('Error in change lang function', extra={'resolved_path': '/test'})
         self.assertHTMLEqual(response, '/en')
 
     def test_change_lang_request_no_reverse_match(self):

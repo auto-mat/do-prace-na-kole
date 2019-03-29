@@ -11,7 +11,9 @@
          <div class="col-12 offset-sm-3 col-sm-9 content">
             <div class="inner">
                <div class="form_head">
+                  {% block langchanger %}
                   {% include "lang_switch.html" %}
+                  {% endblock %}
                   <h1>
                      <img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
                      {% if campaign %}
