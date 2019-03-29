@@ -522,7 +522,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def clean(self):
         if self.team and self.approved_for_team != 'denied':
-            team_members_count = self.team.undenied_members().exclude(pk=self.pk).count() + 1
+            team_members_count = self.team.members().exclude(pk=self.pk).count() + 1
             if self.team.campaign.too_much_members(team_members_count):
                 raise ValidationError({'team': _("Tento tým již má plný počet členů")})
 
