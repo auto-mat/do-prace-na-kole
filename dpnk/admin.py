@@ -165,6 +165,16 @@ class DontValidateCompnayFieldsMixin(object):
 
 
 class CompanyForm(DontValidateCompnayFieldsMixin, forms.ModelForm):
+    allow_duplicate_ico = forms.BooleanField(
+        label=_("Umožnit uložení duplicitního IČO"),
+        required=False,
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.instance.allow_duplicate_ico = cleaned_data.get('allow_duplicate_ico', False)
+        return cleaned_data
+
     class Meta:
         model = models.Company
         fields = "__all__"
