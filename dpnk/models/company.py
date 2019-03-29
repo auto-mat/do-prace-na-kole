@@ -56,15 +56,6 @@ class Company(models.Model):
         null=False,
     )
     address = CompanyAddress()
-    ico = StdNumField(
-        'cz.dic',
-        default=None,
-        verbose_name=_(u"IČO"),
-        validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
-        error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
-        blank=True,
-        null=True,
-    )
     dic = StdNumField(
         'cz.dic',
         verbose_name=_(u"DIČ"),
@@ -79,6 +70,15 @@ class Company(models.Model):
         verbose_name=_(u"Aktivní"),
         default=True,
         null=False,
+    )
+    ico = StdNumField(
+        'cz.dic',
+        default=None,
+        verbose_name=_(u"IČO"),
+        validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
+        error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
+        blank=True,
+        null=True,
     )
 
     def has_filled_contact_information(self):
@@ -99,14 +99,17 @@ class Company(models.Model):
         admins = self.company_admin.filter(campaign=campaign)
         return ", ".join([a.userprofile.telephone for a in admins])
 
-    def clean(self):
+    def clean(self, *args, **kwargs):
         if Company.objects.filter(name__unaccent__iexact=self.name).exclude(pk=self.pk).exists():
             raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
 
-        if self.ico and Company.objects.filter(
-            ico=self.ico,
-            active=True,
-        ).exclude(pk=self.pk).exists():
+        allow_duplicate_ico = getattr(self, 'allow_duplicate_ico', False)
+        if (
+                allow_duplicate_ico is not True and
+                self.ico and
+                not Company.objects.filter(pk=self.pk, ico=self.ico).exists() and  # Don't throw validation error if nothing changed
+                Company.objects.filter(ico=self.ico, active=True).exclude(pk=self.pk).exists()
+        ):
             raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})
 
     def get_related_competitions(self, campaign):

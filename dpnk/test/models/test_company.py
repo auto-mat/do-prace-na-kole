@@ -78,6 +78,15 @@ class TestCompany(TestCase):
         ):
             company.clean()
 
+    def test_clean_ico_error_not_changed(self):
+        """
+        Test that clean method doesn't raises error if company with same ico exists, but nothing changed on self.
+        """
+        models.Company.objects.create(name="Foo", ico=12345)
+        company = models.Company(name="Bar", ico=12345)
+        company.save()
+        company.clean()
+
     def test_clean_ico_self(self):
         """
         Test that clean method doesn't raise error if company with same ico is self.
