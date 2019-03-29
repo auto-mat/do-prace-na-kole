@@ -446,6 +446,11 @@ urlpatterns = [
         django_views.PasswordChangeDoneView.as_view(),
         name='password_change_done',
     ),
+    url(
+        r'^test_errors/$',
+        views.test_errors,
+        name="test_errors",
+    ),
 
     # admin urls
     url(

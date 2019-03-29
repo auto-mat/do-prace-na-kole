@@ -1957,3 +1957,12 @@ class SwitchLang(LoginRequiredMixin, View):
             if form.is_valid():
                 form.save()
         return redirect(self.request.GET['redirect'])
+
+
+def test_errors(request):
+    logger.info('Testing info message', extra={'test': 'foobar'})
+    logger.debug('Testing debug message', extra={'test': 'foobar'})
+    logger.warning('Testing warning message', extra={'test': 'foobar'})
+    logger.exception('Testing exception message', extra={'test': 'foobar'})
+    logger.error('Testing error message', extra={'test': 'foobar'})
+    return HttpResponse("Errors send")
