@@ -370,7 +370,7 @@ class ChangeLangTests(TestCase):
         request = self.factory.get("test")
         context = Context({'request': request})
         response = template.render(context)
-        self.assertHTMLEqual(response, '/en')
+        self.assertHTMLEqual(response, '/test')
 
     def test_change_lang_request_no_reverse_match(self):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
