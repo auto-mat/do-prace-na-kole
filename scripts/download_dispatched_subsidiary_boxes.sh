@@ -9,8 +9,8 @@ if [ $? -ne 0 ];  then
    echo -e "\n"
 fi
 
-dateFrom="1.04.2018"
-dateTo="20.06.2018"
+dateFrom="1.01.`date +%Y`"
+dateTo="20.06.`date +%Y`"
 
 curl "http://online.gls-czech.com/login.php" -d "username=$username" -d "password=$password" -d "lessersecurity=on"  -c cookies.txt -b cookies.txt
 
