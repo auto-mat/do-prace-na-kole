@@ -30,15 +30,15 @@
         <th>{% trans "Město" %}</th>
         <th>{% trans "Čas registrace" %}</th>
     </tr>
-    {% for ua in approved %}
+    {% for tr in approved %}
     <tr>
-    <td>{{ua.company_admission_fee_intcomma}}</td>
-    <td>{{ua.userprofile.user.first_name}}</td>
-    <td>{{ua.userprofile.user.last_name}}</td>
-    <td>{% if ua.userprofile.nickname %}{{ua.userprofile.nickname}}{% endif %}</td>
-    <td>{{ua.userprofile.user.email}}</td>
-    <td>{{ua.team.subsidiary.city}}</td>
-    <td>{{ua.created}}</td>
+    <td>{{tr.amount}}</td>
+    <td>{{tr.user_attendance.userprofile.user.first_name}}</td>
+    <td>{{tr.user_attendance.userprofile.user.last_name}}</td>
+    <td>{% if tr.user_attendance.userprofile.nickname %}{{tr.user_attendance.userprofile.nickname}}{% endif %}</td>
+    <td>{{tr.user_attendance.userprofile.user.email}}</td>
+    <td>{{tr.user_attendance.team.subsidiary.city}}</td>
+    <td>{{tr.user_attendance.created}}</td>
     </tr>
     {% endfor %}
 </table>
