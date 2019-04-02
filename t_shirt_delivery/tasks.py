@@ -37,7 +37,10 @@ def update_dispatched_boxes(self):
     my_env["username"] = settings.GLS_USERNAME
 
     subprocess.call("scripts/download_dispatched_subsidiary_boxes.sh", env=my_env)
-    dataset = tablib.Dataset().load(open("dispatched_subsidiary_boxes_only_dispatched.csv").read())
-    print(dataset)
+    dataset = tablib.Dataset().load(open("dispatched_subsidiary_boxes.csv").read())
     for carrier_identification, box_id, dispatched in dataset:
-        SubsidiaryBox.objects.filter(id=box_id).update(carrier_identification=carrier_identification, dispatched=dispatched)
+        update_info = {}
+        update_info['carrier_identification'] = carrier_identification
+        if dispatched:
+            update_info['dispatched'] = dispatched
+        SubsidiaryBox.objects.filter(id=box_id).update(**update_info)
