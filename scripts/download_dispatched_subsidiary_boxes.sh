@@ -2,15 +2,15 @@
 
 curl "http://online.gls-czech.com/login.php" -c cookies.txt -b cookies.txt | grep script
 
-if [ $? -ne 0 ];  then
+if [ $? -ne 0 ] && [ -z "$username" ];  then
    read -sp 'Enter password: ' password
    echo -e "\n"
    read -p 'Enter username: ' username
    echo -e "\n"
 fi
 
-dateFrom="1.01.`date +%Y`"
-dateTo="20.06.`date +%Y`"
+dateFrom="01.01.2018"
+dateTo=`date +%d.%m.%Y`
 
 curl "http://online.gls-czech.com/login.php" -d "username=$username" -d "password=$password" -d "lessersecurity=on"  -c cookies.txt -b cookies.txt
 

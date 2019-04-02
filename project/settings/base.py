@@ -416,6 +416,9 @@ MAX_COMPETITIONS_PER_COMPANY = 8
 MAILING_API_KEY = os.environ.get('DPNK_MAILING_API_KEY', '')
 ECOMAIL_MAILING_API_KEY = os.environ.get('DPNK_ECOMAIL_MAILING_API_KEY', '')
 
+GLS_USERNAME = os.environ.get('GLS_USERNAME', '')
+GLS_PASSWORD = os.environ.get('GLS_PASSWORD', '')
+
 FIO_TOKEN = os.environ.get('DPNK_FIO_TOKEN', '')
 
 PAYU_KEY_1 = os.environ.get('DPNK_PAYU_KEY_1', '')
