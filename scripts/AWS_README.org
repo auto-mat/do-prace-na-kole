@@ -1,0 +1,57 @@
+* Managing AWS servers and deployments
+
+In the ./scripts directory you will find various scripts for managing AWS deployments. The most important of which is ./status.py.
+
+./status.py produces an output that looks like this:
+
+#+BEGIN_EXAMPLE
+terminated
+	 dpnk-test terminated
+	 dpnk terminated
+stopped
+	 no_tags_set stopped no_ip i-01229e28ae0ccc8ec unregistered
+
+pending
+initializing
+running
+	 dpnk running 34.254.175.61 i-03c2a5d4816b8b2e4 elb_prod
+		ubuntu_dpnk-web_1 devel 2017.410 8ea0745abbe8bc69ffc66501d76d26cf5ac409c8
+	 dpnk-test running 54.171.47.164 i-08240522a22dbe3f6 elb_test
+		ubuntu_dpnk-worker_1 devel 2017.413 5ed52e9135d03b3aef8957e27e7eb81f89cf33ac
+		ubuntu_dpnk-web_1 devel 2017.413 5ed52e9135d03b3aef8957e27e7eb81f89cf33ac
+		ubuntu_dpnk-beat_1 devel 2017.413 5ed52e9135d03b3aef8957e27e7eb81f89cf33ac
+	 dpnk-celery running 54.72.231.197 i-0bb4ccfcfd68545e0 unregistered
+		ubuntu_dpnk-beat_1 devel 2017.408 e2901b9388184790fe660ba1017fb08ac8d1a683
+		ubuntu_dpnk-worker_1 devel 2017.408 e2901b9388184790fe660ba1017fb08ac8d1a683
+	 dpnk running 34.243.195.120 i-066e04152f774bebd elb_prod
+		ubuntu_dpnk-web_1 devel 2017.410 8ea0745abbe8bc69ffc66501d76d26cf5ac409c8
+#+END_EXAMPLE
+
+Lines like "dpnk-test running 54.171.47.164 i-08240522a22dbe3f6 elb_test" have the following format "<auto-scaling-group-name> <instance-ipv4-ip> <instance-id> <elb-registration-status>".
+
+** Deploying to test
+
+When you push to the [[https://github.com/auto-mat/do-prace-na-kole/commits/devel][devel branch]] a new docker image will be uploaded to [[https://cloud.docker.com/u/auto0mat/repository/list][docker hub]] to the [[https://cloud.docker.com/u/auto0mat/repository/docker/auto0mat/dopracenakole-test][dopracenakole-test repo]]. The image will be tagged with the [[https://circleci.com/gh/auto-mat/do-prace-na-kole/tree/devel][CircleCi build number]] as well as the tag 'latest'.
+
+You can use the command restart_containers_on_server, which takes the IP address of a server to restart, to update the docker image which an instance is using. The 'latest' tag for the given instance type (test or prod) will be used.
+
+#+BEGIN_EXAMPLE
+./restart_containers_on_server 34.253.195.34
+#+END_EXAMPLE
+
+** Deploying to production
+
+When you are satisfied with the code running on the test server you can move your image to the production repository. You do this with the './deploy-from-test-to-prod' command. You should pass 'Y.<circle-ci-build-number>' to this script.
+
+#+BEGIN_EXAMPLE
+./deploy-from-test-to-prod Y.410
+#+END_EXAMPLE
+
+
+When committing a change to the production servers it is necessary to use the 'deregister-prod' script before restarting each instance. You will then need to use the 'register-prod' script after the restart is complete. The deregister and register scripts will remove and re-add the instances to the load balancer. If you do not do this, then users will get an error if the load balancer routes requests to the instance while it is restarting. The deregister and register scripts take an instance ID.
+
+#+BEGIN_EXAMPLE
+./deregister-prod i-09d6c4d83bf6b5e77
+./restart_containers_on_server 63.35.178.228
+./register-prod i-09d6c4d83bf6b5e77
+#+END_EXAMPLE

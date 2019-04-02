@@ -5,6 +5,21 @@ import subprocess
 
 instances = json.loads(subprocess.check_output(["aws", "ec2", "describe-instances"]).decode("utf-8"))
 
+########### ELBs ##########################
+elb_prod_arn = 'arn:aws:elasticloadbalancing:eu-west-1:930821752279:targetgroup/dpnk/67c4d6e00abf2f57'
+elb_test_arn = 'arn:aws:elasticloadbalancing:eu-west-1:930821752279:targetgroup/dpnk-test/4a530ccfaf7ade97'
+def get_targets(elb):
+    return json.loads(subprocess.check_output(['aws', 'elbv2', 'describe-target-health', '--target-group-arn', elb,  '--query', 'TargetHealthDescriptions[*].Target.Id']).decode("utf-8"))
+elb_prod = get_targets(elb_prod_arn)
+elb_test = get_targets(elb_test_arn)
+instance_elbs = {}
+for instance in elb_prod:
+    instance_elbs[instance] = "elb_prod"
+
+for instance in elb_test:
+    instance_elbs[instance] = "elb_test"
+##########################
+
 states = collections.OrderedDict([
     ('terminated', []),
     ('stopped', []),
@@ -49,10 +64,12 @@ for instance in instances["Reservations"]:
         ip = "no_ip"
         container_listing = "\n"
     states[state].append(
-        "%s %s %s%s" % (
+        "%s %s %s %s %s%s" % (
             groupName,
             state,
             ip,
+            i["InstanceId"],
+            instance_elbs.get(i['InstanceId'], 'unregistered'),
             container_listing,
         ),
     )

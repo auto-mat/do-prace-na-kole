@@ -1,0 +1,2 @@
+#!/bin/bash
+aws elbv2 deregister-targets --target-group-arn arn:aws:elasticloadbalancing:eu-west-1:930821752279:targetgroup/dpnk/67c4d6e00abf2f57 --targets Id=$1
