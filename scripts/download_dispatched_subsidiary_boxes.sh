@@ -9,7 +9,7 @@ if [ $? -ne 0 ] && [ -z "$username" ];  then
    echo -e "\n"
 fi
 
-dateFrom="01.01.2018"
+dateFrom="01.01.2019"
 dateTo=`date +%d.%m.%Y`
 
 curl "http://online.gls-czech.com/login.php" -d "username=$username" -d "password=$password" -d "lessersecurity=on"  -c cookies.txt -b cookies.txt
