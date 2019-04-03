@@ -858,6 +858,8 @@ class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessa
             "possible_vacation_days": json.dumps([str(day) for day in self.user_attendance.campaign.possible_vacation_days()]),
             "first_vid": vacations.get_vacations(self.user_attendance)[1],
             "events": json.dumps(vacations.get_events(self.request)),
+            "commute_modes": models.CommuteMode.objects.all(),
+            "trips": models.Trip.objects.filter(user_attendance=self.user_attendance, commute_mode__eco=True, commute_mode__does_count=True)
         })
         return context_data
 
