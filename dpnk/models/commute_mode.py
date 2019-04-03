@@ -50,6 +50,11 @@ class CommuteMode(models.Model):
         blank=False,
         null=False,
     )
+    button_html = models.TextField(
+        verbose_name=_("Html of selector buttons"),
+        default="",
+        null=False,
+    )
     does_count = models.BooleanField(
         verbose_name=_("Počítá se"),
         help_text=_("Počítá se jako jízda do práce/z práce."),

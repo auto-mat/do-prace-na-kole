@@ -167,6 +167,9 @@ class Trip(models.Model):
             return _('Dovolená')
         return str(self.commute_mode)
 
+    def get_direction_display(self):
+        return self.DIRECTIONS_DICT[self.direction]
+
     def get_application_link(self):
         app_links = {
             "strava": "https://www.strava.com/",
