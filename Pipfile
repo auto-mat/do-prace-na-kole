@@ -99,7 +99,7 @@ django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git", editab
 django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation", editable = true, ref = "patch-the-issue-with-django2"}
 django_polymorphic = "*"
 Unidecode = "*"
-Pillow = "*"
+Pillow = "==5.4.1"
 easy-thumbnails = "*"
 SQLAlchemy = "*"
 django_celery_beat = "*"
