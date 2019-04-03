@@ -12,8 +12,8 @@
 {{ block.super }}
 {% endblock %}
 {% block form %}
-{% url "profil" as profile %}
 <p>
+{% if not campaign.active %}
 {% blocktrans %}
 V průběhu soutěže
 {% endblocktrans %}
@@ -26,6 +26,41 @@ budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou prav
 Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
 {% endblocktrans %}
 </p>
+    {% else %}
+    <div class="btn-group" role="group">
+        <button type="radio" class="btn green-background">
+            <span class="fas fa-bicycle"></span>
+        </button>
+        <span class="btn-separator"></span>
+        <button type="radio" class="btn green-background">
+            <span class="fas fa-running"></span>
+            <span class="fas fa-slash fa-rotate-90"></span>
+            <span class="fab fa-accessible-icon"></span>
+        </button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn grey-background">
+            <span class="fas fa-subway"></span>
+            <span class="fas fa-slash fa-rotate-90"></span>
+            <span class="fas fa-bus"></span>
+        </button>
+        <span class="btn-separator"></span>
+        <button type="button" class="btn grey-background">
+            <span class="fas fa-car"></span>
+        </button>
+    </div>
+    <button type="button" class="btn">
+        <span class="fas fa-bed" aria-hidden="true"></span>
+        <span class="fas fa-slash fa-rotate-90" aria-hidden="true"></span>
+        <span class="fas fa-umbrella-beach"></span>
+    </button>
+    <div class="input-group">
+        <input type="text" class="form-control" id="validationDefaultUsername" placeholder="Trasa nebo vzdálenost" aria-describedby="inputGroupPrepend2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="inputGroupPrepend2">Km</span>
+        </div>
+    </div>
+{% endif %}
 <br/>
 {% get_current_language as LANGUAGE_CODE %}
 <div id='calendar'></div>

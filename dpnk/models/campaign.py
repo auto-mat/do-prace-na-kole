@@ -349,6 +349,9 @@ class Campaign(Pricable, models.Model):
             return False
         return member_count > self.max_team_members
 
+    def active(self):
+        return self.day_active(util.today())
+
     def day_active(self, day):
         """ Return if this day can be changed by user """
         day_today = util.today()
