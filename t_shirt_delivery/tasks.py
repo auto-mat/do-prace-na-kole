@@ -36,7 +36,7 @@ def update_dispatched_boxes(self):
     my_env["password"] = settings.GLS_PASSWORD
     my_env["username"] = settings.GLS_USERNAME
 
-    subprocess.call("scripts/download_dispatched_subsidiary_boxes.sh", env=my_env)
+    subprocess.call("scripts/batch_generation/download_dispatched_subsidiary_boxes.sh", env=my_env)
     dataset = tablib.Dataset().load(open("dispatched_subsidiary_boxes.csv").read())
     for carrier_identification, box_id, dispatched in dataset:
         update_info = {}
