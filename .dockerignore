@@ -11,6 +11,7 @@ db_backup
 media
 static
 scripts
+!scripts/batch_generation/download_dispatched_subsidiary_boxes.sh
 htmlcov
 htmlcov-max
 sql
