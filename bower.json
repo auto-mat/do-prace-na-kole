@@ -17,7 +17,7 @@
     "jquery": "2.2.0",
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
-    "font-awesome": "~4.7.0",
+    "font-awesome": "!5.8.1",
     "lightbox2": "~2.8.2",
     "jquery.are-you-sure": "~1.9.0",
     "datatables.net": "~1.10.19",
@@ -25,7 +25,8 @@
     "bootstrap-social": "~5.1.1",
     "jquery-ui": "~1.11.4",
     "fullcalendar": "~3.9",
-    "dropzone": "~5.5.0"
+    "dropzone": "~5.5.0",
+    "jquery-editable-select": "~2.2.5"
   },
   "resolutions": {
     "jquery": "2.2.0"
