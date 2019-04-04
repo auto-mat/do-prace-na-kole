@@ -17,7 +17,7 @@
     "jquery": "2.2.0",
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
-    "font-awesome": "!5.8.1",
+    "font-awesome": "5.8.1",
     "lightbox2": "~2.8.2",
     "jquery.are-you-sure": "~1.9.0",
     "datatables.net": "~1.10.19",
@@ -29,6 +29,7 @@
     "jquery-editable-select": "~2.2.5"
   },
   "resolutions": {
-    "jquery": "2.2.0"
+    "jquery": "2.2.0",
+    "font-awesome": "5.8.1"
   }
 }
