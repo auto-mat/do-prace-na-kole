@@ -70,10 +70,14 @@ def get_events(request):
             "order": order,
             "editable": False,
             "allDay": True,
-            "commute_mode": commute_mode,
             "direction": direction,
             "className": css_class,
         }
+        if commute_mode:
+            event.update({
+                "commute_mode": commute_mode.slug,
+                "commute_mode__eco": commute_mode.eco,
+            })
         if end:
             event["end"] = str(end)
         else:
@@ -96,7 +100,7 @@ def get_events(request):
             title = distance + " km"
         else:
             title = ""
-        commute_mode = trip.commute_mode.slug
+        commute_mode = trip.commute_mode
         order = 2 if trip.direction == 'trip_from' else 1
         add_event(
             title,
