@@ -854,8 +854,15 @@ class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessa
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
+        competition = self.user_attendance.campaign.phase("competition")
+        possible_vacation_days_set = set(self.user_attendance.campaign.possible_vacation_days())
+        active_days_set = set(util.days_active(competition))
+        locked_days_set = set(set(util.days(competition)) - active_days_set) - possible_vacation_days_set
         context_data.update({
-            "possible_vacation_days": json.dumps([str(day) for day in self.user_attendance.campaign.possible_vacation_days()]),
+            "possible_vacation_days": json.dumps([str(day) for day in possible_vacation_days_set]),
+            "active_days": json.dumps([str(day) for day in active_days_set]),
+            "locked_days": json.dumps([str(day) for day in locked_days_set]),
+            "non_working_days": json.dumps([str(day) for day in util.non_working_days(competition, competition.date_to)]),
             "first_vid": vacations.get_vacations(self.user_attendance)[1],
             "events": json.dumps(vacations.get_events(self.request)),
             "commute_modes": models.CommuteMode.objects.all(),

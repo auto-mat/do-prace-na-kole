@@ -65,7 +65,13 @@
 {% get_current_language as LANGUAGE_CODE %}
 <div id='calendar'></div>
 <script>
- var possible_vacation_days = {{possible_vacation_days|safe}};
+ var day_types = {
+     "possible-vacation-day": {{possible_vacation_days|safe}},
+     "active-day": {{active_days|safe}},
+     "locked-day": {{locked_days|safe}},
+     "non-working-day": {{non_working_days|safe}},
+ };
+ var possible_vacation_days = day_types["possible-vacation-day"];
  var vid = {{first_vid}};
  var full_calendar;
  {% for cm in commute_modes %}
@@ -82,8 +88,8 @@
      },
      {% for trip in trips %}
      {% if trip.commute_mode == cm %}
-     "{% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }}": function () {
-         console.log("TODO");
+     "{% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }} ({{trip.distance}} Km)": function () {
+         $("#km_{{cm.slug}}").val({{trip.distance|stringformat:"f"}});
      },
      {% endif %}
      {% endfor %}
@@ -105,7 +111,7 @@
  }
 
  function format_date(date){
-     return date.getUTCFullYear() + '-' + pad((date.getMonth() + 1).toString(), 2) + '-' + pad(date.getDate().toString(), 2);
+     return date.getFullYear() + '-' + pad((date.getMonth() + 1).toString(), 2) + '-' + pad(date.getDate().toString(), 2);
  }
 
 
@@ -203,46 +209,50 @@
              console.log(info)
              add_vacation(info.start, info.end);
          },
-         eventRender: function(event, element) {
+         eventRender: function(info) {
+             console.log(info);
              var direction_icon = null;
-             if (event.direction == 'trip_to'){
+             exp = info.event._def.extendedProps
+             if (exp.direction == 'trip_to'){
                  direction_icon = document.createElement("i");
                  direction_icon.className='fa fa-industry';
-             } else if (event.direction == 'trip_from') {
+             } else if (exp.direction == 'trip_from') {
                  direction_icon = document.createElement("i");
                  direction_icon.className='fa fa-home';
              }
              if (direction_icon) {
-                 element.children(1).prepend(direction_icon);
+                 info.el.firstChild.prepend(direction_icon);
              }
              var mode_icon = null;
-             if (event.commute_mode == 'bicycle'){
+             if (exp.commute_mode == 'bicycle'){
                  mode_icon = document.createElement("i");
                  mode_icon.className='fa fa-bicycle';
-             } else if (event.commute_mode == 'by_foot') {
+             } else if (exp.commute_mode == 'by_foot') {
                  mode_icon = document.createElement("i");
                  mode_icon.className='fa fa-child';
              }
              if (mode_icon) {
-                 element.children(1).prepend("→");
-                 element.children(1).prepend(mode_icon);
+                 info.el.firstChild.prepend("→");
+                 info.el.firstChild.prepend(mode_icon);
              }
-             if (event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
-                 if (moment(event.start, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') == event.end.format('YYYY-MM-DD')) {
-                     setTimeout(function(){ // Without this, the button gets clicked by the same event that created the event on mobile.
-                         element.append('<button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button>');
-                         element.find(".closeon").click(function(){remove_vacation(event)});
-                     }, 10);
-                 } else {
-                     element.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
-                     element.find(".closeon").click(function(){remove_vacation(event)});
-                     element.append("<br/>");
-                 }
+             if (info.event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+                 //var trash_button = document.createElement("div");
+                 //trans_status
+                 //info.el.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs" ><i class="fa fa-trash"></i></button></div>');
+                 //info.el.find(".closeon").click(function(){remove_vacation(event)});
+                 //info.el.append("<br/>");
              }
          },
          dayRender: function (cell) {
-             if (possible_vacation_days.indexOf(format_date(cell.date)) >= 0) {
-                 cell.el.classList.add("possible-vacation-day");
+             var set = false;
+             for (key in day_types) {
+                 if (day_types[key].indexOf(format_date(cell.date)) >= 0) {
+                     cell.el.classList.add(key);
+                     set = true;
+                 }
+             }
+             if (!set){
+                 cell.el.classList.add("out-of-competition-day");
              }
          },
      });
