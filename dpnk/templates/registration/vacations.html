@@ -49,17 +49,8 @@
             <br/>
             <br/>
             <div class="input-group">
-                <select type="text" class="form-control" id="route_distance_{{cm.slug}}">
-                    <option> {% trans "Zadat Km ručně" %}</option>
-                    <option> {% trans "Nahrat GPX soubor" %}</option>
-                    <option> {% trans "Nakreslit trasu do mapy" %}</option>
-                    {% for trip in trips %}
-                    {% if trip.commute_mode == cm %}
-                    <option> {% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{trip.distance}}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-                <input type="text" id="km_{{cm.slug}}"/>
+                <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
+                <input type="number" style="text-align: right;" max="1000" id="km_{{cm.slug}}"/>
                 <div class="input-group-append">
                     <span class="input-group-text">Km</span>
                 </div>
@@ -77,6 +68,35 @@
  var possible_vacation_days = {{possible_vacation_days|safe}};
  var vid = {{first_vid}};
  var full_calendar;
+ {% for cm in commute_modes %}
+ {% if cm.does_count and cm.eco %}
+ var route_options_{{cm.slug}} = {
+     "{% trans "Zadat Km ručně" %}": function () {
+         $("#km_{{cm.slug}}").val(0);
+     },
+     "{% trans "Nahrat GPX soubor" %}": function () {
+         console.log("TODO");
+     },
+     "{% trans "Nakreslit trasu do mapy" %}": function () {
+         console.log("TODO");
+     },
+     {% for trip in trips %}
+     {% if trip.commute_mode == cm %}
+     "{% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }}": function () {
+         console.log("TODO");
+     },
+     {% endif %}
+     {% endfor %}
+ };
+
+ function on_route_select_{{cm.slug}}() {
+     var sel = document.getElementById("route_select_{{cm.slug}}");
+     route_options_{{cm.slug}}[sel.value]();
+ }
+ {% endif %}
+ {% endfor %}
+
+
 
  function pad(n, width, z) {
      z = z || '0';
@@ -152,8 +172,19 @@
  }
 
  document.addEventListener('DOMContentLoaded', function() {
-     var calendarEl = document.getElementById('calendar');
+     {% for cm in commute_modes %}
+     {% if cm.does_count and cm.eco %}
+     var sel = document.getElementById("route_select_{{cm.slug}}");
+     for(var key in route_options_{{cm.slug}}){
+         var option = document.createElement("option");
+         option.value = key;
+         option.text = key;
+         sel.appendChild(option);
+     }
+     {% endif %}
+     {% endfor %}
 
+     var calendarEl = document.getElementById('calendar');
 
      full_calendar = new FullCalendar.Calendar(calendarEl, {
          events: {{events|safe}},
