@@ -5,201 +5,217 @@
 
 
 {% block extrahead %}
-<link rel='stylesheet' href='{% static "bow/fullcalendar/dist/fullcalendar.css"%}' />
-<link rel='stylesheet' href='{% static "bow/jquery-editable-select/dist/jquery-editable-select.min.css"%}' />
-<script src='{% static "bow/moment/moment.js"%}'></script>
-<script src='{% static "bow/fullcalendar/dist/fullcalendar.js"%}'></script>
-<script src='{% static "bow/fullcalendar/dist/locale-all.js"%}'></script>
-<script src='{% static "bow/jquery-editable-select/dist/jquery-editable-select.min.js"%}'></script>
+<link rel='stylesheet' href='{% static "bow/fullcalendar/dist/core/main.css"%}' />
+<script src='{% static "bow/fullcalendar/dist/core/main.js"%}'></script>
+<script src='{% static "bow/fullcalendar/dist/core/locales-all.js"%}'></script>
+<script src='{% static "bow/fullcalendar/dist/daygrid/main.js"%}'></script>
+<script src='{% static "bow/fullcalendar/dist/list/main.js"%}'></script>
+<script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
 {{ block.super }}
 {% endblock %}
 {% block form %}
 <p>
-{% if not campaign.active %}
-{% blocktrans %}
-V průběhu soutěže
-{% endblocktrans %}
-{% if campaign.competition_phase.date_from %}{% trans "od" %} {{ campaign.competition_phase.date_from }}{% endif %}
-{% if campaign.competition_phase.date_to %}{% trans "do" %} {{ campaign.competition_phase.date_to }}{% endif %}{% blocktrans %}
-budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
-{% endblocktrans %}
+    {% if not campaign.active %}
+    {% blocktrans %}
+    V průběhu soutěže
+    {% endblocktrans %}
+    {% if campaign.competition_phase.date_from %}{% trans "od" %} {{ campaign.competition_phase.date_from }}{% endif %}
+    {% if campaign.competition_phase.date_to %}{% trans "do" %} {{ campaign.competition_phase.date_to }}{% endif %}{% blocktrans %}
+    budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
+    {% endblocktrans %}
 </p><p>
-{% blocktrans %}
-Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
-{% endblocktrans %}
+    {% blocktrans %}
+    Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
+    {% endblocktrans %}
 </p>
 {% else %}
 <h3>Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.</h3>
-<nav>
-  <div class="nav nav-tabs" id="nav-tab" role="tablist">
-      {% for cm in commute_modes %}
-      <a class="nav-item nav-link {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#nav-{{cm.slug}}">
-          {{cm.button_html | safe }}
-      </a>
-      {% endfor %}
-  </div>
-</nav>
-<div class="tab-content" id="nav-tabContent">
-    {% for cm in commute_modes %}
-    <div class="tab-pane show" id="nav-{{cm.slug}}" role="tabpanel">
-        <br/>
-        {{cm.tooltip}}
-        {% if cm.does_count and cm.eco %}
-        <br/>
-        <br/>
-        <div class="input-group">
-            <select type="text" class="form-control" id="route_distance_{{cm.slug}}">
-                <option disabled="disabled"> {% trans "Trasa nebo vzdálenost" %}</option>
-                <option> {% trans "Nahrat GPX soubor" %}</option>
-                <option> {% trans "Nakreslit trasu do mapy" %}</option>
-                {% for trip in trips %}
-                {% if trip.commute_mode == cm %}
-                <option> {% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{trip.distance}}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-            <div class="input-group-append">
-                <span class="input-group-text">Km</span>
-            </div>
+<div class ="card">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for cm in commute_modes %}
+            <a class="nav-item nav-link {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#nav-{{cm.slug}}">
+                {{cm.button_html | safe }}
+            </a>
+            {% endfor %}
         </div>
-        {% endif %}
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        {% for cm in commute_modes %}
+        <div class="tab-pane show" id="nav-{{cm.slug}}" role="tabpanel">
+            <br/>
+            {{cm.tooltip}}
+            {% if cm.does_count and cm.eco %}
+            <br/>
+            <br/>
+            <div class="input-group">
+                <select type="text" class="form-control" id="route_distance_{{cm.slug}}">
+                    <option> {% trans "Zadat Km ručně" %}</option>
+                    <option> {% trans "Nahrat GPX soubor" %}</option>
+                    <option> {% trans "Nakreslit trasu do mapy" %}</option>
+                    {% for trip in trips %}
+                    {% if trip.commute_mode == cm %}
+                    <option> {% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{trip.distance}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <input type="text" id="km_{{cm.slug}}"/>
+                <div class="input-group-append">
+                    <span class="input-group-text">Km</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endif %}
 <br/>
 {% get_current_language as LANGUAGE_CODE %}
 <div id='calendar'></div>
 <script>
-    {% for cm in commute_modes %}
-    {% if cm.does_count and cm.eco %}
-    $('#route_distance_{{cm.slug}}').editableSelect({ filter: false , effects: 'slide'});
-    {%endif%}
-    {%endfor%}
-var possible_vacation_days = {{possible_vacation_days|safe}};
-var vid = {{first_vid}};
+ var possible_vacation_days = {{possible_vacation_days|safe}};
+ var vid = {{first_vid}};
+ var full_calendar;
 
-function events_overlap(event1, event2) {
+ function pad(n, width, z) {
+     z = z || '0';
+     n = n + '';
+     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+ }
+
+ function format_date(date){
+     return date.getUTCFullYear() + '-' + pad((date.getMonth() + 1).toString(), 2) + '-' + pad(date.getDate().toString(), 2);
+ }
+
+
+ function events_overlap(event1, event2) {
      if(event1.end && event2.end) {
          return ((event1.start >= event2.start && event1.start < event2.end) ||
-                    (event1.end > event2.start && event1.end <= event2.end));
+                 (event1.end > event2.start && event1.end <= event2.end));
      } else {
          return false;
      }
-}
+ }
 
-function add_vacation(startDate, endDate) {
-    startDateString = startDate.format('YYYY-MM-DD')
-    endDateString = moment(endDate, "DD-MM-YYYY").subtract(1, 'days').format('YYYY-MM-DD')
-    if(possible_vacation_days.indexOf(startDateString) >= 0 && possible_vacation_days.indexOf(endDateString) >= 0){
-        new_event = {
-            title: "{% trans "Dovolená" %}",
-            start: startDate,
-            end: endDate,
-            allDay: true,
-            id: vid++,
-        }
-        events = $('#calendar').fullCalendar( 'clientEvents');
-        for (eid in events) {
-            if (events[eid].id) {
-                if (events_overlap(new_event, events[eid])) {
-                    e2 = events[eid]
-                    return;
-                }
-            }
-        }
-        $('#calendar').fullCalendar('renderEvent', new_event);
-        $.post('{% url "calendar" %}', {
-            on_vacation: true,
-            start_date: startDateString,
-            end_date: endDateString,
-            csrfmiddlewaretoken: "{{ csrf_token }}",
-            },
-            function(returnedData){
-            }
-        ).fail(function(jqXHR, textStatus, errorThrown) {
-            window.alert('{% trans "Propojení selhalo" %}');
-        });
-    }
-}
-
-function remove_vacation(event) {
-    $('#calendar').fullCalendar( 'removeEvents', event.id );
-    startDateString = event.start.format('YYYY-MM-DD')
-    endDateString = moment(event.end, "DD-MM-YYYY").subtract(1, 'days').format('YYYY-MM-DD')
-    $.post("{% url 'calendar' %}", {
-        on_vacation: false,
-        start_date: startDateString,
-        end_date: endDateString,
-        csrfmiddlewaretoken: "{{ csrf_token }}",
-        },
-        function(returnedData){
-        }
-    ).fail(function(jqXHR, textStatus, errorThrown) {
-        window.alert('{% trans "Propojení selhalo" %}');
-    });
-}
-
-$(function() {
-  var calendar = $('#calendar').fullCalendar({
-      events: {{events|safe}},
-      eventOrder: 'order',
-      selectable: true,
-      lang: '{{ LANGUAGE_CODE }}',
-      locale: '{{ LANGUAGE_CODE }}',
-      height: 'auto',
-      firstDay: 1,
-      select: function(startDate, endDate) {
-          if (moment(startDate, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') != endDate.format('YYYY-MM-DD')) {
-              add_vacation(startDate, endDate);
-          }
-      },
-      dayClick: function(date) {
-          add_vacation(date, moment(date, "DD-MM-YYYY").add(1, 'days'));
-      },
-      eventRender: function(event, element) {
-          var direction_icon = null;
-          if (event.direction == 'trip_to'){
-              direction_icon = document.createElement("i");
-              direction_icon.className='fa fa-industry';
-          } else if (event.direction == 'trip_from') {
-              direction_icon = document.createElement("i");
-              direction_icon.className='fa fa-home';
-          }
-          if (direction_icon) {
-              element.children(1).prepend(direction_icon);
-          }
-          var mode_icon = null;
-          if (event.commute_mode == 'bicycle'){
-              mode_icon = document.createElement("i");
-              mode_icon.className='fa fa-bicycle';
-          } else if (event.commute_mode == 'by_foot') {
-              mode_icon = document.createElement("i");
-              mode_icon.className='fa fa-child';
-          }
-          if (mode_icon) {
-              element.children(1).prepend("→");
-              element.children(1).prepend(mode_icon);
-          }
-          if (event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
-              if (moment(event.start, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') == event.end.format('YYYY-MM-DD')) {
-                  setTimeout(function(){ // Without this, the button gets clicked by the same event that created the event on mobile.
-                      element.append('<button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button>');
-                      element.find(".closeon").click(function(){remove_vacation(event)});
-                  }, 10);
-              } else {
-                  element.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
-                  element.find(".closeon").click(function(){remove_vacation(event)});
-                  element.append("<br/>");
-              }
-          }
-      },
-      dayRender: function (date, cell) {
-         if (possible_vacation_days.indexOf(date.format('YYYY-MM-DD')) <= -1) {
-             cell.css("background-color", "lightGrey");
+ function add_vacation(startDate, endDate) {
+     startDateString = format_date(startDate);
+     endDateString = format_date(endDate);
+     if(possible_vacation_days.indexOf(startDateString) >= 0 && possible_vacation_days.indexOf(endDateString) >= 0){
+         new_event = {
+             title: "{% trans "Dovolená" %}",
+             start: startDate,
+             end: endDate,
+             allDay: true,
+             id: vid++,
          }
-      },
-  });
-});
+         /*
+         for (eid in events) {
+             if (events[eid].id) {
+                 if (events_overlap(new_event, events[eid])) {
+                     e2 = events[eid]
+                     return;
+                 }
+             }
+         }*/
+         full_calendar.addEvent(new_event);
+         $.post('{% url "calendar" %}', {
+             on_vacation: true,
+             start_date: startDateString,
+             end_date: endDateString,
+             csrfmiddlewaretoken: "{{ csrf_token }}",
+         },
+                function(returnedData){
+                }
+         ).fail(function(jqXHR, textStatus, errorThrown) {
+             window.alert('{% trans "Propojení selhalo" %}');
+         });
+     }
+ }
+
+ function remove_vacation(event) {
+     startDateString = format_date(event.start)
+     endDateString = format_date(event.end)
+     event.remove() //todo remove
+     $.post("{% url 'calendar' %}", {
+         on_vacation: false,
+         start_date: startDateString,
+         end_date: endDateString,
+         csrfmiddlewaretoken: "{{ csrf_token }}",
+     },
+            function(returnedData){
+                event.remove()
+            }
+     ).fail(function(jqXHR, textStatus, errorThrown) {
+         window.alert('{% trans "Propojení selhalo" %}');
+     });
+ }
+
+ document.addEventListener('DOMContentLoaded', function() {
+     var calendarEl = document.getElementById('calendar');
+
+
+     full_calendar = new FullCalendar.Calendar(calendarEl, {
+         events: {{events|safe}},
+         eventOrder: 'order',
+         selectable: true,
+         lang: '{{ LANGUAGE_CODE }}',
+         locale: '{{ LANGUAGE_CODE }}',
+         height: 'auto',
+         firstDay: 1,
+         plugins: [ 'interaction', 'dayGrid', 'list' ],
+         selectable: true,
+         header: {
+             right: 'dayGridMonth,listMonth, now, prev,next',
+         },
+         select: function(info) {
+             console.log(info)
+             add_vacation(info.start, info.end);
+         },
+         eventRender: function(event, element) {
+             var direction_icon = null;
+             if (event.direction == 'trip_to'){
+                 direction_icon = document.createElement("i");
+                 direction_icon.className='fa fa-industry';
+             } else if (event.direction == 'trip_from') {
+                 direction_icon = document.createElement("i");
+                 direction_icon.className='fa fa-home';
+             }
+             if (direction_icon) {
+                 element.children(1).prepend(direction_icon);
+             }
+             var mode_icon = null;
+             if (event.commute_mode == 'bicycle'){
+                 mode_icon = document.createElement("i");
+                 mode_icon.className='fa fa-bicycle';
+             } else if (event.commute_mode == 'by_foot') {
+                 mode_icon = document.createElement("i");
+                 mode_icon.className='fa fa-child';
+             }
+             if (mode_icon) {
+                 element.children(1).prepend("→");
+                 element.children(1).prepend(mode_icon);
+             }
+             if (event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+                 if (moment(event.start, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') == event.end.format('YYYY-MM-DD')) {
+                     setTimeout(function(){ // Without this, the button gets clicked by the same event that created the event on mobile.
+                         element.append('<button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button>');
+                         element.find(".closeon").click(function(){remove_vacation(event)});
+                     }, 10);
+                 } else {
+                     element.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
+                     element.find(".closeon").click(function(){remove_vacation(event)});
+                     element.append("<br/>");
+                 }
+             }
+         },
+         dayRender: function (cell) {
+             if (possible_vacation_days.indexOf(format_date(cell.date)) >= 0) {
+                 cell.el.classList.add("possible-vacation-day");
+             }
+         },
+     });
+     full_calendar.render();
+ });
 </script>
 {% endblock %}
