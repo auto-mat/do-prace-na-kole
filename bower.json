@@ -24,7 +24,7 @@
     "datatables.net-bs4": "~1.10.19",
     "bootstrap-social": "~5.1.1",
     "jquery-ui": "~1.11.4",
-    "fullcalendar": "~3.9",
+    "fullcalendar": "~4.0.2",
     "dropzone": "~5.5.0",
     "jquery-editable-select": "~2.2.5"
   },
