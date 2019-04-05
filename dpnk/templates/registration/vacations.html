@@ -29,7 +29,7 @@
     {% endblocktrans %}
 </p>
 {% else %}
-<h3>Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.</h3>
+Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
 <div class ="card">
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -250,7 +250,23 @@
          },
          dayRender: function (cell) {
              var set = false;
-             console.log(cell)
+             var num_eco_trips = 0;
+             var events_this_day = [];
+             var events = full_calendar.getEvents();
+             for (i in events){
+                 if(format_date(events[i].start) == format_date(cell.date)){
+                     var event = events[i];
+                     events_this_day.push(event);
+                     if(event._def.extendedProps['commute_mode__eco']){
+                         num_eco_trips++;
+                     }
+                 }
+             }
+             if (num_eco_trips == 1) {
+                 cell.el.classList.add('one-ride-day');
+             } else if (num_eco_trips > 1) {
+                 cell.el.classList.add('two-ride-day');
+             }
              for (key in day_types) {
                  if (day_types[key].indexOf(format_date(cell.date)) >= 0) {
                      cell.el.classList.add(key);
