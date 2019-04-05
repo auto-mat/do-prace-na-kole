@@ -72,7 +72,7 @@
      "non-working-day": {{non_working_days|safe}},
  };
  var possible_vacation_days = day_types["possible-vacation-day"];
- var vid = {{first_vid}};
+ var vacation_id = {{first_vid}};
  var full_calendar;
  {% for cm in commute_modes %}
  {% if cm.does_count and cm.eco %}
@@ -133,17 +133,17 @@
              start: startDate,
              end: endDate,
              allDay: true,
-             id: vid++,
+             vacation_id: vacation_id++,
          }
-         /*
+         events = full_calendar.getEvents();
          for (eid in events) {
-             if (events[eid].id) {
+             if (events[eid]._def.extendedProps.vacation_id) {
                  if (events_overlap(new_event, events[eid])) {
                      e2 = events[eid]
                      return;
                  }
              }
-         }*/
+         }
          full_calendar.addEvent(new_event);
          $.post('{% url "calendar" %}', {
              on_vacation: true,
@@ -159,7 +159,8 @@
      }
  }
 
- function remove_vacation(event) {
+ function remove_vacation(info) {
+     var event = info.event;
      startDateString = format_date(event.start)
      endDateString = format_date(event.end)
      event.remove() //todo remove
@@ -215,36 +216,41 @@
              exp = info.event._def.extendedProps
              if (exp.direction == 'trip_to'){
                  direction_icon = document.createElement("i");
-                 direction_icon.className='fa fa-industry';
+                 direction_icon.className='fa fa-industry xs';
              } else if (exp.direction == 'trip_from') {
                  direction_icon = document.createElement("i");
-                 direction_icon.className='fa fa-home';
+                 direction_icon.className='fa fa-home xs';
              }
              if (direction_icon) {
-                 info.el.firstChild.prepend(direction_icon);
+                 info.el.firstChild.append(direction_icon);
              }
              var mode_icon = null;
              if (exp.commute_mode == 'bicycle'){
                  mode_icon = document.createElement("i");
-                 mode_icon.className='fa fa-bicycle';
+                 mode_icon.className='fa fa-bicycle xs';
              } else if (exp.commute_mode == 'by_foot') {
                  mode_icon = document.createElement("i");
-                 mode_icon.className='fa fa-child';
+                 mode_icon.className='fa fa-running xs';
              }
              if (mode_icon) {
-                 info.el.firstChild.prepend("→");
                  info.el.firstChild.prepend(mode_icon);
              }
-             if (info.event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
-                 //var trash_button = document.createElement("div");
-                 //trans_status
-                 //info.el.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs" ><i class="fa fa-trash"></i></button></div>');
-                 //info.el.find(".closeon").click(function(){remove_vacation(event)});
-                 //info.el.append("<br/>");
+             if (info.event._def.extendedProps.vacation_id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+                 var trash_icon =  document.createElement("i");
+                 var trash_button = document.createElement("button");
+                 trash_button.className = 'btn btn-default btn-xs';
+                 trash_button.append(trash_icon);
+                 var trash_button_div = document.createElement("div");
+                 trash_button_div.className='fc-transparent trash-container';
+                 trash_button_div.append(trash_button);
+                 trash_button.onclick = function(){remove_vacation(info)};
+                 trash_icon.className = 'fa fa-trash';
+                 info.el.firstChild.append(trash_button_div);
              }
          },
          dayRender: function (cell) {
              var set = false;
+             console.log(cell)
              for (key in day_types) {
                  if (day_types[key].indexOf(format_date(cell.date)) >= 0) {
                      cell.el.classList.add(key);
