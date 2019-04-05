@@ -115,5 +115,4 @@ def get_events(request):
             eid=vacation.get("id", None),
             css_class='no-trip' if vacation['date'] <= util.today() else 'vc-vacation',
         )
-    add_event(_('Dnes'), util.today(), css_class="vc-today")
     return events
