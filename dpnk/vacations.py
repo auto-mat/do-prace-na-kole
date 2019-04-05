@@ -60,6 +60,10 @@ def get_vacations(user_attendance):
     return vacations, vid
 
 
+def get_order(direction):
+    return 2 if direction == 'trip_from' else 1
+
+
 def get_events(request):
     events = []
 
@@ -92,8 +96,15 @@ def get_events(request):
     add_event(_("Začatek soutěže"), phase.date_from, css_class="vc-competition-beginning")
     add_event(_("Konec soutěže"), phase.date_to, css_class="vc-competition-end")
     trips = request.user_attendance.user_trips.filter(
-        commute_mode__slug__in=('by_foot', 'bicycle'),
+        commute_mode__eco=True,
+        commute_mode__does_count=True,
     )
+    placeholders = {}
+    for day in util.days_active(phase):
+        placeholders[day] = {
+            "trip_to": True,
+            "trip_from": True,
+        }
     for trip in trips:
         if trip.distance:
             distance = intcomma(round(trip.distance, 1))
@@ -101,7 +112,11 @@ def get_events(request):
         else:
             title = ""
         commute_mode = trip.commute_mode
-        order = 2 if trip.direction == 'trip_from' else 1
+        try:
+            placeholders[trip.date][trip.direction] = False
+        except KeyError:
+            pass
+        order = get_order(trip.direction)
         add_event(
             title,
             trip.date,
@@ -111,6 +126,15 @@ def get_events(request):
             url=reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction}),
             css_class="vc-" + trip.direction.replace("_", "-"),
         )
+    for date, dirs in placeholders.items():
+        for d, v in dirs.items():
+            add_event(
+                "+",
+                date,
+                order=get_order(d),
+                direction=d,
+        )
+
     for vacation in get_vacations(request.user_attendance)[0]:
         add_event(
             vacation["title"],
