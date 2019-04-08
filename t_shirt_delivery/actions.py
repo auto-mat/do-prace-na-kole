@@ -41,3 +41,11 @@ create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
 
 delivery_box_batch_download = actions.batch_download_action_generator("customer_sheets")
 delivery_box_batch_download.short_description = _("Hromadně stáhnout PDF")
+
+
+def delivery_batch_generate_pdf(modeladmin, request, queryset):
+    for batch in queryset.all():
+        batch.submit_gls_order_pdf()
+
+
+delivery_batch_generate_pdf.short_description = _("Nahrát data do GLS a vytvořit PDF")

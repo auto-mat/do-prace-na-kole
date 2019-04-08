@@ -34,6 +34,7 @@ from dpnk.models import Subsidiary
 
 from .package_transaction import Status
 from .. import batch_csv
+from ..gls.generate_gls_pdf import generate_pdf
 
 
 @with_author
@@ -66,6 +67,13 @@ class DeliveryBatch(models.Model):
         null=True,
         max_length=512,
     )
+    order_pdf = models.FileField(
+        verbose_name=_("PDF objednávky"),
+        upload_to='pdf_delivery',
+        blank=True,
+        null=True,
+        max_length=512,
+    )
     dispatched = models.BooleanField(
         verbose_name=_("Vyřízeno"),
         blank=False,
@@ -89,6 +97,10 @@ class DeliveryBatch(models.Model):
 
     def box_count(self):
         return self.subsidiarybox_set.count()
+
+    def submit_gls_order_pdf(self):
+        self.order_pdf.save("batch%s.pdf" % self.id, ContentFile(generate_pdf(self.tnt_order)))
+        self.save()
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):

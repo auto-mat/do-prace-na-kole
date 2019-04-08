@@ -386,8 +386,10 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
         'box_count',
         'author',
         'customer_sheets__url',
+        'pdf_data_url',
         'csv_data_url',
     ]
+    actions = [actions.delivery_batch_generate_pdf]
     readonly_fields = (
         'campaign',
         'author',
@@ -437,6 +439,10 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
     def customer_sheets__url(self, obj):
         if obj.customer_sheets:
             return format_html("<a href='{}'>customer_sheets</a>", obj.customer_sheets.url)
+
+    def pdf_data_url(self, obj):
+        if obj.order_pdf:
+            return format_html("<a href='{}'>pdf_data</a>", obj.order_pdf.url)
 
     def csv_data_url(self, obj):
         if obj.tnt_order:
