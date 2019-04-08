@@ -33,9 +33,9 @@
 Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
 <div class ="card">
     <nav>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
             {% for cm in commute_modes %}
-            <a class="nav-item nav-link {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#nav-{{cm.slug}}">
+            <a class="nav-item nav-link {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#{{cm.slug}}">
                 {{cm.button_html | safe }}
             </a>
             {% endfor %}
@@ -43,7 +43,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     </nav>
     <div class="tab-content" id="nav-tabContent">
         {% for cm in commute_modes %}
-        <div class="tab-pane show" id="nav-{{cm.slug}}" role="tabpanel">
+        <div class="tab-pane show" id="{{cm.slug}}" role="tabpanel">
             <br/>
             {{cm.tooltip}}
             {% if cm.does_count and cm.eco %}
@@ -51,7 +51,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
             <br/>
             <div class="input-group">
                 <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                <input type="number" style="text-align: right;" max="1000" id="km_{{cm.slug}}"/>
+                <input type="number" style="text-align: right;" max="1000" id="km-{{cm.slug}}"/>
                 <div class="input-group-append">
                     <span class="input-group-text">Km</span>
                 </div>
@@ -72,6 +72,14 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
      "locked-day": {{locked_days|safe}},
      "non-working-day": {{non_working_days|safe}},
  };
+ var commute_modes = {
+     {% for cm in commute_modes %}
+     '{{cm.slug}}': {
+         'eco': {{cm.eco|yesno:"true,false" }},
+         'does_count': {{cm.does_count|yesno:"true,false" }},
+     },
+     {% endfor %}
+ }
  var possible_vacation_days = day_types["possible-vacation-day"];
  var vacation_id = {{first_vid}};
  var full_calendar;
@@ -79,7 +87,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
  {% if cm.does_count and cm.eco %}
  var route_options_{{cm.slug}} = {
      "{% trans "Zadat Km ručně" %}": function () {
-         $("#km_{{cm.slug}}").val(0);
+         $("#km-{{cm.slug}}").val(0);
      },
      "{% trans "Nahrat GPX soubor" %}": function () {
          console.log("TODO");
@@ -90,7 +98,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
      {% for trip in trips %}
      {% if trip.commute_mode == cm %}
      "{% trans "Stejně jako" %} {{trip.date}} {{trip.get_direction_display }} ({{trip.distance}} Km)": function () {
-         $("#km_{{cm.slug}}").val({{trip.distance|stringformat:"f"}});
+         $("#km-{{cm.slug}}").val({{trip.distance|stringformat:"f"}});
      },
      {% endif %}
      {% endfor %}
@@ -140,7 +148,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
          }
          events = full_calendar.getEvents();
          for (eid in events) {
-             if (events[eid]._def.extendedProps.vacation_id) {
+             if (events[eid].extendedProps.vacation_id) {
                  if (events_overlap(new_event, events[eid])) {
                      e2 = events[eid]
                      return;
@@ -216,7 +224,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
          eventRender: function(info) {
              console.log(info);
              var direction_icon = null;
-             exp = info.event._def.extendedProps
+             exp = info.event.extendedProps
              if (exp.direction == 'trip_to'){
                  direction_icon = document.createElement("i");
                  direction_icon.className='fa fa-industry xs';
@@ -238,7 +246,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
              if (mode_icon) {
                  info.el.firstChild.prepend(mode_icon);
              }
-             if (info.event._def.extendedProps.vacation_id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+             if (info.event.extendedProps.vacation_id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
                  var trash_icon =  document.createElement("i");
                  var trash_button = document.createElement("button");
                  trash_button.className = 'btn btn-default btn-xs';
@@ -252,7 +260,18 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
              }
          },
          eventClick: function(info) {
-             //info.event._def.extendedProps
+             console.log(info);
+             if(info.event.extendedProps.placeholder){
+                 commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr(1);
+                 cmo = commute_modes[commute_mode];
+                 info.event.setExtendedProp('commute_mode', commute_mode);
+                 if(cmo.eco && cmo.does_count){
+                     km = $('#km-'+commute_mode).val()
+                     info.event.setProp('title', km + " Km");
+                 } else {
+                     info.event.setProp('title', "");
+                 }
+             }
          },
          dayRender: function (cell) {
              var set = false;
@@ -263,7 +282,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
                  if(format_date(events[i].start) == format_date(cell.date)){
                      var event = events[i];
                      events_this_day.push(event);
-                     if(event._def.extendedProps['commute_mode__eco']){
+                     if(event.extendedProps['commute_mode__eco']){
                          num_eco_trips++;
                      }
                  }

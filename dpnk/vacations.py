@@ -133,6 +133,7 @@ def get_events(request):
                 date,
                 order=get_order(d),
                 direction=d,
+                extra_attrs={"placeholder":True}
         )
 
     for vacation in get_vacations(request.user_attendance)[0]:
