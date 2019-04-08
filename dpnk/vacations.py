@@ -52,7 +52,7 @@ def get_vacations(user_attendance):
                 "editable": trip.date in possible_vacation_days,
             }
             if current_vacation["editable"]:
-                current_vacation["id"] = vid
+                current_vacation["vacation_id"] = vid
                 vid += 1
         this_day = trip.date
     if current_vacation:
@@ -67,7 +67,7 @@ def get_order(direction):
 def get_events(request):
     events = []
 
-    def add_event(title, date, end=None, commute_mode=None, direction=None, order=0, url=None, eid=None, css_class=None):
+    def add_event(title, date, end=None, commute_mode=None, direction=None, order=0, url=None, css_class=None, extra_attrs=None):
         event = {
             "title": title,
             "start": str(date),
@@ -88,8 +88,8 @@ def get_events(request):
             event["end"] = str(date + datetime.timedelta(days=1))
         if url:
             event['url'] = url
-        if id:
-            event['id'] = eid
+        if extra_attrs:
+            event.update(extra_attrs)
         events.append(event)
 
     phase = request.campaign.phase("competition")
@@ -137,10 +137,10 @@ def get_events(request):
 
     for vacation in get_vacations(request.user_attendance)[0]:
         add_event(
-            vacation["title"],
+            vacation.pop("title"),
             vacation["date"],
-            end=vacation["end"],
-            eid=vacation.get("id", None),
-            css_class='no-trip' if vacation['date'] <= util.today() else 'vc-vacation',
+            end=vacation.pop("end"),
+            css_class='no-trip' if vacation.pop('date') <= util.today() else 'vc-vacation',
+            extra_attrs=vacation,
         )
     return events

@@ -127,7 +127,9 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
 
  function add_vacation(startDate, endDate) {
      startDateString = format_date(startDate);
-     endDateString = format_date(endDate);
+     real_end_date = new Date(endDate);
+     real_end_date.setDate(real_end_date.getDate() - 1);
+     endDateString = format_date(real_end_date);
      if(possible_vacation_days.indexOf(startDateString) >= 0 && possible_vacation_days.indexOf(endDateString) >= 0){
          new_event = {
              title: "{% trans "Dovolená" %}",
@@ -248,6 +250,9 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
                  trash_icon.className = 'fa fa-trash';
                  info.el.firstChild.append(trash_button_div);
              }
+         },
+         eventClick: function(info) {
+             //info.event._def.extendedProps
          },
          dayRender: function (cell) {
              var set = false;
