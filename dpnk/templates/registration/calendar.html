@@ -6,8 +6,8 @@
 
 
 {% block extrahead %}
-    {% leaflet_js %}
-    {% leaflet_css %}
+    {% leaflet_js plugins="draw" %}
+    {% leaflet_css plugins="draw" %}
     {% include "registration/leaflet_include.html" %}
     <link rel='stylesheet' href='{% static "bow/fullcalendar/dist/core/main.css"%}' />
     <script src='{% static "bow/fullcalendar/dist/core/main.js"%}'></script>
@@ -47,23 +47,25 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     <div class="tab-content" id="nav-tabContent">
         {% for cm in commute_modes %}
         <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
-            <br/>
-            {{ cm.tooltip|linebreaks }}
-            {% if cm.does_count and cm.eco %}
-            <br/>
-            <br/>
-            <div class="input-group">
-                <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                <input type="number" style="text-align: right;" max="1000" id="km-{{cm.slug}}"/>
-                <div class="input-group-append">
-                    <span class="input-group-text">Km</span>
-                </div>
+                {{ cm.tooltip|linebreaks }}
+                {% if cm.does_count and cm.eco %}
+                    <div class="input-group">
+                        <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
+                        <input type="number" style="text-align: right;" max="1000" id="km-{{cm.slug}}"/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">Km</span>
+                        </div>
+                    </div>
+                    <div id="map_shower_{{cm.slug}}" style="display:none;">
+                        <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
+                    </div>
+                    <div id="track_holder_{{cm.slug}}" style="display:none;">
+                        <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapa' %}</button>
+                        <div id="map_{{cm.slug}}"  style="width:100%; height:300px;">
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-            <div id="track_holder_{{cm.slug}}" style="display:none;">
-                {% leaflet_map cm.slug callback="window.load_this_track" %}
-            </div>
-            {% endif %}
-        </div>
         {% endfor %}
     </div>
 </div>

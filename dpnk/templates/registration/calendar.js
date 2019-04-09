@@ -18,17 +18,28 @@ var commute_modes = {
 var possible_vacation_days = day_types["possible-vacation-day"];
 var vacation_id = {{first_vid}};
 var full_calendar;
+
 {% for cm in commute_modes %}
 {% if cm.does_count and cm.eco %}
+var editable_layers_{{cm.slug}} = new L.FeatureGroup();
+var map_{{cm.slug}} = null;
+
 function show_map_{{cm.slug}}(){
     $("#track_holder_{{cm.slug}}").show();
-    window["leafletmap{{cm.slug}}"]._onResize();
+    $("#map_shower_{{cm.slug}}").hide();
+    map_{{cm.slug}}._onResize();
+}
+
+function hide_map_{{cm.slug}}(){
+    $("#track_holder_{{cm.slug}}").hide();
+    $("#map_shower_{{cm.slug}}").show();
 }
 
 var route_options_{{cm.slug}} = {
     "{% trans 'Zadat Km ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
-        $("#track_holder_{{cm.slug}}").hide();
+        hide_map_{{cm.slug}}();
+        $("#map_shower_{{cm.slug}}").hide();
     },
     "{% trans 'Nahrat GPX soubor' %}": function () {
         console.log("TODO");
@@ -143,6 +154,37 @@ document.addEventListener('DOMContentLoaded', function() {
         option.text = key;
         sel.appendChild(option);
     }
+
+    map_{{cm.slug}} = L.map('map_{{cm.slug}}').setView([50.0866699218750000, 14.4387817382809995], 8);
+    L.tileLayer('https://tiles.prahounakole.cz/{z}/{x}/{y}.png',
+                {
+                    attribution: '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map_{{cm.slug}});
+
+    map_{{cm.slug}}.addLayer(editable_layers_{{cm.slug}});
+
+    var draw_options = {
+        draw: {
+            polygon: false,
+            marker: false,
+            rectangle: false,
+            circle: false,
+        },
+        edit: {
+            featureGroup: editable_layers_{{cm.slug}},
+            remove: false
+        }
+    };
+    var drawControl = new L.Control.Draw(draw_options);
+    map_{{cm.slug}}.addControl(drawControl);
+    map_{{cm.slug}}.on(L.Draw.Event.CREATED, function (e) {
+        var type = e.layerType,
+            layer = e.layer;
+        if (type === 'marker') {
+            layer.bindPopup('A popup!');
+        }
+        editable_layers_{{cm.slug}}.addLayer(layer);
+    });
     {% endif %}
     {% endfor %}
 
