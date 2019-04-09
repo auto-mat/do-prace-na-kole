@@ -108,7 +108,7 @@
 			</div>
 
 			{# main content area #}
-			<div class="col-12 col-sm-9 content">
+			<div class="col-12 col-sm-9 content" id="page-content">
 				<div class="inner">
 					{% block caption %}
 						{% if title %}
@@ -123,7 +123,9 @@
 					{% endif %}
 
 					{% block error %}
-               {{ block.super }}
+              <div id="inner-content">
+                  {{ block.super }}
+              </div>
 					{% endblock %}
 				</div>
 			</div>

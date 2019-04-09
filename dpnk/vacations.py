@@ -123,8 +123,8 @@ def get_events(request):
             order=order,
             commute_mode=commute_mode,
             direction=trip.direction,
-            url=reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction}),
             css_class="vc-" + trip.direction.replace("_", "-"),
+            extra_attrs={"modal_url": reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction})}
         )
     for date, dirs in placeholders.items():
         for d, v in dirs.items():
