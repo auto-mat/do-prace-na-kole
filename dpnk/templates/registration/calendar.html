@@ -45,7 +45,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
         {% for cm in commute_modes %}
         <div class="tab-pane show  {% if cm.slug == 'bicycle' %}active{% endif %}" id="{{cm.slug}}" role="tabpanel">
             <br/>
-            {{cm.tooltip}}
+            {{ cm.tooltip|linebreaks }}
             {% if cm.does_count and cm.eco %}
             <br/>
             <br/>

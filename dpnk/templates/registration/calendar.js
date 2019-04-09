@@ -138,7 +138,11 @@ document.addEventListener('DOMContentLoaded', function() {
     {% endfor %}
 
     var calendarEl = document.getElementById('calendar');
-
+    if($(window).width() > $(window).height()) {
+        defaultView = 'dayGridMonth';
+    } else {
+        defaultView = 'listMonth';
+    }
     full_calendar = new FullCalendar.Calendar(calendarEl, {
         events: {{events|safe}},
         eventOrder: 'order',
@@ -149,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         firstDay: 1,
         plugins: [ 'interaction', 'dayGrid', 'list' ],
         selectable: true,
+        defaultView: defaultView,
         header: {
             right: 'dayGridMonth,listMonth, now, prev,next',
         },
