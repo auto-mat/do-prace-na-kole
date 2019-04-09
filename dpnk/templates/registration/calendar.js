@@ -20,20 +20,29 @@ var vacation_id = {{first_vid}};
 var full_calendar;
 {% for cm in commute_modes %}
 {% if cm.does_count and cm.eco %}
+function show_map_{{cm.slug}}(){
+    $("#track_holder_{{cm.slug}}").show();
+    window["leafletmap{{cm.slug}}"]._onResize();
+}
+
 var route_options_{{cm.slug}} = {
     "{% trans 'Zadat Km ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
+        $("#track_holder_{{cm.slug}}").hide();
     },
     "{% trans 'Nahrat GPX soubor' %}": function () {
         console.log("TODO");
+        show_map_{{cm.slug}}();
     },
     "{% trans 'Nakreslit trasu do mapy' %}": function () {
         console.log("TODO");
+        show_map_{{cm.slug}}();
     },
     {% for trip in trips %}
     {% if trip.commute_mode == cm %}
     "{% trans 'Stejně jako' %} {{trip.date}} {{trip.get_direction_display }} ({{trip.distance}} Km)": function () {
         $("#km-{{cm.slug}}").val({{trip.distance|stringformat:"f"}});
+        show_map_{{cm.slug}}();
     },
     {% endif %}
     {% endfor %}
@@ -205,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         eventClick: function(info) {
             console.log(info);
             if(info.event.extendedProps.placeholder){
-                commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr(1);
+                commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
                 cmo = commute_modes[commute_mode];
                 info.event.setExtendedProp('commute_mode', commute_mode);
                 if(cmo.eco && cmo.does_count){

@@ -399,6 +399,7 @@ LEAFLET_CONFIG = {
             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {'attribution': u'&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
     ],
+    'NO_GLOBALS': False,
     'DEFAULT_ZOOM': 8,
     'MIN_ZOOM': 8,
     'MAX_ZOOM': 18,

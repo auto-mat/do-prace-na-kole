@@ -2,17 +2,20 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
+{% load leaflet_tags %}
 
 
 {% block extrahead %}
-{% include "registration/leaflet_include.html" %}
-<link rel='stylesheet' href='{% static "bow/fullcalendar/dist/core/main.css"%}' />
-<script src='{% static "bow/fullcalendar/dist/core/main.js"%}'></script>
-<script src='{% static "bow/fullcalendar/dist/core/locales-all.js"%}'></script>
-<script src='{% static "bow/fullcalendar/dist/daygrid/main.js"%}'></script>
-<script src='{% static "bow/fullcalendar/dist/list/main.js"%}'></script>
-<script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
-{{ block.super }}
+    {% leaflet_js %}
+    {% leaflet_css %}
+    {% include "registration/leaflet_include.html" %}
+    <link rel='stylesheet' href='{% static "bow/fullcalendar/dist/core/main.css"%}' />
+    <script src='{% static "bow/fullcalendar/dist/core/main.js"%}'></script>
+    <script src='{% static "bow/fullcalendar/dist/core/locales-all.js"%}'></script>
+    <script src='{% static "bow/fullcalendar/dist/daygrid/main.js"%}'></script>
+    <script src='{% static "bow/fullcalendar/dist/list/main.js"%}'></script>
+    <script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
+    {{ block.super }}
 {% endblock %}
 {% block form %}
 <p>
@@ -35,7 +38,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     <nav>
         <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
             {% for cm in commute_modes %}
-            <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#{{cm.slug}}">
+                <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
                 {{cm.button_html | safe }}
             </a>
             {% endfor %}
@@ -43,7 +46,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     </nav>
     <div class="tab-content" id="nav-tabContent">
         {% for cm in commute_modes %}
-        <div class="tab-pane show  {% if cm.slug == 'bicycle' %}active{% endif %}" id="{{cm.slug}}" role="tabpanel">
+        <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
             <br/>
             {{ cm.tooltip|linebreaks }}
             {% if cm.does_count and cm.eco %}
@@ -55,6 +58,9 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
                 <div class="input-group-append">
                     <span class="input-group-text">Km</span>
                 </div>
+            </div>
+            <div id="track_holder_{{cm.slug}}" style="display:none;">
+                {% leaflet_map cm.slug callback="window.load_this_track" %}
             </div>
             {% endif %}
         </div>
