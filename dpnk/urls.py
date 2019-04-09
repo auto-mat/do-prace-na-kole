@@ -107,7 +107,7 @@ urlpatterns = [
     ),
     url(
         r'^kalendar/$',
-        views.VacationsView.as_view(),
+        views.CalendarView.as_view(),
         name="calendar",
     ),
     url(
