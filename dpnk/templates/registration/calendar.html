@@ -18,79 +18,79 @@
     {{ block.super }}
 {% endblock %}
 {% block form %}
-<p>
-    {% if not campaign.active %}
-    {% blocktrans %}
-    V průběhu soutěže
-    {% endblocktrans %}
-    {% if campaign.competition_phase.date_from %}{% trans "od" %} {{ campaign.competition_phase.date_from }}{% endif %}
-    {% if campaign.competition_phase.date_to %}{% trans "do" %} {{ campaign.competition_phase.date_to }}{% endif %}{% blocktrans %}
-    budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
-    {% endblocktrans %}
-</p><p>
-    {% blocktrans %}
-    Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
-    {% endblocktrans %}
-</p>
-{% else %}
-Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
-<div class ="card">
-    <nav>
-        <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
+    <p>
+        {% if not campaign.active %}
+            {% blocktrans %}
+                V průběhu soutěže
+            {% endblocktrans %}
+            {% if campaign.competition_phase.date_from %}{% trans "od" %} {{ campaign.competition_phase.date_from }}{% endif %}
+            {% if campaign.competition_phase.date_to %}{% trans "do" %} {{ campaign.competition_phase.date_to }}{% endif %}{% blocktrans %}
+                budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
+            {% endblocktrans %}
+    </p><p>
+        {% blocktrans %}
+            Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
+        {% endblocktrans %}
+    </p>
+        {% else %}
+    Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
+    <div class ="card">
+        <nav>
+            <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
+                {% for cm in commute_modes %}
+                    <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
+                        {{cm.button_html | safe }}
+                    </a>
+                {% endfor %}
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
             {% for cm in commute_modes %}
-                <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
-                {{cm.button_html | safe }}
-            </a>
+                <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
+                    {{ cm.tooltip|linebreaks }}
+                    {% if cm.does_count and cm.eco %}
+                        <div class="input-group">
+                            <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
+                            <input type="number" style="text-align: right;" max="1000" id="km-{{cm.slug}}"/>
+                            <div class="input-group-append">
+                                <span class="input-group-text">Km</span>
+                            </div>
+                        </div>
+                        <div id="map_shower_{{cm.slug}}" style="display:none;">
+                            <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
+                        </div>
+                        <div id="track_holder_{{cm.slug}}" style="display:none;">
+                            <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapa' %}</button>
+                            <div id="map_{{cm.slug}}"  style="width:100%; height:300px;">
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             {% endfor %}
         </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        {% for cm in commute_modes %}
-        <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
-                {{ cm.tooltip|linebreaks }}
-                {% if cm.does_count and cm.eco %}
-                    <div class="input-group">
-                        <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                        <input type="number" style="text-align: right;" max="1000" id="km-{{cm.slug}}"/>
-                        <div class="input-group-append">
-                            <span class="input-group-text">Km</span>
-                        </div>
-                    </div>
-                    <div id="map_shower_{{cm.slug}}" style="display:none;">
-                        <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
-                    </div>
-                    <div id="track_holder_{{cm.slug}}" style="display:none;">
-                        <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapa' %}</button>
-                        <div id="map_{{cm.slug}}"  style="width:100%; height:300px;">
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
     </div>
-</div>
-{% endif %}
-<br/>
-<!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
-<div class="modal" id="trip-modal" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-spinner">
-                <i class="fa fa-spinner fa-spin"></i>
-            </div>
-            <div class="modal-body">
+        {% endif %}
+        <br/>
+        <!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
+        <div class="modal" id="trip-modal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-spinner">
+                        <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="modal-body">
 
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-{% get_current_language as LANGUAGE_CODE %}
-<div id='calendar'></div>
-<script>
-    {% include "registration/calendar.js" %}
-</script>
+        {% get_current_language as LANGUAGE_CODE %}
+        <div id='calendar'></div>
+        <script>
+         {% include "registration/calendar.js" %}
+        </script>
 {% endblock %}
