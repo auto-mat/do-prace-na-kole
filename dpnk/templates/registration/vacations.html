@@ -35,7 +35,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     <nav>
         <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
             {% for cm in commute_modes %}
-            <a class="nav-item nav-link {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#{{cm.slug}}">
+            <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#{{cm.slug}}">
                 {{cm.button_html | safe }}
             </a>
             {% endfor %}
@@ -43,7 +43,7 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     </nav>
     <div class="tab-content" id="nav-tabContent">
         {% for cm in commute_modes %}
-        <div class="tab-pane show" id="{{cm.slug}}" role="tabpanel">
+        <div class="tab-pane show  {% if cm.slug == 'bicycle' %}active{% endif %}" id="{{cm.slug}}" role="tabpanel">
             <br/>
             {{cm.tooltip}}
             {% if cm.does_count and cm.eco %}
@@ -223,6 +223,12 @@ Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
          },
          eventRender: function(info) {
              console.log(info);
+             // Remove time column from Agenda view
+             if(info.el.children[0].classList.contains("fc-list-item-time")){
+                 info.el.children[1].remove();
+                 info.el.children[0].remove();
+                 info.el.children[0].colSpan=3
+             }
              var direction_icon = null;
              exp = info.event.extendedProps
              if (exp.direction == 'trip_to'){
