@@ -1,6 +1,8 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
+{% include "registration/util.js" %}
+
 var day_types = {
     "possible-vacation-day": {{possible_vacation_days|safe}},
     "active-day": {{active_days|safe}},
@@ -16,7 +18,6 @@ var commute_modes = {
     {% endfor %}
 }
 var possible_vacation_days = day_types["possible-vacation-day"];
-var vacation_id = {{first_vid}};
 var full_calendar;
 
 {% for cm in commute_modes %}
@@ -66,18 +67,10 @@ function on_route_select_{{cm.slug}}() {
 {% endif %}
 {% endfor %}
 
-
-
-function pad(n, width, z) {
-    z = z || '0';
-    n = n + '';
-    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+function show_message(msg) {
+    $("#message-modal-body").text(msg);
+    $('#message-modal').modal({show:true});
 }
-
-function format_date(date){
-    return date.getFullYear() + '-' + pad((date.getMonth() + 1).toString(), 2) + '-' + pad(date.getDate().toString(), 2);
-}
-
 
 function events_overlap(event1, event2) {
     if(event1.end && event2.end) {
@@ -99,18 +92,18 @@ function add_vacation(startDate, endDate) {
             start: startDate,
             end: endDate,
             allDay: true,
-            vacation_id: vacation_id++,
+            vacation: true,
         }
         events = full_calendar.getEvents();
         for (eid in events) {
-            if (events[eid].extendedProps.vacation_id) {
+            if (events[eid].extendedProps.vacation) {
                 if (events_overlap(new_event, events[eid])) {
                     e2 = events[eid]
                     return;
                 }
             }
         }
-        full_calendar.addEvent(new_event);
+        new_event = full_calendar.addEvent(new_event);
         $.post("{% url 'calendar' %}", {
             on_vacation: true,
             start_date: startDateString,
@@ -120,7 +113,8 @@ function add_vacation(startDate, endDate) {
                function(returnedData){
                }
               ).fail(function(jqXHR, textStatus, errorThrown) {
-                  window.alert("{% trans 'Propojení selhalo' %}");
+                  new_event.remove();
+                  show_message("{% trans 'Propojení selhalo' %}");
               });
     }
 }
@@ -140,7 +134,8 @@ function remove_vacation(info) {
                event.remove()
            }
           ).fail(function(jqXHR, textStatus, errorThrown) {
-              window.alert("{% trans 'Propojení selhalo' %}");
+              full_calendar.addEvent(event);
+              show_message("{% trans 'Propojení selhalo' %}");
           });
 }
 
@@ -243,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (mode_icon) {
                 info.el.firstChild.prepend(mode_icon);
             }
-            if (info.event.extendedProps.vacation_id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+            if (info.event.extendedProps.vacation) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
                 var trash_icon =  document.createElement("i");
                 var trash_button = document.createElement("button");
                 trash_button.className = 'btn btn-default btn-xs trash-button';
@@ -268,10 +263,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if(info.event.extendedProps.modal_url){
                 $('#trip-modal').modal({show:true});
-                $('.modal-body').empty();
-                $('.modal-spinner').show();
-                $('.modal-body').load(info.event.extendedProps.modal_url + " #inner-content", function(){
-                    $('.modal-spinner').hide();
+                $('#trip-modal-body').empty();
+                $('#trip-modal-spinner').show();
+                $('#trip-modal-body').load(info.event.extendedProps.modal_url + " #inner-content", function(){
+                    $('#trip-modal-spinner').hide();
                 });
             }
         },

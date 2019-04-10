@@ -37,7 +37,6 @@ def get_vacations(user_attendance):
     this_day = None
     current_vacation = None
     possible_vacation_days = user_attendance.campaign.possible_vacation_days()
-    vid = 1
     for trip in trips:
         if (this_day and trip.date <= (this_day + datetime.timedelta(days=1)) and
                 (current_vacation["editable"] or trip.date not in possible_vacation_days)):
@@ -52,12 +51,11 @@ def get_vacations(user_attendance):
                 "editable": trip.date in possible_vacation_days,
             }
             if current_vacation["editable"]:
-                current_vacation["vacation_id"] = vid
-                vid += 1
+                current_vacation["vacation"] = True
         this_day = trip.date
     if current_vacation:
         vacations.append(current_vacation)
-    return vacations, vid
+    return vacations
 
 
 def get_order(direction):
@@ -136,7 +134,7 @@ def get_events(request):
                 extra_attrs={"placeholder":True}
         )
 
-    for vacation in get_vacations(request.user_attendance)[0]:
+    for vacation in get_vacations(request.user_attendance):
         add_event(
             vacation.pop("title"),
             vacation["date"],

@@ -72,22 +72,34 @@
         {% endif %}
         <br/>
         <!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
-        <div class="modal" id="trip-modal" role="dialog">
+        <div class="modal" id="message-modal" role="dialog">
             <div class="modal-dialog">
-                <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
+                        {% trans "Hlašení" %}
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <div class="modal-spinner">
+                    <div class="modal-body" id="message-modal-body"/>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="trip-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {% trans "Jízda" %}
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-spinner" id="trip-modal-spinner">
                         <i class="fa fa-spinner fa-spin"></i>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" id="trip-modal-body">
 
                     </div>
                 </div>
             </div>
         </div>
+
         {% get_current_language as LANGUAGE_CODE %}
         <div id='calendar'></div>
         <script>
