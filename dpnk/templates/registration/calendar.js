@@ -120,6 +120,22 @@ function redraw_placeholders() {
     full_calendar.getEventSourceById(2).refetch();
 }
 
+function add_trip(trip) {
+    trip.sourceApplication = "web";
+    $.ajax('/rest/gpx/', {
+        data : JSON.stringify(trip),
+        contentType : 'application/json',
+        type : 'POST',
+        headers: {
+            'X-CSRFToken': "{{ csrf_token }}"
+        },
+        error: function(jqXHR, status, error) {
+            show_message(error + " " + jqXHR.responseText);
+        }
+    });
+    display_trip(trip, true);
+}
+
 function display_trip(trip, rerender) {
     displayed_trips.push(trip);
     new_event = {
@@ -314,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
                    "commuteMode": commute_mode,
                    "distanceMeters": Number($('#km-'+commute_mode).val()) * 1000,
                 }
-                display_trip(trip, true);
+                add_trip(trip);
                 redraw_placeholders();
             }
             if(info.event.extendedProps.modal_url){
