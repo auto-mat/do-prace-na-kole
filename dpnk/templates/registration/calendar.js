@@ -14,6 +14,7 @@ var commute_modes = {
     '{{cm.slug}}': {
         'eco': {{cm.eco|yesno:"true,false" }},
         'does_count': {{cm.does_count|yesno:"true,false" }},
+        'icon_html': "{{cm.icon_html|urlencode}}",
     },
     {% endfor %}
 }
@@ -139,13 +140,17 @@ function add_trip(trip) {
 function display_trip(trip, rerender) {
     displayed_trips.push(trip);
     new_event = {
-        title: String(trip.distanceMeters/1000) + "Km",
         start: trip.trip_date,
         end: add_days(new Date(trip.trip_date), 1),
         order: typical_directions.indexOf(trip.direction),
         allDay: true,
         commute_mode: trip.commuteMode,
         direction: trip.direction,
+    }
+    if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
+        new_event.title = String(trip.distanceMeters/1000) + "Km";
+    } else {
+        new_event.title = "→";
     }
     full_calendar.addEvent(new_event);
     if(rerender){
@@ -299,15 +304,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (direction_icon) {
                 info.el.firstChild.append(direction_icon);
             }
-            var mode_icon = null;
-            if (exp.commute_mode == 'bicycle'){
-                mode_icon = document.createElement("i");
-                mode_icon.className='fa fa-bicycle xs';
-            } else if (exp.commute_mode == 'by_foot') {
-                mode_icon = document.createElement("i");
-                mode_icon.className='fa fa-running xs';
-            }
-            if (mode_icon) {
+            if (exp.commute_mode) {
+                var mode_icon = document.createElement("div");
+                mode_icon.className='mode-icon-container';
+                mode_icon.innerHTML = decodeURIComponent(commute_modes[exp.commute_mode].icon_html);
                 info.el.firstChild.prepend(mode_icon);
             }
             if (info.event.extendedProps.vacation) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
@@ -328,7 +328,9 @@ document.addEventListener('DOMContentLoaded', function() {
                    "trip_date": format_date(info.event.start),
                    "direction": info.event.extendedProps.direction,
                    "commuteMode": commute_mode,
-                   "distanceMeters": Number($('#km-'+commute_mode).val()) * 1000,
+                }
+                if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
+                    trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
                 }
                 add_trip(trip);
                 redraw_placeholders();

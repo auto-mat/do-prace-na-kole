@@ -55,6 +55,11 @@ class CommuteMode(models.Model):
         default="",
         null=False,
     )
+    icon_html = models.TextField(
+        verbose_name=_("Html of summary icon"),
+        default="",
+        null=False,
+    )
     does_count = models.BooleanField(
         verbose_name=_("Počítá se"),
         help_text=_("Počítá se jako jízda do práce/z práce."),
