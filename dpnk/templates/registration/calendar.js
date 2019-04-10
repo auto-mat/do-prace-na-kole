@@ -120,7 +120,7 @@ function redraw_placeholders() {
     full_calendar.getEventSourceById(2).refetch();
 }
 
-function display_trip(trip) {
+function display_trip(trip, rerender) {
     displayed_trips.push(trip);
     new_event = {
         title: String(trip.distanceMeters/1000) + "Km",
@@ -132,6 +132,9 @@ function display_trip(trip) {
         direction: trip.direction,
     }
     full_calendar.addEvent(new_event);
+    if(rerender){
+        full_calendar.render();
+    }
 }
 
 function add_vacation(startDate, endDate) {
@@ -311,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                    "commuteMode": commute_mode,
                    "distanceMeters": Number($('#km-'+commute_mode).val()) * 1000,
                 }
-                display_trip(trip);
+                display_trip(trip, true);
                 redraw_placeholders();
             }
             if(info.event.extendedProps.modal_url){
@@ -326,13 +329,10 @@ document.addEventListener('DOMContentLoaded', function() {
         dayRender: function (cell) {
             var set = false;
             var num_eco_trips = 0;
-            var events_this_day = [];
-            var events = full_calendar.getEvents();
-            for (i in events){
-                if(format_date(events[i].start) == format_date(cell.date)){
-                    var event = events[i];
-                    events_this_day.push(event);
-                    if(event.extendedProps['commute_mode'] && commute_modes[event.extendedProps['commute_mode']].eco){
+            for (i in displayed_trips){
+                if(displayed_trips[i].trip_date == format_date(cell.date)){
+                    var trip = displayed_trips[i];
+                    if(commute_modes[trip.commuteMode].eco){
                         num_eco_trips++;
                     }
                 }
