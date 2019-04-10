@@ -7,3 +7,9 @@ function pad(n, width, z) {
 function format_date(date){
     return date.getFullYear() + '-' + pad((date.getMonth() + 1).toString(), 2) + '-' + pad(date.getDate().toString(), 2);
 }
+
+function add_days(date, days){
+    new_date = new Date(date);
+    new_date.setDate(new_date.getDate() + days);
+    return new_date;
+}

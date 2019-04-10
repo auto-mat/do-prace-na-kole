@@ -863,7 +863,6 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
             "active_days": json.dumps([str(day) for day in active_days_set]),
             "locked_days": json.dumps([str(day) for day in locked_days_set]),
             "non_working_days": json.dumps([str(day) for day in util.non_working_days(competition, competition.date_to)]),
-            "first_vid": calendar.get_vacations(self.user_attendance)[1],
             "events": json.dumps(calendar.get_events(self.request)),
             "commute_modes": models.CommuteMode.objects.all(),
             "trips": models.Trip.objects.filter(user_attendance=self.user_attendance, commute_mode__eco=True, commute_mode__does_count=True)

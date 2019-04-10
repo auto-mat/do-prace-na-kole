@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _
 # Local imports
 from . import util
 
-
+"""
 def get_vacations(user_attendance):
     trips = user_attendance.user_trips.filter(
         commute_mode__slug='no_work',
@@ -60,7 +60,7 @@ def get_vacations(user_attendance):
 
 def get_order(direction):
     return 2 if direction == 'trip_from' else 1
-
+"""
 
 def get_events(request):
     events = []
@@ -69,17 +69,17 @@ def get_events(request):
         event = {
             "title": title,
             "start": str(date),
-            "order": order,
-            "editable": False,
+        #    "order": order,
+        #    "editable": False,
             "allDay": True,
-            "direction": direction,
+        #    "direction": direction,
             "className": css_class,
         }
-        if commute_mode:
-            event.update({
-                "commute_mode": commute_mode.slug,
-                "commute_mode__eco": commute_mode.eco,
-            })
+        #if commute_mode:
+        #    event.update({
+        #        "commute_mode": commute_mode.slug,
+        #        "commute_mode__eco": commute_mode.eco,
+        #    })
         if end:
             event["end"] = str(end)
         else:
@@ -97,6 +97,7 @@ def get_events(request):
         commute_mode__eco=True,
         commute_mode__does_count=True,
     )
+    """
     placeholders = {}
     for day in util.days_active(phase):
         placeholders[day] = {
@@ -142,4 +143,5 @@ def get_events(request):
             css_class='no-trip' if vacation.pop('date') <= util.today() else 'vc-vacation',
             extra_attrs=vacation,
         )
+    """
     return events

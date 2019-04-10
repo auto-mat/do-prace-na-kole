@@ -20,6 +20,12 @@ var commute_modes = {
 var possible_vacation_days = day_types["possible-vacation-day"];
 var full_calendar;
 
+placeholder_events = []
+vacation_events = []
+displayed_trips = []
+
+typical_directions = ["trip_to", "trip_from"];
+
 {% for cm in commute_modes %}
 {% if cm.does_count and cm.eco %}
 var editable_layers_{{cm.slug}} = new L.FeatureGroup();
@@ -81,11 +87,54 @@ function events_overlap(event1, event2) {
     }
 }
 
+function redraw_placeholders() {
+    for(i in placeholder_events) {
+        placeholder_events[i].remove();
+    }
+    placeholder_events = [];
+    for(i in day_types["active-day"]){
+       var active_day = day_types["active-day"][i];
+       var directions = [];
+       for (i in displayed_trips) {
+           var trip = displayed_trips[i];
+           if(trip.trip_date == active_day){
+               directions.push(trip.direction);
+           }
+       }
+       for(i in typical_directions) {
+           if(!directions.includes(typical_directions[i])){
+               new_event =  {
+                   title: "+",
+                   start: active_day,
+                   end: add_days(new Date(active_day), 1),
+                   order: i,
+                   allDay: true,
+                   placeholder: true,
+                   direction: typical_directions[i],
+               } 
+               placeholder_events.push(full_calendar.addEvent(new_event));
+           }
+       }
+    }
+}
+
+function display_trip(trip) {
+    displayed_trips.push(trip);
+    new_event = {
+        title: String(trip.distanceMeters/1000) + "Km",
+        start: trip.trip_date,
+        end: add_days(new Date(trip.trip_date), 1),
+        order: typical_directions.indexOf(trip.direction),
+        allDay: true,
+        commute_mode: trip.commuteMode,
+        direction: trip.direction,
+    }
+    full_calendar.addEvent(new_event);
+}
+
 function add_vacation(startDate, endDate) {
     startDateString = format_date(startDate);
-    real_end_date = new Date(endDate);
-    real_end_date.setDate(real_end_date.getDate() - 1);
-    endDateString = format_date(real_end_date);
+    endDateString = format_date(add_days(endDate, -1));
     if(possible_vacation_days.indexOf(startDateString) >= 0 && possible_vacation_days.indexOf(endDateString) >= 0){
         new_event = {
             title: "{% trans 'Dovolená' %}",
@@ -208,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
             add_vacation(info.start, info.end);
         },
         eventRender: function(info) {
-            console.log(info);
             // Remove time column from Agenda view
             if(info.el.children[0].classList.contains("fc-list-item-time")){
                 info.el.children[1].remove();
@@ -252,14 +300,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(info);
             if(info.event.extendedProps.placeholder){
                 commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
-                cmo = commute_modes[commute_mode];
-                info.event.setExtendedProp('commute_mode', commute_mode);
-                if(cmo.eco && cmo.does_count){
-                    km = $('#km-'+commute_mode).val()
-                    info.event.setProp('title', km + " Km");
-                } else {
-                    info.event.setProp('title', "");
+                var trip = {
+                   "trip_date": format_date(info.event.start),
+                   "direction": info.event.extendedProps.direction,
+                   "commuteMode": commute_mode,
+                   "distanceMeters": Number($('#km-'+commute_mode).val()) * 1000,
                 }
+                display_trip(trip);
+                redraw_placeholders();
             }
             if(info.event.extendedProps.modal_url){
                 $('#trip-modal').modal({show:true});
@@ -279,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(format_date(events[i].start) == format_date(cell.date)){
                     var event = events[i];
                     events_this_day.push(event);
-                    if(event.extendedProps['commute_mode__eco']){
+                    if(event.extendedProps['commute_mode'] && commute_modes[event.extendedProps['commute_mode']].eco){
                         num_eco_trips++;
                     }
                 }
@@ -300,5 +348,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
     });
-    full_calendar.render();
+    $.getJSON('/rest/gpx/?format=json', function( data ){
+        for (i in data.results) {
+            display_trip(data.results[i]);
+        }
+        redraw_placeholders();
+        full_calendar.render();
+    });
 });
