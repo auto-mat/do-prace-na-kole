@@ -120,7 +120,7 @@ function redraw_placeholders() {
     full_calendar.getEventSourceById(2).refetch();
 }
 
-function add_trip(trip) {
+function add_trip(trip, cont) {
     trip.sourceApplication = "web";
     $.ajax('/rest/gpx/', {
         data : JSON.stringify(trip),
@@ -130,10 +130,17 @@ function add_trip(trip) {
             'X-CSRFToken': "{{ csrf_token }}"
         },
         error: function(jqXHR, status, error) {
-            show_message(error + " " + jqXHR.responseText);
+            if (error) {
+               show_message(error + " " + jqXHR.responseText);
+            } else if (jqXHR.statusText == 'error') {
+               show_message("{% trans 'Chyba připojení' %}");
+            }
+        },
+        success: function(jqXHR, status) {
+            display_trip(trip, true);
+            cont();
         }
     });
-    display_trip(trip, true);
 }
 
 function display_trip(trip, rerender) {
@@ -360,8 +367,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
                     trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
                 }
-                add_trip(trip);
-                redraw_placeholders();
+                while (info.el.firstChild) {
+                    info.el.removeChild(info.el.firstChild);
+                }
+                var loading_icon =  document.createElement("i");
+                loading_icon.className = 'fa fa-spinner fa-spin';
+                info.el.appendChild(loading_icon);
+                add_trip(trip, redraw_placeholders);
             }
             if(info.event.extendedProps.modal_url){
                 $('#trip-modal').modal({show:true});
