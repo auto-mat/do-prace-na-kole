@@ -26,6 +26,11 @@ vacation_events = []
 displayed_trips = []
 
 typical_directions = ["trip_to", "trip_from"];
+direction_names = {
+ "trip_to": "{% trans 'Do práce' %}",
+ "trip_from": "{% trans 'Domu' %}",
+ "recreational": "{% trans 'Výlet' %}",
+}
 
 {% for cm in commute_modes %}
 {% if cm.does_count and cm.eco %}
@@ -43,7 +48,9 @@ function hide_map_{{cm.slug}}(){
     $("#map_shower_{{cm.slug}}").show();
 }
 
-var route_options_{{cm.slug}} = {
+var route_options_{{cm.slug}} = {};
+
+var basic_route_options_{{cm.slug}} = {
     "{% trans 'Zadat Km ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
         hide_map_{{cm.slug}}();
@@ -57,14 +64,6 @@ var route_options_{{cm.slug}} = {
         console.log("TODO");
         show_map_{{cm.slug}}();
     },
-    {% for trip in trips %}
-    {% if trip.commute_mode == cm %}
-    "{% trans 'Stejně jako' %} {{trip.date}} {{trip.get_direction_display }} ({{trip.distance}} Km)": function () {
-        $("#km-{{cm.slug}}").val({{trip.distance|stringformat:"f"}});
-        show_map_{{cm.slug}}();
-    },
-    {% endif %}
-    {% endfor %}
 };
 
 function on_route_select_{{cm.slug}}() {
@@ -154,6 +153,7 @@ function display_trip(trip, rerender) {
     }
     full_calendar.addEvent(new_event);
     if(rerender){
+        reload_route_options()
         full_calendar.render();
     }
 }
@@ -214,16 +214,44 @@ function remove_vacation(info) {
           });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function reload_route_options() {
+    displayed_trips.sort(function(a, b) {
+        da = Date.parse(a.trip_date);
+        db = Date.parse(b.trip_date);
+        return db - da;
+    });
     {% for cm in commute_modes %}
     {% if cm.does_count and cm.eco %}
-    var sel = document.getElementById("route_select_{{cm.slug}}");
+    route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
+    var sel = $("#route_select_{{cm.slug}}");
+    sel.children().remove(); 
+    sel = sel[0];
+    for(var i in displayed_trips) {
+        var trip = displayed_trips[i];
+        if (trip.commuteMode == '{{cm.slug}}') {
+            var desc = "{% trans 'Stejně jako' %} " + trip.trip_date + "  " + direction_names[trip.direction] + " (" + trip.distanceMeters / 1000 + " Km)";
+            (function () {
+                var local_trip = trip; // Thanks! http://reallifejs.com/the-meat/getting-closure/never-forget/
+                route_options_{{cm.slug}}[desc] = function () {
+                    $("#km-{{cm.slug}}").val(local_trip.distanceMeters / 1000);
+                    show_map_{{cm.slug}}();
+                };
+            })();
+       }
+    }
     for(var key in route_options_{{cm.slug}}){
         var option = document.createElement("option");
         option.value = key;
         option.text = key;
         sel.appendChild(option);
     }
+    {% endif %}
+    {% endfor %}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    {% for cm in commute_modes %}
+    {% if cm.does_count and cm.eco %}
 
     map_{{cm.slug}} = L.map('map_{{cm.slug}}').setView([50.0866699218750000, 14.4387817382809995], 8);
     L.tileLayer('https://tiles.prahounakole.cz/{z}/{x}/{y}.png',
@@ -376,6 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
             display_trip(data.results[i]);
         }
         redraw_placeholders();
+        reload_route_options();
         full_calendar.render();
     });
 });

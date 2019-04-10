@@ -865,7 +865,6 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
             "non_working_days": json.dumps([str(day) for day in util.non_working_days(competition, competition.date_to)]),
             "events": json.dumps(calendar.get_events(self.request)),
             "commute_modes": models.CommuteMode.objects.all(),
-            "trips": models.Trip.objects.filter(user_attendance=self.user_attendance, commute_mode__eco=True, commute_mode__does_count=True)
         })
         return context_data
 
