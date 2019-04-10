@@ -87,10 +87,7 @@ function events_overlap(event1, event2) {
     }
 }
 
-function redraw_placeholders() {
-    for(i in placeholder_events) {
-        placeholder_events[i].remove();
-    }
+function get_placeholder_events(fetchInfo, successCallback, failureCallback){
     placeholder_events = [];
     for(i in day_types["active-day"]){
        var active_day = day_types["active-day"][i];
@@ -112,10 +109,15 @@ function redraw_placeholders() {
                    placeholder: true,
                    direction: typical_directions[i],
                } 
-               placeholder_events.push(full_calendar.addEvent(new_event));
+               placeholder_events.push(new_event);
            }
        }
     }
+    successCallback(placeholder_events);
+}
+
+function redraw_placeholders() {
+    full_calendar.getEventSourceById(2).refetch();
 }
 
 function display_trip(trip) {
@@ -239,7 +241,10 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultView = 'listMonth';
     }
     full_calendar = new FullCalendar.Calendar(calendarEl, {
-        events: {{events|safe}},
+        eventSources: [
+           {events: {{events|safe}}},
+           {events: get_placeholder_events, id: 2},
+        ],
         eventOrder: 'order',
         selectable: true,
         lang: '{{ LANGUAGE_CODE }}',
