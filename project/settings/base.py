@@ -657,3 +657,10 @@ def photologue_path(instance, filename):
 
 
 PHOTOLOGUE_PATH = photologue_path
+
+DBBACKUP_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+DBBACKUP_STORAGE_OPTIONS = {
+    'access_key': os.environ.get('DPNK_AWS_ACCESS_KEY_ID'),
+    'secret_key': os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY'),
+    'bucket_name': 'dpnk-dbbackups'
+}
