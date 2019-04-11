@@ -8,6 +8,7 @@ import requests
 
 
 def generate_pdf(csv_file):
+    gls_url = settings.GLS_BASE_URL
     session = requests.Session()
 
     login_data = {
@@ -15,7 +16,7 @@ def generate_pdf(csv_file):
         'username': settings.GLS_USERNAME,
         'lessersecurity': "on",
     }
-    response = session.post('http://online.gls-czech.com/login.php', data=login_data)
+    response = session.post(gls_url + '/login.php', data=login_data)
     # print_response(response)
 
     # ----------remove uploaded file-------------------------
@@ -33,7 +34,7 @@ def generate_pdf(csv_file):
         "importfile_encoding": "UTF-8",
     }
 
-    response = session.post('http://online.gls-czech.com/subindex.php', data=data)
+    response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response1a.html")
 
     # ----------choose preset----------------------------
@@ -49,7 +50,7 @@ def generate_pdf(csv_file):
         "assignment_id": "1047",
     }
 
-    response = session.post('http://online.gls-czech.com/subindex.php', data=data)
+    response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response1.html")
 
     # -----------upload new file---------------------
@@ -70,7 +71,7 @@ def generate_pdf(csv_file):
 
     files = {'importfile': ('test_batch.csv', csv_file, 'text/csv')}
 
-    response = session.post('http://online.gls-czech.com/subindex.php', files=files, data=data)
+    response = session.post(gls_url + '/subindex.php', files=files, data=data)
     # print_response(response, filename="response2.html")
 
     # -----------------------------------------------
@@ -124,7 +125,7 @@ def generate_pdf(csv_file):
         "saveParcelImportTemplate": "",
     }
 
-    response = session.post('http://online.gls-czech.com/subindex.php', data=data)
+    response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response3.html")
 
     # -----------------------------------------------
@@ -143,7 +144,7 @@ def generate_pdf(csv_file):
         "targetpnum": "0",
     }
 
-    response = session.post('http://online.gls-czech.com/subindex.php', data=data)
+    response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response4.html")
 
     # -----------------------------------------------
@@ -163,7 +164,7 @@ def generate_pdf(csv_file):
         "targetpnum": "0",
     }
 
-    response = session.post('http://online.gls-czech.com/subindex.php', data=data)
+    response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response5.html")
     soup = BeautifulSoup(response.text, features="lxml")
     addr = "http://online.gls-czech.com/" + soup.find('body').find('iframe').attrs['src']

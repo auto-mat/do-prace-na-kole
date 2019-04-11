@@ -418,6 +418,7 @@ ECOMAIL_MAILING_API_KEY = os.environ.get('DPNK_ECOMAIL_MAILING_API_KEY', '')
 
 GLS_USERNAME = os.environ.get('GLS_USERNAME', '')
 GLS_PASSWORD = os.environ.get('GLS_PASSWORD', '')
+GLS_BASE_URL = os.environ.get('GLS_BASE_URL', 'http://test.online.gls-czech.com')
 
 FIO_TOKEN = os.environ.get('DPNK_FIO_TOKEN', '')
 
