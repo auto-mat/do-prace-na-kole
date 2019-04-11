@@ -97,6 +97,8 @@ from .forms import (
     UserProfileLanguageUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
+
+from .rest import TripSerializer
 from .views_mixins import (
     CampaignFormKwargsMixin,
     CampaignParameterMixin,
@@ -884,18 +886,20 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
             date__lte=end_date,
         )
         no_work = models.CommuteMode.objects.get(slug='no_work')
+        updated_trips = []
         if on_vacation:
             for date in util.daterange(start_date, end_date):
                 for direction in ['trip_to', 'trip_from']:
-                    Trip.objects.update_or_create(
+                    updated_trips.append(Trip.objects.update_or_create(
                         user_attendance=self.user_attendance,
                         date=date,
                         direction=direction,
                         defaults={'commute_mode': no_work},
-                    )
+                    ))
         else:
             existing_trips.delete()
-        return HttpResponse("OK")
+        existing_trips = [TripSerializer(trip).data for trip in existing_trips]
+        return HttpResponse(json.dumps(existing_trips))
 
 
 class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
