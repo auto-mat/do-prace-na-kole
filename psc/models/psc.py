@@ -34,14 +34,20 @@ class PSC(models.Model):
     municipality_name = models.CharField(
         verbose_name=_("Název obce"),
         max_length=255,
+        null=True,
+        blank=True,
     )
     municipality_part_name = models.CharField(
         verbose_name=_("Název části obce"),
         max_length=255,
+        null=True,
+        blank=True,
     )
     district_name = models.CharField(
         verbose_name=_("Název okresu"),
         max_length=255,
+        null=True,
+        blank=True,
     )
     psc = models.IntegerField(
         verbose_name=_("PSČ"),
@@ -54,7 +60,11 @@ class PSC(models.Model):
     post_name = models.CharField(
         verbose_name=_("Název pošty"),
         max_length=255,
+        null=True,
+        blank=True,
     )
     code = models.IntegerField(
         verbose_name=_("Kód"),
+        null=True,
+        blank=True,
     )
