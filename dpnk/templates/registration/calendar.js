@@ -66,7 +66,7 @@ var basic_route_options_{{cm.slug}} = {
         show_map_{{cm.slug}}();
     },
     "{% trans 'Nakreslit trasu do mapy' %}": function () {
-        console.log("TODO");
+        editable_layers_{{cm.slug}}.clearLayers();
         show_map_{{cm.slug}}();
     },
 };
