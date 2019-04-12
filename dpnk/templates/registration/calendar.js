@@ -75,109 +75,17 @@ function on_route_select_{{cm.slug}}() {
     var sel = document.getElementById("route_select_{{cm.slug}}");
     route_options_{{cm.slug}}[sel.value]();
 }
+
+function select_old_trip_{{cm.slug}}(trip){
+    $("#km-{{cm.slug}}").val(trip.distanceMeters / 1000);
+    show_map_{{cm.slug}}();
+}
+
 {% endif %}
 {% endfor %}
 
-function show_message(msg) {
-    $("#message-modal-body").text(msg);
-    $('#message-modal').modal({show:true});
-}
-
-function events_overlap(event1, event2) {
-    if(event1.end && event2.end) {
-        return ((event1.start >= event2.start && event1.start < event2.end) ||
-                (event1.end > event2.start && event1.end <= event2.end));
-    } else {
-        return false;
-    }
-}
-
-function show_loading_icon_on_event(info) {
-    el = info.el
-    while (el.firstChild) {
-        el.removeChild(el.firstChild);
-    }
-    var loading_icon = document.createElement("i");
-    loading_icon.className = 'fa fa-spinner fa-spin';
-    el.appendChild(loading_icon);
-}
-
-function get_vacation_events(fetchInfo, successCallback, failureCallback){
-    vacation_events = [];
-    var current_vacation_start = null;
-    var possible_vacation_day = null;
-    function close_out_vacation_if_needed() {
-        if(current_vacation_start) {
-           new_event =  {
-               title: "{% trans 'Dovolena' %}",
-               start: current_vacation_start,
-               end: possible_vacation_day,
-               allDay: true,
-               vacation: true,
-           } 
-           vacation_events.push(new_event);
-           current_vacation_start = null;
-       }
-    }
-    for(i in possible_vacation_days){
-       possible_vacation_day = possible_vacation_days[i];
-       var directions = [];
-       for (i in displayed_trips) {
-           var trip = displayed_trips[i];
-           if(trip.trip_date == possible_vacation_day){
-               directions.push(trip.direction);
-           }
-       }
-       num_trips = 0;
-       for(i in typical_directions) {
-           if(directions.includes(typical_directions[i])){
-              num_trips++;
-           }
-       }
-       if(num_trips == 2){
-          if(!current_vacation_start){
-              current_vacation_start = possible_vacation_day;
-          }
-       } else close_out_vacation_if_needed();
-    }
-    close_out_vacation_if_needed();
-    successCallback(vacation_events);
-}
-
-function get_placeholder_events(fetchInfo, successCallback, failureCallback){
-    placeholder_events = [];
-    for(i in day_types["active-day"]){
-       var active_day = day_types["active-day"][i];
-       var directions = [];
-       for (i in displayed_trips) {
-           var trip = displayed_trips[i];
-           if(trip.trip_date == active_day){
-               directions.push(trip.direction);
-           }
-       }
-       for(i in typical_directions) {
-           if(!directions.includes(typical_directions[i])){
-               new_event =  {
-                   title: "+",
-                   start: active_day,
-                   end: add_days(new Date(active_day), 1),
-                   order: i,
-                   allDay: true,
-                   placeholder: true,
-                   direction: typical_directions[i],
-               } 
-               placeholder_events.push(new_event);
-           }
-       }
-    }
-    successCallback(placeholder_events);
-}
-
-function redraw_everything_trip_related() {
-    full_calendar.getEventSourceById(2).refetch();
-    full_calendar.getEventSourceById(3).refetch();
-    reload_route_options();
-}
+{% include "registration/calendar-util.js" %}
+{% include "registration/calendar-render.js" %}
 
 function add_trip(trip, cont) {
     trip.sourceApplication = "web";
@@ -298,39 +206,30 @@ function remove_vacation(info) {
           });
 }
 
-function reload_route_options() {
-    displayed_trips.sort(function(a, b) {
-        da = Date.parse(a.trip_date);
-        db = Date.parse(b.trip_date);
-        return db - da;
-    });
-    {% for cm in commute_modes %}
-    {% if cm.does_count and cm.eco %}
-    route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
-    var sel = $("#route_select_{{cm.slug}}");
-    sel.children().remove(); 
-    sel = sel[0];
-    for(var i in displayed_trips) {
-        var trip = displayed_trips[i];
-        if (trip.commuteMode == '{{cm.slug}}') {
-            var desc = "{% trans 'Stejně jako' %} " + trip.trip_date + "  " + direction_names[trip.direction] + " (" + trip.distanceMeters / 1000 + " Km)";
-            (function () {
-                var local_trip = trip; // Thanks! http://reallifejs.com/the-meat/getting-closure/never-forget/
-                route_options_{{cm.slug}}[desc] = function () {
-                    $("#km-{{cm.slug}}").val(local_trip.distanceMeters / 1000);
-                    show_map_{{cm.slug}}();
-                };
-            })();
-       }
+function eventClick(info) {
+    console.log(info);
+    if(info.event.extendedProps.placeholder){
+        commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
+        var trip = {
+           "trip_date": format_date(info.event.start),
+           "direction": info.event.extendedProps.direction,
+           "commuteMode": commute_mode,
+        }
+        if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
+            trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
+        }
+        show_loading_icon_on_event(info);
+        add_trip(trip, redraw_everything_trip_related);
     }
-    for(var key in route_options_{{cm.slug}}){
-        var option = document.createElement("option");
-        option.value = key;
-        option.text = key;
-        sel.appendChild(option);
+    modal_url = get_modal_url(info.event);
+    if(modal_url){
+        $('#trip-modal').modal({show:true});
+        $('#trip-modal-body').empty();
+        $('#trip-modal-spinner').show();
+        $('#trip-modal-body').load(modal_url + " #inner-content", function(){
+            $('#trip-modal-spinner').hide();
+        });
     }
-    {% endif %}
-    {% endfor %}
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -399,98 +298,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(info)
             add_vacation(info.start, info.end);
         },
-        eventRender: function(info) {
-            // Remove time column from Agenda view
-            if(info.el.children[0].classList.contains("fc-list-item-time")){
-                info.el.children[1].remove();
-                info.el.children[0].remove();
-                info.el.children[0].colSpan=3
-            }
-            var direction_icon = null;
-            exp = info.event.extendedProps
-            if (exp.loading) {
-               show_loading_icon_on_event(info);
-            }
-            if (exp.vacation) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
-                var trash_icon =  document.createElement("i");
-                var trash_button = document.createElement("button");
-                trash_button.className = 'btn btn-default btn-xs trash-button';
-                trash_button.append(trash_icon);
-                trash_button.onclick = function(){remove_vacation(info)};
-                trash_icon.className = 'fa fa-trash sm';
-                info.el.firstChild.append(trash_button);
-            } else {
-                if (exp.direction == 'trip_to'){
-                    direction_icon = document.createElement("i");
-                    direction_icon.className='fa fa-industry xs';
-                } else if (exp.direction == 'trip_from') {
-                    direction_icon = document.createElement("i");
-                    direction_icon.className='fa fa-home xs';
-                }
-                if (direction_icon) {
-                    info.el.firstChild.append(direction_icon);
-                }
-                if (exp.commute_mode) {
-                    var mode_icon = document.createElement("div");
-                    mode_icon.className='mode-icon-container';
-                    mode_icon.innerHTML = decodeURIComponent(commute_modes[exp.commute_mode].icon_html);
-                    info.el.firstChild.prepend(mode_icon);
-                }
-            }
-
-        },
-        eventClick: function(info) {
-            console.log(info);
-            if(info.event.extendedProps.placeholder){
-                commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
-                var trip = {
-                   "trip_date": format_date(info.event.start),
-                   "direction": info.event.extendedProps.direction,
-                   "commuteMode": commute_mode,
-                }
-                if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
-                    trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
-                }
-                show_loading_icon_on_event(info);
-                add_trip(trip, redraw_everything_trip_related);
-            }
-            if(info.event.extendedProps.modal_url){
-                $('#trip-modal').modal({show:true});
-                $('#trip-modal-body').empty();
-                $('#trip-modal-spinner').show();
-                $('#trip-modal-body').load(info.event.extendedProps.modal_url + " #inner-content", function(){
-                    $('#trip-modal-spinner').hide();
-                });
-            }
-        },
-        dayRender: function (cell) {
-            var set = false;
-            if(active_days.indexOf(format_date(cell.date)) >= 0 || locked_days.indexOf(format_date(cell.date)) >= 0) {
-                var num_eco_trips = 0;
-                for (i in displayed_trips){
-                    if(displayed_trips[i].trip_date == format_date(cell.date)){
-                        var trip = displayed_trips[i];
-                        if(commute_modes[trip.commuteMode].eco){
-                            num_eco_trips++;
-                        }
-                    }
-                }
-                if (num_eco_trips == 1) {
-                    cell.el.classList.add('one-ride-day');
-                } else if (num_eco_trips > 1) {
-                    cell.el.classList.add('two-ride-day');
-                }
-            }
-            for (key in day_types) {
-                if (day_types[key].indexOf(format_date(cell.date)) >= 0) {
-                    cell.el.classList.add(key);
-                    set = true;
-                }
-            }
-            if (!set){
-                cell.el.classList.add("out-of-competition-day");
-            }
-        },
+        eventRender: eventRender,
+        eventClick: eventClick,
+        dayRender: dayRender,
     });
     $.getJSON('/rest/gpx/?format=json', function( data ){
         for (i in data.results) {
