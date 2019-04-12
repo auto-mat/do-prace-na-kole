@@ -71,14 +71,15 @@ var basic_route_options_{{cm.slug}} = {
     },
 };
 
-function on_route_select_{{cm.slug}}() {
-    var sel = document.getElementById("route_select_{{cm.slug}}");
-    route_options_{{cm.slug}}[sel.value]();
-}
-
 function select_old_trip_{{cm.slug}}(trip){
     $("#km-{{cm.slug}}").val(trip.distanceMeters / 1000);
     show_map_{{cm.slug}}();
+    load_track(map_{{cm.slug}}, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, editable_layers_{{cm.slug}});
+}
+
+function on_route_select_{{cm.slug}}() {
+    var sel = document.getElementById("route_select_{{cm.slug}}");
+    route_options_{{cm.slug}}[sel.value]();
 }
 
 {% endif %}
@@ -259,12 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var drawControl = new L.Control.Draw(draw_options);
     map_{{cm.slug}}.addControl(drawControl);
     map_{{cm.slug}}.on(L.Draw.Event.CREATED, function (e) {
-        var type = e.layerType,
-            layer = e.layer;
-        if (type === 'marker') {
-            layer.bindPopup('A popup!');
-        }
-        editable_layers_{{cm.slug}}.addLayer(layer);
+        editable_layers_{{cm.slug}}.addLayer(e.layer);
     });
     {% endif %}
     {% endfor %}
