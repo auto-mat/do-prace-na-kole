@@ -304,5 +304,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         redraw_everything_trip_related();
         full_calendar.render();
+        $(".main-loading-overlay").hide();
     });
 });

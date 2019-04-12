@@ -101,6 +101,9 @@
         </div>
 
         {% get_current_language as LANGUAGE_CODE %}
+        <div class="main-loading-overlay">
+        <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
+        </div>
         <div id='calendar'></div>
         <script>
          {% include "registration/calendar.js" %}
