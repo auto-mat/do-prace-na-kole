@@ -6,9 +6,11 @@
 
 
 {% block extrahead %}
-    {% leaflet_js plugins="draw" %}
-    {% leaflet_css plugins="draw" %}
     {% include "registration/leaflet_include.html" %}
+    <link rel='stylesheet' href='{% static "bow/leaflet/dist/leaflet.css"%}' />
+    <script src='{% static "bow/leaflet/dist/leaflet.js"%}'></script>
+    <link rel='stylesheet' href='{% static "bow/leaflet-draw/dist/leaflet.draw.css"%}' />
+    <script src='{% static "bow/leaflet-draw/dist/leaflet.draw.js"%}'></script>
     <link rel='stylesheet' href='{% static "bow/fullcalendar/dist/core/main.css"%}' />
     <script src='{% static "bow/fullcalendar/dist/core/main.js"%}'></script>
     <script src='{% static "bow/fullcalendar/dist/core/locales-all.js"%}'></script>

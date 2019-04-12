@@ -82,6 +82,22 @@ function on_route_select_{{cm.slug}}() {
     route_options_{{cm.slug}}[sel.value]();
 }
 
+function update_distance_from_map_{{cm.slug}}() {
+   var tempLatLng = null; // https://stackoverflow.com/questions/31221088/how-to-calculate-the-distance-of-a-polyline-in-leaflet-like-geojson-io#31223825
+   var totalDistance = 0.00000;
+   $.each(editable_layers_{{cm.slug}}.getLayers(), function(i, layer){
+       $.each(layer._latlngs, function(i, latlng){
+           if(tempLatLng == null){
+               tempLatLng = latlng;
+               return;
+           }
+           totalDistance += tempLatLng.distanceTo(latlng);
+           tempLatLng = latlng;
+       });
+   });
+   $("#km-{{cm.slug}}").val((totalDistance / 1000).toFixed(2));
+}
+
 {% endif %}
 {% endfor %}
 
@@ -251,14 +267,24 @@ document.addEventListener('DOMContentLoaded', function() {
             marker: false,
             rectangle: false,
             circle: false,
+            circlemarker: false,
+            polyline: {
+                metric: true,
+                feet: false,
+                showLength: true,
+            }
         },
         edit: {
             featureGroup: editable_layers_{{cm.slug}},
-            remove: false
-        }
+            remove: true
+        },
+        delete: {}
     };
     var drawControl = new L.Control.Draw(draw_options);
     map_{{cm.slug}}.addControl(drawControl);
+    map_{{cm.slug}}.on(L.Draw.Event.DRAWSTOP, update_distance_from_map_{{cm.slug}});
+    map_{{cm.slug}}.on(L.Draw.Event.EDITSTOP, update_distance_from_map_{{cm.slug}});
+    map_{{cm.slug}}.on(L.Draw.Event.DELETESTOP, update_distance_from_map_{{cm.slug}});
     map_{{cm.slug}}.on(L.Draw.Event.CREATED, function (e) {
         editable_layers_{{cm.slug}}.addLayer(e.layer);
     });
