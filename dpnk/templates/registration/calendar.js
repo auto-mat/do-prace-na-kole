@@ -61,10 +61,6 @@ var basic_route_options_{{cm.slug}} = {
         hide_map_{{cm.slug}}();
         $("#map_shower_{{cm.slug}}").hide();
     },
-    "{% trans 'Nahrat GPX soubor' %}": function () {
-        console.log("TODO");
-        show_map_{{cm.slug}}();
-    },
     "{% trans 'Nakreslit trasu do mapy' %}": function () {
         editable_layers_{{cm.slug}}.clearLayers();
         show_map_{{cm.slug}}();
@@ -98,6 +94,12 @@ function update_distance_from_map_{{cm.slug}}() {
    });
    $("#km-{{cm.slug}}").val((totalDistance / 1000).toFixed(2));
 }
+
+dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
+    dictDefaultMessage: "{% trans "GPX soubory nahrajete přetažením, nebo kliknutím" %}",
+    uploadMultiple: false,
+    paramName: "gpx",
+});
 
 {% endif %}
 {% endfor %}
@@ -238,6 +240,21 @@ function eventClick(info) {
         }
         if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
             trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
+        }
+        if (true) { //if map shown
+            els = eval('editable_layers_' + commute_mode);
+            layers = els.getLayers();
+            geojson = {
+                type: "MultiLineString",
+                coordinates: [],
+            };
+            for(i in layers) {
+                layer = layers[i];
+                lgeojson = layer.toGeoJSON();
+                geojson.coordinates.push(lgeojson.geometry.coordinates);
+            }
+            console.log(geojson);
+            trip['track'] = JSON.stringify(geojson);
         }
         show_loading_icon_on_event(info);
         add_trip(trip, redraw_everything_trip_related);
