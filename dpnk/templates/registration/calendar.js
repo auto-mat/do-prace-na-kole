@@ -370,6 +370,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         redraw_everything_trip_related();
         full_calendar.render();
+        {% for cm in commute_modes %}
+        {% if cm.does_count and cm.eco %}
+        $("#km-{{cm.slug}}").val(0);
+        for(i in displayed_trips) {
+            console.log(displayed_trips[i]);
+            if(displayed_trips[i].distanceMeters && displayed_trips[i].commuteMode == '{{cm.slug}}') {
+                $("#km-{{cm.slug}}").val(displayed_trips[i].distanceMeters / 1000);
+                break;
+            }
+        }
+        {% endif %}
+        {% endfor %}
         $(".main-loading-overlay").hide();
     });
 });
