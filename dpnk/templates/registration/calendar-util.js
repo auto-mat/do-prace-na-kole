@@ -1,3 +1,5 @@
+{% load i18n %}
+{% load l10n %}
 
 function show_message(msg) {
     $("#message-modal-body").text(msg);
@@ -30,4 +32,23 @@ function get_modal_url(event) {
     if(cmo.eco && cmo.does_count) {
         return "/view_trip/" + format_date(event.start) + "/" + event.extendedProps.direction
     }
+}
+
+function ajax_req_json(url, json, method, success) {
+    $.ajax(url, {
+        data : JSON.stringify(json),
+        contentType : 'application/json',
+        type : method,
+        headers: {
+            'X-CSRFToken': "{{ csrf_token }}"
+        },
+        error: function(jqXHR, status, error) {
+            if (error) {
+                show_message(error + " " + jqXHR.responseText);
+            } else if (jqXHR.statusText == 'error') {
+                show_message("{% trans 'Chyba připojení' %}");
+            }
+        },
+        success: success
+    });
 }

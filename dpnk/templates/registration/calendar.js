@@ -105,26 +105,30 @@ function update_distance_from_map_{{cm.slug}}() {
 {% include "registration/calendar-util.js" %}
 {% include "registration/calendar-render.js" %}
 
+
 function add_trip(trip, cont) {
     trip.sourceApplication = "web";
-    $.ajax('/rest/gpx/', {
-        data : JSON.stringify(trip),
-        contentType : 'application/json',
-        type : 'POST',
-        headers: {
-           'X-CSRFToken': "{{ csrf_token }}"
-        },
-        error: function(jqXHR, status, error) {
-            if (error) {
-               show_message(error + " " + jqXHR.responseText);
-            } else if (jqXHR.statusText == 'error') {
-               show_message("{% trans 'Chyba připojení' %}");
-            }
-        },
-        success: function(jqXHR, status) {
-            display_trip(trip, true);
+    ajax_req_json(
+        '/rest/gpx/',
+        trip,
+        'POST',
+        function(jqXHR, status) {
+            display_trip(jqXHR, true);
             cont();
-        }
+    });
+}
+
+function delete_trip(event) {
+    console.log(event);
+    ajax_req_json(
+        '/rest/gpx/' + event.extendedProps.trip_id + '/',
+        {},
+        'DELETE',
+        function (jqXHR, status) {
+           event.remove();
+           displayed_trips = displayed_trips.filter( function (trip) {return trip.id != event.extendedProps.trip_id});
+           redraw_everything_trip_related();
+           full_calendar.render();
     });
 }
 
@@ -140,6 +144,7 @@ function display_trip(trip, rerender) {
         allDay: true,
         commute_mode: trip.commuteMode,
         direction: trip.direction,
+        trip_id: trip.id,
     }
     if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
         new_event.title = String(trip.distanceMeters/1000) + "Km";
@@ -148,7 +153,7 @@ function display_trip(trip, rerender) {
     }
     event = full_calendar.addEvent(new_event);
     if(rerender){
-        reload_route_options()
+        reload_route_options();
         full_calendar.render();
     }
 }
@@ -244,8 +249,16 @@ function eventClick(info) {
         $('#trip-modal-spinner').show();
         if(locked_days.indexOf(format_date(info.event.start)) >= 0) {
             $('#trip-lock').show();
+            $('#trip-edit-delete').hide();
         } else {
             $('#trip-lock').hide();
+            $('#trip-edit-delete').show();
+            $('#trip-edit-button').attr("href", "/trip/" + format_date(info.event.start) + "/" + info.event.extendedProps.direction);
+            $('#trip-delete-button').unbind('click');
+            $('#trip-delete-button').click(function() {
+                delete_trip(info.event);
+                $('#trip-modal').modal('toggle');
+            });
         }
         $('#trip-modal-body').load(modal_url + " #inner-content", function(){
             $('#trip-modal-spinner').hide();

@@ -1942,6 +1942,7 @@ class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
         context = {
             "title": self.title,
             "days_active": trip.user_attendance.campaign.days_active,
+            "active": trip.user_attendance.campaign.day_active(trip.date),
         }
         context["trip"] = trip
         return context
