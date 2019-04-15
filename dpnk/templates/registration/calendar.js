@@ -83,14 +83,16 @@ function on_route_select_{{cm.slug}}() {
 }
 
 function update_distance_from_map_{{cm.slug}}() {
-   var tempLatLng = null; // https://stackoverflow.com/questions/31221088/how-to-calculate-the-distance-of-a-polyline-in-leaflet-like-geojson-io#31223825
+   // https://stackoverflow.com/questions/31221088/how-to-calculate-the-distance-of-a-polyline-in-leaflet-like-geojson-io#31223825
    var totalDistance = 0.00000;
    $.each(editable_layers_{{cm.slug}}.getLayers(), function(i, layer){
+       var tempLatLng = null;
        $.each(layer._latlngs, function(i, latlng){
            if(tempLatLng == null){
                tempLatLng = latlng;
                return;
            }
+           console.log(tempLatLng)
            totalDistance += tempLatLng.distanceTo(latlng);
            tempLatLng = latlng;
        });
