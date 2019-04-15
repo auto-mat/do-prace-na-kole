@@ -283,6 +283,11 @@ urlpatterns = [
         name="trip",
     ),
     url(
+        r'^view_trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
+        views.TripView.as_view(),
+        name="view_trip",
+    ),
+    url(
         r'^trip_geojson/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
         views.TripGeoJsonView.as_view(),
         name="trip_geojson",

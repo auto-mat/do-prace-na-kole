@@ -92,7 +92,6 @@ function update_distance_from_map_{{cm.slug}}() {
                tempLatLng = latlng;
                return;
            }
-           console.log(tempLatLng)
            totalDistance += tempLatLng.distanceTo(latlng);
            tempLatLng = latlng;
        });
@@ -213,7 +212,6 @@ function remove_vacation(info) {
     },
            function(returnedData){
                days_to_delete = possible_vacation_days.slice(possible_vacation_days.indexOf(startDateString), possible_vacation_days.indexOf(endDateString))
-               console.log(days_to_delete)
                displayed_trips = displayed_trips.filter( function (trip) {
                       return days_to_delete.indexOf(trip.trip_date) < 0;
                });
@@ -226,7 +224,6 @@ function remove_vacation(info) {
 }
 
 function eventClick(info) {
-    console.log(info);
     if(info.event.extendedProps.placeholder){
         commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
         var trip = {
@@ -245,21 +242,33 @@ function eventClick(info) {
         $('#trip-modal').modal({show:true});
         $('#trip-modal-body').empty();
         $('#trip-modal-spinner').show();
+        if(locked_days.indexOf(format_date(info.event.start)) >= 0) {
+            $('#trip-lock').show();
+        } else {
+            $('#trip-lock').hide();
+        }
         $('#trip-modal-body').load(modal_url + " #inner-content", function(){
             $('#trip-modal-spinner').hide();
+            var map = create_map('track_map');
+            load_track(map, "/trip_geojson/" + format_date(info.event.start) + "/" + info.event.extendedProps.direction, {});
         });
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    {% for cm in commute_modes %}
-    {% if cm.does_count and cm.eco %}
-
-    map_{{cm.slug}} = L.map('map_{{cm.slug}}').setView([50.0866699218750000, 14.4387817382809995], 8);
+function create_map(element_id){
+    var map = L.map(element_id).setView([50.0866699218750000, 14.4387817382809995], 8);
     L.tileLayer('https://tiles.prahounakole.cz/{z}/{x}/{y}.png',
                 {
                     attribution: '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                }).addTo(map_{{cm.slug}});
+                }).addTo(map);
+   return map;
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    {% for cm in commute_modes %}
+    {% if cm.does_count and cm.eco %}
+    map_{{cm.slug}} = create_map('map_{{cm.slug}}')
 
     map_{{cm.slug}}.addLayer(editable_layers_{{cm.slug}});
 
@@ -319,7 +328,6 @@ document.addEventListener('DOMContentLoaded', function() {
             right: 'dayGridMonth,listMonth, now, prev,next',
         },
         select: function(info) {
-            console.log(info)
             add_vacation(info.start, info.end);
         },
         eventRender: eventRender,
