@@ -1,3 +1,5 @@
+import datetime
+
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -47,7 +49,7 @@ def generate_pdf(csv_file):
         "version": "18050702",
         "targetpnum": "1",
         "frompage": "0",
-        "assignment_id": "1047",
+        "assignment_id": "0",
     }
 
     response = session.post(gls_url + '/subindex.php', data=data)
@@ -81,13 +83,13 @@ def generate_pdf(csv_file):
         "controller": "listPage",
         "cmd": "importPage",
         "pkey": "",
-        "version": "18050702",
+        "version": "18091802",
         "targetpnum": "3",
         "frompage": "2",
-        "assignname": "Auto*Mat",
+        "assignname": "",
         "senderid_const": "on",
         "senderid": "050013079",
-        "gapid": "1",
+        "gapid": "0",
         "from_name_const": "on",
         "from_name": "Auto*Mat, Do práce na kole",
         "from_address_const": "on",
@@ -113,7 +115,7 @@ def generate_pdf(csv_file):
         "to_phone": "9",
         "to_email": "8",
         "pickupd_const": "on",
-        "pickupd": "09.04.2019",
+        "pickupd": datetime.date.today().strftime("%d.%m.%Y"),
         "pcount_const": "on",
         "pcount": "1",
         "pinfo_const": "on",
@@ -128,7 +130,7 @@ def generate_pdf(csv_file):
     response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response3.html")
 
-    # -----------------------------------------------
+    # -----------download failed pages-------------------------
 
     data = {
         "module": "preparedparcel",
@@ -140,7 +142,8 @@ def generate_pdf(csv_file):
         "frompage": "-1",
         "targetpnum": "0",
         "do_search": "0",
-        "searchtxt": "frompage: -1",
+        "searchtxt": "",
+        "frompage": "-1",
         "targetpnum": "0",
     }
 
@@ -167,7 +170,7 @@ def generate_pdf(csv_file):
     response = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response5.html")
     soup = BeautifulSoup(response.text, features="lxml")
-    addr = "http://online.gls-czech.com/" + soup.find('body').find('iframe').attrs['src']
+    addr = gls_url + "/" + soup.find('body').find('iframe').attrs['src']
     response = session.get(addr)
     # with open("batch.pdf", "wb") as f:
     #     f.write(response.content)
