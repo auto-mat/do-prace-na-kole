@@ -55,9 +55,9 @@ delivery_batch_generate_pdf.short_description = _("Nahrát data do GLS a vytvoř
 
 
 def save_filefield(filefield, directory):
-    filename = directory + os.path.basename(filefield.name)
-    f = open(filename, "wb+")
-    f.write(filefield.read())
+    filename = directory + "/" + os.path.basename(filefield.name)
+    with open(filename, "wb+") as f:
+        f.write(filefield.read())
     return filename
 
 
@@ -69,15 +69,15 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
         subprocess.call(["mkdir", "tmp_pdf/output", "--parents"])
         pdf_files = []
         for subsidiary_box in batch.subsidiarybox_set.all():
-            filename = save_filefield(subsidiary_box.customer_sheets, "tmp_pdf/output/")
+            filename = save_filefield(subsidiary_box.customer_sheets, "tmp_pdf/output")
             pdf_files.append(filename)
 
-        order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf/")
-        tnt_order_filename = save_filefield(batch.tnt_order, "tmp_pdf/")
+        order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf")
+        tnt_order_filename = save_filefield(batch.tnt_order, "tmp_pdf")
         subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename, tnt_order_filename])
 
-        f = open("tmp_pdf/combined_sheets-rotated.pdf", "rb+")
-        batch.combined_opt_pdf.save("tmp_pdf/combined_sheets-rotated.pdf", f)
+        with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
+            batch.combined_opt_pdf.save("tmp_pdf/combined_sheets-rotated.pdf", f)
 
 
 delivery_batch_generate_pdf_for_opt.short_description = _("Nahrát vytvořit PDF pro OPT")

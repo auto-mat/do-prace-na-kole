@@ -106,7 +106,9 @@ class DeliveryBatch(models.Model):
         return self.subsidiarybox_set.count()
 
     def submit_gls_order_pdf(self):
-        self.order_pdf.save("batch%s.pdf" % self.id, ContentFile(generate_pdf(self.tnt_order)))
+        pdf_filename = generate_pdf(self.tnt_order)
+        with open(pdf_filename, "rb+") as f:
+            self.order_pdf.save("batch%s.pdf" % self.id, f)
         self.save()
 
     @transaction.atomic

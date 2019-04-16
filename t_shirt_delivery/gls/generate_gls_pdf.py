@@ -1,4 +1,6 @@
 import datetime
+import subprocess
+from subprocess import PIPE, Popen
 
 from bs4 import BeautifulSoup
 
@@ -9,7 +11,7 @@ from django.conf import settings
 import requests
 
 
-def generate_pdf(csv_file):
+def generate_pdf_part(csv_file):
     gls_url = settings.GLS_BASE_URL
     session = requests.Session()
 
@@ -175,3 +177,21 @@ def generate_pdf(csv_file):
     # with open("batch.pdf", "wb") as f:
     #     f.write(response.content)
     return response.content
+
+
+def generate_pdf(csv_file):
+    subprocess.call(["rm", "tmp_gls", "-R"])
+    subprocess.call(["mkdir", "tmp_gls"])
+    from .. import actions
+    csv_filename = actions.save_filefield(csv_file, "tmp_gls")
+    subprocess.call(["scripts/batch_generation/split_csv.sh", csv_filename, "500"])
+    p = Popen(['bash', '-c', 'ls tmp_gls/delivery_batch_splitted_*'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output, err = p.communicate()
+    for csv_file_part in output.decode("utf-8").split("\n"):
+        if csv_file_part:
+            with open(csv_file_part) as f:
+                pdf_part = generate_pdf_part(f)
+            with open(csv_file_part + ".pdf", "wb+") as f:
+                f.write(pdf_part)
+    subprocess.call(["bash", "-c", "pdftk tmp_gls/*.pdf output tmp_gls/gls_sheet.pdf"])
+    return "tmp_gls/gls_sheet.pdf"
