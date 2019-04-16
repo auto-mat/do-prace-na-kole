@@ -29,9 +29,7 @@ function get_modal_url(event) {
     commute_mode = event.extendedProps.commute_mode;
     cmo = commute_modes[commute_mode];
     if(!cmo) return;
-    if(cmo.eco && cmo.does_count) {
-        return "/view_trip/" + format_date(event.start) + "/" + event.extendedProps.direction
-    }
+    return "/view_trip/" + format_date(event.start) + "/" + event.extendedProps.direction
 }
 
 function ajax_req_json(url, json, method, success) {

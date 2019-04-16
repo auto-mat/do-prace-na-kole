@@ -38,6 +38,7 @@ direction_names = {
 }
 
 {% for cm in commute_modes %}
+var editable_layers_{{cm.slug}} = null;
 {% if cm.does_count and cm.eco %}
 var editable_layers_{{cm.slug}} = new L.FeatureGroup();
 var map_{{cm.slug}} = null;
@@ -121,7 +122,6 @@ function add_trip(trip, cont) {
 }
 
 function delete_trip(event) {
-    console.log(event);
     ajax_req_json(
         '/rest/gpx/' + event.extendedProps.trip_id + '/',
         {},
@@ -241,8 +241,8 @@ function eventClick(info) {
         if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
             trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
         }
-        if (true) { //if map shown
-            els = eval('editable_layers_' + commute_mode);
+        els = eval('editable_layers_' + commute_mode);
+        if (els) {
             layers = els.getLayers();
             geojson = {
                 type: "MultiLineString",
@@ -253,8 +253,9 @@ function eventClick(info) {
                 lgeojson = layer.toGeoJSON();
                 geojson.coordinates.push(lgeojson.geometry.coordinates);
             }
-            console.log(geojson);
-            trip['track'] = JSON.stringify(geojson);
+            if(geojson.coordinates) {
+                trip['track'] = JSON.stringify(geojson);
+            }
         }
         show_loading_icon_on_event(info);
         add_trip(trip, redraw_everything_trip_related);
@@ -279,8 +280,10 @@ function eventClick(info) {
         }
         $('#trip-modal-body').load(modal_url + " #inner-content", function(){
             $('#trip-modal-spinner').hide();
-            var map = create_map('track_map');
-            load_track(map, "/trip_geojson/" + format_date(info.event.start) + "/" + info.event.extendedProps.direction, {});
+            if($('#track_map').length) {
+                var map = create_map('track_map');
+                load_track(map, "/trip_geojson/" + format_date(info.event.start) + "/" + info.event.extendedProps.direction, {});
+            }
         });
     }
 }
@@ -374,7 +377,6 @@ document.addEventListener('DOMContentLoaded', function() {
         {% if cm.does_count and cm.eco %}
         $("#km-{{cm.slug}}").val(0);
         for(i in displayed_trips) {
-            console.log(displayed_trips[i]);
             if(displayed_trips[i].distanceMeters && displayed_trips[i].commuteMode == '{{cm.slug}}') {
                 $("#km-{{cm.slug}}").val(displayed_trips[i].distanceMeters / 1000);
                 break;
