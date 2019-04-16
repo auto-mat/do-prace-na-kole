@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 
-from dpnk.test.util import print_response  # noqa
+# from dpnk.test.util import print_response
 
 import requests
 
