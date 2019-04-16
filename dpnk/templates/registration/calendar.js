@@ -110,15 +110,18 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
     uploadMultiple: false,
     paramName: "gpx",
     maxFiles: 1,
+    acceptedFiles: ".gpx",
     init: function() {
-        this.on("addedfile", function() {
-            if (this.files[1]!=null){
-                this.removeFile(this.files[1]);
-            }
+        this.on("addedfile", function(file) {
+           var files_to_remove = this.files.filter(function (f) {return f != file});
+           for (i in files_to_remove) {
+              this.removeFile(files_to_remove[i]);
+           }
         });
     },
-    accept: function(file) { // https://stackoverflow.com/questions/33710825/getting-file-contents-when-using-dropzonejs
+    accept: function(file, done) { // https://stackoverflow.com/questions/33710825/getting-file-contents-when-using-dropzonejs
         var reader = new FileReader();
+        var dz = this;
         reader.addEventListener("loadend", function(event) {
             gpx = new L.GPX(event.target.result, {
             }).on('loaded', function(e) {
@@ -127,6 +130,9 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
             editable_layers_{{cm.slug}}.clearLayers();
             gpx.getLayers()[0].getLayers()[0].addTo(editable_layers_{{cm.slug}});
             update_distance_from_map_{{cm.slug}}();
+            file.status = Dropzone.SUCCESS;
+            dz.emit("success", file);
+            dz.emit("complete", file);
         });
         reader.readAsText(file);
     },
