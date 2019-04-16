@@ -80,4 +80,4 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
             batch.combined_opt_pdf.save("tmp_pdf/combined_sheets-rotated.pdf", f)
 
 
-delivery_batch_generate_pdf_for_opt.short_description = _("Nahrát vytvořit PDF pro OPT")
+delivery_batch_generate_pdf_for_opt.short_description = _("Vytvořit PDF pro OPT")
