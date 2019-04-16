@@ -56,6 +56,8 @@ function hide_map_{{cm.slug}}(){
 
 var route_options_{{cm.slug}} = {};
 
+var gpx_file_{{cm.slug}} = null;
+
 var basic_route_options_{{cm.slug}} = {
     "{% trans 'Zadat Km ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
@@ -133,6 +135,7 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
             file.status = Dropzone.SUCCESS;
             dz.emit("success", file);
             dz.emit("complete", file);
+            gpx_file_{{cm.slug}} = file;
         });
         reader.readAsText(file);
     },
@@ -145,15 +148,29 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
 {% include "registration/calendar-render.js" %}
 
 
-function add_trip(trip, cont) {
+function add_trip(trip, file, cont) {
     trip.sourceApplication = "web";
-    ajax_req_json(
-        '/rest/gpx/',
-        trip,
-        'POST',
-        function(jqXHR, status) {
-            display_trip(jqXHR, true);
+    var formData = new FormData();
+    for(key in trip) {
+      formData.append(key, trip[key]);
+    }
+    if (file) {
+       formData.append('file', file);
+    }
+    $.ajax({
+        url: '/rest/gpx/',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        cache: false,
+        headers: {
+            'X-CSRFToken': "{{ csrf_token }}"
+        },
+        success: function (returndata) {
+            display_trip(returndata, true);
             cont();
+        }
     });
 }
 
@@ -289,12 +306,13 @@ function eventClick(info) {
                 lgeojson = layer.toGeoJSON();
                 geojson.coordinates.push(lgeojson.geometry.coordinates);
             }
-            if(geojson.coordinates) {
+            if(geojson.coordinates.length) {
                 trip['track'] = JSON.stringify(geojson);
             }
         }
         show_loading_icon_on_event(info);
-        add_trip(trip, redraw_everything_trip_related);
+        var file = eval('gpx_file_' + commute_mode);
+        add_trip(trip, file, redraw_everything_trip_related);
     }
     modal_url = get_modal_url(info.event);
     if(modal_url){
