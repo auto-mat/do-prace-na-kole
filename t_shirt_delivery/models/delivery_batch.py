@@ -74,6 +74,13 @@ class DeliveryBatch(models.Model):
         null=True,
         max_length=512,
     )
+    combined_opt_pdf = models.FileField(
+        verbose_name=_("Kombinované PDF pro OPT"),
+        upload_to='pdf_opt_delivery',
+        blank=True,
+        null=True,
+        max_length=512,
+    )
     dispatched = models.BooleanField(
         verbose_name=_("Vyřízeno"),
         blank=False,

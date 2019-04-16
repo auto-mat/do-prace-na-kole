@@ -388,8 +388,12 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
         'customer_sheets__url',
         'pdf_data_url',
         'csv_data_url',
+        'combined_opt_pdf_url',
     ]
-    actions = [actions.delivery_batch_generate_pdf]
+    actions = [
+        actions.delivery_batch_generate_pdf,
+        actions.delivery_batch_generate_pdf_for_opt,
+    ]
     readonly_fields = (
         'campaign',
         'author',
@@ -447,6 +451,10 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
     def csv_data_url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>csv_data</a>", obj.tnt_order.url)
+
+    def combined_opt_pdf_url(self, obj):
+        if obj.combined_opt_pdf:
+            return format_html("<a href='{}'>combined_opt_pdf</a>", obj.combined_opt_pdf.url)
 
     def dispatched_count(self, obj):
         return obj.dispatched_count

@@ -1,20 +1,15 @@
 #!/bin/bash
 
-# Usage: ./generate_delivery_batch_pdf.sh delivery_batches_*.pdf
-# In the directory must CSV files with same names like the PDFs
+# Usage: ./generate_delivery_batch_pdf.sh delivery_batch.pdf delivery_batch.csv
 
-for pdf_file in $@; do
-   csv_file=`echo $pdf_file | sed "s/pdf/csv/g"`
-   pdftk $pdf_file burst output pdf_output/pg_%04d.pdf
+pdftk $1 burst output tmp_pdf/output/pg_%04d.pdf
 
-   file_ids=`cat $csv_file | cut -d";" -f15 | grep -v "Variabilní symbol"`
-   i=0
-   for id in $file_ids; do
-      i=$((i+1))
-      mv `printf "pdf_output/pg_%04d" $i`.pdf pdf_output/customer_sheets_$id.a.pdf
-   done
+file_ids=`cat $2 | cut -d";" -f15 | grep -v "Variabilní symbol"`
+i=0
+for id in $file_ids; do
+   i=$((i+1))
+   mv `printf "tmp_pdf/output/pg_%04d" $i`.pdf tmp_pdf/output/customer_sheets_$id.gls_label.pdf
 done
 
-
-pdftk pdf_output/*.pdf* output combined_sheets.pdf
-pdftk combined_sheets.pdf cat 1-endeast output combined_sheets-rotated.pdf
+pdftk tmp_pdf/output/*.pdf* output tmp_pdf/combined_sheets.pdf
+pdftk tmp_pdf/combined_sheets.pdf cat 1-endeast output tmp_pdf/combined_sheets-rotated.pdf
