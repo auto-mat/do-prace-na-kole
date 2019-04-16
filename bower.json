@@ -28,7 +28,8 @@
       "dropzone": "~5.5.0",
       "jquery-editable-select": "~2.2.5",
       "leaflet": "0.7.3",
-      "leaflet-draw": "1.0.4"
+      "leaflet-draw": "1.0.4",
+      "leaflet-gpx": "https://github.com/mpetazzoni/leaflet-gpx.git"
   },
   "resolutions": {
     "jquery": "2.2.0",

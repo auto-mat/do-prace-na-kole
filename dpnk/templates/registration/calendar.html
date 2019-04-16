@@ -19,6 +19,7 @@
     <script src='{% static "bow/fullcalendar/dist/list/main.js"%}'></script>
     <script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
     <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
+    <script src="{% static 'bow/leaflet-gpx/gpx.js' %}"></script>
     {{ block.super }}
 {% endblock %}
 {% block form %}
@@ -65,15 +66,15 @@
                         </div>
                         <div id="track_holder_{{cm.slug}}" style="display:none;">
                             <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapa' %}</button>
-                            <div id="map_{{cm.slug}}"  style="width:100%; height:300px;">
-                            </div>
-                            <form class="dropzone" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
+                            <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="fallback">
                                     <input name="gpx" type="file"/>
                                     <input type="submit" value="{% trans 'Odeslat' %}"/>
                                 </div>
                             </form>
+                            <div id="map_{{cm.slug}}"  style="width:100%; height:300px;">
+                            </div>
                         </div>
                     {% endif %}
                 </div>

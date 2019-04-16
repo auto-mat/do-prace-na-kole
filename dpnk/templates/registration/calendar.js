@@ -61,9 +61,16 @@ var basic_route_options_{{cm.slug}} = {
         $("#km-{{cm.slug}}").val(0);
         hide_map_{{cm.slug}}();
         $("#map_shower_{{cm.slug}}").hide();
+        $("#gpx_upload_{{cm.slug}}").hide();
     },
     "{% trans 'Nakreslit trasu do mapy' %}": function () {
         editable_layers_{{cm.slug}}.clearLayers();
+        $("#gpx_upload_{{cm.slug}}").hide();
+        show_map_{{cm.slug}}();
+    },
+    "{% trans 'Nahravat GPX soubor' %}": function () {
+        editable_layers_{{cm.slug}}.clearLayers();
+        $("#gpx_upload_{{cm.slug}}").show();
         show_map_{{cm.slug}}();
     },
 };
@@ -71,6 +78,7 @@ var basic_route_options_{{cm.slug}} = {
 function select_old_trip_{{cm.slug}}(trip){
     $("#km-{{cm.slug}}").val(trip.distanceMeters / 1000);
     show_map_{{cm.slug}}();
+    $("#gpx_upload_{{cm.slug}}").hide();
     load_track(map_{{cm.slug}}, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, editable_layers_{{cm.slug}});
 }
 
@@ -96,11 +104,33 @@ function update_distance_from_map_{{cm.slug}}() {
    $("#km-{{cm.slug}}").val((totalDistance / 1000).toFixed(2));
 }
 
+Dropzone.autoDiscover = false;
 dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
-    dictDefaultMessage: "{% trans "GPX soubory nahrajete přetažením, nebo kliknutím" %}",
+    dictDefaultMessage: "{% trans "GPX soubory nahrajete přetažením, nebo kliknutím " %}",
     uploadMultiple: false,
     paramName: "gpx",
-});
+    maxFiles: 1,
+    init: function() {
+        this.on("addedfile", function() {
+            if (this.files[1]!=null){
+                this.removeFile(this.files[1]);
+            }
+        });
+    },
+    accept: function(file) { // https://stackoverflow.com/questions/33710825/getting-file-contents-when-using-dropzonejs
+        var reader = new FileReader();
+        reader.addEventListener("loadend", function(event) {
+            gpx = new L.GPX(event.target.result, {
+            }).on('loaded', function(e) {
+            })
+            map_{{cm.slug}}.fitBounds(gpx.getBounds());
+            editable_layers_{{cm.slug}}.clearLayers();
+            gpx.getLayers()[0].getLayers()[0].addTo(editable_layers_{{cm.slug}});
+            update_distance_from_map_{{cm.slug}}();
+        });
+        reader.readAsText(file);
+    },
+}); 
 
 {% endif %}
 {% endfor %}
