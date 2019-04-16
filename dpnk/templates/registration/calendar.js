@@ -328,6 +328,7 @@ function eventClick(info) {
             $('#trip-edit-button').attr("href", "/trip/" + format_date(info.event.start) + "/" + info.event.extendedProps.direction);
             $('#trip-delete-button').unbind('click');
             $('#trip-delete-button').click(function() {
+                show_loading_icon_on_event(info);
                 delete_trip(info.event);
                 $('#trip-modal').modal('toggle');
             });
