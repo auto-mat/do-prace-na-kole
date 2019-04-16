@@ -69,13 +69,13 @@ from registration.backends.default.views import RegistrationView as SimpleRegist
 from unidecode import unidecode
 
 # Local imports
+from . import calendar
 from . import draw
 from . import exceptions
 from . import forms
 from . import models
 from . import results
 from . import util
-from . import calendar
 from .email import (
     approval_request_mail,
     invitation_mail,
@@ -97,7 +97,6 @@ from .forms import (
     UserProfileLanguageUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
-
 from .rest import TripSerializer
 from .views_mixins import (
     CampaignFormKwargsMixin,
@@ -890,12 +889,14 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
         if on_vacation:
             for date in util.daterange(start_date, end_date):
                 for direction in ['trip_to', 'trip_from']:
-                    updated_trips.append(Trip.objects.update_or_create(
-                        user_attendance=self.user_attendance,
-                        date=date,
-                        direction=direction,
-                        defaults={'commute_mode': no_work},
-                    ))
+                    updated_trips.append(
+                        Trip.objects.update_or_create(
+                            user_attendance=self.user_attendance,
+                            date=date,
+                            direction=direction,
+                            defaults={'commute_mode': no_work},
+                        ),
+                    )
         else:
             existing_trips.delete()
         existing_trips = [TripSerializer(trip).data for trip in existing_trips]

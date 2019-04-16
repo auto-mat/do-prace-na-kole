@@ -21,12 +21,8 @@
 
 import datetime
 
-from django.contrib.humanize.templatetags.humanize import intcomma
-from django.urls import reverse
 from django.utils.translation import ugettext as _
 
-# Local imports
-from . import util
 
 def get_events(request):
     events = []
