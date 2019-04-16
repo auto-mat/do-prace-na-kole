@@ -13,7 +13,7 @@ static
 scripts
 !scripts/batch_generation/download_dispatched_subsidiary_boxes.sh
 !scripts/batch_generation/split_csv.sh
-!scripts/generate_delivery_batch_pdf.sh
+!scripts/batch_generation/generate_delivery_batch_pdf.sh
 htmlcov
 htmlcov-max
 sql
