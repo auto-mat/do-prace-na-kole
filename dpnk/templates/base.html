@@ -6,18 +6,18 @@
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
+<html xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
 <head>
 	<title>{% if campaign %}{{ campaign.campaign_type.name }}{% endif %}{% block title %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
-	<link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}"> </link>
-	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32"> </link>
-	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16"> </link>
-	<link rel="manifest" href="{% static "img/favicon/manifest.json" %}"></link>
-  <link rel="mask-icon" href="{% static "img/favicon/safari-pinned-tab.svg" %}" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}> </link>
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}"> 
+	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32"> 
+	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16"> 
+	<link rel="manifest" href="{% static "img/favicon/manifest.json" %}">
+  <link rel="mask-icon" href="{% static "img/favicon/safari-pinned-tab.svg" %}" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}> 
    <meta name="theme-color" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}>
 	{% block default_head %}
-	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> </meta>
-	 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.min.js"%}"></script>
 		<script type="text/javascript" src="{% static "bow/jquery-ui/jquery-ui.min.js"%}"></script>
@@ -43,7 +43,7 @@
 		<link href="{% static "bow/lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
 		<link href="{% static "bootstrap/bootstrap.min.css"%}" rel="stylesheet" media="screen">
 		<link href="{% static "bow/jquery-ui/themes/base/jquery-ui.min.css"%}" rel="stylesheet" media="screen">
-		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C300%2C600%2C400&#038;subset=latin%2Clatin-ext&#038;ver=4.1.1' type='text/css' media='all'></link>
+		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C300%2C600%2C400&#038;subset=latin%2Clatin-ext&#038;ver=4.1.1' type='text/css' media='all'>
 		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
     <link href="{% static "bow/font-awesome/css/all.css"%}" rel="stylesheet">
 	{% endblock %}
