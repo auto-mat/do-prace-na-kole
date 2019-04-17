@@ -56,7 +56,7 @@
                     {% if cm.does_count and cm.eco %}
                         <div class="input-group">
                             <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                            <input type="number" style="text-align: right;" max="1000" id="km-{{cm.slug}}"/>
+                            <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">Km</span>
                             </div>
