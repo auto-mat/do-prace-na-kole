@@ -2,11 +2,9 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
-{% load leaflet_tags %}
 
 
 {% block extrahead %}
-    {% include "registration/leaflet_include.html" %}
     <link rel='stylesheet' href='{% static "bow/leaflet/dist/leaflet.css"%}' />
     <link href="{% static "bow/dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet"/>
     <script src='{% static "bow/leaflet/dist/leaflet.js"%}'></script>
@@ -20,6 +18,7 @@
     <script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
     <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
     <script src="{% static 'bow/leaflet-gpx/gpx.js' %}"></script>
+    {% include "registration/leaflet_settings.html" %}
     {{ block.super }}
 {% endblock %}
 {% block form %}

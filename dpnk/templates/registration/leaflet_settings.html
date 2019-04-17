@@ -1,0 +1,83 @@
+<style type="text/css">
+   .leaflet-interactive {
+       stroke:red;
+       stroke-opacity: 1;
+       stroke-width: 4;
+   }
+</style>
+<script>
+   // Hack to fix Leaflet Draw behaviour, which added point when moving map.
+   (function() {
+      var originalOnTouch = L.Draw.Polyline.prototype._onTouch;
+      L.Draw.Polyline.prototype._onTouch = function( e ) {
+         if( e.originalEvent.pointerType != 'mouse' ) {
+            if(this._calculateFinishDistance(e.latlng) > 10){ // dissables https://github.com/Leaflet/Leaflet.draw/blob/6e4e2c3806dcaeab2e569a82d5c6d2081b2e51db/src/draw/handler/Draw.Polyline.js#L305
+                return originalOnTouch.call(this, e);
+            }
+         }
+      }
+
+      // https://github.com/Leaflet/Leaflet.draw/issues/789
+      L.Draw.Polyline.prototype._updateFinishHandler = function( e ) {
+       var markerCount = this._markers.length;
+       // The last marker should have a click handler to close the polyline
+       if (markerCount > 2) {
+           setTimeout(function(){
+                  if ( this._markers === undefined ) {
+                      return;
+                  }
+                  this._markers[this._markers.length - 1].on('click', this._finishShape, this);
+          }.bind(this), 300);
+       }
+       // Remove the old marker click handler (as only the last point should close the polyline)
+       if (markerCount > 2) {
+           this._markers[markerCount - 2].off('click', this._finishShape, this);
+       }
+      }
+   })();
+
+ ClearableGeometryField = L.GeometryField.extend({
+     addTo: function (map) {
+         L.GeometryField.prototype.addTo.call(this, map);
+         window["leaflet-geometry-field"] = this;
+     },
+     clear: function () {
+         lgf = this
+         lgf.drawnItems.eachLayer(function(layer){
+             lgf.drawnItems.removeLayer(layer);
+         });
+     },
+     save: function () {
+         this.store.save(this.drawnItems);
+     },
+ });
+
+ // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
+ function load_track (map, trip_url, options, editable_layers) {
+     var track_geojson = L.geoJson();
+     if(!editable_layers) {
+         track_geojson.addTo(map);
+     } else {
+         editable_layers.clearLayers();
+     }
+     $.ajax({
+         dataType: "json",
+         url: trip_url,
+         success: function(data) {
+             track_geojson.addData(data);
+             if(editable_layers) {
+                 var layers = track_geojson.getLayers();
+                 for (i in layers) {
+                     layer = layers[i]
+                     for(n in layer._latlngs) {
+                         coord_array = layer._latlngs[n]
+                         polyline = new L.Polyline(coord_array);
+                         editable_layers.addLayer(polyline);
+                     }
+                 }
+             }
+             map.fitBounds(track_geojson.getBounds())
+         }
+     }).error(function() {});
+ }
+</script>
