@@ -18,10 +18,10 @@
     <script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
     <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
     <script src="{% static 'bow/leaflet-gpx/gpx.js' %}"></script>
-    {% include "registration/leaflet_settings.html" %}
     {{ block.super }}
 {% endblock %}
 {% block form %}
+    {% include "registration/leaflet_settings.html" %}
     <p>
         {% if not campaign.active %}
             {% blocktrans %}
