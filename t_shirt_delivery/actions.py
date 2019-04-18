@@ -77,7 +77,7 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
         subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename, tnt_order_filename])
 
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
-            batch.combined_opt_pdf.save("tmp_pdf/combined_sheets-rotated.pdf", f)
+            batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
 
 
 delivery_batch_generate_pdf_for_opt.short_description = _("Vytvořit PDF pro OPT")
