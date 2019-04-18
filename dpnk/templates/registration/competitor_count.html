@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load l10n %}
 {% load humanize %}
@@ -11,6 +11,8 @@
 {% endblock %}
 
 {% block content %}
+<div class="container">
+   <div class="row">
 <script>
 $(document).ready(function() {
    $('.table-ordered').DataTable( {
@@ -84,4 +86,6 @@ $(document).ready(function() {
 </tr>
 </tfoot>
 </table>
+   </div>
+</div>
 {% endblock %}
