@@ -325,7 +325,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return 0
 
     def trip_length_total_rounded(self):
-        return round(self.trip_length_total, 2)
+        return round(self.trip_length_total or 0, 2)
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')

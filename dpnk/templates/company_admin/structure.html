@@ -29,7 +29,7 @@
                <div class="_team row">
                   {% if team.campaign == campaign %}
                      {% for team_member in team.users.all %}
-                        {% include "registration/team_member_card.html" with include_payment_state=True%}
+                        {% include "registration/team_member_card.html" with include_payment_state=True for_coordinator=True %}
                      {% endfor %}
                   {% endif %}
                </div>

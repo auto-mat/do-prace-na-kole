@@ -1,6 +1,7 @@
 {% load avatar_tags %}
 {% load dpnk_tags %}
 {% load i18n %}
+{% load humanize %}
 <div id="id-{{ team_member.userprofile.user }}-team-member" class="col-12 col-sm-6 col-md-4 member-item">
    <div class="user_head">
       <div class="avatar_holder" id="_{{ team_member.id }}">
@@ -25,29 +26,44 @@
          background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, #fff {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
       }
    </style>
-   <h2>
-      {{ team_member.userprofile }}
-   </h2>
    {% if include_approve_buttons %}
    {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.id %}
    {% endif %}
    <div class="userdata">
       <div>
-         <b>{% trans "Jméno" %}</b>: {{ team_member.userprofile }}
+         <b>{% trans "Osobní pravidelnost" %}</b>: {{ team_member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
+      </div>
+      <div>
+         <b>{% trans "Zdolaná vzdálenost" %}</b>: {{ team_member.trip_length_total_rounded|intcomma }}&nbsp;km
+      </div>
+   </div>
+   <div class="userdata">
+      <div>
+         <b>{% trans "Jméno" %}</b>: {{ team_member.userprofile.user.get_full_name }}
       </div><div>
          <b>{% trans "E-mail" %}</b>: {{ team_member.userprofile.user.email }}
-      </div><div>
-         <b>{% trans "Platba" %}</b>: {{ team_member.get_payment_status_display }}
-      </div><div>
-         <b>{% trans "Telefon" %}</b>: {{ team_member.userprofile.telephone }}
-      </div><div>
-         <b>{% trans "Stav týmu" %}</b>: {{ team_member.get_approved_for_team_display }}
       </div>
+      {% if for_coordinator %}
+      <div>
+         <b>{% trans "Telefon" %}</b>: {{ team_member.userprofile.telephone }}
+      </div>
+      {% endif %}
+      <div>
+         <b>
+            {% if for_coordinator %}
+               {% trans "Členství v týmu" %}
+            {% else %}
+               {% trans "Členství" %}
+            {% endif %}
+         </b>: {{ team_member.get_approved_for_team_display }}
+      </div>
+      {% if for_coordinator %}
       <div>
          <b>{% trans "Typ plaby" %}</b>: {{ team_member.payment_type_string }}
       </div>
+      {% endif %}
       <div>
-         <b>{% trans "Stav plaby" %}</b>: {{ team_member.get_payment_status_display }}
+         <b>{% trans "Platba" %}</b>: {{ team_member.get_payment_status_display }}
       </div>
    </div>
 
