@@ -3,6 +3,8 @@
 {% load static %}
 {% include "registration/util.js" %}
 {% include "leaflet/_leaflet_draw_i18n.js" %}
+L.drawLocal.draw.toolbar.finish.text="{% trans 'Finish' %}"; // TODO move this code to django-leaflet or something
+L.drawLocal.draw.toolbar.finish.title="{% trans 'Finish drawing' %}";
 
 var day_types = {
     "possible-vacation-day": {{possible_vacation_days|safe}},
