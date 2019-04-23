@@ -205,6 +205,7 @@ function display_trip(trip, rerender) {
         commute_mode: trip.commuteMode,
         direction: trip.direction,
         trip_id: trip.id,
+        className: (active_days.indexOf(trip.trip_date) >= 0) ? 'active-trip' : 'locked-trip',
     }
     if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
         new_event.title = String(trip.distanceMeters/1000) + "Km";
@@ -404,8 +405,9 @@ document.addEventListener('DOMContentLoaded', function() {
     full_calendar = new FullCalendar.Calendar(calendarEl, {
         eventSources: [
            {events: {{events|safe}}},
-           {events: get_placeholder_events, id: 2},
-           {events: get_vacation_events, id: 3},
+           {events: get_placeholder_events, className: "active-trip", id: 2},
+           {events: get_vacation_events, className: "cal-vacation", id: 3},
+           {events: get_wordpress_events, className: "wp-event", id: 4},
         ],
         eventOrder: 'order',
         selectable: true,

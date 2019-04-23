@@ -42,6 +42,8 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
                end: possible_vacation_day,
                allDay: true,
                vacation: true,
+               eventOrder: 'order',
+               order: 1,
            } 
            vacation_events.push(new_event);
            current_vacation_start = null;
@@ -71,6 +73,36 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
     close_out_vacation_if_needed();
     successCallback(vacation_events);
 }
+
+
+function get_wordpress_events(fetchInfo, successCallback, failureCallback){
+    $.getJSON('{{campaign.wp_api_url}}/feed/?orderby=start_date&_year={{campaign.year}}&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}', function ( data ) {
+        used_dates = [];
+        events_by_day = {};
+        for (i in data) {
+            event = data[i];
+            if(!(event.start_date in events_by_day)) {
+                events_by_day[event.start_date] = [];
+            }
+            events_by_day[event.start_date].push(event);
+        }
+        events = [];
+        for (day in events_by_day) {
+            new_event = {
+                start: day,
+                end: add_days(new Date(day), 1),
+                eventOrder: 'order',
+                order: 3,
+                allDay: true,
+                wp_events: events_by_day[day],
+                title: "Cyklo akce",
+            }
+            events.push(new_event);
+        }
+        successCallback(events);
+    });
+}
+
 
 function redraw_everything_trip_related() {
     full_calendar.getEventSourceById(2).refetch();
@@ -119,7 +151,9 @@ function eventRender(info) {
         info.el.children[0].remove();
         info.el.children[0].colSpan=3
     }
-    var direction_icon = null;
+
+    // Add buttons and icons to events
+    var left_icon = null;
     exp = info.event.extendedProps
     if (exp.loading) {
        show_loading_icon_on_event(info);
@@ -134,14 +168,17 @@ function eventRender(info) {
         info.el.firstChild.append(trash_button);
     } else {
         if (exp.direction == 'trip_to'){
-            direction_icon = document.createElement("i");
-            direction_icon.className='fa fa-industry xs';
+            left_icon = document.createElement("i");
+            left_icon.className='fa fa-industry xs';
         } else if (exp.direction == 'trip_from') {
-            direction_icon = document.createElement("i");
-            direction_icon.className='fa fa-home xs';
+            left_icon = document.createElement("i");
+            left_icon.className='fa fa-home xs';
+        } else if (exp.wp_events) {
+            left_icon = document.createElement("i");
+            left_icon.className='fa fa-glass-cheers xs';
         }
-        if (direction_icon) {
-            info.el.firstChild.append(direction_icon);
+        if (left_icon) {
+            info.el.firstChild.append(left_icon);
         }
         if (exp.commute_mode) {
             var mode_icon = document.createElement("div");
