@@ -22,7 +22,9 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
      <div class="col-sm-8">
          <table>
             <tr>
-               <td style="text-align:center">Máte {{ user_attendance.get_rides_count_denorm }} ekologických cest</td>
+               <td style="text-align:center">
+                  {% blocktrans count rides_num=1 %}Máte jednu ekologickou cestu{% plural %}Máte {{ rides_num }} ekologických cest{% endblocktrans %}
+               </td>
                <td></td>
                <td></td>
             </tr>
@@ -37,7 +39,9 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
                </td>
             </tr>
             <tr>
-               <td style="text-align:center">z celkového počtu {{ user_attendance.get_working_rides_base_count }} zapsaných cest.</td>
+               <td style="text-align:center">
+                  {% blocktrans count rides_num=user_attendance.get_working_rides_base_count %}z celkového počtu jedné zapsané cesty.{% plural %}z celkového počtu {{ rides_num }} zapsaných cest.{% endblocktrans %}
+               </td>
                <td></td>
                <td></td>
             </tr>
@@ -50,10 +54,23 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
                      <h5 class="card-title">Gratulujeme! Váš tým má ve vás opravdovou oporu.</h5>
                  {% elif user_attendance.get_frequency_percentage > campaign.minimum_percentage %}
                      <h5 class="card-title">Jste na dobré cestě! Kolegové v týmu jsou určitě šťastní, že vás mají.</h5>
-                     <p>Ale neusněte na vavřínech. Do konce soutěže můžete najezdit či naběhat ještě {{ user_attendance.get_remaining_rides_count }} cest ku vaší až {{ user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma }}% pravidelnosti.</p>
+                     <p>
+                     {% trans "Ale neusněte na vavřínech." %}
+                     {% blocktrans count rides_num=user_attendance.get_remaining_rides_count with max_percentage=user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
+                     Do konce soutěže můžete najezdit či naběhat ještě jednu cestu ku vaší až {{ max_percentage }}% pravidelnosti.
+                     {% plural %}
+                     Do konce soutěže můžete najezdit či naběhat ještě {{ rides_num }} cest ku vaší až {{ max_percentage }}% pravidelnosti.
+                     {% endblocktrans %}
+                     </p>
                  {% else %}
                      <h5 class="card-title">Šlápněte do pedálů a podpořte svůj tým!</h5>
-                     <p>Do konce soutěže můžete urazit ještě {{ user_attendance.get_remaining_rides_count }} cest a dosáhnout {{ user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma }}% pravidelnosti.</p>
+                     <p>
+                     {% blocktrans count rides_num=user_attendance.get_remaining_rides_count with max_percentage=user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
+                     Do konce soutěže můžete urazit ještě jednu cestu a dosáhnout {{ max_percentage }}% pravidelnosti.
+                     {% plural %}
+                     Do konce soutěže můžete urazit ještě {{ rides_num }} cest a dosáhnout {{ max_percentage }}% pravidelnosti.
+                     {% endblocktrans %}
+                     </p>
                  {% endif %}
               </div>
          </div>
@@ -63,7 +80,12 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
 <p>
 <b>
 {% if user_attendance.get_working_rides_base_count != user_attendance.get_minimum_rides_base_proportional %}
-K dnešními dni už máte mít odsvištěno {{ user_attendance.get_working_rides_base_count }} cest, aby vám ostatní neutekli. Nahoďte sportovní outfit a běžte to dohnat!
+   {% blocktrans count rides_num=user_attendance.get_working_rides_base_count %}
+      K dnešnímu dni už máte mít odsvištěnu jednu cestu, aby vám ostatní neutekli.
+      {% plural %}
+      K dnešnímu dni už máte mít odsvištěno {{ rides_num }} cest, aby vám ostatní neutekli.
+   {% endblocktrans %}
+   {% trans "Nahoďte sportovní outfit a běžte to dohnat!" %}
 {% endif %}
 </b>
 </p>
@@ -149,10 +171,22 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
                      <p>Uvidíme se zase zítra ráno na trase.</p>
                  {% elif user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}
                      <h5 class="card-title">Jste dobrý tým. Dotáhněte to až na vrchol!</h5>
-                     <p>Do konce soutěže můžete najezdit či naběhat ještě {{ user_attendance.team.get_remaining_rides_count }} cest ku vaší až {{ user_attendance.team.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma }}% pravidelnosti.</p>
+                     <p>
+                     {% blocktrans count rides_num=user_attendance.team.get_remaining_rides_count with percentage=user_attendance.team.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
+                     Do konce soutěže můžete najezdit či naběhat ještě jednu cestu ku vaší až {{ percentage }}% pravidelnosti.
+                     {% plural %}
+                     Do konce soutěže můžete najezdit či naběhat ještě {{ rides_num }} cest ku vaší až {{ percentage }}% pravidelnosti.
+                     {% endblocktrans %}
+                     </p>
                  {% else %}
                      <h5 class="card-title">Ukažte, co váš tým dokáže. Teď není čas odpočívat.</h5>
-                     <p>Schází vám ještě {{ user_attendance.team.get_missing_rides_for_minimum_percentage }} cest, než budete pravidelně jezdit na 66&nbsp;%.</p>
+                     <p>
+                     {% blocktrans count rides_num=user_attendance.team.get_missing_rides_for_minimum_percentage %}
+                     Schází vám ještě jedna cesta, než budete pravidelně jezdit na 66&nbsp;%.
+                     {% plural %}
+                     Schází vám ještě {{ rides_num }} cest, než budete pravidelně jezdit na 66&nbsp;%.
+                     {% endblocktrans %}
+                     </p>
                  {% endif %}
               </div>
          </div>
