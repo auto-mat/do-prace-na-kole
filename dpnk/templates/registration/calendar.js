@@ -108,6 +108,8 @@ function update_distance_from_map_{{cm.slug}}() {
 }
 
 Dropzone.autoDiscover = false;
+{% include "registration/dropzone-locale.js" %}
+
 dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
     dictDefaultMessage: "{% trans "GPX soubory nahrajete přetažením, nebo kliknutím " %}",
     uploadMultiple: false,
