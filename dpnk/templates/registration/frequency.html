@@ -1,0 +1,161 @@
+{% extends "base_generic.html" %}
+{% load dpnk_tags %}
+{% load i18n %}
+{% load humanize %}
+
+{% block content %}
+<h3>{% trans "Pravidelnost je nejlepší přítel člověka" %}</h3>
+{% blocktrans %}
+<p>
+Chceme vás odměnit za vaše vrcholové výkony a tleskáme za každé zdolané převýšení. Ale hlavně chceme změnit česká města k lepšímu. Máme sen o světě, kde si všichni rádi vyjedeme do práce na kole, nebo ráno vyběhnete do školy ne proto, že za pět minut zvoní, ale pro radost z pohybu.
+</p><p>
+A k tomu potřebujeme pravidelnost. Je to jeden z přírodních zákonů. Den, noc, jaro, léto, řeči o počasí, vše se pravidelně opakuje. Jednorázové extrémní výkony vyvolají povyk. Pravidelnost může postupně změnit svět.
+</p>
+{% endblocktrans %}
+<h3>{% trans "Jak se počítá osobní pravidelnost?" %}</h3>
+{% blocktrans %}
+<p>
+Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na stoprocentní pravidelnost. Když se naopak v květnu vydáte do práce autem, MHD, taxíkem, letadlem, lodí či na motorce, vaše procento tím utrpí. A hned vám to spočítáme:
+</p>
+{% endblocktrans %}
+<div class="row">
+     <div class="col-sm-8">
+         <table>
+            <tr>
+               <td style="text-align:center">Máte {{ user_attendance.get_rides_count_denorm }} ekologických cest</td>
+               <td></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td><hr style="border-top-color: black;"/></td>
+               <td>&nbsp;=</td>
+               <td>
+                  <span style="color:{% if user_attendance.get_frequency_percentage > campaign.minimum_percentage %}green{% else %}red{% endif %}">
+                     {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}
+                  </span>&nbsp;%
+                  osobní pravidelnost
+               </td>
+            </tr>
+            <tr>
+               <td style="text-align:center">z celkového počtu {{ user_attendance.get_working_rides_base_count }} zapsaných cest.</td>
+               <td></td>
+               <td></td>
+            </tr>
+         </table>
+     </div>
+     <div class="col-sm-4">
+         <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                 {% if user_attendance.get_frequency_percentage == 100 %}
+                     <h5 class="card-title">Gratulujeme! Váš tým má ve vás opravdovou oporu.</h5>
+                 {% elif user_attendance.get_frequency_percentage > campaign.minimum_percentage %}
+                     <h5 class="card-title">Jste na dobré cestě! Kolegové v týmu jsou určitě šťastní, že vás mají.</h5>
+                     <p>Ale neusněte na vavřínech. Do konce soutěže můžete najezdit či naběhat ještě {{ user_attendance.get_remaining_rides_count }} cest ku vaší až {{ user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma }}% pravidelnosti.</p>
+                 {% else %}
+                     <h5 class="card-title">Šlápněte do pedálů a podpořte svůj tým!</h5>
+                     <p>Do konce soutěže můžete urazit ještě {{ user_attendance.get_remaining_rides_count }} cest a dosáhnout {{ user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma }}% pravidelnosti.</p>
+                 {% endif %}
+              </div>
+         </div>
+     </div>
+</div>
+
+<p>
+<b>
+{% if user_attendance.get_working_rides_base_count != user_attendance.get_minimum_rides_base_proportional %}
+K dnešními dni už máte mít odsvištěno {{ user_attendance.get_working_rides_base_count }} cest, aby vám ostatní neutekli. Nahoďte sportovní outfit a běžte to dohnat!
+{% endif %}
+</b>
+</p>
+
+<h3>
+   {% trans "Když nejdete do práce, nic se neděje" %}
+</h3>
+{% blocktrans with minimum_rides_base=campaign.minimum_rides_base %}
+<p>
+Pravidelností procento se snižuje pouze vlivem neekologických cest do práce a z práce. Máme pochopení pro to, že si chcete vzít dovolenou, nebo máte zkrácený úvazek. Dny, kdy nejdete do práce, nemají vliv na celkovou pravidelnost. 
+</p>
+<p>
+Pozor, má to háček. Celkem za měsíc musíte ekologicky zvládnout alespoň {{ minimum_rides_base }} cest, ať máte šanci dosáhnout na stoprocentní pravidelnost. Kdyby měl člověk s třítýdenní dovolenou a jednou aktivní cestou do práce 100 %, nebylo by to vůči ostatním fér. 
+</p>
+<p>
+V průběhu května se minimální počet jízd bude pravidelně zvedat o necelý jeden bod každý den (např. v pondělí musíte mít zapsáno minimálně 10 jízd, v úterý už 11 jízd).
+</p>
+<p>
+V praxi to znamená, že se jmenovatel každý den během května automaticky zvedne o necelý jeden bod, ať už si nějakou jízdu zapíšete a nebo ne. Toto číslo se do pravidelnosti započítává pouze pokud je námi předpokládaný počet jízd k danému dni vyšší, než celkový počet vámi zapsaných jízd. 
+</p>
+{% endblocktrans %}
+
+<h3>
+   {% trans "Jak se počítá skupinová pravidelnost?" %}
+</h3>
+<p>
+{% blocktrans %}
+Do práce na kole jezdí hlavně skupinoví hráči, a proto je pro nás tato pravidelnost nejdůležitější.
+{% endblocktrans %}
+<a target="_blank" href="{{ campaign.web }}/o-vyzve/souteze-a-pravidla-vse">{% trans "Nezapomeňte, že potřebujete mít minimálně 66% týmovou pravidelnost, abychom vás zařadili do slosování o věcné ceny." %}</a>
+{% blocktrans %}
+Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkového počtu zapsaných cest všech členů týmu. Takže si to ráno s tou tramvají dobře rozmyslete. Stačí jedna neekologická cesta a váš tým už na 100% pravidelnost nikdy nedosáhne. Přesvědčte se:
+{% endblocktrans %}
+</p>
+
+<div class="row">
+     <div class="col-sm-8">
+         <table>
+            <tr>
+               <td></td>
+               <td></td>
+               <td></td>
+               {% for user_attendance in team_members %}
+               <td>{{ user_attendance.name }}</td>
+               {% endfor %}
+            </tr>
+            <tr>
+               <td>Ekologické cesty: </td>
+               <td>{{ user_attendance.team.get_rides_count_denorm }}</td>
+               <td></td>
+               {% for user_attendance in team_members %}
+               <td>{% if not forloop.first %}+ {% endif %}{{ user_attendance.get_rides_count_denorm }}</td>
+               {% endfor %}
+            </tr>
+            <tr>
+               <td></td>
+               <td><hr style="border-top-color: black;"/></td>
+               <td>&nbsp;=</td>
+               <td colspan="{{ team_members.count }}"><hr style="border-top-color: black;"/></td>
+               <td>&nbsp;=</td>
+               <td>
+                  <span style="color:{% if user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}green{% else %}red{% endif %}">
+                     {{ user_attendance.team.get_frequency_percentage|floatformat:-1|intcomma }}
+                  </span>&nbsp;%
+                  týmová pravidelnost
+               </td>
+            </tr>
+            <tr>
+               <td>Všechny cesty:</td>
+               <td>{{ user_attendance.team.get_working_trips_count }}</td>
+               <td></td>
+               {% for user_attendance in team_members %}
+               <td>{% if not forloop.first %}+ {% endif %}{{ user_attendance.get_working_rides_base_count }}</td>
+               {% endfor %}
+            </tr>
+         </table>
+     </div>
+     <div class="col-sm-4">
+         <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                 {% if user_attendance.team.get_frequency_percentage == 100 %}
+                     <h5 class="card-title">Perfektní! Pro dnešek dobrý.</h5>
+                     <p>Uvidíme se zase zítra ráno na trase.</p>
+                 {% elif user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}
+                     <h5 class="card-title">Jste dobrý tým. Dotáhněte to až na vrchol!</h5>
+                     <p>Do konce soutěže můžete najezdit či naběhat ještě {{ user_attendance.team.get_remaining_rides_count }} cest ku vaší až {{ user_attendance.team.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma }}% pravidelnosti.</p>
+                 {% else %}
+                     <h5 class="card-title">Ukažte, co váš tým dokáže. Teď není čas odpočívat.</h5>
+                     <p>Schází vám ještě {{ user_attendance.team.get_missing_rides_for_minimum_percentage }} cest, než budete pravidelně jezdit na 66&nbsp;%.</p>
+                 {% endif %}
+              </div>
+         </div>
+     </div>
+</div>
+{% endblock %}

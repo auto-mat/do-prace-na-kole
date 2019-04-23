@@ -340,8 +340,27 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return round(self.total_trip_length_including_recreational, 2)
 
     def get_working_rides_base_count(self):
+        """ Return number of rides, that should be acomplished to this date """
         from .. import results
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
+
+    def get_remaining_rides_count(self):
+        """ Return number of rides, that are remaining to the end of competition """
+        competition = self.campaign.competition_phase()
+        days_count = util.days_count(competition, competition.date_to)
+        days_count_till_now = util.days_count(competition, util.today())
+        print(days_count)
+        print(days_count_till_now)
+        return (days_count - days_count_till_now).days * 2
+
+    def get_remaining_max_theoretical_frequency_percentage(self):
+        """ Return maximal frequency that can be achieved till end of the competition """
+        remaining_rides = self.get_remaining_rides_count()
+        rides_count = self.get_rides_count_denorm
+        working_rides_base = self.get_working_rides_base_count()
+        print("working rides base: ", working_rides_base)
+        print("rides count: ", rides_count)
+        return ((rides_count + remaining_rides) / (working_rides_base + remaining_rides)) * 100
 
     def get_minimum_rides_base_proportional(self):
         from .. import results

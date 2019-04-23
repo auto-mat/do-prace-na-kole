@@ -969,6 +969,11 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedFo
         return super().get(request, *args, **kwargs)
 
 
+class FrequencyView(OtherTeamMembers):
+    template_name = 'registration/frequency.html'
+    title = _("Pravidelnost")
+
+
 class CompetitionsRulesView(CampaignFormKwargsMixin, TitleViewMixin, TemplateView):
     title_base = _("Pravidla soutěží")
 

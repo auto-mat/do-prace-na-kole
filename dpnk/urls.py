@@ -128,6 +128,11 @@ urlpatterns = [
         name="other_team_members_results",
     ),
     url(
+        r'^pravidelnost/$',
+        views.FrequencyView.as_view(),
+        name="team_frequency",
+    ),
+    url(
         r'^souteze_vykonnostni/$',
         views.LengthCompetitionsView.as_view(),
         name="length_competitions",
