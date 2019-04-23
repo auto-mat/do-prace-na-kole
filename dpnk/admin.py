@@ -1661,6 +1661,7 @@ class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):
         'name',
         'slug',
         'does_count',
+        'eco',
     )
 
 
