@@ -2,6 +2,7 @@
 {% load l10n %}
 {% load static %}
 {% include "registration/util.js" %}
+{% include "leaflet/_leaflet_draw_i18n.js" %}
 
 var day_types = {
     "possible-vacation-day": {{possible_vacation_days|safe}},
