@@ -320,8 +320,8 @@ function eventClick(info) {
         var file = eval('gpx_file_' + commute_mode);
         add_trip(trip, file, redraw_everything_trip_related);
     }
-    modal_url = get_modal_url(info.event);
-    if(modal_url){
+    trip_url = get_trip_url(info.event);
+    if(trip_url){
         $('#trip-modal').modal({show:true});
         $('#trip-modal-body').empty();
         $('#trip-modal-spinner').show();
@@ -339,12 +339,22 @@ function eventClick(info) {
                 $('#trip-modal').modal('toggle');
             });
         }
-        $('#trip-modal-body').load(modal_url + " #inner-content", function(){
+        $('#trip-modal-body').load(trip_url + " #inner-content", function(){
             $('#trip-modal-spinner').hide();
             if($('#track_map').length) {
                 var map = create_map('track_map');
                 load_track(map, "/trip_geojson/" + format_date(info.event.start) + "/" + info.event.extendedProps.direction, {});
             }
+        });
+    }
+    console.log(info);
+    if(info.event.extendedProps.wp_events){
+        $('#events-modal').modal({show:true});
+        $('#events-modal-body').empty();
+        $('#events-modal-spinner').show();
+        $('#events-modal-body').load(info.event.extendedProps.wp_events[0].url  + " .container", function(){
+
+            $('#events-modal-spinner').hide();
         });
     }
 }

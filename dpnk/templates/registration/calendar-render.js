@@ -76,15 +76,17 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
 
 
 function get_wordpress_events(fetchInfo, successCallback, failureCallback){
-    $.getJSON('{{campaign.wp_api_url}}/feed/?orderby=start_date&_year={{campaign.year}}&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}', function ( data ) {
+    $.getJSON('{{campaign.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}', function ( data ) {
         used_dates = [];
         events_by_day = {};
         for (i in data) {
             event = data[i];
-            if(!(event.start_date in events_by_day)) {
-                events_by_day[event.start_date] = [];
+            if(event.start_date.startsWith("{{campaign.year}}")){
+                if(!(event.start_date in events_by_day)) {
+                    events_by_day[event.start_date] = [];
+                }
+                events_by_day[event.start_date].push(event);
             }
-            events_by_day[event.start_date].push(event);
         }
         events = [];
         for (day in events_by_day) {

@@ -25,7 +25,7 @@ function show_loading_icon_on_event(info) {
     el.appendChild(loading_icon);
 }
 
-function get_modal_url(event) {
+function get_trip_url(event) {
     commute_mode = event.extendedProps.commute_mode;
     cmo = commute_modes[commute_mode];
     if(!cmo) return;
