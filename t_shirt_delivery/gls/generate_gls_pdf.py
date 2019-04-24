@@ -193,5 +193,5 @@ def generate_pdf(csv_file):
                 pdf_part = generate_pdf_part(f)
             with open(csv_file_part + ".pdf", "wb+") as f:
                 f.write(pdf_part)
-    subprocess.call(["bash", "-c", "pdftk tmp_gls/*.pdf output tmp_gls/gls_sheet.pdf"])
+    subprocess.call(["bash", "-c", "pdfunite tmp_gls/*.pdf tmp_gls/gls_sheet.pdf"])
     return "tmp_gls/gls_sheet.pdf"
