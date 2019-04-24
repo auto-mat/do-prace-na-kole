@@ -856,6 +856,7 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         competition = self.user_attendance.campaign.phase("competition")
+        entry_enabled_phase = self.user_attendance.campaign.phase("entry_enabled")
         possible_vacation_days_set = set(self.user_attendance.campaign.possible_vacation_days())
         active_days_set = set(util.days_active(competition))
         locked_days_set = set(set(util.days(competition)) - active_days_set) - possible_vacation_days_set
@@ -866,6 +867,7 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
             "non_working_days": json.dumps([str(day) for day in util.non_working_days(competition, competition.date_to)]),
             "events": json.dumps(calendar.get_events(self.request)),
             "commute_modes": models.CommuteMode.objects.all(),
+            "entry_enabled_phase": entry_enabled_phase,
         })
         return context_data
 

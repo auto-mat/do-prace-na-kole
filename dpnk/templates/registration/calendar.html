@@ -23,7 +23,9 @@
 {% block form %}
     {% include "registration/leaflet_settings.html" %}
     <p>
-        {% if not campaign.active %}
+
+        <!-- Before start -->
+        {% if not entry_enabled_phase.has_started %}
             {% blocktrans %}
                 V průběhu soutěže
             {% endblocktrans %}
@@ -36,7 +38,12 @@
             Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
         {% endblocktrans %}
     </p>
-        {% else %}
+        {% elif entry_enabled_phase.is_actual %}
+
+    <!-- Editation tools -->
+    <div class="main-loading-overlay">
+        <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
+    </div>
     Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
     <div class ="card">
         <nav>
@@ -81,6 +88,12 @@
             {% endfor %}
         </div>
     </div>
+        {% else %}
+
+    <!-- After end -->
+    {% blocktrans %}
+    Soutěž jíž ukončil. Děkujeme za účast.
+    {% endblocktrans %}
         {% endif %}
         <br/>
         <!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
@@ -135,11 +148,6 @@
             </div>
         </div>
 
-
-        {% get_current_language as LANGUAGE_CODE %}
-        <div class="main-loading-overlay">
-        <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
-        </div>
         <div id='calendar'></div>
         <script>
          {% include "registration/calendar.js" %}

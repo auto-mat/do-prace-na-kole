@@ -361,8 +361,9 @@ class Campaign(Pricable, models.Model):
                 return False
         except Phase.DoesNotExist:
             pass
+        competition_phase = self.phase('competition')
         return (
-            (day <= day_today) and
+            (day <= day_today) and competition_phase.day_in_phase(day) and
             (day > day_today - datetime.timedelta(days=self.days_active))
         )
 

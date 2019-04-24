@@ -3,6 +3,7 @@
 {% load static %}
 {% include "registration/util.js" %}
 {% include "leaflet/_leaflet_draw_i18n.js" %}
+{% get_current_language as current_language_code %}
 L.drawLocal.draw.toolbar.finish.text="{% trans 'Finish' %}"; // TODO move this code to django-leaflet or something
 L.drawLocal.draw.toolbar.finish.title="{% trans 'Finish drawing' %}";
 
@@ -387,6 +388,7 @@ function create_map(element_id){
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    {% if entry_enabled_phase.is_actual %}
     {% for cm in commute_modes %}
     {% if cm.does_count and cm.eco %}
     map_{{cm.slug}} = create_map('map_{{cm.slug}}')
@@ -423,6 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {% endif %}
     {% endfor %}
 
+    {% endif %}
     var calendarEl = document.getElementById('calendar');
     if($(window).width() > $(window).height()) {
         defaultView = 'dayGridMonth';
@@ -438,8 +441,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         eventOrder: 'order',
         selectable: true,
-        lang: '{{ LANGUAGE_CODE }}',
-        locale: '{{ LANGUAGE_CODE }}',
+        lang: '{{ current_language_code }}',
+        locale: '{{ current_language_code }}',
         height: 'auto',
         firstDay: 1,
         plugins: [ 'interaction', 'dayGrid', 'list' ],
@@ -462,6 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         redraw_everything_trip_related();
         full_calendar.render();
+        {% if entry_enabled_phase.is_actual %}
         {% for cm in commute_modes %}
         {% if cm.does_count and cm.eco %}
         $("#km-{{cm.slug}}").val(0);
@@ -473,6 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         {% endif %}
         {% endfor %}
+        {% endif %}
         $(".main-loading-overlay").hide();
     });
 });

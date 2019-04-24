@@ -101,18 +101,27 @@ class Phase(models.Model):
     def get_minimum_rides_base(self):
         return self.campaign.minimum_rides_base
 
-    def has_started(self):
+    def day_before_start(self, day):
         if not self.date_from:
-            return True
-        return self.date_from <= util.today()
+            return False
+        return self.date_from > day
 
-    def has_finished(self):
+    def day_after_end(self, day):
         if not self.date_to:
             return False
-        return not self.date_to >= util.today()
+        return self.date_to < day
+
+    def has_started(self):
+        return not self.day_before_start(util.today())
+
+    def has_finished(self):
+        return self.day_after_end(util.today())
+
+    def day_in_phase(self, day):
+        return (not self.day_before_start(day)) and (not self.day_after_end(day))
 
     def is_actual(self):
-        return self.has_started() and not self.has_finished()
+        return self.day_in_phase(util.today())
 
     def __str__(self):
         return "%s" % self.phase_type
