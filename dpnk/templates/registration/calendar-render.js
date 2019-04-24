@@ -22,7 +22,7 @@ function get_placeholder_events(fetchInfo, successCallback, failureCallback){
                    allDay: true,
                    placeholder: true,
                    direction: typical_directions[i],
-               } 
+               }
                placeholder_events.push(new_event);
            }
        }
@@ -146,6 +146,14 @@ function reload_route_options() {
     {% endfor %}
 }
 
+function show_tooltip(el, title) {
+    el.setAttribute("title", title)
+    el.setAttribute("data-toggle", "tooltip")
+    el.setAttribute("data-placement", "left")
+    $(document.body).tooltip({ selector: "[title]" });
+}
+
+
 function eventRender(info) {
     // Remove time column from Agenda view
     if(info.el.children[0].classList.contains("fc-list-item-time")){
@@ -172,15 +180,11 @@ function eventRender(info) {
         if (exp.direction == 'trip_to'){
             right_icon = document.createElement("i");
             right_icon.className='fa fa-industry xs';
-            info.el.setAttribute("title", "{% trans 'Do prace' %} " + info.event.title)
-            info.el.setAttribute("data-toggle", "tooltip")
-            $(document.body).tooltip({ selector: "[title]" });
+            show_tooltip(info.el, "{% trans 'Do prace' %} " + info.event.title)
         } else if (exp.direction == 'trip_from') {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-home xs';
-            info.el.setAttribute("title", "{% trans 'Domu' %} " + info.event.title)
-            info.el.setAttribute("data-toggle", "tooltip")
-            $(document.body).tooltip({ selector: "[title]" });
+            show_tooltip(info.el, "{% trans 'Domu' %} " + info.event.title)
         } else if (exp.wp_events) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-glass-cheers xs';
