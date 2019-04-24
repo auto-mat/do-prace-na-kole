@@ -63,9 +63,7 @@ def save_filefield(filefield, directory):
 
 def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
     for batch in queryset.all():
-        subprocess.call(["rm", "tmp_pdf/output", "-r"])
-        subprocess.call(["rm", "tmp_pdf/combined_sheets.pdf"])
-        subprocess.call(["rm", "tmp_pdf/combined_sheets-rotated.pdf"])
+        subprocess.call(["rm", "tmp_pdf/", "-r"])
         subprocess.call(["mkdir", "tmp_pdf/output", "--parents"])
         pdf_files = []
         for subsidiary_box in batch.subsidiarybox_set.all():
@@ -78,6 +76,7 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
 
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
             batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
+        subprocess.call(["rm", "tmp_pdf/", "-r"])
 
 
 delivery_batch_generate_pdf_for_opt.short_description = _("Vytvořit PDF pro OPT")
