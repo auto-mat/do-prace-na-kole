@@ -19,7 +19,8 @@ run apt-get update && apt-get install -y \
    libxml2-dev \
    libxslt-dev \
    memcached \
-   pdftk \
+   poppler-utils \
+   texlive-extra-utils \
    postgresql-common \
    python-tk \
    tcl8.6-dev \
