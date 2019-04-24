@@ -303,6 +303,7 @@ function remove_vacation(info) {
 }
 
 function eventClick(info) {
+    $(".tooltip").tooltip("hide");
     if(info.event.extendedProps.placeholder){
         commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
         var trip = {
