@@ -155,7 +155,7 @@ function eventRender(info) {
     }
 
     // Add buttons and icons to events
-    var left_icon = null;
+    var right_icon = null;
     exp = info.event.extendedProps
     if (exp.loading) {
        show_loading_icon_on_event(info);
@@ -170,17 +170,17 @@ function eventRender(info) {
         info.el.firstChild.append(trash_button);
     } else {
         if (exp.direction == 'trip_to'){
-            left_icon = document.createElement("i");
-            left_icon.className='fa fa-industry xs';
+            right_icon = document.createElement("i");
+            right_icon.className='fa fa-industry xs';
         } else if (exp.direction == 'trip_from') {
-            left_icon = document.createElement("i");
-            left_icon.className='fa fa-home xs';
+            right_icon = document.createElement("i");
+            right_icon.className='fa fa-home xs';
         } else if (exp.wp_events) {
-            left_icon = document.createElement("i");
-            left_icon.className='fa fa-glass-cheers xs';
+            right_icon = document.createElement("i");
+            right_icon.className='fa fa-glass-cheers xs';
         }
-        if (left_icon) {
-            info.el.firstChild.append(left_icon);
+        if (right_icon) {
+            info.el.firstChild.append(right_icon);
         }
         if (exp.commute_mode) {
             var mode_icon = document.createElement("div");
