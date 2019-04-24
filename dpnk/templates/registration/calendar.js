@@ -221,7 +221,7 @@ function display_trip(trip, rerender) {
         className: (active_days.indexOf(trip.trip_date) >= 0) ? 'active-trip' : 'locked-trip',
     }
     if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
-        new_event.title = String(trip.distanceMeters/1000) + "Km";
+        new_event.title = display_meters(trip.distanceMeters) + "Km";
     } else {
         new_event.title = "→";
     }
