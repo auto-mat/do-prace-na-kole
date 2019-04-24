@@ -317,7 +317,11 @@ function eventClick(info) {
             }
         }
         show_loading_icon_on_event(info);
-        var file = eval('gpx_file_' + commute_mode);
+        var file = null;
+        try {
+            file = eval('gpx_file_' + commute_mode);
+        } catch( e ) {
+        }
         add_trip(trip, file, redraw_everything_trip_related);
     }
     trip_url = get_trip_url(info.event);
