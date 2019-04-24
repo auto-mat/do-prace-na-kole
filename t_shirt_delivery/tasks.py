@@ -43,8 +43,8 @@ def update_dispatched_boxes(self):
         update_info['carrier_identification'] = carrier_identification
         if dispatched:
             update_info['dispatched'] = dispatched
-        if box_id:
-            box_filter = {'id': box_id}
-        else:
+        try:
+            box_filter = {'id': int(box_id)}
+        except ValueError:
             box_filter = {'carrier_identification': carrier_identification}
         SubsidiaryBox.objects.filter(**box_filter).update(**update_info)
