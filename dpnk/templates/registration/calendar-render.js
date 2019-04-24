@@ -172,9 +172,15 @@ function eventRender(info) {
         if (exp.direction == 'trip_to'){
             right_icon = document.createElement("i");
             right_icon.className='fa fa-industry xs';
+            info.el.setAttribute("title", "{% trans 'Do prace' %} " + info.event.title)
+            info.el.setAttribute("data-toggle", "tooltip")
+            $(document.body).tooltip({ selector: "[title]" });
         } else if (exp.direction == 'trip_from') {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-home xs';
+            info.el.setAttribute("title", "{% trans 'Domu' %} " + info.event.title)
+            info.el.setAttribute("data-toggle", "tooltip")
+            $(document.body).tooltip({ selector: "[title]" });
         } else if (exp.wp_events) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-glass-cheers xs';
