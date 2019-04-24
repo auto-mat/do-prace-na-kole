@@ -57,6 +57,19 @@ function hide_map_{{cm.slug}}(){
     $("#map_shower_{{cm.slug}}").show();
 }
 
+function toggle_map_size_{{cm.slug}}(){
+    $("#map_{{cm.slug}}").toggleClass('leaflet-container-default');
+    $("#map_{{cm.slug}}").toggleClass('leaflet-container-large');
+    $("#enlarge_map_text_{{cm.slug}}").toggle();
+    $("#shrink_map_text_{{cm.slug}}").toggle();
+    setTimeout(function(){ map_{{cm.slug}}.invalidateSize()}, 400);
+    $('html, body').animate({
+        scrollTop: $("#resize-button-{{cm.slug}}").offset().top
+    }, 'fast');
+}
+
+
+
 var route_options_{{cm.slug}} = {};
 
 var gpx_file_{{cm.slug}} = null;
