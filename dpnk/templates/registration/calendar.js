@@ -365,7 +365,6 @@ function eventClick(info) {
             }
         });
     }
-    console.log(info);
     if(info.event.extendedProps.wp_events){
         $('#events-modal').modal({show:true});
         $('#events-modal-body').empty();
