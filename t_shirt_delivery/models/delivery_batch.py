@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import subprocess
 from io import StringIO
 
 from author.decorators import with_author
@@ -110,6 +111,7 @@ class DeliveryBatch(models.Model):
         with open(pdf_filename, "rb+") as f:
             self.order_pdf.save("batch%s.pdf" % self.id, f)
         self.save()
+        subprocess.call(["rm", "tmp_gls/", "-r"])
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):
