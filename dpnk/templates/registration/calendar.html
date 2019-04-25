@@ -44,112 +44,116 @@
     <div class="main-loading-overlay">
         <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
     </div>
-    Nejdřív vyberte mod dopravy a trasu, pak kliknete na datum a směr.
-    <div class ="card">
-        <nav>
-            <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
-                {% for cm in commute_modes %}
-                    <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
-                        {{cm.button_html | safe }}
-                    </a>
-                {% endfor %}
-            </div>
-        </nav>
-        <div class="tab-content" id="nav-tabContent">
+    <h3>1. vyberte mod dopravy</h3>
+    <nav>
+        <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
             {% for cm in commute_modes %}
-                <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
-                    {{ cm.tooltip|linebreaks }}
-                    {% if cm.does_count and cm.eco %}
-                        <div class="input-group">
-                            <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                            <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}"/>
-                            <div class="input-group-append">
-                                <span class="input-group-text">Km</span>
-                            </div>
-                        </div>
-                        <div id="map_shower_{{cm.slug}}" style="display:none;">
-                            <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
-                        </div>
-                        <div id="track_holder_{{cm.slug}}" style="display:none;">
-                            <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapu' %}</button>
-                            <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}"><div id="enlarge_map_text_{{cm.slug}}"><i class="fa fa-expand"></i>{% trans 'Zvětšit mapu' %}</div><div id="shrink_map_text_{{cm.slug}}" style="display:none"><i class="fa fa-compress"></i>{% trans 'Zmenšit mapu' %}</div></button>
-                            <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <div class="fallback">
-                                    <input name="gpx" type="file"/>
-                                    <input type="submit" value="{% trans 'Odeslat' %}"/>
-                                </div>
-                            </form>
-                            <div id="map_{{cm.slug}}"  class="leaflet-container-default">
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
+            <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
+                {{cm.button_html | safe }}
+            </a>
             {% endfor %}
         </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        {% for cm in commute_modes %}
+        <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
+            {{ cm.tooltip|linebreaks }}
+            {% if cm.does_count and cm.eco %}
+            <h3>2. Zadejte trasu</h3>
+            <div class="input-group">
+                <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
+                <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}"/>
+                <div class="input-group-append">
+                    <span class="input-group-text">Km</span>
+                </div>
+            </div>
+            <div id="map_shower_{{cm.slug}}" style="display:none;">
+                <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
+            </div>
+            <div id="track_holder_{{cm.slug}}" style="display:none;">
+                <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapu' %}</button>
+                <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}"><div id="enlarge_map_text_{{cm.slug}}"><i class="fa fa-expand"></i>{% trans 'Zvětšit mapu' %}</div><div id="shrink_map_text_{{cm.slug}}" style="display:none"><i class="fa fa-compress"></i>{% trans 'Zmenšit mapu' %}</div></button>
+                <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="fallback">
+                        <input name="gpx" type="file"/>
+                        <input type="submit" value="{% trans 'Odeslat' %}"/>
+                    </div>
+                </form>
+                <div id="map_{{cm.slug}}"  class="leaflet-container-default">
+                </div>
+            </div>
+            <br>
+            <h3>3.
+            {% else %}
+            <h3>2.
+            {% endif %}
+            Klikňěte na datum a směr</h3>
+        </div>
+        {% endfor %}
     </div>
-        {% else %}
+    {% else %}
 
     <!-- After end -->
     {% blocktrans %}
     Soutěž jíž ukončil. Děkujeme za účast.
     {% endblocktrans %}
-        {% endif %}
-        <br/>
-        <!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
-        <div class="modal" id="message-modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        {% trans "Hlašení" %}
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    {% endif %}
+
+    <!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
+    <div class="modal" id="message-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% trans "Hlašení" %}
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" id="message-modal-body"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="trip-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% trans "Jízda" %}
+                    <div id="trip-lock">
+                        <i class="fa fa-lock"></i>
                     </div>
-                    <div class="modal-body" id="message-modal-body"></div>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div id="trip-edit-delete">
+                    <a class="btn" id="trip-edit-button"><i class="fa fa-pen"></i> {% trans 'Editovat' %}</a>
+                    <button class="btn" id="trip-delete-button"><i class="fa fa-trash"></i> {% trans 'Smazat' %}</button>
+                </div>
+                <div class="modal-spinner" id="trip-modal-spinner">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+                <div class="modal-body" id="trip-modal-body">
+
                 </div>
             </div>
         </div>
-        <div class="modal" id="trip-modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        {% trans "Jízda" %}
-                        <div id="trip-lock">
-                            <i class="fa fa-lock"></i>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div id="trip-edit-delete">
-                        <a class="btn" id="trip-edit-button"><i class="fa fa-pen"></i> {% trans 'Editovat' %}</a>
-                        <button class="btn" id="trip-delete-button"><i class="fa fa-trash"></i> {% trans 'Smazat' %}</button>
-                    </div>
-                    <div class="modal-spinner" id="trip-modal-spinner">
-                        <i class="fa fa-spinner fa-spin"></i>
-                    </div>
-                    <div class="modal-body" id="trip-modal-body">
+    </div>
 
-                    </div>
+    <div class="modal" id="events-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% trans "Údalosti" %}
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-spinner" id="events-modal-spinner">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+                <div class="modal-body" id="events-modal-body">
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="modal" id="events-modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        {% trans "Údalosti" %}
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-spinner" id="events-modal-spinner">
-                        <i class="fa fa-spinner fa-spin"></i>
-                    </div>
-                    <div class="modal-body" id="events-modal-body">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id='calendar'></div>
-        <script>
-         {% include "registration/calendar.js" %}
-        </script>
-{% endblock %}
+    <div id='calendar'></div>
+    <script>
+     {% include "registration/calendar.js" %}
+    </script>
+    {% endblock %}

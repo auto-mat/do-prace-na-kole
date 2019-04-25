@@ -449,8 +449,20 @@ document.addEventListener('DOMContentLoaded', function() {
         selectable: true,
         defaultView: defaultView,
         rerenderDelay: 50,
+        buttonText: {
+          today:    '{% trans "Dnes" %}',
+          month:    '{% trans "Kalendář" %}',
+          list:     '{% trans "Seznam" %}'
+        },
         header: {
-            right: 'dayGridMonth,listMonth, now, prev,next',
+            left: '',
+            center: '',
+            right: '',
+        },
+        footer: {
+            left: 'title',
+            center: '',
+            right: 'dayGridMonth,listMonth, today, prev,next',
         },
         select: function(info) {
             add_vacation(info.start, info.end);
