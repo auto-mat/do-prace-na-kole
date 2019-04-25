@@ -29,7 +29,7 @@
             {% blocktrans %}
                 V průběhu soutěže
             {% endblocktrans %}
-            {% if campaign.competition_phase.date_from %}{% trans "od" %} {{ campaign.competition_phase.date_from }}{% endif %}
+        {% if campaign.competition_phase.date_from %}{% trans "od" %} {{ campaign.ctemplates/registration/ompetition_phase.date_from }}{% endif %}
             {% if campaign.competition_phase.date_to %}{% trans "do" %} {{ campaign.competition_phase.date_to }}{% endif %}{% blocktrans %}
                 budeme zapsané jízdy bedlivě sledovat a vypočítávat osobní jezdeckou pravidelnost, která Vás dovede k vítězství.
             {% endblocktrans %}
@@ -153,6 +153,11 @@
     </div>
 
     <div id='calendar'></div>
+
+    {% if entry_enabled_phase.is_actual %}
+    <br/>
+    <h3> Hotovo! Jizdy se automatické ukladají po zadání do kalendáře. </h3>
+    {% endif %}
     <script>
      {% include "registration/calendar.js" %}
     </script>

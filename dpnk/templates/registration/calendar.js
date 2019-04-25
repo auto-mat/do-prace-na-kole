@@ -455,11 +455,6 @@ document.addEventListener('DOMContentLoaded', function() {
           list:     '{% trans "Seznam" %}'
         },
         header: {
-            left: '',
-            center: '',
-            right: '',
-        },
-        footer: {
             left: 'title',
             center: '',
             right: 'dayGridMonth,listMonth, today, prev,next',
