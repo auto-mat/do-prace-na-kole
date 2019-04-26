@@ -366,14 +366,8 @@ function eventClick(info) {
             }
         });
     }
-    if(info.event.extendedProps.wp_events){
-        $('#events-modal').modal({show:true});
-        $('#events-modal-body').empty();
-        $('#events-modal-spinner').show();
-        $('#events-modal-body').load(info.event.extendedProps.wp_events[0].url  + " .container", function(){
-
-            $('#events-modal-spinner').hide();
-        });
+    if(info.event.extendedProps.wp_event){
+        window.open(info.event.extendedProps.wp_event.url);
     }
 }
 
@@ -445,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
         locale: '{{ current_language_code }}',
         height: 'auto',
         firstDay: 1,
+        eventLimit: true,
         plugins: [ 'interaction', 'dayGrid', 'list' ],
         selectable: true,
         defaultView: defaultView,

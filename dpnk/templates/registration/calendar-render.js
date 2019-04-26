@@ -91,16 +91,18 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
         }
         events = [];
         for (day in events_by_day) {
-            new_event = {
-                start: day,
-                end: add_days(new Date(day), 1),
-                eventOrder: 'order',
-                order: 3,
-                allDay: true,
-                wp_events: events_by_day[day],
-                title: "Cyklo akce",
+            for (i in events_by_day[day]) {
+                new_event = {
+                    start: day,
+                    end: add_days(new Date(day), 1),
+                    eventOrder: 'order',
+                    order: 3,
+                    allDay: true,
+                    wp_event: events_by_day[day][i],
+                    title: "Akce",
+                }
+                events.push(new_event);
             }
-            events.push(new_event);
         }
         successCallback(events);
     });
@@ -192,9 +194,10 @@ function eventRender(info) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-home xs';
             show_tooltip(info.el, "{% trans 'Domu' %} " + info.event.title)
-        } else if (exp.wp_events) {
+        } else if (exp.wp_event) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-glass-cheers xs';
+            show_tooltip(info.el, $("<textarea/>").html(exp.wp_event.title).text())
         }
         if (right_icon) {
             info.el.firstChild.append(right_icon);
