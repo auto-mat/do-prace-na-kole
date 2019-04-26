@@ -9,7 +9,9 @@
 {% block form_intro %}
 <div style="width:80%">
 <a href="{% url "edit_team" %}">Upravit název</a>
-<a href="{% url "edit_team" %}" class="btn primary float-right"><i class="fa fa-pencil"></i></a>
+<a href="{% url "edit_team" %}" class="btn primary float-right">
+    <i class="fa fa-pen"></i>
+</a>
 {% if team.lead_photo %}
 <a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
     <img src="{{team.lead_photo.get_display_url}}"/>
