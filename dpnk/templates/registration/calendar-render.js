@@ -99,7 +99,7 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
                     order: 3,
                     allDay: true,
                     wp_event: events_by_day[day][i],
-                    title: "Akce",
+                    title: "{% trans 'Akce' %} ",
                 }
                 events.push(new_event);
             }
