@@ -260,6 +260,7 @@ INSTALLED_APPS = (
     'stravasync',
     'psc',
     'stale_notifications',
+    'motivation_messages',
 
     'smart_selects',
     'composite_field',
@@ -298,7 +299,7 @@ INSTALLED_APPS = (
     'daterange_filter',
     'storages',
     'favicon',
-    'adminactions',
+    # 'adminactions',
     'massadmin',
     'advanced_filters',
     'djcelery_email',

@@ -946,8 +946,9 @@ class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredM
     pass
 
 
-class RegistrationCompleteUserAttendanceView(RegistrationCompleteMixin, UserAttendanceView):
-    pass
+class LandingView(RegistrationCompleteMixin, UserAttendanceView):
+    template_name = "registration/landing.html"
+    title = _("Vítejte v dalším ročníku soutěže!")
 
 
 class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):

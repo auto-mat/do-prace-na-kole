@@ -5,6 +5,10 @@
 
 {% block content %}
 <div id="landing_page_intro">
+    <p>
+     {{ user_attendance.get_random_motivation_message.message|safe }}
+    </p>
+    {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}
     {% scribble 'landing_page_before_start' %}
     {% load i18n %}
       <p>

@@ -27,10 +27,13 @@ from denorm import denormalized, depend_on_related
 from django.contrib.gis.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
+from django.db.models import F
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
+
+from motivation_messages.models import MotivationMessage
 
 from stale_notifications.model_mixins import StaleSyncMixin
 
@@ -557,6 +560,16 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return self.userprofile.userattendance_set.get(campaign=previous_campaign)
         except UserAttendance.DoesNotExist:
             return None
+
+    def get_random_motivation_message(self):
+        message = MotivationMessage.get_random_message(self)
+        return message
+
+    def get_frequency_rank_in_team(self):
+        return self.team.members().order_by(
+            F('frequency').desc(nulls_last=True),
+            'get_rides_count_denorm',
+        ).filter(frequency__gte=self.frequency).count()
 
     def clean(self):
         if self.team and self.approved_for_team != 'denied':
