@@ -76,7 +76,7 @@ var route_options_{{cm.slug}} = {};
 var gpx_file_{{cm.slug}} = null;
 
 var basic_route_options_{{cm.slug}} = {
-    "{% trans 'Zadat Km ručně' %}": function () {
+    "{% trans 'Zadat km ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
         hide_map_{{cm.slug}}();
         $("#map_shower_{{cm.slug}}").hide();
@@ -222,7 +222,7 @@ function display_trip(trip, rerender) {
         className: (active_days.indexOf(trip.trip_date) >= 0) ? 'active-trip' : 'locked-trip',
     }
     if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
-        new_event.title = display_meters(trip.distanceMeters) + "Km";
+        new_event.title = display_meters(trip.distanceMeters) + "km";
     } else {
         new_event.title = "→";
     }

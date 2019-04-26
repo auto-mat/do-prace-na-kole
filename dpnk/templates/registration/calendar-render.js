@@ -116,7 +116,7 @@ function redraw_everything_trip_related() {
 }
 
 function display_meters(meters){
-    return (meters / 1000).toLocaleString("{{ current_language_code }}")
+    return (meters / 1000).toFixed(0).toLocaleString("{{ current_language_code }}")
 }
 
 function reload_route_options() {
@@ -134,7 +134,7 @@ function reload_route_options() {
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
         if (trip.commuteMode == '{{cm.slug}}') {
-            var desc = "{% trans 'Stejně jako' %} " + trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " Km)";
+            var desc = "{% trans 'Stejně jako' %} " + trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
             (function () {
                 var local_trip = trip; // Thanks! http://reallifejs.com/the-meat/getting-closure/never-forget/
                 route_options_{{cm.slug}}[desc] = function () {
