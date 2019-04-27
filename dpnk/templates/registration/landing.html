@@ -8,7 +8,15 @@
     <p>
      {{ user_attendance.get_random_motivation_message.message|safe }}
     </p>
-    {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}
+    <p>
+    Týmová pravidelnost: {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+    </p>
+    <p>
+    Osobní pravidelnost: {{ user_attendance.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+    </p>
+   {% for team_member in user_attendance.team.members %}
+      {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
+   {% endfor %}
     {% scribble 'landing_page_before_start' %}
     {% load i18n %}
       <p>
