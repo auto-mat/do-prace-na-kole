@@ -361,8 +361,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
         competition = self.campaign.competition_phase()
         days_count = util.days_count(competition, competition.date_to)
         days_count_till_now = util.days_count(competition, util.today())
-        print(days_count)
-        print(days_count_till_now)
         return (days_count - days_count_till_now).days * 2
 
     def get_remaining_max_theoretical_frequency_percentage(self):
@@ -370,8 +368,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
         remaining_rides = self.get_remaining_rides_count()
         rides_count = self.get_rides_count_denorm
         working_rides_base = self.get_working_rides_base_count()
-        print("working rides base: ", working_rides_base)
-        print("rides count: ", rides_count)
         return ((rides_count + remaining_rides) / (working_rides_base + remaining_rides)) * 100
 
     def get_minimum_rides_base_proportional(self):

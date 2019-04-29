@@ -106,12 +106,10 @@ class MotivationMessage(models.Model):
         queryset = queryset.filter(Q(day_to__isnull=True) | Q(day_to__gte=days))
 
         team_rank = user_attendance.get_frequency_rank_in_team()
-        print(team_rank)
         queryset = queryset.filter(Q(team_rank_from__isnull=True) | Q(team_rank_from__lte=team_rank))
         queryset = queryset.filter(Q(team_rank_to__isnull=True) | Q(team_rank_to__gte=team_rank))
 
         team_backwards_rank = user_attendance.team.members().count() - user_attendance.get_frequency_rank_in_team() + 1
-        print(team_backwards_rank)
         queryset = queryset.filter(Q(team_backwards_rank_from__isnull=True) | Q(team_backwards_rank_from__lte=team_backwards_rank))
         queryset = queryset.filter(Q(team_backwards_rank_to__isnull=True) | Q(team_backwards_rank_to__gte=team_backwards_rank))
         return queryset.order_by(F('priority').desc(nulls_last=True), '?')
@@ -119,7 +117,5 @@ class MotivationMessage(models.Model):
     @classmethod
     def get_random_message(cls, user_attendance):
         messages = MotivationMessage._get_all_messages(user_attendance)
-        import pprint
-        pprint.pprint(list(messages.values('priority', 'message')))
         message = messages.first()
         return message

@@ -6,10 +6,18 @@
 {% block content %}
 <div id="landing_page_intro">
     <p>
+     {% if user_attendance.get_frequency_rank_in_team == 1 %}
+       <i class="fas fa-sun"></i>
+       {% trans "Zpráva pro nejlepšího týmového hráče:" %}
+     {% endif %}
      {{ user_attendance.get_random_motivation_message.message|safe }}
+     {% if user_attendance.get_frequency_percentage == 100 %}
+       {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
+     {% endif %}
     </p>
     <p>
     Týmová pravidelnost: {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+    (<a href="{% url "team_frequency" %}">Vysvětlení pravidelnosti</a>)
     </p>
     <p>
     Osobní pravidelnost: {{ user_attendance.get_frequency_percentage|floatformat:"0" }}&nbsp;%
