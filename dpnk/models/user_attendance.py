@@ -36,10 +36,10 @@ from stale_notifications.model_mixins import StaleSyncMixin
 
 from .company_admin import CompanyAdmin
 from .diploma import Diploma
+from .landingpageicon import LandingPageIcon
 from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
-from .landingpageicon import LandingPageIcon
 from .util import MAP_DESCRIPTION
 from .. import mailing, util
 # from ..email import register_mail
@@ -497,14 +497,12 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def get_initial_track(self):
         trips, _ = self.get_all_trips()
-        previous_trip_with_track = trips.filter(track__isnull=False).order_by('-date','-direction').first()
+        previous_trip_with_track = trips.filter(track__isnull=False).order_by('-date', '-direction').first()
         if previous_trip_with_track:
             return previous_trip_with_track.track
         if self.track:
             return self.track
         return None
-
-
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('UserProfile', skip={'mailing_hash'})

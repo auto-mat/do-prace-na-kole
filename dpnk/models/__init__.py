@@ -39,8 +39,8 @@ from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
 from .diploma import Diploma, DiplomaField
 from .gpxfile import GpxFile, normalize_gpx_filename
-from .landingpageicon import LandingPageIcon
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
+from .landingpageicon import LandingPageIcon
 from .occupation import Occupation
 from .phase import PHASE_TYPE_DICT, Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename

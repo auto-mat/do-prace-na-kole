@@ -3,8 +3,7 @@ from sitetree.utils import item, tree
 sitetrees = (
     tree(
         'maintree', 'Hlavní menu', items=[
-            item(
-                'Zapsat jízdu!', 'calendar', title_en='Take a Ride!'),
+            item('Zapsat jízdu!', 'calendar', title_en='Take a Ride!'),
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
                     item('Změnit osobní údaje', 'edit_profile_detailed', title_en='Change Personal Details'),

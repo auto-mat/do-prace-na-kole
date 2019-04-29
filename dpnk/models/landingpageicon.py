@@ -24,7 +24,7 @@ class LandingPageIcon(models.Model):
         max_length=512,
     )
     ROLES = [
-        ('main', _(u"Hlavní obráz"))
+        ('main', _(u"Hlavní obráz")),
     ]
     role = models.CharField(
         verbose_name=_(u"Role pro obráz"),
