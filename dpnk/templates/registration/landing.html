@@ -4,45 +4,59 @@
 {% load scribbler_tags %}
 
 {% block caption %}
-<h2>
-{% trans "Týmová pravidelnost" %}:
-<span style="color:{% if user_attendance.team.get_frequency_percentage < 33 %}red{% elif user_attendance.team.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
-  {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-</span>
-</h2>
-<br/>
-<a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
-<br/>
-<br/>
 {% endblock %}
 
 {% block content %}
-<div id="landing_page_intro">
-    {% if user_attendance.get_random_motivation_message.message %}
-      <p>
-        {% if user_attendance.get_frequency_rank_in_team == 1 %}
-          <i class="fas fa-sun"></i>
-          {% trans "Zpráva pro nejlepšího týmového hráče:" %}
-        {% endif %}
-        {{ user_attendance.get_random_motivation_message.message|safe }}
-        {% if user_attendance.get_frequency_percentage == 100 %}
-          {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
-        {% endif %}
-      </p>
-    {% endif %}
+  <div id="landing_page_intro">
+    {# graphic #}
     {% with user_attendance.get_frequency_icons as frequency_icons %}
-    <img src="{{frequency_icons.main}}"/>
+      <img src="{{frequency_icons.main}}"/>
     {% endwith %}
-    <div class="row">
-    {% for team_member in user_attendance.team.members %}
-       <div class="col-12 col-sm-6 col-md-4">
-          {% include "./user_profile_image.html" %}
-          <h4>
-             {{ team_member }}
-          </h4>
-          {% trans "Osobní pravidelnost" %}: {{ team_member.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-       </div>
-    {% endfor %}
-    </div>
-</div>
+
+    {# clever tattle #}
+    {% if user_attendance.get_random_motivation_message.message %}
+        <div class"clever_tattle">
+          {% if user_attendance.get_frequency_rank_in_team == 1 %}
+            <i class="fas fa-sun"></i>
+            {% trans "Zpráva pro nejlepšího týmového hráče:" %}
+          {% endif %}
+          {{ user_attendance.get_random_motivation_message.message|safe }}
+          {% if user_attendance.get_frequency_percentage == 100 %}
+            {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        {# team head #}
+        <div class="col-12">
+          <h2>
+            {% trans "Týmová pravidelnost" %}:
+            <span style="color:{% if user_attendance.team.get_frequency_percentage < 33 %}red{% elif user_attendance.team.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
+              {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+            </span>
+            <a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
+          </h2>
+        </div>
+
+        {# team members #}
+        {% for team_member in user_attendance.team.members %}
+           <div class="col-12 col-sm-6 col-md-4">
+              {% include "./user_profile_image.html" %}
+              <span class="percentage" data-toggle="tooltip" title="{% trans "Osobní pravidelnost" %}">{{ team_member.get_frequency_percentage|floatformat:"0" }}&nbsp;%</span>
+              <h6>
+                 {{ team_member }}
+              </h6>
+           </div>
+        {% endfor %}
+      </div>
+  </div>
+
+  <script>
+    jQuery(document).ready(function($) {
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+      })
+    });
+  </script>
 {% endblock %}
