@@ -8,9 +8,13 @@ function start_editing(){
     $('.editation').show();
     redraw_everything_trip_related();
     full_calendar.render();
+    load_initial_trips(true);
 }
 
-$('.nav-tabs').on('shown.bs.tab', redraw_shopping_cart);
+$('.nav-tabs').on('shown.bs.tab', function(){
+    redraw_shopping_cart();
+    load_initial_trips(false);
+});
 
 {% for cm in commute_modes %}
 {% if cm.does_count and cm.eco %}
@@ -19,10 +23,11 @@ $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 {%endfor%}
 
 function redraw_shopping_cart(){
+    full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();
     start = "Máte vybráno ";
     mid = " "
-    end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance(commute_mode) + " km" : "";
+    end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance() + " km" : "";
     $('#trip-shopping-cart').text(start + commute_modes[commute_mode].name + mid + end);
 }
 
@@ -159,27 +164,42 @@ function reload_route_options() {
     {% for cm in commute_modes %}
     {% if cm.does_count and cm.eco %}
     route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
+    route_option_ids_{{cm.slug}} = jQuery.extend({}, basic_route_option_ids_{{cm.slug}});
     var sel = $("#route_select_{{cm.slug}}");
     sel.children().remove();
     sel = sel[0];
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
         if (trip.commuteMode == '{{cm.slug}}') {
-            var desc = "{% trans 'Stejně jako' %} " + trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
+            var desc = trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
             (function () {
                 var local_trip = trip; // Thanks! http://reallifejs.com/the-meat/getting-closure/never-forget/
                 route_options_{{cm.slug}}[desc] = function () {
                     select_old_trip_{{cm.slug}}(local_trip);
                 };
+                route_option_ids_{{cm.slug}}[desc] = "option-{{cm.slug}}" + trip.trip_date + trip.direction;
             })();
        }
     }
+    var i = 0;
+    var num_basic_options = Object.keys(basic_route_options_{{cm.slug}}).length;
+    var first_group = document.createElement("optgroup");
+    first_group.label = "{% trans '---' %}";
+    var second_group = document.createElement("optgroup");
+    second_group.label = "{% trans 'Stejně jako...' %}";
     for(var key in route_options_{{cm.slug}}){
         var option = document.createElement("option");
         option.value = key;
         option.text = key;
-        sel.appendChild(option);
+        option.id = route_option_ids_{{cm.slug}}[key];
+        if (i++ < num_basic_options){
+            first_group.appendChild(option);
+        } else {
+            second_group.appendChild(option);
+        }
     }
+    sel.appendChild(first_group);
+    sel.appendChild(second_group);
     {% endif %}
     {% endfor %}
 }
@@ -215,11 +235,12 @@ function eventRender(info) {
         trash_icon.className = 'fa fa-trash sm';
         info.el.firstChild.append(trash_button);
     } else {
-        explanation = exp.placeholder ? "Přidat cestu" : info.event.title
-        if (exp.direction == 'trip_to'){
-            show_tooltip(info.el, explanation + " {% trans 'Do práce' %} ")
+        if (exp.placeholder) {
+            show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
+        } else if (exp.direction == 'trip_to'){
+            show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
         } else if (exp.direction == 'trip_from') {
-            show_tooltip(info.el, explanation + " {% trans 'Domů' %} ")
+            show_tooltip(info.el, " {% trans 'Domů' %} " + info.event.title)
         } else if (exp.wp_event) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-glass-cheers xs';

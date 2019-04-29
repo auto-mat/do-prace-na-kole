@@ -25,6 +25,7 @@ var commute_modes = {
     '{{cm.slug}}': {
         'eco': {{cm.eco|yesno:"true,false" }},
         'name': "{{cm.name}}",
+        'add_command': "{{cm.add_command}}",
         'does_count': {{cm.does_count|yesno:"true,false" }},
         'icon_html': "{{cm.icon_html|urlencode}}",
     },
@@ -75,6 +76,8 @@ function toggle_map_size_{{cm.slug}}(){
 
 
 var route_options_{{cm.slug}} = {};
+var route_option_ids_{{cm.slug}} = {};
+
 
 var gpx_file_{{cm.slug}} = null;
 
@@ -97,6 +100,12 @@ var basic_route_options_{{cm.slug}} = {
     },
 };
 
+var basic_route_option_ids_{{cm.slug}} = {
+    "{% trans 'Zadat vzdálenost ručně' %}": 'option_enter_distance_{{cm.slug}}',
+    "{% trans 'Nakreslit trasu do mapy' %}": 'option_draw_{{cm.slug}}',
+    "{% trans 'Nahrát GPX soubor' %}": 'option_gpx_{{cm.slug}}',
+};
+
 function select_old_trip_{{cm.slug}}(trip){
     $("#km-{{cm.slug}}").val(trip.distanceMeters / 1000);
     show_map_{{cm.slug}}();
@@ -106,7 +115,31 @@ function select_old_trip_{{cm.slug}}(trip){
 
 function on_route_select_{{cm.slug}}() {
     var sel = document.getElementById("route_select_{{cm.slug}}");
-    route_options_{{cm.slug}}[sel.value]();
+    if(sel.value){
+        route_options_{{cm.slug}}[sel.value]();
+    }
+}
+
+function load_initial_trips(set_tab) {
+    {% for cm in commute_modes %}
+    $("#km-{{cm.slug}}").val(0);
+    for(i in displayed_trips) {
+        if (set_tab) {
+            $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
+            set_tab = false;
+        }
+        trip = displayed_trips[i]
+        {% if cm.does_count and cm.eco %}
+        if(trip.distanceMeters && trip.commuteMode == '{{cm.slug}}') {
+
+            $("#option-{{cm.slug}}" + trip.trip_date + trip.direction).prop('selected', true);
+            on_route_select_{{cm.slug}}()
+            break;
+        }
+        {% endif %}
+    }
+    {% endfor %}
+    redraw_shopping_cart();
 }
 
 function update_distance_from_map_{{cm.slug}}() {
@@ -313,8 +346,9 @@ function get_selected_commute_mode() {
     return $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
 }
 
-function get_selected_distance(commute_mode) {
-    return Number($('#km-'+commute_mode).val())
+function get_selected_distance() {
+    commute_mode = get_selected_commute_mode();
+    return Number($('#km-'+commute_mode).val());
 }
 
 function eventClick(info) {
@@ -326,7 +360,7 @@ function eventClick(info) {
            "commuteMode": get_selected_commute_mode(),
         }
         if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
-            trip["distanceMeters"] = get_selected_distance(commute_mode) * 1000;
+            trip["distanceMeters"] = get_selected_distance() * 1000;
         }
         els = eval('editable_layers_' + commute_mode);
         if (els) {
@@ -486,23 +520,9 @@ document.addEventListener('DOMContentLoaded', function() {
         {% if interactive_entry_enabled %}
         for(i in displayed_trips) {
             if(displayed_trips[i].distanceMeters) {
-                console.log("#nav-" + displayed_trips[i].commuteMode + "-tab");
-                $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
                 break;
             }
         }
-        {% for cm in commute_modes %}
-        {% if cm.does_count and cm.eco %}
-        $("#km-{{cm.slug}}").val(0);
-        for(i in displayed_trips) {
-            if(displayed_trips[i].distanceMeters && displayed_trips[i].commuteMode == '{{cm.slug}}') {
-                $("#km-{{cm.slug}}").val(displayed_trips[i].distanceMeters / 1000);
-                break;
-            }
-        }
-        {% endif %}
-        {% endfor %}
-        redraw_shopping_cart();
         {% endif %}
         $(".main-loading-overlay").hide();
     });
