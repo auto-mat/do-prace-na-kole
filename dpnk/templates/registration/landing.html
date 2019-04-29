@@ -6,7 +6,7 @@
 {% block caption %}
 <h2>
 {% trans "Týmová pravidelnost" %}:
-<span style="color:{% if user_attendance.get_frequency_percentage < 33 %}red{% elif user_attendance.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
+<span style="color:{% if user_attendance.team.get_frequency_percentage < 33 %}red{% elif user_attendance.team.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
   {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
 </span>
 </h2>
