@@ -20,6 +20,7 @@
     <script src="{% static 'bow/leaflet-gpx/gpx.js' %}"></script>
     {{ block.super }}
 {% endblock %}
+    {% block caption %} {%endblock caption %}
 {% block form %}
     {% include "registration/leaflet_settings.html" %}
     <p>
@@ -41,9 +42,15 @@
     {% elif interactive_entry_enabled %}
 
     <!-- Editation tools -->
+    <div id="edit-method-chooser">
+    Zápis jízd
+    <button class="btn btn-primary" onclick="start_editing()"><i class="fa fa-calendar-plus"></i> Kalendář </button>
+    <a href="{% url 'rides' %}" class="btn btn-primary" role="button"><i class="fa fa-th-list"></i> Tabulka </button>
+    </div>
     <div class="main-loading-overlay">
         <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
     </div>
+    <div style="display:none" class="editation">
     <h3>1. Vyberte druh dopravy</h3>
     <nav>
         <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
@@ -92,6 +99,7 @@
         </div>
         {% endfor %}
     </div>
+    </div>
     {% else %}
 
     <!-- After end -->
@@ -139,8 +147,10 @@
     <div id='calendar'></div>
 
     {% if interactive_entry_enabled %}
+    <div style="display:none" class="editation">
     <br/>
     <h3> Hotovo! Jízdy se automaticky po zadání ukladají do kalendáře. </h3>
+    </div>
     {% endif %}
     <script>
      {% include "registration/calendar.js" %}

@@ -7,6 +7,8 @@
 L.drawLocal.draw.toolbar.finish.text="{% trans 'Finish' %}"; // TODO move this code to django-leaflet or something
 L.drawLocal.draw.toolbar.finish.title="{% trans 'Finish drawing' %}";
 
+var editing = false;
+
 var day_types = {
     "possible-vacation-day": {{possible_vacation_days|safe}},
     "active-day": {{active_days|safe}},
@@ -211,6 +213,11 @@ function display_trip(trip, rerender) {
     if ((possible_vacation_days.indexOf(trip.trip_date) >= 0) && !commute_modes[trip.commuteMode].does_count) {
         return
     }
+    var trip_class = 'locked-trip ';
+    if (active_days.indexOf(trip.trip_date) >= 0) {
+      trip_class = 'active-trip-filled ';
+    }
+    trip_class += 'cal_event_'+trip.direction
     new_event = {
         start: trip.trip_date,
         end: add_days(new Date(trip.trip_date), 1),
@@ -219,12 +226,10 @@ function display_trip(trip, rerender) {
         commute_mode: trip.commuteMode,
         direction: trip.direction,
         trip_id: trip.id,
-        className: (active_days.indexOf(trip.trip_date) >= 0) ? 'active-trip' : 'locked-trip',
+        className: trip_class,
     }
     if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
         new_event.title = display_meters(trip.distanceMeters) + "km";
-    } else {
-        new_event.title = "→";
     }
     event = full_calendar.addEvent(new_event);
     if(rerender){
@@ -429,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
     full_calendar = new FullCalendar.Calendar(calendarEl, {
         eventSources: [
            {events: {{events|safe}}},
-           {events: get_placeholder_events, className: "active-trip", id: 2},
+           {events: get_placeholder_events, className: "active-trip-unfilled", id: 2},
            {events: get_vacation_events, className: "cal-vacation", id: 3},
            {events: get_wordpress_events, className: "wp-event", id: 4},
         ],
@@ -452,7 +457,10 @@ document.addEventListener('DOMContentLoaded', function() {
         header: {
             left: 'title',
             center: '',
-            right: 'dayGridMonth,listMonth, today, prev,next',
+            right: 'today, prev,next',
+        },
+        footer: {
+            left: 'dayGridMonth,listMonth',
         },
         select: function(info) {
             add_vacation(info.start, info.end);

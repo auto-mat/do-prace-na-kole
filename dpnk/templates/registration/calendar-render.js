@@ -2,7 +2,18 @@
 {% load l10n %}
 {% get_current_language as current_language_code %}
 
+function start_editing(){
+    editing = true;
+    $('#edit-method-chooser').hide();
+    $('.editation').show();
+    redraw_everything_trip_related();
+    full_calendar.render();
+}
+
 function get_placeholder_events(fetchInfo, successCallback, failureCallback){
+    if (!editing) {
+        return successCallback([]);
+    }
     placeholder_events = [];
     for(i in day_types["active-day"]){
        var active_day = day_types["active-day"][i];
@@ -186,14 +197,11 @@ function eventRender(info) {
         trash_icon.className = 'fa fa-trash sm';
         info.el.firstChild.append(trash_button);
     } else {
+        explanation = exp.placeholder ? "Přidat cestu" : info.event.title
         if (exp.direction == 'trip_to'){
-            right_icon = document.createElement("i");
-            right_icon.className='fa fa-industry xs';
-            show_tooltip(info.el, "{% trans 'Do práce' %} " + info.event.title)
+            show_tooltip(info.el, explanation + " {% trans 'Do práce' %} ")
         } else if (exp.direction == 'trip_from') {
-            right_icon = document.createElement("i");
-            right_icon.className='fa fa-home xs';
-            show_tooltip(info.el, "{% trans 'Domů' %} " + info.event.title)
+            show_tooltip(info.el, explanation + " {% trans 'Domů' %} ")
         } else if (exp.wp_event) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-glass-cheers xs';
