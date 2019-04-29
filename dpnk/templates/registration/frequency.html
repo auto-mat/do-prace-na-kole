@@ -48,7 +48,7 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
          </table>
      </div>
      <div class="col-sm-4">
-         <div class="card" style="width: 18rem;">
+         <div class="card">
               <div class="card-body">
                  {% if user_attendance.get_frequency_percentage == 100 %}
                      <h5 class="card-title">Gratulujeme! Váš tým má ve vás opravdovou oporu.</h5>
@@ -121,75 +121,76 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
 {% endblocktrans %}
 </p>
 
-<div class="row">
-     <div class="col-sm-8">
-         <table>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               {% for user_attendance in team_members %}
-               <td>{{ user_attendance.name }}</td>
-               {% endfor %}
-            </tr>
-            <tr>
-               <td>Ekologické cesty: </td>
-               <td>{{ user_attendance.team.get_rides_count_denorm }}</td>
-               <td></td>
-               {% for user_attendance in team_members %}
-               <td>{% if not forloop.first %}+ {% endif %}{{ user_attendance.get_rides_count_denorm }}</td>
-               {% endfor %}
-            </tr>
-            <tr>
-               <td></td>
-               <td><hr style="border-top-color: black;"/></td>
-               <td>&nbsp;=</td>
-               <td colspan="{{ team_members.count }}"><hr style="border-top-color: black;"/></td>
-               <td>&nbsp;=</td>
-               <td>
-                  <span style="color:{% if user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}green{% else %}red{% endif %}">
-                     {{ user_attendance.team.get_frequency_percentage|floatformat:-1|intcomma }}
-                  </span>&nbsp;%
-                  týmová pravidelnost
-               </td>
-            </tr>
-            <tr>
-               <td>Všechny cesty:</td>
-               <td>{{ user_attendance.team.get_working_trips_count }}</td>
-               <td></td>
-               {% for user_attendance in team_members %}
-               <td>{% if not forloop.first %}+ {% endif %}{{ user_attendance.get_working_rides_base_count }}</td>
-               {% endfor %}
-            </tr>
-         </table>
-     </div>
-     <div class="col-sm-4">
-         <div class="card" style="width: 18rem;">
-              <div class="card-body">
-                 {% if user_attendance.team.get_frequency_percentage == 100 %}
-                     <h5 class="card-title">Perfektní! Pro dnešek dobrý.</h5>
-                     <p>Uvidíme se zase zítra ráno na trase.</p>
-                 {% elif user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}
-                     <h5 class="card-title">Jste dobrý tým. Dotáhněte to až na vrchol!</h5>
-                     <p>
-                     {% blocktrans count rides_num=user_attendance.team.get_remaining_rides_count with percentage=user_attendance.team.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
-                     Do konce soutěže můžete najezdit či naběhat ještě jednu cestu ku vaší až {{ percentage }}% pravidelnosti.
-                     {% plural %}
-                     Do konce soutěže můžete najezdit či naběhat ještě {{ rides_num }} cest ku vaší až {{ percentage }}% pravidelnosti.
-                     {% endblocktrans %}
-                     </p>
-                 {% else %}
-                     <h5 class="card-title">Ukažte, co váš tým dokáže. Teď není čas odpočívat.</h5>
-                     <p>
-                     {% blocktrans count rides_num=user_attendance.team.get_missing_rides_for_minimum_percentage %}
-                     Schází vám ještě jedna cesta, než budete pravidelně jezdit na 66&nbsp;%.
-                     {% plural %}
-                     Schází vám ještě {{ rides_num }} cest, než budete pravidelně jezdit na 66&nbsp;%.
-                     {% endblocktrans %}
-                     </p>
-                 {% endif %}
-              </div>
+<table>
+   <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      {% for user_attendance in team_members %}
+      <td>{{ user_attendance.name }}</td>
+      {% endfor %}
+   </tr>
+   <tr>
+      <td>Ekologické cesty: </td>
+      <td>{{ user_attendance.team.get_rides_count_denorm }}</td>
+      <td></td>
+      {% for user_attendance in team_members %}
+      <td style="text-align:center">
+      {% if not forloop.first %}+&nbsp;{% endif %}{{ user_attendance.get_rides_count_denorm }}
+      </td>
+      {% endfor %}
+   </tr>
+   <tr>
+      <td></td>
+      <td><hr style="border-top-color: black;"/></td>
+      <td>&nbsp;=</td>
+      <td colspan="{{ team_members.count }}"><hr style="border-top-color: black;"/></td>
+      <td>&nbsp;=</td>
+      <td>
+         <span style="color:{% if user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}green{% else %}red{% endif %}">
+            {{ user_attendance.team.get_frequency_percentage|floatformat:-1|intcomma }}
+         </span>&nbsp;%
+         týmová pravidelnost
+      </td>
+   </tr>
+   <tr>
+      <td>Všechny cesty:</td>
+      <td>{{ user_attendance.team.get_working_trips_count }}</td>
+      <td></td>
+      {% for user_attendance in team_members %}
+      <td style="text-align:center">
+      {% if not forloop.first %}+&nbsp;{% endif %}{{ user_attendance.get_working_rides_base_count }}
+      </td>
+      {% endfor %}
+   </tr>
+</table>
+<br/>
+<div class="col d-flex justify-content-center">
+    <div class="card" style="width: 18rem;">
+         <div class="card-body">
+            {% if user_attendance.team.get_frequency_percentage == 100 %}
+                <h5 class="card-title">Perfektní! Pro dnešek dobrý.</h5>
+                <p>Uvidíme se zase zítra ráno na trase.</p>
+            {% elif user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}
+                <h5 class="card-title">Jste dobrý tým. Dotáhněte to až na vrchol!</h5>
+                <p>
+                {% blocktrans count rides_num=user_attendance.team.get_remaining_rides_count with percentage=user_attendance.team.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
+                Do konce soutěže můžete najezdit či naběhat ještě jednu cestu ku vaší až {{ percentage }}% pravidelnosti.
+                {% plural %}
+                Do konce soutěže můžete najezdit či naběhat ještě {{ rides_num }} cest ku vaší až {{ percentage }}% pravidelnosti.
+                {% endblocktrans %}
+                </p>
+            {% else %}
+                <h5 class="card-title">Ukažte, co váš tým dokáže. Teď není čas odpočívat.</h5>
+                <p>
+                {% blocktrans count rides_num=user_attendance.team.get_missing_rides_for_minimum_percentage %}
+                Schází vám ještě jedna cesta, než budete pravidelně jezdit na 66&nbsp;%.
+                {% plural %}
+                Schází vám ještě {{ rides_num }} cest, než budete pravidelně jezdit na 66&nbsp;%.
+                {% endblocktrans %}
+                </p>
+            {% endif %}
          </div>
-     </div>
+    </div>
 </div>
 {% endblock %}

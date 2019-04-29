@@ -44,7 +44,7 @@
     <div class="main-loading-overlay">
         <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
     </div>
-    <h3>1. vyberte mod dopravy</h3>
+    <h3>1. Vyberte druh dopravy</h3>
     <nav>
         <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
             {% for cm in commute_modes %}
@@ -64,14 +64,14 @@
                 <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
                 <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}"/>
                 <div class="input-group-append">
-                    <span class="input-group-text">Km</span>
+                    <span class="input-group-text">km</span>
                 </div>
             </div>
             <div id="map_shower_{{cm.slug}}" style="display:none;">
-                <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
+                <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i> {% trans 'Zobrazit mapu' %}</button>
             </div>
             <div id="track_holder_{{cm.slug}}" style="display:none;">
-                <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapu' %}</button>
+                <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i> {% trans 'Skrýt mapu' %}</button>
                 <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}"><div id="enlarge_map_text_{{cm.slug}}"><i class="fa fa-expand"></i>{% trans 'Zvětšit mapu' %}</div><div id="shrink_map_text_{{cm.slug}}" style="display:none"><i class="fa fa-compress"></i>{% trans 'Zmenšit mapu' %}</div></button>
                 <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -96,7 +96,7 @@
 
     <!-- After end -->
     {% blocktrans %}
-    Soutěž jíž ukončil. Děkujeme za účast.
+    Soutěž jíž skončila. Děkujeme vám za účast.
     {% endblocktrans %}
     {% endif %}
 
@@ -140,7 +140,7 @@
 
     {% if interactive_entry_enabled %}
     <br/>
-    <h3> Hotovo! Jizdy se automatické ukladají po zadání do kalendáře. </h3>
+    <h3> Hotovo! Jízdy se automaticky po zadání ukladají do kalendáře. </h3>
     {% endif %}
     <script>
      {% include "registration/calendar.js" %}
