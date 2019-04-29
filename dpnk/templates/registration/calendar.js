@@ -120,14 +120,13 @@ function on_route_select_{{cm.slug}}() {
     }
 }
 
-function load_initial_trips() {
-    var tab_set = false;
+function load_initial_trips(set_tab) {
     {% for cm in commute_modes %}
     $("#km-{{cm.slug}}").val(0);
     for(i in displayed_trips) {
-        if (!tab_set) {
+        if (set_tab) {
             $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
-            tab_set = true;
+            set_tab = false;
         }
         trip = displayed_trips[i]
         {% if cm.does_count and cm.eco %}

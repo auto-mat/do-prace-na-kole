@@ -8,10 +8,13 @@ function start_editing(){
     $('.editation').show();
     redraw_everything_trip_related();
     full_calendar.render();
-    load_initial_trips();
+    load_initial_trips(true);
 }
 
-$('.nav-tabs').on('shown.bs.tab', redraw_shopping_cart);
+$('.nav-tabs').on('shown.bs.tab', function(){
+    redraw_shopping_cart();
+    load_initial_trips(false);
+});
 
 {% for cm in commute_modes %}
 {% if cm.does_count and cm.eco %}
