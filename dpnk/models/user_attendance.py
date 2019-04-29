@@ -367,10 +367,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return results.get_minimum_rides_base_proportional(self.campaign.phase("competition"), util.today())
 
     def get_distance(self, round_digits=2):
+        track = self.get_initial_track()
+        if track:
+            return round(util.get_multilinestring_length(track), round_digits)
         if self.distance:
             return self.distance
-        elif self.track:
-            return round(util.get_multilinestring_length(self.track), round_digits)
         else:
             return 0
     get_distance.short_description = _('Vzdálenost (km) do práce')
@@ -484,6 +485,17 @@ class UserAttendance(StaleSyncMixin, models.Model):
         expected_trip_days = [(day, direction) for day in days for direction in self.campaign.get_directions()]
         uncreated_trips = sorted(list(set(expected_trip_days) - set(trip_days)))
         return trips, uncreated_trips
+
+    def get_initial_track(self):
+        trips, _ = self.get_all_trips()
+        previous_trip_with_track = trips.filter(track__isnull=False).order_by('-date','-direction').first()
+        if previous_trip_with_track:
+            return previous_trip_with_track.track
+        if self.track:
+            return self.track
+        return None
+
+
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('UserProfile', skip={'mailing_hash'})
