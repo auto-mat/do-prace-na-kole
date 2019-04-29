@@ -115,7 +115,9 @@ function select_old_trip_{{cm.slug}}(trip){
 
 function on_route_select_{{cm.slug}}() {
     var sel = document.getElementById("route_select_{{cm.slug}}");
-    route_options_{{cm.slug}}[sel.value]();
+    if(sel.value){
+        route_options_{{cm.slug}}[sel.value]();
+    }
 }
 
 function load_initial_trips() {

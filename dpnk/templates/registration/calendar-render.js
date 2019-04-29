@@ -168,7 +168,7 @@ function reload_route_options() {
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
         if (trip.commuteMode == '{{cm.slug}}') {
-            var desc = "{% trans 'Stejně jako' %} " + trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
+            var desc = trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
             (function () {
                 var local_trip = trip; // Thanks! http://reallifejs.com/the-meat/getting-closure/never-forget/
                 route_options_{{cm.slug}}[desc] = function () {
@@ -178,13 +178,25 @@ function reload_route_options() {
             })();
        }
     }
+    var i = 0;
+    var num_basic_options = Object.keys(basic_route_options_{{cm.slug}}).length;
+    var first_group = document.createElement("optgroup");
+    first_group.label = "{% trans '---' %}";
+    var second_group = document.createElement("optgroup");
+    second_group.label = "{% trans 'Stejně jako...' %}";
     for(var key in route_options_{{cm.slug}}){
         var option = document.createElement("option");
         option.value = key;
         option.text = key;
         option.id = route_option_ids_{{cm.slug}}[key];
-        sel.appendChild(option);
+        if (i++ < num_basic_options){
+            first_group.appendChild(option);
+        } else {
+            second_group.appendChild(option);
+        }
     }
+    sel.appendChild(first_group);
+    sel.appendChild(second_group);
     {% endif %}
     {% endfor %}
 }
