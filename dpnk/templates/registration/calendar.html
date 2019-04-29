@@ -25,7 +25,7 @@
     <p>
 
         <!-- Before start -->
-        {% if not entry_enabled_phase.has_started %}
+        {% if not competition_phase.has_started %}
             {% blocktrans %}
                 V průběhu soutěže
             {% endblocktrans %}
@@ -38,7 +38,7 @@
             Ještě před začátkem soutěže si můžete v kalendáři poznačit plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska negativně neodrazí na celkovém skóre.
         {% endblocktrans %}
     </p>
-        {% elif entry_enabled_phase.is_actual %}
+    {% elif interactive_entry_enabled %}
 
     <!-- Editation tools -->
     <div class="main-loading-overlay">
@@ -138,7 +138,7 @@
 
     <div id='calendar'></div>
 
-    {% if entry_enabled_phase.is_actual %}
+    {% if interactive_entry_enabled %}
     <br/>
     <h3> Hotovo! Jizdy se automatické ukladají po zadání do kalendáře. </h3>
     {% endif %}

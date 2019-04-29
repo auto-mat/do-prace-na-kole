@@ -112,7 +112,7 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
 function redraw_everything_trip_related() {
     full_calendar.getEventSourceById(2).refetch();
     full_calendar.getEventSourceById(3).refetch();
-    {% if entry_enabled_phase.is_actual %}
+    {% if interactive_entry_enabled %}
     reload_route_options();
     {% endif %}
 }

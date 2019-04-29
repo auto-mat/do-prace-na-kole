@@ -868,6 +868,8 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
             "events": json.dumps(calendar.get_events(self.request)),
             "commute_modes": models.CommuteMode.objects.all(),
             "entry_enabled_phase": entry_enabled_phase,
+            "competition_phase": competition,
+            "interactive_entry_enabled": competition.has_started() and entry_enabled_phase.is_actual(),
         })
         return context_data
 

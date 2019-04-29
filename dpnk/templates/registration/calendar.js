@@ -382,7 +382,7 @@ function create_map(element_id){
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    {% if entry_enabled_phase.is_actual %}
+    {% if interactive_entry_enabled %}
     {% for cm in commute_modes %}
     {% if cm.does_count and cm.eco %}
     map_{{cm.slug}} = create_map('map_{{cm.slug}}')
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         redraw_everything_trip_related();
         full_calendar.render();
-        {% if entry_enabled_phase.is_actual %}
+        {% if interactive_entry_enabled %}
         {% for cm in commute_modes %}
         {% if cm.does_count and cm.eco %}
         $("#km-{{cm.slug}}").val(0);
