@@ -95,6 +95,7 @@ from .forms import (
     TeamSettingsForm,
     TrackUpdateForm,
     UserProfileLanguageUpdateForm,
+    UserProfileRidesUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
 from .rest import TripSerializer
@@ -1986,6 +1987,26 @@ class SwitchLang(LoginRequiredMixin, View):
             if form.is_valid():
                 form.save()
         return redirect(self.request.GET['redirect'])
+
+
+class SwitchRidesView(LoginRequiredMixin, View):
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_anonymous:
+            user_profile = self.request.user_attendance.userprofile
+            if 'rides_view' in self.request.GET:
+                form = UserProfileRidesUpdateForm(
+                    data={"default_rides_view": self.request.GET.get('rides_view', None)},
+                    instance=user_profile,
+                )
+                if form.is_valid():
+                    form.save()
+            if user_profile.default_rides_view:
+                view_mapping = {
+                    'table': 'rides',
+                    'calendar': 'calendar',
+                }
+                return redirect(view_mapping[user_profile.default_rides_view])
+        return redirect('calendar')
 
 
 def test_errors(request):

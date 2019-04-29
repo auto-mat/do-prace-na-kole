@@ -42,10 +42,9 @@
     {% elif interactive_entry_enabled %}
 
     <!-- Editation tools -->
-    <div id="edit-method-chooser">
-    Zápis jízd
-    <button class="btn btn-primary" onclick="start_editing()"><i class="fa fa-calendar-plus"></i> Kalendář </button>
-    <a href="{% url 'rides' %}" class="btn btn-primary" role="button"><i class="fa fa-th-list"></i> Tabulka </button>
+    {% include "./rides_view_switcher.html" %}
+    <div id="edit-button-activator">
+    <button class="btn" onclick="start_editing()"><i class="fa fa-calendar-plus"></i> Ukázat editaci </button>
     </div>
     <div class="main-loading-overlay">
         <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>

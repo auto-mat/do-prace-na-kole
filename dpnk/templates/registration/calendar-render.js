@@ -4,7 +4,7 @@
 
 function start_editing(){
     editing = true;
-    $('#edit-method-chooser').hide();
+    $('#edit-button-activator').hide();
     $('.editation').show();
     redraw_everything_trip_related();
     full_calendar.render();

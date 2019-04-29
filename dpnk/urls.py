@@ -325,6 +325,11 @@ urlpatterns = [
         views.SwitchLang.as_view(),
         name="switch_lang",
     ),
+    url(
+        r'^switch_rides_view/$',
+        views.SwitchRidesView.as_view(),
+        name="switch_rides_view",
+    ),
 
 
     # company admin:

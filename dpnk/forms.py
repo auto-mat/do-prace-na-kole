@@ -906,6 +906,14 @@ class UserProfileLanguageUpdateForm(forms.ModelForm):
         )
 
 
+class UserProfileRidesUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            'default_rides_view',
+        )
+
+
 class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     def clean_mailing_opt_in(self):
         if self.cleaned_data['mailing_opt_in'] is None:
