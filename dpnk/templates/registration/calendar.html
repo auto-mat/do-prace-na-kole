@@ -44,7 +44,7 @@
     <div class="main-loading-overlay">
         <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
     </div>
-    <h3>1. vyberte druh dopravy</h3>
+    <h3>1. Vyberte druh dopravy</h3>
     <nav>
         <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
             {% for cm in commute_modes %}
@@ -68,10 +68,10 @@
                 </div>
             </div>
             <div id="map_shower_{{cm.slug}}" style="display:none;">
-                <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i>{% trans 'Zobrazit mapa' %}</button>
+                <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i> {% trans 'Zobrazit mapu' %}</button>
             </div>
             <div id="track_holder_{{cm.slug}}" style="display:none;">
-                <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i>{% trans 'Zakryvat mapu' %}</button>
+                <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye"></i> {% trans 'Skrýt mapu' %}</button>
                 <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}"><div id="enlarge_map_text_{{cm.slug}}"><i class="fa fa-expand"></i>{% trans 'Zvětšit mapu' %}</div><div id="shrink_map_text_{{cm.slug}}" style="display:none"><i class="fa fa-compress"></i>{% trans 'Zmenšit mapu' %}</div></button>
                 <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
                     {% csrf_token %}

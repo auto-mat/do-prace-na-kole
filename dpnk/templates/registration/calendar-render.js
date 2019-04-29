@@ -38,7 +38,7 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
     function close_out_vacation_if_needed() {
         if(current_vacation_start) {
            new_event =  {
-               title: "{% trans 'Dovolena' %}",
+               title: "{% trans 'Dovolená' %}",
                start: current_vacation_start,
                end: possible_vacation_day,
                allDay: true,
@@ -189,11 +189,11 @@ function eventRender(info) {
         if (exp.direction == 'trip_to'){
             right_icon = document.createElement("i");
             right_icon.className='fa fa-industry xs';
-            show_tooltip(info.el, "{% trans 'Do prace' %} " + info.event.title)
+            show_tooltip(info.el, "{% trans 'Do práce' %} " + info.event.title)
         } else if (exp.direction == 'trip_from') {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-home xs';
-            show_tooltip(info.el, "{% trans 'Domu' %} " + info.event.title)
+            show_tooltip(info.el, "{% trans 'Domů' %} " + info.event.title)
         } else if (exp.wp_event) {
             right_icon = document.createElement("i");
             right_icon.className='fa fa-glass-cheers xs';

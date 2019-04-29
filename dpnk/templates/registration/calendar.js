@@ -76,7 +76,7 @@ var route_options_{{cm.slug}} = {};
 var gpx_file_{{cm.slug}} = null;
 
 var basic_route_options_{{cm.slug}} = {
-    "{% trans 'Zadat km ručně' %}": function () {
+    "{% trans 'Zadat vzdálenost ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
         hide_map_{{cm.slug}}();
         $("#map_shower_{{cm.slug}}").hide();
@@ -87,7 +87,7 @@ var basic_route_options_{{cm.slug}} = {
         $("#gpx_upload_{{cm.slug}}").hide();
         show_map_{{cm.slug}}();
     },
-    "{% trans 'Nahravat GPX soubor' %}": function () {
+    "{% trans 'Nahrát GPX soubor' %}": function () {
         editable_layers_{{cm.slug}}.clearLayers();
         $("#gpx_upload_{{cm.slug}}").show();
         show_map_{{cm.slug}}();
