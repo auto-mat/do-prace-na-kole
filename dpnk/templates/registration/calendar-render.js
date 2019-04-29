@@ -132,6 +132,8 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
             }
         }
         successCallback(events);
+    }).fail(function(data){
+       successCallback([]);
     });
 }
 
