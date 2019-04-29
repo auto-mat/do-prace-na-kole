@@ -15,7 +15,7 @@
 
     {# clever tattle #}
     {% if user_attendance.get_random_motivation_message.message %}
-        <div class"clever_tattle">
+        <div class="clever_tattle">
           {% if user_attendance.get_frequency_rank_in_team == 1 %}
             <i class="fas fa-sun"></i>
             {% trans "Zpráva pro nejlepšího týmového hráče:" %}
@@ -30,25 +30,28 @@
       <div class="row">
         {# team head #}
         <div class="col-12">
-          <h2>
-            {% trans "Týmová pravidelnost" %}:
-            <span style="color:{% if user_attendance.team.get_frequency_percentage < 33 %}red{% elif user_attendance.team.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
-              {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-            </span>
-            <a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
+          <h2 class="frequencybar">
+            {% trans "Týmová pravidelnost" %} {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%
           </h2>
+          <style>
+            .frequencybar{
+              background: linear-gradient(90deg, rgba(251,115,93,1) 0%, rgba(251,115,93,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) 100%);
+            }
+          </style>
+          <a class="sidenote" href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
         </div>
 
         {# team members #}
-        {% for team_member in user_attendance.team.members %}
-           <div class="col-12 col-sm-6 col-md-4">
-              {% include "./user_profile_image.html" %}
-              <span class="percentage" data-toggle="tooltip" title="{% trans "Osobní pravidelnost" %}">{{ team_member.get_frequency_percentage|floatformat:"0" }}&nbsp;%</span>
-              <h6>
-                 {{ team_member }}
-              </h6>
-           </div>
-        {% endfor %}
+        <div class="col-12 team_members">
+          {% for team_member in user_attendance.team.members %}
+             <div class="col-fifth">
+                {% include "./user_profile_image.html" %}
+                <h6>
+                   {{ team_member }}
+                </h6>
+             </div>
+          {% endfor %}
+        </div>
       </div>
   </div>
 

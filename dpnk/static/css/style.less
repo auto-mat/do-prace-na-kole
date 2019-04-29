@@ -626,8 +626,48 @@ label{
   text-align:center;
   margin-top:@wg;
 }
-
-
+.clever_tattle{
+  font-weight:300;
+  font-size:1.4rem;
+  line-height:1.85rem;
+  margin:@wg*1.6 @wg @wg*2 @wg;
+  h1, h2, h3, h4, h5, h6{
+    font-size:1.4rem;
+    font-weight:500;
+  }
+}
+.frequencybar{
+  padding:@wg;
+  color:#fff;
+}
+.sidenote{
+  float:right;
+  margin-top:-@wg*0.8;
+  font-size:.8rem;
+  opacity:.6;
+  text-decoration:none;
+  border-bottom:1px solid @lightgrey;
+  &:hover{
+    opacity:1;
+    text-decoration:none;
+    border-bottom:1px solid @primary;
+  }
+}
+.team_members{
+  margin-top:@wg*.9;
+  .avatar_holder{
+    padding:0 @wg;
+  }
+  h6{
+    font-size: .8rem;
+    text-align:center;
+    margin:@wg/2 0 @wg*2 0;
+  }
+}
+.col-fifth{
+  width:20%;
+  display:inline-block;
+}
 .noanim {
   transition: all 0.0s;
 }
@@ -702,6 +742,9 @@ label{
   left: 8px;
 }
 @media all and (max-width: 769px) {
+  .col-fifth{
+    width: 33%;
+  }
   .container{
     width:100%;
   }
@@ -717,6 +760,9 @@ label{
   }
 }
 @media all and (max-width: 480px) {
+  .col-fifth{
+    width: 100%;
+  }
   .application-layout{
     background:transparent;
   }
