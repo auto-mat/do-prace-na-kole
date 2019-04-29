@@ -30,7 +30,9 @@
         {% endif %}
       </p>
     {% endif %}
-    (Obrázek)
+    {% with user_attendance.get_frequency_icons as frequency_icons %}
+    <img src="{{frequency_icons.main}}"/>
+    {% endwith %}
     <div class="row">
     {% for team_member in user_attendance.team.members %}
        <div class="col-12 col-sm-6 col-md-4">
@@ -43,7 +45,4 @@
     {% endfor %}
     </div>
 </div>
-{% with user_attendance.get_frequency_icons as frequency_icons %}
-<img src="{{frequency_icons.main}}"/>
-{% endwith %}
 {% endblock %}
