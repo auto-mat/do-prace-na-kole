@@ -3,6 +3,16 @@
 {% load l10n %}
 {% load scribbler_tags %}
 
+{% block caption %}
+<b style="color:{% if user_attendance.get_frequency_percentage < 33 %}red{% elif user_attendance.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
+  {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+</b>= {% trans "týmová pravidelnost" %}
+<br/>
+<a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
+<br/>
+<br/>
+{% endblock %}
+
 {% block content %}
 <div id="landing_page_intro">
     <p>
@@ -15,38 +25,12 @@
        {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
      {% endif %}
     </p>
-    <p>
-    Týmová pravidelnost: {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-    (<a href="{% url "team_frequency" %}">Vysvětlení pravidelnosti</a>)
-    </p>
-    <p>
-    Osobní pravidelnost: {{ user_attendance.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-    </p>
-   {% for team_member in user_attendance.team.members %}
-      {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
-   {% endfor %}
-    {% scribble 'landing_page_before_start' %}
-    {% load i18n %}
-      <p>
-      {% blocktrans %}
-      Tento rok jsme se na Vás opravdu důkladně připravovali. Tento web i <a href="https://www.dopracenakole.cz">stránky Do práce na kole</a> jsou čerstvé jako ranní projížďka kolem farmářského trhu.
-      {% endblocktrans %}
-      </p>
-      <p>
-      {% blocktrans %}
-      Další velké překvapení najdete přímo TADY začátkem soutěže na prvního máje.
-      {% endblocktrans %}
-        </p>
-      <p>
-      {% url 'upravit_profil' as profile_url %}
-      {% url 'pozvanky' as invitation_url %}
-      {% blocktrans %}
-      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href="{{ profile_url }}">doplňte profil</a> a <a href="{{ invitation_url }}">pozvěte kolegy do svého týmu</a>.
-      {% endblocktrans %}
-      </p>
-
-      <img src="https://www.dopracenakole.cz/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
-    {% endscribble %}
+    (Obrázek)
+    <div class="row">
+    {% for team_member in user_attendance.team.members %}
+       {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
+    {% endfor %}
+    </div>
 </div>
 {% with user_attendance.get_frequency_icons as frequency_icons %}
 <img src="{{frequency_icons.main}}"/>
