@@ -10,6 +10,22 @@ function start_editing(){
     full_calendar.render();
 }
 
+$('.nav-tabs').on('shown.bs.tab', redraw_shopping_cart);
+
+{% for cm in commute_modes %}
+{% if cm.does_count and cm.eco %}
+$('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
+{%endif%}
+{%endfor%}
+
+function redraw_shopping_cart(){
+    commute_mode = get_selected_commute_mode();
+    start = "Máte vybráno ";
+    mid = " "
+    end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance(commute_mode) + " km" : "";
+    $('#trip-shopping-cart').text(start + commute_modes[commute_mode].name + mid + end);
+}
+
 function get_placeholder_events(fetchInfo, successCallback, failureCallback){
     if (!editing) {
         return successCallback([]);

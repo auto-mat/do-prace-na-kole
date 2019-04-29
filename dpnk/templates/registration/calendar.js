@@ -24,6 +24,7 @@ var commute_modes = {
     {% for cm in commute_modes %}
     '{{cm.slug}}': {
         'eco': {{cm.eco|yesno:"true,false" }},
+        'name': "{{cm.name}}",
         'does_count': {{cm.does_count|yesno:"true,false" }},
         'icon_html': "{{cm.icon_html|urlencode}}",
     },
@@ -308,17 +309,24 @@ function remove_vacation(info) {
           });
 }
 
+function get_selected_commute_mode() {
+    return $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
+}
+
+function get_selected_distance(commute_mode) {
+    return Number($('#km-'+commute_mode).val())
+}
+
 function eventClick(info) {
     $(".tooltip").tooltip("hide");
     if(info.event.extendedProps.placeholder){
-        commute_mode = $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
         var trip = {
            "trip_date": format_date(info.event.start),
            "direction": info.event.extendedProps.direction,
-           "commuteMode": commute_mode,
+           "commuteMode": get_selected_commute_mode(),
         }
         if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
-            trip["distanceMeters"] = Number($('#km-'+commute_mode).val()) * 1000
+            trip["distanceMeters"] = get_selected_distance(commute_mode) * 1000;
         }
         els = eval('editable_layers_' + commute_mode);
         if (els) {
@@ -476,6 +484,13 @@ document.addEventListener('DOMContentLoaded', function() {
         redraw_everything_trip_related();
         full_calendar.render();
         {% if interactive_entry_enabled %}
+        for(i in displayed_trips) {
+            if(displayed_trips[i].distanceMeters) {
+                console.log("#nav-" + displayed_trips[i].commuteMode + "-tab");
+                $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
+                break;
+            }
+        }
         {% for cm in commute_modes %}
         {% if cm.does_count and cm.eco %}
         $("#km-{{cm.slug}}").val(0);
@@ -487,6 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         {% endif %}
         {% endfor %}
+        redraw_shopping_cart();
         {% endif %}
         $(".main-loading-overlay").hide();
     });
