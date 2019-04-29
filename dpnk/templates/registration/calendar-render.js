@@ -8,6 +8,7 @@ function start_editing(){
     $('.editation').show();
     redraw_everything_trip_related();
     full_calendar.render();
+    load_initial_trips();
 }
 
 $('.nav-tabs').on('shown.bs.tab', redraw_shopping_cart);
@@ -160,6 +161,7 @@ function reload_route_options() {
     {% for cm in commute_modes %}
     {% if cm.does_count and cm.eco %}
     route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
+    route_option_ids_{{cm.slug}} = jQuery.extend({}, basic_route_option_ids_{{cm.slug}});
     var sel = $("#route_select_{{cm.slug}}");
     sel.children().remove();
     sel = sel[0];
@@ -172,6 +174,7 @@ function reload_route_options() {
                 route_options_{{cm.slug}}[desc] = function () {
                     select_old_trip_{{cm.slug}}(local_trip);
                 };
+                route_option_ids_{{cm.slug}}[desc] = "option-{{cm.slug}}" + trip.trip_date + trip.direction;
             })();
        }
     }
@@ -179,6 +182,7 @@ function reload_route_options() {
         var option = document.createElement("option");
         option.value = key;
         option.text = key;
+        option.id = route_option_ids_{{cm.slug}}[key];
         sel.appendChild(option);
     }
     {% endif %}

@@ -76,6 +76,8 @@ function toggle_map_size_{{cm.slug}}(){
 
 
 var route_options_{{cm.slug}} = {};
+var route_option_ids_{{cm.slug}} = {};
+
 
 var gpx_file_{{cm.slug}} = null;
 
@@ -98,6 +100,12 @@ var basic_route_options_{{cm.slug}} = {
     },
 };
 
+var basic_route_option_ids_{{cm.slug}} = {
+    "{% trans 'Zadat vzdálenost ručně' %}": 'option_enter_distance_{{cm.slug}}',
+    "{% trans 'Nakreslit trasu do mapy' %}": 'option_draw_{{cm.slug}}',
+    "{% trans 'Nahrát GPX soubor' %}": 'option_gpx_{{cm.slug}}',
+};
+
 function select_old_trip_{{cm.slug}}(trip){
     $("#km-{{cm.slug}}").val(trip.distanceMeters / 1000);
     show_map_{{cm.slug}}();
@@ -108,6 +116,29 @@ function select_old_trip_{{cm.slug}}(trip){
 function on_route_select_{{cm.slug}}() {
     var sel = document.getElementById("route_select_{{cm.slug}}");
     route_options_{{cm.slug}}[sel.value]();
+}
+
+function load_initial_trips() {
+    var tab_set = false;
+    {% for cm in commute_modes %}
+    $("#km-{{cm.slug}}").val(0);
+    for(i in displayed_trips) {
+        if (!tab_set) {
+            $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
+            tab_set = true;
+        }
+        trip = displayed_trips[i]
+        {% if cm.does_count and cm.eco %}
+        if(trip.distanceMeters && trip.commuteMode == '{{cm.slug}}') {
+
+            $("#option-{{cm.slug}}" + trip.trip_date + trip.direction).prop('selected', true);
+            on_route_select_{{cm.slug}}()
+            break;
+        }
+        {% endif %}
+    }
+    {% endfor %}
+    redraw_shopping_cart();
 }
 
 function update_distance_from_map_{{cm.slug}}() {
@@ -488,22 +519,9 @@ document.addEventListener('DOMContentLoaded', function() {
         {% if interactive_entry_enabled %}
         for(i in displayed_trips) {
             if(displayed_trips[i].distanceMeters) {
-                $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
                 break;
             }
         }
-        {% for cm in commute_modes %}
-        {% if cm.does_count and cm.eco %}
-        $("#km-{{cm.slug}}").val(0);
-        for(i in displayed_trips) {
-            if(displayed_trips[i].distanceMeters && displayed_trips[i].commuteMode == '{{cm.slug}}') {
-                $("#km-{{cm.slug}}").val(displayed_trips[i].distanceMeters / 1000);
-                break;
-            }
-        }
-        {% endif %}
-        {% endfor %}
-        redraw_shopping_cart();
         {% endif %}
         $(".main-loading-overlay").hide();
     });
