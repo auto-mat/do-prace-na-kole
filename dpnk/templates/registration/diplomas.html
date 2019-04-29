@@ -41,7 +41,7 @@
       <td>{{ team.campaign }}</td>
       <td>{{ team.name }}</td>
       <td>{{ team.get_frequency_percentage|floatformat|intcomma }}%</td>
-      <td>{{ team.get_length|floatformat|intcomma }} Km</td>
+      <td>{{ team.get_length|floatformat|intcomma }} km</td>
       <td>
          {% if team.diploma %}
          <a href="{{ team.diploma.pdf.url }}">
