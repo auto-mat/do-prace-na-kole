@@ -2,3 +2,22 @@
 {% leaflet_js plugins="ALL" %}
 {% leaflet_css plugins="ALL" %}
 {% include "registration/leaflet_settings.html" %}
+
+<script>
+ClearableGeometryField = L.GeometryField.extend({
+    addTo: function (map) {
+        L.GeometryField.prototype.addTo.call(this, map);
+	      window["leaflet-geometry-field"] = this;
+	  },
+	  clear: function () {
+	      lgf = this
+	      lgf.drawnItems.eachLayer(function(layer){
+	          lgf.drawnItems.removeLayer(layer);
+	      });
+	  },
+	  save: function () {
+	      this.store.save(this.drawnItems);
+	      console.log(this.drawnItems)
+	  },
+});
+</script>

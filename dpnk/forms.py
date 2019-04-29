@@ -73,6 +73,9 @@ class RequiredFieldsMixin():
 
 
 class UserLeafletWidget(LeafletWidget):
+    geometry_field_class = 'ClearableGeometryField'
+    template_name = 'widgets/leaflet.html'
+
     def __init__(self, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
         settings_overrides = {}
@@ -85,7 +88,8 @@ class UserLeafletWidget(LeafletWidget):
                 "geom_type": 'MULTILINESTRING',
                 "map_height": "500px",
                 "map_width": "100%",
-                'settings_overrides': settings_overrides,
+                "settings_overrides": settings_overrides,
+                "prev_tracks": models.Trip.objects.filter(user_attendance=user_attendance, track__isnull=False).order_by("-date", "direction"),
             },
         )
 

@@ -1955,8 +1955,15 @@ class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
 
 class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
     def get(self, *args, **kwargs):
+        geom = self.request.GET.get('geom', 'MultiLineString')
         if self.get_object().track:
-            track_json = self.get_object().track.geojson
+            if geom == 'MultiLineString':
+	            track_json = self.get_object().track.geojson
+            if geom == 'LineStrings':
+                linestrings = []
+                for ls in self.get_object().track:
+                    linestrings.append(ls.geojson)
+                    track_json = "[" + ",".join(linestrings) + "]" 
         else:
             track_json = {}
         return HttpResponse(track_json)
