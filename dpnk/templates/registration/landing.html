@@ -5,9 +5,10 @@
 
 {% block caption %}
 <h2>
+{% trans "Týmová pravidelnost" %}:
 <span style="color:{% if user_attendance.get_frequency_percentage < 33 %}red{% elif user_attendance.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
   {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-</span>= {% trans "týmová pravidelnost" %}
+</span>
 </h2>
 <br/>
 <a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
