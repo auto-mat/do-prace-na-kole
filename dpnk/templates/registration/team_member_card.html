@@ -1,19 +1,9 @@
-{% load avatar_tags %}
 {% load dpnk_tags %}
 {% load i18n %}
 {% load humanize %}
 <div id="id-{{ team_member.userprofile.user }}-team-member" class="col-12 col-sm-6 col-md-4 member-item">
    <div class="user_head">
-      <div class="avatar_holder" id="_{{ team_member.id }}">
-         <span>
-            {% avatar team_member.userprofile.user 200 %}
-         </span>
-      </div>
-      <style>
-         .avatar_holder#_{{ team_member.id }} span{
-            background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, #fff {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
-         }
-      </style>
+      {% include "./user_profile_image.html" %}
       <h4>
          {{ team_member.userprofile }}
       </h4>
@@ -21,11 +11,6 @@
       {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.userprofile.user.id %}
       {% endif %}
    </div>
-   <style>
-      .avatar_holder#_{{ team_member.id }} span{
-         background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, #fff {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
-      }
-   </style>
    {% if include_approve_buttons %}
    {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.id %}
    {% endif %}

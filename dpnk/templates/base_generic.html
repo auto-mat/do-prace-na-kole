@@ -21,15 +21,8 @@
                   		{% include "lang_switch.html" %}
 
 						{% if user.is_authenticated and user_attendance %}
-							<div class="avatar_holder" id="_{{ user_attendance.id }}">
-                        <a href="{% url 'profil' %}">{% avatar user_attendance.userprofile.user 200 %}</a>
-							</div>
-							{# dynamic progress circle #}
-							<style>
-								.avatar_holder#_{{ user_attendance.id }} a{
-									background: conic-gradient(#FF6F61 0% {{ user_attendance.get_frequency_percentage|floatformat:"0" }}%, #fff {{ user_attendance.get_frequency_percentage|floatformat:"0"  }}% 100%);
-								}
-							</style>
+                     {% url 'profil' as href %}
+                     {% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
 							<h4 class="nick">
 								<a href="{% url 'profil' %}">{{ user_attendance }}</a>
 							</h4>

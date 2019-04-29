@@ -4,9 +4,11 @@
 {% load scribbler_tags %}
 
 {% block caption %}
-<b style="color:{% if user_attendance.get_frequency_percentage < 33 %}red{% elif user_attendance.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
+<h2>
+<span style="color:{% if user_attendance.get_frequency_percentage < 33 %}red{% elif user_attendance.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
   {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
-</b>= {% trans "týmová pravidelnost" %}
+</span>= {% trans "týmová pravidelnost" %}
+</h2>
 <br/>
 <a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
 <br/>
@@ -28,7 +30,13 @@
     (Obrázek)
     <div class="row">
     {% for team_member in user_attendance.team.members %}
-       {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
+       <div class="col-12 col-sm-6 col-md-4">
+          {% include "./user_profile_image.html" %}
+          <h4>
+             {{ team_member }}
+          </h4>
+          {% trans "Osobní pravidelnost" %}: {{ team_member.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+       </div>
     {% endfor %}
     </div>
 </div>
