@@ -1,0 +1,45 @@
+{% load i18n %}
+{% load l10n %}
+<script>
+ var urls = {};
+ {% for trip in prev_tracks %}
+ urls[{{trip.id}}] = "{% url "trip_geojson" date=trip.date direction=trip.direction %}";
+ {% endfor %}
+ function load_old_map(track_id) {
+     map = window["leafletmapid_track-map"]
+     lgf = window["leaflet-geometry-field"]
+     lgf.clear()
+     function add_layer(l) {
+         var geojson_layer = L.GeoJSON.geometryToLayer(l);
+         lgf.drawnItems.addLayer(geojson_layer)
+         map.fitBounds(geojson_layer.getBounds())
+     }
+     if (track_id === null) {
+         return
+     }
+     $.ajax({
+         dataType: "json",
+         url: urls[track_id],
+         type: "get",
+         data: {
+             geom: 'LineStrings',
+         },
+         success: function(data) {
+             for (i in data) {
+                 add_layer(data[i]);
+             }
+             lgf.store.save(lgf.drawnItems)
+         }
+     }).error(function() {});
+ }
+</script>
+<div class="dropdown">
+<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Vybrat z předchozích trasů" %}&nbsp;<span class="caret"></span></button>
+<ul class="dropdown-menu">
+    <li class="dropdown-item"><a onclick="load_old_map(null);" href="#">{% trans "Vyprazdnit" %}</a></li>
+{% for trip in prev_tracks %}
+    <li class="dropdown-item"><a onclick="load_old_map({{trip.pk}});" href="#">{{ trip.date }} {{trip.distance}} km</a></li>
+{% endfor %}
+</ul>
+</div>
+{% include "leaflet/widget.html" %}
