@@ -7,7 +7,7 @@
 <h3>{% trans "Pravidelnost je nejlepší přítel člověka" %}</h3>
 {% blocktrans %}
 <p>
-Chceme vás odměnit za vaše vrcholové výkony a tleskáme za každé zdolané převýšení. Ale hlavně chceme změnit česká města k lepšímu. Máme sen o světě, kde si všichni rádi vyjedeme do práce na kole, nebo ráno vyběhnete do školy ne proto, že za pět minut zvoní, ale pro radost z pohybu.
+Chceme vás odměnit za vaše vrcholové výkony a tleskáme za každé zdolané převýšení. Ale hlavně chceme změnit česká města k lepšímu. Máme sen o světě, kde si všichni rádi vyjedeme do práce na kole nebo ráno vyběhneme do školy ne proto, že za pět minut zvoní, ale pro radost z pohybu.
 </p><p>
 A k tomu potřebujeme pravidelnost. Je to jeden z přírodních zákonů. Den, noc, jaro, léto, řeči o počasí, vše se pravidelně opakuje. Jednorázové extrémní výkony vyvolají povyk. Pravidelnost může postupně změnit svět.
 </p>
@@ -95,7 +95,7 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
 </h3>
 {% blocktrans with minimum_rides_base=campaign.minimum_rides_base %}
 <p>
-Pravidelností procento se snižuje pouze vlivem neekologických cest do práce a z práce. Máme pochopení pro to, že si chcete vzít dovolenou, nebo máte zkrácený úvazek. Dny, kdy nejdete do práce, nemají vliv na celkovou pravidelnost. 
+Pravidelností procento se snižuje pouze vlivem neekologických cest do práce a z práce. Máme pochopení pro to, že si chcete vzít dovolenou nebo máte zkrácený úvazek. Dny, kdy nejdete do práce, nemají vliv na celkovou pravidelnost.
 </p>
 <p>
 Pozor, má to háček. Celkem za měsíc musíte ekologicky zvládnout alespoň {{ minimum_rides_base }} cest, ať máte šanci dosáhnout na stoprocentní pravidelnost. Kdyby měl člověk s třítýdenní dovolenou a jednou aktivní cestou do práce 100 %, nebylo by to vůči ostatním fér. 
@@ -127,7 +127,9 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
       <td></td>
       <td></td>
       {% for user_attendance in team_members %}
-      <td>{{ user_attendance.name }}</td>
+      <td style="text-align:center">
+      {{ user_attendance.name }}
+      </td>
       {% endfor %}
    </tr>
    <tr>
