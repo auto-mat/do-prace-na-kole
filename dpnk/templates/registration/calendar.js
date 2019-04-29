@@ -25,6 +25,7 @@ var commute_modes = {
     '{{cm.slug}}': {
         'eco': {{cm.eco|yesno:"true,false" }},
         'name': "{{cm.name}}",
+        'add_command': "{{cm.add_command}}",
         'does_count': {{cm.does_count|yesno:"true,false" }},
         'icon_html': "{{cm.icon_html|urlencode}}",
     },
@@ -313,8 +314,9 @@ function get_selected_commute_mode() {
     return $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
 }
 
-function get_selected_distance(commute_mode) {
-    return Number($('#km-'+commute_mode).val())
+function get_selected_distance() {
+    commute_mode = get_selected_commute_mode();
+    return Number($('#km-'+commute_mode).val());
 }
 
 function eventClick(info) {
@@ -326,7 +328,7 @@ function eventClick(info) {
            "commuteMode": get_selected_commute_mode(),
         }
         if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
-            trip["distanceMeters"] = get_selected_distance(commute_mode) * 1000;
+            trip["distanceMeters"] = get_selected_distance() * 1000;
         }
         els = eval('editable_layers_' + commute_mode);
         if (els) {
@@ -486,7 +488,6 @@ document.addEventListener('DOMContentLoaded', function() {
         {% if interactive_entry_enabled %}
         for(i in displayed_trips) {
             if(displayed_trips[i].distanceMeters) {
-                console.log("#nav-" + displayed_trips[i].commuteMode + "-tab");
                 $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
                 break;
             }

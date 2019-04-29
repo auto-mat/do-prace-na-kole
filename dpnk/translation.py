@@ -28,10 +28,12 @@ class CommuteModeTranslationOptions(TranslationOptions):
     fields = (
         'name',
         'tooltip',
+        'add_command',
     )
     empty_values = {
         'name': None,
         'tooltip': None,
+        'add_command': None,
     }
 
 

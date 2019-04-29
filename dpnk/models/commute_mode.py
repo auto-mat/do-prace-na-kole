@@ -60,6 +60,11 @@ class CommuteMode(models.Model):
         default="",
         null=False,
     )
+    add_command = models.TextField(
+        verbose_name=_("Tooltip command for adding trip. Use {{distance}} to insert distance."),
+        default="",
+        null=False,
+    )
     does_count = models.BooleanField(
         verbose_name=_("Počítá se"),
         help_text=_("Počítá se jako jízda do práce/z práce."),
