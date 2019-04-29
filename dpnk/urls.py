@@ -310,10 +310,7 @@ urlpatterns = [
     ),
     url(
         r'^$',
-        views.RegistrationCompleteUserAttendanceView.as_view(
-            template_name="registration/landing.html",
-            title=_("Vítejte v dalším ročníku soutěže!"),
-        ),
+        views.LandingView.as_view(),
         name="profil",
     ),
     url(

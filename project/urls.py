@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^admin/', include("massadmin.urls")),
     url(r'^advanced_filters/', include('advanced_filters.urls')),
     url(r'^chaining/', include('smart_selects.urls')),
-    url(r'^adminactions/', include('adminactions.urls')),
+    # url(r'^adminactions/', include('adminactions.urls')),
     url(r"^su/", include("django_su.urls")),
     url(r'^selectable/', include('selectable.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),

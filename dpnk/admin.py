@@ -24,7 +24,7 @@ import types
 
 from admin_views.admin import AdminViews
 
-from adminactions import actions as admin_actions, merge
+# from adminactions import actions as admin_actions, merge
 
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
@@ -55,7 +55,7 @@ from isnull_filter import isnull_filter
 
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
-from massadmin.massadmin import mass_change_selected
+# from massadmin.massadmin import mass_change_selected
 
 from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
@@ -184,11 +184,11 @@ class CompanyForm(DontValidateCompnayFieldsMixin, forms.ModelForm):
         }
 
 
-class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
-    def full_clean(self):
-        super().full_clean()
-        if 'address_psc' in self._errors:
-            del self._errors['address_psc']
+# class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
+#     def full_clean(self):
+#         super().full_clean()
+#         if 'address_psc' in self._errors:
+#             del self._errors['address_psc']
 
 
 class CompanyResource(resources.ModelResource):
@@ -250,7 +250,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
     )
     list_max_show_all = 10000
     form = CompanyForm
-    merge_form = CompanyMergeForm
+    # merge_form = CompanyMergeForm
     resource_class = CompanyResource
     actions = (
         actions.create_invoices,
@@ -1692,10 +1692,10 @@ TokenAdmin.search_fields = (
 
 
 # register all adminactions
-admin.site.add_action(admin_actions.merge)
+# admin.site.add_action(admin_actions.merge)
 
 # This is fix for massadmin not adding itself automatically
-admin.site.add_action(mass_change_selected)
+# admin.site.add_action(mass_change_selected)
 
 
 @admin.register(models.Diploma)

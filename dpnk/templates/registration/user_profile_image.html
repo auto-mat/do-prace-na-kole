@@ -1,0 +1,19 @@
+{% load avatar_tags %}
+<div class="avatar_holder" id="_{{ team_member.id }}">
+      {% if link != None %}
+         <a href="{{ href }}">
+      {% else %}
+         <span>
+      {% endif %}
+      {% avatar team_member.userprofile.user 200 %}
+      {% if link != None %}
+         </a>
+      {% else %}
+         </span>
+      {% endif %}
+</div>
+<style>
+   .avatar_holder#_{{ team_member.id }} {% if link != None %}a{% else %}span{% endif %}{
+      background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, #fff {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
+   }
+</style>

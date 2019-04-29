@@ -3,32 +3,46 @@
 {% load l10n %}
 {% load scribbler_tags %}
 
+{% block caption %}
+<h2>
+{% trans "Týmová pravidelnost" %}:
+<span style="color:{% if user_attendance.team.get_frequency_percentage < 33 %}red{% elif user_attendance.team.get_frequency_percentage < campaign.minimum_percentage %}orange{% else %}green{% endif %}">
+  {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+</span>
+</h2>
+<br/>
+<a href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
+<br/>
+<br/>
+{% endblock %}
+
 {% block content %}
 <div id="landing_page_intro">
-    {% scribble 'landing_page_before_start' %}
-    {% load i18n %}
+    {% if user_attendance.get_random_motivation_message.message %}
       <p>
-      {% blocktrans %}
-      Tento rok jsme se na Vás opravdu důkladně připravovali. Tento web i <a href="https://www.dopracenakole.cz">stránky Do práce na kole</a> jsou čerstvé jako ranní projížďka kolem farmářského trhu.
-      {% endblocktrans %}
+        {% if user_attendance.get_frequency_rank_in_team == 1 %}
+          <i class="fas fa-sun"></i>
+          {% trans "Zpráva pro nejlepšího týmového hráče:" %}
+        {% endif %}
+        {{ user_attendance.get_random_motivation_message.message|safe }}
+        {% if user_attendance.get_frequency_percentage == 100 %}
+          {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
+        {% endif %}
       </p>
-      <p>
-      {% blocktrans %}
-      Další velké překvapení najdete přímo TADY začátkem soutěže na prvního máje.
-      {% endblocktrans %}
-        </p>
-      <p>
-      {% url 'upravit_profil' as profile_url %}
-      {% url 'pozvanky' as invitation_url %}
-      {% blocktrans %}
-      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href="{{ profile_url }}">doplňte profil</a> a <a href="{{ invitation_url }}">pozvěte kolegy do svého týmu</a>.
-      {% endblocktrans %}
-      </p>
-
-      <img src="https://www.dopracenakole.cz/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
-    {% endscribble %}
+    {% endif %}
+    {% with user_attendance.get_frequency_icons as frequency_icons %}
+    <img src="{{frequency_icons.main}}"/>
+    {% endwith %}
+    <div class="row">
+    {% for team_member in user_attendance.team.members %}
+       <div class="col-12 col-sm-6 col-md-4">
+          {% include "./user_profile_image.html" %}
+          <h4>
+             {{ team_member }}
+          </h4>
+          {% trans "Osobní pravidelnost" %}: {{ team_member.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+       </div>
+    {% endfor %}
+    </div>
 </div>
-{% with user_attendance.get_frequency_icons as frequency_icons %}
-<img src="{{frequency_icons.main}}"/>
-{% endwith %}
 {% endblock %}
