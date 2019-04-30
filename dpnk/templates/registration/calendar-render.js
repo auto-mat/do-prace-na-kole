@@ -119,7 +119,7 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
         events_by_day = {};
         for (i in data) {
             event = data[i];
-            if(typeof variable !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
+            if(typeof event.start_date !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
                 if(!(event.start_date in events_by_day)) {
                     events_by_day[event.start_date] = [];
                 }
