@@ -350,6 +350,10 @@ function add_vacation(startDate, endDate) {
     }
 }
 
+document.addEventListener('scroll', function (event) {
+    $(".tooltip").tooltip("hide");
+}, true /*Capture event*/);
+
 function remove_vacation(info) {
     var event = info.event;
     startDateString = format_date(event.start)
@@ -367,6 +371,7 @@ function remove_vacation(info) {
                       return days_to_delete.indexOf(trip.trip_date) < 0;
                });
                full_calendar.getEventSourceById(3).refetch();
+               $(".tooltip").tooltip("hide");
            }
           ).fail(function(jqXHR, textStatus, errorThrown) {
               full_calendar.addEvent(event);
