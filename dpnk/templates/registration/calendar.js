@@ -119,6 +119,7 @@ function on_route_select_{{cm.slug}}() {
     if(sel.value){
         route_options_{{cm.slug}}[sel.value]();
     }
+    redraw_shopping_cart();
 }
 
 function set_initial_tab() {
