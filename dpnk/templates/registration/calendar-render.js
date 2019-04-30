@@ -2,6 +2,16 @@
 {% load l10n %}
 {% get_current_language as current_language_code %}
 
+// define startsWith for Internet Explorer
+if (!String.prototype.startsWith) {
+    Object.defineProperty(String.prototype, 'startsWith', {
+        value: function(search, pos) {
+            pos = !pos || pos < 0 ? 0 : +pos;
+            return this.substring(pos, pos + search.length) === search;
+        }
+    });
+}
+
 function start_editing(){
     // Dissabled now
     editing = true;
