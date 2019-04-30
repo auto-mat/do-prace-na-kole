@@ -86,6 +86,7 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
                vacation: true,
                eventOrder: 'order',
                order: 1,
+               commute_mode: 'no_work',
            } 
            vacation_events.push(new_event);
            current_vacation_start = null;
@@ -227,35 +228,35 @@ function eventRender(info) {
     if (exp.loading) {
        show_loading_icon_on_event(info);
     }
+    if (exp.placeholder) {
+        show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
+    } else if (exp.direction == 'trip_to'){
+        show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
+    } else if (exp.direction == 'trip_from') {
+        show_tooltip(info.el, " {% trans 'Domů' %} " + info.event.title)
+    } else if (exp.wp_event) {
+        right_icon = document.createElement("i");
+        right_icon.className='fa fa-glass-cheers xs';
+        show_tooltip(info.el, $("<textarea/>").html(exp.wp_event.title).text())
+    }
+    if (right_icon) {
+        $(info.el.firstChild).append(right_icon);
+    }
+    if (exp.commute_mode) {
+        var mode_icon = document.createElement("div");
+        mode_icon.className='mode-icon-container';
+        mode_icon.innerHTML = decodeURIComponent(commute_modes[exp.commute_mode].icon_html);
+        $(info.el.firstChild).prepend(mode_icon);
+    }
     if (exp.vacation) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+        show_tooltip(info.el, "{% trans 'Dovolená' %}")
         var trash_icon =  document.createElement("i");
         var trash_button = document.createElement("button");
-        trash_button.className = 'btn btn-default btn-xs trash-button';
+        trash_button.className = 'btn btn-default trash-button';
         $(trash_button).append(trash_icon);
         trash_button.onclick = function(){remove_vacation(info)};
         trash_icon.className = 'fa fa-trash sm';
-        $(info.el.firstChild).append(trash_button);
-    } else {
-        if (exp.placeholder) {
-            show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
-        } else if (exp.direction == 'trip_to'){
-            show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
-        } else if (exp.direction == 'trip_from') {
-            show_tooltip(info.el, " {% trans 'Domů' %} " + info.event.title)
-        } else if (exp.wp_event) {
-            right_icon = document.createElement("i");
-            right_icon.className='fa fa-glass-cheers xs';
-            show_tooltip(info.el, $("<textarea/>").html(exp.wp_event.title).text())
-        }
-        if (right_icon) {
-            $(info.el.firstChild).append(right_icon);
-        }
-        if (exp.commute_mode) {
-            var mode_icon = document.createElement("div");
-            mode_icon.className='mode-icon-container';
-            mode_icon.innerHTML = decodeURIComponent(commute_modes[exp.commute_mode].icon_html);
-            $(info.el.firstChild).prepend(mode_icon);
-        }
+        $(info.el.firstChild).prepend(trash_button);
     }
 }
 
