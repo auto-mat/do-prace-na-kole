@@ -481,7 +481,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.get_trips(days)
 
     def get_all_trips(self, day=None):
-        days = list(util.days(self.campaign.phase("competition"), day))
+        try:
+            days = list(util.days(self.campaign.competition_phase(), day))
+        except Phase.DoesNotExist:
+            days = []
         return self.get_trips(days)
 
     def company_admin_emails(self):

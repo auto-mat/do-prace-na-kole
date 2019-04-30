@@ -10,7 +10,9 @@
   <div id="landing_page_intro">
     {# graphic #}
     {% with user_attendance.get_team_frequency_icons as frequency_icons %}
+      {% if frequency_icons.main %}
       <img src="{{frequency_icons.main}}"/>
+      {% endif %}
     {% endwith %}
 
     {# clever tattle #}
