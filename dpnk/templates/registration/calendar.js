@@ -111,7 +111,7 @@ function select_old_trip_{{cm.slug}}(trip){
     $("#km-{{cm.slug}}").val(trip.distanceMeters / 1000);
     show_map_{{cm.slug}}();
     $("#gpx_upload_{{cm.slug}}").hide();
-    load_track(map_{{cm.slug}}, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, editable_layers_{{cm.slug}});
+    load_track(map_{{cm.slug}}, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, editable_layers_{{cm.slug}}, hide_map_{{cm.slug}});
     redraw_shopping_cart();
 }
 

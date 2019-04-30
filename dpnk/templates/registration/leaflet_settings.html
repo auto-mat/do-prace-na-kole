@@ -40,7 +40,7 @@
    })();
 
  // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
- function load_track (map, trip_url, options, editable_layers) {
+ function load_track (map, trip_url, options, editable_layers, on_no_track) {
      var track_geojson = L.geoJson();
      if(editable_layers) {
          editable_layers.clearLayers();
@@ -66,7 +66,11 @@
              }
              map.fitBounds(track_geojson.getBounds())
          }
-     }).error(function() {});
+     }).error(function() {
+         if(typeof on_no_track != 'undefined') {
+             on_no_track();
+         }
+     });
  }
 
  {% if leaflet_config %}
