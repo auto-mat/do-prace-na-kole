@@ -47,7 +47,7 @@ function get_placeholder_events(fetchInfo, successCallback, failureCallback){
            }
        }
        for(i in typical_directions) {
-           if(!directions.includes(typical_directions[i])){
+           if(directions.indexOf(typical_directions[i]) == -1){
                new_event =  {
                    title: "+",
                    start: active_day,
@@ -95,7 +95,7 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
        }
        num_trips = 0;
        for(i in typical_directions) {
-           if(directions.includes(typical_directions[i])){
+           if(directions.indexOf(typical_directions[i]) != -1){
               num_trips++;
            }
        }
@@ -239,10 +239,10 @@ function eventRender(info) {
         var trash_icon =  document.createElement("i");
         var trash_button = document.createElement("button");
         trash_button.className = 'btn btn-default btn-xs trash-button';
-        trash_button.append(trash_icon);
+        $(trash_button).append(trash_icon);
         trash_button.onclick = function(){remove_vacation(info)};
         trash_icon.className = 'fa fa-trash sm';
-        info.el.firstChild.append(trash_button);
+        $(info.el.firstChild).append(trash_button);
     } else {
         if (exp.placeholder) {
             show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
@@ -256,13 +256,13 @@ function eventRender(info) {
             show_tooltip(info.el, $("<textarea/>").html(exp.wp_event.title).text())
         }
         if (right_icon) {
-            info.el.firstChild.append(right_icon);
+            $(info.el.firstChild).append(right_icon);
         }
         if (exp.commute_mode) {
             var mode_icon = document.createElement("div");
             mode_icon.className='mode-icon-container';
             mode_icon.innerHTML = decodeURIComponent(commute_modes[exp.commute_mode].icon_html);
-            info.el.firstChild.prepend(mode_icon);
+            $(info.el.firstChild).prepend(mode_icon);
         }
     }
 }
