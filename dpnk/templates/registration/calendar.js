@@ -267,11 +267,22 @@ function display_trip(trip, rerender) {
     if ((possible_vacation_days.indexOf(trip.trip_date) >= 0) && !commute_modes[trip.commuteMode].does_count) {
         return
     }
-    var trip_class = 'locked-trip ';
+    var trip_class = 'locked-trip';
     if (active_days.indexOf(trip.trip_date) >= 0) {
-      trip_class = 'active-trip-filled ';
+      trip_class = 'active-trip-filled';
     }
-    trip_class += 'cal_event_'+trip.direction
+    trip_class += ' cal_event_'+trip.direction
+    var commute_mode = commute_modes[trip.commuteMode];
+    if(commute_mode.eco){
+        trip_class += ' cal_event_eco'
+    } else {
+        trip_class += ' cal_event_not_eco'
+    }
+    if(commute_mode.does_count){
+        trip_class += ' cal_event_counts'
+    } else {
+        trip_class += ' cal_event_does_not_count'
+    }
     new_event = {
         start: trip.trip_date,
         end: add_days(new Date(trip.trip_date), 1),
@@ -282,7 +293,7 @@ function display_trip(trip, rerender) {
         trip_id: trip.id,
         className: trip_class,
     }
-    if (commute_modes[trip.commuteMode].does_count && commute_modes[trip.commuteMode].eco) {
+    if (commute_mode.does_count && commute_mode.eco) {
         new_event.title = display_meters(trip.distanceMeters) + "km";
     }
     event = full_calendar.addEvent(new_event);
