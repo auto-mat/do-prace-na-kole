@@ -54,7 +54,7 @@ var map_{{cm.slug}} = null;
 function show_map_{{cm.slug}}(){
     $("#track_holder_{{cm.slug}}").show();
     $("#map_shower_{{cm.slug}}").hide();
-    map_{{cm.slug}}._onResize();
+    map_{{cm.slug}}.invalidateSize();
 }
 
 function hide_map_{{cm.slug}}(){
