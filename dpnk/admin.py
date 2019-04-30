@@ -1656,8 +1656,9 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
 
 
 @admin.register(models.LandingPageIcon)
-class LandingPageIconAdmin(admin.ModelAdmin):
+class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('role', 'file', 'min_frequency', 'max_frequency')
+    list_editable = ('min_frequency', 'max_frequency')
 
 
 @admin.register(models.CommuteMode)
