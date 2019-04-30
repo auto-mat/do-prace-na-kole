@@ -26,7 +26,7 @@ $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 function redraw_shopping_cart(){
     full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();
-    start = "Máte vybráno ";
+    start = "";
     mid = " "
     end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance() + " km" : "";
     $('#trip-shopping-cart').text(start + commute_modes[commute_mode].name + mid + end);

@@ -41,70 +41,97 @@
     </p>
     {% elif interactive_entry_enabled %}
 
-    <!-- Editation tools -->
-    {% include "./rides_view_switcher.html" %}
-    <div class="main-loading-overlay">
-        <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
-    </div>
-    <div class="editation">
-    <h3>1. Vyberte druh dopravy</h3>
-    <nav>
-        <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
-            {% for cm in commute_modes %}
-            <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %} {% if cm.eco and cm.does_count %}green-background{% elif cm.does_count %}grey-background {% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
-                {{cm.button_html | safe }}
-            </a>
-            {% endfor %}
+        <!-- Editation tools -->
+        {% include "./rides_view_switcher.html" %}
+
+        <div class="main-loading-overlay">
+            <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>
         </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        {% for cm in commute_modes %}
-        <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
-            {{ cm.tooltip|linebreaks }}
-            {% if cm.does_count and cm.eco %}
-            <h3>2. Zadejte trasu</h3>
-            <div class="input-group">
-                <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}"/>
-                <div class="input-group-append">
-                    <span class="input-group-text">km</span>
+
+        <div class="cal_heading tip">
+            Nastavení zadávaných hodnot
+        </div>
+        <div class="row calendar_chooser">
+            <div class="col-3">
+                <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
+                    {% for cm in commute_modes %}
+                        <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
+                            {{cm.button_html | safe }}
+                        </a>
+                    {% endfor %}
                 </div>
             </div>
-            <div id="map_shower_{{cm.slug}}" style="display:none;">
-                <button class="btn" onclick="show_map_{{cm.slug}}()"><i class="fa fa-eye"></i> {% trans 'Zobrazit mapu' %}</button>
-            </div>
-            <div id="track_holder_{{cm.slug}}" style="display:none;">
-                <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye-slash"></i> {% trans 'Skrýt mapu' %}</button>
-                <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}"><div id="enlarge_map_text_{{cm.slug}}"><i class="fa fa-expand"></i>{% trans 'Zvětšit mapu' %}</div><div id="shrink_map_text_{{cm.slug}}" style="display:none"><i class="fa fa-compress"></i>{% trans 'Zmenšit mapu' %}</div></button>
-                <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="fallback">
-                        <input name="gpx" type="file"/>
-                        <input type="submit" value="{% trans 'Odeslat' %}"/>
+            <div class="col-5 path_switch_holder">
+                <div class="inner">
+                    <div class="tab-content" id="nav-tabContent">
+                        {% for cm in commute_modes %}
+                            <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
+                                {% if cm.does_count and cm.eco %}
+                                    <h3>Zadejte trasu</h3>
+                                    <div class="cm_tolltip tip">
+                                        {{ cm.tooltip|linebreaks }}
+                                    </div>
+                                    <div class="input-group">
+                                        <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
+                                        <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}" class="enter_km" />&nbsp;km
+                                    </div>
+
+                                    <div id="map_shower_{{cm.slug}}" style="display:none;">
+                                        <button class="btn" onclick="show_map_{{cm.slug}}()">
+                                            <i class="fa fa-eye"></i> {% trans 'Zobrazit mapu' %}
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
-                </form>
-                <div id="map_{{cm.slug}}"  class="leaflet-container-default">
+                </div>
+            <!-- Virtual shopping cart -->
+            </div>
+            <div class="col-4">
+                <div id="trip-shopping-cart"></div>
+                <div class="inner cart_note">
+                    <div class="tip">
+                        Klikuntím na zaznámy v kalendáři nastavíte vybranou hodnotu.
+                    </div>
                 </div>
             </div>
-            <br>
-            <h3>3.
-            {% else %}
-            <h3>2.
-            {% endif %}
-            Klikňěte na datum a směr</h3>
+
+            <div class="col-12">
+                {% for cm in commute_modes %}
+                    {% if cm.does_count and cm.eco %}
+                        <div id="track_holder_{{cm.slug}}" style="display:none;">
+                            <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye-slash">
+                                </i> {% trans 'Skrýt mapu' %}
+                            </button>
+                            <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}">
+                                <div id="enlarge_map_text_{{cm.slug}}">
+                                    <i class="fa fa-expand"></i> {% trans 'Zvětšit mapu' %}
+                                </div>
+                                <div id="shrink_map_text_{{cm.slug}}" style="display:none">
+                                    <i class="fa fa-compress"></i> {% trans 'Zmenšit mapu' %}
+                                </div>
+                            </button>
+                            <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="fallback">
+                                    <input name="gpx" type="file"/>
+                                    <input type="submit" value="{% trans 'Odeslat' %}"/>
+                                </div>
+                            </form>
+                            <div id="map_{{cm.slug}}"  class="leaflet-container-default">
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
-        {% endfor %}
-    </div>
-    <!-- Virtual shopping cart -->
-    <div id="trip-shopping-cart">
-    </div>
-    </div>
     {% else %}
 
-    <!-- After end -->
-    {% blocktrans %}
-    Soutěž jíž skončila. Děkujeme vám za účast.
-    {% endblocktrans %}
+        <!-- After end -->
+        {% blocktrans %}
+            Soutěž jíž skončila. Děkujeme vám za účast.
+        {% endblocktrans %}
     {% endif %}
 
     <!-- Modal https://www.codexworld.com/bootstrap-modal-dynamic-content-jquery-ajax-php-mysql/ -->
@@ -119,6 +146,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="trip-modal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -146,12 +174,13 @@
     <div id='calendar'></div>
 
     {% if interactive_entry_enabled %}
-    <div class="editation">
-    <br/>
-    <h3> Hotovo! Jízdy se automaticky po zadání ukladají do kalendáře. </h3>
-    </div>
+        <div class="editation">
+            <h3> Hotovo! Jízdy se automaticky po zadání ukladají do kalendáře. </h3>
+        </div>
     {% endif %}
+
     <script>
      {% include "registration/calendar.js" %}
     </script>
-    {% endblock %}
+
+{% endblock %}
