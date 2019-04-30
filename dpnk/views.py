@@ -871,6 +871,7 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
             "entry_enabled_phase": entry_enabled_phase,
             "competition_phase": competition,
             "interactive_entry_enabled": competition.has_started() and entry_enabled_phase.is_actual(),
+            "leaflet_config": settings.LEAFLET_CONFIG,
         })
         return context_data
 

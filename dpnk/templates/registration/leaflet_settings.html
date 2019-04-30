@@ -1,3 +1,6 @@
+{% load i18n %}
+{% load l10n %}
+
 <style type="text/css">
    .leaflet-interactive, .leaflet-clickable {
        stroke:red;
@@ -64,4 +67,32 @@
          }
      }).error(function() {});
  }
+
+ {% if leaflet_config %}
+ function create_map(element_id){
+     options = {
+         maxZoom: {{leaflet_config.MAX_ZOOM}},
+         minZoom: {{leaflet_config.MIN_ZOOM}},
+     }
+     var map = L.map(element_id, options).setView(
+         [
+             {{leaflet_config.DEFAULT_CENTER.0|unlocalize}},
+             {{leaflet_config.DEFAULT_CENTER.1|unlocalize}}
+         ]
+         ,{{leaflet_config.DEFAULT_ZOOM}});
+     var baseMapList = [
+         {% for tile in leaflet_config.TILES %}
+         ['{{tile.0}}', L.tileLayer("{{tile.1}}", {{tile.2| safe}})],
+         {% endfor %}
+     ];
+     console.log(baseMapList);
+     baseMapList[0][1].addTo(map);
+     baseMaps = {};
+     for (i in baseMapList) {
+         baseMaps[baseMapList[i][0]] = baseMapList[i][1];
+     }
+     L.control.layers(baseMaps).addTo(map);
+     return map;
+ }
+ {% endif %}
 </script>

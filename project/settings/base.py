@@ -402,7 +402,7 @@ LEAFLET_CONFIG = {
     ],
     'NO_GLOBALS': False,
     'DEFAULT_ZOOM': 8,
-    'MIN_ZOOM': 8,
+    'MIN_ZOOM': 7,
     'MAX_ZOOM': 18,
     'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }

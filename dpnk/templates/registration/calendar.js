@@ -419,16 +419,6 @@ function eventClick(info) {
     }
 }
 
-function create_map(element_id){
-    var map = L.map(element_id).setView([50.0866699218750000, 14.4387817382809995], 8);
-    L.tileLayer('https://tiles.prahounakole.cz/{z}/{x}/{y}.png',
-                {
-                    attribution: '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                }).addTo(map);
-   return map;
-}
-
-
 document.addEventListener('DOMContentLoaded', function() {
     {% if interactive_entry_enabled %}
     {% for cm in commute_modes %}
