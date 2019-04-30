@@ -9,6 +9,7 @@
 @fsize: 16px;
 @wg:@fsize/16*15;
 @positive:#85e233;
+@negative:@primary;
 
 // Fix for company select, where users were confused if item is not selected
 #hint_id_company.invalid-feedback{
@@ -891,6 +892,9 @@ div.dataTables_filter input {
   }
   .active-trip-filled {
     background-color: @positive;
+	 &.cal_event_does_not_count, &.cal_event_not_eco {
+		 background-color: @negative;
+	 }
   }
 
   .active-trip-unfilled {
@@ -912,9 +916,14 @@ div.dataTables_filter input {
       border-width: 17px;
     }
     &.active-trip-filled{
-       &:before {
+      &:before {
         border-left-color: @positive;
       }
+		&.cal_event_does_not_count, &.cal_event_not_eco {
+			&:before {
+				border-left-color: @negative;
+			}
+		}
     }
   }
   .fc-day-grid-event.cal_event_trip_from {
@@ -933,9 +942,14 @@ div.dataTables_filter input {
       border-width: 17px;
     }
     &.active-trip-filled{
-       &:before {
+      &:before {
         border-right-color: @positive;
       }
+		&.cal_event_does_not_count, &.cal_event_not_eco {
+			&:before {
+				border-right-color: @negative;
+			}
+		}
     }
 
   }
