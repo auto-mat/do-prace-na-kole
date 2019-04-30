@@ -175,7 +175,7 @@ function reload_route_options() {
     route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
     route_option_ids_{{cm.slug}} = jQuery.extend({}, basic_route_option_ids_{{cm.slug}});
     var sel = $("#route_select_{{cm.slug}}");
-    sel.children().remove();
+    $(sel.children()).remove();
     sel = sel[0];
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
@@ -224,8 +224,8 @@ function show_tooltip(el, title) {
 function eventRender(info) {
     // Remove time column from Agenda view
     if(info.el.children[0].classList.contains("fc-list-item-time")){
-        info.el.children[1].remove();
-        info.el.children[0].remove();
+        $(info.el.children[1]).remove();
+        $(info.el.children[0]).remove();
         info.el.children[0].colSpan=3
     }
 
