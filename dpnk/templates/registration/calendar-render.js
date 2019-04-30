@@ -159,6 +159,13 @@ function reload_route_options() {
     displayed_trips.sort(function(a, b) {
         da = Date.parse(a.trip_date);
         db = Date.parse(b.trip_date);
+        if (db == da) {
+            if (a.direction == 'trip_to') {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
         return db - da;
     });
     {% for cm in commute_modes %}
