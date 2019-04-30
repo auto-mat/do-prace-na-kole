@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
     full_calendar = new FullCalendar.Calendar(calendarEl, {
         eventSources: [
            {events: {{events|safe}}},
-           {events: get_placeholder_events, className: "active-trip-unfilled", id: 2},
+           {events: get_placeholder_events, id: 2},
            {events: get_vacation_events, className: "cal-vacation", id: 3},
            {events: get_wordpress_events, className: "wp-event", id: 4},
         ],
