@@ -111,6 +111,7 @@ function select_old_trip_{{cm.slug}}(trip){
     show_map_{{cm.slug}}();
     $("#gpx_upload_{{cm.slug}}").hide();
     load_track(map_{{cm.slug}}, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, editable_layers_{{cm.slug}});
+    redraw_shopping_cart();
 }
 
 function on_route_select_{{cm.slug}}() {
@@ -159,6 +160,7 @@ function update_distance_from_map_{{cm.slug}}() {
        });
    });
    $("#km-{{cm.slug}}").val((totalDistance / 1000).toFixed(2));
+   redraw_shopping_cart();
 }
 
 Dropzone.autoDiscover = false;
