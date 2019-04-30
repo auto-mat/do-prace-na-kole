@@ -26,10 +26,9 @@ $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 function redraw_shopping_cart(){
     full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();
-    start = "";
     mid = " "
-    end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance() + " km" : "";
-    $('#trip-shopping-cart').text(start + commute_modes[commute_mode].name + mid + end);
+    end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance_string() + " km" : "";
+    $('#trip-shopping-cart').text(commute_modes[commute_mode].name + mid + end);
 }
 
 function get_placeholder_events(fetchInfo, successCallback, failureCallback){
@@ -233,7 +232,7 @@ function eventRender(info) {
         $(info.el.firstChild).append(trash_button);
     } else {
         if (exp.placeholder) {
-            show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
+            show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
         } else if (exp.direction == 'trip_to'){
             show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
         } else if (exp.direction == 'trip_from') {

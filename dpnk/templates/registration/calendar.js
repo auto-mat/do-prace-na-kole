@@ -383,6 +383,10 @@ function get_selected_distance() {
     return Number($('#km-'+commute_mode).val());
 }
 
+function get_selected_distance_string() {
+    return get_selected_distance().toLocaleString("{{ current_language_code }}");
+}
+
 function eventClick(info) {
     $(".tooltip").tooltip("hide");
     if(info.event.extendedProps.placeholder){
