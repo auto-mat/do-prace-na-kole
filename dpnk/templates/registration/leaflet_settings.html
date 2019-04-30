@@ -52,11 +52,7 @@
              track_geojson.addData(data);
              if(editable_layers) {
                  var layers = track_geojson.getLayers();
-                 if(editable_layers) {
-                     editable_layers.clearLayers();
-                 } else {
-                     track_geojson.addTo(map);
-                 }
+                 editable_layers.clearLayers();
                  for (i in layers) {
                      layer = layers[i]
                      for(n in layer._latlngs) {
@@ -65,6 +61,8 @@
                          editable_layers.addLayer(polyline);
                      }
                  }
+             } else {
+                 track_geojson.addTo(map);
              }
              map.fitBounds(track_geojson.getBounds())
          }
