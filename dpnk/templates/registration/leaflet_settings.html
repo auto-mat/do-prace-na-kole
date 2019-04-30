@@ -96,4 +96,29 @@
      return map;
  }
  {% endif %}
+
+ function load_route_list(sel_tag, num_basic_options, route_options, route_option_ids){
+     var sel = $(sel_tag);
+     $(sel.children()).remove();
+     console.log(sel);
+     sel = sel[0];
+     var i = 0;
+     var first_group = document.createElement("optgroup");
+     first_group.label = "{% trans '---' %}";
+     var second_group = document.createElement("optgroup");
+     second_group.label = "{% trans 'Stejně jako...' %}";
+     for(var key in route_options){
+         var option = document.createElement("option");
+         option.value = key;
+         option.text = key;
+         option.id = route_option_ids[key];
+         if (i++ < num_basic_options){
+             first_group.appendChild(option);
+         } else {
+             second_group.appendChild(option);
+         }
+     }
+     sel.appendChild(first_group);
+     sel.appendChild(second_group);
+ }
 </script>

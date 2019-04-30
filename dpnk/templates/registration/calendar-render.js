@@ -174,9 +174,6 @@ function reload_route_options() {
     {% if cm.does_count and cm.eco %}
     route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
     route_option_ids_{{cm.slug}} = jQuery.extend({}, basic_route_option_ids_{{cm.slug}});
-    var sel = $("#route_select_{{cm.slug}}");
-    $(sel.children()).remove();
-    sel = sel[0];
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
         if (trip.commuteMode == '{{cm.slug}}') {
@@ -190,25 +187,13 @@ function reload_route_options() {
             })();
        }
     }
-    var i = 0;
     var num_basic_options = Object.keys(basic_route_options_{{cm.slug}}).length;
-    var first_group = document.createElement("optgroup");
-    first_group.label = "{% trans '---' %}";
-    var second_group = document.createElement("optgroup");
-    second_group.label = "{% trans 'Stejně jako...' %}";
-    for(var key in route_options_{{cm.slug}}){
-        var option = document.createElement("option");
-        option.value = key;
-        option.text = key;
-        option.id = route_option_ids_{{cm.slug}}[key];
-        if (i++ < num_basic_options){
-            first_group.appendChild(option);
-        } else {
-            second_group.appendChild(option);
-        }
-    }
-    sel.appendChild(first_group);
-    sel.appendChild(second_group);
+    load_route_list(
+        "#route_select_{{cm.slug}}",
+        num_basic_options,
+        route_options_{{cm.slug}},
+        route_option_ids_{{cm.slug}}
+    );
     {% endif %}
     {% endfor %}
 }
