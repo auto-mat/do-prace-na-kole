@@ -3,6 +3,7 @@
 {% get_current_language as current_language_code %}
 
 function start_editing(){
+    // Dissabled now
     editing = true;
     $('#edit-button-activator').hide();
     $('.editation').show();
@@ -13,7 +14,7 @@ function start_editing(){
 
 $('.nav-tabs').on('shown.bs.tab', function(){
     redraw_shopping_cart();
-    load_initial_trips(false);
+    load_initial_trips();
 });
 
 {% for cm in commute_modes %}
@@ -159,7 +160,7 @@ function reload_route_options() {
     displayed_trips.sort(function(a, b) {
         da = Date.parse(a.trip_date);
         db = Date.parse(b.trip_date);
-        if (db == da) {
+        if (a.trip_date == b.trip_date) {
             if (a.direction == 'trip_to') {
                 return 1;
             } else {

@@ -7,7 +7,7 @@
 L.drawLocal.draw.toolbar.finish.text="{% trans 'Finish' %}"; // TODO move this code to django-leaflet or something
 L.drawLocal.draw.toolbar.finish.title="{% trans 'Finish drawing' %}";
 
-var editing = false;
+var editing = true;
 
 var day_types = {
     "possible-vacation-day": {{possible_vacation_days|safe}},
@@ -120,25 +120,27 @@ function on_route_select_{{cm.slug}}() {
     }
 }
 
-function load_initial_trips(set_tab) {
-    {% for cm in commute_modes %}
-    $("#km-{{cm.slug}}").val(0);
+function set_initial_tab() {
     for(i in displayed_trips) {
-        if (set_tab) {
-            $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
-            set_tab = false;
-        }
-        trip = displayed_trips[i]
-        {% if cm.does_count and cm.eco %}
-        if(trip.distanceMeters && trip.commuteMode == '{{cm.slug}}') {
+        $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
+        return;
+    }
+}
 
+function load_initial_trips() {
+    for(i in displayed_trips) {
+        trip = displayed_trips[i]
+        {% for cm in commute_modes %}
+        {% if cm.does_count and cm.eco %}
+        if(trip.commuteMode == '{{cm.slug}}' && get_selected_commute_mode() == '{{cm.slug}}') {
             $("#option-{{cm.slug}}" + trip.trip_date + trip.direction).prop('selected', true);
-            on_route_select_{{cm.slug}}()
+            on_route_select_{{cm.slug}}();
+            hide_map_{{cm.slug}}();
             break;
         }
         {% endif %}
+        {% endfor %}
     }
-    {% endfor %}
     redraw_shopping_cart();
 }
 
@@ -526,6 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         {% endif %}
+        set_initial_tab();
         $(".main-loading-overlay").hide();
     });
 });
