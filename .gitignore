@@ -40,6 +40,7 @@ graph.pdf
 src/
 graph
 project/media/
+project/settings/local.py
 profiles/
 .req_checker_cache
 .config/
