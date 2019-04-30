@@ -274,6 +274,9 @@ function dayRender(cell) {
             if(displayed_trips[i].trip_date == format_date(cell.date)){
                 var trip = displayed_trips[i];
                 if(commute_modes[trip.commuteMode].eco){
+                    if (trip.commuteMode == 'by_foot' && trip.distanceMeters < 1500){
+                        continue;
+                    }
                     num_eco_trips++;
                 }
             }

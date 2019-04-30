@@ -206,6 +206,9 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
 
 
 function add_trip(trip, file, cont) {
+    if(trip.commuteMode == "by_foot" && trip.distanceMeters < 1500) {
+        show_message("{% trans 'Pěší cesta se počítá od minimální vzdálenost 1,5 km.' %}")
+    }
     trip.sourceApplication = "web";
     var formData = new FormData();
     for(key in trip) {
