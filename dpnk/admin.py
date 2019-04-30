@@ -1662,7 +1662,7 @@ class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
 
 
 @admin.register(models.CommuteMode)
-class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):
+class CommuteModeAdmin(ImportExportMixin, SortableAdminMixin, TranslationAdmin):
     list_display = (
         'name',
         'slug',
