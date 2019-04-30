@@ -6,32 +6,33 @@
 {% block extrahead %}
     {% include "registration/leaflet_include.html" %}
 {% endblock %}
+
 {% block content %}
-<p align="center">
-{% if not active %}
-{% blocktrans %}Podle pravidel soutěže, nemůžete zadavat ani změnit jízdy starší než {{days_active}} dnů.{% endblocktrans %}
-{% endif %}
-</p>
-<h3>{% trans "Den" %}</h3>
-{{ trip.date }}
-<h3>{% trans "Směr" %}</h3>
-{{ trip.get_direction_display }}
-<h3>{% trans "Dopravní prostředek" %}</h3>
-{{ trip.commute_mode }}
-{% if trip.commute_mode.eco and trip.commute_mode.does_count %}
-<h3>{% trans "Vzdálenost" %}</h3>
-{{ trip.distance }} km
-<h3>{% trans "Trasa" %}</h3>
-{% if trip.track %}
-{% leaflet_map "track_map" callback="window.load_this_track" %}
-<script type="text/javascript">
- load_this_track = function(map, options) {
-     load_track(map, "{% url 'trip_geojson' date=trip.date direction=trip.direction %}", options);
- }
-</script>
-{% else %}
-{% trans 'Žádná trasa nebyla zadána' %}
-{% endif %}
-{% endif %}
-{% include "registration/application_link.html" %}
+	<p align="center">
+	{% if not active %}
+	{% blocktrans %}Podle pravidel soutěže, nemůžete zadavat ani změnit jízdy starší než {{days_active}} dnů.{% endblocktrans %}
+	{% endif %}
+	</p>
+	<h3>{% trans "Den" %}</h3>
+	{{ trip.date }}
+	<h3>{% trans "Směr" %}</h3>
+	{{ trip.get_direction_display }}
+	<h3>{% trans "Dopravní prostředek" %}</h3>
+	{{ trip.commute_mode }}
+	{% if trip.commute_mode.eco and trip.commute_mode.does_count %}
+	<h3>{% trans "Vzdálenost" %}</h3>
+	{{ trip.distance }} km
+	<h3>{% trans "Trasa" %}</h3>
+	{% if trip.track %}
+	{% leaflet_map "track_map" callback="window.load_this_track" %}
+	<script type="text/javascript">
+	 load_this_track = function(map, options) {
+	     load_track(map, "{% url 'trip_geojson' date=trip.date direction=trip.direction %}", options);
+	 }
+	</script>
+	{% else %}
+	{% trans 'Žádná trasa nebyla zadána' %}
+	{% endif %}
+	{% endif %}
+	{% include "registration/application_link.html" %}
 {% endblock %}

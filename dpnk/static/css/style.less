@@ -8,6 +8,7 @@
 @white: #fff;
 @fsize: 16px;
 @wg:@fsize/16*15;
+@positive:#85e233;
 
 // Fix for company select, where users were confused if item is not selected
 #hint_id_company.invalid-feedback{
@@ -230,19 +231,42 @@ label{
   .btn-group{
     display:block;
   }
+  .form-group{
+    margin-bottom:@wg/2
+  }
   .radio{
-    width:50%;
+    width:25%;
     padding:0;
     border:1px solid #fff;
     input{
       display:none;
     }
   }
+  table{
+    th, td{
+      border:0;
+    }
+  }
+  label{
+    font-size:.8rem;
+    &:hover{
+      text-decoration:underline;
+    }
+  }
   input:checked + label{
-    color:@white;
-    background-color:@primary;
+    background-color:@positive;
     margin-bottom:0;
     padding:@wg/4 0;
+    &:hover{
+      text-decoration:none;
+    }
+  }
+  th.date{
+    font-size:1.4rem;
+    font-weight:300;
+    margin-top:@wg/2;
+    border-bottom:1px solid @lightgrey;
+    padding-bottom:0;
   }
 }
 ._primary{
@@ -690,7 +714,7 @@ div.dataTables_filter input {
 }
 
 .possible-vacation-day {
-    background-color: #ceeaea;
+  box-shadow: inset 0 50px 50px #ffe4fcc7;
 }
 
 .active-day {
@@ -701,32 +725,17 @@ div.dataTables_filter input {
     background-color: #aaaaaa;
 }
 
-.active-trip-filled {
-    background-color: #5b5b46 !important;
-}
-
-.active-trip-unfilled {
-    background-color: #ffff3f !important;
-}
-
-.cal_event_trip_to {
-    //TODO
-}
-
-.cal_event_trip_from {
-    //TODO
-}
 
 .locked-trip {
     background-color: #9f9f9f !important;
 }
 
 .one-ride-day {
-    background-color: #4f6051 !important;
+    // background-color: #4f6051 !important;
 }
 
 .two-ride-day {
-    background-color: #18a025 !important;
+    // background-color: #18a025 !important;
 }
 
 .out-of-competition-day {
@@ -734,15 +743,13 @@ div.dataTables_filter input {
 }
 
 .non-working-day {
-    opacity: 0.5;
+    // opacity: 0.5;
+
 }
 
 .trash-button {
 }
 
-.fc-event {
-    cursor: pointer;
-}
 
 .mode-icon-container {
     display: inline;
@@ -773,13 +780,7 @@ div.dataTables_filter input {
     height: 90vh;
 }
 
-.wp-event {
-    background-color: #ff8800 !important;
-}
 
-.cal-vacation {
-    background-color: #ff8870 !important;
-}
 
 .fc-header-toolbar {
     margin-bottom: 0.1em !important;
@@ -849,12 +850,113 @@ div.dataTables_filter input {
 }
 .calendar{
   h2{
-   font-size:@wg;
-   color:@grey;
+    color:darken(@lightgrey, 10%);
+    font-size: 1.4em;
+    margin: 0;
+    font-weight: 300;
   }
 }
-// End calendar view classes
+#calendar{
+  .fc-content{
+    padding:@wg*.5;
+    text-align:center;
+  }
+  .fc-event {
+    cursor: pointer;
+    border:0;
+    border-radius:0;
+    .anim;
+    &:hover{
+      .anim;
+      filter: saturate(180%) contrast(120%);
+    }
+  }
+  .locked-day{
+    background-image: linear-gradient(135deg, #f3ebff 3.85%, #ffffff 3.85%, #ffffff 50%, #f3ebff 50%, #f3ebff 53.85%, #ffffff 53.85%, #ffffff 100%);
+    background-size: 18.38px 18.38px;
+  }
+  .fc-past{
+    color: @lightgrey;
+  }
+  .fc-today{
+    background-color:transparent;
+    .fc-day-number{
+      color: #fff;
+      background-color: #3e3e3e;
+      border-radius: 50%;
+      font-size: .8rem;
+      padding: .2em .1rem .1rem .3rem;
+      text-align: center;
+    }
+  }
+  th, td{
+    padding:@wg/4 @wg/2;
+  }
+  .active-trip-filled {
+    background-color: @positive;
+  }
 
+  .active-trip-unfilled {
+      background-color: @lightgrey;
+  }
+  .cal_event_trip_to{
+    margin-right:@wg; 
+    padding-right:0;
+    &:before {
+      left: 100%;
+      top: 50%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-color: rgba(194, 225, 245, 0);
+      border-left-color: @lightgrey;
+      border-width: 17px;
+      margin-top: -27%;
+    }
+    &.active-trip-filled{
+       &:before {
+        border-left-color: @positive;
+      }
+    }
+  }
+  .cal_event_trip_from {
+    margin-left:@wg;
+    padding-left:0;
+    &:before {
+      left: -53%;
+      top: 50%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-color: rgba(194, 225, 245, 0);
+      border-right-color: @lightgrey;
+      border-width: 17px;
+      margin-top: -27%;
+    }
+    &.active-trip-filled{
+       &:before {
+        border-right-color: @positive;
+      }
+    }
+
+  }
+  .wp-event {
+    background-color: #ffdcf9;
+  }
+
+  .cal-vacation {
+      background-color: lightblue;
+  }
+
+}
+// End calendar view classes
+.date
 .noanim {
   transition: all 0.0s;
 }
