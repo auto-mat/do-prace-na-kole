@@ -223,6 +223,7 @@ function add_trip(trip, file, cont) {
             'X-CSRFToken': "{{ csrf_token }}"
         },
         success: function (returndata) {
+            $(".tooltip").tooltip("hide");
             display_trip(returndata, true);
             cont();
         }
