@@ -86,7 +86,6 @@
          ['{{tile.0}}', L.tileLayer("{{tile.1}}", {{tile.2| safe}})],
          {% endfor %}
      ];
-     console.log(baseMapList);
      baseMapList[0][1].addTo(map);
      baseMaps = {};
      for (i in baseMapList) {
@@ -100,7 +99,6 @@
  function load_route_list(sel_tag, num_basic_options, route_options, route_option_ids){
      var sel = $(sel_tag);
      $(sel.children()).remove();
-     console.log(sel);
      sel = sel[0];
      var i = 0;
      var first_group = document.createElement("optgroup");
