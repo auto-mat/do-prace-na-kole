@@ -207,7 +207,11 @@ function add_trip(trip, file, cont) {
     trip.sourceApplication = "web";
     var formData = new FormData();
     for(key in trip) {
-      formData.append(key, trip[key]);
+        var data = trip[key];
+        if (key == 'distanceMeters') {
+            data = Math.round(data);
+        }
+        formData.append(key, data);
     }
     if (file) {
        formData.append('file', file);
@@ -226,6 +230,13 @@ function add_trip(trip, file, cont) {
             $(".tooltip").tooltip("hide");
             display_trip(returndata, true);
             cont();
+        },
+        error: function(jqXHR, status, error) {
+            console.log("Error posting trip to rest api.")
+            console.log(jqXHR);
+            console.log(status);
+            console.log(error);
+            show_message("{% trans 'Propojení selhalo.\nDalší údaje:' %}" + jqXHR.responseText);
         }
     });
 }
