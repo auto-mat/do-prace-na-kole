@@ -2,16 +2,6 @@
 {% load l10n %}
 {% get_current_language as current_language_code %}
 
-// define startsWith for Internet Explorer
-if (!String.prototype.startsWith) {
-    Object.defineProperty(String.prototype, 'startsWith', {
-        value: function(search, pos) {
-            pos = !pos || pos < 0 ? 0 : +pos;
-            return this.substring(pos, pos + search.length) === search;
-        }
-    });
-}
-
 function start_editing(){
     // Dissabled now
     editing = true;
@@ -126,7 +116,7 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
         events_by_day = {};
         for (i in data) {
             event = data[i];
-            if(event.start_date.startsWith("{{campaign.year}}")){
+            if(typeof variable !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
                 if(!(event.start_date in events_by_day)) {
                     events_by_day[event.start_date] = [];
                 }
