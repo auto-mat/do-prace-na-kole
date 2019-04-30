@@ -14,6 +14,11 @@ function start_editing(){
 
 $('.nav-tabs').on('shown.bs.tab', function(){
     redraw_shopping_cart();
+    {% for cm in commute_modes %}
+    {% if cm.does_count and cm.eco %}
+    hide_map_{{cm.slug}}();
+    {%endif%}
+    {%endfor%}
     load_initial_trips();
 });
 
