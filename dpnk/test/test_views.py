@@ -2162,6 +2162,7 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "<div><b>Platba</b>: zaplaceno</div>", html=True)
 
     def test_dpnk_views_track_gpx_file(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
@@ -2176,6 +2177,7 @@ class TripViewTests(ViewsLogon):
         self.assertEqual(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track_gpx_file_route(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         with open('dpnk/test_files/route.gpx', 'rb') as gpxfile:
             post_data = {
@@ -2207,6 +2209,7 @@ class TripViewTests(ViewsLogon):
         )
 
     def test_dpnk_views_track(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         post_data = {
             'dont_want_insert_track': False,
@@ -2223,6 +2226,7 @@ class TripViewTests(ViewsLogon):
         self.assertEqual(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         post_data = {
             'dont_want_insert_track': True,
@@ -2235,6 +2239,21 @@ class TripViewTests(ViewsLogon):
         user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
         self.assertEqual(user_attendance.track, None)
         self.assertEqual(user_attendance.get_distance(), 12)
+
+    def test_dpnk_views_track_only_distance_last_trip(self):
+        """ Test, that get_distance function returns distance of last trip """
+        address = reverse('upravit_trasu')
+        post_data = {
+            'dont_want_insert_track': True,
+            'distance': 12,
+            'gpx_file': '',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
+        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
+        self.assertEqual(user_attendance.track, None)
+        self.assertEqual(user_attendance.get_distance(), 156.9)
 
     def test_dpnk_views_track_no_track_distance(self):
         address = reverse('upravit_trasu')

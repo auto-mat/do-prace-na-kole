@@ -45,6 +45,9 @@ a{
 b, .strong{
       letter-spacing: 0.01rem;
 }
+p:empty{
+  display:none;
+}
 // ratio perfect forth / 1.33
 @ratio: 1.1;
 @elements: h1, h2, h3, h4, h5, h6;
@@ -72,7 +75,7 @@ h2:empty{
   border:0;
 }
 input[type="text"], input[type="password"], input[type="email"], textarea, select, .form-control{
-  background:darken(#fff, 5%);
+  background-color:darken(#fff, 5%);
   border: 3px solid @lightgrey;
 }
 input[type="radio"], input[type="checkbox"]{
@@ -212,7 +215,7 @@ form{
 .welcome_message{
   margin-top: 2rem;
 }
-.homepage.profil, .team_members{
+.homepage.profil, .team_members_col{
   form{
     width: 100%;
   }
@@ -251,6 +254,11 @@ label{
   background: linear-gradient(to right, rgba(230,230,230,1) 0%,rgba(230,230,230,1) 20%,rgba(255,255,255,1) 20%,rgba(255,255,255,1) 100%,rgba(255,255,255,1) 100%); 
   .content{
     margin-top: 4rem;
+  }
+  &.homepage{
+    .content{
+      margin-top: 0;
+    }
   }
 }
 .login-layout{
@@ -618,8 +626,48 @@ label{
   text-align:center;
   margin-top:@wg;
 }
-
-
+.clever_tattle{
+  font-weight:300;
+  font-size:1.4rem;
+  line-height:1.85rem;
+  margin:@wg*1.6 @wg @wg*2 @wg;
+  h1, h2, h3, h4, h5, h6{
+    font-size:1.4rem;
+    font-weight:500;
+  }
+}
+.frequencybar{
+  padding:@wg;
+  color:#fff;
+}
+.sidenote{
+  float:right;
+  margin-top:-@wg*0.8;
+  font-size:.8rem;
+  opacity:.6;
+  text-decoration:none;
+  border-bottom:1px solid @lightgrey;
+  &:hover{
+    opacity:1;
+    text-decoration:none;
+    border-bottom:1px solid @primary;
+  }
+}
+.team_members_col{
+  margin-top:@wg*.9;
+  .avatar_holder{
+    padding:0 @wg;
+  }
+  h6{
+    font-size: .8rem;
+    text-align:center;
+    margin:@wg/2 0 @wg*2 0;
+  }
+}
+.col-fifth{
+  width:19%;
+  display:inline-block;
+}
 .noanim {
   transition: all 0.0s;
 }
@@ -694,6 +742,9 @@ label{
   left: 8px;
 }
 @media all and (max-width: 769px) {
+  .col-fifth{
+    width: 33%;
+  }
   .container{
     width:100%;
   }
@@ -709,6 +760,9 @@ label{
   }
 }
 @media all and (max-width: 480px) {
+  .col-fifth{
+    width: 100%;
+  }
   .application-layout{
     background:transparent;
   }
@@ -748,6 +802,11 @@ label{
       }
     }
   }
+}
+
+div.dataTables_length select,
+div.dataTables_filter input {
+	display: block !important;
 }
 
 // Start Calendar view classes

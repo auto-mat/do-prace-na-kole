@@ -316,13 +316,20 @@ class UserAttendance(StaleSyncMixin, models.Model):
             frequency = self.frequency if self.frequency is not None else 0
             return frequency * 100
 
-    def get_frequency_icons(self):
-        frequency = self.frequency
+    def get_frequency_icons(self, frequency):
         roles = {}
-        for icon in LandingPageIcon.objects.filter(max_frequency__gte=frequency, min_frequency__lte=frequency):
+        for icon in LandingPageIcon.objects.filter(max_frequency__gte=round(frequency), min_frequency__lte=round(frequency)):
             roles[icon.role] = icon.file.url
 
         return roles
+
+    def get_user_frequency_icons(self):
+        frequency = self.get_frequency_percentage()
+        return self.get_frequency_icons(frequency)
+
+    def get_team_frequency_icons(self):
+        frequency = self.team.get_frequency_percentage()
+        return self.get_frequency_icons(frequency)
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
@@ -474,7 +481,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.get_trips(days)
 
     def get_all_trips(self, day=None):
-        days = list(util.days(self.campaign.phase("competition"), day))
+        try:
+            days = list(util.days(self.campaign.competition_phase(), day))
+        except Phase.DoesNotExist:
+            days = []
         return self.get_trips(days)
 
     def company_admin_emails(self):

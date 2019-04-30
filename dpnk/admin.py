@@ -601,6 +601,8 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
         'userattendance_set__approved_for_team',
         'occupation',
         'age_group',
+        'telephone_opt_in',
+        'mailing_opt_in',
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = [
@@ -808,6 +810,7 @@ class UserAttendanceAdmin(
         't_shirt_size__name',
         'userprofile__user__is_active',
         'userprofile__mailing_opt_in',
+        'userprofile__telephone_opt_in',
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
@@ -829,6 +832,7 @@ class UserAttendanceAdmin(
         't_shirt_size',
         'userprofile__user__is_active',
         'userprofile__mailing_opt_in',
+        'userprofile__telephone_opt_in',
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
@@ -1656,12 +1660,13 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
 
 
 @admin.register(models.LandingPageIcon)
-class LandingPageIconAdmin(admin.ModelAdmin):
+class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('role', 'file', 'min_frequency', 'max_frequency')
+    list_editable = ('min_frequency', 'max_frequency')
 
 
 @admin.register(models.CommuteMode)
-class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):
+class CommuteModeAdmin(ImportExportMixin, SortableAdminMixin, TranslationAdmin):
     list_display = (
         'name',
         'slug',
