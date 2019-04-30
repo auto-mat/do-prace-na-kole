@@ -75,7 +75,7 @@ h2:empty{
   border:0;
 }
 input[type="text"], input[type="password"], input[type="email"], textarea, select, .form-control{
-  background:darken(#fff, 5%);
+  background-color:darken(#fff, 5%);
   border: 3px solid @lightgrey;
 }
 input[type="radio"], input[type="checkbox"]{
@@ -802,6 +802,11 @@ label{
       }
     }
   }
+}
+
+div.dataTables_length select,
+div.dataTables_filter input {
+	display: block !important;
 }
 
 // Start Calendar view classes
