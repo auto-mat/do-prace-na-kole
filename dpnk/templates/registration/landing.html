@@ -9,7 +9,7 @@
 {% block content %}
   <div id="landing_page_intro">
     {# graphic #}
-    {% with user_attendance.get_frequency_icons as frequency_icons %}
+    {% with user_attendance.get_team_frequency_icons as frequency_icons %}
       <img src="{{frequency_icons.main}}"/>
     {% endwith %}
 
