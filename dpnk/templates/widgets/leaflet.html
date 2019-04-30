@@ -32,14 +32,58 @@
          }
      }).error(function() {});
  }
+ var trips = [
+ {% for trip in prev_tracks %}
+     {
+         trip_date: '{{trip.date}}',
+         direction: '{{trip.direction}}',
+         distanceKm: {{trip.distance|unlocalize}},
+         pk: {{trip.pk}}
+     },
+ {% endfor %}
+];
+
+ direction_names = { // TODO DEDUPLICATE!
+     "trip_to": "{% trans 'Do práce' %}",
+     "trip_from": "{% trans 'Domu' %}",
+     "recreational": "{% trans 'Výlet' %}",
+ }
+
+ route_options = {
+     "-": function(){},
+     "{% trans 'Vyprazdnit' %}": function (){load_old_map(null)}
+ };
+ route_option_ids = {
+     "{% trans 'Vyprazdnit' %}": "clear_route_option",
+     "-": "null_option"
+ };
+ for (i in trips){
+     var trip = trips[i];
+     desc = trip.trip_date + "  " + direction_names[trip.direction] + " (" + trip.distanceKm + " km)"; // TODO DEDUP!
+     (function() {
+         var local_trip = trip;
+         route_options[desc] = function () {load_old_map(local_trip.pk);};
+         route_option_ids[desc] = desc;
+     })();
+ }
+
+ function on_route_select() {
+     var sel = document.getElementById("route_select");
+     if(sel.value){
+         route_options[sel.value]();
+     }
+ }
+
+ //load_old_map({{trip.pk}})
+ $(function (){
+     load_route_list("#route_select", 2, route_options, route_option_ids);
+ });
 </script>
-<div class="dropdown">
-<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Vybrat z předchozích trasů" %}&nbsp;<span class="caret"></span></button>
-<ul class="dropdown-menu">
-    <li class="dropdown-item"><a onclick="load_old_map(null);" href="#">{% trans "Vyprazdnit" %}</a></li>
-{% for trip in prev_tracks %}
-    <li class="dropdown-item"><a onclick="load_old_map({{trip.pk}});" href="#">{{ trip.date }} {{trip.distance}} km</a></li>
-{% endfor %}
-</ul>
+<div class="form-group row">
+    <label for="route_options" class="col col-form-label col-form-label-sm">{% trans "Vyberte z předchozích tras" %}</label>
+    <div class="col">
+        <select id="route_select" onchange="on_route_select()">
+        </select>
+    </div>
 </div>
 {% include "leaflet/widget.html" %}

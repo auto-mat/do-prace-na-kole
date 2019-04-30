@@ -47,7 +47,7 @@ function get_placeholder_events(fetchInfo, successCallback, failureCallback){
            }
        }
        for(i in typical_directions) {
-           if(!directions.includes(typical_directions[i])){
+           if(directions.indexOf(typical_directions[i]) == -1){
                new_event =  {
                    title: "+",
                    start: active_day,
@@ -56,7 +56,10 @@ function get_placeholder_events(fetchInfo, successCallback, failureCallback){
                    allDay: true,
                    placeholder: true,
                    direction: typical_directions[i],
-                   classNames: ['cal_event_'+typical_directions[i], "active-trip-unfilled"],
+                   classNames: [
+                       'cal_event_'+typical_directions[i],
+                       "active-trip-unfilled",
+                   ],
                }
                placeholder_events.push(new_event);
            }
@@ -95,7 +98,7 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
        }
        num_trips = 0;
        for(i in typical_directions) {
-           if(directions.includes(typical_directions[i])){
+           if(directions.indexOf(typical_directions[i]) != -1){
               num_trips++;
            }
        }
@@ -116,7 +119,7 @@ function get_wordpress_events(fetchInfo, successCallback, failureCallback){
         events_by_day = {};
         for (i in data) {
             event = data[i];
-            if(event.start_date.startsWith("{{campaign.year}}")){
+            if(typeof variable !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
                 if(!(event.start_date in events_by_day)) {
                     events_by_day[event.start_date] = [];
                 }
@@ -174,9 +177,6 @@ function reload_route_options() {
     {% if cm.does_count and cm.eco %}
     route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
     route_option_ids_{{cm.slug}} = jQuery.extend({}, basic_route_option_ids_{{cm.slug}});
-    var sel = $("#route_select_{{cm.slug}}");
-    sel.children().remove();
-    sel = sel[0];
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
         if (trip.commuteMode == '{{cm.slug}}') {
@@ -190,25 +190,13 @@ function reload_route_options() {
             })();
        }
     }
-    var i = 0;
     var num_basic_options = Object.keys(basic_route_options_{{cm.slug}}).length;
-    var first_group = document.createElement("optgroup");
-    first_group.label = "{% trans '---' %}";
-    var second_group = document.createElement("optgroup");
-    second_group.label = "{% trans 'Stejně jako...' %}";
-    for(var key in route_options_{{cm.slug}}){
-        var option = document.createElement("option");
-        option.value = key;
-        option.text = key;
-        option.id = route_option_ids_{{cm.slug}}[key];
-        if (i++ < num_basic_options){
-            first_group.appendChild(option);
-        } else {
-            second_group.appendChild(option);
-        }
-    }
-    sel.appendChild(first_group);
-    sel.appendChild(second_group);
+    load_route_list(
+        "#route_select_{{cm.slug}}",
+        num_basic_options,
+        route_options_{{cm.slug}},
+        route_option_ids_{{cm.slug}}
+    );
     {% endif %}
     {% endfor %}
 }
@@ -224,8 +212,8 @@ function show_tooltip(el, title) {
 function eventRender(info) {
     // Remove time column from Agenda view
     if(info.el.children[0].classList.contains("fc-list-item-time")){
-        info.el.children[1].remove();
-        info.el.children[0].remove();
+        $(info.el.children[1]).remove();
+        $(info.el.children[0]).remove();
         info.el.children[0].colSpan=3
     }
 
@@ -239,10 +227,10 @@ function eventRender(info) {
         var trash_icon =  document.createElement("i");
         var trash_button = document.createElement("button");
         trash_button.className = 'btn btn-default btn-xs trash-button';
-        trash_button.append(trash_icon);
+        $(trash_button).append(trash_icon);
         trash_button.onclick = function(){remove_vacation(info)};
         trash_icon.className = 'fa fa-trash sm';
-        info.el.firstChild.append(trash_button);
+        $(info.el.firstChild).append(trash_button);
     } else {
         if (exp.placeholder) {
             show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
@@ -256,13 +244,13 @@ function eventRender(info) {
             show_tooltip(info.el, $("<textarea/>").html(exp.wp_event.title).text())
         }
         if (right_icon) {
-            info.el.firstChild.append(right_icon);
+            $(info.el.firstChild).append(right_icon);
         }
         if (exp.commute_mode) {
             var mode_icon = document.createElement("div");
             mode_icon.className='mode-icon-container';
             mode_icon.innerHTML = decodeURIComponent(commute_modes[exp.commute_mode].icon_html);
-            info.el.firstChild.prepend(mode_icon);
+            $(info.el.firstChild).prepend(mode_icon);
         }
     }
 }

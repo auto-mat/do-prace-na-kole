@@ -120,7 +120,7 @@ def _wp_news(
         reverse=True,
         header=None,
         city=None,
-        **other_args
+        **other_args,
 ):
     get_params = {}
     get_params['feed'] = "content_to_backend"
