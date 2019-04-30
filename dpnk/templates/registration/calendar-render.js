@@ -56,6 +56,7 @@ function get_placeholder_events(fetchInfo, successCallback, failureCallback){
                    allDay: true,
                    placeholder: true,
                    direction: typical_directions[i],
+                   classNames: ['cal_event_'+typical_directions[i], "active-trip-unfilled"],
                }
                placeholder_events.push(new_event);
            }
