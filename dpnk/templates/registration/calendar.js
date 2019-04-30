@@ -84,6 +84,7 @@ var gpx_file_{{cm.slug}} = null;
 var basic_route_options_{{cm.slug}} = {
     "{% trans 'Zadat vzdálenost ručně' %}": function () {
         $("#km-{{cm.slug}}").val(0);
+        editable_layers_{{cm.slug}}.clearLayers();
         hide_map_{{cm.slug}}();
         $("#map_shower_{{cm.slug}}").hide();
         $("#gpx_upload_{{cm.slug}}").hide();
