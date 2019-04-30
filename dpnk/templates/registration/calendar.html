@@ -81,7 +81,11 @@
                                             <i class="fa fa-eye"></i> {% trans 'Zobrazit mapu' %}
                                         </button>
                                     </div>
-                                {% endif %}
+                                {% else %}
+                                    <div class="cm_tolltip tip">
+                                        {{ cm.tooltip|linebreaks }}
+                                    </div>
+                                {%endif%}
                             </div>
                         {% endfor %}
                     </div>
