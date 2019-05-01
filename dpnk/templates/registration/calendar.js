@@ -41,7 +41,7 @@ displayed_trips = []
 typical_directions = ["trip_to", "trip_from"];
 direction_names = {
  "trip_to": "{% trans 'Do práce' %}",
- "trip_from": "{% trans 'Domu' %}",
+ "trip_from": "{% trans 'Domů' %}",
  "recreational": "{% trans 'Výlet' %}",
 }
 

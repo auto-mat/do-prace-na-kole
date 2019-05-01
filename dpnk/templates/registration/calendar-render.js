@@ -31,9 +31,7 @@ $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 function redraw_shopping_cart(){
     full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();
-    mid = " "
-    end = (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) ? get_selected_distance_string() + " km" : "";
-    $('#trip-shopping-cart').text(commute_modes[commute_mode].name + mid + end);
+    $('#trip-shopping-cart').text(decode_tooltip(commute_mode, ""));
 }
 
 function get_placeholder_events(fetchInfo, successCallback, failureCallback){
@@ -213,6 +211,9 @@ function show_tooltip(el, title) {
     $(document.body).tooltip({ selector: "[title]" });
 }
 
+function decode_tooltip(commute_mode, direction) {
+    return commute_modes[commute_mode].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}")
+}
 
 function eventRender(info) {
     // Remove time column from Agenda view
@@ -229,7 +230,7 @@ function eventRender(info) {
        show_loading_icon_on_event(info);
     }
     if (exp.placeholder) {
-        show_tooltip(info.el, commute_modes[get_selected_commute_mode()].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", exp.direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}"))
+        show_tooltip(info.el, decode_tooltip(get_selected_commute_mode(), exp.direction))
     } else if (exp.direction == 'trip_to'){
         show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
     } else if (exp.direction == 'trip_from') {

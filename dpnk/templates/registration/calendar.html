@@ -50,8 +50,9 @@
         </div>
 
         <div class="cal_heading tip">
-            Nastavení zadávaných hodnot
+           {% trans "Své jízdy si můžete zapsat do kalendáře nebo pomocí tabulky." %}
         </div>
+
         <div class="row calendar_chooser">
             <div class="col-12 col-sm-3">
                 <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
@@ -68,7 +69,6 @@
                         {% for cm in commute_modes %}
                             <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
                                 {% if cm.does_count and cm.eco %}
-                                    <h3>Zadejte trasu</h3>
                                     <div class="cm_tolltip tip">
                                         {{ cm.tooltip|linebreaks }}
                                     </div>
@@ -97,7 +97,7 @@
                 <div id="trip-shopping-cart"></div>
                 <div class="inner cart_note">
                     <div class="tip">
-                        Klikuntím na zaznámy v kalendáři nastavíte vybranou hodnotu.
+                        {% trans "Teď si zapište do kalendáře všechny dny pro které tento výběr platí." %}
                     </div>
                 </div>
             </div>
