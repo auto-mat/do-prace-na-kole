@@ -351,7 +351,7 @@ document.addEventListener('scroll', function (event) {
 function remove_vacation(info) {
     var event = info.event;
     startDateString = format_date(event.start)
-    endDateString = format_date(event.end)
+    endDateString = format_date(add_days(event.end, -1));
     show_loading_icon_on_event(info);
     $.post("{% url 'calendar' %}", {
         on_vacation: false,
@@ -363,11 +363,11 @@ function remove_vacation(info) {
                var first_to_delete = possible_vacation_days.indexOf(startDateString);
                var last_to_delete = possible_vacation_days.indexOf(endDateString);
                if (last_to_delete == -1){
-                   last_to_delete = possible_vacation_days.length;
+                   last_to_delete = possible_vacation_days.length - 1;
                }
                days_to_delete = possible_vacation_days.slice(
                    first_to_delete,
-                   last_to_delete)
+                   last_to_delete + 1)
                displayed_trips = displayed_trips.filter( function (trip) {
                       return days_to_delete.indexOf(trip.trip_date) < 0;
                });

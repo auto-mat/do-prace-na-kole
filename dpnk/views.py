@@ -883,8 +883,7 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
         possible_vacation_days = self.user_attendance.campaign.possible_vacation_days()
         if not start_date <= end_date:
             raise exceptions.TemplatePermissionDenied(_("Data musí být seřazena chronologicky"))
-        last_full_day = end_date - datetime.timedelta(days=1)
-        if not {start_date, last_full_day}.issubset(possible_vacation_days):
+        if not {start_date, end_date}.issubset(possible_vacation_days):
             raise exceptions.TemplatePermissionDenied(_("Není povoleno editovat toto datum"))
         existing_trips = Trip.objects.filter(
             user_attendance=self.user_attendance,
