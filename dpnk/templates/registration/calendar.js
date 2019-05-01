@@ -388,6 +388,9 @@ function get_selected_distance_string() {
 
 function eventClick(info) {
     $(".tooltip").tooltip("hide");
+    if(info.event.extendedProps.vacation){
+        return;
+    }
     if(info.event.extendedProps.placeholder){
         var trip = {
            "trip_date": format_date(info.event.start),
