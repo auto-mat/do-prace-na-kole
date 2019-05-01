@@ -1,8 +1,14 @@
+{% load i18n %}
+{% load l10n %}
 <div id="edit-method-chooser">
 	<a href="{% url 'switch_rides_view' %}?rides_view=calendar" class="btn btn-primary" role="button">
-		<i class="fa fa-calendar-alt"></i> Kalendář
+		<i class="fa fa-calendar-alt"></i> {% trans 'Kalendář' %}
 	</a>
 	<a href="{% url 'switch_rides_view' %}?rides_view=table" class="btn btn-primary" role="button">
-		<i class="fa fa-th-list"></i> Tabulka
+		<i class="fa fa-th-list"></i> {% trans 'Tabulka' %}
 	</a>
+	<a href="{% url 'application' %}" class="btn btn" role="button">
+		  <i class="fa fa-mobile-alt"></i> {% trans 'Apklikace' %}
+	</a>
+
 </div>
