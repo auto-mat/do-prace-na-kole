@@ -5,8 +5,8 @@
 
 {% block content %}
 <h3>{% trans "Výsledky týmu" %} {{ user_attendance.team.name }}</h3>
-<h4>{% trans "Týmová pravidelnost" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%</h4>
-<table class="table table-bordered" id="team_members_table">
+<b>{% trans "Týmová pravidelnost" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%</b>
+<table class="table table-bordered team_members_results" id="team_members_table">
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>
       <th class="fixed_width_column">{% trans "Po&shy;čet jízd" %}</th>
