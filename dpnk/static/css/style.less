@@ -857,6 +857,14 @@ div.dataTables_filter input {
     padding:@wg*.5;
     text-align:center;
   }
+  .cal_event_trip_from>.fc-content {
+		margin-left: -13px;
+		padding-right: 2px;
+	}
+  .cal_event_trip_to>.fc-content {
+		margin-right: -13px;
+		padding-left: 2px;
+	}
   .fc-event {
     cursor: pointer;
     border:0;
@@ -909,8 +917,10 @@ div.dataTables_filter input {
       background-color: @lightgrey;
   }
   .fc-day-grid-event.cal_event_trip_to{
-    margin-right:@wg;
     padding-right:0;
+    border-right-width: 15px;
+    border-right-color: white;
+    border-right-style: solid;
     &:before {
       left: 100%;
       border: solid transparent;
@@ -940,8 +950,10 @@ div.dataTables_filter input {
     }
   }
   .fc-day-grid-event.cal_event_trip_from {
-    margin-left:@wg;
     padding-left:0;
+    border-left-width: 15px;
+    border-left-color: white;
+    border-left-style: solid;
     &:before {
       left: -34px;
       border: solid transparent;
