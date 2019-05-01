@@ -10,6 +10,7 @@
 @wg:@fsize/16*15;
 @positive:#85e233;
 @negative:@primary;
+@neutral: lightblue;
 
 // Fix for company select, where users were confused if item is not selected
 #hint_id_company.invalid-feedback{
@@ -723,11 +724,6 @@ div.dataTables_filter input {
     background-color: #aaaaaa;
 }
 
-
-.locked-trip {
-    background-color: #9f9f9f !important;
-}
-
 .one-ride-day {
     // background-color: #4f6051 !important;
 }
@@ -895,18 +891,21 @@ div.dataTables_filter input {
   th, td{
     padding:@wg/4 @wg/2;
   }
-  .active-trip-filled {
+  .active-trip-filled, .locked-trip {
     background-color: @positive;
-	 &.cal_event_does_not_count, &.cal_event_not_eco {
-		 background-color: @negative;
-	 }
+    &.cal_event_does_not_count {
+        background-color: @neutral;
+    }
+	  &.cal_event_not_eco {
+		    background-color: @negative;
+	  }
   }
 
   .active-trip-unfilled {
       background-color: @lightgrey;
   }
   .fc-day-grid-event.cal_event_trip_to{
-    margin-right:@wg; 
+    margin-right:@wg;
     padding-right:0;
     &:before {
       left: 100%;
@@ -920,15 +919,20 @@ div.dataTables_filter input {
       border-left-color: @lightgrey;
       border-width: 17px;
     }
-    &.active-trip-filled{
+    &.active-trip-filled, &.locked-trip{
       &:before {
         border-left-color: @positive;
       }
-		&.cal_event_does_not_count, &.cal_event_not_eco {
-			&:before {
-				border-left-color: @negative;
-			}
-		}
+		  &.cal_event_does_not_count{
+          &:before {
+				      border-left-color: @neutral;
+			    }
+      }
+      &.cal_event_not_eco {
+			    &:before {
+				      border-left-color: @negative;
+			    }
+		  }
     }
   }
   .fc-day-grid-event.cal_event_trip_from {
@@ -946,24 +950,28 @@ div.dataTables_filter input {
       border-right-color: @lightgrey;
       border-width: 17px;
     }
-    &.active-trip-filled{
-      &:before {
-        border-right-color: @positive;
-      }
-		&.cal_event_does_not_count, &.cal_event_not_eco {
-			&:before {
-				border-right-color: @negative;
-			}
-		}
+    &.active-trip-filled, &.locked-trip{
+        &:before {
+            border-right-color: @positive;
+        }
+		    &.cal_event_does_not_count {
+ 			      &:before {
+				        border-right-color: @neutral;
+			      }
+        }
+        &.cal_event_not_eco {
+			      &:before {
+				        border-right-color: @negative;
+			      }
+		    }
     }
-
   }
   .wp-event {
     background-color: #ffdcf9;
   }
 
   .cal-vacation {
-      background-color: lightblue;
+      background-color: @neutral;
   }
 
 }
