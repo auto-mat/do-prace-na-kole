@@ -360,7 +360,14 @@ function remove_vacation(info) {
         csrfmiddlewaretoken: "{{ csrf_token }}",
     },
            function(returnedData){
-               days_to_delete = possible_vacation_days.slice(possible_vacation_days.indexOf(startDateString), possible_vacation_days.indexOf(endDateString))
+               var first_to_delete = possible_vacation_days.indexOf(startDateString);
+               var last_to_delete = possible_vacation_days.indexOf(endDateString);
+               if (last_to_delete == -1){
+                   last_to_delete = possible_vacation_days.length;
+               }
+               days_to_delete = possible_vacation_days.slice(
+                   first_to_delete,
+                   last_to_delete)
                displayed_trips = displayed_trips.filter( function (trip) {
                       return days_to_delete.indexOf(trip.trip_date) < 0;
                });

@@ -76,40 +76,48 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
     var possible_vacation_day = null;
     function close_out_vacation_if_needed() {
         if(current_vacation_start) {
-           new_event =  {
-               title: "{% trans 'Dovolená' %}",
-               start: current_vacation_start,
-               end: possible_vacation_day,
-               allDay: true,
-               vacation: true,
-               eventOrder: 'order',
-               order: 1,
-               commute_mode: 'no_work',
-           } 
-           vacation_events.push(new_event);
-           current_vacation_start = null;
-       }
+            var vacation_end = possible_vacation_day;
+            new_event =  {
+                title: "{% trans 'Dovolená' %}",
+                start: current_vacation_start,
+                end: vacation_end,
+                allDay: true,
+                vacation: true,
+                eventOrder: 'order',
+                order: 1,
+                commute_mode: 'no_work',
+            };
+            vacation_events.push(new_event);
+            current_vacation_start = null;
+        }
     }
-    for(i in possible_vacation_days){
-       possible_vacation_day = possible_vacation_days[i];
-       var directions = [];
-       for (i in displayed_trips) {
-           var trip = displayed_trips[i];
-           if(trip.trip_date == possible_vacation_day){
-               directions.push(trip.direction);
-           }
-       }
-       num_trips = 0;
-       for(i in typical_directions) {
-           if(directions.indexOf(typical_directions[i]) != -1){
-              num_trips++;
-           }
-       }
-       if(num_trips == 2){
-          if(!current_vacation_start){
-              current_vacation_start = possible_vacation_day;
-          }
-       } else close_out_vacation_if_needed();
+    var i;
+    for(i=0; i <= possible_vacation_days.length; i++){
+        if(possible_vacation_days[i]){
+            possible_vacation_day = possible_vacation_days[i];
+        }else{
+            // Add one day at end so that vacations can end on last day of competition.
+            // This is because fullcalendar allDay events end on midnight the next day.
+            possible_vacation_day = format_date(add_days(new Date(possible_vacation_day), 1))
+        }
+        var directions = [];
+        for (n in displayed_trips) {
+            var trip = displayed_trips[n];
+            if(trip.trip_date == possible_vacation_day && trip.commuteMode == 'no_work'){
+                directions.push(trip.direction);
+            }
+        }
+        num_trips = 0;
+        for(n in typical_directions) {
+            if(directions.indexOf(typical_directions[n]) != -1){
+                num_trips++;
+            }
+        }
+        if(num_trips >= 2){
+            if(!current_vacation_start){
+                current_vacation_start = possible_vacation_day;
+            }
+        } else close_out_vacation_if_needed();
     }
     close_out_vacation_if_needed();
     successCallback(vacation_events);
