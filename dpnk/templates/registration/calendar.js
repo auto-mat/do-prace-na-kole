@@ -523,6 +523,11 @@ document.addEventListener('DOMContentLoaded', function() {
         eventLimit: true,
         plugins: [ 'interaction', 'dayGrid', 'list' ],
         selectable: true,
+        views: {
+            dayGrid: {
+                eventLimit: 3
+            }
+        },
         defaultView: defaultView,
         rerenderDelay: 50,
         buttonText: {
