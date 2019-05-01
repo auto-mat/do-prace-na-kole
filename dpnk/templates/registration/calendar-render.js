@@ -125,34 +125,39 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
 
 
 function get_wordpress_events(fetchInfo, successCallback, failureCallback){
-    $.getJSON('{{campaign.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}', function ( data ) {
-        used_dates = [];
-        events_by_day = {};
-        for (i in data) {
-            event = data[i];
-            if(typeof event.start_date !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
-                if(!(event.start_date in events_by_day)) {
-                    events_by_day[event.start_date] = [];
-                }
-                events_by_day[event.start_date].push(event);
-            }
-        }
-        events = [];
-        for (day in events_by_day) {
-            for (i in events_by_day[day]) {
-                new_event = {
-                    start: day,
-                    end: add_days(new Date(day), 1),
-                    eventOrder: 'order',
-                    order: 3,
-                    allDay: true,
-                    wp_event: events_by_day[day][i],
-                    title: "{% trans 'Akce' %} ",
-                }
-                events.push(new_event);
-            }
-        }
-        successCallback(events);
+    $.ajax({
+       dataType: "json",
+       url: '{{campaign.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}',
+       success: function ( data ) {
+           used_dates = [];
+           events_by_day = {};
+           for (i in data) {
+               event = data[i];
+               if(typeof event.start_date !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
+                   if(!(event.start_date in events_by_day)) {
+                       events_by_day[event.start_date] = [];
+                   }
+                   events_by_day[event.start_date].push(event);
+               }
+           }
+           events = [];
+           for (day in events_by_day) {
+               for (i in events_by_day[day]) {
+                   new_event = {
+                       start: day,
+                       end: add_days(new Date(day), 1),
+                       eventOrder: 'order',
+                       order: 3,
+                       allDay: true,
+                       wp_event: events_by_day[day][i],
+                       title: "{% trans 'Akce' %} ",
+                   }
+                   events.push(new_event);
+               }
+           }
+           successCallback(events);
+       },
+       timeout: 1000
     }).fail(function(data){
        successCallback([]);
     });
