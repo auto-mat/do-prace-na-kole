@@ -4,8 +4,8 @@
 {% include "registration/util.js" %}
 {% include "leaflet/_leaflet_draw_i18n.js" %}
 {% get_current_language as current_language_code %}
-L.drawLocal.draw.toolbar.finish.text="{% trans 'Finish' %}"; // TODO move this code to django-leaflet or something
-L.drawLocal.draw.toolbar.finish.title="{% trans 'Finish drawing' %}";
+L.drawLocal.draw.toolbar.finish.text="{% trans 'Uložit' %}";
+L.drawLocal.draw.toolbar.finish.title="{% trans 'Uložit trasu' %}";
 
 var editing = true;
 
