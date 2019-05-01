@@ -308,16 +308,7 @@ function add_vacation(startDate, endDate) {
     startDateString = format_date(startDate);
     endDateString = format_date(add_days(endDate, -1));
     if(possible_vacation_days.indexOf(startDateString) >= 0 && possible_vacation_days.indexOf(endDateString) >= 0){
-        events = full_calendar.getEvents(); // TODO only look at vacation event source
-        for (eid in events) {
-            if (events[eid].extendedProps.vacation) {
-                if (events_overlap(new_event, events[eid])) {
-                    e2 = events[eid]
-                    return;
-                }
-            }
-        }
-        new_event = {
+        var new_event = {
             title: "",
             start: startDate,
             end: endDate,
@@ -337,11 +328,14 @@ function add_vacation(startDate, endDate) {
                   end_date: endDateString,
                },
                success: function(returnedData){
-                  new_event.remove();
-                  for (i in returnedData) {
-                     display_trip(returnedData[i]);
-                  }
-                  redraw_everything_trip_related();
+                   (function (){
+                       var new_event_local = new_event;
+                       new_event_local.remove();
+                       for (i in returnedData) {
+                           display_trip(returnedData[i]);
+                       }
+                       redraw_everything_trip_related();
+                   })()
                },
                fail: function(jqXHR, textStatus, errorThrown) {
                   new_event.remove();
@@ -512,7 +506,6 @@ document.addEventListener('DOMContentLoaded', function() {
            {events: get_wordpress_events, className: "wp-event", id: 4},
         ],
         eventOrder: 'order',
-        selectable: true,
         lang: '{{ current_language_code }}',
         locale: '{{ current_language_code }}',
         height: 'auto',
@@ -535,8 +528,8 @@ document.addEventListener('DOMContentLoaded', function() {
         footer: {
             left: 'dayGridMonth,listMonth',
         },
-        select: function(info) {
-            add_vacation(info.start, info.end);
+        dateClick: function(info) {
+            add_vacation(info.date, add_days(info.date, 1));
         },
         eventRender: eventRender,
         eventClick: eventClick,
