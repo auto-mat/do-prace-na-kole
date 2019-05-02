@@ -50,7 +50,10 @@
         </div>
 
         <div class="cal_heading tip">
-           {% trans "Své jízdy si můžete zapsat do kalendáře nebo pomocí tabulky." %}
+           {% trans "Své jízdy si můžete zapsat do kalendáře nebo zadat pomocí tabulky." %}<br/>
+           {% blocktrans with days=campaign.days_active %}
+           Nezapomeňte, že si své jízdy můžete zapisovat pouze {{ days }} dní zpětně.
+           {% endblocktrans %}
         </div>
 
         <div class="row calendar_chooser">
