@@ -942,14 +942,26 @@ div.dataTables_filter input {
 	  }
   }
 
-  .active-trip-unfilled{
-      background-color: @lightgrey;
+  .active-trip-unfilled {
+      background-color: @negative;
+  }
+  .active-trip-unfilled-vacation{
+      background-color: @neutral;
+      &.cal_event_trip_to:before {
+          border-left-color: @neutral !important;
+      }
+      &.cal_event_trip_from:before {
+          border-right-color: @neutral !important;
+      }
   }
   .locked-trip {
     opacity:.6;
     &:hover{
       opacity:1;
     }
+  }
+  .fc-day-grid-event{
+     height:34px;
   }
   .fc-day-grid-event.cal_event_trip_to{
     padding-right:0;
@@ -965,7 +977,7 @@ div.dataTables_filter input {
       position: absolute;
       pointer-events: none;
       border-color: rgba(194, 225, 245, 0);
-      border-left-color: @lightgrey;
+      border-left-color: @negative;
       border-width: 17px;
     }
     &.active-trip-filled, &.locked-trip{
@@ -998,7 +1010,7 @@ div.dataTables_filter input {
       position: absolute;
       pointer-events: none;
       border-color: rgba(194, 225, 245, 0);
-      border-right-color: @lightgrey;
+      border-right-color: @negative;
       border-width: 17px;
     }
     &.active-trip-filled, &.locked-trip{
