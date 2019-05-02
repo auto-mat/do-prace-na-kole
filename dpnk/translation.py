@@ -29,11 +29,13 @@ class CommuteModeTranslationOptions(TranslationOptions):
         'name',
         'tooltip',
         'add_command',
+        'choice_description',
     )
     empty_values = {
         'name': None,
         'tooltip': None,
         'add_command': None,
+        'choice_description': None,
     }
 
 

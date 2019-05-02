@@ -31,7 +31,7 @@ $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 function redraw_shopping_cart(){
     full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();
-    $('#trip-shopping-cart').text(decode_tooltip(commute_mode, ""));
+    $('#trip-shopping-cart').html(decode_description_string(commute_modes[commute_mode].choice_description, ""));
 }
 
 function get_placeholder_events(fetchInfo, successCallback, failureCallback){
@@ -224,8 +224,8 @@ function show_tooltip(el, title) {
     $(document.body).tooltip({ selector: "[title]" });
 }
 
-function decode_tooltip(commute_mode, direction) {
-    return commute_modes[commute_mode].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}")
+function decode_description_string(description_string, direction) {
+    return description_string.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}")
 }
 
 function show_loading_icon_on_event(info) {
@@ -261,8 +261,12 @@ function eventRender(info) {
        show_loading_icon_on_event(info);
     }
     if (exp.placeholder) {
+<<<<<<< HEAD
         add_icon('fa fa-plus xs', 'right')
         show_tooltip(info.el, decode_tooltip(get_selected_commute_mode(), exp.direction))
+=======
+        show_tooltip(info.el, decode_description_string(commute_modes[get_selected_commute_mode()].add_command, exp.direction))
+>>>>>>> 71c7e524... cal: split choice description and tooltip in Commute modes
     } else if (exp.direction == 'trip_to'){
         show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
     } else if (exp.direction == 'trip_from') {
