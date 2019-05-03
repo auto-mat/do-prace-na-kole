@@ -373,8 +373,25 @@ class SubsidiaryBoxInline(NestedTabularInline):
     )
 
 
+class DeliveryBatchResource(resources.ModelResource):
+    box_count = resources.Field()
+    tshirt_sizes = resources.Field()
+
+    class Meta:
+        model = models.DeliveryBatch
+        fields = ('note', 'created', 'campaign__name', 'dispatched')
+        export_order = ('note', 'created', 'campaign__name', 'dispatched', 'box_count', 'tshirt_sizes')
+
+    def dehydrate_box_count(self, db):
+        return db.box_count()
+
+    def dehydrate_tshirt_sizes(self, db):
+        t_shirts = db.t_shirt_size_counts()
+        return ';'.join('%s;%i' % (k, v) for k, v in t_shirts)
+
+
 @admin.register(models.DeliveryBatch)
-class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
+class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
     list_display = [
         'id',
         'campaign',
@@ -407,6 +424,7 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
     inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
+    resource_class = DeliveryBatchResource
 
     def get_list_display(self, request):
         for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
@@ -428,16 +446,7 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
     package_transaction_count.short_description = _("Trik k odeslání")
 
     def t_shirt_sizes(self, obj):
-        if not obj.pk:
-            package_transactions = obj.campaign.user_attendances_for_delivery()
-            t_shirts = models.TShirtSize.objects.filter(userattendance__in=package_transactions)
-            t_shirts = t_shirts.annotate(size_count=Count('userattendance'))
-        else:
-            package_transactions = models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj)
-            t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions)
-            t_shirts = t_shirts.annotate(size_count=Count('packagetransaction'))
-        t_shirts = t_shirts.values_list('name', 'size_count')
-        return format_html_join(mark_safe("<br/>"), "{}: {}", t_shirts)
+        return format_html_join(mark_safe("<br/>"), "{}: {}", obj.t_shirt_size_counts())
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):
