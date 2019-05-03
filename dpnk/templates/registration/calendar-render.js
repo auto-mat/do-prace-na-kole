@@ -51,7 +51,7 @@ function get_placeholder_events(fetchInfo, successCallback, failureCallback){
        for(i in typical_directions) {
            if(directions.indexOf(typical_directions[i]) == -1){
                new_event =  {
-                   title: "+",
+                   title: "",
                    start: active_day,
                    end: add_days(new Date(active_day), 1),
                    order: i,
@@ -247,24 +247,29 @@ function eventRender(info) {
     }
 
     // Add buttons and icons to events
-    var right_icon = null;
+    function add_icon(icon_class, side) {
+        var icon = document.createElement("i");
+        icon.className=icon_class;
+        if (side == 'right') {
+            $(info.el.firstChild).append(icon);
+        } else {
+            $(info.el.firstChild).prepend(icon);
+        }
+    }
     exp = info.event.extendedProps
     if (exp.loading) {
        show_loading_icon_on_event(info);
     }
     if (exp.placeholder) {
+        add_icon('fa fa-plus xs', 'right')
         show_tooltip(info.el, decode_tooltip(get_selected_commute_mode(), exp.direction))
     } else if (exp.direction == 'trip_to'){
         show_tooltip(info.el, " {% trans 'Do práce' %} " + info.event.title)
     } else if (exp.direction == 'trip_from') {
         show_tooltip(info.el, " {% trans 'Domů' %} " + info.event.title)
     } else if (exp.wp_event) {
-        right_icon = document.createElement("i");
-        right_icon.className='fa fa-glass-cheers xs';
+        add_icon('fa fa-glass-cheers xs', 'right');
         show_tooltip(info.el, $("<textarea/>").html(exp.wp_event.title).text())
-    }
-    if (right_icon) {
-        $(info.el.firstChild).append(right_icon);
     }
     if (exp.commute_mode) {
         var mode_icon = document.createElement("div");
