@@ -223,6 +223,16 @@ function decode_tooltip(commute_mode, direction) {
     return commute_modes[commute_mode].add_command.replace("\{\{distance\}\}", get_selected_distance_string()).replace("\{\{direction\}\}", direction == 'trip_to' ? "{% trans 'do práce' %}" : "{% trans 'domu' %}")
 }
 
+function show_loading_icon_on_event(info) {
+    el = info.el
+    while (el.firstChild.firstChild) {
+        el.firstChild.removeChild(el.firstChild.firstChild);
+    }
+    var loading_icon = document.createElement("i");
+    loading_icon.className = 'fa fa-spinner fa-spin';
+    el.firstChild.appendChild(loading_icon);
+}
+
 function eventRender(info) {
     // Remove time column from Agenda view
     if(info.el.children[0].classList.contains("fc-list-item-time")){

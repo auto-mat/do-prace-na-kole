@@ -15,16 +15,6 @@ function events_overlap(event1, event2) {
     }
 }
 
-function show_loading_icon_on_event(info) {
-    el = info.el
-    while (el.firstChild) {
-        el.removeChild(el.firstChild);
-    }
-    var loading_icon = document.createElement("i");
-    loading_icon.className = 'fa fa-spinner fa-spin';
-    el.appendChild(loading_icon);
-}
-
 function get_trip_url(event) {
     commute_mode = event.extendedProps.commute_mode;
     cmo = commute_modes[commute_mode];
