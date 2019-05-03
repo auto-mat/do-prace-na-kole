@@ -22,7 +22,7 @@
             "searchCols": [
                 { "search": searchString },
             ],
-            "dom": "<'row'<'col-md-4'l><'col-md-4 search-company-div-{{ competition.id }}'><'col-md-4'f>>" +
+            "dom": "<'row tableheading'<'col-md-4'l><'col-md-4 search-company-div-{{ competition.id }}'><'col-md-4'f>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-5'i><'col-sm-7'p>>",
             "language": {
@@ -42,7 +42,7 @@
     });
     </script>
 
-    <table id="results-table-{{ competition.slug }}" class="table datatable table-condensed table-striped table-bordered">
+    <table id="results-table-{{ competition.slug }}" class="competition_results_table table datatable table-condensed table-striped table-bordered">
         <thead>
             <tr>
                 {% for col in competition.get_columns %}

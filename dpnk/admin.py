@@ -603,6 +603,7 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
         'age_group',
         'telephone_opt_in',
         'mailing_opt_in',
+        'default_rides_view',
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = [
