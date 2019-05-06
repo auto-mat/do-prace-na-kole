@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-16 17:56+0200\n"
-"PO-Revision-Date: 2018-05-14 12:56+0200\n"
+"POT-Creation-Date: 2019-05-06 14:19+0200\n"
+"PO-Revision-Date: 2019-05-06 13:52+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -62,7 +62,7 @@ msgstr ""
 
 #: stravasync/templates/stravasync/about.html:24
 msgid "Našli jsme následující aktivity:"
-msgstr ""
+msgstr "We found the following activities:"
 
 #: stravasync/templates/stravasync/about.html:32
 msgid "Synchronizace selhala"
