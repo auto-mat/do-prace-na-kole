@@ -899,6 +899,16 @@ div.dataTables_filter input {
       filter: saturate(180%) contrast(120%);
     }
   }
+  .fc-list-item:hover .fc-widget-content {
+     background-color: inherit !important;
+     /*
+     .anim;
+     filter: saturate(180%) contrast(120%);
+     &:before {
+        right: -29px;
+     }
+     */
+  }
   .locked-day{
     background-image: linear-gradient(135deg, #f3ebff 3.85%, #ffffff 3.85%, #ffffff 50%, #f3ebff 50%, #f3ebff 53.85%, #ffffff 53.85%, #ffffff 100%);
     background-size: 18.38px 18.38px;
@@ -947,10 +957,10 @@ div.dataTables_filter input {
   }
   .active-trip-unfilled-vacation{
       background-color: @neutral;
-      &.cal_event_trip_to:before {
+      &.cal_event_trip_to:before, &.cal_event_trip_to>.fc-widget-content:before {
           border-left-color: @neutral !important;
       }
-      &.cal_event_trip_from:before {
+      &.cal_event_trip_from:before, &.cal_event_trip_from>.fc-widget-content:before {
           border-right-color: @neutral !important;
       }
   }
@@ -963,12 +973,15 @@ div.dataTables_filter input {
   .fc-day-grid-event{
      height:34px;
   }
-  .fc-day-grid-event.cal_event_trip_to{
+  .fc-list-item{
+     height:32px;
+  }
+  .cal_event_trip_to{
     padding-right:0;
     border-right-width: 15px;
     border-right-color: white;
     border-right-style: solid;
-    &:before {
+    &.fc-day-grid-event:before, &>.fc-widget-content:before {
       left: 100%;
       border: solid transparent;
       content: " ";
@@ -979,29 +992,39 @@ div.dataTables_filter input {
       border-color: rgba(194, 225, 245, 0);
       border-left-color: @negative;
       border-width: 17px;
+      font-size: 0px;
     }
-    &.active-trip-filled, &.locked-trip{
-      &:before {
+    &>.fc-widget-content:before {
+      border-width: 15px;
+      left: auto;
+      right: -15px;
+      margin-top: -3px; 
+    }
+    &.fc-list-item{
+       border-right-width: 28px;
+    }
+    &.active-trip-filled, &.locked-trip {
+      &:before, &>.fc-widget-content:before {
         border-left-color: @positive;
       }
-		  &.cal_event_does_not_count{
-          &:before {
+		  &.cal_event_does_not_count {
+          &:before, &>.fc-widget-content:before {
 				      border-left-color: @neutral;
 			    }
       }
       &.cal_event_not_eco {
-			    &:before {
+			    &:before, &>.fc-widget-content:before {
 				      border-left-color: @negative;
 			    }
 		  }
     }
   }
-  .fc-day-grid-event.cal_event_trip_from {
+  .cal_event_trip_from {
     padding-left:0;
     border-left-width: 15px;
     border-left-color: white;
     border-left-style: solid;
-    &:before {
+    &.fc-day-grid-event:before, &>.fc-widget-content:before {
       left: -34px;
       border: solid transparent;
       content: " ";
@@ -1012,18 +1035,27 @@ div.dataTables_filter input {
       border-color: rgba(194, 225, 245, 0);
       border-right-color: @negative;
       border-width: 17px;
+      font-size: 0px;
+    }
+    &>.fc-widget-content:before {
+      border-width: 15px;
+      left: -15px;
+      margin-top: -3px; 
+    }
+    &.fc-list-item{
+       border-left-width: 28px;
     }
     &.active-trip-filled, &.locked-trip{
-        &:before {
+        &:before, &>.fc-widget-content:before {
             border-right-color: @positive;
         }
 		    &.cal_event_does_not_count {
- 			      &:before {
+            &:before, &>.fc-widget-content:before {
 				        border-right-color: @neutral;
 			      }
         }
         &.cal_event_not_eco {
-			      &:before {
+            &:before, &>.fc-widget-content:before {
 				        border-right-color: @negative;
 			      }
 		    }
