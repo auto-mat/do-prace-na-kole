@@ -8,6 +8,7 @@ directions = {
     'there': 'trip_to',
     'to': 'trip_to',
     'back': 'trip_from',
+    'from': 'trip_from',
 }
 
 hashtag_to_by_lang = {
