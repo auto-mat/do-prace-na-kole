@@ -83,7 +83,7 @@
       {% endscribble %}
    </th>
 </tr>
-{% include "./rides_view_switcher.html" %}
+{% include "./rides_view_switcher.html" with page="table" %}
 </table>
 <form id="rides-form" name="calendar" method="POST" class="dirty-check submit-once-form">
 {% csrf_token %}

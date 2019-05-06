@@ -628,6 +628,15 @@ table.competition_results_table, .tableheading{
       background-color:darken(@primary, 5%);
     }
   }
+  &.btn-secondary {
+      color: #000;
+      background-color: @neutral;
+      .anim2;
+      &:hover{
+          .anim;
+          background-color:darken(@neutral, 15%);
+      }
+  }
   &.google, &.facebook{
     display:inline-block;
     background-color:@ternary;
