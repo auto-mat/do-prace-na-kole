@@ -23,7 +23,7 @@
             {% trans "Zpráva pro nejlepšího týmového hráče:" %}
           {% endif %}
           {{ user_attendance.get_random_motivation_message.message|safe }}
-          {% if user_attendance.get_frequency_percentage == 100 %}
+          {% if user_attendance.team.get_frequency_percentage == 100 %}
             {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
           {% endif %}
         </div>
