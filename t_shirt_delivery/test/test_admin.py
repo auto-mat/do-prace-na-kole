@@ -213,7 +213,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Velikosti trik:</label>"
-            "<div class='readonly'></div>"
+            "<div class='readonly'>Testing t-shirt size: 0</div>"
             "</div>",
             html=True,
         )
