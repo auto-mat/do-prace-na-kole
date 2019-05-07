@@ -126,14 +126,18 @@ function on_route_select_{{cm.slug}}() {
 
 function set_initial_tab() {
     for(i in displayed_trips) {
-        $("#nav-" + displayed_trips[i].commuteMode + "-tab").tab('show');
-        return;
+        var trip = displayed_trips[i];
+        if(trip.commuteMode!= "no_work") {
+            $("#nav-" + trip.commuteMode + "-tab").tab('show');
+            $("#nav-" + trip.commuteMode + "-tab").trigger('click');
+            return;
+        }
     }
 }
 
 function load_initial_trips() {
     for(i in displayed_trips) {
-        trip = displayed_trips[i]
+        trip = displayed_trips[i];
         {% for cm in commute_modes %}
         {% if cm.does_count and cm.eco %}
         if(trip.commuteMode == '{{cm.slug}}' && get_selected_commute_mode() == '{{cm.slug}}') {
@@ -382,7 +386,12 @@ function remove_vacation(info) {
 }
 
 function get_selected_commute_mode() {
-    return $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
+    try {
+        return $("div#nav-commute-modes a.active")[0].hash.substr("#tab-for-".length);
+    } catch (e) {
+        console.log(e);
+        return "bicycle";
+    }
 }
 
 function get_selected_distance() {

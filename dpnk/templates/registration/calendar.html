@@ -61,7 +61,7 @@
             <div class="col-12 col-sm-3">
                 <div class="nav nav-tabs" id="nav-commute-modes" role="tablist">
                     {% for cm in commute_modes %}
-                        <a class="nav-item nav-link {% if cm.slug == 'bicycle' %}active{% endif %}" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
+                        <a class="nav-item nav-link" id="nav-{{cm.slug}}-tab" data-toggle="tab" role="tab" aria-controls="nav-{{cm.slug}}" href="#tab-for-{{cm.slug}}">
                             {{cm.button_html | safe }}
                         </a>
                     {% endfor %}
