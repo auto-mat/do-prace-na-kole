@@ -234,7 +234,7 @@ function reload_route_options() {
 function show_tooltip(el, title) {
     el.setAttribute("title", title)
     el.setAttribute("data-toggle", "tooltip")
-    el.setAttribute("data-placement", "left")
+    el.setAttribute("data-placement", "bottom")
     $(document.body).tooltip({ selector: "[title]" });
 }
 
