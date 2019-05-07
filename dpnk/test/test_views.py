@@ -2496,7 +2496,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(
             response,
             '<span class="type-string">Vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company '
-            'pro cesty s prostředky Kolo, Chůze/běh</span>',
+            'pro cesty s prostředky Kolo, Pěšky</span>',
             html=True,
         )
         self.assertContains(response, '<p>1. místo z 1 organizací</p>', html=True)
@@ -2511,7 +2511,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('length_competitions'))
         self.assertContains(
             response,
-            '<span class="type-string">Soutěž na vzdálenost jednotlivců ve městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</span>',
+            '<span class="type-string">Soutěž na vzdálenost jednotlivců ve městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>',
             html=True,
         )
 
@@ -2525,7 +2525,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(
             response,
             '<span class="type-string">Soutěž na vzdálenost jednotlivců  '
-            've městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</span>',
+            've městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>',
             html=True,
         )
 
