@@ -2519,7 +2519,7 @@ msgstr "English"
 #: dpnk/models/user_profile.py:62
 #: dpnk/templates/registration/rides_view_switcher.html:5
 msgid "Kalendář"
-msgstr "Calender"
+msgstr "Calendar"
 
 #: dpnk/models/user_profile.py:63
 #: dpnk/templates/registration/rides_view_switcher.html:8
@@ -3037,12 +3037,12 @@ msgid ""
 msgstr ""
 "\n"
 "Even before the competition starts you can put your planned holiday into the "
-"calendar so yor sunny days at the beach won’t be throwing shade on Your "
+"calendar so your sunny days at the beach won’t be throwing shade on Your "
 "results."
 
 #: dpnk/templates/registration/calendar.html:53
 msgid "Své jízdy si můžete zapsat do kalendáře nebo pomocí tabulky."
-msgstr "You can enter your rides using the calender or via the table."
+msgstr "You can enter your rides using the calendar or via the table."
 
 #: dpnk/templates/registration/calendar.html:82
 msgid "Zobrazit mapu"
@@ -3979,8 +3979,8 @@ msgid "Další nahrané jízdy"
 msgstr "Other uploaded rides"
 
 #: dpnk/templates/registration/rides_view_switcher.html:11
-msgid "Apklikace"
-msgstr "Apps"
+msgid "Aplikace"
+msgstr "Applications"
 
 #: dpnk/templates/registration/team_admin_members.html:27
 msgid "Výsledky členů týmu"
