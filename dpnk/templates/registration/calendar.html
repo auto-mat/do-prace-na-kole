@@ -20,7 +20,10 @@
     <script src="{% static 'bow/leaflet-gpx/gpx.js' %}"></script>
     {{ block.super }}
 {% endblock %}
-    {% block caption %} {%endblock caption %}
+{% block caption %}
+   {% include "./rides_view_switcher.html" with page="calendar" %}
+{% endblock caption %}
+
 {% block form %}
     {% include "registration/leaflet_settings.html" %}
     <p>
@@ -42,8 +45,6 @@
     {% elif interactive_entry_enabled %}
 
         <!-- Editation tools -->
-        {% include "./rides_view_switcher.html" with page="calendar" %}
-
         <div class="main-calendar-container">
         <div class="main-loading-overlay">
             <i class="fa fa-spinner fa-spin main-spinner" id="main-spinner"></i>

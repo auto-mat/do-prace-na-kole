@@ -1,14 +1,13 @@
 {% load i18n %}
 {% load l10n %}
 <div id="edit-method-chooser">
-	  <a href="{% if page == "calendar" %}#calendar{% else %}{% url 'switch_rides_view' %}?rides_view=calendar {% endif %}" class="btn {% if page != "calendar" %}btn-primary{%endif%}" role="button">
+	  <a href="{% if page == "calendar" %}#calendar{% else %}{% url 'switch_rides_view' %}?rides_view=calendar {% endif %}" class="btn {% if page == "calendar" %}btn-outline-primary{%endif%}" role="button">
 		<i class="fa fa-calendar-alt"></i> {% trans 'Kalendář' %}
 	</a>
-	<a href="{% if page == "table" %}#{% else %}{% url 'switch_rides_view' %}?rides_view=table {% endif %}" class="btn {% if page != "table" %}btn-primary{%endif%}" role="button">
+	<a href="{% if page == "table" %}#{% else %}{% url 'switch_rides_view' %}?rides_view=table {% endif %}" class="btn {% if page == "table" %}btn-outline-primary{%endif%}" role="button">
 		<i class="fa fa-th-list"></i> {% trans 'Tabulka' %}
 	</a>
-	<a href="{% url 'application' %}" class="btn btn-secondary" role="button">
+	<a href="{% url 'application' %}" class="btn {% if page == "applications" %}btn-outline-primary{%endif%}" role="button">
 		  <i class="fa fa-mobile-alt"></i> {% trans 'Aplikace' %}
 	</a>
-
 </div>
