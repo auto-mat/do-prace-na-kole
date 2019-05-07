@@ -28,6 +28,11 @@ $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 {%endif%}
 {%endfor%}
 
+function show_message(msg) {
+    $("#message-modal-body").text(msg);
+    $('#message-modal').modal({show:true});
+}
+
 function redraw_shopping_cart(){
     full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();

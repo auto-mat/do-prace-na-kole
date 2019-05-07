@@ -409,10 +409,22 @@ function eventClick(info) {
         return;
     }
     if(info.event.extendedProps.placeholder){
+        var distance = get_selected_distance();
+        var commute_mode = get_selected_commute_mode();
+        if (distance <= 0) {
+            alert("{% trans 'Nejdříve zadejte vzdalenost.' %}")
+            $("#km-"+commute_mode).focus()
+            return;
+        }
+        if (distance > 999) {
+            alert("{% trans 'Vzdalenost nesmí být delší než 999 km. Pokud jste opravdu tak daleko jeli, kontaktujte helpdesk.' %}")
+            $("#km-"+commute_mode).focus()
+            return;
+        }
         var trip = {
            "trip_date": format_date(info.event.start),
            "direction": info.event.extendedProps.direction,
-           "commuteMode": get_selected_commute_mode(),
+           "commuteMode": commute_mode,
         }
         if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
             trip["distanceMeters"] = get_selected_distance() * 1000;

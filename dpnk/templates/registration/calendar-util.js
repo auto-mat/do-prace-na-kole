@@ -1,11 +1,6 @@
 {% load i18n %}
 {% load l10n %}
 
-function show_message(msg) {
-    $("#message-modal-body").text(msg);
-    $('#message-modal').modal({show:true});
-}
-
 function events_overlap(event1, event2) {
     if(event1.end && event2.end) {
         return ((event1.start >= event2.start && event1.start < event2.end) ||
