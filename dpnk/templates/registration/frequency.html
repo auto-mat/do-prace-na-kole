@@ -23,7 +23,7 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
          <table>
             <tr>
                <td style="text-align:center">
-                  {% blocktrans count rides_num=1 %}Máte jednu ekologickou cestu{% plural %}Máte {{ rides_num }} ekologických cest{% endblocktrans %}
+                  {% blocktrans count rides_num=user_attendance.get_rides_count_denorm %}Máte jednu ekologickou cestu{% plural %}Máte {{ rides_num }} ekologických cest{% endblocktrans %}
                </td>
                <td></td>
                <td></td>
