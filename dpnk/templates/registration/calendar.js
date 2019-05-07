@@ -300,7 +300,7 @@ function display_trip(trip, rerender) {
         className: trip_class,
     }
     if (commute_mode.does_count && commute_mode.eco) {
-        new_event.title = display_meters(trip.distanceMeters) + "km";
+        new_event.title = display_meters(trip.distanceMeters) + " km";
     }
     event = full_calendar.addEvent(new_event);
     if(rerender){
