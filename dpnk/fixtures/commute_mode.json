@@ -19,9 +19,9 @@
         "add_command_en": null,
         "add_command_cs": "Zapsat {{distance}} km j\u00edzdy na kolech {{direction}}.",
         "add_command_dsnkcs": null,
-        "choice_description": "Chcete si zapsat: {{distance}} km j\u00edzdy na kolech.<br/><br/>Te\u010f ozna\u010dte kliknut\u00edm v kalend\u00e1\u0159i v\u0161echny dny, kdy m\u011bla aktivn\u00ed ekologick\u00e1 cesta p\u0159ednost p\u0159ed tramvaj\u00ed.",
+        "choice_description": "Chcete si zapsat: {{distance}} km j\u00edzdy na kole, kolob\u011b\u017ece nebo brusl\u00edch.<br/> Te\u010f ozna\u010dte kliknut\u00edm na ikony '+' v kalend\u00e1\u0159i v\u0161echny dny a sm\u011bry, pro kter\u00e9 plat\u00ed tyto \u00fadaje.",
         "choice_description_en": null,
-        "choice_description_cs": "Chcete si zapsat: {{distance}} km j\u00edzdy na kolech.<br/><br/>Te\u010f ozna\u010dte kliknut\u00edm v kalend\u00e1\u0159i v\u0161echny dny, kdy m\u011bla aktivn\u00ed ekologick\u00e1 cesta p\u0159ednost p\u0159ed tramvaj\u00ed.",
+        "choice_description_cs": "Chcete si zapsat: {{distance}} km j\u00edzdy na kole, kolob\u011b\u017ece nebo brusl\u00edch.<br/> Te\u010f ozna\u010dte kliknut\u00edm na ikony '+' v kalend\u00e1\u0159i v\u0161echny dny a sm\u011bry, pro kter\u00e9 plat\u00ed tyto \u00fadaje.",
         "choice_description_dsnkcs": null,
         "does_count": true,
         "eco": true
@@ -47,9 +47,9 @@
         "add_command_en": null,
         "add_command_cs": "Zapsat {{distance}} km b\u011bhu (ch\u016fze) {{direction}}.",
         "add_command_dsnkcs": null,
-        "choice_description": "Chcete si zapsat: {{distance}} km b\u011bhu (ch\u016fze).<br/><br/>Te\u010f ozna\u010dte kliknut\u00edm v kalend\u00e1\u0159i v\u0161echny dny, kdy m\u011bla aktivn\u00ed ekologick\u00e1 cesta p\u0159ednost p\u0159ed tramvaj\u00ed.",
+        "choice_description": "Chcete si zapsat: {{distance}} km b\u011bhu nebo ch\u016fze. <br/>Te\u010f ozna\u010dte kliknut\u00edm na ikony '+' v kalend\u00e1\u0159i v\u0161echny dny a sm\u011bry, pro kter\u00e9 plat\u00ed tyto \u00fadaje.",
         "choice_description_en": null,
-        "choice_description_cs": "Chcete si zapsat: {{distance}} km b\u011bhu (ch\u016fze).<br/><br/>Te\u010f ozna\u010dte kliknut\u00edm v kalend\u00e1\u0159i v\u0161echny dny, kdy m\u011bla aktivn\u00ed ekologick\u00e1 cesta p\u0159ednost p\u0159ed tramvaj\u00ed.",
+        "choice_description_cs": "Chcete si zapsat: {{distance}} km b\u011bhu nebo ch\u016fze. <br/>Te\u010f ozna\u010dte kliknut\u00edm na ikony '+' v kalend\u00e1\u0159i v\u0161echny dny a sm\u011bry, pro kter\u00e9 plat\u00ed tyto \u00fadaje.",
         "choice_description_dsnkcs": null,
         "does_count": true,
         "eco": true
