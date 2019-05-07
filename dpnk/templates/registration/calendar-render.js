@@ -184,6 +184,12 @@ function display_meters(meters){
     return (meters / 1000).toFixed(0).toLocaleString("{{ current_language_code }}")
 }
 
+function format_trip_date(trip_date_string){
+    var trip_date = new Date(trip_date_string);
+    var date_options = { weekday: 'short', month: 'long', day: 'numeric' };
+    return trip_date.toLocaleDateString('default', date_options);
+}
+
 function reload_route_options() {
     displayed_trips.sort(function(a, b) {
         da = Date.parse(a.trip_date);
@@ -204,13 +210,13 @@ function reload_route_options() {
     for(var i in displayed_trips) {
         var trip = displayed_trips[i];
         if (trip.commuteMode == '{{cm.slug}}') {
-            var desc = trip.trip_date + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
+            var desc = format_trip_date(trip.trip_date) + "  " + direction_names[trip.direction] + " (" + display_meters(trip.distanceMeters) + " km)";
             (function () {
                 var local_trip = trip; // Thanks! http://reallifejs.com/the-meat/getting-closure/never-forget/
                 route_options_{{cm.slug}}[desc] = function () {
                     select_old_trip_{{cm.slug}}(local_trip);
                 };
-                route_option_ids_{{cm.slug}}[desc] = "option-{{cm.slug}}" + trip.trip_date + trip.direction;
+                route_option_ids_{{cm.slug}}[desc] = "option-{{cm.slug}}" + format_trip_date(trip.trip_date) + trip.direction;
             })();
        }
     }
