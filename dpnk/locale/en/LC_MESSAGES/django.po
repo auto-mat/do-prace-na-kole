@@ -3978,10 +3978,6 @@ msgstr "Competition rides"
 msgid "Další nahrané jízdy"
 msgstr "Other uploaded rides"
 
-#: dpnk/templates/registration/rides_view_switcher.html:11
-msgid "Aplikace"
-msgstr "Applications"
-
 #: dpnk/templates/registration/team_admin_members.html:27
 msgid "Výsledky členů týmu"
 msgstr "Results of your team colleagues"
