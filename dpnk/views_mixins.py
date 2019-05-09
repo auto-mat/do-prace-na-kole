@@ -84,7 +84,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         _('Ve Vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
                     ),
                 )
-            elif self.user_attendance.is_libero():
+            elif self.user_attendance.is_libero() and self.user_attendance.campaign.phase('registration').is_actual():
                 # TODO: get WP slug for city
                 messages.error(
                     request,
