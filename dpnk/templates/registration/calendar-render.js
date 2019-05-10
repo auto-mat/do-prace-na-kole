@@ -216,7 +216,7 @@ function reload_route_options() {
                 route_options_{{cm.slug}}[desc] = function () {
                     select_old_trip_{{cm.slug}}(local_trip);
                 };
-                route_option_ids_{{cm.slug}}[desc] = "option-{{cm.slug}}" + format_trip_date(trip.trip_date) + trip.direction;
+                route_option_ids_{{cm.slug}}[desc] = "option-{{cm.slug}}" + trip.trip_date + trip.direction;
             })();
        }
     }
