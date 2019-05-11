@@ -187,7 +187,7 @@ function display_meters(meters){
 function format_trip_date(trip_date_string){
     var trip_date = new Date(trip_date_string);
     var date_options = { weekday: 'short', month: 'long', day: 'numeric' };
-    return trip_date.toLocaleDateString('default', date_options);
+    return trip_date.toLocaleDateString('{{ current_language_code }}', date_options);
 }
 
 function reload_route_options() {
