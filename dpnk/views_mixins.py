@@ -183,7 +183,7 @@ class TitleViewMixin(object):
         return context_data
 
 
-class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin):
+class RegistrationPersonalViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -210,6 +210,10 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
                 return reverse(self.registration_phase)
         else:
             return reverse(self.prev_url)
+
+
+class RegistrationViewMixin(MustBeInRegistrationPhaseMixin, RegistrationPersonalViewMixin):
+    pass
 
 
 class UserAttendanceFormKwargsMixin(object):

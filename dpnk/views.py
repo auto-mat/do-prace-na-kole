@@ -103,6 +103,7 @@ from .views_mixins import (
     CampaignFormKwargsMixin,
     CampaignParameterMixin,
     RegistrationMessagesMixin,
+    RegistrationPersonalViewMixin,
     RegistrationViewMixin,
     TitleViewMixin,
     UserAttendanceFormKwargsMixin,
@@ -1081,7 +1082,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
+class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationPersonalViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/profile_update.html'
     form_class = RegistrationProfileUpdateForm
     model = UserProfile

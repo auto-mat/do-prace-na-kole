@@ -71,8 +71,28 @@ class MustBeInRegistrationPhaseMixin(PhaseMixin):
     def dispatch(self, request, *args, **kwargs):
         phase = self.get_phase(request)
 
-        if phase.is_actual() or (getattr(self, 'user_attendance', False) and self.user_attendance.entered_competition()):
+        user_attendance = self.request.user_attendance
+        if not user_attendance:
+            user_attendance = getattr(self, 'user_attendance', False)
+
+        if phase.is_actual() or (user_attendance and user_attendance.entered_competition()):
             return super().dispatch(request, *args, **kwargs)
+
+        if user_attendance and not user_attendance.personal_data_opt_in:
+            raise exceptions.TemplatePermissionDenied(
+                format_html(
+                    _(
+                        "Nemáte potvrzený souhlas se zpracováním osobních údajů. "
+                        "Než budete moci pokračovat v práci se systémem, prosím {aggree_terms}."
+                    ),
+                    aggree_terms=format_html(
+                        "<a href='{}'>{}</a>",
+                        reverse("upravit_profil"),
+                        _('ověřte svůj souhlas'),
+                    ),
+                ),
+                template_name=getattr(self, 'template_name', None),
+            )
 
         if phase.has_started():
             raise exceptions.TemplatePermissionDenied(
