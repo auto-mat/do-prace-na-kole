@@ -17,7 +17,7 @@ class MessagesTest(TestCase):
     def setUp(self):
         self.user_attendance = MagicMock()
         self.user_attendance.get_frequency_percentage.return_value = 65
-        self.user_attendance.campaign.competition_phase.return_value.date_from = datetime.date(2010, 11, 22)
+        self.user_attendance.campaign.competition_phase.return_value.date_from = datetime.date(2010, 11, 18)
         self.user_attendance.get_frequency_rank_in_team.return_value = 2
         self.user_attendance.team.members.return_value.count.return_value = 4
 
