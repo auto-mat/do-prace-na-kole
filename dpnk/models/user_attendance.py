@@ -575,7 +575,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.team.members().order_by(
             F('frequency').desc(nulls_last=True),
             'get_rides_count_denorm',
-        ).filter(frequency__gte=self.frequency).count()
+        ).filter(frequency__gte=self.frequency - 0.000000001).count()
 
     def clean(self):
         if self.team and self.approved_for_team != 'denied':
