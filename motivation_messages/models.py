@@ -101,7 +101,7 @@ class MotivationMessage(models.Model):
         queryset = queryset.filter(Q(frequency_min__isnull=True) | Q(frequency_min__lte=percentage))
         queryset = queryset.filter(Q(frequency_max__isnull=True) | Q(frequency_max__gte=percentage))
 
-        days = (user_attendance.campaign.competition_phase().date_from - today).days
+        days = (today - user_attendance.campaign.competition_phase().date_from).days
         queryset = queryset.filter(Q(day_from__isnull=True) | Q(day_from__lte=days))
         queryset = queryset.filter(Q(day_to__isnull=True) | Q(day_to__gte=days))
 
