@@ -576,6 +576,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
             F('frequency').desc(nulls_last=True),
             'get_rides_count_denorm',
         ).filter(frequency__gte=self.frequency - 0.000000001).count()
+        # Frequency returned from the ORM is not exactly the same as in DB
+        # (floating point transformations). We need to give it some extra margin to match self.
 
     def clean(self):
         if self.team and self.approved_for_team != 'denied':
