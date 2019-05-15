@@ -24,11 +24,12 @@ from celery import shared_task
 
 import denorm
 
+from dj_fiobank_payments.statement import parse
+
 from django.contrib import contenttypes
 
 from . import email, mailing, util
 from .models import Campaign, Company, Competition, Invoice, Team, UserAttendance, payments_to_invoice
-from .statement import parse
 
 
 @shared_task(bind=True)

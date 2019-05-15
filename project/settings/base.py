@@ -304,6 +304,7 @@ INSTALLED_APPS = (
     'advanced_filters',
     'djcelery_email',
     'django_celery_beat',
+    'dj_fiobank_payments.apps.DjFiobankPaymentsConfig',
     'smmapdfs',
     'secretballot',
     'sitetree',
@@ -666,3 +667,5 @@ DBBACKUP_STORAGE_OPTIONS = {
     'secret_key': os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY'),
     'bucket_name': 'dpnk-dbbackups',
 }
+
+FIOBANK_PAYMENTS_ORDER_MODEL = 'dpnk.Invoice'

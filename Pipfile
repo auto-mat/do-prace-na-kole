@@ -112,6 +112,7 @@ tornado = "<6"
 dj_anonymizer = "*"
 faker = "*"
 django-colorfield = "*"
+dj-fiobank-payments = ">=0.2.1"
 
 [requires]
 python_version = "3.6"
