@@ -243,7 +243,6 @@ class Invoice(StaleSyncMixin, models.Model):
             first = campaign.invoice_sequence_number_first
             last = campaign.invoice_sequence_number_last
             last_transaction = Invoice.objects.filter(
-                campaign=campaign,
                 sequence_number__gte=first,
                 sequence_number__lte=last,
             )
