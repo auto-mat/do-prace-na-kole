@@ -365,17 +365,21 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def get_remaining_rides_count(self):
         """ Return number of rides, that are remaining to the end of competition """
-        competition = self.campaign.competition_phase()
-        days_count = util.days_count(competition, competition.date_to)
-        days_count_till_now = util.days_count(competition, util.today())
+        competition_phase = self.campaign.competition_phase()
+        days_count = util.days_count(competition_phase, competition_phase.date_to)
+        days_count_till_now = util.days_count(competition_phase, util.today())
         return (days_count - days_count_till_now).days * 2
 
     def get_remaining_max_theoretical_frequency_percentage(self):
         """ Return maximal frequency that can be achieved till end of the competition """
+        from .. import results
+
         remaining_rides = self.get_remaining_rides_count()
         rides_count = self.get_rides_count_denorm
-        working_rides_base = self.get_working_rides_base_count()
-        return ((rides_count + remaining_rides) / (working_rides_base + remaining_rides)) * 100
+        competition_phase = self.campaign.competition_phase()
+        working_rides_base = results.get_working_trips_count_without_minimum(self, competition_phase) + remaining_rides
+        working_rides_count = max(working_rides_base, self.campaign.minimum_rides_base)
+        return ((rides_count + remaining_rides) / working_rides_count) * 100
 
     def get_minimum_rides_base_proportional(self):
         from .. import results
