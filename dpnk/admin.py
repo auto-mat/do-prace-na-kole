@@ -1524,6 +1524,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
         CampaignFilter,
         isnull_filter('paid_date', _("Nezaplacené faktury")),
         'company_pais_benefitial_fee',
+        isnull_filter('fio_payments'),
     ]
     search_fields = [
         'company__name',

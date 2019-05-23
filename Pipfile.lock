@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3b471d26597d0678aa590fed77571eb68462892909584772d1aa391502220df7"
+            "sha256": "bc8d531cd7c26c97a1448672ffda26886a704569e81a1cb26e46c21ded5557f7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -148,10 +148,10 @@
         },
         "dj-fiobank-payments": {
             "hashes": [
-                "sha256:b69922c967adfb17f760fe858e45f804e3176a95b8f8d2830079f690d204d524"
+                "sha256:a46e9395b7325b1534f9473f43ed6eda5367289402821440751f9611c9821220"
             ],
             "index": "pypi",
-            "version": "==0.2.1"
+            "version": "==0.3.0"
         },
         "django": {
             "hashes": [
