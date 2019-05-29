@@ -126,7 +126,7 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
       <td></td>
       <td></td>
       <td></td>
-      {% for user_attendance in team_members %}
+      {% for user_attendance in approved_team_members %}
       <td style="text-align:center">
       {{ user_attendance.name }}
       </td>
@@ -136,7 +136,7 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
       <td>Ekologické cesty: </td>
       <td>{{ user_attendance.team.get_rides_count_denorm }}</td>
       <td></td>
-      {% for user_attendance in team_members %}
+      {% for user_attendance in approved_team_members %}
       <td style="text-align:center">
       {% if not forloop.first %}+&nbsp;{% endif %}{{ user_attendance.get_rides_count_denorm }}
       </td>
@@ -146,7 +146,7 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
       <td></td>
       <td><hr style="border-top-color: black;"/></td>
       <td>&nbsp;=</td>
-      <td colspan="{{ team_members.count }}"><hr style="border-top-color: black;"/></td>
+      <td colspan="{{ approved_team_members.count }}"><hr style="border-top-color: black;"/></td>
       <td>&nbsp;=</td>
       <td>
          <span style="color:{% if user_attendance.team.get_frequency_percentage > campaign.minimum_percentage %}green{% else %}red{% endif %}">
@@ -159,7 +159,7 @@ Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkovéh
       <td>Všechny cesty:</td>
       <td>{{ user_attendance.team.get_working_trips_count }}</td>
       <td></td>
-      {% for user_attendance in team_members %}
+      {% for user_attendance in approved_team_members %}
       <td style="text-align:center">
       {% if not forloop.first %}+&nbsp;{% endif %}{{ user_attendance.get_working_rides_base_count }}
       </td>

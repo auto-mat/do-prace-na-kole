@@ -993,6 +993,11 @@ class FrequencyView(OtherTeamMembers):
     template_name = 'registration/frequency.html'
     title = _("Pravidelnost")
 
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['approved_team_members'] = self.user_attendance.team.members()
+        return context_data
+
 
 class CompetitionsRulesView(CampaignFormKwargsMixin, TitleViewMixin, TemplateView):
     title_base = _("Pravidla soutěží")
