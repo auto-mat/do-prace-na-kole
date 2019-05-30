@@ -1715,7 +1715,9 @@ class DiplomaAdmin(PdfSandwichAdmin):
 
 @admin.register(models.DiplomaField)
 class DiplomaFieldAdmin(PdfSandwichFieldAdmin):
-    pass
+    list_filter = (
+        'pdfsandwich_type__name',
+    )
 
 
 @admin.register(models.TeamDiploma)
