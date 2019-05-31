@@ -53,4 +53,8 @@ CREATE OR REPLACE FUNCTION has_longer_section_than(line geometry, max_length int
 END;
 $$ LANGUAGE plpgsql;
 
-create table dpnk_gpxfile_anonymized_avg as select the_geom, st_length(the_geom::geography), st_numpoints(the_geom) campaign_id, id from dpnk_gpxfile_anonymized where not has_longer_section_than(the_geom, 1000);
+drop table dpnk_gpxfile_anonymized_avg;
+create table dpnk_gpxfile_anonymized_avg
+       as select the_geom, st_length(the_geom::geography), st_numpoints(the_geom) campaign_id, id
+       from dpnk_gpxfile_anonymized
+       where not has_longer_section_than(the_geom, 1000);
