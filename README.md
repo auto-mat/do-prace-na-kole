@@ -19,5 +19,12 @@ Skript na vytvoení anonimizovaných tras z DPNK
 ![](screenshots/screenshot_4.png)
 13. Finally, on the "Publishing" tab select "dpnk:gpxtrack" as the default style.
 ![](screenshots/screenshot_5.png)
-14. The last step is updating [the code](https://github.com/auto-mat/prahounakole/blob/master/apps/cyklomapa/static/js/mapa.js) to include the new layer and publish the changes to the server.
+14. Update [the code](https://github.com/auto-mat/prahounakole/blob/master/apps/cyklomapa/static/js/mapa.js) to include the new layer and publish the changes to the server.
+15. Go to https://mapa.prahounakole.cz/admin/ and add a new "Překryvné vrstva"
+![](screenshots/screenshot_6.png)
+16. Set the "Název v URL" to the slug configured in the javascript and uncheck "Defantě zapnuto"
+![](screenshots/screenshot_7.png)
+17. Go to "Map presets" and select "Dopravní heatmapa"
+![](screenshots/screenshot_8.png)
+18. Add the new "překryvná vrstva"
 
