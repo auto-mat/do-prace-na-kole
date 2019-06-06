@@ -231,9 +231,21 @@ class Team(models.Model):
     def get_frequency_percentage(self):
         return (self.frequency or 0) * 100
 
-    def get_length(self):
+    def _get_length(self):
         from .. import results
-        return results.get_team_length(self, self.campaign.phase("competition"))[2]
+        return results.get_team_length(self, self.campaign.phase("competition"))
+
+    def get_length(self):
+        """
+        Get total distance traveled by all members.
+        """
+        return self._get_length()[0]
+
+    def get_average_length(self):
+        """
+        Get total distance traveled by all members divided by the number of team members.
+        """
+        return self._get_length()[2]
 
     @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
