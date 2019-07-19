@@ -98,6 +98,7 @@ from .forms import (
     UserProfileRidesUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
+from .models.trip import distance_all_modes
 from .rest import TripSerializer
 from .views_mixins import (
     CampaignFormKwargsMixin,
@@ -1660,41 +1661,6 @@ class TeamMembers(
         return context_data
 
 
-def distance_all_modes(trips):
-    return trips.filter(commute_mode__eco=True, commute_mode__does_count=True).aggregate(
-        distance__sum=Coalesce(Sum("distance"), 0.0),
-        count__sum=Coalesce(Count("id"), 0),
-        count_bicycle=Sum(
-            Case(
-                When(commute_mode__slug='bicycle', then=1),
-                output_field=IntegerField(),
-                default=0,
-            ),
-        ),
-        distance_bicycle=Sum(
-            Case(
-                When(commute_mode__slug='bicycle', then=F('distance')),
-                output_field=FloatField(),
-                default=0,
-            ),
-        ),
-        count_foot=Sum(
-            Case(
-                When(commute_mode__slug='by_foot', then=1),
-                output_field=IntegerField(),
-                default=0,
-            ),
-        ),
-        distance_foot=Sum(
-            Case(
-                When(commute_mode__slug='by_foot', then=F('distance')),
-                output_field=FloatField(),
-                default=0,
-            ),
-        ),
-    )
-
-
 def distance(trips):
     return distance_all_modes(trips)['distance__sum'] or 0
 
@@ -1795,20 +1761,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         campaign_slug = self.request.subdomain
         context_data['campaign_slug'] = campaign_slug
-        cities = City.objects.\
-            filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign__slug=campaign_slug).\
-            annotate(competitor_count=Count('subsidiary__teams__users')).\
-            order_by('-competitor_count')
-        for city in cities:
-            city.distances = distance_all_modes(
-                models.Trip.objects.filter(
-                    user_attendance__payment_status='done',
-                    user_attendance__team__subsidiary__city=city,
-                    user_attendance__campaign__slug=campaign_slug,
-                ),
-            )
-            city.emissions = util.get_emissions(city.distances['distance__sum'])
-        context_data['cities'] = cities
+        context_data['cities'] = models.CityInCampaign.objects.filter(campaign__slug=campaign_slug)
         context_data['without_city'] =\
             UserAttendance.objects.\
             filter(payment_status='done', campaign__slug=campaign_slug, team=None)

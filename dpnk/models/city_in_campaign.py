@@ -19,10 +19,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from cache_utils.decorators import cached
+
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from .city import City
+from .trip import Trip, distance_all_modes
+from .user_attendance import UserAttendance
+
+from dpnk.util import get_emissions
 
 
 class CityInCampaign(models.Model):
@@ -52,6 +58,29 @@ class CityInCampaign(models.Model):
         blank=False,
         default=True,
     )
+
+    @cached(60)
+    def competitors(self):
+        return UserAttendance.objects.filter(
+            campaign=self.campaign,
+            team__subsidiary__city=self.city,
+            payment_status='done',
+        )
+
+    @property
+    def name(self):
+        return self.city.name
+
+
+    def competitor_count(self):
+        return len(self.competitors())
+
+    @cached(60)
+    def distances(self):
+        return distance_all_modes(Trip.objects.filter(user_attendance__in=self.competitors()))
+
+    def emissions(self):
+        return get_emissions(self.distances()['distance__sum'])
 
     def __str__(self):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
