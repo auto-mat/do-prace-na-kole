@@ -147,6 +147,33 @@ class CityAdmin(LeafletGeoAdmin):
     list_filter = ('cityincampaign__campaign',)
 
 
+@admin.register(models.CityInCampaign)
+class CityInCampaignAdmin(RelatedFieldAdmin):
+    list_display = (
+        'name',
+    )
+    list_filter = (
+        CampaignFilter,
+    )
+    actions = (
+        make_pdfsandwich,
+    )
+
+
+@admin.register(models.CityInCampaignDiploma)
+class CityInCampaignDiplomaAdmin(PdfSandwichAdmin):
+    search_fields = (
+        'obj__name',
+    )
+
+
+@admin.register(models.CityInCampaignDiplomaField)
+class CityInCampaignDiplomaFieldAdmin(PdfSandwichFieldAdmin):
+    list_filter = (
+        'pdfsandwich_type__name',
+    )
+
+
 class DontValidateCompnayFieldsMixin(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

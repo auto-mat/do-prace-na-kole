@@ -45,8 +45,7 @@ from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
-from django.db.models import BooleanField, Case, Count, F, FloatField, IntegerField, Q, Sum, When
-from django.db.models.functions import Coalesce
+from django.db.models import BooleanField, Case, Q, When
 from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render

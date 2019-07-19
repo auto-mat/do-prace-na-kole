@@ -24,11 +24,12 @@ from cache_utils.decorators import cached
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from dpnk.util import get_emissions
+
 from .city import City
+from .city_in_campaign_diploma import CityInCampaignDiploma
 from .trip import Trip, distance_all_modes
 from .user_attendance import UserAttendance
-
-from dpnk.util import get_emissions
 
 
 class CityInCampaign(models.Model):
@@ -59,6 +60,10 @@ class CityInCampaign(models.Model):
         default=True,
     )
 
+    @property
+    def name(self):
+        return self.city.name
+
     @cached(60)
     def competitors(self):
         return UserAttendance.objects.filter(
@@ -66,11 +71,6 @@ class CityInCampaign(models.Model):
             team__subsidiary__city=self.city,
             payment_status='done',
         )
-
-    @property
-    def name(self):
-        return self.city.name
-
 
     def competitor_count(self):
         return len(self.competitors())
@@ -84,3 +84,8 @@ class CityInCampaign(models.Model):
 
     def __str__(self):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
+
+    sandwich_model = CityInCampaignDiploma
+
+    def get_sandwich_type(self):
+        return self.campaign.city_in_campaign_diploma_sandwich_type

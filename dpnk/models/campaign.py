@@ -321,6 +321,14 @@ class Campaign(Pricable, models.Model):
         default='',
         on_delete=models.SET_NULL,
     )
+    city_in_campaign_diploma_sandwich_type = models.ForeignKey(
+        PdfSandwichType,
+        related_name='city_in_campaign_diploma_campaign',
+        null=True,
+        blank=True,
+        default='',
+        on_delete=models.SET_NULL,
+    )
 
     def get_language_prefix(self):
         if self.language_prefixes == 'dpnk':

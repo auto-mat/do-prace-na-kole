@@ -32,6 +32,7 @@ from .campaign import Campaign
 from .campaign_type import CampaignType
 from .city import City
 from .city_in_campaign import CityInCampaign
+from .city_in_campaign_diploma import CityInCampaignDiploma, CityInCampaignDiplomaField
 from .commute_mode import CommuteMode
 from .company import Company
 from .company_admin import CompanyAdmin
@@ -61,6 +62,8 @@ __all__ = (
     Campaign,
     CampaignType,
     CityInCampaign,
+    CityInCampaignDiploma,
+    CityInCampaignDiplomaField,
     City,
     CommuteMode,
     Company,
