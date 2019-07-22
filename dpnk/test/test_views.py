@@ -511,6 +511,12 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
     def test_competitor_counts(self):
         city = mommy.make("City", name="Foo city")
         PriceLevelRecipe.make()
+        campaign = models.Campaign.objects.get(slug='testing-campaign')
+        mommy.make(
+            "CityInCampaign",
+            city=city,
+            campaign=campaign,
+        )
         user_attendances = [
             UserAttendancePaidRecipe.make(team=None),
             UserAttendancePaidRecipe.make(
