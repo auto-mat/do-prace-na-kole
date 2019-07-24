@@ -170,7 +170,7 @@ class CityInCampaignDiplomaAdmin(PdfSandwichAdmin):
 @admin.register(models.CityInCampaignDiplomaField)
 class CityInCampaignDiplomaFieldAdmin(PdfSandwichFieldAdmin):
     list_filter = (
-       'pdfsandwich_type__name',
+        'pdfsandwich_type__name',
     )
 
 
