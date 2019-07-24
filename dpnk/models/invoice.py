@@ -45,8 +45,15 @@ from .transactions import Payment, Status
 from .. import invoice_gen, util
 
 
+class DepricatedInvoiceFields:
+    company_pais_benefitial_fee = models.BooleanField(
+        verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
+        default=False,
+    )
+
+
 @with_author
-class Invoice(StaleSyncMixin, AbstractOrder):
+class Invoice(StaleSyncMixin, DepricatedInvoiceFields, AbstractOrder):
     """Faktura"""
     class Meta:
         verbose_name = _(u"Faktura")
@@ -81,10 +88,6 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         default=None,
         null=True,
         blank=True,
-    )
-    company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
-        default=False,
     )
     anonymize = models.BooleanField(
         verbose_name=_("Anonimizovat položky na faktuře"),

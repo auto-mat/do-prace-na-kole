@@ -280,13 +280,8 @@ class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        amount = kwargs['initial']['campaign'].benefitial_admission_fee_company
-        self.fields['company_pais_benefitial_fee'].help_text = format_html(
-            _("Benefiční startovné je {amount} Kč za osobu bez DPH."),
-            amount=amount,
-        )
         return ret_val
 
     class Meta:
         model = Invoice
-        fields = ('company_pais_benefitial_fee', 'order_number', 'create_invoice')
+        fields = ('price_level', 'order_number', 'create_invoice')
