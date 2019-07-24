@@ -163,14 +163,14 @@ class CityInCampaignAdmin(RelatedFieldAdmin):
 @admin.register(models.CityInCampaignDiploma)
 class CityInCampaignDiplomaAdmin(PdfSandwichAdmin):
     search_fields = (
-        'obj__name',
+        'obj__city__name',
     )
 
 
 @admin.register(models.CityInCampaignDiplomaField)
 class CityInCampaignDiplomaFieldAdmin(PdfSandwichFieldAdmin):
     list_filter = (
-        'pdfsandwich_type__name',
+       'pdfsandwich_type__name',
     )
 
 
