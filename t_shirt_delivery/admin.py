@@ -21,7 +21,10 @@ import re
 
 from admin_views.admin import AdminViews
 
-# from adminactions import actions as admin_actions
+try:
+    from adminactions import actions as admin_actions
+except ImportError:
+    pass
 
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
@@ -544,4 +547,7 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin, Nes
 
 
 # register all adminactions
-# admin.site.add_action(admin_actions.merge)
+try:
+    admin.site.add_action(admin_actions.merge)
+except NameError:
+    pass

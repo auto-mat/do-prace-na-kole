@@ -233,7 +233,7 @@ TEMPLATES = [
         },
     },
 ]
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'modeltranslation',
     'admin_view_permission',
     'admin_views',
@@ -299,7 +299,7 @@ INSTALLED_APPS = (
     'daterange_filter',
     'storages',
     'favicon',
-    # 'adminactions',
+    'adminactions',
     'massadmin',
     'advanced_filters',
     'djcelery_email',
@@ -317,7 +317,7 @@ INSTALLED_APPS = (
     'photologue',
     'sortedm2m',
     # 'dj_anonymizer',
-)
+]
 
 ECC_PROVIDER_CODE = "DK"
 ECC_URL_BASE = "http://srv.cycling365.eu/services"
