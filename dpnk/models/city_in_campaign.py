@@ -64,20 +64,24 @@ class CityInCampaign(models.Model):
     def name(self):
         return self.city.name
 
-    @cached(60)
     def competitors(self):
-        return UserAttendance.objects.filter(
-            campaign=self.campaign,
-            team__subsidiary__city=self.city,
-            payment_status='done',
-        )
+        @cached(60)
+        def actually_get_competitors(pk):
+            return UserAttendance.objects.filter(
+                campaign=self.campaign,
+                team__subsidiary__city=self.city,
+                payment_status='done',
+            )
+        return actually_get_competitors(self.pk)
 
     def competitor_count(self):
         return len(self.competitors())
 
-    @cached(60)
     def distances(self):
-        return distance_all_modes(Trip.objects.filter(user_attendance__in=self.competitors()))
+        @cached(60)
+        def actually_get_distances(pk):
+            return distance_all_modes(Trip.objects.filter(user_attendance__in=self.competitors()))
+        return actually_get_distances(self.pk)
 
     def emissions(self):
         return get_emissions(self.distances()['distance__sum'])

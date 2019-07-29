@@ -509,28 +509,39 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
 
     def test_competitor_counts(self):
-        city = mommy.make("City", name="Foo city")
+        city1 = mommy.make("City", name="Foo city")
+        city2 = mommy.make("City", name="Bar city")
         PriceLevelRecipe.make()
         campaign = models.Campaign.objects.get(slug='testing-campaign')
         mommy.make(
             "CityInCampaign",
-            city=city,
+            city=city1,
+            campaign=campaign,
+        )
+        mommy.make(
+            "CityInCampaign",
+            city=city2,
             campaign=campaign,
         )
         user_attendances = [
             UserAttendancePaidRecipe.make(team=None),
             UserAttendancePaidRecipe.make(
-                team__subsidiary__city=city,
+                team__subsidiary__city=city1,
                 user_trips=[mommy.make("Trip", direction="trip_to", distance=2, commute_mode_id=2)],
             ),
             UserAttendancePaidRecipe.make(
-                team__subsidiary__city=city,
+                team__subsidiary__city=city1,
                 user_trips=[mommy.make("Trip", direction="trip_to", distance=3)],
+            ),
+            UserAttendancePaidRecipe.make(
+                team__subsidiary__city=city2,
+                user_trips=[mommy.make("Trip", direction="trip_to", distance=5, commute_mode_id=2)],
             ),
         ]
         for ua in user_attendances:
             ua.save()
         response = self.client.get(reverse('competitor_counts'))
+        print_response(response)
         self.assertContains(
             response,
             "<tr>"
@@ -547,6 +558,20 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         )
         self.assertContains(
             response,
+            "<tr>"
+            "   <td>Bar city</td>"
+            "   <td>1</td>"
+            "   <td>0</td>"
+            "   <td>5.0</td>"
+            "   <td>5.0</td>"
+            "   <td>0</td>"
+            "   <td>1</td>"
+            "   <td>645.0</td>"
+            "</tr>",
+            html=True,
+        )
+        self.assertContains(
+            response,
             "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>",
             html=True,
         )
@@ -554,13 +579,13 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             response,
             "<tr>"
             "   <th>celkem</th>"
-            "   <th>3</th>"
+            "   <th>4</th>"
             "   <th>3,0</th>"
-            "   <th>2,0</th>"
-            "   <th>5,0</th>"
+            "   <th>7,0</th>"
+            "   <th>10,0</th>"
             "   <th>1</th>"
-            "   <th>1</th>"
-            "   <th>645,0</th>"
+            "   <th>2</th>"
+            "   <th>1 290,0</th>"
             "</tr>",
             html=True,
         )

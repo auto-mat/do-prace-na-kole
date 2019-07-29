@@ -19,6 +19,7 @@
 from __future__ import absolute_import
 
 from datetime import timedelta
+from urllib.request import urlopen
 
 from celery import shared_task
 
@@ -159,3 +160,8 @@ def create_invoice_if_needed(self, pk=None, campaign_slug=''):
             company=company,
             campaign=campaign,
         )
+
+
+@shared_task(bind=True)
+def request_page(self, page):
+    urlopen(page)

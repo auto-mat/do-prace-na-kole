@@ -1752,7 +1752,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
     template_name = 'registration/competitor_count.html'
     title = _("Počty soutěžících")
 
-    @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60 * 60))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
