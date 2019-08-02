@@ -46,15 +46,8 @@ from .transactions import Payment, Status
 from .. import invoice_gen, util
 
 
-class DeprecatedInvoiceFields:
-    company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
-        default=False,
-    )
-
-
 @with_author
-class Invoice(StaleSyncMixin, DeprecatedInvoiceFields, AbstractOrder):
+class Invoice(StaleSyncMixin, AbstractOrder):
     """Faktura"""
     class Meta:
         verbose_name = _(u"Faktura")
@@ -291,6 +284,12 @@ class Invoice(StaleSyncMixin, DeprecatedInvoiceFields, AbstractOrder):
     def clean(self):
         if not self.pk and hasattr(self, 'campaign') and not self.payments_to_add().exists():
             raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
+
+    #Deprecated fields
+    company_pais_benefitial_fee = models.BooleanField(
+        verbose_name=_(u"ZAVRHOVANÝ: Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
+        default=False,
+    )
 
 
 def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):

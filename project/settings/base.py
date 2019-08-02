@@ -37,7 +37,6 @@ from model_utils import Choices
 def normpath(*args):
     return os.path.normpath(os.path.abspath(os.path.join(*args)))
 
-
 PROJECT_ROOT = normpath(__file__, "..", "..", "..")
 BASE_DIR = PROJECT_ROOT
 
@@ -304,7 +303,7 @@ INSTALLED_APPS = (
     'advanced_filters',
     'djcelery_email',
     'django_celery_beat',
-    'dj_fiobank_payments.apps.DjFiobankPaymentsConfig',
+    'dj_fiobank_payments',
     'smmapdfs',
     'secretballot',
     'sitetree',
@@ -596,6 +595,9 @@ FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'
 PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
+AWARD_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
+AWARD_LEVEL_CATEGORY_DEFAULT = 'basic'
+
 
 SITETREE_MODEL_TREE_ITEM = 'sitetree_modeltranslation.ModeltranslationTreeItem'
 
