@@ -26,6 +26,7 @@ from author.decorators import with_author
 import denorm
 
 from dj_fiobank_payments.models import AbstractOrder
+from price_level.models import AwardLevel
 
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
@@ -45,7 +46,7 @@ from .transactions import Payment, Status
 from .. import invoice_gen, util
 
 
-class DepricatedInvoiceFields:
+class DeprecatedInvoiceFields:
     company_pais_benefitial_fee = models.BooleanField(
         verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
         default=False,
@@ -53,7 +54,7 @@ class DepricatedInvoiceFields:
 
 
 @with_author
-class Invoice(StaleSyncMixin, DepricatedInvoiceFields, AbstractOrder):
+class Invoice(StaleSyncMixin, DeprecatedInvoiceFields, AbstractOrder):
     """Faktura"""
     class Meta:
         verbose_name = _(u"Faktura")
@@ -67,6 +68,11 @@ class Invoice(StaleSyncMixin, DepricatedInvoiceFields, AbstractOrder):
         verbose_name=_(u"Datum vytvoření"),
         default=datetime.datetime.now,
         null=False,
+    )
+    award_level = models.ForeignKey(
+        AwardLevel,
+        null=True,
+        on_delete=models.SET_NULL,
     )
     exposure_date = models.DateField(
         verbose_name=_(u"Den vystavení daňového dokladu"),

@@ -284,4 +284,4 @@ class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
 
     class Meta:
         model = Invoice
-        fields = ('price_level', 'order_number', 'create_invoice')
+        fields = ('award_level', 'order_number', 'create_invoice')

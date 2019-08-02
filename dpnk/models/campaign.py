@@ -32,7 +32,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
-from price_level.models import Pricable
+from price_level.models import Priceable
 
 from smmapdfs.models import PdfSandwichType
 
@@ -41,7 +41,7 @@ from .user_attendance import UserAttendance
 from .. import util
 
 
-class Campaign(Pricable, models.Model):
+class Campaign(Priceable, models.Model):
     """kampaň"""
 
     class Meta:

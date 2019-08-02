@@ -1496,7 +1496,7 @@ class InvoiceResource(resources.ModelResource):
             'order_number',
             'company__ico',
             'company__dic',
-            'price_level',
+            'award_level',
             'company__address_street',
             'company__address_street_number',
             'company__address_recipient',
@@ -1529,7 +1529,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
         'order_number',
         'company_ico',
         'company_dic',
-        'price_level',
+        'award_level',
         'company_address_street',
         'note',
         'company_admin_telephones',
@@ -1550,7 +1550,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     list_filter = [
         CampaignFilter,
         isnull_filter('paid_date', _("Nezaplacené faktury")),
-        'price_level',
+        'award_level',
         isnull_filter('fio_payments'),
     ]
     search_fields = [
