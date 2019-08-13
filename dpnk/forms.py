@@ -622,22 +622,13 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 format_html(
                     '<span id="payment_amount">{} Kč</span><br/>{}',
                     round(self.user_attendance.admission_fee()),
-                    _("Zaplatím běžné startovné."),
-                ),
-            ), (
-                'pay_beneficiary',
-                format_html(
-                    '{} Kč<br/>{}',
-                    round(self.user_attendance.beneficiary_admission_fee()),
-                    _("Podpořím soutěž benefičním startovným %s Kč.") % (
-                        round(self.user_attendance.beneficiary_admission_fee() - self.user_attendance.admission_fee())
-                    ),
+                    _("jsem mecenáš a poplatek si hradím sám"),
                 ),
             ), (
                 'company',
                 format_html(
                     '0 Kč<br/>{}',
-                    _("Startovné mi platí zaměstnavatel."),
+                    _("jsem mecenáš a poplatek mi hradí zaměstnavatel"),
                 ),
             ),
         ]
@@ -656,8 +647,8 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             (
                 'coupon',
                 format_html(
-                    '? Kč<br/>{}',
-                    _("Chci uplatnit voucher."),
+                    '100/200 Kč<br/>{}',
+                    _("použiju voucher a pak zvolím, kdo hradí platbu (pro výši 200 Kč si zkopírujte kód voucheru SC-VLECAB, pro výši 100 Kč si zkopírujte kód SC-QKELKU, v následujícím kroku kód vložte do pole a pak si budete moci zvolit, kdo poplatek uhradí)."),
                 ),
             ),
         )

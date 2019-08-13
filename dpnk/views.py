@@ -348,7 +348,7 @@ class PaymentTypeView(
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
-    title = _("Děkujeme, že s námi chcete jezdit Do práce na kole!")
+    title = _("Sciday - Platba")
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
