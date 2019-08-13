@@ -304,7 +304,7 @@ INSTALLED_APPS = [
     'advanced_filters',
     'djcelery_email',
     'django_celery_beat',
-    'dj_fiobank_payments.apps.DjFiobankPaymentsConfig',
+    'dj_fiobank_payments',
     'smmapdfs',
     'secretballot',
     'sitetree',
