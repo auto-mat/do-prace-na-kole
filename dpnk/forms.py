@@ -648,7 +648,10 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 'coupon',
                 format_html(
                     '100/200 Kč<br/>{}',
-                    _("použiju voucher a pak zvolím, kdo hradí platbu (pro výši 200 Kč si zkopírujte kód voucheru SC-VLECAB, pro výši 100 Kč si zkopírujte kód SC-QKELKU, v následujícím kroku kód vložte do pole a pak si budete moci zvolit, kdo poplatek uhradí)."),
+                    _("použiju voucher a pak zvolím, kdo hradí platbu"
+                      "  (pro výši 200 Kč si zkopírujte kód voucheru SC-VLECAB,"
+                      " pro výši 100 Kč si zkopírujte kód SC-QKELKU,"
+                      " v následujícím kroku kód vložte do pole a pak si budete moci zvolit, kdo poplatek uhradí)."),
                 ),
             ),
         )
