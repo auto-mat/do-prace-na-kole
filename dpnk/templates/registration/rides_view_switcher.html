@@ -7,7 +7,9 @@
 	<a href="{% if page == "table" %}#{% else %}{% url 'switch_rides_view' %}?rides_view=table {% endif %}" class="btn {% if page == "table" %}btn-outline-primary{%endif%}" role="button">
 		<i class="fa fa-th-list"></i> {% trans 'Tabulka' %}
 	</a>
+  {% if campaign.show_application_links %}
 	<a href="{% url 'application' %}" class="btn {% if page == "applications" %}btn-outline-primary{%endif%}" role="button">
 		  <i class="fa fa-mobile-alt"></i> {% trans 'Aplikace' %}
 	</a>
+  {% endif %}
 </div>
