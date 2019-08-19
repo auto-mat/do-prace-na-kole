@@ -1386,9 +1386,8 @@ class CampaignTypeAdmin(admin.ModelAdmin):
 @admin.register(models.Campaign)
 class CampaignAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'campaign_type',
         'year',
+        'campaign_type',
         'slug',
         'slug_identifier',
         'mailing_list_id',
@@ -1398,14 +1397,92 @@ class CampaignAdmin(admin.ModelAdmin):
         'trip_plus_distance',
         'mailing_list_enabled',
     )
+    fieldsets = (
+        ('Basic settings', {
+            'fields': (
+                'campaign_type',
+                'year',
+                'slug',
+                'slug_identifier',
+                'main_color',
+                'previous_campaign',
+                'sitetree_postfix',
+                'language_prefixes',
+            )
+        }),
+        ('Communications', {
+            'fields': (
+                'email_footer',
+                'mailing_list_id',
+                'mailing_list_type',
+                'mailing_list_enabled',
+            )
+        }),
+        ('Sign up and payment', {
+            'fields': (
+                'extra_agreement_text',
+                'benefitial_admission_fee',
+                'benefitial_admission_fee_company',
+                'free_entry_cases_html',
+                'invoice_sequence_number_first',
+                'invoice_sequence_number_last',
+                'club_membership_integration',
+            )
+        }),
+        ('Trip entry', {
+            'fields': (
+                'days_active',
+                'track_required',
+                'tracks',
+                'recreational',
+                'show_application_links',
+                'minimum_rides_base',
+                'minimum_percentage',
+                'trip_plus_distance',
+            )
+        }),
+        ('Teams', {
+            'fields': (
+                'max_team_members',
+            )
+        }),
+        ('Diplomas', {
+            'fields': (
+                'sandwich_type',
+                'team_diploma_sandwich_type',
+                'city_in_campaign_diploma_sandwich_type',
+            )
+        }),
+        ('Packages and t-shirts', {
+            'fields': (
+                'tracking_number_first',
+                'tracking_number_last',
+                'package_height',
+                'package_width',
+                'package_depth',
+                'package_max_count',
+                'package_weight',
+            )
+        }),
+        ('External web and Organization id', {
+            'fields': (
+                'web',
+                'wp_api_url',
+                'wp_api_date_from',
+                'contact_email',
+            )
+        }),
+    )
     inlines = [
         TShirtSizeInline,
         PhaseInline,
         CityInCampaignInline,
         PriceLevelInline,
     ]
-    prepopulated_fields = {'slug': ('name',)}
-    readonly_fields = ('city_count',)
+    readonly_fields = (
+        'name',
+        'city_count',
+    )
     save_as = True
 
     def city_count(self, obj):
