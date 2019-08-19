@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core import mail
@@ -27,7 +26,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from dpnk import email
-from dpnk.models import Campaign, City, Company, CompanyAdmin, Invoice, Phase, Subsidiary, Team, UserAttendance, UserProfile
+from dpnk.models import Campaign, CampaignType, City, Company, CompanyAdmin, Invoice, Phase, Subsidiary, Team, UserAttendance, UserProfile
 
 from lxml import etree
 
@@ -45,9 +44,13 @@ def language_url_infix(language):
 class TestEmails(TestCase):
     def setUp(self):
         Site.objects.create(domain="dopracenakole.cz", id=123)
+        campaign_type = CampaignType.objects.create(
+            name="Testing campaign",
+        )
         self.campaign = Campaign.objects.create(
-            name="Testing campaign 1",
             slug="dpnk",
+            year=1,
+            campaign_type=campaign_type,
             email_footer="""
                 <p>
                 Soutěž Do práce na kole 2019 pořádá spolek Auto*Mat ve spolupráci s Pavel Bednařík/Olomouc, Brdonoš/Příbram,
@@ -243,7 +246,7 @@ class TestEmails(TestCase):
             self.assertEqual(msg.subject, "[Testing campaign 1] Pozvánka")
         else:
             self.assertEqual(msg.subject, "[Testing campaign 1] Invitation")
-        self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
+        self.assertEqual(msg.from_email, 'kontakt@dopracenakole.cz')
         self.assertEqual(msg.to[0], "email@email.com")
         link = 'https://dpnk.dopracenakole.cz%s/registrace/%s/email@email.com/' % (
             language_url_infix(self.userprofile.language),

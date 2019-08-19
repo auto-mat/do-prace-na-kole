@@ -246,6 +246,7 @@ def campaign_mail(user_attendance, subject, template_path, extra_context={}, ema
         subject=subject,
         body=txt_summary,
         to=[email],
+        from_email=campaign.campaign_type.contact_email,
     )
     email.attach_alternative(message, "text/html")
     email.send(fail_silently=False)

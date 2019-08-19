@@ -38,7 +38,8 @@ import slumber
 class DpnkTagsTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.campaign = mommy.make("Campaign", wp_api_date_from="2017-01-01")
+        campaign_type = mommy.make("CampaignType")
+        self.campaign = mommy.make("Campaign", wp_api_date_from="2017-01-01", campaign_type=campaign_type)
         self.city = mommy.make("City", name="City", slug="test_city")
         self.factory = RequestFactory()
 

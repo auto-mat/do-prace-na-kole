@@ -69,6 +69,10 @@ class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1015, 1115, 2115, 1016]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
+        campaign = self.user_attendance.campaign
+        campaign.year = 1
+        campaign.campaign_type = models.CampaignType.objects.get(name="Testing campaign")
+        campaign.save()
 
 
 @override_settings(
@@ -78,7 +82,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_competition_rules(self):
         address = reverse('competition-rules-city', kwargs={'city_slug': "testing-city"})
         response = self.client.get(address)
-        self.assertContains(response, "Testing campaign - Pravidla soutěží - Testing city")
+        self.assertContains(response, "Testing campaign 1 - Pravidla soutěží - Testing city")
         self.assertContains(response, "Competition vykonnostr rules")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
         self.assertContains(response, "soutěž na vzdálenost týmů  ve městě Testing city pro muže")
@@ -86,7 +90,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_competition_results(self):
         address = reverse('competition-results-city', kwargs={'city_slug': "testing-city"})
         response = self.client.get(address)
-        self.assertContains(response, "Testing campaign - Výsledky soutěží - Testing city")
+        self.assertContains(response, "Testing campaign 1 - Výsledky soutěží - Testing city")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
 
     def test_payment(self):
@@ -653,10 +657,10 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign] Jste firemní koordinátor')
+        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Jste firemní koordinátor')
         msg = mail.outbox[1]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign] Potvrzení registrace firemního koordinátora')
+        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Potvrzení registrace firemního koordinátora')
 
     def test_dpnk_company_admin_registration_existing(self):
         user = models.User.objects.get(username='test1')
@@ -865,6 +869,14 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
+        campaign_type = mommy.make(
+            "CampaignType",
+            slug="test_campaign_type",
+            web="dopracenakole.cz",
+        )
+        self.campaign = self.user_attendance.campaign
+        self.campaign.campaign_type = campaign_type
+        self.campaign.save()
 
     def test_questionnaire_view_unauthenticated(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -1575,7 +1587,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign] Pozvánka')
+        self.assertEqual(str(msg.subject), '[Testing campaign 1] Pozvánka')
 
     def test_dpnk_team_invitation_same_team(self):
         post_data = {
@@ -1587,7 +1599,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test2@test.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign] Jste členem týmu')
+        self.assertEqual(str(msg.subject), '[Testing campaign 1] Jste členem týmu')
 
     def test_dpnk_team_invitation_unknown(self):
         post_data = {
@@ -1599,7 +1611,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
-        self.assertEqual(str(msg.subject), "[Testing campaign] Pozvánka")
+        self.assertEqual(str(msg.subject), "[Testing campaign 1] Pozvánka")
 
     def test_dpnk_team_no_team(self):
         """ Test, that invitation shows warning if the team is not set """
@@ -1930,7 +1942,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign] Máte nového člena')
+        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Máte nového člena')
 
     @patch('dpnk.forms.logger')
     def test_team_out_of_campaign(self, mock_logger):

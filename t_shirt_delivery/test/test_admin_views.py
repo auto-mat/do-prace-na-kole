@@ -36,7 +36,8 @@ class DispatchViewTests(TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
         user = mommy.make("auth.User", is_staff=True)
-        mommy.make("Campaign", slug='testing-campaign')
+        campaign_type = mommy.make("CampaignType")
+        mommy.make("Campaign", slug='testing-campaign', campaign_type=campaign_type)
         self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_bad_format(self):

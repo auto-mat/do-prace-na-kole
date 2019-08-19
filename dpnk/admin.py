@@ -1408,7 +1408,7 @@ class CampaignAdmin(admin.ModelAdmin):
                 'previous_campaign',
                 'sitetree_postfix',
                 'language_prefixes',
-            )
+            ),
         }),
         ('Communications', {
             'fields': (
@@ -1416,7 +1416,7 @@ class CampaignAdmin(admin.ModelAdmin):
                 'mailing_list_id',
                 'mailing_list_type',
                 'mailing_list_enabled',
-            )
+            ),
         }),
         ('Sign up and payment', {
             'fields': (
@@ -1427,7 +1427,7 @@ class CampaignAdmin(admin.ModelAdmin):
                 'invoice_sequence_number_first',
                 'invoice_sequence_number_last',
                 'club_membership_integration',
-            )
+            ),
         }),
         ('Trip entry', {
             'fields': (
@@ -1439,19 +1439,19 @@ class CampaignAdmin(admin.ModelAdmin):
                 'minimum_rides_base',
                 'minimum_percentage',
                 'trip_plus_distance',
-            )
+            ),
         }),
         ('Teams', {
             'fields': (
                 'max_team_members',
-            )
+            ),
         }),
         ('Diplomas', {
             'fields': (
                 'sandwich_type',
                 'team_diploma_sandwich_type',
                 'city_in_campaign_diploma_sandwich_type',
-            )
+            ),
         }),
         ('Packages and t-shirts', {
             'fields': (
@@ -1462,15 +1462,12 @@ class CampaignAdmin(admin.ModelAdmin):
                 'package_depth',
                 'package_max_count',
                 'package_weight',
-            )
+            ),
         }),
-        ('External web and Organization id', {
+        ('External API', {
             'fields': (
-                'web',
-                'wp_api_url',
                 'wp_api_date_from',
-                'contact_email',
-            )
+            ),
         }),
     )
     inlines = [

@@ -287,10 +287,15 @@ class TestIsLibero(TransactionTestCase):
 
 class TestClean(TestCase):
     def setUp(self):
+        self.campaign_type = mommy.make(
+            'CampaignType',
+            name='Foo campaign',
+        )
         self.campaign = mommy.make(
             'dpnk.campaign',
-            name="Foo campaign",
             max_team_members=1,
+            campaign_type=self.campaign_type,
+            year=2018,
         )
 
     def test_clean_team_none(self):
@@ -328,14 +333,23 @@ class TestClean(TestCase):
             user_attendance.clean()
 
     def test_campaign_mismatch(self):
+        campaign_type1 = mommy.make(
+            'CampaignType',
+            name='Bar campaign',
+            slug='bar_campaign',
+        )
         user_attendance = mommy.make(
             'dpnk.UserAttendance',
-            campaign=mommy.make("Campaign", name="Bar campaign"),
+            campaign=mommy.make(
+                "Campaign",
+                campaign_type=campaign_type1,
+                year=2019,
+            ),
             team=mommy.make('Team', campaign=self.campaign),
         )
         with self.assertRaisesRegex(
             ValidationError,
-            r"'campaign': \['Zvolená kampaň \(Bar campaign\) musí být shodná s kampaní týmu \(Foo campaign\)'\]",
+            r"'campaign': \['Zvolená kampaň \(Bar campaign 2019\) musí být shodná s kampaní týmu \(Foo campaign 2018\)'\]",
         ):
             user_attendance.clean()
 

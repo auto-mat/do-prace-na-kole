@@ -128,7 +128,7 @@ def _wp_news(
     get_params['_number'] = count
     get_params['orderby'] = orderby
     get_params.update(other_args)
-    url = campaign.wp_api_url
+    url = campaign.campaign_type.wp_api_url
     api = slumber.API(url, session=TimeoutRequestsSession())
     try:
         wp_feed = api.feed.get(**get_params)

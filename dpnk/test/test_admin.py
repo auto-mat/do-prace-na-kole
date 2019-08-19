@@ -107,6 +107,12 @@ class AdminModulesTests(DenormMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+        campaign_type = models.CampaignType.objects.get(name='Testing campaign')
+        self.campaign = models.Campaign.objects.get(pk=339)
+        self.campaign.year = 1
+        self.campaign.campaign_type = campaign_type
+        self.campaign.save()
+
         self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
@@ -199,7 +205,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             '_selected_action': '5',
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, '<option value="338">Testing campaign - last year</option>', html=True)
+        self.assertContains(response, '<option value="338">Testing campaign 2018</option>', html=True)
 
     def test_subsidiary_masschange(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
@@ -213,7 +219,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_admin_questions(self):
         address = reverse('admin_questions')
         response = self.client.get(address)
-        self.assertContains(response, 'Testing campaign -')
+        self.assertContains(response, 'Testing campaign 1 -')
 
     def test_admin_answers(self):
         address = "%s?question=2" % reverse('admin_answers')

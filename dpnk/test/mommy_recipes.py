@@ -42,7 +42,10 @@ RegistrationPhaseRecipe = Recipe(
     date_from=None,
     date_to=None,
 )
-CampaignTypeRecipe = Recipe("dpnk.CampaignType")
+CampaignTypeRecipe = Recipe(
+    "dpnk.CampaignType",
+    name='Testing campaign',
+)
 
 
 def campaign_type_get_or_create(**kwargs):
@@ -79,7 +82,6 @@ def campaign_get_or_create(**kwargs):
 
 testing_campaign = campaign_get_or_create(
     slug="testing-campaign",
-    name='Testing campaign',
     year=2019,
 )
 
