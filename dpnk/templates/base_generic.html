@@ -14,7 +14,7 @@
 			<div class="col-12 col-sm-3 sidebar">
 				{% if user.is_authenticated %}
 					<div class="_head">
-						<a class="logo" href="https://www.dopracenakole.cz">
+						<a class="logo" {% if campaign %}href="{{campaign.campaign_type.web}}"{%endif%}>
 							 <img src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
 						</a>
 
@@ -39,7 +39,7 @@
 						  	<ul class="collapse navbar-collapse" id="sideNavbar">
 								{% block main_menu %}
 		                           {% if user_attendance.entered_competition %}
-										{% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
+										{% sitetree_menu from campaign.campaign_type.sitetree_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
 		                           {% endif %}
 								{% endblock %}
 

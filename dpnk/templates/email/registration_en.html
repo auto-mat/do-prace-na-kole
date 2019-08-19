@@ -4,7 +4,7 @@
 {% block content %}
 {% language lang_code %}
 <p>
-Welcome to the {{user_attendance.campaign.name}} competition!
+Welcome to the {{user_attendance.campaign.display_name}} competition!
 </p><p>
 Our ride begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
 </p><p>
@@ -23,7 +23,7 @@ That could be much more interesting if You compare Your results with fellow cowo
 {% include "./button.html" with button_text="Invite people" %}
 
 <p>
-Do You have some questions? Let us know at <a href="mailto:{{user_attendance.campaign.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
+Do You have some questions? Let us know at <a href="mailto:{{user_attendance.campaign.campaign_type.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
 </p>
 {% endlanguage %}
 {% endblock %}

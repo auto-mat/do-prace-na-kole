@@ -27,14 +27,14 @@ Desatero doporučení před startem.
    </li><li>
  Nezapomeňte sledovat, jak si vede <a href="{{ absolute_uri }}{% url 'team_members' %}">Váš tým</a>.
    </li><li>
- Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených <a href="{{user_attendance.campaign.web}}/aplikace">aplikací</a>.
+ Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených <a href="{{user_attendance.campaign.campaign_type.web}}/aplikace">aplikací</a>.
    </li><li>
- Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem <a href="{{user_attendance.campaign.web}}">webu</a>.
+ Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem <a href="{{user_attendance.campaign.campaign_type.web}}">webu</a>.
    </li>
 </ul>
 
 <p>
-   Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="mailto:{{user_attendance.campaign.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
+   Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="mailto:{{user_attendance.campaign.campaign_type.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
 </p>
 {% endlanguage %}
 {% endblock %}

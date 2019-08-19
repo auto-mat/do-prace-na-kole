@@ -58,7 +58,7 @@ class UserAttendanceMiddleware(MiddlewareMixin):
             request.campaign = Campaign.objects.get(slug=campaign_slug)
 
             # Change language, if not available in campaign
-            available_language_codes = list(zip(*request.campaign.get_available_languages()))[0]
+            available_language_codes = list(zip(*request.campaign.campaign_type.get_available_languages()))[0]
             if get_language() not in available_language_codes:
                 new_language = available_language_codes[0]
                 translation.activate(new_language)
