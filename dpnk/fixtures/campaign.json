@@ -1,6 +1,127 @@
 [
     {
         "fields": {
+            "benefitial_admission_fee": 350.0,
+            "benefitial_admission_fee_company": 450.0,
+            "email_footer": "",
+            "free_entry_cases_html": "",
+            "invoice_sequence_number_first": 1,
+            "invoice_sequence_number_last": 999999999,
+            "mailing_list_enabled": null,
+            "mailing_list_id": "12345abcde",
+            "minimum_percentage": 66,
+            "minimum_rides_base": 25,
+            "name": "Testing campaign - last year",
+            "year": 2018,
+            "package_depth": 35,
+            "package_height": 1,
+            "package_weight": 0.25,
+            "package_width": 26,
+            "previous_campaign": null,
+            "slug": "testing-campaign-ly",
+            "tracking_number_first": 0,
+            "tracking_number_last": 999999999,
+            "campaign_type": 5338,
+            "track_required": true,
+            "trip_plus_distance": 5
+        },
+        "model": "dpnk.campaign",
+        "pk": 338
+    },
+    {
+        "fields": {
+           "name": "Testing campaign"
+        },
+        "model": "dpnk.campaigntype",
+        "pk": 5338
+    },
+    {
+        "fields": {
+            "benefitial_admission_fee": 350.0,
+            "benefitial_admission_fee_company": 450.0,
+            "email_footer": "",
+            "free_entry_cases_html": "",
+            "invoice_sequence_number_first": 1,
+            "invoice_sequence_number_last": 999999999,
+            "mailing_list_enabled": null,
+            "mailing_list_id": "12345abcde",
+            "minimum_percentage": 66,
+            "year": 2019,
+            "minimum_rides_base": 25,
+            "name": "Testing campaign",
+            "package_depth": 35,
+            "package_height": 1,
+            "package_weight": 0.25,
+            "package_width": 26,
+            "previous_campaign": 338,
+            "campaign_type": 5338,
+            "slug": "testing-campaign",
+            "tracking_number_first": 1111111,
+            "tracking_number_last": 999999999,
+            "track_required": true,
+            "trip_plus_distance": 5
+        },
+        "model": "dpnk.campaign",
+        "pk": 339
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "date_from": "2010-11-01",
+            "date_to": "2010-11-30",
+            "phase_type": "registration"
+        },
+        "model": "dpnk.phase",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "city": [],
+            "company": null,
+            "competitor_type": "team",
+            "date_from": "2010-11-01",
+            "date_to": "2010-11-15",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Pravidelnost týmů",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "FQ-LB",
+            "competition_type": "frequency",
+            "minimum_rides_base": 23,
+            "url": "http://www.dopracenakole.net/url/",
+            "commute_modes": [1, 2]
+        },
+        "model": "dpnk.competition",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "city": [],
+            "company": 1,
+            "competitor_type": "single_user",
+            "date_from": "2010-11-01",
+            "date_to": "2010-11-15",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Pravidelnost jednotlivců",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "pravidelnost-jednotlivcu",
+            "competition_type": "frequency",
+            "minimum_rides_base": 23,
+            "url": "http://www.dopracenakole.net/url/",
+            "commute_modes": [1, 2]
+        },
+        "model": "dpnk.competition",
+        "pk": 12
+    },
+    {
+        "fields": {
            "question_type": "text",
            "comment_type": null,
            "with_attachment": false,

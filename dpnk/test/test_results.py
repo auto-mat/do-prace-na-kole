@@ -202,7 +202,7 @@ class GetCompetitorsTests(TestCase):
             campaign=self.campaign,
         )
         query = results.get_competitors(competition)
-        self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Foo user, Bar user)>'])
+        self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Bar user, Foo user)>'])
 
     def test_get_competitors_with_admission_single(self):
         mommy.make(
@@ -241,7 +241,7 @@ class GetCompetitorsTests(TestCase):
             campaign=self.campaign,
         )
         query = results.get_competitors(competition)
-        self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Foo user, Bar user)>'])
+        self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Bar user, Foo user)>'])
 
     def test_get_competitors_with_admission_company(self):
         mommy.make(

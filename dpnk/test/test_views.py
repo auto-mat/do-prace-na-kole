@@ -158,7 +158,7 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, 'test_wa@email.cz')
         self.assertContains(response, 'test@email.cz')
         self.assertContains(response, 'test@test.cz')
-        self.assertContains(response, 'Testing team 1 (Nick, Testing User 1, Registered User 1)')
+        self.assertContains(response, 'Testing team 1 (Nick, Registered User 1, Testing User 1)')
 
     def test_team_approval_request(self):
         address = reverse('zaslat_zadost_clenstvi')
@@ -279,7 +279,7 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         response = self.client.get(address)
         self.assertJSONEqual(
             response.content.decode(),
-            [{'value': 4, 'display': 'Empty team'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
+            [{'value': 4, 'display': 'Empty team'}, {'value': 1, 'display': 'Testing team 1 (Nick, Registered User 1, Testing User 1)'}],
         )
 
     def test_chaining_subsidiary(self):
@@ -1285,7 +1285,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(address)
         self.assertContains(
             response,
-            "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Testing User 1, Registered User 1)?</div>",
+            "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Registered User 1, Testing User 1)?</div>",
             html=True,
         )
 
@@ -2244,6 +2244,8 @@ class TripViewTests(ViewsLogon):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
+        print_response(response)
+        import pdb;pdb.set_trace()
         self.assertContains(
             response,
             '<strong>Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?</strong>',

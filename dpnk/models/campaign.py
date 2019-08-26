@@ -385,6 +385,7 @@ class Campaign(Pricable, models.Model):
                 return False
         result = get_phase(self.pk, phase_type)
         if not result:
+            get_phase.invalidate(self.pk, phase_type)
             raise Phase.DoesNotExist
         return result
 

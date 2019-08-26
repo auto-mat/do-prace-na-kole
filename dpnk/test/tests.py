@@ -41,14 +41,16 @@ from model_mommy import mommy
 from price_level import models as price_level_models
 
 from .mommy_recipes import testing_campaign
+from .mommy.mommy import Fixtures
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ['sites']
 
     def setUp(self):
+        self.objs = Fixtures({"userattendances"})
         self.factory = RequestFactory()
-        self.user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.user_attendance = self.objs.userattendances.userattendance
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         models.Payment.objects.create(
@@ -86,7 +88,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
-        request.campaign = models.Campaign.objects.get(pk=338)
+        request.campaign = self.objs.campaigns.c2009
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
         self.assertEqual(urlparse(response.url).path, '/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
         payment = models.Payment.objects.get(session_id=self.session_id)
@@ -415,14 +417,14 @@ class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
         call_command('denorm_flush')
-        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Registered User 1, Testing User 1)")
         self.assertEqual(user_attendance.team.unapproved_member_count, 0)
         self.assertEqual(user_attendance.team.member_count, 3)
         user_attendance.userprofile.nickname = "Testing nick"
         user_attendance.userprofile.save()
         call_command('denorm_flush')
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing nick, Registered User 1)")
+        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Registered User 1, Testing nick)")
         self.assertEqual(user_attendance.team.unapproved_member_count, 0)
         self.assertEqual(user_attendance.team.member_count, 3)
 
@@ -430,7 +432,7 @@ class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
         call_command('denorm_flush')
-        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Registered User 1, Testing User 1)")
         self.assertEqual(user_attendance.team.unapproved_member_count, 0)
         self.assertEqual(user_attendance.team.member_count, 3)
         user_attendance.payments().delete()
