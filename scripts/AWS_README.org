@@ -2,32 +2,17 @@
 
 In the ./scripts directory you will find various scripts for managing AWS deployments. The most important of which is ./status.py.
 
-./status.py produces an output that looks like this:
+The most basic command you will run is
 
-#+BEGIN_EXAMPLE
-terminated
-	 dpnk-test terminated
-	 dpnk terminated
-stopped
-	 no_tags_set stopped no_ip i-01229e28ae0ccc8ec unregistered
+./sync-hosts.py
 
-pending
-initializing
-running
-	 dpnk running 34.254.175.61 i-03c2a5d4816b8b2e4 elb_prod
-		ubuntu_dpnk-web_1 devel 2017.410 8ea0745abbe8bc69ffc66501d76d26cf5ac409c8
-	 dpnk-test running 54.171.47.164 i-08240522a22dbe3f6 elb_test
-		ubuntu_dpnk-worker_1 devel 2017.413 5ed52e9135d03b3aef8957e27e7eb81f89cf33ac
-		ubuntu_dpnk-web_1 devel 2017.413 5ed52e9135d03b3aef8957e27e7eb81f89cf33ac
-		ubuntu_dpnk-beat_1 devel 2017.413 5ed52e9135d03b3aef8957e27e7eb81f89cf33ac
-	 dpnk-celery running 54.72.231.197 i-0bb4ccfcfd68545e0 unregistered
-		ubuntu_dpnk-beat_1 devel 2017.408 e2901b9388184790fe660ba1017fb08ac8d1a683
-		ubuntu_dpnk-worker_1 devel 2017.408 e2901b9388184790fe660ba1017fb08ac8d1a683
-	 dpnk running 34.243.195.120 i-066e04152f774bebd elb_prod
-		ubuntu_dpnk-web_1 devel 2017.410 8ea0745abbe8bc69ffc66501d76d26cf5ac409c8
-#+END_EXAMPLE
+This will generate an up to date ansible-aws-inventory.yml file which will be used by the other commands.
 
-Lines like "dpnk-test running 54.171.47.164 i-08240522a22dbe3f6 elb_test" have the following format "<auto-scaling-group-name> <instance-ipv4-ip> <instance-id> <elb-registration-status>".
+For example running
+
+./versions.sh dpnk
+
+will tell you the versions of each container running on each instance in the 'dpnk' autoscaling group on aws. The list of autoscaling groups is printed when you run the sync-hosts command.
 
 ** Deploying to test
 
