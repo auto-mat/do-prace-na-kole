@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import collections
 import json
+import yaml
 import subprocess
 
 instances = json.loads(subprocess.check_output(["aws", "ec2", "describe-instances"]).decode("utf-8"))
@@ -28,21 +29,7 @@ states = collections.OrderedDict([
     ('running', []),
 ])
 
-
-def get_container_listing(ip):
-    container_listing = ""
-    print("Getting container listing and versions for ip:", ip)
-    try:
-        container_listing_raw = subprocess.check_output(["ssh", "-oStrictHostKeyChecking=no", "ubuntu@" + ip, "--", "sudo", "docker", "ps", "--format", "{{.Names}}"]).decode("utf-8") # noqa
-        for container in container_listing_raw.splitlines():
-            try:
-                container_listing += '\n\t\t%s %s' % (container, ' '.join(subprocess.check_output(["ssh", "-oStrictHostKeyChecking=no", "ubuntu@" + ip, "--", "sudo", "docker", "exec", container, "cat", "static/version.txt"]).decode("utf-8").splitlines())) # noqa
-            except subprocess.CalledProcessError:
-                container_listing += '\n\t\t' + container
-    except subprocess.CalledProcessError:
-        container_listing = ""
-    return container_listing
-
+inventories = {}
 
 for instance in instances["Reservations"]:
     i = instance["Instances"][0]
@@ -59,20 +46,23 @@ for instance in instances["Reservations"]:
         continue
     try:
         ip = i["PublicIpAddress"]
-        container_listing = get_container_listing(ip)
+        inventories[groupName] = inventories.get(groupName, {})
+        inventories[groupName]["hosts"] = inventories[groupName].get("hosts", {})
+        inventories[groupName]["hosts"][ip] = {"ansible_host": ip, "ansible_user": "ubuntu"}
     except KeyError:
         ip = "no_ip"
-        container_listing = "\n"
     states[state].append(
-        "%s %s %s %s %s%s" % (
+        "%s %s %s %s %s" % (
             groupName,
             state,
             ip,
             i["InstanceId"],
             instance_elbs.get(i['InstanceId'], 'unregistered'),
-            container_listing,
         ),
     )
+
+with open('ansible-aws-inventory.yml', 'w') as fd:
+    fd.write(yaml.dump(inventories, default_flow_style=False))
 
 for state, instances in states.items():
     print(state)
