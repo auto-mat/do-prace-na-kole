@@ -1,23 +1,21 @@
-[
     {
         "fields": {
             "campaign": 339,
             "city": [],
-            "company": 1,
+            "company": null,
             "competitor_type": "team",
             "date_from": "2013-05-01",
             "date_to": "2013-06-02",
             "entry_after_beginning_days": 7,
             "is_public": true,
-            "name": "Pravidelnost společnosti",
+            "name": "Team frequency",
             "public_answers": false,
             "rules": null,
             "sex": null,
-            "slug": "FA-testing-campaign-pravidelnost-spolecnosti",
+            "slug": "TF",
             "competition_type": "frequency",
             "url": "http://www.dopracenakole.net/url/"
         },
         "model": "dpnk.competition",
-        "pk": 7
+        "pk": 0
     }
-]

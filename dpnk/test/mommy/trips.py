@@ -1,4 +1,3 @@
-[
     {
         "fields": {
            "direction": "trip_to",
@@ -53,4 +52,3 @@
         "model": "dpnk.trip",
         "pk": 3
     }
-]

@@ -1,4 +1,3 @@
-[
     {
         "fields": {
            "company": 1,
@@ -9,4 +8,3 @@
         "model": "dpnk.invoice",
         "pk": 1
     }
-]

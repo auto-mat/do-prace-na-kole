@@ -1,14 +1,14 @@
-[
-    {
-        "fields": {
-            "user_attendance": 2115,
-            "status": 1,
-            "created": "2014-12-01",
-            "polymorphic_ctype": ["dpnk", "payment"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 5
-    },
+from model_mommy import mommy
+
+
+class Payments:
+    def __init__(self, transactions, **kwargs):
+        self.klub_pratel = mommy.make(  # was pk=9
+            "dpnk.payment",
+            amount = 150,
+            pay_type = "am",
+            transaction_ptr = 9,
+        )
     {
         "fields": {
             "amount": 150,
@@ -22,14 +22,6 @@
     },
     {
         "fields": {
-            "user_attendance": 1115,
-            "polymorphic_ctype": ["dpnk", "payment"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 3
-    },
-    {
-        "fields": {
             "amount": 150,
             "trans_id": "2075-1",
             "session_id": "2075-1J1455206433",
@@ -37,16 +29,6 @@
         },
         "model": "dpnk.payment",
         "pk": 3
-    },
-    {
-        "fields": {
-            "user_attendance": 1115,
-            "status": 99,
-            "realized": "2010-11-01",
-            "polymorphic_ctype": ["dpnk", "payment"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 4
     },
     {
         "fields": {
@@ -61,16 +43,6 @@
     },
     {
         "fields": {
-            "user_attendance": 1015,
-            "status": 99,
-            "realized": "2010-11-01",
-            "polymorphic_ctype": ["dpnk", "payment"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 16
-    },
-    {
-        "fields": {
             "amount": 145,
             "pay_type": "fc",
             "trans_id": "2075-2",
@@ -79,16 +51,6 @@
         },
         "model": "dpnk.payment",
         "pk": 16
-    },
-    {
-        "fields": {
-            "user_attendance": 2115,
-            "status": 99,
-            "realized": "2010-11-01",
-            "polymorphic_ctype": ["dpnk", "payment"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 17
     },
     {
         "fields": {
@@ -101,16 +63,6 @@
         "model": "dpnk.payment",
         "pk": 17
 	},
-   {
-        "fields": {
-            "user_attendance": 1016,
-            "status": 99,
-            "realized": "2010-11-01",
-            "polymorphic_ctype": ["dpnk", "payment"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 18
-    },
     {
         "fields": {
             "amount": 145,
@@ -122,4 +74,4 @@
         "model": "dpnk.payment",
         "pk": 18
 	}
-]
+
