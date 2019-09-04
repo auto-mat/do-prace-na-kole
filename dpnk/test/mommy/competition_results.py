@@ -5,7 +5,7 @@ class CompetitionResults:
     def __init__(self, competitions, teams, **kwargs):
         self.basic = mommy.make(  # was pk=0
             "dpnk.competitionresult",
-            team = 1,
+            team = teams.basic,
             result = 100,
-            competition = 3,
+            competition = competitions.team_frequency_c2010,
         )

@@ -2,13 +2,13 @@ from model_mommy import mommy
 
 
 class CompanyAdmins:
-    def __init__(self, users, campaigns, companies, **kwargs)
+    def __init__(self, users, campaigns, companies, **kwargs):
         self.company_admin = mommy.make(
             "dpnk.companyadmin",
             userprofile = users.userprofile,
             can_confirm_payments = True,
-            campaign = campaigns.campaign,
-            administrated_company = companies.company,
+            campaign = campaigns.c2010,
+            administrated_company = companies.basic,
             company_admin_approved = "approved",
         )
 
@@ -17,6 +17,6 @@ class CompanyAdmins:
             userprofile = users.null_user_profile,
             can_confirm_payments = True,
             campaign = "self.campaign",
-            administrated_company = companies.company,
+            administrated_company = companies.basic,
             company_admin_approved = "approved",
         )

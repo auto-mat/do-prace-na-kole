@@ -14,6 +14,6 @@ class Choices:
             "dpnk.choice",
             text = "no",
             points = 3,
-            choice_type =  choice_types.yes_no,
+            choice_type = choice_types.yes_no,
         )
 

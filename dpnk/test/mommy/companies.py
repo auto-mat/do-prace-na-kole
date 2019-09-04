@@ -1,9 +1,8 @@
-from dpnk import models
 from model_mommy import mommy
 
-class Companies():
-    def __init__(self, cities):
-        self.company = mommy.make(
+class Companies:
+    def __init__(self, cities, **kwargs):
+        self.basic = mommy.make(  #pk=1
             "dpnk.company",
             name = "Testing company",
             ico = "11111",
@@ -14,7 +13,7 @@ class Companies():
             address_city = "Praha",
         )
 
-        self.company_no_admin = mommy.make(
+        self.no_admin = mommy.make(  #pk=2
             "dpnk.company",
             name = "Testing company without admin",
             ico = "11111",
@@ -22,24 +21,4 @@ class Companies():
             address_street_number = "1",
             address_street = "Ulice",
             address_city = "Praha",
-        )
-
-        self.subsidiary = mommy.make(
-            "dpnk.subsidiary",
-            address_psc = "11111",
-            address_street_number = "1",
-            address_street = "Ulice",
-            address_city = "Praha",
-            company = self.company,
-            city = cities.city,
-        )
-
-        self.other_subsidiary = mommy.make(
-            "dpnk.subsidiary",
-            address_psc = "22222",
-            address_street_number = "2",
-            address_street = "Ulice",
-            address_city = "Brno",
-            company = self.company,
-            city = self.other_city,
         )

@@ -1,31 +1,13 @@
 from model_mommy import mommy
 
-
-class PackageTransactions:
-    def __init__(self, transactions, **kwargs):
-        self.basic = mommy.make(  # was pk=8
-            "t_shirt_delivery.packagetransaction",
-            transaction_ptr = 8,
-            team_package_id = 7,
-            tracking_number = 13112117,
+class DeliveryBatches:
+    def __init__(self, campaigns, **kwargs):
+        self.basic1 = mommy.make(  # was pk=1
+            "t_shirt_delivery.deliverybatch",
+            created = "2015-11-12T18:18:40.223",
+            campaign = campaings.c2010,
         )
-    {
-        "fields": {
-           "transaction_ptr": 6,
-           "team_package_id": 7,
-           "tracking_number": 11111117
-        },
-        "model": "t_shirt_delivery.packagetransaction",
-        "pk": 6
-    }
-
-    {
-        "fields": {
-           "transaction_ptr": 7,
-           "team_package_id": 7,
-           "tracking_number": 11112117
-        },
-        "model": "t_shirt_delivery.packagetransaction",
-        "pk": 7
-    },
-
+        self.basic2 = mommy.make(  # was pk=7
+            "t_shirt_delivery.deliverybatch",
+            campaign = campaigns.c2010,
+        )

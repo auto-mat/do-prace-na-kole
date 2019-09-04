@@ -40,14 +40,16 @@ from model_mommy import mommy
 from price_level import models as price_level_models
 
 from .mommy_recipes import testing_campaign
+from .mommy.mommy import Fixtures
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ['sites']
 
     def setUp(self):
+        self.objs = Fixtures(["userattendances",])
         self.factory = RequestFactory()
-        self.user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.user_attendance = self.objs.sets.userattendances.userattendance
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         models.Payment.objects.create(

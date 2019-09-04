@@ -3,10 +3,10 @@ from model_mommy import mommy
 
 class Competitions:
     def __init__(self, campaigns, companies, commute_modes, **kwargs):
-        self.c2010_competition_individual_frequency = mommy.make(
-            campaign = campaigns.campaign,
+        self.individual_frequency_C2010 = mommy.make( #pk=12
+            campaign = campaigns.c2010,
             city = [],
-            company = companies.company,
+            company = companies.basic,
             competitor_type = "single_user",
             date_from = "2010-11-01",
             date_to = "2010-11-15",
@@ -22,10 +22,30 @@ class Competitions:
             url = "http://www.dopracenakole.net/url/",
             commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
         )
+        self.team_frequency_c2010 = mommy.make( #pk=3
+            'dpnk.Competition',
+            campaign = campaigns.c2010,
+            city = [],
+            company = None,
+            competitor_type = "team",
+            date_from = "2010-11-01",
+            date_to = "2010-11-15",
+            entry_after_beginning_days = 7,
+            is_public = True,
+            name = "Pravidelnost týmů",
+            public_answers = False,
+            rules = None,
+            sex = None,
+            slug = "FQ-LB",
+            competition_type = "frequency",
+            minimum_rides_base = 23,
+            url = "http://www.dopracenakole.net/url/",
+            commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
+        )
 
         self.questionnaire = mommy.make(  # was pk=4
             "dpnk.competition",
-            campaign = 339,
+            campaign = campaigns.c2010,
             city = [],
             company = None,
             competitor_type = "single_user",
@@ -42,10 +62,10 @@ class Competitions:
             url = "http://www.dopracenakole.net/url/",
         )
 
-        self.competition_team_questionnaire = mommy.make(  # was pk=13
+        self.team_questionnaire = mommy.make(  # was pk=13
             "dpnk.competition",
-            campaign = 339,
-            city = [1],
+            campaign = campaigns.c2010,
+            city = [cities.city],
             company = None,
             competitor_type = "team",
             date_from = "2010-11-01",
@@ -61,10 +81,11 @@ class Competitions:
             url = "http://www.dopracenakole.net/url/",
         )
 
+
         self.competition_mens_performance = mommy.make(  # was pk=5
             "dpnk.competition",
-            campaign = 339,
-            city = [1],
+            campaign = campaigns.c2010,
+            city = [cities.city],
             company = None,
             competitor_type = "single_user",
             date_from = "2010-11-01",
@@ -78,13 +99,13 @@ class Competitions:
             slug = "vykonnost",
             competition_type = "length",
             url = "http://www.dopracenakole.net/url/",
-            commute_modes = [1, 2],
+            commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
         )
 
         self.competition_team_performance = mommy.make(  # was pk=9
             "dpnk.competition",
-            campaign = 339,
-            city = [1],
+            campaign = campaigns.c2010,
+            city = [cities.city],
             company = None,
             competitor_type = "team",
             date_from = "2010-11-01",
@@ -98,13 +119,13 @@ class Competitions:
             slug = "vykonnost-tymu",
             competition_type = "length",
             url = "http://www.dopracenakole.net/url/",
-            commute_modes = [1 2],
+            commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
         )
 
         self.city_performance = mommy.make(  # was pk=6
             "dpnk.competition",
-            campaign = 339,
-            city = [1],
+            campaign = campaigns.c2010,
+            city = [cities.city],
             company = None,
             competitor_type = "single_user",
             date_from = "2010-11-01",
@@ -118,13 +139,13 @@ class Competitions:
             slug = "vykonnost-mesto",
             competition_type = "length",
             url = "http://www.dopracenakole.net/url/",
-            commute_modes = [1 2],
+            commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
         )
 
         self.company_performance = mommy.make(  # was pk=8
             "dpnk.competition",
-            campaign = 339,
-            city = [1],
+            campaign = campaigns.c2010,
+            city = [cities.city],
             company = None,
             competitor_type = "company",
             date_from = "2010-11-01",
@@ -138,12 +159,12 @@ class Competitions:
             slug = "vykonnost-spolecnosti",
             competition_type = "length",
             url = "http://www.dopracenakole.net/url/",
-            commute_modes = [1 2],
+            commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
         )
 
         self.company_regularity = mommy.make(  # was pk=10
             "dpnk.competition",
-            campaign = 339,
+            campaign = campaigns.c2010,
             city = [1],
             company = 1,
             competitor_type = "company",
@@ -158,12 +179,12 @@ class Competitions:
             slug = "pravidelnost-spolecnosti",
             competition_type = "frequency",
             url = "http://www.dopracenakole.net/url/",
-            commute_modes = [1 2],
+            commute_modes = [commute_modes.bicycle, commute_modes.by_foot],
         )
 
         self.company_questionnaire = mommy.make(  # was pk=11
             "dpnk.competition",
-            campaign = 339,
+            campaign = campaigns.c2010,
             city = [],
             company = None,
             competitor_type = "company",
@@ -179,25 +200,21 @@ class Competitions:
             competition_type = "questionnaire",
             url = "http://www.dopracenakole.net/url/",
         )
-
-    {
-        "fields": {
-            "campaign": 339,
-            "city": [],
-            "company": 1,
-            "competitor_type": "team",
-            "date_from": "2013-05-01",
-            "date_to": "2013-06-02",
-            "entry_after_beginning_days": 7,
-            "is_public": true,
-            "name": "Pravidelnost společnosti",
-            "public_answers": false,
-            "rules": null,
-            "sex": null,
-            "slug": "FA-testing-campaign-pravidelnost-spolecnosti",
-            "competition_type": "frequency",
-            "url": "http://www.dopracenakole.net/url/"
-        },
-        "model": "dpnk.competition",
-        "pk": 7
-    }
+        self.fa_company_regularity = mommy.make(  # was pk=7
+            "dpnk.competition",
+            campaign = campaigns.c2010,
+            city = [],
+            company = companies.basic,
+            competitor_type = "team",
+            date_from = "2013-05-01",
+            date_to = "2013-06-02",
+            entry_after_beginning_days = 7,
+            is_public = True,
+            name = "Pravidelnost společnosti",
+            public_answers = False,
+            rules = None,
+            sex = None,
+            slug = "FA-testing-campaign-pravidelnost-spolecnosti",
+            competition_type = "frequency",
+            url = "http://www.dopracenakole.net/url/",
+        )
