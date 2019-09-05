@@ -2,7 +2,7 @@ from dpnk import models
 from model_mommy import mommy
 
 class Cities():
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.city = mommy.make(  # was pk=1
             "dpnk.city",
             slug = "testing-city",

@@ -2,7 +2,7 @@ from model_mommy import mommy
 
 
 class Users:
-    def __init__(self, groups, cities, companies, **kwargs):
+    def __init__(self, groups, cities, companies, campaigns, **kwargs):
         self.user = mommy.make(  # was pk = 1128
             "auth.user",
             date_joined = "2015-11-12T18:18:10",
@@ -35,10 +35,10 @@ class Users:
         )
         self.user_companyadmin = mommy.make(  # was pk=1
             "dpnk.companyadmin",
-            userprofile = self.user,
+            userprofile = self.userprofile,
             can_confirm_payments = True,
-            campaign = "self.campaign",
-            administrated_company = companies.company,
+            campaign = campaigns.c2010,
+            administrated_company = companies.basic,
             company_admin_approved = "approved",
         )
 
@@ -253,7 +253,7 @@ class Users:
             user_permissions = [],
             username = "null_user",
         )
-        self.null_user_userprofile = mommy.make(  # was pk=1016
+        self.null_userprofile = mommy.make(  # was pk=1016
             "dpnk.userprofile",
             administrated_cities = [],
             language = "cs",

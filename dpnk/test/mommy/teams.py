@@ -29,7 +29,7 @@ class Teams:
 
         self.last_year = mommy.make( #pk=2
             "dpnk.team",
-            campaign = campaigns.campaign_2009,
+            campaign = campaigns.c2009,
             subsidiary = subsidiaries.other_subsidiary,
             invitation_token = "token123214",
             name = "Testing team last campaign",

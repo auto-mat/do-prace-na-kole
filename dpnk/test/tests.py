@@ -47,9 +47,9 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
     fixtures = ['sites']
 
     def setUp(self):
-        self.objs = Fixtures(["userattendances",])
+        self.objs = Fixtures({"userattendances"})
         self.factory = RequestFactory()
-        self.user_attendance = self.objs.sets.userattendances.userattendance
+        self.user_attendance = self.objs.userattendances.userattendance
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         models.Payment.objects.create(
@@ -87,7 +87,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
-        request.campaign = models.Campaign.objects.get(pk=338)
+        request.campaign = self.objs.campaigns.c2009
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
         self.assertEqual(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
         payment = models.Payment.objects.get(session_id=self.session_id)

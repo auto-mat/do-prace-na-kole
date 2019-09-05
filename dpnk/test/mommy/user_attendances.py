@@ -6,7 +6,7 @@ class UserAttendances:
         self.userattendance = mommy.make(  # was pk=1115
             "dpnk.userattendance",
             approved_for_team = "approved",
-            campaign = campaigns.campaign,
+            campaign = campaigns.c2010,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -22,7 +22,7 @@ class UserAttendances:
         self.userattendance2009 = mommy.make(  # was pk=1116
             "dpnk.userattendance",
             approved_for_team = "approved",
-            campaign = campaigns.campaign_2009,
+            campaign = campaigns.c2009,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -38,7 +38,7 @@ class UserAttendances:
         self.userattendance2 = mommy.make(  # was pk=1015
             "dpnk.userattendance",
             approved_for_team = "approved",
-            campaign = campaigns.campaign,
+            campaign = campaigns.c2010,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -55,7 +55,7 @@ class UserAttendances:
         self.null_userattendance = mommy.make(  # was pk=1016
         "dpnk.userattendance",
             approved_for_team = "approved",
-            campaign = campaigns.campaign,
+            campaign = campaigns.c2010,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -64,13 +64,13 @@ class UserAttendances:
             team = teams.other_subsidiary,
             track = None,
             updated = "2015-11-12T18:18:40.223",
-            userprofile = users.null_user_profile,
+            userprofile = users.null_userprofile,
         )
 
         self.whithout_team = mommy.make(  # was pk=3
             "dpnk.userattendance",
             approved_for_team = "undecided",
-            campaign = campaigns.campaign,
+            campaign = campaigns.c2010,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -85,7 +85,7 @@ class UserAttendances:
         self.unapproved_userattendance = mommy.make(  # was pk=5
             "dpnk.userattendance",
             approved_for_team = "undecided",
-            campaign = campaigns.campaign,
+            campaign = campaigns.c2010,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -100,7 +100,7 @@ class UserAttendances:
         self.todo_useraddendance_for_user_without_userattendance = mommy.make(  # was pk=1027
             "dpnk.userattendance",
             approved_for_team = "approved",
-            campaign = campaigns.campaign_2009,
+            campaign = campaigns.c2009,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
@@ -115,7 +115,7 @@ class UserAttendances:
         self.registered = mommy.make(  # was pk=2115
             "dpnk.userattendance",
             approved_for_team = "approved",
-            campaign = campaigns.campaign,
+            campaign = campaigns.c2010,
             created = "2015-11-12T18:18:40.223",
             distance = None,
             dont_want_insert_track = False,
