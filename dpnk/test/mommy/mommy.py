@@ -49,7 +49,7 @@ target_dag = {
     "competitions": (Competitions, {"campaigns", "companies", "commute_modes"}),
     "groups": (Groups, {"permissions"}),
     "invoices": (Invoices, {"campaigns", "companies"}),
-    "payments": (Payments, {"transactions"}),
+    "payments": (Payments, {"userattendances"}),
     "permissions": (Permissions, set()),
     "phases": (Phases, {"campaigns"}),
     "price_levels": (PriceLevels, {"campaings"}),
@@ -62,7 +62,6 @@ target_dag = {
     "userattendances": (UserAttendances, {"users", "teams", "tshirt_sizes", "campaigns"}),
 
     "transactions_package_transactions": (transactions.PackageTransactions, {"userattendances"}),
-    "transactions_payment_transactions": (transactions.PaymentTransactions, {"userattendances"}),
 
     #tshirt_delivery
     "deliverybatches": (DeliveryBatches, {"campaigns"}),

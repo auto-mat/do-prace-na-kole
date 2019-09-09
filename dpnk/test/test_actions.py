@@ -35,6 +35,8 @@ from dpnk.models.transactions import Status
 
 from model_mommy import mommy
 
+from .mommy.mommy import Fixtures
+
 
 class TestActionsMommy(TestCase):
     """ Tests that are independend of fixtures """
@@ -93,14 +95,15 @@ class TestActionsMommy(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class TestActions(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'test_results_data', 'invoices', 'commute_mode']
+    fixtures = ['sites', 'commute_mode']
 
     def setUp(self):
+        self.objs = Fixtures({"userattendances", "campaigns", "payments"})
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
         self.factory = RequestFactory()
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
-        self.request.user = models.User.objects.get(username="test")
+        self.request.user = self.objs.users.user
         setattr(self.request, 'session', 'session')
         self.messages = FallbackStorage(self.request)
         setattr(self.request, '_messages', self.messages)
@@ -111,13 +114,13 @@ class TestActions(TestCase):
         call_command('denorm_drop')
 
     def test_approve_am_payment(self):
-        models.Payment.objects.get(pk=17).delete()
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
+        self.objs.payments.bill_t17.delete()
+        util.rebuild_denorm_models([self.objs.userattendances.registered])
         queryset = models.UserAttendance.objects.all()
-        payment = models.Payment.objects.get(pk=5)
+        payment = self.objs.payments.bill
         self.assertEqual(payment.status, 1)
         actions.approve_am_payment(self.modeladmin, self.request, queryset)
-        payment = models.Payment.objects.get(pk=5)
+        payment = models.Payment.objects.get(pk=self.objs.payments.bill.pk)
         self.assertEqual(payment.status, 99)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(str(message), "Platby potvrzeny")
