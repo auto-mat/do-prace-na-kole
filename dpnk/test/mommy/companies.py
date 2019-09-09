@@ -1,7 +1,7 @@
 from model_mommy import mommy
 
 class Companies:
-    def __init__(self, cities, **kwargs):
+    def __init__(self, **kwargs):
         self.basic = mommy.make(  #pk=1
             "dpnk.company",
             name = "Testing company",

@@ -2,8 +2,9 @@ from model_mommy import mommy
 
 
 class Competitions:
-    def __init__(self, campaigns, companies, commute_modes, **kwargs):
+    def __init__(self, cities, campaigns, companies, commute_modes, **kwargs):
         self.individual_frequency_C2010 = mommy.make( #pk=12
+            'dpnk.Competition',
             campaign = campaigns.c2010,
             city = [],
             company = companies.basic,
@@ -165,8 +166,8 @@ class Competitions:
         self.company_regularity = mommy.make(  # was pk=10
             "dpnk.competition",
             campaign = campaigns.c2010,
-            city = [1],
-            company = 1,
+            city = [cities.city],
+            company = companies.basic,
             competitor_type = "company",
             date_from = "2010-11-01",
             date_to = "2010-12-30",

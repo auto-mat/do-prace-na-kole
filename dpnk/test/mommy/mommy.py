@@ -43,20 +43,20 @@ target_dag = {
     "cities_in_campaign": (CitiesInCampaign, {"campaigns", "cities"}),
     "cities": (Cities, set()),
     "commute_modes": (CommuteModes, set()),
-    "companies": (Companies, {"commute_modes"}),
+    "companies": (Companies, set()),
     "company_admins": (CompanyAdmins, {"users", "campaigns", "companies"}),
     "competition_results": (CompetitionResults, {"competitions", "teams"}),
-    "competitions": (Competitions, {"campaigns", "companies", "commute_modes"}),
+    "competitions": (Competitions, {"campaigns", "companies", "commute_modes", "cities"}),
     "groups": (Groups, {"permissions"}),
-    "invoices": (Invoices, {"campaigns", "companies"}),
+    "invoices": (Invoices, {"campaigns", "companies", "phases"}),
     "payments": (Payments, {"userattendances"}),
     "permissions": (Permissions, set()),
     "phases": (Phases, {"campaigns"}),
-    "price_levels": (PriceLevels, {"campaings"}),
+    "price_levels": (PriceLevels, {"campaigns"}),
     "questions": (Questions, {"competitions"}),
     "subsidiaries": (Subsidiaries, {"cities", "companies"}),
     "teams": (Teams, {"campaigns", "subsidiaries"}),
-    "trips": (Trips, {"userattendances", "commutemodes"}),
+    "trips": (Trips, {"userattendances", "commute_modes"}),
     "users": (Users, {"groups", "cities", "companies"}),
     "tshirt_sizes": (TshirtSizes, {"campaigns"}),
     "userattendances": (UserAttendances, {"users", "teams", "tshirt_sizes", "campaigns"}),
@@ -82,8 +82,6 @@ class Fixtures:
     def __init__(self, targets):
         self.sets = {}
         while targets != set(self.sets.keys()):
-            print(targets)
-            print(self.sets.keys())
             for target_name in list(targets):
                 if target_name in self.sets:
                     continue
@@ -92,7 +90,7 @@ class Fixtures:
                     try:
                         self.sets[target_name] = target[0](**self.sets)
                     except Exception as e:
-                        raise TypeError(target_name + str(e))
+                        raise Exception(target_name + str(e))
                 else:
                     for new_target in target[1]:
                         if new_target not in targets:

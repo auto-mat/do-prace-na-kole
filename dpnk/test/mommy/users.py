@@ -33,14 +33,6 @@ class Users:
             ecc_email = "email1128@dopracenakole.cz",
             user = self.user,
         )
-        self.user_companyadmin = mommy.make(  # was pk=1
-            "dpnk.companyadmin",
-            userprofile = self.userprofile,
-            can_confirm_payments = True,
-            campaign = campaigns.c2010,
-            administrated_company = companies.basic,
-            company_admin_approved = "approved",
-        )
 
         self.local_organizer_user = mommy.make(  # was pk=2
             "auth.user",
