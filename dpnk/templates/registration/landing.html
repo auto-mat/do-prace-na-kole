@@ -18,7 +18,7 @@
     {# clever tattle #}
     {% if user_attendance.get_random_motivation_message.message %}
         <div class="clever_tattle">
-          {% if user_attendance.get_frequency_rank_in_team == 1 %}
+          {% if user_attendance.get_frequency_rank_in_team == 1 and user_attendance.campaign.competitors_choose_team %}
             <i class="fas fa-sun"></i>
             {% trans "Zpráva pro nejlepšího týmového hráče:" %}
           {% endif %}
