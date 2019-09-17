@@ -43,6 +43,7 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'author',
         'updated_by',
     )
+    save_as = True
 
     def message_html(self, obj):
         return mark_safe(obj.message)

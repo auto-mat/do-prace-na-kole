@@ -15,6 +15,11 @@ class MotivationMessage(models.Model):
         verbose_name = _("Motivační hláška")
         verbose_name_plural = _("Motivační hlášky")
 
+    campaign_types = models.ManyToManyField(
+        'dpnk.CampaignType',
+        null=True,
+        blank=True,
+    )
     message = models.TextField(
         verbose_name=_("Hláška"),
         null=False,
@@ -96,6 +101,9 @@ class MotivationMessage(models.Model):
         today = util.today()
         queryset = queryset.filter(Q(date_from__isnull=True) | Q(date_from__lte=today))
         queryset = queryset.filter(Q(date_to__isnull=True) | Q(date_to__gte=today))
+
+        campaign_type = user_attendance.campaign.campaign_type
+        queryset = queryset.filter(Q(campaign_types__isnull=True) | Q(campaign_types=campaign_type))
 
         percentage = user_attendance.get_frequency_percentage()
         queryset = queryset.filter(Q(frequency_min__isnull=True) | Q(frequency_min__lte=percentage))
