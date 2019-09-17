@@ -25,6 +25,9 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'team_backwards_rank_from',
         'team_backwards_rank_to',
     )
+    list_filter = (
+        'campaign_types',
+    )
     list_editable = (
         'enabled',
         'priority',
