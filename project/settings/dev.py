@@ -134,6 +134,7 @@ DEBUG_TOOLBAR_CONFIG = {
 
 TEMPLATES[0]['OPTIONS']['debug'] = True
 TEMPLATES[0]['OPTIONS']['loaders'] = [
+    ('dbtemplates.loader.Loader'),
     ('django.template.loaders.filesystem.Loader'),
     ('django.template.loaders.app_directories.Loader'),
 ]
