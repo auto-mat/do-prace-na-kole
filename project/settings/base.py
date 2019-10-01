@@ -322,7 +322,7 @@ INSTALLED_APPS = [
     'reversion',
 ]
 
-DBTEMPLATES_USE_REVERSION=True
+DBTEMPLATES_USE_REVERSION = True
 
 ECC_PROVIDER_CODE = "DK"
 ECC_URL_BASE = "http://srv.cycling365.eu/services"
