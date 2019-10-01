@@ -15,9 +15,12 @@ from .models import MotivationMessage
 )
 class MessagesTest(TestCase):
     def setUp(self):
+        self.campaign_type1 = mommy.make("CampaignType", name="campaign type 1", slug="ct1")
+        self.campaign_type2 = mommy.make("CampaignType", name="campaign type 2", slug="ct2")
         self.user_attendance = MagicMock()
         self.user_attendance.get_frequency_percentage.return_value = 65
         self.user_attendance.campaign.competition_phase.return_value.date_from = datetime.date(2010, 11, 18)
+        self.user_attendance.campaign.campaign_type = self.campaign_type1
         self.user_attendance.get_frequency_rank_in_team.return_value = 2
         self.user_attendance.team.members.return_value.count.return_value = 4
 
@@ -68,6 +71,13 @@ class MessagesTest(TestCase):
         mommy.make("MotivationMessage", message="message7", team_rank_to=1)
         messages = MotivationMessage._get_all_messages(self.user_attendance).order_by('id')
         self.assertQuerysetEqual(messages, (message1, message2, message3), transform=lambda x: x)
+
+    def test_get_all_messages_campaign_types(self):
+        message1 = mommy.make("MotivationMessage", message="message1", campaign_types=[self.campaign_type1, self.campaign_type2])
+        mommy.make("MotivationMessage", message="message2", campaign_types=[self.campaign_type2])
+        message3 = mommy.make("MotivationMessage", message="message3", campaign_types=[])
+        messages = MotivationMessage._get_all_messages(self.user_attendance).order_by('id')
+        self.assertQuerysetEqual(messages, (message1, message3), transform=lambda x: x)
 
     def test_get_random_simple(self):
         """ Random enabled message from set with highest priority should be returned """

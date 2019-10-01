@@ -25,6 +25,9 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'team_backwards_rank_from',
         'team_backwards_rank_to',
     )
+    list_filter = (
+        'campaign_types',
+    )
     list_editable = (
         'enabled',
         'priority',
@@ -43,6 +46,7 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'author',
         'updated_by',
     )
+    save_as = True
 
     def message_html(self, obj):
         return mark_safe(obj.message)
