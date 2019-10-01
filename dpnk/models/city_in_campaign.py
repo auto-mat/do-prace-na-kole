@@ -70,7 +70,7 @@ class CityInCampaign(models.Model):
             return UserAttendance.objects.filter(
                 campaign=self.campaign,
                 team__subsidiary__city=self.city,
-                payment_status='done',
+                payment_status__in=('done', 'no_admission'),
             )
         return actually_get_competitors(self.pk)
 
