@@ -1763,13 +1763,13 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         context_data['cities'] = models.CityInCampaign.objects.filter(campaign__slug=campaign_slug)
         context_data['without_city'] =\
             UserAttendance.objects.\
-            filter(payment_status='done', campaign__slug=campaign_slug, team=None)
+            filter(payment_status__in=('done', 'no_admission'), campaign__slug=campaign_slug, team=None)
         context_data['total'] =\
             UserAttendance.objects.\
-            filter(payment_status='done', campaign__slug=campaign_slug)
+            filter(payment_status__in=('done', 'no_admission'), campaign__slug=campaign_slug)
         context_data['total_distances'] = distance_all_modes(
             models.Trip.objects.filter(
-                user_attendance__payment_status='done',
+                user_attendance__payment_status__in=('done', 'no_admission'),
                 user_attendance__campaign__slug=campaign_slug,
             ),
         )

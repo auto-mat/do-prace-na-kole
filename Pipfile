@@ -57,9 +57,9 @@ django-model-utils = "*"
 django-price-level = "*"
 django-datatables-view = "*"
 django-rank-query = "*"
-django-adminactions = {editable = true, ref = "develop", git = "https://github.com/saxix/django-adminactions.git"}
+django-adminactions = {editable = true,ref = "develop",git = "https://github.com/saxix/django-adminactions.git"}
 django-avatar = "*"
-django-photologue = {git = "https://github.com/auto-mat/django-photologue.git", editable = true, ref = "s3links"}
+django-photologue = {git = "https://github.com/auto-mat/django-photologue.git",editable = true,ref = "s3links"}
 boto = "*"
 django-google-tag-manager = "*"
 django-ses = "*"
@@ -87,23 +87,23 @@ django-bleach = "*"
 sqlparse = "*"
 django-appconf = "*"
 social-auth-app-django = "*"
-django-admin-view-permission = {git = "https://github.com/auto-mat/django-admin-view-permission.git", editable = true, ref = "request-arg"} # Remove after https://github.com/ctxis/django-admin-view-permission/pull/62 is merged
-svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git", editable = true}
-django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains", editable = true, ref = "django20"}
-django-advanced-filters = {git = "https://github.com/PetrDlouhy/django-advanced-filters.git", editable = true, ref = "develop"}
-stravalib = {git = "https://github.com/hozn/stravalib", editable = true, ref = "master"}
-django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor", editable = true}
-django-selectable = {git = "https://github.com/PetrDlouhy/django-selectable.git", editable = true, ref = "mergeup"}  # For the Django 2.0 fixes, for search splitted by whitespaces
-django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", editable = true, ref = "develop"}
-django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git", editable = true, ref = "2.0"}
-django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation", editable = true, ref = "patch-the-issue-with-django2"}
+django-admin-view-permission = {git = "https://github.com/auto-mat/django-admin-view-permission.git",editable = true,ref = "request-arg"} # Remove after https://github.com/ctxis/django-admin-view-permission/pull/62 is merged
+svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git",editable = true}
+django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains",editable = true,ref = "django20"}
+django-advanced-filters = {git = "https://github.com/PetrDlouhy/django-advanced-filters.git",editable = true,ref = "develop"}
+stravalib = {git = "https://github.com/hozn/stravalib",editable = true,ref = "master"}
+django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor",editable = true}
+django-selectable = {git = "https://github.com/PetrDlouhy/django-selectable.git",editable = true,ref = "mergeup"}  # For the Django 2.0 fixes, for search splitted by whitespaces
+django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git",editable = true,ref = "develop"}
+django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git",editable = true,ref = "2.0"}
+django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation",editable = true,ref = "patch-the-issue-with-django2"}
 django_polymorphic = "*"
 Unidecode = "*"
 Pillow = "==5.4.1"
 easy-thumbnails = "*"
 SQLAlchemy = "*"
 django_celery_beat = "*"
-django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", editable = true, ref = "mergeup"}
+django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git",editable = true,ref = "mergeup"}
 "PyPDF2" = "*"
 "django-scribbler-django2.0" = "*"
 "django-bootstrap4" = "*"
@@ -113,6 +113,9 @@ dj_anonymizer = "*"
 faker = "*"
 django-colorfield = "*"
 dj-fiobank-payments = "<=0.3.0"
+asgiref="*"
+django-dbtemplates = "*"
+django-reversion = "*"
 
 [requires]
 python_version = "3.6"
@@ -138,7 +141,10 @@ nose-exclude = "*"
 pudb = "*"
 coveralls = "*"
 ddt = "*"
-model_mommy = {git = "https://github.com/auto-mat/model_mommy.git", ref = "issue-377", editable = true} # Remove after https://github.com/vandersonmota/model_mommy/pull/378 is fixed
+model_mommy = {git = "https://github.com/auto-mat/model_mommy.git",ref = "issue-377",editable = true} # Remove after https://github.com/vandersonmota/model_mommy/pull/378 is fixed
 django_coverage_plugin = "*"
 "flake8_strict" = "*"
 django-livereload-server="*"
+
+[pipenv]
+allow_prereleases = true
