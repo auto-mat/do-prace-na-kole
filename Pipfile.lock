@@ -173,7 +173,7 @@
         "django-admin-charts": {
             "editable": true,
             "git": "https://github.com/PetrDlouhy/django-admin-charts",
-            "ref": "333545de0fa2e536cb53abf74045198b2e7b74a5"
+            "ref": "02ae2119f5186462dc79e5f07d340ec507d8779b"
         },
         "django-admin-sortable2": {
             "hashes": [
