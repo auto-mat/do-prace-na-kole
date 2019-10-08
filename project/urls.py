@@ -4,6 +4,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib.gis import admin
 from django.http import HttpResponse
+from django.urls import path
 from django.views.generic import RedirectView
 
 from dpnk.rest import router
@@ -29,6 +30,7 @@ urlpatterns = [
     url(r"^su/", include("django_su.urls")),
     url(r'^selectable/', include('selectable.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('admin_tools_stats/', include('admin_tools_stats.urls')),
     url(r'^photologue/', include('photologue.urls', namespace='photologue')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^nested_admin/', include('nested_admin.urls')),

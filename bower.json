@@ -29,7 +29,8 @@
       "jquery-editable-select": "~2.2.5",
       "leaflet": "1.0.3",
       "leaflet-draw": "1.0.4",
-      "leaflet-gpx": "https://github.com/mpetazzoni/leaflet-gpx.git"
+      "leaflet-gpx": "https://github.com/mpetazzoni/leaflet-gpx.git",
+      "nvd3": "^1.8.6"
   },
   "resolutions": {
     "jquery": "2.2.0",
