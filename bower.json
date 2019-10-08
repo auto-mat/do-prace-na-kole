@@ -30,7 +30,8 @@
       "leaflet": "1.0.3",
       "leaflet-draw": "1.0.4",
       "leaflet-gpx": "https://github.com/mpetazzoni/leaflet-gpx.git",
-      "nvd3": "^1.8.6"
+      "d3": "3.3.13",
+      "nvd3": "1.7.1"
   },
   "resolutions": {
     "jquery": "2.2.0",
