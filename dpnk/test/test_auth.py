@@ -103,7 +103,7 @@ class TestPasswordForms(ViewsLogonMommy):
         uidb64 = base64.b64encode(bytes(str(user.id), "utf-8")).decode("utf-8")
         address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
         response1 = self.client.get(address)
-        response = self.client.post(response1.url, {"new_password1": "a", "new_password2": "a"})
+        response = self.client.post(response1.url, {"new_password1": "azxkr", "new_password2": "azxkr"})
         self.assertContains(
             response,
             '<strong>Heslo je příliš krátké. Musí mít délku aspoň 6 znaků.</strong>',

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from django.conf import settings
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -24,8 +25,6 @@ from django.urls import reverse
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-import settings
 
 
 @override_settings(

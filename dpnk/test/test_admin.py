@@ -20,6 +20,7 @@
 import datetime
 import random
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
@@ -31,8 +32,6 @@ from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-import settings
 
 
 @override_settings(

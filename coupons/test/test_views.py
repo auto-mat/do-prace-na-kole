@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from django.conf import settings
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -27,8 +28,6 @@ from dpnk.test.mommy_recipes import campaign_type
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-import settings
 
 
 @override_settings(

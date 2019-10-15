@@ -26,6 +26,7 @@ from ddt import data, ddt
 
 import denorm
 
+from django.conf import settings
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
@@ -38,8 +39,6 @@ from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
@@ -633,8 +632,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('register_admin')
         post_data = {
             'email': 'testadmin@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
             'motivation_company_admin': 'some motivation',
             'telephone': 123456789,
             'first_name': 'Company',
@@ -678,8 +677,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdf',
+            'password2': 'this.is.an.uncommon.password#$%^asdf',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('registration_complete'))
@@ -809,8 +808,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('registration_complete'))
@@ -835,8 +834,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('registration_complete'))

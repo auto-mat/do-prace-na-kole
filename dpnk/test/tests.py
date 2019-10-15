@@ -20,6 +20,7 @@
 import datetime
 from collections import OrderedDict
 from unittest.mock import ANY, patch
+from urllib.parse import urlparse
 
 import denorm
 
@@ -87,7 +88,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request.user_attendance = self.user_attendance
         request.campaign = models.Campaign.objects.get(pk=338)
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
-        self.assertEqual(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
+        self.assertEqual(urlparse(response.url).path, '/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
         payment = models.Payment.objects.get(session_id=self.session_id)
         self.assertEqual(payment.pay_type, None)
         self.assertEqual(payment.error, None)
