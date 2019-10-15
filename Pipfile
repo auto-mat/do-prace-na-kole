@@ -116,7 +116,7 @@ dj-fiobank-payments = "<=0.3.0"
 asgiref="*"
 django-dbtemplates = "*"
 django-reversion = "*"
-django-admin-charts = {git = "https://github.com/PetrDlouhy/django-admin-charts",editable = true,ref = "dpnk_fixes"}
+django-admin-charts = {git = "https://github.com/PetrDlouhy/django-admin-charts",editable = true,ref = "develop"}
 
 [requires]
 python_version = "3.6"
