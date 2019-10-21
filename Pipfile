@@ -5,9 +5,9 @@ name = "pypi"
 
 [packages]
 six = "*"
-Django = "<2.1"
+Django = ">=2.2.6"
 django-import-export = "*"
-django-smart-selects = "==1.5.3"
+django-smart-selects = {editable = true,ref = "patch-1",git = "https://github.com/Murakam1/django-smart-selects.git"} # THIS PACKAGE IS TERRIBLE AND DEPRECATED AND SHOULD NEVER HAVE BEEN USED! https://django-autocomplete-light.readthedocs.io/en/master/ looks better, should move to it probably. https://github.com/digi604/django-smart-selects/pull/284
 psycopg2 = "*"
 python-memcached = "*"
 django-chart-tools = "*"
@@ -28,7 +28,7 @@ polyline = "*"
 InvoiceGenerator = "*"
 django-related-admin = "*"
 newrelic = "*"
-django-crispy-forms = "*"
+django-crispy-forms = "==1.7.2" # https://github.com/django-crispy-forms/django-crispy-forms/issues/913
 django-class-based-auth-views = "*"
 slumber = "*"
 geopy = "*"
@@ -42,7 +42,7 @@ django-leaflet = "*"
 gpxpy = "*"
 lxml = "*"
 django-gpxpy = "*"
-django-cachalot = "*"
+django-cachalot = {editable = true,ref = "django-2.2",git = "https://github.com/federicobond/django-cachalot.git"} # https://github.com/noripyt/django-cachalot/pull/127
 django-bulk-update = "*"
 django-cors-headers = "*"
 django-denorm = "*"
@@ -69,7 +69,7 @@ django-mass-edit = "*"
 fiobank = "*"
 django-ipware = "*"
 djangorestframework-gis = "*"
-django-table-select-widget = "*"
+django-table-select-widget = {git = "https://github.com/willardmr/DjangoTableSelectMultipleWidget.git",editable = true,ref = "master"} # https://github.com/willardmr/DjangoTableSelectMultipleWidget/pull/6 Waiting on pypi release
 redis = "*"
 django-isnull-list-filter = "*"
 django-redis = "*"
@@ -87,16 +87,15 @@ django-bleach = "*"
 sqlparse = "*"
 django-appconf = "*"
 social-auth-app-django = "*"
-django-admin-view-permission = {git = "https://github.com/auto-mat/django-admin-view-permission.git",editable = true,ref = "request-arg"} # Remove after https://github.com/ctxis/django-admin-view-permission/pull/62 is merged
 svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git",editable = true}
 django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains",editable = true,ref = "django20"}
-django-advanced-filters = {git = "https://github.com/PetrDlouhy/django-advanced-filters.git",editable = true,ref = "develop"}
+django-advanced-filters = "*"
 stravalib = {git = "https://github.com/hozn/stravalib",editable = true,ref = "master"}
 django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor",editable = true}
-django-selectable = {git = "https://github.com/PetrDlouhy/django-selectable.git",editable = true,ref = "mergeup"}  # For the Django 2.0 fixes, for search splitted by whitespaces
+django-selectable = "*"
 django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git",editable = true,ref = "develop"}
-django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git",editable = true,ref = "2.0"}
-django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation",editable = true,ref = "patch-the-issue-with-django2"}
+django-braces = "*"
+django-modeltranslation = "*"
 django_polymorphic = "*"
 Unidecode = "*"
 Pillow = "==5.4.1"

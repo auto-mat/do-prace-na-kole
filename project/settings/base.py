@@ -238,7 +238,6 @@ INSTALLED_APPS = [
     'modeltranslation',
     'admin_tools_stats',
     'django_nvd3',
-    'admin_view_permission',
     'admin_views',
 
     'django_su',
