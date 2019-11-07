@@ -19,16 +19,18 @@
 from __future__ import absolute_import
 
 from datetime import timedelta
+from urllib.request import urlopen
 
 from celery import shared_task
 
 import denorm
 
+from dj_fiobank_payments.statement import parse
+
 from django.contrib import contenttypes
 
 from . import email, mailing, util
 from .models import Campaign, Company, Competition, Invoice, Team, UserAttendance, payments_to_invoice
-from .statement import parse
 
 
 @shared_task(bind=True)
@@ -158,3 +160,8 @@ def create_invoice_if_needed(self, pk=None, campaign_slug=''):
             company=company,
             campaign=campaign,
         )
+
+
+@shared_task(bind=True)
+def request_page(self, page):
+    urlopen(page)

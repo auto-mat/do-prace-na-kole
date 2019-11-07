@@ -321,6 +321,14 @@ class Campaign(Pricable, models.Model):
         default='',
         on_delete=models.SET_NULL,
     )
+    city_in_campaign_diploma_sandwich_type = models.ForeignKey(
+        PdfSandwichType,
+        related_name='city_in_campaign_diploma_campaign',
+        null=True,
+        blank=True,
+        default='',
+        on_delete=models.SET_NULL,
+    )
 
     def get_language_prefix(self):
         if self.language_prefixes == 'dpnk':
@@ -349,6 +357,9 @@ class Campaign(Pricable, models.Model):
             return False
         return member_count > self.max_team_members
 
+    def active(self):
+        return self.day_active(util.today())
+
     def day_active(self, day):
         """ Return if this day can be changed by user """
         day_today = util.today()
@@ -358,8 +369,9 @@ class Campaign(Pricable, models.Model):
                 return False
         except Phase.DoesNotExist:
             pass
+        competition_phase = self.phase('competition')
         return (
-            (day <= day_today) and
+            (day <= day_today) and competition_phase.day_in_phase(day) and
             (day > day_today - datetime.timedelta(days=self.days_active))
         )
 

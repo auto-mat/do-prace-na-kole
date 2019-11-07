@@ -226,6 +226,7 @@ TEMPLATES = [
             ),
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
+                    'dbtemplates.loader.Loader',
                     'django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader',
                 ]),
@@ -233,9 +234,10 @@ TEMPLATES = [
         },
     },
 ]
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'modeltranslation',
-    'admin_view_permission',
+    'admin_tools_stats',
+    'django_nvd3',
     'admin_views',
 
     'django_su',
@@ -260,6 +262,7 @@ INSTALLED_APPS = (
     'stravasync',
     'psc',
     'stale_notifications',
+    'motivation_messages',
 
     'smart_selects',
     'composite_field',
@@ -303,6 +306,7 @@ INSTALLED_APPS = (
     'advanced_filters',
     'djcelery_email',
     'django_celery_beat',
+    'dj_fiobank_payments',
     'smmapdfs',
     'secretballot',
     'sitetree',
@@ -315,7 +319,11 @@ INSTALLED_APPS = (
     'photologue',
     'sortedm2m',
     # 'dj_anonymizer',
-)
+    'dbtemplates',
+    'reversion',
+]
+
+DBTEMPLATES_USE_REVERSION = True
 
 ECC_PROVIDER_CODE = "DK"
 ECC_URL_BASE = "http://srv.cycling365.eu/services"
@@ -399,8 +407,9 @@ LEAFLET_CONFIG = {
             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {'attribution': u'&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
     ],
+    'NO_GLOBALS': False,
     'DEFAULT_ZOOM': 8,
-    'MIN_ZOOM': 8,
+    'MIN_ZOOM': 7,
     'MAX_ZOOM': 18,
     'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }
@@ -415,6 +424,10 @@ MAX_COMPETITIONS_PER_COMPANY = 8
 
 MAILING_API_KEY = os.environ.get('DPNK_MAILING_API_KEY', '')
 ECOMAIL_MAILING_API_KEY = os.environ.get('DPNK_ECOMAIL_MAILING_API_KEY', '')
+
+GLS_USERNAME = os.environ.get('GLS_USERNAME', '')
+GLS_PASSWORD = os.environ.get('GLS_PASSWORD', '')
+GLS_BASE_URL = os.environ.get('GLS_BASE_URL', 'http://test.online.gls-czech.com')
 
 FIO_TOKEN = os.environ.get('DPNK_FIO_TOKEN', '')
 
@@ -630,6 +643,10 @@ SMMAPDFS_EMAIL_CONTEXT_HELP = """<br/>
 
 DENORM_MAX_PROCESS_COUNT = os.environ.get('DENORM_MAX_PROCESS_COUNT', 100)
 
+ADMIN_CHARTS_NVD3_JS_PATH = 'bow/nvd3/build/nv.d3.js'
+ADMIN_CHARTS_NVD3_CSS_PATH = 'bow/nvd3/build/nv.d3.css'
+ADMIN_CHARTS_D3_JS_PATH = 'bow/d3/d3.js'
+
 
 AVATAR_CACHE_ENABLED = False
 AVATAR_AUTO_GENERATE_SIZES = (30, 80, 150)
@@ -653,3 +670,12 @@ def photologue_path(instance, filename):
 
 
 PHOTOLOGUE_PATH = photologue_path
+
+DBBACKUP_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+DBBACKUP_STORAGE_OPTIONS = {
+    'access_key': os.environ.get('DPNK_AWS_ACCESS_KEY_ID'),
+    'secret_key': os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY'),
+    'bucket_name': 'dpnk-dbbackups',
+}
+
+FIOBANK_PAYMENTS_ORDER_MODEL = 'dpnk.Invoice'

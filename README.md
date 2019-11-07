@@ -18,7 +18,7 @@ Running the dev env
 Check out and setup repo
 ------------------------
 
-    $ git clone https://bitbucket.org/pdlouhy/do-prace-na-kole.git
+    $ git clone https://github.com/auto-mat/do-prace-na-kole.git
     $ cd do-prace-na-kole
 
 Create a docker.env file

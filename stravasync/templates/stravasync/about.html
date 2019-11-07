@@ -19,6 +19,9 @@
         {% blocktrans with synced_activities=sync_outcome.synced_activities %}
         Ve Stravě máte  {{synced_activities}} aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy {{hashtag_to}} nebo {{hashtag_from}} do názvu aktivity aby se počítaly jako jízdy do práce a z práce.
         {% endblocktrans %}
+    {% blocktrans %}
+    Pokud jste při připojení se Stravou nevybral/a "Synchronizovat i soukromé jízdy a zóny". Soukromé jizdy synchronizované nebudou. Pokud chcete změnit tuhle nastavení, odpojte a připojte znovu.
+    {% endblocktrans %}
         <br/>
         <br/>
         {% trans "Našli jsme následující aktivity:" %}

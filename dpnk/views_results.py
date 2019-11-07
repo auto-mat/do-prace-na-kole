@@ -70,7 +70,7 @@ class CompetitionResultResource(resources.ModelResource):
     team = Field(column_name=_("Tým"))
     company = Field(column_name=_("Organizace"))
     subsidiary = Field(column_name=_("Pobočka"))
-    sequence_range = Field(column_name=_("Rozmezí sekvence"))
+    sequence_range = Field(column_name=_("Pořadí"))
 
     class Meta:
         model = models.CompetitionResult

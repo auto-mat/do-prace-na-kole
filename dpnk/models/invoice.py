@@ -25,6 +25,8 @@ from author.decorators import with_author
 
 import denorm
 
+from dj_fiobank_payments.models import AbstractOrder
+
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.files import File
@@ -44,7 +46,7 @@ from .. import invoice_gen, util
 
 
 @with_author
-class Invoice(StaleSyncMixin, models.Model):
+class Invoice(StaleSyncMixin, AbstractOrder):
     """Faktura"""
     class Meta:
         verbose_name = _(u"Faktura")
@@ -243,7 +245,6 @@ class Invoice(StaleSyncMixin, models.Model):
             first = campaign.invoice_sequence_number_first
             last = campaign.invoice_sequence_number_last
             last_transaction = Invoice.objects.filter(
-                campaign=campaign,
                 sequence_number__gte=first,
                 sequence_number__lte=last,
             )

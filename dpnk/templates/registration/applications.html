@@ -1,6 +1,12 @@
 {% extends "base_generic_form.html" %}
 {% load i18n %}
 
+
+{% block caption %}
+   {% include "./rides_view_switcher.html" with page="applications" %}
+   {{ block.super }}
+{% endblock caption %}
+
 {% block form %}
    {% if perms.dpnk.can_see_application_links and not campaign.show_application_links %}
       <div class="alert alert-danger"> {% trans "Odkazy zobrazené jen pro testovací účely. Umožnit přistup k odkazům přes nastavení kampaně:" %} {% trans "Ukázat odkazy na aplikace" %} </div><br/>

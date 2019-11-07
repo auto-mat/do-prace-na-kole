@@ -1,0 +1,89 @@
+{% load i18n %}
+{% load l10n %}
+<script>
+ var urls = {};
+ {% for trip in prev_tracks %}
+ urls[{{trip.id}}] = "{% url "trip_geojson" date=trip.date direction=trip.direction %}";
+ {% endfor %}
+ function load_old_map(track_id) {
+     map = window["leafletmapid_track-map"]
+     lgf = window["leaflet-geometry-field"]
+     lgf.clear()
+     function add_layer(l) {
+         var geojson_layer = L.GeoJSON.geometryToLayer(l);
+         lgf.drawnItems.addLayer(geojson_layer)
+         map.fitBounds(geojson_layer.getBounds())
+     }
+     if (track_id === null) {
+         return
+     }
+     $.ajax({
+         dataType: "json",
+         url: urls[track_id],
+         type: "get",
+         data: {
+             geom: 'LineStrings',
+         },
+         success: function(data) {
+             for (i in data) {
+                 add_layer(data[i]);
+             }
+             lgf.store.save(lgf.drawnItems)
+         }
+     }).error(function() {});
+ }
+ var trips = [
+ {% for trip in prev_tracks %}
+     {
+         trip_date: '{{trip.date}}',
+         direction: '{{trip.direction}}',
+         distanceKm: {{trip.distance|unlocalize}},
+         pk: {{trip.pk}}
+     },
+ {% endfor %}
+];
+
+ direction_names = { // TODO DEDUPLICATE!
+     "trip_to": "{% trans 'Do práce' %}",
+     "trip_from": "{% trans 'Domů' %}",
+     "recreational": "{% trans 'Výlet' %}",
+ }
+
+ route_options = {
+     "-": function(){},
+     "{% trans 'Vyprazdnit' %}": function (){load_old_map(null)}
+ };
+ route_option_ids = {
+     "{% trans 'Vyprazdnit' %}": "clear_route_option",
+     "-": "null_option"
+ };
+ for (i in trips){
+     var trip = trips[i];
+     desc = trip.trip_date + "  " + direction_names[trip.direction] + " (" + trip.distanceKm + " km)"; // TODO DEDUP!
+     (function() {
+         var local_trip = trip;
+         route_options[desc] = function () {load_old_map(local_trip.pk);};
+         route_option_ids[desc] = desc;
+     })();
+ }
+
+ function on_route_select() {
+     var sel = document.getElementById("route_select");
+     if(sel.value){
+         route_options[sel.value]();
+     }
+ }
+
+ //load_old_map({{trip.pk}})
+ $(function (){
+     load_route_list("#route_select", 2, route_options, route_option_ids);
+ });
+</script>
+<div class="form-group row">
+    <label for="route_options" class="col col-form-label col-form-label-sm">{% trans "Vyberte z předchozích tras" %}</label>
+    <div class="col">
+        <select id="route_select" onchange="on_route_select()">
+        </select>
+    </div>
+</div>
+{% include "leaflet/widget.html" %}

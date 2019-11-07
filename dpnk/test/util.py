@@ -21,12 +21,12 @@ from django.core.cache import cache
 from django.core.management import call_command
 
 
-def print_response(response, stdout=False):
+def print_response(response, stdout=False, filename="response.html"):
     content = response.content.decode()
     if stdout:
         print(content)
     else:
-        with open("response.html", "w") as f:  # pragma: no cover
+        with open(filename, "w") as f:  # pragma: no cover
             f.write(content)  # pragma: no cover
 
 

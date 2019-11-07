@@ -50,6 +50,29 @@ class CommuteMode(models.Model):
         blank=False,
         null=False,
     )
+    button_html = models.TextField(
+        verbose_name=_("Html of selector buttons"),
+        default="",
+        null=False,
+    )
+    icon_html = models.TextField(
+        verbose_name=_("Html of summary icon"),
+        default="",
+        null=False,
+    )
+    add_command = models.TextField(
+        verbose_name=_("Tooltip command for adding trip."),
+        help_text=_("Use {{distance}} to insert distance and {{direction}} for direction."),
+        default="",
+        null=False,
+    )
+    choice_description = models.TextField(
+        verbose_name=_("Vysvětlivka výběru módu"),
+        help_text=_("Use {{distance}} to insert distance."),
+        default=None,
+        blank=True,
+        null=True,
+    )
     does_count = models.BooleanField(
         verbose_name=_("Počítá se"),
         help_text=_("Počítá se jako jízda do práce/z práce."),

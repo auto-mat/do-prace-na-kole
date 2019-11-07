@@ -107,7 +107,7 @@ urlpatterns = [
     ),
     url(
         r'^kalendar/$',
-        views.VacationsView.as_view(),
+        views.CalendarView.as_view(),
         name="calendar",
     ),
     url(
@@ -126,6 +126,11 @@ urlpatterns = [
             template_name='registration/team_members_results.html',
         ),
         name="other_team_members_results",
+    ),
+    url(
+        r'^pravidelnost/$',
+        views.FrequencyView.as_view(),
+        name="team_frequency",
     ),
     url(
         r'^souteze_vykonnostni/$',
@@ -278,6 +283,11 @@ urlpatterns = [
         name="trip",
     ),
     url(
+        r'^view_trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
+        views.TripView.as_view(),
+        name="view_trip",
+    ),
+    url(
         r'^trip_geojson/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
         views.TripGeoJsonView.as_view(),
         name="trip_geojson",
@@ -300,10 +310,7 @@ urlpatterns = [
     ),
     url(
         r'^$',
-        views.RegistrationCompleteUserAttendanceView.as_view(
-            template_name="registration/landing.html",
-            title=_("Vítejte v dalším ročníku soutěže!"),
-        ),
+        views.LandingView.as_view(),
         name="profil",
     ),
     url(
@@ -314,6 +321,11 @@ urlpatterns = [
         r'^switch_lang/$',
         views.SwitchLang.as_view(),
         name="switch_lang",
+    ),
+    url(
+        r'^switch_rides_view/$',
+        views.SwitchRidesView.as_view(),
+        name="switch_rides_view",
     ),
 
 

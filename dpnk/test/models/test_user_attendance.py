@@ -239,8 +239,15 @@ class TestGetDistance(TestCase):
         self.assertEqual(user_attendance.get_distance(), 123)
 
     def test_user_attendance_get_distance(self):
+        models.Trip.objects.all().delete()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
+        user_attendance.track = None
+        user_attendance.save()
         self.assertEqual(user_attendance.get_distance(), 123)
+
+    def test_user_attendance_get_distance_track(self):
+        user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.assertEqual(user_attendance.get_distance(), 156.9)
 
     def test_user_attendance_get_distance_no_length(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
@@ -253,7 +260,7 @@ class TestGetDistance(TestCase):
         user_attendance.track = "MULTILINESTRING((0 0, 0 0))"
         user_attendance.save()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.get_distance(), 123)
+        self.assertEqual(user_attendance.get_distance(), 0.0)
 
 
 class TestIsLibero(TransactionTestCase):

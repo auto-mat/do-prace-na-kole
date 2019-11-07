@@ -1,4 +1,5 @@
 !.gitkeep
+third_party
 /#*#
 *.mo
 *.pyc
@@ -40,6 +41,7 @@ graph.pdf
 src/
 graph
 project/media/
+project/settings/local.py
 profiles/
 .req_checker_cache
 .config/

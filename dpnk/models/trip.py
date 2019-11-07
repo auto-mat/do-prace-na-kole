@@ -28,6 +28,8 @@ from bulk_update.manager import BulkUpdateManager
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Case, Count, F, FloatField, IntegerField, Sum, When
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
@@ -46,6 +48,41 @@ def normalize_gpx_filename(instance, filename):
         datetime.datetime.now().strftime("%Y-%m-%d"),
         slugify(filename),
     ])
+
+
+def distance_all_modes(trips):
+    return trips.filter(commute_mode__eco=True, commute_mode__does_count=True).aggregate(
+        distance__sum=Coalesce(Sum("distance"), 0.0),
+        count__sum=Coalesce(Count("id"), 0),
+        count_bicycle=Sum(
+            Case(
+                When(commute_mode__slug='bicycle', then=1),
+                output_field=IntegerField(),
+                default=0,
+            ),
+        ),
+        distance_bicycle=Sum(
+            Case(
+                When(commute_mode__slug='bicycle', then=F('distance')),
+                output_field=FloatField(),
+                default=0,
+            ),
+        ),
+        count_foot=Sum(
+            Case(
+                When(commute_mode__slug='by_foot', then=1),
+                output_field=IntegerField(),
+                default=0,
+            ),
+        ),
+        distance_foot=Sum(
+            Case(
+                When(commute_mode__slug='by_foot', then=F('distance')),
+                output_field=FloatField(),
+                default=0,
+            ),
+        ),
+    )
 
 
 @with_author
@@ -166,6 +203,9 @@ class Trip(models.Model):
         if self.commute_mode.slug == 'no_work' and self.date > util.today():
             return _('Dovolená')
         return str(self.commute_mode)
+
+    def get_direction_display(self):
+        return self.DIRECTIONS_DICT[self.direction]
 
     def get_application_link(self):
         app_links = {

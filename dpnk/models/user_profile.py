@@ -58,6 +58,10 @@ class UserProfile(models.Model):
         ('cs', _(u"Čeština")),
         ('en', _(u"Angličtna")),
     ]
+    RIDES_VIEWS = [
+        ('calendar', _("Kalendář")),
+        ('table', _("Tabulka")),
+    ]
 
     user = models.OneToOneField(
         User,
@@ -95,6 +99,14 @@ class UserProfile(models.Model):
         max_length=16,
         null=False,
         default='cs',
+    )
+    default_rides_view = models.CharField(
+        verbose_name=_("Defaultní předvolba vyplňování jízd"),
+        choices=RIDES_VIEWS,
+        max_length=16,
+        null=True,
+        blank=True,
+        default=None,
     )
     mailing_id = models.CharField(
         verbose_name=_(u"ID uživatele v mailing listu"),

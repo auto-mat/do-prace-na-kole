@@ -24,7 +24,10 @@ import types
 
 from admin_views.admin import AdminViews
 
-from adminactions import actions as admin_actions, merge
+try:
+    from adminactions import actions as admin_actions, merge
+except ImportError:
+    pass
 
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
@@ -55,7 +58,10 @@ from isnull_filter import isnull_filter
 
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
-from massadmin.massadmin import mass_change_selected
+try:
+    from massadmin.massadmin import mass_change_selected
+except ImportError:
+    pass
 
 from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
@@ -147,6 +153,33 @@ class CityAdmin(LeafletGeoAdmin):
     list_filter = ('cityincampaign__campaign',)
 
 
+@admin.register(models.CityInCampaign)
+class CityInCampaignAdmin(RelatedFieldAdmin):
+    list_display = (
+        'name',
+    )
+    list_filter = (
+        CampaignFilter,
+    )
+    actions = (
+        make_pdfsandwich,
+    )
+
+
+@admin.register(models.CityInCampaignDiploma)
+class CityInCampaignDiplomaAdmin(PdfSandwichAdmin):
+    search_fields = (
+        'obj__city__name',
+    )
+
+
+@admin.register(models.CityInCampaignDiplomaField)
+class CityInCampaignDiplomaFieldAdmin(PdfSandwichFieldAdmin):
+    list_filter = (
+        'pdfsandwich_type__name',
+    )
+
+
 class DontValidateCompnayFieldsMixin(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -184,11 +217,14 @@ class CompanyForm(DontValidateCompnayFieldsMixin, forms.ModelForm):
         }
 
 
-class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
-    def full_clean(self):
-        super().full_clean()
-        if 'address_psc' in self._errors:
-            del self._errors['address_psc']
+try:
+    class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
+        def full_clean(self):
+            super().full_clean()
+            if 'address_psc' in self._errors:
+                del self._errors['address_psc']
+except NameError:
+    pass
 
 
 class CompanyResource(resources.ModelResource):
@@ -250,7 +286,10 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
     )
     list_max_show_all = 10000
     form = CompanyForm
-    merge_form = CompanyMergeForm
+    try:
+        merge_form = CompanyMergeForm
+    except NameError:
+        pass
     resource_class = CompanyResource
     actions = (
         actions.create_invoices,
@@ -601,6 +640,9 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
         'userattendance_set__approved_for_team',
         'occupation',
         'age_group',
+        'telephone_opt_in',
+        'mailing_opt_in',
+        'default_rides_view',
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = [
@@ -808,6 +850,7 @@ class UserAttendanceAdmin(
         't_shirt_size__name',
         'userprofile__user__is_active',
         'userprofile__mailing_opt_in',
+        'userprofile__telephone_opt_in',
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
@@ -829,6 +872,7 @@ class UserAttendanceAdmin(
         't_shirt_size',
         'userprofile__user__is_active',
         'userprofile__mailing_opt_in',
+        'userprofile__telephone_opt_in',
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
@@ -1519,6 +1563,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
         CampaignFilter,
         isnull_filter('paid_date', _("Nezaplacené faktury")),
         'company_pais_benefitial_fee',
+        isnull_filter('fio_payments'),
     ]
     search_fields = [
         'company__name',
@@ -1655,12 +1700,19 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
 
 
+@admin.register(models.LandingPageIcon)
+class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
+    list_display = ('role', 'file', 'min_frequency', 'max_frequency')
+    list_editable = ('min_frequency', 'max_frequency')
+
+
 @admin.register(models.CommuteMode)
-class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):
+class CommuteModeAdmin(ImportExportMixin, SortableAdminMixin, TranslationAdmin):
     list_display = (
         'name',
         'slug',
         'does_count',
+        'eco',
     )
 
 
@@ -1686,10 +1738,12 @@ TokenAdmin.search_fields = (
 
 
 # register all adminactions
-admin.site.add_action(admin_actions.merge)
-
-# This is fix for massadmin not adding itself automatically
-admin.site.add_action(mass_change_selected)
+try:
+    admin.site.add_action(admin_actions.merge)
+    # This is fix for massadmin not adding itself automatically
+    admin.site.add_action(mass_change_selected)
+except NameError:
+    pass
 
 
 @admin.register(models.Diploma)
@@ -1702,7 +1756,9 @@ class DiplomaAdmin(PdfSandwichAdmin):
 
 @admin.register(models.DiplomaField)
 class DiplomaFieldAdmin(PdfSandwichFieldAdmin):
-    pass
+    list_filter = (
+        'pdfsandwich_type__name',
+    )
 
 
 @admin.register(models.TeamDiploma)

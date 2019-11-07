@@ -45,8 +45,7 @@ from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
-from django.db.models import BooleanField, Case, Count, F, FloatField, IntegerField, Q, Sum, When
-from django.db.models.functions import Coalesce
+from django.db.models import BooleanField, Case, Q, When
 from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -69,13 +68,13 @@ from registration.backends.default.views import RegistrationView as SimpleRegist
 from unidecode import unidecode
 
 # Local imports
+from . import calendar
 from . import draw
 from . import exceptions
 from . import forms
 from . import models
 from . import results
 from . import util
-from . import vacations
 from .email import (
     approval_request_mail,
     invitation_mail,
@@ -95,12 +94,16 @@ from .forms import (
     TeamSettingsForm,
     TrackUpdateForm,
     UserProfileLanguageUpdateForm,
+    UserProfileRidesUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
+from .models.trip import distance_all_modes
+from .rest import TripSerializer
 from .views_mixins import (
     CampaignFormKwargsMixin,
     CampaignParameterMixin,
     RegistrationMessagesMixin,
+    RegistrationPersonalViewMixin,
     RegistrationViewMixin,
     TitleViewMixin,
     UserAttendanceFormKwargsMixin,
@@ -847,17 +850,29 @@ class RidesDetailsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMe
         return context_data
 
 
-class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView):
+class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     title = _("Zapište svou jízdu do kalendáře")
-    template_name = 'registration/vacations.html'
+    template_name = 'registration/calendar.html'
     registration_phase = 'profile_view'
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
+        competition = self.user_attendance.campaign.phase("competition")
+        entry_enabled_phase = self.user_attendance.campaign.phase("entry_enabled")
+        possible_vacation_days_set = set(self.user_attendance.campaign.possible_vacation_days())
+        active_days_set = set(util.days_active(competition))
+        locked_days_set = set(set(util.days(competition)) - active_days_set) - possible_vacation_days_set
         context_data.update({
-            "possible_vacation_days": json.dumps([str(day) for day in self.user_attendance.campaign.possible_vacation_days()]),
-            "first_vid": vacations.get_vacations(self.user_attendance)[1],
-            "events": json.dumps(vacations.get_events(self.request)),
+            "possible_vacation_days": json.dumps([str(day) for day in possible_vacation_days_set]),
+            "active_days": json.dumps([str(day) for day in active_days_set]),
+            "locked_days": json.dumps([str(day) for day in locked_days_set]),
+            "non_working_days": json.dumps([str(day) for day in util.non_working_days(competition, competition.date_to)]),
+            "events": json.dumps(calendar.get_events(self.request)),
+            "commute_modes": models.CommuteMode.objects.all(),
+            "entry_enabled_phase": entry_enabled_phase,
+            "competition_phase": competition,
+            "interactive_entry_enabled": competition.has_started() and entry_enabled_phase.is_actual(),
+            "leaflet_config": settings.LEAFLET_CONFIG,
         })
         return context_data
 
@@ -877,18 +892,22 @@ class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessa
             date__lte=end_date,
         )
         no_work = models.CommuteMode.objects.get(slug='no_work')
+        updated_trips = []
         if on_vacation:
             for date in util.daterange(start_date, end_date):
                 for direction in ['trip_to', 'trip_from']:
-                    Trip.objects.update_or_create(
-                        user_attendance=self.user_attendance,
-                        date=date,
-                        direction=direction,
-                        defaults={'commute_mode': no_work},
+                    updated_trips.append(
+                        Trip.objects.update_or_create(
+                            user_attendance=self.user_attendance,
+                            date=date,
+                            direction=direction,
+                            defaults={'commute_mode': no_work},
+                        ),
                     )
         else:
             existing_trips.delete()
-        return HttpResponse("OK")
+        existing_trips = [TripSerializer(trip).data for trip in existing_trips]
+        return HttpResponse(json.dumps(existing_trips))
 
 
 class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
@@ -929,8 +948,9 @@ class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredM
     pass
 
 
-class RegistrationCompleteUserAttendanceView(RegistrationCompleteMixin, UserAttendanceView):
-    pass
+class LandingView(RegistrationCompleteMixin, UserAttendanceView):
+    template_name = "registration/landing.html"
+    title = _("Vítejte v dalším ročníku soutěže!")
 
 
 class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
@@ -967,6 +987,16 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedFo
     # This is here for NewRelic to distinguish from TemplateView.get
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+
+class FrequencyView(OtherTeamMembers):
+    template_name = 'registration/frequency.html'
+    title = _("Pravidelnost")
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['approved_team_members'] = self.user_attendance.team.members()
+        return context_data
 
 
 class CompetitionsRulesView(CampaignFormKwargsMixin, TitleViewMixin, TemplateView):
@@ -1057,7 +1087,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
+class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationPersonalViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/profile_update.html'
     form_class = RegistrationProfileUpdateForm
     model = UserProfile
@@ -1630,41 +1660,6 @@ class TeamMembers(
         return context_data
 
 
-def distance_all_modes(trips):
-    return trips.filter(commute_mode__eco=True, commute_mode__does_count=True).aggregate(
-        distance__sum=Coalesce(Sum("distance"), 0.0),
-        count__sum=Coalesce(Count("id"), 0),
-        count_bicycle=Sum(
-            Case(
-                When(commute_mode__slug='bicycle', then=1),
-                output_field=IntegerField(),
-                default=0,
-            ),
-        ),
-        distance_bicycle=Sum(
-            Case(
-                When(commute_mode__slug='bicycle', then=F('distance')),
-                output_field=FloatField(),
-                default=0,
-            ),
-        ),
-        count_foot=Sum(
-            Case(
-                When(commute_mode__slug='by_foot', then=1),
-                output_field=IntegerField(),
-                default=0,
-            ),
-        ),
-        distance_foot=Sum(
-            Case(
-                When(commute_mode__slug='by_foot', then=F('distance')),
-                output_field=FloatField(),
-                default=0,
-            ),
-        ),
-    )
-
-
 def distance(trips):
     return distance_all_modes(trips)['distance__sum'] or 0
 
@@ -1757,7 +1752,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
     template_name = 'registration/competitor_count.html'
     title = _("Počty soutěžících")
 
-    @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60 * 60 - 4))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -1765,29 +1760,16 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         campaign_slug = self.request.subdomain
         context_data['campaign_slug'] = campaign_slug
-        cities = City.objects.\
-            filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign__slug=campaign_slug).\
-            annotate(competitor_count=Count('subsidiary__teams__users')).\
-            order_by('-competitor_count')
-        for city in cities:
-            city.distances = distance_all_modes(
-                models.Trip.objects.filter(
-                    user_attendance__payment_status='done',
-                    user_attendance__team__subsidiary__city=city,
-                    user_attendance__campaign__slug=campaign_slug,
-                ),
-            )
-            city.emissions = util.get_emissions(city.distances['distance__sum'])
-        context_data['cities'] = cities
+        context_data['cities'] = models.CityInCampaign.objects.filter(campaign__slug=campaign_slug)
         context_data['without_city'] =\
             UserAttendance.objects.\
-            filter(payment_status='done', campaign__slug=campaign_slug, team=None)
+            filter(payment_status__in=('done', 'no_admission'), campaign__slug=campaign_slug, team=None)
         context_data['total'] =\
             UserAttendance.objects.\
-            filter(payment_status='done', campaign__slug=campaign_slug)
+            filter(payment_status__in=('done', 'no_admission'), campaign__slug=campaign_slug)
         context_data['total_distances'] = distance_all_modes(
             models.Trip.objects.filter(
-                user_attendance__payment_status='done',
+                user_attendance__payment_status__in=('done', 'no_admission'),
                 user_attendance__campaign__slug=campaign_slug,
             ),
         )
@@ -1895,8 +1877,8 @@ class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
     def get_initial(self):
         initial = {}
         instance = self.get_object()
-        if instance.track is None and self.user_attendance.track:
-            initial['track'] = self.user_attendance.track
+        if instance.track is None:
+            initial['track'] = self.user_attendance.get_initial_track()
         if not instance.distance:
             initial['distance'] = self.user_attendance.get_distance()
         return super().get_initial(initial)
@@ -1926,6 +1908,7 @@ class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
         context = {
             "title": self.title,
             "days_active": trip.user_attendance.campaign.days_active,
+            "active": trip.user_attendance.campaign.day_active(trip.date),
         }
         context["trip"] = trip
         return context
@@ -1933,8 +1916,15 @@ class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
 
 class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
     def get(self, *args, **kwargs):
+        geom = self.request.GET.get('geom', 'MultiLineString')
         if self.get_object().track:
-            track_json = self.get_object().track.geojson
+            if geom == 'MultiLineString':
+                track_json = self.get_object().track.geojson
+            if geom == 'LineStrings':
+                linestrings = []
+                for ls in self.get_object().track:
+                    linestrings.append(ls.geojson)
+                    track_json = "[" + ",".join(linestrings) + "]"
         else:
             track_json = {}
         return HttpResponse(track_json)
@@ -1957,6 +1947,26 @@ class SwitchLang(LoginRequiredMixin, View):
             if form.is_valid():
                 form.save()
         return redirect(self.request.GET['redirect'])
+
+
+class SwitchRidesView(LoginRequiredMixin, View):
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_anonymous:
+            user_profile = self.request.user_attendance.userprofile
+            if 'rides_view' in self.request.GET:
+                form = UserProfileRidesUpdateForm(
+                    data={"default_rides_view": self.request.GET.get('rides_view', None)},
+                    instance=user_profile,
+                )
+                if form.is_valid():
+                    form.save()
+            if user_profile.default_rides_view:
+                view_mapping = {
+                    'table': 'rides',
+                    'calendar': 'calendar',
+                }
+                return redirect(view_mapping[user_profile.default_rides_view])
+        return redirect('calendar')
 
 
 def test_errors(request):

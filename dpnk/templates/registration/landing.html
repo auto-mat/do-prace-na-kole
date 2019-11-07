@@ -3,29 +3,65 @@
 {% load l10n %}
 {% load scribbler_tags %}
 
-{% block content %}
-<div id="landing_page_intro">
-    {% scribble 'landing_page_before_start' %}
-    {% load i18n %}
-      <p>
-      {% blocktrans %}
-      Tento rok jsme se na Vás opravdu důkladně připravovali. Tento web i <a href="https://www.dopracenakole.cz">stránky Do práce na kole</a> jsou čerstvé jako ranní projížďka kolem farmářského trhu.
-      {% endblocktrans %}
-      </p>
-      <p>
-      {% blocktrans %}
-      Další velké překvapení najdete přímo TADY začátkem soutěže na prvního máje.
-      {% endblocktrans %}
-        </p>
-      <p>
-      {% url 'upravit_profil' as profile_url %}
-      {% url 'pozvanky' as invitation_url %}
-      {% blocktrans %}
-      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href="{{ profile_url }}">doplňte profil</a> a <a href="{{ invitation_url }}">pozvěte kolegy do svého týmu</a>.
-      {% endblocktrans %}
-      </p>
+{% block caption %}
+{% endblock %}
 
-      <img src="https://www.dopracenakole.cz/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
-    {% endscribble %}
-</div>
+{% block content %}
+  <div id="landing_page_intro">
+    {# graphic #}
+    {% with user_attendance.get_team_frequency_icons as frequency_icons %}
+      {% if frequency_icons.main %}
+      <img src="{{frequency_icons.main}}"/>
+      {% endif %}
+    {% endwith %}
+
+    {# clever tattle #}
+    {% if user_attendance.get_random_motivation_message.message %}
+        <div class="clever_tattle">
+          {% if user_attendance.get_frequency_rank_in_team == 1 and user_attendance.campaign.competitors_choose_team %}
+            <i class="fas fa-sun"></i>
+            {% trans "Zpráva pro nejlepšího týmového hráče:" %}
+          {% endif %}
+          {{ user_attendance.get_random_motivation_message.message|safe }}
+          {% if user_attendance.team.get_frequency_percentage == 100 %}
+            {% trans "A to na" %} 1<i class="fas fa-bicycle"></i> %.
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        {# team head #}
+        <div class="col-12">
+          <h2 class="frequencybar">
+            {% trans "Týmová pravidelnost" %} {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+          </h2>
+          <style>
+            .frequencybar{
+              background: linear-gradient(90deg, rgba(251,115,93,1) 0%, rgba(251,115,93,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) 100%);
+            }
+          </style>
+          <a class="sidenote" href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
+        </div>
+
+        {# team members #}
+        <div class="col-12 team_members_col">
+          {% for team_member in user_attendance.team.members %}
+             <div class="col-fifth">
+                {% include "./user_profile_image.html" %}
+                <h6>
+                   {{ team_member }}
+                </h6>
+             </div>
+          {% endfor %}
+        </div>
+      </div>
+  </div>
+
+  <script>
+    jQuery(document).ready(function($) {
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+      })
+    });
+  </script>
 {% endblock %}

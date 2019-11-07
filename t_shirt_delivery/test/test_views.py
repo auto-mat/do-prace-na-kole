@@ -20,6 +20,7 @@
 import datetime
 from unittest.mock import MagicMock, patch
 
+from django.conf import settings
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -31,8 +32,6 @@ from freezegun import freeze_time
 from model_mommy import mommy
 
 from price_level.models import PriceLevel
-
-import settings
 
 from t_shirt_delivery.models import TShirtSize
 

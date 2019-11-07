@@ -1,0 +1,126 @@
+{% load i18n %}
+{% load l10n %}
+
+<style type="text/css">
+   .leaflet-interactive, .leaflet-clickable {
+       stroke:red;
+       stroke-opacity: 1;
+       stroke-width: 4;
+   }
+</style>
+<script>
+   // Hack to fix Leaflet Draw behaviour, which added point when moving map.
+   (function() {
+      var originalOnTouch = L.Draw.Polyline.prototype._onTouch;
+      L.Draw.Polyline.prototype._onTouch = function( e ) {
+         if( e.originalEvent.pointerType != 'mouse' ) {
+            if(this._calculateFinishDistance(e.latlng) > 10){ // dissables https://github.com/Leaflet/Leaflet.draw/blob/6e4e2c3806dcaeab2e569a82d5c6d2081b2e51db/src/draw/handler/Draw.Polyline.js#L305
+                return originalOnTouch.call(this, e);
+            }
+         }
+      }
+
+      // https://github.com/Leaflet/Leaflet.draw/issues/789
+      L.Draw.Polyline.prototype._updateFinishHandler = function( e ) {
+       var markerCount = this._markers.length;
+       // The last marker should have a click handler to close the polyline
+       if (markerCount > 2) {
+           setTimeout(function(){
+                  if ( this._markers === undefined ) {
+                      return;
+                  }
+                  this._markers[this._markers.length - 1].on('click', this._finishShape, this);
+          }.bind(this), 300);
+       }
+       // Remove the old marker click handler (as only the last point should close the polyline)
+       if (markerCount > 2) {
+           this._markers[markerCount - 2].off('click', this._finishShape, this);
+       }
+      }
+   })();
+
+ // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
+ function load_track (map, trip_url, options, editable_layers, on_no_track) {
+     var track_geojson = L.geoJson();
+     if(editable_layers) {
+         editable_layers.clearLayers();
+     }
+     $.ajax({
+         dataType: "json",
+         url: trip_url,
+         success: function(data) {
+             track_geojson.addData(data);
+             if(editable_layers) {
+                 var layers = track_geojson.getLayers();
+                 editable_layers.clearLayers();
+                 for (i in layers) {
+                     layer = layers[i]
+                     for(n in layer._latlngs) {
+                         coord_array = layer._latlngs[n]
+                         polyline = new L.Polyline(coord_array);
+                         editable_layers.addLayer(polyline);
+                     }
+                 }
+             } else {
+                 track_geojson.addTo(map);
+             }
+             map.fitBounds(track_geojson.getBounds())
+         }
+     }).error(function() {
+         if(typeof on_no_track != 'undefined') {
+             on_no_track();
+         }
+     });
+ }
+
+ {% if leaflet_config %}
+ function create_map(element_id){
+     options = {
+         maxZoom: {{leaflet_config.MAX_ZOOM}},
+         minZoom: {{leaflet_config.MIN_ZOOM}},
+     }
+     var map = L.map(element_id, options).setView(
+         [
+             {{leaflet_config.DEFAULT_CENTER.0|unlocalize}},
+             {{leaflet_config.DEFAULT_CENTER.1|unlocalize}}
+         ]
+         ,{{leaflet_config.DEFAULT_ZOOM}});
+     var baseMapList = [
+         {% for tile in leaflet_config.TILES %}
+         ['{{tile.0}}', L.tileLayer("{{tile.1}}", {{tile.2| safe}})],
+         {% endfor %}
+     ];
+     baseMapList[0][1].addTo(map);
+     baseMaps = {};
+     for (i in baseMapList) {
+         baseMaps[baseMapList[i][0]] = baseMapList[i][1];
+     }
+     L.control.layers(baseMaps).addTo(map);
+     return map;
+ }
+ {% endif %}
+
+ function load_route_list(sel_tag, num_basic_options, route_options, route_option_ids){
+     var sel = $(sel_tag);
+     $(sel.children()).remove();
+     sel = sel[0];
+     var i = 0;
+     var first_group = document.createElement("optgroup");
+     first_group.label = "{% trans '---' %}";
+     var second_group = document.createElement("optgroup");
+     second_group.label = "{% trans 'Stejně jako...' %}";
+     for(var key in route_options){
+         var option = document.createElement("option");
+         option.value = key;
+         option.text = key;
+         option.id = route_option_ids[key];
+         if (i++ < num_basic_options){
+             first_group.appendChild(option);
+         } else {
+             second_group.appendChild(option);
+         }
+     }
+     sel.appendChild(first_group);
+     sel.appendChild(second_group);
+ }
+</script>

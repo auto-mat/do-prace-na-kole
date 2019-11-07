@@ -41,7 +41,8 @@ from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm,
 )
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
-from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserAttendance, UserProfile
+from .models import Campaign, Company, CompanyAdmin, Competition, Payment, Subsidiary, UserProfile
+from .models.transactions import Status
 from .views import RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
@@ -129,19 +130,20 @@ class SelectUsersPayView(
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         company_admin = self.company_admin
-        context_data["approved"] = UserAttendance.objects.filter(
-            team__subsidiary__company=company_admin.administrated_company,
-            campaign=company_admin.campaign,
-            userprofile__user__is_active=True,
-            representative_payment__pay_type='fc',
-            payment_status='done',
+        context_data["approved"] = Payment.objects.filter(
+            user_attendance__team__subsidiary__company=company_admin.administrated_company,
+            user_attendance__campaign=company_admin.campaign,
+            user_attendance__userprofile__user__is_active=True,
+            pay_type='fc',
+            payment_status=Status.COMPANY_ACCEPTS,
         ).select_related(
-            'userprofile__user',
-            'team__subsidiary__city',
-            'representative_payment',
+            'user_attendance',
+            'user_attendance__userprofile',
+            'user_attendance__userprofile__user',
+            'user_attendance__team__subsidiary',
         )
         context_data["total_approved_count"] = len(context_data["approved"])
-        context_data["total_approved_amount"] = sum([ua.company_admission_fee() for ua in context_data["approved"]]) # noqa
+        context_data["total_approved_amount"] = sum(ua.amount for ua in context_data["approved"])
         return context_data
 
     def dispatch(self, request, *args, **kwargs):

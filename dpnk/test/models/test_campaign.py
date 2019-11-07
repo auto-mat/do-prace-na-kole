@@ -50,18 +50,31 @@ class TestCampaignMethods(ClearCacheMixin, TestCase):
             campaign=campaign,
             phase_type="entry_enabled",
             date_from=datetime.date(year=2010, month=11, day=13),
+            date_to=datetime.date(year=2010, month=11, day=22),
+        )
+        models.Phase.objects.create(
+            campaign=campaign,
+            phase_type="competition",
+            date_from=datetime.date(year=2010, month=11, day=13),
             date_to=datetime.date(year=2010, month=11, day=20),
         )
         self.assertTrue(campaign.day_active(datetime.date(2010, 11, 14)))
         self.assertTrue(campaign.day_active(datetime.date(2010, 11, 20)))
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 13)))
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 21)))
+        self.assertFalse(campaign.day_active(datetime.date(2010, 11, 23)))
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=11, day=20),
     )
     def test_day_active_no_entry_enabled_phase(self):
         campaign = mommy.make("Campaign")
+        models.Phase.objects.create(
+            campaign=campaign,
+            phase_type="competition",
+            date_from=datetime.date(year=2010, month=11, day=13),
+            date_to=datetime.date(year=2010, month=11, day=20),
+        )
         self.assertTrue(campaign.day_active(datetime.date(2010, 11, 14)))
         self.assertTrue(campaign.day_active(datetime.date(2010, 11, 20)))
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 13)))

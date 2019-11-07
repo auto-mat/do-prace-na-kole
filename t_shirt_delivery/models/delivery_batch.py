@@ -18,7 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import collections
 import datetime
+import subprocess
 from io import StringIO
 
 from author.decorators import with_author
@@ -32,8 +34,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from dpnk.models import Subsidiary
 
-from .package_transaction import Status
+from .package_transaction import PackageTransaction, Status
+from .t_shirt_size import TShirtSize
 from .. import batch_csv
+from ..gls.generate_gls_pdf import generate_pdf
 
 
 @with_author
@@ -66,6 +70,20 @@ class DeliveryBatch(models.Model):
         null=True,
         max_length=512,
     )
+    order_pdf = models.FileField(
+        verbose_name=_("PDF objednávky"),
+        upload_to='pdf_delivery',
+        blank=True,
+        null=True,
+        max_length=512,
+    )
+    combined_opt_pdf = models.FileField(
+        verbose_name=_("Kombinované PDF pro OPT"),
+        upload_to='pdf_opt_delivery',
+        blank=True,
+        null=True,
+        max_length=512,
+    )
     dispatched = models.BooleanField(
         verbose_name=_("Vyřízeno"),
         blank=False,
@@ -89,6 +107,34 @@ class DeliveryBatch(models.Model):
 
     def box_count(self):
         return self.subsidiarybox_set.count()
+
+    def submit_gls_order_pdf(self):
+        pdf_filename = generate_pdf(self.tnt_order)
+        with open(pdf_filename, "rb+") as f:
+            self.order_pdf.save("batch%s.pdf" % self.id, f)
+        self.save()
+        subprocess.call(["rm", "tmp_gls/", "-r"])
+
+    def t_shirt_size_counts(self):
+        if not self.pk:
+            package_transactions = self.campaign.user_attendances_for_delivery()
+            t_shirts = TShirtSize.objects.filter(userattendance__in=package_transactions)
+            t_shirts = t_shirts.annotate(size_count=models.Count('userattendance'))
+        else:
+            package_transactions = PackageTransaction.objects.filter(team_package__box__delivery_batch=self)
+            t_shirts = TShirtSize.objects.filter(packagetransaction__in=package_transactions)
+            t_shirts = t_shirts.annotate(size_count=models.Count('packagetransaction'))
+        t_shirt_counts = t_shirts.values_list('name', 'size_count')
+        ordered_t_shirt_counts = collections.OrderedDict(
+            [
+                (size.name, 0) for size in TShirtSize.objects.filter(
+                    campaign=self.campaign,
+                ).order_by('name')
+            ]
+        )
+        for count in t_shirt_counts:
+            ordered_t_shirt_counts[count[0]] = count[1]
+        return ordered_t_shirt_counts.items()
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):

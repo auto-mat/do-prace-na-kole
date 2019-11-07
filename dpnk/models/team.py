@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import logging
+import math
 import random
 import string
 
@@ -196,6 +197,24 @@ class Team(models.Model):
             from .. import results
             trip_count += results.get_working_trips_count(member, self.campaign.phase("competition"))
         return trip_count
+
+    def get_remaining_rides_count(self):
+        """ Return number of rides, that are remaining to the end of competition """
+        return self.members().count() * self.members().first().get_remaining_rides_count()
+
+    def get_remaining_max_theoretical_frequency_percentage(self):
+        """ Return maximal frequency that can be achieved till end of the competition """
+        remaining_rides = self.get_remaining_rides_count()
+        rides_count = self.get_rides_count_denorm
+        working_rides_base = self.get_working_trips_count()
+        return (rides_count + remaining_rides) / (working_rides_base + remaining_rides) * 100
+
+    def get_missing_rides_for_minimum_percentage(self):
+        """ Return number of eco rides that would have to be done till end of competition to fullfill mimimal percentage """
+        minimal_percentage = self.campaign.minimum_percentage / 100
+        rides_count = self.get_rides_count_denorm
+        working_rides_base = self.get_working_trips_count()
+        return math.ceil((rides_count - minimal_percentage * working_rides_base) / (minimal_percentage - 1))
 
     def get_frequency(self):
         from .. import results

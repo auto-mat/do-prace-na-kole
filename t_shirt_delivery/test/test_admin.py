@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -28,8 +29,6 @@ from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-import settings
 
 
 @override_settings(
@@ -213,7 +212,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Velikosti trik:</label>"
-            "<div class='readonly'></div>"
+            "<div class='readonly'>Testing t-shirt size: 0</div>"
             "</div>",
             html=True,
         )

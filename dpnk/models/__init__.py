@@ -32,6 +32,7 @@ from .campaign import Campaign
 from .campaign_type import CampaignType
 from .city import City
 from .city_in_campaign import CityInCampaign
+from .city_in_campaign_diploma import CityInCampaignDiploma, CityInCampaignDiplomaField
 from .commute_mode import CommuteMode
 from .company import Company
 from .company_admin import CompanyAdmin
@@ -40,6 +41,7 @@ from .competition_result import CompetitionResult
 from .diploma import Diploma, DiplomaField
 from .gpxfile import GpxFile, normalize_gpx_filename
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
+from .landingpageicon import LandingPageIcon
 from .occupation import Occupation
 from .phase import PHASE_TYPE_DICT, Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
@@ -60,6 +62,8 @@ __all__ = (
     Campaign,
     CampaignType,
     CityInCampaign,
+    CityInCampaignDiploma,
+    CityInCampaignDiplomaField,
     City,
     CommuteMode,
     Company,
@@ -91,6 +95,7 @@ __all__ = (
     UserAttendance,
     UserProfile,
     Voucher,
+    LandingPageIcon,
     change_invoice_payments_status,
     pre_user_team_changed,
     post_user_team_changed,

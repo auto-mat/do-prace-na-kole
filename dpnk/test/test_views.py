@@ -26,6 +26,7 @@ from ddt import data, ddt
 
 import denorm
 
+from django.conf import settings
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
@@ -38,8 +39,6 @@ from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
@@ -509,22 +508,39 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
 
     def test_competitor_counts(self):
-        city = mommy.make("City", name="Foo city")
+        city1 = mommy.make("City", name="Foo city")
+        city2 = mommy.make("City", name="Bar city")
         PriceLevelRecipe.make()
+        campaign = models.Campaign.objects.get(slug='testing-campaign')
+        mommy.make(
+            "CityInCampaign",
+            city=city1,
+            campaign=campaign,
+        )
+        mommy.make(
+            "CityInCampaign",
+            city=city2,
+            campaign=campaign,
+        )
         user_attendances = [
             UserAttendancePaidRecipe.make(team=None),
             UserAttendancePaidRecipe.make(
-                team__subsidiary__city=city,
+                team__subsidiary__city=city1,
                 user_trips=[mommy.make("Trip", direction="trip_to", distance=2, commute_mode_id=2)],
             ),
             UserAttendancePaidRecipe.make(
-                team__subsidiary__city=city,
+                team__subsidiary__city=city1,
                 user_trips=[mommy.make("Trip", direction="trip_to", distance=3)],
+            ),
+            UserAttendancePaidRecipe.make(
+                team__subsidiary__city=city2,
+                user_trips=[mommy.make("Trip", direction="trip_to", distance=5, commute_mode_id=2)],
             ),
         ]
         for ua in user_attendances:
             ua.save()
         response = self.client.get(reverse('competitor_counts'))
+        print_response(response)
         self.assertContains(
             response,
             "<tr>"
@@ -541,6 +557,20 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         )
         self.assertContains(
             response,
+            "<tr>"
+            "   <td>Bar city</td>"
+            "   <td>1</td>"
+            "   <td>0</td>"
+            "   <td>5.0</td>"
+            "   <td>5.0</td>"
+            "   <td>0</td>"
+            "   <td>1</td>"
+            "   <td>645.0</td>"
+            "</tr>",
+            html=True,
+        )
+        self.assertContains(
+            response,
             "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>",
             html=True,
         )
@@ -548,13 +578,13 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             response,
             "<tr>"
             "   <th>celkem</th>"
-            "   <th>3</th>"
+            "   <th>4</th>"
             "   <th>3,0</th>"
-            "   <th>2,0</th>"
-            "   <th>5,0</th>"
+            "   <th>7,0</th>"
+            "   <th>10,0</th>"
             "   <th>1</th>"
-            "   <th>1</th>"
-            "   <th>645,0</th>"
+            "   <th>2</th>"
+            "   <th>1 290,0</th>"
             "</tr>",
             html=True,
         )
@@ -602,8 +632,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('register_admin')
         post_data = {
             'email': 'testadmin@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
             'motivation_company_admin': 'some motivation',
             'telephone': 123456789,
             'first_name': 'Company',
@@ -647,8 +677,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdf',
+            'password2': 'this.is.an.uncommon.password#$%^asdf',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('registration_complete'))
@@ -778,8 +808,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('registration_complete'))
@@ -804,8 +834,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('registration_complete'))
@@ -2159,9 +2189,10 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "Testing User 1")
         self.assertContains(response, "test@test.cz")
         self.assertContains(response, "platba přes firemního koordinátora")
-        self.assertContains(response, "<div><b>Stav plaby</b>: zaplaceno</div>", html=True)
+        self.assertContains(response, "<div><b>Platba</b>: zaplaceno</div>", html=True)
 
     def test_dpnk_views_track_gpx_file(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
@@ -2176,6 +2207,7 @@ class TripViewTests(ViewsLogon):
         self.assertEqual(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track_gpx_file_route(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         with open('dpnk/test_files/route.gpx', 'rb') as gpxfile:
             post_data = {
@@ -2207,6 +2239,7 @@ class TripViewTests(ViewsLogon):
         )
 
     def test_dpnk_views_track(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         post_data = {
             'dont_want_insert_track': False,
@@ -2223,6 +2256,7 @@ class TripViewTests(ViewsLogon):
         self.assertEqual(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
+        models.Trip.objects.all().delete()
         address = reverse('upravit_trasu')
         post_data = {
             'dont_want_insert_track': True,
@@ -2235,6 +2269,21 @@ class TripViewTests(ViewsLogon):
         user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
         self.assertEqual(user_attendance.track, None)
         self.assertEqual(user_attendance.get_distance(), 12)
+
+    def test_dpnk_views_track_only_distance_last_trip(self):
+        """ Test, that get_distance function returns distance of last trip """
+        address = reverse('upravit_trasu')
+        post_data = {
+            'dont_want_insert_track': True,
+            'distance': 12,
+            'gpx_file': '',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
+        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
+        self.assertEqual(user_attendance.track, None)
+        self.assertEqual(user_attendance.get_distance(), 156.9)
 
     def test_dpnk_views_track_no_track_distance(self):
         address = reverse('upravit_trasu')
@@ -2477,7 +2526,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(
             response,
             '<span class="type-string">Vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company '
-            'pro cesty s prostředky Kolo, Chůze/běh</span>',
+            'pro cesty s prostředky Kolo, Pěšky</span>',
             html=True,
         )
         self.assertContains(response, '<p>1. místo z 1 organizací</p>', html=True)
@@ -2492,7 +2541,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('length_competitions'))
         self.assertContains(
             response,
-            '<span class="type-string">Soutěž na vzdálenost jednotlivců ve městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</span>',
+            '<span class="type-string">Soutěž na vzdálenost jednotlivců ve městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>',
             html=True,
         )
 
@@ -2506,7 +2555,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(
             response,
             '<span class="type-string">Soutěž na vzdálenost jednotlivců  '
-            've městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</span>',
+            've městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>',
             html=True,
         )
 

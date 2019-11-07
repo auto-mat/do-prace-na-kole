@@ -27,15 +27,19 @@ from denorm import denormalized, depend_on_related
 from django.contrib.gis.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
+from django.db.models import F
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 
+from motivation_messages.models import MotivationMessage
+
 from stale_notifications.model_mixins import StaleSyncMixin
 
 from .company_admin import CompanyAdmin
 from .diploma import Diploma
+from .landingpageicon import LandingPageIcon
 from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
@@ -312,6 +316,21 @@ class UserAttendance(StaleSyncMixin, models.Model):
             frequency = self.frequency if self.frequency is not None else 0
             return frequency * 100
 
+    def get_frequency_icons(self, frequency):
+        roles = {}
+        for icon in LandingPageIcon.objects.filter(max_frequency__gte=round(frequency), min_frequency__lte=round(frequency)):
+            roles[icon.role] = icon.file.url
+
+        return roles
+
+    def get_user_frequency_icons(self):
+        frequency = self.get_frequency_percentage()
+        return self.get_frequency_icons(frequency)
+
+    def get_team_frequency_icons(self):
+        frequency = self.team.get_frequency_percentage()
+        return self.get_frequency_icons(frequency)
+
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def trip_length_total(self):
@@ -325,7 +344,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return 0
 
     def trip_length_total_rounded(self):
-        return round(self.trip_length_total, 2)
+        return round(self.trip_length_total or 0, 2)
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
@@ -340,18 +359,38 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return round(self.total_trip_length_including_recreational, 2)
 
     def get_working_rides_base_count(self):
+        """ Return number of rides, that should be acomplished to this date """
         from .. import results
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
+
+    def get_remaining_rides_count(self):
+        """ Return number of rides, that are remaining to the end of competition """
+        competition_phase = self.campaign.competition_phase()
+        days_count = util.days_count(competition_phase, competition_phase.date_to)
+        days_count_till_now = util.days_count(competition_phase, util.today())
+        return (days_count - days_count_till_now).days * 2
+
+    def get_remaining_max_theoretical_frequency_percentage(self):
+        """ Return maximal frequency that can be achieved till end of the competition """
+        from .. import results
+
+        remaining_rides = self.get_remaining_rides_count()
+        rides_count = self.get_rides_count_denorm
+        competition_phase = self.campaign.competition_phase()
+        working_rides_base = results.get_working_trips_count_without_minimum(self, competition_phase) + remaining_rides
+        working_rides_count = max(working_rides_base, self.campaign.minimum_rides_base)
+        return ((rides_count + remaining_rides) / working_rides_count) * 100
 
     def get_minimum_rides_base_proportional(self):
         from .. import results
         return results.get_minimum_rides_base_proportional(self.campaign.phase("competition"), util.today())
 
     def get_distance(self, round_digits=2):
+        track = self.get_initial_track()
+        if track:
+            return round(util.get_multilinestring_length(track), round_digits)
         if self.distance:
             return self.distance
-        elif self.track:
-            return round(util.get_multilinestring_length(self.track), round_digits)
         else:
             return 0
     get_distance.short_description = _('Vzdálenost (km) do práce')
@@ -446,7 +485,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.get_trips(days)
 
     def get_all_trips(self, day=None):
-        days = list(util.days(self.campaign.phase("competition"), day))
+        try:
+            days = list(util.days(self.campaign.competition_phase(), day))
+        except Phase.DoesNotExist:
+            days = []
         return self.get_trips(days)
 
     def company_admin_emails(self):
@@ -465,6 +507,15 @@ class UserAttendance(StaleSyncMixin, models.Model):
         expected_trip_days = [(day, direction) for day in days for direction in self.campaign.get_directions()]
         uncreated_trips = sorted(list(set(expected_trip_days) - set(trip_days)))
         return trips, uncreated_trips
+
+    def get_initial_track(self):
+        trips, _ = self.get_all_trips()
+        previous_trip_with_track = trips.filter(track__isnull=False).order_by('-date', '-direction').first()
+        if previous_trip_with_track:
+            return previous_trip_with_track.track
+        if self.track:
+            return self.track
+        return None
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('UserProfile', skip={'mailing_hash'})
@@ -520,9 +571,21 @@ class UserAttendance(StaleSyncMixin, models.Model):
         except UserAttendance.DoesNotExist:
             return None
 
+    def get_random_motivation_message(self):
+        message = MotivationMessage.get_random_message(self)
+        return message
+
+    def get_frequency_rank_in_team(self):
+        return self.team.members().order_by(
+            F('frequency').desc(nulls_last=True),
+            'get_rides_count_denorm',
+        ).filter(frequency__gte=self.frequency - 0.000000001).count()
+        # Frequency returned from the ORM is not exactly the same as in DB
+        # (floating point transformations). We need to give it some extra margin to match self.
+
     def clean(self):
         if self.team and self.approved_for_team != 'denied':
-            team_members_count = self.team.undenied_members().exclude(pk=self.pk).count() + 1
+            team_members_count = self.team.members().exclude(pk=self.pk).count() + 1
             if self.team.campaign.too_much_members(team_members_count):
                 raise ValidationError({'team': _("Tento tým již má plný počet členů")})
 

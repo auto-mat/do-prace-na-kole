@@ -195,7 +195,7 @@ def get_minimum_rides_base_proportional(competition, day):
     return int(competition.get_minimum_rides_base() * (days_count_till_now / days_count))
 
 
-def get_working_trips_count(user_attendance, competition=None, day=None):
+def get_working_trips_count_without_minimum(user_attendance, competition=None, day=None):
     if not day:
         day = util.today()
     non_working_days = util.non_working_days(competition, day)
@@ -212,6 +212,11 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
     ).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
+    return working_trips_count
+
+
+def get_working_trips_count(user_attendance, competition=None, day=None):
+    working_trips_count = get_working_trips_count_without_minimum(user_attendance, competition, day)
     return max(working_trips_count, get_minimum_rides_base_proportional(competition, day))
 
 

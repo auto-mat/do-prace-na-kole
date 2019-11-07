@@ -8,6 +8,9 @@
 @white: #fff;
 @fsize: 16px;
 @wg:@fsize/16*15;
+@positive:#85e233;
+@negative:@primary;
+@neutral: lightblue;
 
 // Fix for company select, where users were confused if item is not selected
 #hint_id_company.invalid-feedback{
@@ -45,6 +48,9 @@ a{
 b, .strong{
       letter-spacing: 0.01rem;
 }
+p:empty{
+  display:none;
+}
 // ratio perfect forth / 1.33
 @ratio: 1.1;
 @elements: h1, h2, h3, h4, h5, h6;
@@ -72,7 +78,7 @@ h2:empty{
   border:0;
 }
 input[type="text"], input[type="password"], input[type="email"], textarea, select, .form-control{
-  background:darken(#fff, 5%);
+  background-color:darken(#fff, 5%);
   border: 3px solid @lightgrey;
 }
 input[type="radio"], input[type="checkbox"]{
@@ -212,7 +218,7 @@ form{
 .welcome_message{
   margin-top: 2rem;
 }
-.homepage.profil, .team_members{
+.homepage.profil, .team_members_col{
   form{
     width: 100%;
   }
@@ -235,11 +241,31 @@ label{
       display:none;
     }
   }
+  table{
+    th, td{
+      border:0;
+    }
+  }
+  label{
+    font-size:.8rem;
+    &:hover{
+      text-decoration:underline;
+    }
+  }
   input:checked + label{
-    color:@white;
-    background-color:@primary;
+    background-color:@positive;
     margin-bottom:0;
     padding:@wg/4 0;
+    &:hover{
+      text-decoration:none;
+    }
+  }
+  th.date{
+    font-size:1.4rem;
+    font-weight:300;
+    margin-top:@wg/2;
+    border-bottom:1px solid @lightgrey;
+    padding-bottom:0;
   }
 }
 ._primary{
@@ -251,6 +277,11 @@ label{
   background: linear-gradient(to right, rgba(230,230,230,1) 0%,rgba(230,230,230,1) 20%,rgba(255,255,255,1) 20%,rgba(255,255,255,1) 100%,rgba(255,255,255,1) 100%); 
   .content{
     margin-top: 4rem;
+  }
+  &.homepage{
+    .content{
+      margin-top: 0;
+    }
   }
 }
 .login-layout{
@@ -340,6 +371,7 @@ label{
       display:inline-block;
       img{
         width:@wg*2;
+        height:@wg*2;
       }
     }
     .nick{
@@ -414,6 +446,9 @@ label{
     // display:block !important;
     flex-flow: column;
     width: 100%;
+    li {  //fix for IE 11
+       width: 100%;
+    }
     align-items: normal;
     margin:0;
     padding:0;
@@ -567,6 +602,15 @@ label{
   padding:@wg;
   color:#fff;
 }
+table.competition_results_table, .tableheading{
+  margin-top:@wg;
+  font-size:.8rem;
+}
+// https://github.com/twbs/bootstrap/issues/23454
+#error_1_id_team.invalid-feedback{
+  display: block;
+}
+
 .col-form-label {
   margin-left:@wg/2;
   padding-top:0;
@@ -587,6 +631,15 @@ label{
       color:#000;
       background-color:darken(@primary, 5%);
     }
+  }
+  &.btn-secondary {
+      color: #000;
+      background-color: @neutral;
+      .anim2;
+      &:hover{
+          .anim;
+          background-color:darken(@neutral, 15%);
+      }
   }
   &.google, &.facebook{
     display:inline-block;
@@ -612,8 +665,421 @@ label{
   text-align:center;
   margin-top:@wg;
 }
+.clever_tattle{
+  font-weight:300;
+  font-size:1.4rem;
+  line-height:1.85rem;
+  margin:@wg*1.6 @wg @wg*2 @wg;
+  h1, h2, h3, h4, h5, h6{
+    font-size:1.4rem;
+    font-weight:500;
+  }
+}
+.frequencybar{
+  padding:@wg;
+  color:#fff;
+}
+.sidenote{
+  float:right;
+  margin-top:-@wg*0.8;
+  font-size:.8rem;
+  opacity:.6;
+  text-decoration:none;
+  border-bottom:1px solid @lightgrey;
+  &:hover{
+    opacity:1;
+    text-decoration:none;
+    border-bottom:1px solid @primary;
+  }
+}
+.team_members_col{
+  margin-top:@wg*.9;
+  .avatar_holder{
+    padding:0 @wg;
+  }
+  h6{
+    font-size: .8rem;
+    text-align:center;
+    margin:@wg/2 0 @wg*2 0;
+  }
+}
+.col-fifth{
+  width:19%;
+  display:inline-block;
+}
 
 
+
+
+div.dataTables_length select,
+div.dataTables_filter input {
+  display: block !important;
+}
+
+// Start Calendar view classes
+// .green-background {background-color:#00bb00;}
+// .green-background:hover {background-color:#005500;}
+// .green-background:active {background-color:#005500 !important; }
+// .grey-background {background-color:#bbbbbb;}
+// .grey-background:hover {background-color:#555555;}
+
+.btn-separator {
+    text-align:center;
+    border-left: 2px solid #000000;
+}
+
+.possible-vacation-day {
+  // box-shadow: inset 0 50px 50px #ffe4fcc7;
+}
+
+.active-day {
+    background-color: #ffffff;
+}
+
+.locked-day {
+    background-color: #aaaaaa;
+}
+
+.one-ride-day {
+    // background-color: #4f6051 !important;
+}
+
+.two-ride-day {
+    // background-color: #18a025 !important;
+}
+
+.out-of-competition-day {
+    background-color: #333333;
+}
+
+.non-working-day {
+    // opacity: 0.5;
+
+}
+
+
+.mode-icon-container {
+    display: inline;
+}
+
+.main-calendar-container{
+    position: relative;
+}
+
+.main-loading-overlay { // https://stackoverflow.com/questions/28931791/jquery-how-to-grey-out-the-background-while-showing-the-loading-icon-over-it#28931864
+    background: #e9e9e9;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0.7;
+    z-index: 1000;
+}
+
+.gpx-uploader {
+    display: none;
+}
+
+.leaflet-container-default {
+    width: 100%;
+    height: 300px;
+}
+
+.leaflet-container-large {
+    width: 70vw;
+    height: 90vh;
+}
+
+
+
+.fc-header-toolbar {
+    margin-bottom: 0.1em !important;
+    font-size: 1.5 !important;
+}
+
+.fc-button {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+.cal_heading{
+  margin:@wg/4 0 @wg 0;
+  color:@grey;
+}
+.calendar_chooser{
+  margin:0 0 @wg 0;
+  background-color:#f5f5f5;
+}
+#nav-commute-modes{
+  flex: 1;
+  height: 100%;
+  border:0;
+  .nav-item{
+    background-color:lighten(@lightgrey, 10%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    border:1px solid #fff;
+    border-radius:0;
+    text-decoration:none;
+    padding:@wg;
+    &.active{
+      background-color:@primary;
+      color:#fff;
+    }
+  }
+}
+#trip-shopping-cart{
+  height: 100%;
+  align-items: center;
+  display: flex;
+  padding:@wg;
+  background-color:@lightgrey;
+  color:black;
+  font-size:.8rem;
+  justify-content:center;
+  &:empty{
+    display:none;
+  }
+}
+.tip{
+  font-size:.8rem;
+}
+.path_switch_holder{
+  border-left:1px solid #fff;
+  select.form-control{
+    width:100%;
+  }
+  .enter_km{
+    border-bottom:2px solid @lightgrey;
+    border-left:2px solid @lightgrey;
+	  width: 100%;
+	  margin-right: 32px;
+    height: 2.5em;
+  }
+  .enter_km:focus{
+      box-shadow: 0 1px 14px @neutral inset, 0 0 8px @neutral;
+  }
+}
+.cal-km-appendix{
+	background-color: white;
+	position: absolute;
+	right: 3px;
+	width: 30px;
+  bottom: 0px;
+  text-align: center;
+  margin-bottom: 2px;
+  height: ~"calc(2.5em - 1px)"; // https://stackoverflow.com/questions/16323310/how-can-i-instruct-less-to-ignore-math-for-certain-styles
+  line-height: 2.5em; // https://stackoverflow.com/questions/9249359/vertically-align-text-within-a-div
+}
+.calendar{
+  h2{
+    color:darken(@lightgrey, 10%);
+    font-size: 1.4em;
+    margin: 0;
+    font-weight: 300;
+  }
+}
+#calendar{
+  .fc-list-heading-main {
+    padding-right: 1em;
+  }
+  .fc-content{
+    padding:@wg*.5;
+    text-align:center;
+  }
+  .cal_event_trip_from>.fc-content {
+		margin-left: -13px;
+		padding-right: 2px;
+	}
+  .cal_event_trip_to>.fc-content {
+		margin-right: -13px;
+		padding-left: 2px;
+	}
+  .fc-event {
+    cursor: pointer;
+    border:0;
+    border-radius:0;
+    .anim;
+    &:hover{
+      .anim;
+      filter: saturate(180%) contrast(120%);
+    }
+  }
+  .fc-list-item:hover .fc-widget-content {
+     background-color: inherit !important;
+     /*
+     .anim;
+     filter: saturate(180%) contrast(120%);
+     &:before {
+        right: -29px;
+     }
+     */
+  }
+  .locked-day{
+    background-image: linear-gradient(135deg, #f3ebff 3.85%, #ffffff 3.85%, #ffffff 50%, #f3ebff 50%, #f3ebff 53.85%, #ffffff 53.85%, #ffffff 100%);
+    background-size: 18.38px 18.38px;
+  }
+  .out-of-competition-day{
+      background-color:#ededed;
+  }
+  .fc-future{
+    color: @lightgrey;
+  }
+  .fc-today{
+    background-color:transparent;
+    .fc-day-number{
+      color: #fff;
+      min-width: 16px;
+      display:inline-block;
+      background-color: #3e3e3e;
+      border-radius: 50%;
+      font-size: .8rem;
+		text-align: center;
+		height: 24px;
+		width: 24px;
+		line-height: 24px;
+		text-align: center;
+		width: max-content;
+		min-width: 24px;
+		float: none;
+		display: block;
+    }
+  }
+  th, td{
+    padding:@wg/4 @wg/2;
+  }
+  .active-trip-filled, .locked-trip {
+    background-color: @positive;
+    &.cal_event_does_not_count {
+        background-color: @neutral;
+    }
+	  &.cal_event_not_eco {
+		    background-color: @negative;
+	  }
+  }
+
+  .active-trip-unfilled {
+      background-color: @negative;
+  }
+  .active-trip-unfilled-vacation{
+      background-color: @neutral;
+      &.cal_event_trip_to:before, &.cal_event_trip_to>.fc-widget-content:before {
+          border-left-color: @neutral !important;
+      }
+      &.cal_event_trip_from:before, &.cal_event_trip_from>.fc-widget-content:before {
+          border-right-color: @neutral !important;
+      }
+  }
+  .locked-trip {
+    opacity:.6;
+    &:hover{
+      opacity:1;
+    }
+  }
+  .cal_event_trip_to{
+    padding-right:0;
+    border-right-width: 15px;
+    border-right-color: white;
+    border-right-style: solid;
+    &.fc-day-grid-event:before, &>.fc-widget-content:before {
+      left: 100%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-color: rgba(194, 225, 245, 0);
+      border-left-color: @negative;
+      border-width: 17px;
+      font-size: 0px;
+    }
+    &>.fc-widget-content:before {
+      border-width: 15px;
+      left: auto;
+      right: -15px;
+      margin-top: -3px; 
+    }
+    &.fc-list-item{
+       border-right-width: 28px;
+    }
+    &.active-trip-filled, &.locked-trip {
+      &:before, &>.fc-widget-content:before {
+        border-left-color: @positive;
+      }
+		  &.cal_event_does_not_count {
+          &:before, &>.fc-widget-content:before {
+				      border-left-color: @neutral;
+			    }
+      }
+      &.cal_event_not_eco {
+			    &:before, &>.fc-widget-content:before {
+				      border-left-color: @negative;
+			    }
+		  }
+    }
+  }
+  .cal_event_trip_from {
+    padding-left:0;
+    border-left-width: 15px;
+    border-left-color: white;
+    border-left-style: solid;
+    &.fc-day-grid-event:before, &>.fc-widget-content:before {
+      left: -34px;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-color: rgba(194, 225, 245, 0);
+      border-right-color: @negative;
+      border-width: 17px;
+      font-size: 0px;
+    }
+    &>.fc-widget-content:before {
+      border-width: 15px;
+      left: -15px;
+      margin-top: -3px; 
+    }
+    &.fc-list-item{
+       border-left-width: 28px;
+    }
+    &.active-trip-filled, &.locked-trip{
+        &:before, &>.fc-widget-content:before {
+            border-right-color: @positive;
+        }
+		    &.cal_event_does_not_count {
+            &:before, &>.fc-widget-content:before {
+				        border-right-color: @neutral;
+			      }
+        }
+        &.cal_event_not_eco {
+            &:before, &>.fc-widget-content:before {
+				        border-right-color: @negative;
+			      }
+		    }
+    }
+  }
+  .wp-event {
+    background-color: #ffdcf9;
+  }
+
+  .cal-vacation {
+      background-color: @neutral;
+  }
+
+}
+
+.trash-button {
+    border-radius: 10%;
+    padding: 3px;
+}
+// End calendar view classes
+.date
 .noanim {
   transition: all 0.0s;
 }
@@ -631,6 +1097,8 @@ label{
     top: 4.65rem;
     right: 6rem;
     zoom: 150%;
+    width: 3em;
+    height: 2.5em;
   span{
     display: block;
     position: absolute;
@@ -688,6 +1156,9 @@ label{
   left: 8px;
 }
 @media all and (max-width: 769px) {
+  .col-fifth{
+    width: 33%;
+  }
   .container{
     width:100%;
   }
@@ -703,14 +1174,21 @@ label{
   }
 }
 @media all and (max-width: 480px) {
+  .col-fifth{
+    width: 100%;
+  }
   .application-layout{
     background:transparent;
   }
   .help-block, .form-text{
     color:#000 !important;
   }
-  .registration_access, .login, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
+  .login-layout, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
     form{
+      width:100%;
+      margin:0;
+    }
+    .form_head{
       width:100%;
       margin:0;
     }
@@ -744,3 +1222,6 @@ label{
   }
 }
 
+.text-muted {
+    color: black !important;
+}

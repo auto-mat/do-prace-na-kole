@@ -60,6 +60,8 @@ INSTALLED_APPS += (
     'django_nose',
 )
 
+INSTALLED_APPS.remove('adminactions')
+
 for mid in UNUSED_MIDDLEWARES:
     try:
         MIDDLEWARE.remove(mid)

@@ -84,7 +84,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         _('Ve Vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
                     ),
                 )
-            elif self.user_attendance.is_libero():
+            elif self.user_attendance.is_libero() and self.user_attendance.campaign.phase('registration').is_actual():
                 # TODO: get WP slug for city
                 messages.error(
                     request,
@@ -183,7 +183,7 @@ class TitleViewMixin(object):
         return context_data
 
 
-class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin):
+class RegistrationPersonalViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -210,6 +210,10 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
                 return reverse(self.registration_phase)
         else:
             return reverse(self.prev_url)
+
+
+class RegistrationViewMixin(MustBeInRegistrationPhaseMixin, RegistrationPersonalViewMixin):
+    pass
 
 
 class UserAttendanceFormKwargsMixin(object):

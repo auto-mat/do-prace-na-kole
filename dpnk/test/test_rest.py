@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -33,8 +34,6 @@ from freezegun import freeze_time
 from model_mommy import mommy
 
 from rest_framework.test import APIClient
-
-import settings
 
 from .mommy_recipes import UserAttendanceRecipe
 
