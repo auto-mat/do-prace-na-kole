@@ -1,6 +1,6 @@
-`apt install qgis`
-nastavit security groups v AWS abych měl přístup z lokálního počítače
-nastavit PSQL připojení
-stáhnout vhodnou vrstvu (pravděpodobně `dpnk_gpxfile_anonymized_avg`)
-vybrat oblast dat (nebo všechna)
-uložit jako SHP
+- `apt install qgis`
+- nastavit security groups v AWS abych měl přístup z lokálního počítače
+- nastavit PSQL připojení
+- stáhnout vhodnou vrstvu (pravděpodobně `dpnk_gpxfile_anonymized_avg`)
+- vybrat oblast dat (nebo všechna)
+- uložit jako SHP
