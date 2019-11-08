@@ -2244,8 +2244,6 @@ class TripViewTests(ViewsLogon):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-        print_response(response)
-        import pdb;pdb.set_trace()
         self.assertContains(
             response,
             '<strong>Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?</strong>',

@@ -1,7 +1,4 @@
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
-
-from model_mommy import mommy
 
 
 class Permissions:
@@ -40,5 +37,5 @@ class Permissions:
             codename="view_subsidiary",
         )
         self.view_userattendance = Permission.objects.get(
-            codename="view_userattendance"
+            codename="view_userattendance",
         )

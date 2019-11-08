@@ -1,5 +1,6 @@
 from dpnk import models
 
+
 class CommuteModes:
     def __init__(self, **kwargs):
         self.bicycle = models.CommuteMode.objects.get(pk=1)

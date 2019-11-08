@@ -1,10 +1,11 @@
+from . import transactions
 from .answers import Answers
-from .campaigns import Campaigns
 from .campaign_types import CampaignTypes
-from .choices import Choices
+from .campaigns import Campaigns
 from .choice_types import ChoiceTypes
-from .cities_in_campaign import CitiesInCampaign
+from .choices import Choices
 from .cities import Cities
+from .cities_in_campaign import CitiesInCampaign
 from .commute_modes import CommuteModes
 from .companies import Companies
 from .company_admins import CompanyAdmins
@@ -18,20 +19,16 @@ from .phases import Phases
 from .price_levels import PriceLevels
 from .questions import Questions
 from .subsidiaries import Subsidiaries
-from .teams import Teams
-from .test_results_data import TestResultsData
-from .trips import Trips
-from .user_attendances import UserAttendances
-from .users import Users
-
-from . import transactions
-
 from .t_shirt_delivery.deliverybatches import DeliveryBatches
 from .t_shirt_delivery.packagetransactions import PackageTransactions
 from .t_shirt_delivery.subsidiaryboxes import SubsidiaryBoxes
 from .t_shirt_delivery.teampackages import TeamPackages
 from .t_shirt_delivery.tshirt_sizes import TshirtSizes
-
+from .teams import Teams
+from .test_results_data import TestResultsData
+from .trips import Trips
+from .user_attendances import UserAttendances
+from .users import Users
 
 
 target_dag = {
@@ -58,12 +55,11 @@ target_dag = {
     "teams": (Teams, {"campaigns", "subsidiaries"}),
     "trips": (Trips, {"userattendances", "commute_modes"}),
     "users": (Users, {"groups", "cities", "companies"}),
-    "tshirt_sizes": (TshirtSizes, {"campaigns"}),
     "userattendances": (UserAttendances, {"users", "teams", "tshirt_sizes", "campaigns", "phases"}),
 
     "transactions_package_transactions": (transactions.PackageTransactions, {"userattendances"}),
 
-    #tshirt_delivery
+    # tshirt_delivery
     "deliverybatches": (DeliveryBatches, {"campaigns"}),
     "packagetransactions": (PackageTransactions, {"transactions_package_transactions"}),
     "subsidiaryboxes": (SubsidiaryBoxes, {"deliverybatches"}),
@@ -72,6 +68,7 @@ target_dag = {
 
     "test_results_data": (TestResultsData, {"campaigns"}),
 }
+
 
 class Fixtures:
     """
@@ -102,5 +99,5 @@ class Fixtures:
         except KeyError:
             return super().__getattribute__(attr)
 
-    def format(self, string):
+    def format(self, string):  # noqa
         return string.format(**self.sets)

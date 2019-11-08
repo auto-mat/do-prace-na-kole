@@ -2,6 +2,7 @@
 
 import contextlib
 
+
 @contextlib.contextmanager
 def suppress_autotime(model, fields):
     _original_values = {}

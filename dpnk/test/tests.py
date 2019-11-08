@@ -40,8 +40,8 @@ from model_mommy import mommy
 
 from price_level import models as price_level_models
 
-from .mommy_recipes import testing_campaign
 from .mommy.mommy import Fixtures
+from .mommy_recipes import testing_campaign
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
