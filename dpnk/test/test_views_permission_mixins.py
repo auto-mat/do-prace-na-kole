@@ -103,7 +103,7 @@ class MustBeCompanyAdminMixinTest(TestCase):
     def test_is_admin_approved(self):
         self.request.user_attendance = mommy.make(
             "UserAttendance",
-            userprofile__company_admin=[mommy.make("CompanyAdmin", company_admin_approved='approved', campaign=testing_campaign)],
+            userprofile__company_admin=[mommy.make("CompanyAdmin", company_admin_approved='approved', campaign=testing_campaign())],
             campaign=testing_campaign,
         )
         self.request.user_attendance.save()
@@ -133,7 +133,7 @@ class MustBeCompanyAdminMixinTest(TestCase):
             mixin.dispatch(self.request)
 
     def test_isnt_admin(self):
-        self.request.user_attendance = mommy.make("UserAttendance")
+        self.request.user_attendance = mommy.make("UserAttendance", campaign=testing_campaign())
         mixin = MustBeCompanyAdmin()
         with self.assertRaisesRegex(PermissionDenied, "Tato stránka je určená pouze ověřeným firemním koordinátorům."):
             mixin.dispatch(self.request)

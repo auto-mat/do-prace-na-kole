@@ -240,7 +240,9 @@ class Team(models.Model):
     def name_with_members(self):
         members = self.members()
         if members:
-            return "%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
+            names = [u.userprofile.name() for u in self.members()]
+            names.sort()
+            return "%s (%s)" % (self.name, ", ".join(names))
         else:
             return self.name
 

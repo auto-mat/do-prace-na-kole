@@ -346,14 +346,14 @@
                Enjoy Your everyday ride!
                </b></p>
                <p>
-               Organization team <a href="{{ campaign.web }}">{{ campaign.name }}</a>
+               Organization team <a href="{{ campaign.campaign_type.web }}">{{ campaign.display_name }}</a>
                </p>
             {% else %}
                <p><b>
                Děkujeme za podporu udržitelné mobility ve městech a přejeme hodně radosti z jízdy na kole!
                </b></p>
                <p>
-               Organizační tým soutěže <a href="{{ campaign.web }}">{{ campaign.name }}</a>
+               Organizační tým soutěže <a href="{{ campaign.campaign_type.web }}">{{ campaign.display_name }}</a>
                </p>
             {% endif %}
             </td>

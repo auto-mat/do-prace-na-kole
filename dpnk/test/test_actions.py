@@ -35,6 +35,8 @@ from dpnk.models.transactions import Status
 
 from model_mommy import mommy
 
+from .mommy.mommy import Fixtures
+
 
 class TestActionsMommy(TestCase):
     """ Tests that are independend of fixtures """
@@ -93,31 +95,43 @@ class TestActionsMommy(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class TestActions(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'test_results_data', 'invoices', 'commute_mode']
+    fixtures = ['sites', 'commute_mode']
 
     def setUp(self):
+        self.objs = Fixtures({
+            "userattendances",
+            "campaigns",
+            "payments",
+            "phases",
+            "price_levels",
+            "teams",
+            "invoices",
+            "trips",
+            "company_admins",
+            "competitions",
+        })
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
         self.factory = RequestFactory()
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
-        self.request.user = models.User.objects.get(username="test")
+        self.request.user = self.objs.users.user
         setattr(self.request, 'session', 'session')
         self.messages = FallbackStorage(self.request)
         setattr(self.request, '_messages', self.messages)
         call_command('denorm_init')
-        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
+        util.rebuild_denorm_models([self.objs.teams.basic])
 
     def tearDown(self):
         call_command('denorm_drop')
 
     def test_approve_am_payment(self):
-        models.Payment.objects.get(pk=17).delete()
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
+        self.objs.payments.done_bill_ua2115.delete()
+        util.rebuild_denorm_models([self.objs.userattendances.registered])
         queryset = models.UserAttendance.objects.all()
-        payment = models.Payment.objects.get(pk=5)
+        payment = self.objs.payments.new_bill_2014
         self.assertEqual(payment.status, 1)
         actions.approve_am_payment(self.modeladmin, self.request, queryset)
-        payment = models.Payment.objects.get(pk=5)
+        payment = models.Payment.objects.get(pk=self.objs.payments.new_bill_2014.pk)
         self.assertEqual(payment.status, 99)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(str(message), "Platby potvrzeny")
@@ -139,14 +153,14 @@ class TestActions(TestCase):
         self.assertEqual(str(message), "Ujetá vzdálenost: 167.2 Km v 3 jízdách")
 
     def test_recalculate_results(self):
-        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
+        util.rebuild_denorm_models([self.objs.teams.last_year, self.objs.teams.other_subsidiary])
         queryset = models.UserAttendance.objects.all()
         actions.recalculate_results(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(str(message), "Výsledky přepočítány")
 
     def test_touch_items_user_attendance(self):
-        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
+        util.rebuild_denorm_models([self.objs.teams.last_year, self.objs.teams.other_subsidiary])
         queryset = models.UserAttendance.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
@@ -165,10 +179,10 @@ class TestActions(TestCase):
         self.assertEqual(str(message), "Zadáno přepočítání 11 výsledků")
 
     def test_remove_mailing_id(self):
-        self.assertEqual(models.UserProfile.objects.get(pk=1026).mailing_id, "")
+        self.assertEqual(self.objs.users.user_without_userattendance_userprofile.mailing_id, "")
         queryset = models.UserProfile.objects.all()
         actions.remove_mailing_id(self.modeladmin, self.request, queryset)
-        self.assertEqual(models.UserProfile.objects.get(pk=1026).mailing_id, None)
+        self.assertEqual(models.UserProfile.objects.get(pk=self.objs.users.user_without_userattendance_userprofile.pk).mailing_id, None)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(message, "Mailing ID a hash byl úspěšne odebrán 8 profilům")
 
@@ -210,4 +224,4 @@ class TestActions(TestCase):
         actions.create_invoices(self.modeladmin, self.request, queryset, celery=False)
         num_invoices = len(models.Invoice.objects.all())
         self.assertEqual(num_invoices, 2)
-        self.assertEqual(len(models.Invoice.objects.get(pk=2).payment_set.all()), 1)
+        self.assertEqual(len(models.Invoice.objects.exclude(pk=self.objs.invoices.basic.pk)[0].payment_set.all()), 1)

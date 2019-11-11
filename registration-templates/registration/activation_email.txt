@@ -16,7 +16,7 @@ Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero d
 * Své jízdy si pravidelně zaznamenávejte v profilu ({{ absolute_uri }}{% url 'profil' %}).
 * Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
 * Nezapomeňte pozvat kolegy ({{ absolute_uri }}{% url 'pozvanky' %}) do svého týmu.
-* Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených aplikací ({{campaign.web}}/aplikace).
-* Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem webu ({{campaign.web}}).
+* Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených aplikací ({{campaign.campaign_type.web}}/aplikace).
+* Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem webu ({{campaign.campaign_type.web}}).
 
-Jakékoliv další otázky rádi zodpovíme na e-mailu {{campaign.contact_email}}
+Jakékoliv další otázky rádi zodpovíme na e-mailu {{campaign.campaign_type.contact_email}}

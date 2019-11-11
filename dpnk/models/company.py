@@ -92,7 +92,7 @@ class Company(models.Model):
         return get_address_string(self.address)
 
     def admin_emails(self, campaign):
-        admins = self.company_admin.filter(campaign=campaign)
+        admins = self.company_admin.filter(campaign=campaign).select_related('userprofile__user').order_by('userprofile__user__email')
         return ", ".join([a.userprofile.user.email for a in admins])
 
     def admin_telephones(self, campaign):

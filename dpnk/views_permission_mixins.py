@@ -190,7 +190,7 @@ class MustBeCompanyAdminMixin(object):
                     "<a href='mailto:{contact_email}?subject=Přihlásit koordinátora'>{contact_email}</a>."
                 ).format(
                     admin_application=reverse("company_admin_application"),
-                    contact_email=request.user_attendance.campaign.contact_email,
+                    contact_email=request.user_attendance.campaign.campaign_type.contact_email,
                 ),
             ),
             template_name=getattr(self, 'template_name', None),

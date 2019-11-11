@@ -135,7 +135,7 @@ function get_vacation_events(fetchInfo, successCallback, failureCallback){
 function get_wordpress_events(fetchInfo, successCallback, failureCallback){
     $.ajax({
        dataType: "json",
-       url: '{{campaign.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}',
+       url: '{{campaign.campaign_type.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}',
        success: function ( data ) {
            used_dates = [];
            events_by_day = {};

@@ -27,11 +27,13 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk import filters, models, util
-from dpnk.models import Team, UserAttendance
+from dpnk.models import UserAttendance
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
+
+from .mommy.mommy import Fixtures
 
 
 @override_settings(
@@ -55,14 +57,28 @@ class BadSubdomainTests(DenormMixin, TestCase):
     SSLIFY_ADMIN_DISABLE=True,
 )
 class LocalAdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
+    fixtures = ['sites']
 
     def setUp(self):
+        self.objs = Fixtures({
+            "userattendances",
+            "campaigns",
+            "payments",
+            "phases",
+            "price_levels",
+            "invoices",
+            "questions",
+            "answers",
+            "subsidiaries",
+            "company_admins",
+            "trips",
+            "teams",
+            "competitions",
+        })
+
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(username='local_admin'), settings.AUTHENTICATION_BACKENDS[0])
-        util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_admin_userattendance(self):
         address = reverse('admin:dpnk_userattendance_changelist')
@@ -71,10 +87,9 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, '3 Účastníci kampaně')
 
     def test_admin_questionnaire_answers_no_permission(self):
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
-        competition = models.Competition.objects.filter(slug="FQ-LB")
-        competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition.get())
+        competition = self.objs.competitions.team_frequency_c2010
+        competition.recalculate_results()
+        cr = models.CompetitionResult.objects.get(competition=self.objs.competitions.team_frequency_c2010)
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "Soutěž je vypsána ve městě, pro které nemáte oprávnění.")
@@ -87,13 +102,19 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, "Nesprávně zadaný soutěžící.", status_code=401)
 
     def test_admin_question_change(self):
-        address = reverse('admin:dpnk_question_change', args=(6,))
+        address = reverse('admin:dpnk_question_change', args=(self.objs.questions.team_question.pk,))
         response = self.client.get(address)
         self.assertContains(response, 'Answers link')
         self.assertNotContains(response, 'Pravidelnost týmů')
         self.assertContains(response, 'Team question')
         self.assertContains(response, 'Team question text')
-        self.assertContains(response, '<option value="5">Výkonnost</option>', html=True)
+        self.assertContains(
+            response,
+            self.objs.format(
+                '<option value="{competitions.competition_mens_performance.pk}">Výkonnost</option>',
+            ),
+            html=True,
+        )
 
 
 @override_settings(
@@ -102,23 +123,35 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
     SSLIFY_ADMIN_DISABLE=True,
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices', 'am_payments']
+    fixtures = ['sites']
 
     def setUp(self):
+        self.objs = Fixtures({
+            "userattendances",
+            "campaigns",
+            "payments",
+            "phases",
+            "price_levels",
+            "invoices",
+            "questions",
+            "answers",
+            "subsidiaries",
+            "company_admins",
+        })
         super().setUp()
+        self.campaign = self.objs.campaigns.c2010
+
         self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
-        util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk__in=(1115, 2115)))
 
     def test_userattendance_admin_post(self):
-        campaign = models.Campaign.objects.get(pk=339)
+        campaign = self.campaign
         campaign.max_team_members = 1
         campaign.save()
-        address = reverse("admin:dpnk_userattendance_change", args=(1115,))
+        address = reverse("admin:dpnk_userattendance_change", args=(self.objs.userattendances.userattendance.pk,))
         post_data = {
             'approved_for_team': 'approved',
-            'team': '1',
+            'team': str(self.objs.teams.basic.pk),
             'transactions-TOTAL_FORMS': 0,
             'transactions-INITIAL_FORMS': 0,
             'transactions-2-TOTAL_FORMS': 0,
@@ -139,9 +172,11 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            '1015,339,testing-campaign,,,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
-            '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,'
-            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,2015-11-12 18:18:40.223000,done,,',
+            self.objs.format(
+                '{userattendances.userattendance2.pk},{campaigns.c2010.pk},testing-campaign,,0.0,0.0,{teams.basic.pk},Testing team 1,approved,,,Testing city,{users.user2_userprofile.pk},cs,,'  # noqa
+                '{users.user2.pk},Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,'
+                '"test@email.cz, test@test.cz, test_wa@email.cz",2015-11-12 18:18:40,2010-11-01 00:00:00,done,fc,145'
+            ),
         )
 
     def test_company_export(self):
@@ -150,7 +185,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "2,Testing company without admin,11111")
+        self.assertContains(response, self.objs.format("{companies.no_admin.pk},Testing company without admin,11111"))
 
     def test_subsidiary_export(self):
         address = "/admin/dpnk/subsidiary/export/"
@@ -158,7 +193,12 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, '1,"Ulice 1, 111 11 Praha",Ulice,1,,Praha,11111,Testing company,Testing city')
+        self.assertContains(
+            response,
+            self.objs.format(
+                '{subsidiaries.subsidiary.pk},"Ulice 1, 111 11 Praha",Ulice,1,,Praha,11111,Testing company,Testing city',
+            ),
+        )
 
     def test_userprofile_export(self):
         address = "/admin/dpnk/userprofile/export/"
@@ -168,7 +208,9 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            '1117,1128,Testing User 1,test@test.cz,male,,cs,,,,,,secret,email1128@dopracenakole.cz,done',
+            self.objs.format(
+                '{users.userprofile.pk},{users.user.pk},Testing User 1,test@test.cz,male,,cs,,,,,,{users.userprofile.ecc_password},{users.userprofile.ecc_email},done,no_admission',  # noqa
+            ),
         )
 
     def test_answer_export(self):
@@ -179,8 +221,10 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            "5,Testing,User 1,test@test.cz,1128,,1117,Testing team 1,Ulice,1,,11111,"
-            "Praha,Testing company,Testing city,1115,,2,,,1,yes,Answer without attachment",
+            self.objs.format(
+                "{answers.answer_without_attachment.pk},Testing,User 1,test@test.cz,{users.user.pk},,{users.userprofile.pk},Testing team 1,Ulice,1,,11111,"  # noqa
+                "Praha,Testing company,Testing city,{userattendances.userattendance.pk},,{questions.with_choices_and_attachment.pk},,,{choices.yes.pk},yes,Answer without attachment"  # noqa
+            ),
         )
 
     def test_invoice_export(self):
@@ -195,16 +239,22 @@ class AdminModulesTests(DenormMixin, TestCase):
         address = reverse('admin:dpnk_competition_changelist')
         post_data = {
             'action': 'mass_change_selected',
-            '_selected_action': '5',
+            '_selected_action': self.objs.competitions.competition_mens_performance.pk,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, '<option value="338">Testing campaign - last year</option>', html=True)
+        self.assertContains(
+            response,
+            self.objs.format(
+                '<option value="{campaigns.c2009.pk}">Testing campaign 2009</option>',
+            ),
+            html=True,
+        )
 
     def test_subsidiary_masschange(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
         post_data = {
             'action': 'mass_change_selected',
-            '_selected_action': '1',
+            '_selected_action': self.objs.subsidiaries.subsidiary.pk,
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, 'id="id_address_street_number"')
@@ -212,16 +262,23 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_admin_questions(self):
         address = reverse('admin_questions')
         response = self.client.get(address)
-        self.assertContains(response, 'Testing campaign -')
+        self.assertContains(response, 'Testing campaign 2010 -')
 
     def test_admin_answers(self):
-        address = "%s?question=2" % reverse('admin_answers')
+        address = "%s?question=%s" % (reverse('admin_answers'), self.objs.questions.with_choices_and_attachment.pk)
         response = self.client.get(address)
-        self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>', html=True)
+        self.assertContains(
+            response,
+            '<a href="/admin/dpnk/answer/?question__competition__id__exact=%s">Odpovědi k soutěži Dotazník</a>' % self.objs.competitions.questionnaire.pk,  # noqa
+            html=True,
+        )
         self.assertContains(response, '<a href="%s/DSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
 
     def test_admin_companyadmin(self):
-        address = "%s?administrated_company__subsidiaries__city__id__exact=1" % reverse('admin:dpnk_companyadmin_changelist')
+        address = "%s?administrated_company__subsidiaries__city__id__exact=%s" % (
+            reverse('admin:dpnk_companyadmin_changelist'),
+            self.objs.cities.city.pk,
+        )
         response = self.client.get(address)
         self.assertContains(response, 'test_wa@email.cz')
         self.assertContains(response, 'Null User')
@@ -233,15 +290,18 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, 'Null User')
 
     def test_admin_userprofile(self):
-        address = "%s?userattendance_set__team__subsidiary__city__id__exact=1" % reverse('admin:dpnk_userprofile_changelist')
+        address = "%s?userattendance_set__team__subsidiary__city__id__exact=%s" % (
+            reverse('admin:dpnk_userprofile_changelist'),
+            self.objs.cities.city.pk,
+        )
         response = self.client.get(address)
-        self.assertContains(response, 'email1031@dopracenakole.cz')
+        self.assertContains(response, self.objs.users.user2_userprofile.ecc_email)
         self.assertContains(response, 'Registered User 1')
 
     def test_admin_userprofile_sex_filter(self):
         address = "%s?sex__exact=male" % reverse('admin:dpnk_userprofile_changelist')
         response = self.client.get(address)
-        self.assertContains(response, 'email1031@dopracenakole.cz')
+        self.assertContains(response, self.objs.users.user2_userprofile.ecc_email)
         self.assertContains(response, 'Registered User 1')
 
     def test_admin_question_changelist(self):
@@ -251,10 +311,15 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, 'yes/no')
 
     def test_admin_question_change(self):
-        address = reverse('admin:dpnk_question_change', args=(5,))
+        address = reverse('admin:dpnk_question_change', args=(self.objs.questions.basic5.pk,))
         response = self.client.get(address)
         self.assertContains(response, 'Answers link')
-        self.assertContains(response, '<option value="3">Pravidelnost týmů</option>', html=True)
+        self.assertContains(
+            response,
+            self.objs.format(
+                '<option value="{competitions.team_frequency_c2010.pk}">Pravidelnost týmů</option>'),
+            html=True,
+        )
         self.assertContains(response, 'Question 5 name')
         self.assertContains(response, 'Question text')
 
@@ -288,14 +353,27 @@ class AdminModulesTests(DenormMixin, TestCase):
     SSLIFY_ADMIN_DISABLE=True,
 )
 class AdminTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['sites']
 
     def setUp(self):
+        self.objs = Fixtures({
+            "userattendances",
+            "campaigns",
+            "payments",
+            "phases",
+            "price_levels",
+            "invoices",
+            "answers",
+            "subsidiaries",
+            "company_admins",
+            "test_results_data",
+            "trips",
+            "competition_results",
+            "competitions",
+        })
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
-        util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        self.user_attendance = UserAttendance.objects.filter(pk=1115)
+        self.user_attendance = self.objs.userattendances.userattendance
 
     def test_subsidiary_admin(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
@@ -319,7 +397,7 @@ class AdminTests(TestCase):
         self.assertContains(response, "unapproved_user")
 
     def test_user_admin_change(self):
-        address = reverse('admin:auth_user_change', args=(1128,))
+        address = reverse('admin:auth_user_change', args=(self.objs.users.user.pk,))
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing")
         self.assertContains(response, "User 1")
@@ -329,12 +407,12 @@ class AdminTests(TestCase):
         competition.get().recalculate_results()
         address = reverse('admin_questionnaire_results', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
-        self.assertContains(response, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertContains(response, "Testing team 1 (Nick, Registered User 1, Testing User 1)")
 
     def test_admin_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition.get(), user_attendance__pk=1115)
+        cr = models.CompetitionResult.objects.get(competition=competition.get(), user_attendance__pk=self.objs.userattendances.userattendance.pk)
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "quest"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "%s/DSC00002.JPG" % settings.MEDIA_URL)
@@ -360,48 +438,72 @@ class AdminTests(TestCase):
         self.assertContains(response, "Dohromady bodů: 0,0")
 
     def test_admin_draw_results_fq_lb(self):
-        models.Payment.objects.create(user_attendance_id=1015, status=models.Status.DONE, amount=1)
-        models.Payment.objects.create(user_attendance_id=2115, status=models.Status.DONE, amount=1)
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(id__in=[1015, 2115]))
+        models.Payment.objects.create(user_attendance_id=self.objs.userattendances.userattendance2.pk, status=models.Status.DONE, amount=1)
+        models.Payment.objects.create(user_attendance_id=self.objs.userattendances.registered.pk, status=models.Status.DONE, amount=1)
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.filter(
+                id__in=[
+                    self.objs.userattendances.userattendance2.pk,
+                    self.objs.userattendances.registered.pk,
+                ],
+            ),
+        )
         competition = models.Competition.objects.get(slug="FQ-LB")
-        cr = models.CompetitionResult.objects.get(team_id=1, competition=competition)
+        cr = models.CompetitionResult.objects.get(team_id=self.objs.teams.basic.pk, competition=competition)
         cr.result = 0.8
         cr.save()
         address = reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"})
         response = self.client.get(address)
         self.assertContains(
             response,
-            "<li>"
-            "1. tah: Tým Testing team 1 z organizace Testing company"
-            "<br/>"
-            "pravidelnost jízd 80&nbsp;%"
-            "   <br/>"
-            "   Členové:"
+            "Testing team 1 z organizace Testing company",
+        )
+        self.assertContains(
+            response,
+            "pravidelnost jízd 80&nbsp;%",
+        )
+        self.assertContains(
+            response,
             "      <ul>"
             "         <li>"
             "            Testing User: "
             "         </li>"
-            "      </ul>"
+            "      </ul>",
+            html=True,
+        )
+        self.assertContains(
+            response,
             "      <ul>"
             "         <li>"
             "            Testing User 1: "
             "         </li>"
-            "      </ul>"
+            "      </ul>",
+            html=True,
+        )
+        self.assertContains(
+            response,
             "   "
             "      <ul>"
             "         <li>"
             "            Registered User 1: "
             "         </li>"
-            "      </ul>"
-            "</li>",
+            "      </ul>",
             html=True,
         )
 
     def test_admin_draw_results_fq_lb_not_all_paying(self):
         models.Payment.objects.all().delete()
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(id__in=[1115, 1015, 2115]))
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.filter(
+                id__in=[
+                    self.objs.userattendances.userattendance.pk,
+                    self.objs.userattendances.userattendance2.pk,
+                    self.objs.userattendances.registered.pk,
+                ],
+            ),
+        )
         competition = models.Competition.objects.get(slug="FQ-LB")
-        cr = models.CompetitionResult.objects.get(team_id=1, competition=competition)
+        cr = models.CompetitionResult.objects.get(team_id=self.objs.teams.basic.pk, competition=competition)
         cr.result = 0.8
         cr.save()
         address = reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"})
@@ -416,10 +518,9 @@ class AdminTests(TestCase):
         response = self.client.get(address)
         self.assertContains(
             response,
-            "<li> 1. tah: Tým Testing User 1"
+            "3. tah: Tým Testing User 1"
             "<br/>"
-            "ujetá vzdálenost 16 190&nbsp;km"
-            "</li>",
+            "ujetá vzdálenost 16 190&nbsp;km",
             html=True,
         )
 
@@ -431,7 +532,7 @@ class AdminTests(TestCase):
         response = self.client.get(address)
         self.assertContains(
             response,
-            "<li> 1. tah: Tým Testing User 1"
+            "<li> 2. tah: Tým Testing User 1"
             "<br/>"
             "1 620&nbsp;bodů"
             "</li>",

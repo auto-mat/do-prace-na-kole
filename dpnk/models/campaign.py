@@ -26,7 +26,6 @@ from colorfield.fields import ColorField
 
 from denorm import denormalized, depend_on_related
 
-from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
@@ -63,12 +62,6 @@ class Campaign(Pricable, models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    name = models.CharField(
-        unique=True,
-        verbose_name=_(u"Jméno kampaně"),
-        max_length=60,
-        null=False,
-    )
     year = models.CharField(
         unique=False,
         verbose_name=_("Ročník kampaně"),
@@ -86,10 +79,6 @@ class Campaign(Pricable, models.Model):
         verbose_name="Identifikátor kampaně",
         blank=True,
         null=True,
-    )
-    main_color = ColorField(
-        default='#1EA04F',
-        verbose_name="Hlavní barva kampaně",
     )
     previous_campaign = models.ForeignKey(
         'Campaign',
@@ -257,47 +246,10 @@ class Campaign(Pricable, models.Model):
         verbose_name=_("Lze zadávat i výlety"),
         default=False,
     )
-    wp_api_url = models.URLField(
-        default="http://www.dopracenakole.cz",
-        verbose_name=_("Adresa pro Wordpress API se články"),
-        null=True,
-        blank=True,
-    )
     wp_api_date_from = models.DateField(
         verbose_name=_("Datum, od kterého se zobrazují příspěvky z Wordpress API se články"),
         null=True,
         blank=True,
-    )
-    web = models.URLField(
-        verbose_name=_("Web kampáně"),
-        default="http://www.dopracenakole.cz",
-        blank=True,
-    )
-    contact_email = models.CharField(
-        verbose_name=_("Kontaktní e-mail"),
-        default="kontakt@dopracenakole.cz",
-        max_length=80,
-        blank=False,
-    )
-    sitetree_postfix = models.CharField(
-        verbose_name=_("Postfix pro menu"),
-        max_length=60,
-        null=False,
-        blank=True,
-        default="",
-    )
-
-    LANGUAGE_PREFIXES = [
-        ('dpnk', _("Do práce na kole")),
-        ('dsnk', _("Do školy na kole")),
-    ]
-    language_prefixes = models.CharField(
-        verbose_name=_("Jazyková sada"),
-        choices=LANGUAGE_PREFIXES,
-        max_length=16,
-        null=False,
-        blank=False,
-        default='dpnk',
     )
     max_team_members = models.PositiveIntegerField(
         verbose_name=_("Počet lidí v týmu"),
@@ -330,24 +282,13 @@ class Campaign(Pricable, models.Model):
         on_delete=models.SET_NULL,
     )
 
-    def get_language_prefix(self):
-        if self.language_prefixes == 'dpnk':
-            return ''
-        return self.language_prefixes
-
-    def get_available_languages(self):
-        if self.language_prefixes == 'dpnk':
-            return ((k, v) for k, v in settings.LANGUAGES if len(k) == 2)
-        return ((k, v) for k, v in settings.LANGUAGES if k.startswith(self.get_language_prefix()))
-
-    def sitetree_postfix_maintree(self):
-        if self.sitetree_postfix:
-            return "maintree_%s" % self.sitetree_postfix
-        else:
-            return "maintree"
+    def display_name(self):
+        if self.campaign_type is None:
+            return 'No campaign type ' + str(self.year)
+        return self.campaign_type.name + ' ' + str(self.year)
 
     def __str__(self):
-        return self.name
+        return self.display_name()
 
     def competitors_choose_team(self):
         return self.max_team_members > 1
@@ -444,8 +385,62 @@ class Campaign(Pricable, models.Model):
                 return False
         result = get_phase(self.pk, phase_type)
         if not result:
+            get_phase.invalidate(self.pk, phase_type)
             raise Phase.DoesNotExist
         return result
 
     def competition_phase(self):
         return self.phase('competition')
+
+    #############################################
+    # DEPRECATED ################################
+    #############################################
+    name = models.CharField(
+        unique=False,
+        verbose_name=_(u"Deprecated: Jméno kampaně"),
+        max_length=60,
+        null=True,
+    )
+    wp_api_url = models.URLField(
+        default="http://www.dopracenakole.cz",
+        verbose_name=_("Deprecated: Adresa pro Wordpress API se články"),
+        null=True,
+        blank=True,
+    )
+    web = models.URLField(
+        verbose_name=_("Deprecated: Web kampáně"),
+        default="http://www.dopracenakole.cz",
+        blank=True,
+        null=True,
+    )
+    contact_email = models.CharField(
+        verbose_name=_("Deprecated: Kontaktní e-mail"),
+        default="kontakt@dopracenakole.cz",
+        max_length=80,
+        blank=True,
+        null=True,
+    )
+    sitetree_postfix = models.CharField(
+        verbose_name=_("Deprecated: Postfix pro menu"),
+        max_length=60,
+        null=True,
+        blank=True,
+        default="",
+    )
+
+    LANGUAGE_PREFIXES = [
+        ('dpnk', _("Do práce na kole")),
+        ('dsnk', _("Do školy na kole")),
+    ]
+    language_prefixes = models.CharField(
+        verbose_name=_("Deprecated: Jazyková sada"),
+        choices=LANGUAGE_PREFIXES,
+        max_length=16,
+        null=False,
+        blank=False,
+        default='dpnk',
+    )
+    main_color = ColorField(
+        default='#1EA04F',
+        verbose_name="Deprecated: Hlavní barva kampaně",
+    )

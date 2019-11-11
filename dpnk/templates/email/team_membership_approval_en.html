@@ -1,7 +1,7 @@
 {% extends "email/base.html" %}
 {% block content %}
 <p>
-Good news, {{user_attendance.campaign.name}}!
+Good news, {{user_attendance.campaign.display_name}}!
 </p><p>
 You are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
 </p>
@@ -10,6 +10,6 @@ You are now member of the {{user_attendance.team.name}} team. It's time to hit t
 {% include "./button.html" with button_text="Sign up as a team member" %}
 
 <p>
-Welcome to the {{user_attendance.campaign.name}} competition!
+    Welcome to the {{user_attendance.campaign.display_name}} competition!
 </p>
 {% endblock %}

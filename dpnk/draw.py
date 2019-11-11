@@ -42,7 +42,7 @@ def draw(competition_slug, limit=10):
     condition['competition'] = competition
     if competition.competition_type == 'frequency':
         condition['result__gt'] = threshold
-    results = CompetitionResult.objects.filter(**condition)
+    results = CompetitionResult.objects.filter(**condition).order_by('result')
 
     if competition.competitor_type == 'team':
         results = \
