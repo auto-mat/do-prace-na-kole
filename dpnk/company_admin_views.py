@@ -36,13 +36,13 @@ from registration.backends.simple.views import RegistrationView
 from . import company_admin_forms
 from . import exceptions
 from . import models
-from .admin import UserAttendanceResource
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm,
 )
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Payment, Subsidiary, UserProfile
 from .models.transactions import Status
+from .resources import UserAttendanceResource
 from .views import RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin

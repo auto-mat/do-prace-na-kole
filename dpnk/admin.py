@@ -20,7 +20,6 @@
 """Administrátorské rozhraní pro Do práce na kole"""
 
 import pprint
-import types
 
 from admin_views.admin import AdminViews
 
@@ -51,7 +50,6 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
 from isnull_filter import isnull_filter
@@ -86,7 +84,7 @@ from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import TShirtSize
 
-from . import actions, models, transaction_forms
+from . import actions, models, resources, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 from .filters import (
     ActiveCityFilter,
@@ -98,7 +96,6 @@ from .filters import (
     PSCFilter,
     campaign_filter_generator,
 )
-from .views_results import CompetitionResultResource
 
 
 def admin_links(args_generator):
@@ -227,18 +224,6 @@ except NameError:
     pass
 
 
-class CompanyResource(resources.ModelResource):
-    class Meta:
-        model = models.Company
-        fields = [
-            'id',
-            'name',
-            'ico',
-            'dic',
-        ]
-        export_order = fields
-
-
 class CompanyAdminInline(NestedTabularInline):
     raw_id_fields = ('administrated_company', 'userprofile')
     extra = 0
@@ -290,7 +275,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
         merge_form = CompanyMergeForm
     except NameError:
         pass
-    resource_class = CompanyResource
+    resource_class = resources.CompanyResource
     actions = (
         actions.create_invoices,
     )
@@ -308,45 +293,6 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
             ]
         )
     subsidiary_links.short_description = _('Pobočky')
-
-
-def create_subsidiary_resource(campaign_slugs):
-    campaign_fields = ["user_count_%s" % sl for sl in campaign_slugs]
-
-    class SubsidiaryResource(resources.ModelResource):
-        class Meta:
-            model = models.Subsidiary
-            fields = [
-                'id',
-                'name',
-                'address_street',
-                'address_street_number',
-                'address_recipient',
-                'address_city',
-                'address_psc',
-                'company__name',
-                'city__name',
-                'user_count',
-                'team_count',
-            ] + campaign_fields
-            export_order = fields
-
-        name = fields.Field(readonly=True, attribute='name')
-        team_count = fields.Field(readonly=True, attribute='team_count')
-        user_count = fields.Field(readonly=True)
-
-        def dehydrate_user_count(self, obj):
-            return obj.teams.distinct().aggregate(Sum('member_count'))['member_count__sum']
-
-        for slug in campaign_slugs:
-            vars()['user_count_%s' % slug] = fields.Field(readonly=True)
-
-    for slug in campaign_slugs:
-        def func(slug, obj):
-            return obj.teams.filter(campaign__slug=slug).distinct().aggregate(Sum('member_count'))['member_count__sum']
-        setattr(SubsidiaryResource, "dehydrate_user_count_%s" % slug, types.MethodType(func, slug))
-
-    return SubsidiaryResource
 
 
 @admin.register(models.Subsidiary)
@@ -399,7 +345,7 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
 
     @property
     def resource_class(self):
-        return create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
+        return resources.create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
 
     def get_queryset(self, request):
         self.campaign = request.subdomain
@@ -573,47 +519,6 @@ class UserProfileAdminInline(NestedStackedInline):
     filter_horizontal = ('administrated_cities',)
 
 
-def create_userprofile_resource(campaign_slugs):  # noqa: C901
-    campaign_fields = ["user_attended_%s" % sl for sl in campaign_slugs]
-
-    class UserProileResource(resources.ModelResource):
-        class Meta:
-            model = models.UserProfile
-            fields = [
-                'id',
-                'user',
-                'name',
-                'email',
-                'sex',
-                'telephone',
-                'language',
-                'occupation',
-                'occupation_name',
-                'age_group',
-                'mailing_id',
-                'note',
-                'ecc_password',
-                'ecc_email',
-            ] + campaign_fields
-            export_order = fields
-
-        name = fields.Field(readonly=True, attribute='name')
-        email = fields.Field(readonly=True, attribute='user__email')
-        occupation_name = fields.Field(readonly=True, attribute='occupation__name')
-
-        for slug in campaign_slugs:
-            vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
-
-    for slug in campaign_slugs:
-        def func(slug, obj):
-            user_profile = obj.userattendance_set.filter(campaign__slug=slug)
-            if user_profile.exists():
-                return user_profile.get().payment_status
-        setattr(UserProileResource, "dehydrate_user_attended_%s" % slug, types.MethodType(func, slug))
-
-    return UserProileResource
-
-
 @admin.register(models.UserProfile)
 class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
     form = UserProfileForm
@@ -665,7 +570,7 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
 
     @property
     def resource_class(self):
-        return create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
+        return resources.create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
 
     def lookup_allowed(self, key, value):
         if key in ('userattendance_set__team__subsidiary__city__id__exact',):
@@ -759,51 +664,6 @@ class TripAdminInline(admin.TabularInline):
     raw_id_fields = ('user_attendance',)
     extra = 0
     model = models.Trip
-
-
-class UserAttendanceResource(resources.ModelResource):
-    class Meta:
-        model = models.UserAttendance
-        fields = [
-            'id',
-            'campaign',
-            'campaign__slug',
-            'distance',
-            'frequency',
-            'trip_length_total',
-            'team',
-            'team__name',
-            'approved_for_team',
-            't_shirt_size',
-            't_shirt_size__name',
-            'team__subsidiary__city__name',
-            'userprofile',
-            'userprofile__language',
-            'userprofile__telephone',
-            'userprofile__user__id',
-            'userprofile__user__first_name',
-            'userprofile__user__last_name',
-            'userprofile__user__username',
-            'userprofile__user__email',
-            'userprofile__occupation',
-            'userprofile__age_group',
-            'subsidiary_name',
-            'team__subsidiary__company__name',
-            'company_admin_emails',
-            'created',
-            'payment_date',
-            'payment_status',
-            'payment_type',
-            'payment_amount',
-        ]
-        export_order = fields
-
-    subsidiary_name = fields.Field(readonly=True, attribute='team__subsidiary__name')
-    payment_date = fields.Field(readonly=True, attribute='payment_complete_date')
-    payment_status = fields.Field(readonly=True, attribute='payment_status')
-    payment_type = fields.Field(readonly=True, attribute='representative_payment__pay_type')
-    payment_amount = fields.Field(readonly=True, attribute='representative_payment__amount')
-    company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
 
 
 @admin.register(models.UserAttendance)
@@ -923,7 +783,7 @@ class UserAttendanceAdmin(
     inlines = [PaymentInlineUserAttendance, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
     list_per_page = 100
-    resource_class = UserAttendanceResource
+    resource_class = resources.UserAttendanceResource
 
     def avatar_small(self, obj):
         return avatar(obj.userprofile.user, 30)
@@ -1104,39 +964,6 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
     save_as = True
 
 
-class AnswerResource(resources.ModelResource):
-    class Meta:
-        model = models.Answer
-        fields = [
-            'id',
-            'user_attendance__userprofile__user__first_name',
-            'user_attendance__userprofile__user__last_name',
-            'user_attendance__userprofile__user__email',
-            'user_attendance__userprofile__user__id',
-            'user_attendance__userprofile__telephone',
-            'user_attendance__userprofile__id',
-            'user_attendance__team__name',
-            'user_attendance__team__subsidiary__address_street',
-            'user_attendance__team__subsidiary__address_street_number',
-            'user_attendance__team__subsidiary__address_recipient',
-            'user_attendance__team__subsidiary__address_psc',
-            'user_attendance__team__subsidiary__address_city',
-            'user_attendance__team__subsidiary__company__name',
-            'user_attendance__team__subsidiary__city__name',
-            'user_attendance__id',
-            'points_given',
-            'question',
-            'question__name',
-            'question__text',
-            'choices',
-            'str_choices',
-            'comment',
-        ]
-        export_order = fields
-
-    str_choices = fields.Field(readonly=True, attribute='str_choices')
-
-
 class AnswerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1178,7 +1005,7 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', 'question')
     save_as = True
-    resource_class = AnswerResource
+    resource_class = resources.AnswerResource
     form = AnswerForm
 
     def attachment_url(self, obj):
@@ -1230,29 +1057,6 @@ class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
     extra = 0
 
 
-class TripResource(resources.ModelResource):
-    class Meta:
-        model = models.Trip
-        fields = [
-            'id',
-            'user_attendance__userprofile__user__id',
-            'user_attendance__userprofile__user__first_name',
-            'user_attendance__userprofile__user__last_name',
-            'user_attendance__userprofile__user__email',
-            'user_attendance',
-            'source_application',
-            'source_id',
-            'date',
-            'direction',
-            'commute_mode',
-            'commute_mode__slug',
-            'distance',
-            'duration',
-            'from_application',
-        ]
-        export_order = fields
-
-
 @admin.register(models.Trip)
 class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
     queryset_city_param = 'user_attendance__team__subsidiary__city__in'
@@ -1290,7 +1094,7 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
-    resource_class = TripResource
+    resource_class = resources.TripResource
     save_as = True
 
     def get_queryset(self, request):
@@ -1317,11 +1121,6 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         )
 
 
-class AdminCompetitionResultResource(CompetitionResultResource):
-    def __init__(self):
-        return super().__init__(include_personal_info=True)
-
-
 @admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
@@ -1346,7 +1145,7 @@ class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
         'team__name',
         'competition__name')
     raw_id_fields = ('user_attendance', 'team')
-    resource_class = AdminCompetitionResultResource
+    resource_class = resources.AdminCompetitionResultResource
 
 
 @admin.register(models.Occupation)
@@ -1486,29 +1285,6 @@ class CampaignAdmin(admin.ModelAdmin):
         return obj.cityincampaign_set.count()
 
 
-class CompanyAdminResource(resources.ModelResource):
-    class Meta:
-        model = models.CompanyAdmin
-        fields = [
-            'userprofile__user',
-            'userprofile__user__email',
-            'userprofile',
-            'userprofile__user__first_name',
-            'userprofile__user__last_name',
-            'userprofile__telephone',
-            'company_admin_approved',
-            'administrated_company__name',
-            'can_confirm_payments',
-            'will_pay_opt_in',
-            'note',
-            'sitetree_postfix',
-            'motivation_company_admin',
-            'campaign',
-            'tracks',
-            'recreational',
-        ]
-
-
 @admin.register(models.CompanyAdmin)
 class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administrated_company__subsidiaries__city__in'), RelatedFieldAdmin):
     list_display = [
@@ -1543,7 +1319,7 @@ class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administr
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
     actions = (actions.update_mailing_coordinator,)
-    resource_class = CompanyAdminResource
+    resource_class = resources.CompanyAdminResource
 
     def lookup_allowed(self, key, value):
         if key in ('administrated_company__subsidiaries__city__id__exact',):
@@ -1563,39 +1339,6 @@ class InvoiceForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if 'sequence_number' in self.fields:
             self.fields['sequence_number'].required = False
-
-
-class InvoiceResource(resources.ModelResource):
-    class Meta:
-        model = models.Invoice
-        fields = [
-            'company__name',
-            'created',
-            'exposure_date',
-            'taxable_date',
-            'payback_date',
-            'paid_date',
-            'total_amount',
-            'payments_count',
-            'campaign__name',
-            'sequence_number',
-            'order_number',
-            'company__ico',
-            'company__dic',
-            'company_pais_benefitial_fee',
-            'company__address_street',
-            'company__address_street_number',
-            'company__address_recipient',
-            'company__address_psc',
-            'company__address_city',
-            'company_admin_telephones',
-            'company_admin_emails',
-        ]
-        export_order = fields
-
-    payments_count = fields.Field(readonly=True, attribute='payments_count')
-    company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
-    company_admin_telephones = fields.Field(readonly=True, attribute='company_admin_telephones')
 
 
 @admin.register(models.Invoice)
@@ -1656,7 +1399,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     ]
     list_max_show_all = 10000
     form = InvoiceForm
-    resource_class = InvoiceResource
+    resource_class = resources.InvoiceResource
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
