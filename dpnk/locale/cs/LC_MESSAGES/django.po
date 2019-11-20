@@ -2600,11 +2600,11 @@ msgid "Osobní údaje"
 msgstr ""
 
 #: dpnk/templates/base_generic.html:55
-msgid "Změnít tým"
+msgid "Změnit tým"
 msgstr ""
 
 #: dpnk/templates/base_generic.html:55
-msgid "Změnít společnost"
+msgid "Změnit společnost"
 msgstr ""
 
 #: dpnk/templates/base_generic.html:65

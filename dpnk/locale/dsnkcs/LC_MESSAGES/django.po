@@ -2517,11 +2517,11 @@ msgid "Osobní údaje"
 msgstr ""
 
 #: templates/base_generic.html:62
-msgid "Změnít tým"
+msgid "Změnit tým"
 msgstr ""
 
 #: templates/base_generic.html:62
-msgid "Změnít společnost"
+msgid "Změnit společnost"
 msgstr "Změnit školu"
 
 #: templates/base_generic.html:72

@@ -2703,11 +2703,11 @@ msgid "Osobní údaje"
 msgstr "Personal details"
 
 #: dpnk/templates/base_generic.html:55
-msgid "Změnít tým"
+msgid "Změnit tým"
 msgstr "Change team"
 
 #: dpnk/templates/base_generic.html:55
-msgid "Změnít společnost"
+msgid "Změnit společnost"
 msgstr "Change Company"
 
 #: dpnk/templates/base_generic.html:65
