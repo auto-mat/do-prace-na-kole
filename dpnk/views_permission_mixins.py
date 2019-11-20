@@ -215,7 +215,6 @@ def registration_complete_gate(user_attendance):
             'profile_uncomplete': 'upravit_profil',
             'team_waiting': 'registration_uncomplete',
             'payment_waiting': 'registration_uncomplete',
-            'track_uncomplete': 'registration_uncomplete',
         }
         return redirect(reverse(redirect_view[reason]))
 

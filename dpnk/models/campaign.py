@@ -234,7 +234,7 @@ class Campaign(Pricable, models.Model):
         default=True,
     )
     track_required = models.BooleanField(
-        verbose_name=_("Je povinné zadávat trasu"),
+        verbose_name=_("DEPRECATED"),
         default=False,
         null=False,
     )

@@ -1,11 +1,5 @@
 
 $(function(){
-    //UserProfile update form:
-    $("#id_dont_want_insert_track").change(function(){
-        $("#div_id_track").toggle(! $("#id_dont_want_insert_track").prop("checked"));
-        $("#div_id_distance").toggle($("#id_dont_want_insert_track").prop("checked"));
-    });
-
    $('.submit-once-form').submit(function () {
        // Bail out if the form contains validation errors
        if ($.validator && !$(this).valid()) return;
@@ -36,7 +30,3 @@ $(function(){
       $('#id_company_1').change();
    } );
 });
-
-window.addEventListener("map:init", function (e) {
-   $("#id_dont_want_insert_track").change();
-}, false);

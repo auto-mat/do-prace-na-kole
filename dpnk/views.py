@@ -42,7 +42,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
-from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
 from django.db.models import BooleanField, Case, Q, When
@@ -57,7 +56,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.gzip import gzip_page
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
@@ -92,7 +90,6 @@ from .forms import (
     RegistrationFormDPNK,
     RegistrationProfileUpdateForm,
     TeamSettingsForm,
-    TrackUpdateForm,
     UserProfileLanguageUpdateForm,
     UserProfileRidesUpdateForm,
 )
@@ -978,7 +975,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedFo
         context_data = super().get_context_data(*args, **kwargs)
         team_members = []
         if self.user_attendance.team:
-            team_members = self.user_attendance.team.all_members().annotate(length=Length('track'))
+            team_members = self.user_attendance.team.all_members()
             team_members = team_members.select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign')
         context_data['team_members'] = team_members
         context_data['registration_phase'] = "other_team_members"
@@ -1115,19 +1112,6 @@ class UpdateProfileView(RegistrationProfileView):
     success_url = "edit_profile_detailed"
     title = _("Můj profil")
     template_name = 'registration/profile_update_detailed.html'
-
-
-class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'registration/change_track.html'
-    form_class = TrackUpdateForm
-    model = UserAttendance
-    success_message = _("Trasa/vzdálenost úspěšně upravena")
-    success_url = 'profil'
-    registration_phase = "upravit_profil"
-    title = _("Upravit typickou trasu")
-
-    def get_object(self):
-        return self.user_attendance
 
 
 class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
@@ -1805,25 +1789,6 @@ class DrawResultsView(TitleViewMixin, TemplateView):
         return context_data
 
 
-class CombinedTracksKMLView(TemplateView):
-    template_name = "gis/tracks.kml"
-
-    @method_decorator(gzip_page)
-    @method_decorator(never_cache)              # don't cache KML in browsers
-    @method_decorator(cache_page(24 * 60 * 60))  # cache in memcached for 24h
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, city_slug=None, *args, **kwargs):
-        context_data = super().get_context_data(*args, **kwargs)
-        filter_params = {}
-        if city_slug:
-            filter_params['team__subsidiary__city__slug'] = city_slug
-        user_attendances = models.UserAttendance.objects.filter(campaign__slug=self.request.subdomain, **filter_params).kml()
-        context_data['user_attendances'] = user_attendances
-        return context_data
-
-
 def view_edit_trip(request, date, direction):
     incomplete = registration_complete_gate(request.user_attendance)
     if incomplete is not None:
@@ -1874,27 +1839,14 @@ class WithTripMixin():
 
 
 class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
-    def get_initial(self):
-        initial = {}
-        instance = self.get_object()
-        if instance.track is None:
-            initial['track'] = self.user_attendance.get_initial_track()
-        if not instance.distance:
-            initial['distance'] = self.user_attendance.get_distance()
-        return super().get_initial(initial)
+    pass
 
 
 class CreateTripView(EditTripView, CreateView):
     def get_initial(self):
-        if self.user_attendance.track:
-            track = self.user_attendance.track
-        else:
-            track = None
         initial = {
             'direction': self.kwargs['direction'],
             'date': self.kwargs['date'],
-            'track': track,
-            'distance': self.user_attendance.distance,
         }
         return super().get_initial(initial)
 

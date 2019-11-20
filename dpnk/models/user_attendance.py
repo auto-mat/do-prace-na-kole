@@ -83,14 +83,14 @@ class UserAttendance(StaleSyncMixin, models.Model):
         on_delete=models.CASCADE,
     )
     distance = models.FloatField(
-        verbose_name=_(u"Vzdálenost (km)"),
-        help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
+        verbose_name=_(u"DEPRECATED"),
+        help_text=_(u"DEPRECATED"),
         default=None,
         blank=True,
         null=True,
     )
     track = models.MultiLineStringField(
-        verbose_name=_(u"trasa"),
+        verbose_name=_(u"DEPRECATED"),
         help_text=MAP_DESCRIPTION,
         srid=4326,
         null=True,
@@ -98,7 +98,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         geography=True,
     )
     dont_want_insert_track = models.BooleanField(
-        verbose_name=_(u"Nepřeji si zadávat svoji trasu."),
+        verbose_name=_(u"DEPRECATED"),
         default=False,
         null=False,
     )
@@ -436,8 +436,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
                 return 'payment_waiting'
             else:
                 return 'payment_uncomplete'
-        if self.campaign.track_required and not self.track_complete():
-            return 'track_uncomplete'
         return True
 
     def entered_competition(self):
@@ -453,9 +451,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def tshirt_complete(self):
         return (not self.campaign.has_any_tshirt) or self.t_shirt_size
-
-    def track_complete(self):
-        return self.track or self.distance
 
     def team_complete(self):
         return self.team
@@ -602,9 +597,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if self.pk is None:
             previous_user_attendance = self.previous_user_attendance()
             if previous_user_attendance:
-                if previous_user_attendance.track:
-                    self.distance = previous_user_attendance.distance
-                    self.track = previous_user_attendance.track
                 if previous_user_attendance.t_shirt_size:
                     t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
                     if t_shirt_size.count() == 1:
