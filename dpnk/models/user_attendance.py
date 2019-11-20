@@ -505,7 +505,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         trips = Trip.objects.filter(user_attendance=self, date__in=days)
         trip_days = trips.values_list('date', 'direction')
         expected_trip_days = [(day, direction) for day in days for direction in self.campaign.get_directions()]
-        uncreated_trips = sorted(list(set(expected_trip_days) - set(trip_days)))
+        uncreated_trips = sorted(set(expected_trip_days) - set(trip_days))
         return trips, uncreated_trips
 
     def get_initial_track(self):

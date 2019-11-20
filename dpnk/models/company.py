@@ -121,3 +121,10 @@ class Company(models.Model):
             Q(city__isnull=True, campaign=campaign),
         )
         return competitions
+
+    @classmethod
+    def export_resource_classes(cls):
+        from .. import resources
+        return {
+            'company_history': ('Company histories', resources.create_company_history_resource()),
+        }

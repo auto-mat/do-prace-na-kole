@@ -52,6 +52,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
+from import_export_celery.admin_actions import create_export_job_action
+
 from isnull_filter import isnull_filter
 
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
@@ -278,6 +280,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
     resource_class = resources.CompanyResource
     actions = (
         actions.create_invoices,
+        create_export_job_action,
     )
 
     def subsidiaries_text(self, obj):
@@ -1318,7 +1321,9 @@ class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administr
     ]
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
-    actions = (actions.update_mailing_coordinator,)
+    actions = (
+        actions.update_mailing_coordinator,
+    )
     resource_class = resources.CompanyAdminResource
 
     def lookup_allowed(self, key, value):
