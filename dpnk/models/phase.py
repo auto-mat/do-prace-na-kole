@@ -21,6 +21,7 @@
 from datetime import timedelta
 
 from django.contrib.gis.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from .. import util
@@ -76,7 +77,10 @@ class Phase(models.Model):
     def get_active(cls, when=None):
         if when is None:
             when = util.today()
-        return cls.objects.filter(date_from__lte=when, date_to__gte=when)
+        return cls.objects.filter(
+            Q(date_from__lte=when) | Q(date_from__isnull=True),
+            Q(date_to__gte=when) | Q(date_to__isnull=True),
+        )
 
     @staticmethod
     def get_active_range(phase_type, when=None):
