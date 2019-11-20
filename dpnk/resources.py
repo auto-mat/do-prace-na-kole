@@ -21,6 +21,73 @@ class CompanyResource(resources.ModelResource):
         export_order = fields
 
 
+def get_paid_user_attendances_for_company(company, campaign, extra_filter=None):
+    queryset = models.UserAttendance.objects.filter(
+        campaign=campaign,
+        team__subsidiary__company=company,
+    )
+    if extra_filter:
+        queryset = extra_filter(queryset)
+    return [ua for ua in queryset if ua.has_paid()]
+
+
+def total_paid_participants_factory(campaign):
+    def tpp(_, company):
+        return str(
+            len(get_paid_user_attendances_for_company(company, campaign)),
+        )
+    return tpp
+
+
+def employer_paid_by_bill_factory(campaign):
+    def epbb(_, company):
+        return str(
+            len(
+                get_paid_user_attendances_for_company(
+                    company,
+                    campaign,
+                    lambda qs: qs.filter(representative_payment__pay_type='fc'),
+                ),
+            ),
+        )
+    return epbb
+
+
+def create_company_history_resource():
+    campaigns = models.Campaign.objects.all()
+    extra_fields = {}
+    extra_field_types = {
+        'total_paid_participants': total_paid_participants_factory,
+        'employer_paid_by_bill': employer_paid_by_bill_factory,
+    }
+    for ft in extra_field_types:
+        for campaign in campaigns:
+            extra_fields.update({"{campaign}_{field_type}".format(campaign=campaign.slug, field_type=ft): (campaign, ft) for campaign in campaigns})
+
+    class CompanyHistoryResource(resources.ModelResource):
+        class Meta:
+            model = models.Company
+            fields = [
+                'id',
+                'name',
+                'ico',
+                'dic',
+            ] + list(extra_fields.keys())
+            export_order = fields
+
+        for field in extra_fields.keys():
+            vars()[field] = fields.Field(readonly=True)
+
+    for field_name, (campaign, field_type) in extra_fields.items():
+        setattr(
+            CompanyHistoryResource,
+            "dehydrate_" + field_name,
+            extra_field_types[field_type](campaign),
+        )
+
+    return CompanyHistoryResource
+
+
 def create_subsidiary_resource(campaign_slugs):
     campaign_fields = ["user_count_%s" % sl for sl in campaign_slugs]
 

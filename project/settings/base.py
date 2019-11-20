@@ -270,6 +270,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'chart_tools',
     'import_export',
+    'import_export_celery',
     'polymorphic',
     'author',
     'fieldsignals',
