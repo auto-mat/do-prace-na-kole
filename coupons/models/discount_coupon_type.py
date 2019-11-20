@@ -19,8 +19,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
+
+
+def validate_prefix(prefix):
+    if len(prefix) < 2:
+        raise ValidationError(_("Prefix musí mít aspon dva pismena"))
 
 
 class DiscountCouponType(models.Model):
@@ -50,6 +56,7 @@ class DiscountCouponType(models.Model):
                 message=_('Prefix musí sestávat pouze z velkých písmen'),
                 code='invalid_prefix',
             ),
+            validate_prefix,
         ],
         verbose_name=_("prefix"),
         max_length=10,
