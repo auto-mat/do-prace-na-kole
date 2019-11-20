@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
-from braces.views import LoginRequiredMixin
-
 from django import http
 from django.conf import settings
 from django.urls import reverse
@@ -11,6 +9,7 @@ from django.views import generic
 from django.views.generic.base import TemplateView
 
 from dpnk.util import get_base_url
+from dpnk.views_permission_mixins import RegistrationCompleteMixin
 
 import requests.exceptions
 
@@ -22,7 +21,7 @@ from . import models
 from . import tasks
 
 
-class AboutStrava(TemplateView, LoginRequiredMixin):
+class AboutStrava(RegistrationCompleteMixin, TemplateView):
     template_name = 'stravasync/about.html'
     title = _("Propojení se Stravou")
     registration_phase = "application"
@@ -66,7 +65,7 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
         return context
 
 
-class StravaAuth(generic.View, LoginRequiredMixin):
+class StravaAuth(RegistrationCompleteMixin, generic.View):
     def get(self, request, *args, **kwargs):
         sclient = stravalib.Client()
         code = request.GET.get("code", None)
@@ -86,7 +85,7 @@ class StravaAuth(generic.View, LoginRequiredMixin):
         return http.HttpResponseRedirect(reverse('about_strava'))
 
 
-class StravaConnect(generic.View, LoginRequiredMixin):
+class StravaConnect(RegistrationCompleteMixin, generic.View):
     def post(self, request, *args, **kwargs):
         sclient = stravalib.Client()
         if request.POST.get('private', False):
@@ -102,7 +101,7 @@ class StravaConnect(generic.View, LoginRequiredMixin):
         )
 
 
-class StravaDisconnect(generic.View, LoginRequiredMixin):
+class StravaDisconnect(RegistrationCompleteMixin, generic.View):
     def post(self, request, *args, **kwargs):
         strava_account = request.user.stravaaccount
         sclient = stravalib.Client(access_token=strava_account.access_token)
