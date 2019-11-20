@@ -785,7 +785,7 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
 
         # This is hack, to get commute mode queryset cached:
         qs = models.CommuteMode.objects.all()
-        cache = [p for p in qs]
+        cache = list(qs)
 
         class CacheQuerysetAll(object):
             def __iter__(self):
