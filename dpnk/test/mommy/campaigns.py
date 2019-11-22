@@ -26,8 +26,6 @@ class Campaigns:
             tracking_number_first=0,
             tracking_number_last=999999999,
             campaign_type=campaign_types.basic,
-            track_required=True,
-            trip_plus_distance=5,
         )
 
         self.c2010 = mommy.make(  # pk = 339 in old fixtures
@@ -53,6 +51,5 @@ class Campaigns:
             slug="testing-campaign",
             tracking_number_first=1111111,
             tracking_number_last=999999999,
-            track_required=True,
             trip_plus_distance=5,
         )

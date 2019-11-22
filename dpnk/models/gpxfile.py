@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+###################################
+#
+# DEPRECATED!
+#
+#
+###################################
+
 # Author: Hynek Hanke <hynek.hanke@auto-mat.cz>
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #

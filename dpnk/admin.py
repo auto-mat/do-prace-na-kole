@@ -90,7 +90,6 @@ from . import actions, models, resources, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 from .filters import (
     ActiveCityFilter,
-    BadTrackFilter,
     CampaignFilter,
     EmailFilter,
     HasReactionFilter,
@@ -698,7 +697,6 @@ class UserAttendanceAdmin(
         'representative_payment__amount',
         'representative_payment__realized',
         'team__member_count',
-        'get_distance',
         'frequency',
         'trip_length_total',
         'get_rides_count_denorm',
@@ -723,7 +721,6 @@ class UserAttendanceAdmin(
         ('userprofile__sex', AllValuesComboFilter),
         'discount_coupon__coupon_type__name',
         'discount_coupon__discount',
-        BadTrackFilter,
         isnull_filter('voucher', _("Nemá přiřazené vouchery?")),
         isnull_filter('user_trips', _("Nemá žádné cesty?")),
         isnull_filter('team', _("Uživatel nemá zvolený tým?")),
@@ -836,7 +833,6 @@ class UserAttendanceAdmin(
             'team__subsidiary__address_street_number',
             'team__subsidiary__city',
             'team__subsidiary__company',
-            'track',
             'trip_length_total',
             'updated',
             'userprofile',
@@ -1234,7 +1230,6 @@ class CampaignAdmin(admin.ModelAdmin):
         ('Trip entry', {
             'fields': (
                 'days_active',
-                'track_required',
                 'tracks',
                 'recreational',
                 'show_application_links',
@@ -1422,80 +1417,6 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     def invoice_xml_url(self, obj):
         if obj.invoice_xml:
             return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
-
-
-def merge_gpx_into_trip(modeladmin, request, queryset):
-    fields_to_copy = [
-        'author',
-        'created',
-        'duration',
-        'from_application',
-        'source_application',
-        ('file', 'gpx_file'),
-        'track',
-        'updated',
-        'updated_by',
-    ]
-    fields_to_copy = [(x, x) if not type(x) is tuple else x for x in fields_to_copy]
-    for gpxfile in queryset:
-        for (ftc_from, ftc_to) in fields_to_copy:
-            gpxattr = gpxfile.__getattribute__(ftc_from)
-            if gpxattr and not gpxfile.trip.__getattribute__(ftc_to):
-                gpxfile.trip.__setattr__(ftc_to, gpxattr)
-        if gpxfile.distance and not gpxfile.trip.distance:
-            gpxfile.trip.distance = gpxfile.distance / 1000
-        gpxfile.trip.save()
-
-
-@admin.register(models.GpxFile)
-class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
-    queryset_city_param = 'user_attendance__team__subsidiary__city__in'
-    model = models.GpxFile
-    list_display = (
-        'id',
-        'trip_date',
-        'file',
-        'direction',
-        'trip',
-        'commute_mode',
-        'user_attendance',
-        'from_application',
-        'source_application',
-        'distance',
-        'duration',
-        'created',
-        'author',
-        'updated_by',
-        'created',
-        'updated',
-        'ecc_last_upload'
-    )
-    search_fields = (
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username',
-        'user_attendance__userprofile__user__email',
-    )
-    raw_id_fields = ('user_attendance', 'trip')
-    readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
-    list_filter = (
-        campaign_filter_generator('user_attendance__campaign'),
-        'from_application',
-        'source_application',
-        'user_attendance__team__subsidiary__city'
-    )
-    actions = [merge_gpx_into_trip, ]
-
-    def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super().get_readonly_fields(request, obj)
-        return [x for x in readonly_fields if x != 'track']
-
-    def get_fields(self, request, obj=None):
-        fields = super().get_fields(request, obj)
-        if 'track' not in fields:
-            fields.append('track')
-        return fields
 
 
 @admin.register(scribbler_models.Scribble)

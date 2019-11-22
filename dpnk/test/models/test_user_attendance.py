@@ -60,7 +60,6 @@ class TestEnteredCompetitionReason(TestCase):
         tshirt_size = mommy.make(
             't_shirt_delivery.TShirtSize',
             name='XXXL',
-            campaign__track_required=False,
         )
         self.campaign = tshirt_size.campaign
         self.campaign.has_any_tshirt = True
@@ -135,14 +134,6 @@ class TestEnteredCompetitionReason(TestCase):
         self.user_attendance.payment_status = 'none'
         reason = self.user_attendance.entered_competition_reason()
         self.assertEqual(reason, 'payment_uncomplete')
-
-    def test_track_uncomplete(self):
-        """
-        Test that entered_competition_reason function works properly for track_required
-        """
-        self.campaign.track_required = True
-        reason = self.user_attendance.entered_competition_reason()
-        self.assertEqual(reason, 'track_uncomplete')
 
     def test_true(self):
         """

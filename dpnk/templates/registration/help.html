@@ -7,12 +7,6 @@
 {% block content %}
 {% scribble 'help_page' %}
 {% load i18n %}
-<div class="section" id="change-default-track" >
-  <h1>{% trans "Změnit vychozí trasu" %}</h1>
-  {% blocktrans %}
-  Výchozí trasu můžete změnit kliknutím na "Můj profil" a poté "Typická trasa". Případně kliknutím na odkaz zde:
-  {% endblocktrans %} <a href="{% url "upravit_trasu" %}">Změnit typickou trasu</a>
-</div>
 <div class="section" id="edit-tracks">
   <h1>{% trans "Editace tras" %}</h1>
   {% blocktrans %}

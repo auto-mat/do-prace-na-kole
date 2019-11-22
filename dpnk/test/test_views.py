@@ -27,7 +27,6 @@ from ddt import data, ddt
 import denorm
 
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
 from django.test import Client, RequestFactory, TestCase
@@ -726,14 +725,11 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('upravit_profil'))
-        user_attendance = models.UserAttendance.objects.annotate(
-            length=Length('track'),
-        ).get(
+        user_attendance = models.UserAttendance.objects.get(
             userprofile__user__username='user_without_attendance',
             campaign__pk=339,
         )
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
-        self.assertEqual(user_attendance.get_distance(), 156.9)
 
 
 class RegistrationPhaseTests(TestCase):
@@ -982,7 +978,6 @@ class TestRidesView(ViewsLogonMommy):
             slug="testing-campaign",
             name='Testing campaign',
             minimum_rides_base=10000,
-            track_required=False,
         )
         user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
@@ -2038,7 +2033,7 @@ class RegistrationMixinTests(ViewsLogon):
             if team_member != self.user_attendance:
                 team_member.team = None
                 team_member.save()
-        self.user_attendance.track = None
+        self.user_attendance.personal_data_opt_in = False
         self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
@@ -2049,16 +2044,15 @@ class RegistrationMixinTests(ViewsLogon):
             if team_member != self.user_attendance:
                 team_member.approved_for_team = 'undecided'
                 team_member.save()
-        self.user_attendance.track = None
+        self.user_attendance.personal_data_opt_in = False
         self.user_attendance.save()
+        self.user_attendance.team.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Ve Vašem týmu jsou neschválení členové")
 
     def test_dpnk_registration_unapproved(self):
         self.user_attendance.approved_for_team = 'undecided'
-        self.user_attendance.save()
-        self.user_attendance.track = None
         self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
@@ -2068,15 +2062,11 @@ class RegistrationMixinTests(ViewsLogon):
     def test_dpnk_registration_denied(self):
         self.user_attendance.approved_for_team = 'denied'
         self.user_attendance.save()
-        self.user_attendance.track = None
-        self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Vaše členství v týmu bylo bohužel zamítnuto")
 
     def test_dpnk_registration_no_payment(self):
-        self.user_attendance.track = None
-        self.user_attendance.save()
         for payment in self.user_attendance.payments():
             payment.status = models.Status.NEW
             payment.save()
@@ -2203,111 +2193,6 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "platba přes firemního koordinátora")
         self.assertContains(response, "<div><b>Platba</b>: zaplaceno</div>", html=True)
 
-    def test_dpnk_views_track_gpx_file(self):
-        models.Trip.objects.all().delete()
-        address = reverse('upravit_trasu')
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
-            post_data = {
-                'dont_want_insert_track': False,
-                'track': '',
-                'gpx_file': gpxfile,
-                'submit': 'Odeslat',
-            }
-            response = self.client.post(address, post_data)
-        self.assertEqual(response.status_code, 302)
-        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEqual(user_attendance.get_distance(), 13.32)
-
-    def test_dpnk_views_track_gpx_file_route(self):
-        models.Trip.objects.all().delete()
-        address = reverse('upravit_trasu')
-        with open('dpnk/test_files/route.gpx', 'rb') as gpxfile:
-            post_data = {
-                'dont_want_insert_track': False,
-                'track': '',
-                'gpx_file': gpxfile,
-                'submit': 'Odeslat',
-            }
-            response = self.client.post(address, post_data)
-        self.assertEqual(response.status_code, 302)
-        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEqual(user_attendance.get_distance(), 6.72)
-
-    def test_dpnk_views_track_gpx_file_parsing_error(self):
-        """ Test that error message is shown to the user where non-gpx file is submitted """
-        address = reverse('upravit_trasu')
-        with open('dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
-            post_data = {
-                'dont_want_insert_track': False,
-                'track': '',
-                'gpx_file': gpxfile,
-                'submit': 'Odeslat',
-            }
-            response = self.client.post(address, post_data)
-        self.assertContains(
-            response,
-            '<strong>Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?</strong>',
-            html=True,
-        )
-
-    def test_dpnk_views_track(self):
-        models.Trip.objects.all().delete()
-        address = reverse('upravit_trasu')
-        post_data = {
-            'dont_want_insert_track': False,
-            'gpx_file': '',
-            'track':
-                '{"type": "MultiLineString", "coordinates": [[[14.377684590344607, 50.104472624878724], [14.382855889324802, 50.104637777363834], '
-                '[14.385232326511767, 50.10294493739811], [14.385398623470714, 50.102697199702064], [14.385446903233, 50.102236128912004], '
-                '[14.38538253021666, 50.101957419789834]]]}',
-            'submit': 'Odeslat',
-        }
-        response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEqual(user_attendance.get_distance(), 0.74)
-
-    def test_dpnk_views_track_only_distance(self):
-        models.Trip.objects.all().delete()
-        address = reverse('upravit_trasu')
-        post_data = {
-            'dont_want_insert_track': True,
-            'distance': 12,
-            'gpx_file': '',
-            'submit': 'Odeslat',
-        }
-        response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEqual(user_attendance.track, None)
-        self.assertEqual(user_attendance.get_distance(), 12)
-
-    def test_dpnk_views_track_only_distance_last_trip(self):
-        """ Test, that get_distance function returns distance of last trip """
-        address = reverse('upravit_trasu')
-        post_data = {
-            'dont_want_insert_track': True,
-            'distance': 12,
-            'gpx_file': '',
-            'submit': 'Odeslat',
-        }
-        response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEqual(user_attendance.track, None)
-        self.assertEqual(user_attendance.get_distance(), 156.9)
-
-    def test_dpnk_views_track_no_track_distance(self):
-        address = reverse('upravit_trasu')
-        post_data = {
-            'dont_want_insert_track': False,
-            'gpx_file': '',
-            'track': '',
-            'submit': 'Odeslat',
-        }
-        response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")
-
     def test_emission_calculator(self):
         address = reverse('emission_calculator')
         response = self.client.get(address)
@@ -2423,7 +2308,6 @@ class TestNotLoggedIn(TestCase):
         "rides_details",
         "team_members",
         "upravit_profil",
-        "upravit_trasu",
         "zaslat_zadost_clenstvi",
         "zmenit_tym",
     )

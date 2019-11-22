@@ -56,7 +56,7 @@ from smart_selects.form_fields import ChainedModelChoiceField
 
 from . import email, models, util, views
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
-from .string_lazy import format_html_lazy, mark_safe_lazy
+from .string_lazy import format_html_lazy
 from .widgets import CommuteModeSelect
 
 logger = logging.getLogger(__name__)
@@ -808,42 +808,6 @@ class FormWithTrackMixin():
         if self.cleaned_data.get('track', None) and ('track' in self.changed_data or not self.cleaned_data['distance']):
             self.cleaned_data['distance'] = round(util.get_multilinestring_length(self.cleaned_data['track']), 2)
         return self.cleaned_data
-
-
-class TrackUpdateForm(SubmitMixin, FormWithTrackMixin, forms.ModelForm):
-    gpx_file = forms.FileField(
-        label=_("GPX soubor"),
-        help_text=mark_safe_lazy(
-            _(
-                "Zadat trasu nahráním souboru GPX. "
-                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší "
-                "<a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
-            ),
-        ),
-        required=False,
-    )
-
-    def clean(self):
-        self.cleaned_data = super().clean()
-
-        self.clean_parse_and_calculate_track()
-        if self.cleaned_data['dont_want_insert_track']:
-            self.cleaned_data['track'] = None
-        else:
-            if self.cleaned_data['track'] is None:
-                raise forms.ValidationError({'track': _("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")})
-
-        return self.cleaned_data
-
-    class Meta:
-        model = models.UserAttendance
-        fields = ('track', 'gpx_file', 'dont_want_insert_track', 'distance')
-
-    def __init__(self, *args, **kwargs):
-        instance = kwargs['instance']
-        super().__init__(*args, **kwargs)
-
-        self.fields['track'].widget = UserLeafletWidget(user_attendance=instance)
 
 
 class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):

@@ -203,11 +203,6 @@ urlpatterns = [
         name="edit_profile_detailed",
     ),
     url(
-        r'^upravit_trasu/$',
-        views.UpdateTrackView.as_view(),
-        name="upravit_trasu",
-    ),
-    url(
         r'^typ_platby/$',
         views.PaymentTypeView.as_view(),
         name="typ_platby",
@@ -270,14 +265,6 @@ urlpatterns = [
         ),
     ),
     url(
-        r'^tracks/$',
-        views.CombinedTracksKMLView.as_view(),
-    ),
-    url(
-        r'^tracks/(?P<city_slug>[^&]+)/$',
-        views.CombinedTracksKMLView.as_view(),
-    ),
-    url(
         r'^trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$',
         views.view_edit_trip,
         name="trip",
@@ -327,7 +314,6 @@ urlpatterns = [
         views.SwitchRidesView.as_view(),
         name="switch_rides_view",
     ),
-
 
     # company admin:
     url(
