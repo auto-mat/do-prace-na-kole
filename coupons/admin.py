@@ -24,6 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from dpnk.filters import CampaignFilter, campaign_filter_generator
 
+from import_export import resources
 from import_export.admin import ImportExportMixin
 
 from related_admin import RelatedFieldAdmin
@@ -56,6 +57,28 @@ class NullUserAttendanceListFilter(SimpleListFilter):
         return queryset
 
 
+class DiscountCouponResource(resources.ModelResource):
+
+    class Meta:
+        model = models.DiscountCoupon
+        fields = (
+            'discount',
+            'note',
+            'coupon_type',
+            'receiver',
+            'user_attendance_number',
+        )
+
+    def import_field(self, field, obj, data, **kwargs):
+        if field.column_name == 'coupon_type':
+            obj.coupon_type = models.DiscountCouponType.objects.get(prefix=data['coupon_type'])
+        else:
+            super().import_field(field, obj, data, **kwargs)
+
+    def get_instance(self, instance_loader, row):
+        return False
+
+
 @admin.register(models.DiscountCoupon)
 class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
@@ -82,3 +105,5 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         NullUserAttendanceListFilter,
     )
     search_fields = ('token', 'note', 'receiver')
+
+    resource_class = DiscountCouponResource
