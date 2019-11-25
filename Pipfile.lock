@@ -171,10 +171,10 @@
         },
         "django-admin-sortable2": {
             "hashes": [
-                "sha256:003f4c9e1dc28ec3435f907e9bc953a922eea7e1da28a7242644e6dbc3071f2e"
+                "sha256:da293f5a731762f76a8df9399258cf4ecdc03af6d7eade01eb0ae8b752607b9c"
             ],
             "index": "pypi",
-            "version": "==0.7.3"
+            "version": "==0.7.4"
         },
         "django-admin-views": {
             "hashes": [
@@ -339,12 +339,12 @@
         },
         "django-datatables-view": {
             "hashes": [
-                "sha256:beeaec03ed6dc2c9015a63f655ec5e42ac91d095791f0c117ba361b028ad9cfd",
-                "sha256:c90dd5a87ec477d5639ba0d042048083c284056edb7ca3b4d66f5bf623fffd18",
-                "sha256:f39b81646def04113b33ca9ab7a20974c783c8d8599d99135857ccdba63855d9"
+                "sha256:03a0fe265c16078e579d152f1fed77a51d1d4ea917aaf732a152bc022a1a6a60",
+                "sha256:22f9920008bb11eb2a2ac7886ff2151f749a86a08c9cbf999571f32255da3621",
+                "sha256:89fca7fc3a5be02fb0c9302f3cf11558bd0adccb3f398df389d6ab8af6db30c3"
             ],
             "index": "pypi",
-            "version": "==1.19.0"
+            "version": "==1.19.1"
         },
         "django-daterange-filter": {
             "hashes": [
@@ -437,7 +437,7 @@
         "django-import-export-celery": {
             "editable": true,
             "git": "https://github.com/auto-mat/django-import-export-celery.git",
-            "ref": "0654af095abeb9e971e344d3406d8610faf7ce9e"
+            "ref": "5a61173b92ad701a7ef72eea52df29e25d2be8d4"
         },
         "django-initial-field": {
             "hashes": [
@@ -633,11 +633,11 @@
         },
         "django-sitetree": {
             "hashes": [
-                "sha256:43d0bc2cd716be1eb8131ecc1b5dd6820decd5ed4546560f9ae6f987ea088031",
-                "sha256:637c12d08a612806a846e6f7f79de02289423569d48cc52e36d8d36c9dfa4372"
+                "sha256:9fc51dc588910bb8da968d167d20442ca6981229c8ae302fd04fbcef89690f28",
+                "sha256:efa6c6e99d3818b6909eae6e6747897bea6b1e9ed72d70414f563de3d51bacf4"
             ],
             "index": "pypi",
-            "version": "==1.13.1"
+            "version": "==1.13.2"
         },
         "django-smart-selects": {
             "editable": true,
@@ -672,11 +672,11 @@
         },
         "django-storages": {
             "hashes": [
-                "sha256:87287b7ad2e789cd603373439994e1ac6f94d9dc2e5f8173d2a87aa3ed458bd9",
-                "sha256:f3b3def96493d3ccde37b864cea376472baf6e8a596504b209278801c510b807"
+                "sha256:0a9b7e620e969fb0797523695329ed223bf540bbfdf6cd163b061fc11dab2d1c",
+                "sha256:9322ab74ba6371e2e0fccc350c741686ade829e43085597b26b07ae8955a0a00"
             ],
             "index": "pypi",
-            "version": "==1.7.2"
+            "version": "==1.8"
         },
         "django-su": {
             "hashes": [
@@ -804,11 +804,11 @@
         },
         "gunicorn": {
             "hashes": [
-                "sha256:0806b5e8a2eb8ba9ac1be65d7b743ec896fc25f5d6cb16c5e051540157b315bb",
-                "sha256:ef69dea4814df95e64e3f40b47b7ffedc6911c5009233be9d01cfd0d14aa3f50"
+                "sha256:5a3bf56a1d44c2ed15dae2f9d2a9e7c87acc3517f7225e27e4ece3098a2b5efc",
+                "sha256:fe457b7093b353cefcb2ebc40d192fc7c8a62bba49da648c9e1fa0671fa654d1"
             ],
             "index": "pypi",
-            "version": "==20.0.0"
+            "version": "==20.0.2"
         },
         "hiredis": {
             "hashes": [
@@ -1718,11 +1718,11 @@
         },
         "flake8-comprehensions": {
             "hashes": [
-                "sha256:2f73897575ce6d904c761d636ca1c6c33159abaac7ec7ee10fd9cc2189812e92",
-                "sha256:b28537e05dde41ea865e4e36af86992a74bd053e1750170c90fc25500f9109bd"
+                "sha256:6de428c3ac67d3614d527456469c8a3d6638960e9ad7e1222358526a2507400a",
+                "sha256:e3a8350a35d7bc71f8a1f64cf3c633a418a26b0edace2219d26ea4dd78ac21f3"
             ],
             "index": "pypi",
-            "version": "==3.1.1"
+            "version": "==3.1.4"
         },
         "flake8-import-order": {
             "hashes": [
@@ -1891,10 +1891,10 @@
         },
         "pudb": {
             "hashes": [
-                "sha256:ac30cfc64580958ab7265decb4cabb9141f08781ff072e9a336d5a7942ce35a6"
+                "sha256:e8f0ea01b134d802872184b05bffc82af29a1eb2f9374a277434b932d68f58dc"
             ],
             "index": "pypi",
-            "version": "==2019.1"
+            "version": "==2019.2"
         },
         "pycodestyle": {
             "hashes": [
