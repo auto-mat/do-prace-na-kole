@@ -18,26 +18,57 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import uuid
-
 from author.decorators import with_author
 
 from coupons.models.discount_coupon_type import DiscountCouponType
 
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
 from django.core.validators import MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
-from ..generate_pdf import generate_coupon_pdf
+import smmapdfs
+import smmapdfs.model_abcs
+
+
+class CouponField(smmapdfs.model_abcs.PdfSandwichFieldABC):
+    fields = {
+        'token': (lambda obj: obj.token),
+        'good_till': (lambda obj: obj.coupon_type.valid_until.strftime("%d. %m. %Y") if obj.coupon_type.valid_until else None),
+        'campaign_year': (lambda obj: obj.coupon_type.campaign.year),
+    }
+
+
+class CouponSandwich(smmapdfs.model_abcs.PdfSandwichABC):
+    field_model = CouponField
+    obj = models.ForeignKey(
+        'DiscountCoupon',
+        null=False,
+        blank=False,
+        default='',
+        on_delete=models.CASCADE,
+    )
+
+    def get_email(self):
+        return self.obj.receiver
+
+    def get_context(self, base_url):
+        return {
+            'token': self.obj.token,
+            'good_till': self.obj.coupon_type.valid_until.strftime("%d. %m. %Y") if self.obj.coupon_type.valid_until else None,
+            'campaign_year': self.obj.coupon_type.campaign.year,
+        }
+
+    def get_language(self):
+        return "cs"
 
 
 @with_author
 class DiscountCoupon(models.Model):
+    sandwich_model = CouponSandwich
     coupon_type = models.ForeignKey(
         DiscountCouponType,
         verbose_name=_("typ voucheru"),
@@ -78,17 +109,6 @@ class DiscountCoupon(models.Model):
         blank=True,
         null=True,
     )
-    sent = models.BooleanField(
-        verbose_name=_("Odeslaný"),
-        default=False,
-        null=False,
-    )
-    coupon_pdf = models.FileField(
-        verbose_name=_(u"PDF kupón"),
-        upload_to='coupons',
-        blank=True,
-        null=True,
-    )
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
         auto_now_add=True,
@@ -99,12 +119,41 @@ class DiscountCoupon(models.Model):
         auto_now=True,
         null=True,
     )
+    sent = models.BooleanField(
+        verbose_name=_("DEPRECATED"),
+        default=False,
+        null=False,
+    )
+    coupon_pdf = models.FileField(
+        verbose_name=_(u"DEPRECATED"),
+        upload_to='coupons',
+        blank=True,
+        null=True,
+    )
+
+    def get_pdf(self):
+        try:
+            url = self.couponsandwich_set.get().pdf.url
+        except (CouponSandwich.DoesNotExist, ValueError):
+            try:
+                url = self.coupon_pdf.url
+            except ValueError:
+                url = None
+        if url:
+            return format_html("<a href='{}'>{}</a>", url, _('PDF file'))
+        else:
+            return '-'
+
+    get_pdf.short_description = _("PDF")
 
     def available(self):
         if self.user_attendance_number is None:
             return True
         user_count = self.userattendance_set.count()
         return self.user_attendance_number > user_count
+
+    def get_sandwich_type(self):
+        return self.coupon_type.sandwich_type
 
     class Meta:
         verbose_name = _("Slevový kupón")
@@ -137,16 +186,8 @@ class DiscountCoupon(models.Model):
 
 @receiver(post_save, sender=DiscountCoupon)
 def create_coupon_file(sender, instance, created, **kwargs):
-    if not instance.coupon_pdf:
-        temp = NamedTemporaryFile()
-        generate_coupon_pdf(
-            temp,
-            instance.name(),
-            instance.coupon_type.valid_until.strftime("%d. %m. %Y") if instance.coupon_type.valid_until else None,
-        )
-        filename = "%s/coupon_%s.pdf" % (
-            instance.coupon_type.campaign.slug,
-            uuid.uuid4()
-        )
-        instance.coupon_pdf.save(filename, File(temp))
-        instance.save()
+    smmapdfs.actions.make_pdfsandwich_task.delay(
+        instance._meta.app_label,
+        instance._meta.object_name,
+        instance.pk,
+    )

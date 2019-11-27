@@ -40,16 +40,16 @@ services:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: celery worker -A project.celery -ldebug
+  entrypoint: pipenv run celery worker -A project.celery -ldebug
   links:
    - postgres
    - redis
   tty: true
   stdin_open: true
-  working_dir: /klub-v/
+  working_dir: /app-v/
   user: test
   volumes:
-   - ./:/klub-v/
+   - ./:/app-v/
    - ./pipenv:/home/test
   env_file: docker.env
  celery-beat:

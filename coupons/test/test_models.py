@@ -17,31 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import datetime
-
-from PyPDF2 import PdfFileReader
-
 from django.test import TestCase
 
 from model_mommy import mommy
 
 
 class DiscountCouponTests(TestCase):
-    def test_save(self):
-        discount_coupon = mommy.make(
-            'coupons.DiscountCoupon',
-            coupon_type__prefix="AA",
-            coupon_type__campaign__slug="testing-campaign",
-            coupon_type__valid_until=datetime.datetime(2017, 12, 12),
-            token="",
-        )
-        self.assertRegex(discount_coupon.name(), r"AA-[A-Z]{6}")
-        self.assertRegex(discount_coupon.coupon_pdf.name, r"coupon_[0123456789abcdef-]*\.pdf")
-        pdf = PdfFileReader(discount_coupon.coupon_pdf)
-        pdf_string = pdf.pages[0].extractText()
-        self.assertTrue(discount_coupon.name() in pdf_string)
-        self.assertTrue("12. 12. 2017" in pdf_string)
-
     def test_available(self):
         discount_coupon = mommy.make(
             'coupons.DiscountCoupon',
