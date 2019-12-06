@@ -20,10 +20,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 """Import all models."""
-from coupons.models.discount_coupon import DiscountCoupon
+from coupons.models.discount_coupon import CouponField, CouponSandwich, DiscountCoupon
 from coupons.models.discount_coupon_type import DiscountCouponType
 
 __all__ = (
+    CouponField,
+    CouponSandwich,
     DiscountCoupon,
     DiscountCouponType,
 )

@@ -23,6 +23,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 
+from smmapdfs.models import PdfSandwichType
+
 
 def validate_prefix(prefix):
     if len(prefix) < 2:
@@ -63,6 +65,13 @@ class DiscountCouponType(models.Model):
         null=False,
         blank=False,
         unique=True,
+    )
+    sandwich_type = models.ForeignKey(
+        PdfSandwichType,
+        null=True,
+        blank=False,
+        default='',
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):

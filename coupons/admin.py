@@ -29,6 +29,9 @@ from import_export.admin import ImportExportMixin
 
 from related_admin import RelatedFieldAdmin
 
+import smmapdfs.actions
+from smmapdfs.admin_abcs import PdfSandwichAdmin, PdfSandwichFieldAdmin, fieldForm
+
 from . import models
 
 
@@ -85,25 +88,38 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         'name',
         'coupon_type__prefix',
         'token',
+        'get_pdf',
         'coupon_type',
-        'coupon_pdf',
         'discount',
         'user_attendance_number',
         'note',
         'receiver',
         'attached_user_attendances_list',
         'attached_user_attendances_count',
+    )
+    exclude = (
         'sent',
+        'coupon_pdf',
     )
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
-    list_editable = ('note', 'receiver', 'discount', 'user_attendance_number', 'sent')
+    list_editable = ('note', 'receiver', 'discount', 'user_attendance_number')
     list_filter = (
         campaign_filter_generator('coupon_type__campaign'),
         'coupon_type__name',
-        'sent',
         'user_attendance_number',
         NullUserAttendanceListFilter,
     )
     search_fields = ('token', 'note', 'receiver')
 
     resource_class = DiscountCouponResource
+    actions = (smmapdfs.actions.make_pdfsandwich,)
+
+
+@admin.register(models.CouponSandwich)
+class DiscountCouponSandwichAdmin(PdfSandwichAdmin):
+    pass
+
+
+@admin.register(models.CouponField)
+class CertificateFieldAdmin(PdfSandwichFieldAdmin):
+    form = fieldForm(models.CouponField)
