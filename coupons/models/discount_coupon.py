@@ -39,6 +39,7 @@ class CouponField(smmapdfs.model_abcs.PdfSandwichFieldABC):
         'token': (lambda obj: obj.token),
         'good_till': (lambda obj: obj.coupon_type.valid_until.strftime("%d. %m. %Y") if obj.coupon_type.valid_until else None),
         'campaign_year': (lambda obj: obj.coupon_type.campaign.year),
+        'discount': (lambda obj: "%s%" % obj.discount),
     }
 
 
