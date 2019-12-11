@@ -121,5 +121,5 @@ class DiscountCouponSandwichAdmin(PdfSandwichAdmin):
 
 
 @admin.register(models.CouponField)
-class CertificateFieldAdmin(PdfSandwichFieldAdmin):
+class CouponFieldAdmin(PdfSandwichFieldAdmin):
     form = fieldForm(models.CouponField)
