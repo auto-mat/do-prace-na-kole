@@ -654,10 +654,10 @@
         },
         "django-smmapdfs": {
             "hashes": [
-                "sha256:9e1b9e80be847b3d80c33ba381e32c3180b6dfa377e9fdb996134922b773fba4"
+                "sha256:f96d1421dbde71c371bc8c7bca27a0e4662260418a2201c6969661134c14d511"
             ],
             "index": "pypi",
-            "version": "==1.0.5"
+            "version": "==1.0.6"
         },
         "django-softhyphen": {
             "hashes": [
