@@ -14,7 +14,7 @@ jobs:
       - run: pip install 'Django==2.2.6' "coveralls==1.5.1" django_coverage_plugin
       - run: django-admin compilemessages
       - run: cd dpnk/static/css && lessc style.less style.css
-      - run: echo "${CIRCLE_BRANCH} 2017.${CIRCLE_BUILD_NUM}" > dpnk/static/version.txt
+      - run: echo "branch ${CIRCLE_BRANCH} $(date +%Y).${CIRCLE_BUILD_NUM}" > dpnk/static/version.txt
       - run: git rev-parse HEAD >> dpnk/static/version.txt
       - setup_remote_docker:
           reusable: true
@@ -33,7 +33,7 @@ jobs:
          name: Deploy test Docker image
          command: |
             if [ "$DOCKER_USER" != "" ] ; then
-              TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
+              TAG="$(date +%Y).${CIRCLE_BUILD_NUM}"
               docker tag dopracenakole:latest auto0mat/dopracenakole-test:$TAG
               if [ "$CIRCLE_BRANCH" == "devel" ] ; then
                  docker tag dopracenakole:latest auto0mat/dopracenakole-test:latest

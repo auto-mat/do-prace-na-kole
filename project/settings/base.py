@@ -322,6 +322,7 @@ INSTALLED_APPS = [
     # 'dj_anonymizer',
     'dbtemplates',
     'reversion',
+    'inline_static',
 ]
 
 DBTEMPLATES_USE_REVERSION = True

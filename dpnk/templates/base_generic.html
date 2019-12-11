@@ -4,6 +4,7 @@
 {% load scribbler_tags %}
 {% load sitetree %}
 {% load avatar_tags %}
+{% load inline_static_tags %}
 
 {% block body-class %}application-layout{% endblock %}
 
@@ -95,6 +96,10 @@
 								{% endif %}
 							</ul>
 						</nav>
+            <div style="height:20px"></div>
+            <div style="opacity: 0.1;">
+                {% inline_staticfile "version.txt" %}
+            </div>
 					{% endif %}
 
 				{% endif %}
