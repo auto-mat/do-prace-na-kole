@@ -43,14 +43,14 @@ class CampaignFilter(SimpleListFilter):
 
         if campaign:
             current_campaign = campaign
-            campaigns = [(None, current_campaign.name)]
-            campaigns += [(c.slug, c.name) for c in models.Campaign.objects.exclude(slug=request.subdomain)]
+            campaigns = [(None, str(current_campaign))]
+            campaigns += [(c.slug, str(c)) for c in models.Campaign.objects.exclude(slug=request.subdomain)]
             campaigns += [('all', _('All'))]
             campaigns += [('none', _('None'))]
         else:
             campaigns = [('all', _('All'))]
             campaigns += [('none', _('None'))]
-            campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
+            campaigns += [(c.slug, str(c)) for c in models.Campaign.objects.all()]
         return campaigns
 
     def choices(self, changelist):

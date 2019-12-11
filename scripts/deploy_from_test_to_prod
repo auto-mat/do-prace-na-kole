@@ -1,0 +1,3 @@
+#!/bin/bash
+./copy_image_from_test_to_prod $1
+./restart_dpnk
