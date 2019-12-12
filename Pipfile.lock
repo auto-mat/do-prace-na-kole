@@ -285,11 +285,11 @@
         },
         "django-celery-email": {
             "hashes": [
-                "sha256:02694114f8a4e4b363cfae48b960473396899cae08351e29b0c5e431d647ef9e",
-                "sha256:83ad3d4edfccbcdeb8319314ed8c36cf2d017bbb02cae8b459bf6678a804ea44"
+                "sha256:0f72da39cb2ea83c69440566e87f27cd72f68f247f98ce99fb29889fcf329406",
+                "sha256:5546cbba80952cc3b8a0ffa4206ce90a4a996a7ffd1c385a2bdb65903ca18ece"
             ],
             "index": "pypi",
-            "version": "==2.0.2"
+            "version": "==3.0.0"
         },
         "django-chart-tools": {
             "hashes": [
@@ -497,11 +497,11 @@
         },
         "django-model-utils": {
             "hashes": [
-                "sha256:3f130a262e45d73e0950d2be76af4bf4ee86804dd60e5f90afc5cd948fcfe760",
-                "sha256:682f58c1de330cedcda58cc85d5232c5b47a9e2cb67bef4541fb43fdaeb18e96"
+                "sha256:9cf882e5b604421b62dbe57ad2b18464dc9c8f963fc3f9831badccae66c1139c",
+                "sha256:adf09e5be15122a7f4e372cb5a6dd512bbf8d78a23a90770ad0983ee9d909061"
             ],
             "index": "pypi",
-            "version": "==3.2.0"
+            "version": "==4.0.0"
         },
         "django-modeltranslation": {
             "hashes": [
@@ -654,10 +654,10 @@
         },
         "django-smmapdfs": {
             "hashes": [
-                "sha256:f96d1421dbde71c371bc8c7bca27a0e4662260418a2201c6969661134c14d511"
+                "sha256:347740da12cdad6e44a5e6d97e525edcbc905b94751482e8e0fe2cc8c933a279"
             ],
             "index": "pypi",
-            "version": "==1.0.6"
+            "version": "==1.0.7"
         },
         "django-softhyphen": {
             "hashes": [
@@ -668,10 +668,9 @@
         },
         "django-sortedm2m": {
             "hashes": [
-                "sha256:7110089acca47fb8194e3272f2fc8dc87897800fa419200fff42e7de70672c65",
-                "sha256:7a95e40ece52410d8617eb4e9e9634d59cbe751b0e6311192f846d72f771147b"
+                "sha256:363846516d26b193ef9b960c8031daf919795257359267814f029fb4d07ab5ce"
             ],
-            "version": "==2.0.0"
+            "version": "==3.0.0"
         },
         "django-stdnumfield": {
             "editable": true,
