@@ -39,7 +39,7 @@ class CouponField(smmapdfs.model_abcs.PdfSandwichFieldABC):
         'token': (lambda obj: obj.token),
         'good_till': (lambda obj: obj.coupon_type.valid_until.strftime("%d. %m. %Y") if obj.coupon_type.valid_until else None),
         'campaign_year': (lambda obj: "%s." % obj.coupon_type.campaign.year),
-        'discount': (lambda obj: "%s%" % obj.discount),
+        'discount': (lambda obj: "%s%%" % obj.discount),
     }
 
 
@@ -55,13 +55,6 @@ class CouponSandwich(smmapdfs.model_abcs.PdfSandwichABC):
 
     def get_email(self):
         return self.obj.receiver
-
-    def get_context(self, base_url):
-        return {
-            'token': self.obj.token,
-            'good_till': self.obj.coupon_type.valid_until.strftime("%d. %m. %Y") if self.obj.coupon_type.valid_until else None,
-            'campaign_year': self.obj.coupon_type.campaign.year,
-        }
 
     def get_language(self):
         return "cs"
