@@ -293,11 +293,11 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
 
 
 router = routers.DefaultRouter()
-router.register(r'gpx', TripSet, base_name="gpxfile")
+router.register(r'gpx', TripSet, basename="gpxfile")
 # This is disabled, because Abra doesn't cooperate anymore
-# router.register(r'competition', CompetitionSet, base_name="competition")
-# router.register(r'team', TeamSet, base_name="team")
-# router.register(r'subsidiary', SubsidiarySet, base_name="subsidiary")
-# router.register(r'company', CompanySet, base_name="company")
-# router.register(r'userattendance', UserAttendanceSet, base_name="userattendance")
-# router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, base_name="result")
+# router.register(r'competition', CompetitionSet, basename="competition")
+# router.register(r'team', TeamSet, basename="team")
+# router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
+# router.register(r'company', CompanySet, basename="company")
+# router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
+# router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
