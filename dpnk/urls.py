@@ -24,12 +24,29 @@ from django.utils.translation import ugettext_lazy as _
 from . import auth
 from . import company_admin_views
 from . import views, views_results
+from .autocomplete_views import CompanyAutocomplete, SubsidiaryAutocomplete, TeamAutocomplete
 from .views import answers, questionnaire_answers, questionnaire_results, questions
+
 urlpatterns = [
     url(
         r'^tym/$',
         views.ChangeTeamView.as_view(),
         name="zmenit_tym",
+    ),
+    url(
+        r'^company-autocomplete/$',
+        CompanyAutocomplete.as_view(),
+        name='company_autocomplete',
+    ),
+    url(
+        r'^subsidiary-autocomplete/$',
+        SubsidiaryAutocomplete.as_view(),
+        name='subsidiary_autocomplete',
+    ),
+    url(
+        r'^team-autocomplete/$',
+        TeamAutocomplete.as_view(),
+        name='team_autocomplete',
     ),
     url(
         r'^registrovat_spolecnost/$',

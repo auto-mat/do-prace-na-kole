@@ -19,43 +19,54 @@
   {% include "fm/modal.html" %}
   <script type="text/javascript">
       $(function() {
-          $( "#id_company_0" ).on( "djselectablechange", function( event, ui ) {
-             $("#id_company_0").toggleClass("is-invalid", $('#id_company_1').val() == "");
-             $("#hint_id_company").toggleClass("invalid-feedback", $('#id_company_1').val() == "");
-          });
           updateSubsidiary = function(event, ui) {
-             $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
-             $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
+              $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company').val());
+              $("#fm-create-subsidiary").prop('disabled', $('#id_company').val() == "");
           }
+          $(':input[name$=company]').on('change', function() {
+              // Get the field prefix, ie. if this comes from a formset form
+              var prefix = $(this).getFormPrefix();
+              company = $('#id_company');
+              company.toggleClass("is-invalid", company.val() == "");
+              updateSubsidiary();
+              // Clear the autocomplete with the same prefix
+              $(':input[name=' + prefix + 'subsidiary]').val(null).trigger('change');
+              $(':input[name=' + prefix + 'team]').val(null).trigger('change');
+          });
+          $(':input[name$=subsidiary]').on('change', function() {
+              var prefix = $(this).getFormPrefix();
+              $("#fm-create-team").attr('href', "{% url 'register_team' "" %}" + $('#id_subsidiary').val());
+              $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
+              $(':input[name=' + prefix + 'team]').val(null).trigger('change');
+              $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
+          });
           $.fm({
               debug: true,
               custom_callbacks: {
                   "createCompanyCallback": function(data, options) {
-                      $('#id_company_0').attr('value', data.name);
-                      $('#id_company_1').attr('value', data.id);
-                      $('#id_company_1').change();
+                      company = $('#id_company');
+                      company.append(
+                          $('<option>', {value: data.id, text: data.name, selected: true})
+                      );
+                      company.trigger('change');
+                      $("#id_subsidiary").trigger('change');
                   },
                   "createSubsidiaryCallback": function(data, options) {
-                      $('#id_company_1').change();
-                      $('#id_subsidiary').one('change', function(event, ui) {
-                         $('#id_subsidiary').val(data.id);
-                         $('#id_subsidiary').change();
-                         $('#id_team').val();
-                      });
+                      subsidiary = $('#id_subsidiary');
+                      subsidiary.append(
+                          $('<option>', {value: data.id, text: data.name, selected: true})
+                      );
+                      subsidiary.trigger('change');
+                      $("#id_team").trigger('change');
                   },
                   "createTeamCallback": function(data, options) {
-                      $('#id_subsidiary').change();
-                      $('#id_team').one('change', function(event, ui) {
-                         $('#id_team').val(data.id);
-                      });
+                      select = $('#id_team');
+                      select.append(
+                          $('<option>', {value: data.id, text: data.name, selected: true})
+                      );
+                      select.trigger('change');
                   }
               }
-          });
-          $('#id_company_0').on('djselectablechange', updateSubsidiary);
-          $('#id_company_1').change(updateSubsidiary);
-          $('#id_subsidiary').change(function(event, ui) {
-             $("#fm-create-team").attr('href', "{% url 'register_team' "" %}" + $('#id_subsidiary').val());
-             $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
           });
       });
   </script>

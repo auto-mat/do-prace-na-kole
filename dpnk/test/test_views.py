@@ -250,62 +250,6 @@ class CompetitionsViewTests(ViewsLogon):
 
 
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
-class BaseViewsTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
-
-    def setUp(self):
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-
-    def test_chaining(self):
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
-        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
-        denorm.flush()
-        kwargs = {
-            'app': 'dpnk',
-            'model': 'Team',
-            'manager': 'team_in_campaign_testing-campaign',
-            'field': 'subsidiary',
-            'foreign_key_app_name': 'dpnk',
-            'foreign_key_model_name': 'Subsidiary',
-            'foreign_key_field_name': 'company',
-            'value': '1',
-        }
-        address = reverse('chained_filter', kwargs=kwargs)
-        response = self.client.get(address)
-        self.assertJSONEqual(
-            response.content.decode(),
-            [{'value': 4, 'display': 'Empty team'}, {'value': 1, 'display': 'Testing team 1 (Nick, Registered User 1, Testing User 1)'}],
-        )
-
-    def test_chaining_subsidiary(self):
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
-        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
-        denorm.flush()
-        kwargs = {
-            'app': 'dpnk',
-            'model': 'Subsidiary',
-            'field': 'company',
-            'foreign_key_app_name': 'dpnk',
-            'foreign_key_model_name': 'Subsidiary',
-            'foreign_key_field_name': 'company',
-            'value': '1',
-        }
-        address = reverse('chained_filter', kwargs=kwargs)
-        response = self.client.get(address)
-        self.assertJSONEqual(
-            response.content.decode(),
-            [
-                {'display': 'Ulice 1, 111 11 Praha - Testing city', 'value': 1},
-                {'display': 'Ulice 2, 222 22 Brno - Other city', 'value': 2},
-            ],
-        )
-
-
-@override_settings(
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class PaymentTypeViewTests(TestCase):
@@ -543,7 +487,6 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         for ua in user_attendances:
             ua.save()
         response = self.client.get(reverse('competitor_counts'))
-        print_response(response)
         self.assertContains(
             response,
             "<tr>"
@@ -1103,7 +1046,11 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
         self.assertEqual(subsidiary.address.recipient, "Foo recipient")
         self.assertJSONEqual(
             response.content.decode(),
-            {"status": "ok", "id": subsidiary.id},
+            {
+                "status": "ok",
+                'name': 'Foo recipient, Foo street 123, 123 45 Foo city',
+                "id": subsidiary.id,
+            },
         )
 
     def test_psc_failing(self):
@@ -1398,12 +1345,13 @@ class ViewsTestsLogon(ViewsLogon):
         self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         post_data = {
-            'company_1': '1',
+            'company': '1',
             'subsidiary': '1',
             'team': '4',
             'prev': 'Prev',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        print_response(response)
         self.assertRedirects(response, reverse("upravit_profil"))
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
@@ -1672,18 +1620,14 @@ class ViewsTestsLogon(ViewsLogon):
 
 
 class ChangeTeamViewTests(TestCase):
-    blank_team_html = """<select
-        name="team"
-        name="team"
-        data-value="null"
-        data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"
-        data-empty_label="--------"
-        data-auto_choose="false"
-        id="id_team"
-        class="chainedselect form-control chained-fk"
-        data-chainfield="subsidiary"
-        required>
-        </select>"""
+    blank_team_html = """
+    <select name="team" class="modelselect2 form-control"
+    required id="id_team" data-autocomplete-light-language="cs"
+    data-autocomplete-light-url="/team-autocomplete/"
+    data-autocomplete-light-function="select2">
+    <option value="" selected>---------</option>
+    </select>
+    """
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
@@ -1784,7 +1728,7 @@ class ChangeTeamViewTests(TestCase):
         previous_campaign = CampaignRecipe.make(year=2018)
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
-        UserAttendanceRecipe.make(
+        prev_ua = UserAttendanceRecipe.make(
             campaign=previous_campaign,
             userprofile=self.user_attendance.userprofile,
             team__subsidiary__company__name="Foo company lasts",
@@ -1797,10 +1741,7 @@ class ChangeTeamViewTests(TestCase):
 
         self.assertContains(
             response,
-            '<input type="text" name="company_0" name="company" value="Foo company lasts" '
-            'data-selectable-allow-new="false" id="id_company_0" autocomplete="off" '
-            'class="autocompletewidget form-control" data-selectable-type="text" '
-            'required data-selectable-url="/selectable/dpnk-companylookup/" />',
+            '<option value="%s" selected>Foo company lasts</option>' % prev_ua.team.subsidiary.company.id,
             html=True,
         )
 
@@ -1862,8 +1803,7 @@ class ChangeTeamViewTests(TestCase):
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_team.subsidiary.company.id,
+            "company": new_team.subsidiary.company.id,
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
@@ -1880,8 +1820,7 @@ class ChangeTeamViewTests(TestCase):
         new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
         post_data = {
             "subsidiary": new_subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_subsidiary.company.id,
+            "company": new_subsidiary.company.id,
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
@@ -1900,8 +1839,7 @@ class ChangeTeamViewTests(TestCase):
         new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
         post_data = {
             "subsidiary": new_subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_subsidiary.company.id,
+            "company": new_subsidiary.company.id,
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
@@ -1924,8 +1862,7 @@ class ChangeTeamViewTests(TestCase):
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_team.subsidiary.company.id,
+            "company": new_team.subsidiary.company.id,
             'next': 'Další',
         }
         mail.outbox = []
@@ -1947,8 +1884,7 @@ class ChangeTeamViewTests(TestCase):
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_team.subsidiary.company.id,
+            "company": new_team.subsidiary.company.id,
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data)
@@ -1967,8 +1903,7 @@ class ChangeTeamViewTests(TestCase):
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_team.subsidiary.company.id,
+            "company": new_team.subsidiary.company.id,
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
@@ -1978,27 +1913,24 @@ class ChangeTeamViewTests(TestCase):
     def test_no_team_set(self):
         company = mommy.make('Company')
         post_data = {
-            'company_1': company.id,
+            'company': company.id,
             'subsidiary': '',
             'team': '',
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data)
         self.assertContains(response, 'error_1_id_team')
+        invalid_select = """
+        <select name="subsidiary" class="modelselect2 form-control is-invalid"
+        required id="id_subsidiary" data-autocomplete-light-language="cs"
+        data-autocomplete-light-url="/subsidiary-autocomplete/"
+        data-autocomplete-light-function="select2">
+        <option value="" selected>---------</option>
+        </select>
+        """
         self.assertContains(
             response,
-            '<select '
-            'class="chainedselect form-control is-invalid chained-fk" '
-            'data-auto_choose="false" '
-            'data-chainfield="subsidiary" '
-            'data-empty_label="--------" '
-            'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company" '
-            'data-value="null" '
-            'id="id_team" '
-            'name="team" '
-            'name="team" '
-            'required'
-            '> </select>',
+            invalid_select,
             html=True,
         )
 
@@ -2018,8 +1950,7 @@ class ChangeTeamViewTests(TestCase):
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
-            "company_0": "Foo",
-            "company_1": new_team.subsidiary.company.id,
+            "company": new_team.subsidiary.company.id,
             'next': 'Další',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)

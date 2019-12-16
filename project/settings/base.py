@@ -240,6 +240,8 @@ INSTALLED_APPS = [
     'django_nvd3',
     'admin_views',
 
+    'dal',
+    'dal_select2',
     'django_su',
     'django.contrib.contenttypes',
     'django.contrib.admin',

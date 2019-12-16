@@ -237,6 +237,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
     def get_success_result(self):
         return {
             'status': 'ok',
+            'name': self.object.name(),
             'id': self.object.id,
         }
 
