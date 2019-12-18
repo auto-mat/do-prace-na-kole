@@ -20,8 +20,6 @@
 
 
 from django.apps import AppConfig
-from django.contrib.gis.db import models
-from django.db.utils import ProgrammingError
 
 
 class DPNKConfig(AppConfig):
@@ -30,31 +28,11 @@ class DPNKConfig(AppConfig):
 
     def ready(self):
 
-        def get_team_in_campaign_manager(campaign_slug):
-            """ This is hacky manager, that enables filter by campaign for chained team field in ChangeTeamView. """
-            class TeamInCampaignManager(models.Manager):
-                def __init__(self):
-                    ret_val = super().__init__()
-                    self.model = dpnk_models.Team
-                    return ret_val
-
-                def get_queryset(self):
-                    return super().get_queryset().filter(campaign__slug=campaign_slug)
-            return TeamInCampaignManager()
-
         from . import models as dpnk_models
         from fieldsignals import post_save_changed, pre_save_changed
         from django.conf import settings
         if not settings.DATABASE_CONFIGURED:
             return
-
-        try:
-            slugs = dpnk_models.Campaign.objects.values_list('slug', flat=True)
-            for campaign_slug in slugs:
-                setattr(dpnk_models.Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug))
-            setattr(dpnk_models.Team, 'team_in_campaign_testing-campaign', get_team_in_campaign_manager('testing-campaign'))
-        except ProgrammingError:
-            pass
 
         post_save_changed.connect(dpnk_models.change_invoice_payments_status, sender=dpnk_models.Invoice, fields=['paid_date'])
         pre_save_changed.connect(dpnk_models.pre_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])

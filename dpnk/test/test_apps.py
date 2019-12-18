@@ -23,7 +23,7 @@ import sys
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from dpnk import apps, models
+from dpnk import apps
 
 
 @override_settings(
@@ -37,7 +37,3 @@ class AppsTests(TestCase):
         module = sys.modules['dpnk']
         dpnk_config = apps.DPNKConfig('dpnk', module)
         dpnk_config.ready()
-        self.assertEqual(
-            str(getattr(models.Team, "team_in_campaign_testing-campaign").__class__),
-            "<class 'dpnk.apps.DPNKConfig.ready.<locals>.get_team_in_campaign_manager.<locals>.TeamInCampaignManager'>",
-        )

@@ -24,9 +24,4 @@ $(function(){
    });
 
    $('form.dirty-check').areYouSure({'message':"Ve formuláři jsou neuložené změny."});
-
-   // Fix triggering chaining on hidden company field
-   $( "#id_company_0" ).on( "djselectableselect", function( event, ui ) {
-      $('#id_company_1').change();
-   } );
 });

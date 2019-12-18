@@ -28,6 +28,8 @@ from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Field, Fieldset, HTML, Layout, Submit
 
+from dal import autocomplete
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -49,10 +51,6 @@ from leaflet.forms.widgets import LeafletWidget
 import photologue
 
 import registration.forms
-
-from selectable.forms.widgets import AutoCompleteSelectWidget
-
-from smart_selects.form_fields import ChainedModelChoiceField
 
 from . import email, models, util, views
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
@@ -201,24 +199,6 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
-company_field = forms.ModelChoiceField(
-    label=_("Společnost"),
-    queryset=models.Company.objects.filter(active=True),
-    widget=AutoCompleteSelectWidget(
-        lookup_class='dpnk.lookups.CompanyLookup',
-        attrs={
-            'autocomplete': 'off',
-            'class': "autocompletewidget form-control",
-            'name': 'company',
-        },
-    ),
-    required=True,
-    help_text=_(
-        "Začněte psát název společnosti a pak si vyberte z nabídky.",
-    ),
-)
-
-
 class RegisterSubsidiaryForm(AddressForm):
     def clean_company(self):
         return self.company
@@ -278,36 +258,25 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
-    company = company_field
-
-    subsidiary = ChainedModelChoiceField(
-        chained_field="company_1",
-        to_app_name="dpnk",
-        to_model_name="Subsidiary",
-        chained_model_field="company",
-        show_all=False,
-        auto_choose=True,
-        manager='active_objects',
-        label=_("Adresa společnosti nebo pobočky"),
-        foreign_key_app_name="dpnk",
-        foreign_key_model_name="Subsidiary",
-        foreign_key_field_name="company",
-        queryset=models.Subsidiary.objects.filter(active=True),
-        required=True,
+    company = forms.ModelChoiceField(
+        queryset=models.Company.objects.all(),
+        widget=autocomplete.ModelSelect2(url='company_autocomplete'),
     )
-    team = ChainedModelChoiceField(
-        chained_field="subsidiary",
-        to_app_name="dpnk",
-        to_model_name="Team",
-        chained_model_field="subsidiary",
-        show_all=False,
-        auto_choose=False,
-        foreign_key_app_name="dpnk",
-        foreign_key_model_name="Subsidiary",
-        foreign_key_field_name="company",
-        label=_("Tým"),
+
+    subsidiary = forms.ModelChoiceField(
+        queryset=models.Subsidiary.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='subsidiary_autocomplete',
+            forward=['company'],
+        ),
+    )
+
+    team = forms.ModelChoiceField(
         queryset=models.Team.objects.all(),
-        required=True,
+        widget=autocomplete.ModelSelect2(
+            url='team_autocomplete',
+            forward=['subsidiary'],
+        ),
     )
 
     def clean(self):
@@ -324,7 +293,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     ),
                 )
 
-            if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+            if not self.instance.campaign.competitors_choose_team():  # We ask only for company and subsidiary
                 team = cleaned_data['team']
                 team.subsidiary = subsidiary
                 team.save()

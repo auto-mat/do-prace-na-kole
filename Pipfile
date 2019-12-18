@@ -8,7 +8,8 @@ six = "*"
 Django = ">=2.2.6"
 django-import-export = "*"
 django-import-export-celery = {editable = true,ref = "master",git = "https://github.com/auto-mat/django-import-export-celery.git"}
-django-smart-selects = {editable = true,ref = "patch-1",git = "https://github.com/Murakam1/django-smart-selects.git"} # THIS PACKAGE IS TERRIBLE AND DEPRECATED AND SHOULD NEVER HAVE BEEN USED! https://django-autocomplete-light.readthedocs.io/en/master/ looks better, should move to it probably. https://github.com/digi604/django-smart-selects/pull/284
+django-autocomplete-light = "*"
+django-smart-selects = {editable = true,ref = "patch-1",git = "https://github.com/Murakam1/django-smart-selects.git"} # THIS PACKAGE IS DEPRECATED but we need it because migrating data away from it is a PITA
 psycopg2 = "*"
 python-memcached = "*"
 django-chart-tools = "*"
