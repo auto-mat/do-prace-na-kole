@@ -33,7 +33,7 @@
         {# team head #}
         <div class="col-12">
           <h2 class="frequencybar">
-            {% trans "Týmová pravidelnost" %} {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
+              {% if user_attendance.campaign.competitors_choose_team %} {% trans "Týmová" %} {% else %} {% trans "Osobní" %} {% endif %} {% trans 'pravidelnost' %} {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}&nbsp;%
           </h2>
           <style>
             .frequencybar{
