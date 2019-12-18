@@ -8,7 +8,7 @@ six = "*"
 Django = ">=2.2.6"
 django-import-export = "*"
 django-import-export-celery = {editable = true,ref = "master",git = "https://github.com/auto-mat/django-import-export-celery.git"}
-django-autocomplete-light = "*"
+django-autocomplete-light = {editable = true,ref = "jquery",git = "https://github.com/auto-mat/django-autocomplete-light.git"} # PR already merged switch back to * on next release
 django-smart-selects = {editable = true,ref = "patch-1",git = "https://github.com/Murakam1/django-smart-selects.git"} # THIS PACKAGE IS DEPRECATED but we need it because migrating data away from it is a PITA
 psycopg2 = "*"
 python-memcached = "*"

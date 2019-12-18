@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1b41e853e54e0f751d351d94a667e0f171d0832afbfeedd8a381ac8c220717cd"
+            "sha256": "ca750ea01fae772a0fe8db7a3e6e1f78f6d6067533005f1e9ea62c78f85751c6"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -219,11 +219,9 @@
             "version": "==1.0.2"
         },
         "django-autocomplete-light": {
-            "hashes": [
-                "sha256:4a32bce7bc3004f49eb36b377ad18bd6a291077904810f22a2b13a6c53215666"
-            ],
-            "index": "pypi",
-            "version": "==3.5.0"
+            "editable": true,
+            "git": "https://github.com/auto-mat/django-autocomplete-light.git",
+            "ref": "58dc8a5c050866c61d9e28d88e4c268e483c6f40"
         },
         "django-avatar": {
             "hashes": [
