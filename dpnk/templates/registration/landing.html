@@ -40,9 +40,12 @@
               background: linear-gradient(90deg, rgba(251,115,93,1) 0%, rgba(251,115,93,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) 100%);
             }
           </style>
+          {% if user_attendance.campaign.competitors_choose_team %}
           <a class="sidenote" href="{% url "team_frequency" %}">Jak se počítá týmová pravidelnost</a>
+          {% endif %}
         </div>
 
+        {% if user_attendance.campaign.competitors_choose_team %}
         {# team members #}
         <div class="col-12 team_members_col">
           {% for team_member in user_attendance.team.members %}
@@ -55,6 +58,7 @@
           {% endfor %}
         </div>
       </div>
+      {% endif %}
   </div>
 
   <script>
