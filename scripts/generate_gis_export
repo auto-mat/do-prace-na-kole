@@ -1,0 +1,8 @@
+#!/bin/bash
+echo Run this command as
+echo 'generate_gis_export <ip_of_aws_celery_instance>'
+scp refresh_views.sql ubuntu@$1:/home/ubuntu/refresh_views.sql
+ssh ubuntu@$1 sudo docker cp /home/ubuntu/refresh_views.sql ubuntu_dpnk-worker_1:/home/aplikace/scripts/refresh_views.sql
+echo This is the password you need to connect to the DB
+ssh ubuntu@$1 sudo docker exec ubuntu_dpnk-worker_1 sh -c \'echo \$DPNK_DB_PASSWORD\'
+ssh ubuntu@$1 sudo docker exec -i ubuntu_dpnk-worker_1 sh -c \'psql -h \$DPNK_DB_HOST -U \$DPNK_DB_USER -d \$DPNK_DB_NAME -a -f /home/aplikace/scripts/refresh_views.sql\'

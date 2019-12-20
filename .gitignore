@@ -50,3 +50,5 @@ celerybeat.pid
 pipenv/
 .#*
 test-dpnk.log
+scripts/ansible-playbooks/get_containers.retry
+scripts/output.sql
