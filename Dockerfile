@@ -22,6 +22,7 @@ run apt-get update && apt-get install -y \
    poppler-utils \
    texlive-extra-utils \
    postgresql-common \
+   postgresql-client \
    python-tk \
    tcl8.6-dev \
    tk8.6-dev \
