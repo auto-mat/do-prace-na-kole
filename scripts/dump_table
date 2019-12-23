@@ -1,0 +1,6 @@
+#!/bin/bash
+echo Run this command as
+echo 'dump_table <table_name> <ip_of_aws_celery_instance>'
+echo This is the password you need to connect to the DB
+ssh ubuntu@$2 sudo docker exec ubuntu_dpnk-worker_1 sh -c \'echo \$DPNK_DB_PASSWORD\'
+ssh ubuntu@$2 sudo docker exec -i ubuntu_dpnk-worker_1 sh -c \'pg_dump -U \$DPNK_DB_USER -h \$DPNK_DB_HOST --table=$1 \$DPNK_DB_NAME\' > output.sql
