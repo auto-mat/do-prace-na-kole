@@ -1182,7 +1182,7 @@ class CampaignTypeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Campaign)
-class CampaignAdmin(admin.ModelAdmin):
+class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'year',
         'campaign_type',
