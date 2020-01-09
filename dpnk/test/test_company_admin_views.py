@@ -21,6 +21,7 @@ import datetime
 
 from django.conf import settings
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk.test.test_views import ViewsLogon
@@ -74,6 +75,9 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
         )
 
 
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class InvoiceTests(ClearCacheMixin, TestCase):
 
     def setUp(self):
