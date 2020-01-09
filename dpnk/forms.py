@@ -261,6 +261,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         queryset=models.Company.objects.all(),
         widget=autocomplete.ModelSelect2(url='company_autocomplete'),
+        label=_("Společnost"),
     )
 
     subsidiary = forms.ModelChoiceField(
@@ -269,6 +270,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             url='subsidiary_autocomplete',
             forward=['company'],
         ),
+        label=_("Adresa společnosti nebo pobočky"),
     )
 
     team = forms.ModelChoiceField(
@@ -277,6 +279,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             url='team_autocomplete',
             forward=['subsidiary'],
         ),
+        label=_("Tým"),
     )
 
     def clean(self):

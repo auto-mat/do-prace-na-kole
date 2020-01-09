@@ -1,5 +1,7 @@
 from dal import autocomplete
 
+from django.db.models import Q
+
 from .models import (Company, Subsidiary, Team)
 
 
@@ -11,7 +13,12 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
         qs = Company.objects.all()
 
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
+            qs = qs.filter(
+                Q(ico=self.q) |
+                Q(name__unaccent__icontains=self.q) |
+                Q(name__unaccent__trigram_similar=self.q) |
+                Q(address_street__unaccent__icontains=self.q),
+            ).filter(active=True)
 
         return qs
 
@@ -54,6 +61,6 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
             return Team.objects.none()
 
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
+            qs = qs.filter(name__unaccent__icontains=self.q)
 
         return qs
