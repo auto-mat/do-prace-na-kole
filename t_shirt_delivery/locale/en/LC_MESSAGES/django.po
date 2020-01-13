@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-06 14:19+0200\n"
-"PO-Revision-Date: 2018-03-02 18:22+0058\n"
+"POT-Creation-Date: 2020-01-13 18:45+0100\n"
+"PO-Revision-Date: 2020-01-13 19:51+0100\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Translated-Using: django-rosetta 0.8.1\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: t_shirt_delivery/actions.py:40
 #, python-format
@@ -33,41 +33,41 @@ msgstr "Mass download PDF"
 
 #: t_shirt_delivery/actions.py:54
 msgid "Nahrát data do GLS a vytvořit PDF"
-msgstr ""
+msgstr "Upload data to GLS and create PDF"
 
 #: t_shirt_delivery/actions.py:82
 msgid "Vytvořit PDF pro OPT"
-msgstr ""
+msgstr "Create PDF for OPT"
 
-#: t_shirt_delivery/admin.py:161
+#: t_shirt_delivery/admin.py:164
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr "Mark packages/boxes as done"
 
-#: t_shirt_delivery/admin.py:250 t_shirt_delivery/admin.py:314
+#: t_shirt_delivery/admin.py:253 t_shirt_delivery/admin.py:317
 msgid "ID krabice"
 msgstr "Box ID"
 
-#: t_shirt_delivery/admin.py:251 t_shirt_delivery/models/team_package.py:43
+#: t_shirt_delivery/admin.py:254 t_shirt_delivery/models/team_package.py:43
 msgid "Tým"
 msgstr "Team"
 
-#: t_shirt_delivery/admin.py:252 t_shirt_delivery/models/team_package.py:36
+#: t_shirt_delivery/admin.py:255 t_shirt_delivery/models/team_package.py:36
 msgid "Krabice"
 msgstr "Box"
 
-#: t_shirt_delivery/admin.py:446
+#: t_shirt_delivery/admin.py:449
 msgid "Trik k odeslání"
 msgstr "T-shirts for sending"
 
-#: t_shirt_delivery/admin.py:450
+#: t_shirt_delivery/admin.py:453
 msgid "Velikosti trik"
 msgstr "T-shirt sizes"
 
-#: t_shirt_delivery/admin.py:507
+#: t_shirt_delivery/admin.py:510
 msgid "Uživatel na dávku objednávek"
 msgstr "User for delivery batch"
 
-#: t_shirt_delivery/admin.py:508
+#: t_shirt_delivery/admin.py:511
 msgid "Uživatelé na dávku objednávek"
 msgstr "Users for delivery batch"
 
@@ -163,14 +163,12 @@ msgid "CSV objednávka"
 msgstr "CSV order"
 
 #: t_shirt_delivery/models/delivery_batch.py:74
-#, fuzzy
-#| msgid "CSV objednávka"
 msgid "PDF objednávky"
-msgstr "CSV order"
+msgstr "Order PDF"
 
 #: t_shirt_delivery/models/delivery_batch.py:81
 msgid "Kombinované PDF pro OPT"
-msgstr ""
+msgstr "Combined PDF for OPT"
 
 #: t_shirt_delivery/models/delivery_batch.py:88
 msgid "Vyřízeno"
@@ -178,7 +176,7 @@ msgstr "Dispatched"
 
 #: t_shirt_delivery/models/delivery_batch.py:94
 msgid "Krátká poznámka"
-msgstr ""
+msgstr "Short note"
 
 #: t_shirt_delivery/models/delivery_batch.py:101
 #: t_shirt_delivery/models/subsidiary_box.py:62
@@ -230,7 +228,7 @@ msgstr "Subsidiary"
 
 #: t_shirt_delivery/models/subsidiary_box.py:82
 msgid "Krabice evidována u dopravce"
-msgstr ""
+msgstr "Your package has been accepted by the shipping firm"
 
 #: t_shirt_delivery/models/subsidiary_box.py:88
 msgid "Identifikace u dopravce"
@@ -327,31 +325,35 @@ msgid ""
 "nejdříve.\n"
 "   "
 msgstr ""
+"\n"
+"We try to send the t-shirts in bulk to reduce our impact on the environment. "
+"We will send out your shirt in the next bulk shipment."
 
 #: t_shirt_delivery/templates/registration/tshirt_delivery.html:11
 #, python-format
 msgid "Balíček dorazí kolem %(batch_delivery)s na následující adresu."
 msgstr ""
+"Your package will be sent around %(batch_delivery)s to the following address."
 
 #: t_shirt_delivery/templates/registration/tshirt_delivery.html:13
 msgid "Balíček by každou chvílí měl dorazit na následující adresu."
-msgstr ""
+msgstr "Your package should arrive soon at the following address."
 
 #: t_shirt_delivery/templates/registration/tshirt_delivery.html:23
 msgid "Zásilku můžete sledovat pomocí trackovacího čísla"
-msgstr ""
+msgstr "You can track your package using the following tracking number"
 
 #: t_shirt_delivery/views.py:42
 msgid "Vaše triko je již na cestě"
-msgstr ""
+msgstr "Your shirt is on the way"
 
 #: t_shirt_delivery/views.py:62
 msgid "Uložili jsme si Vaší velikost"
-msgstr ""
+msgstr "We've saved your selected size"
 
 #: t_shirt_delivery/views.py:69
 msgid "Změňte velikost soutěžního trička"
-msgstr ""
+msgstr "Change the size of your shirt"
 
 #: t_shirt_delivery/views.py:71
 msgid "Vyberte velikost soutěžního trička"

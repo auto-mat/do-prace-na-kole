@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-13 18:39+0100\n"
-"PO-Revision-Date: 2020-01-13 18:30+0100\n"
+"POT-Creation-Date: 2020-01-13 18:45+0100\n"
+"PO-Revision-Date: 2020-01-13 19:43+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
 "Language: en\n"
@@ -129,7 +129,7 @@ msgstr "Send unfilled rides notification"
 
 #: dpnk/admin.py:200
 msgid "Umožnit uložení duplicitního IČO"
-msgstr ""
+msgstr "Allow saving duplicate IČO"
 
 #: dpnk/admin.py:288 dpnk/admin.py:297
 msgid "Pobočky"
@@ -468,7 +468,7 @@ msgstr "Please fill in your company's Identification number (IČO)."
 
 #: dpnk/company_admin_views.py:167
 msgid "Podělíte se o firemní IČO?"
-msgstr ""
+msgstr "Share a company IČO?"
 
 #: dpnk/company_admin_views.py:180
 msgid "Adresa společnosti"
@@ -2563,7 +2563,7 @@ msgstr "Language, in which will be delivered e-mails from registration system"
 
 #: dpnk/models/user_profile.py:104
 msgid "Defaultní předvolba vyplňování jízd"
-msgstr ""
+msgstr "Default view for entering trips"
 
 #: dpnk/models/user_profile.py:112
 msgid "ID uživatele v mailing listu"
@@ -2662,13 +2662,13 @@ msgstr "You don't have access to this page"
 
 #: dpnk/templates/404.html:10
 msgid "Kdopak tu loupe perníček, místo aby sportoval."
-msgstr ""
+msgstr "404 page not found"
 
 #: dpnk/templates/404.html:16
 msgid ""
 "Dejte pozor. Právě bloudíte hlubokým lesem v zóně 404. Vraťte se zpátky na "
 "trasu."
-msgstr ""
+msgstr "We lost it!"
 
 #: dpnk/templates/500.html:9
 msgid ""
@@ -2726,15 +2726,15 @@ msgstr "Payment"
 
 #: dpnk/templates/base_login_registration.html:9
 msgid "Učit se. Učit se. Učit se"
-msgstr ""
+msgstr "Study, study, study."
 
 #: dpnk/templates/base_login_registration.html:11
 msgid "Že už ti to dneska někdo řekl?  Pak vyměň soutěž a jezdi s námi "
-msgstr ""
+msgstr "If you are a student, why don't you try "
 
 #: dpnk/templates/base_login_registration.html:17
 msgid "Tahle soutěž není pro starý"
-msgstr ""
+msgstr "This competition isn't for grown ups "
 
 #: dpnk/templates/base_login_registration.html:19
 msgid ""
@@ -3053,6 +3053,8 @@ msgid ""
 "zpětně.\n"
 "           "
 msgstr ""
+"\n"
+"Don't forget that you can only enter trips for the past %(days)s."
 
 #: dpnk/templates/registration/calendar.html:86
 msgid "Zobrazit mapu"
@@ -3076,10 +3078,12 @@ msgid ""
 "            Soutěž jíž skončila. Děkujeme vám za účast.\n"
 "        "
 msgstr ""
+"\n"
+"The competition has ended. Thank you for your participation."
 
 #: dpnk/templates/registration/calendar.html:147
 msgid "Hlašení"
-msgstr ""
+msgstr "Message"
 
 #: dpnk/templates/registration/calendar.html:166
 msgid "Editovat"
@@ -3300,7 +3304,7 @@ msgstr ""
 
 #: dpnk/templates/registration/frequency.html:7
 msgid "Pravidelnost je nejlepší přítel člověka"
-msgstr ""
+msgstr "It's always good to be reliable"
 
 #: dpnk/templates/registration/frequency.html:8
 msgid ""
@@ -3316,10 +3320,23 @@ msgid ""
 "extrémní výkony vyvolají povyk. Pravidelnost může postupně změnit svět.\n"
 "</p>\n"
 msgstr ""
+"\n"
+"<p>\n"
+"We want to award you for your peek performance and we congratulate every "
+"personal record, but our main goal is to change Czech cities for the better. "
+"We dream of a world in which we all commute by bike or by foot, not because "
+"we need to be there in 5 minutes, but from the simple joy of physical "
+"movement.\n"
+"</p><p>\n"
+"In order to achieve this vision, diligence is necessary. Great bursts of "
+"activity may attract attention, but only through diligence can we change the "
+"world.\n"
+"</p>\n"
+"\n"
 
 #: dpnk/templates/registration/frequency.html:15
 msgid "Jak se počítá osobní pravidelnost?"
-msgstr ""
+msgstr "How is your personal frequency (percentage) calculated?"
 
 #: dpnk/templates/registration/frequency.html:16
 msgid ""
@@ -3331,24 +3348,31 @@ msgid ""
 "vám to spočítáme:\n"
 "</p>\n"
 msgstr ""
+"\n"
+"<p>\n"
+"Run and bike with us every day and achieve 100%% frequency. If you go by "
+"car, taxi, plane or mass transport your frequency will decrease.\n"
+"\n"
+"\n"
+"</p>\n"
 
 #: dpnk/templates/registration/frequency.html:26
 #, python-format
 msgid "Máte jednu ekologickou cestu"
 msgid_plural "Máte %(rides_num)s ekologických cest"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "You've entered one eco-friendly trip."
+msgstr[1] "You've entered %(rides_num)s eco-friendly trips"
 
 #: dpnk/templates/registration/frequency.html:43
 #, python-format
 msgid "z celkového počtu jedné zapsané cesty."
 msgid_plural "z celkového počtu %(rides_num)s zapsaných cest."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "of one trip."
+msgstr[1] "of %(rides_num)s trips."
 
 #: dpnk/templates/registration/frequency.html:58
 msgid "Ale neusněte na vavřínech."
-msgstr ""
+msgstr "But don't rest on your laurels."
 
 #: dpnk/templates/registration/frequency.html:59
 #, python-format
@@ -3363,7 +3387,13 @@ msgid_plural ""
 "%(rides_num)s cest ku vaší až %(max_percentage)s%% pravidelnosti.\n"
 "                     "
 msgstr[0] ""
+"\n"
+"Before the end of the competition you can run or bike one more trip for a "
+"maximum of %(max_percentage)s%%."
 msgstr[1] ""
+"\n"
+"Before the end of the competition there are still %(rides_num)s possible for "
+"a maximum of %(max_percentage)s%%."
 
 #: dpnk/templates/registration/frequency.html:68
 #, python-format
@@ -3378,7 +3408,13 @@ msgid_plural ""
 "a dosáhnout %(max_percentage)s%% pravidelnosti.\n"
 "                     "
 msgstr[0] ""
+"\n"
+"Before the end of the competition you can run or bike one more trip for a "
+"maximum of %(max_percentage)s%%."
 msgstr[1] ""
+"\n"
+"Before the end of the competition there are still %(rides_num)s possible for "
+"a maximum of %(max_percentage)s%%."
 
 #: dpnk/templates/registration/frequency.html:83
 #, python-format
@@ -3393,15 +3429,20 @@ msgid_plural ""
 "ostatní neutekli.\n"
 "   "
 msgstr[0] ""
+"\n"
+"You're behind by one eco-trip."
 msgstr[1] ""
+"\n"
+"You should have done %(rides_num)s more eco-trips by now. Time to get in "
+"gear!"
 
 #: dpnk/templates/registration/frequency.html:88
 msgid "Nahoďte sportovní outfit a běžte to dohnat!"
-msgstr ""
+msgstr "Put on an your workout cloths and make up your slack"
 
 #: dpnk/templates/registration/frequency.html:94
 msgid "Když nejdete do práce, nic se neděje"
-msgstr ""
+msgstr "If you stay home from work a few times, we won't count it against you"
 
 #: dpnk/templates/registration/frequency.html:96
 #, python-format
@@ -3431,10 +3472,24 @@ msgid ""
 "jízd k danému dni vyšší, než celkový počet vámi zapsaných jízd. \n"
 "</p>\n"
 msgstr ""
+"\n"
+"<p>\n"
+"Your frequency percentage is reduced only when you make non-ecological trips "
+"to and from work. We understand, that you might have a vacation or work part "
+"time.\n"
+"</p>\n"
+"<p>\n"
+"That doesn't mean you can get 100%% by lying around at home every day. You "
+"need to complete at least %(minimum_rides_base)s in order to get 100%%.\n"
+"</p>\n"
+"<p>\n"
+"During the month of May you'll need to average a little over one eco-trip "
+"per day in order to reach 100%%.\n"
+"</p>\n"
 
 #: dpnk/templates/registration/frequency.html:112
 msgid "Jak se počítá skupinová pravidelnost?"
-msgstr ""
+msgstr "How is team frequency calculated?"
 
 #: dpnk/templates/registration/frequency.html:115
 msgid ""
@@ -3442,6 +3497,9 @@ msgid ""
 "Do práce na kole jezdí hlavně skupinoví hráči, a proto je pro nás tato "
 "pravidelnost nejdůležitější.\n"
 msgstr ""
+"\n"
+"Most of our participants are team players, that's why team frequency is the "
+"most important number for us.\n"
 
 #: dpnk/templates/registration/frequency.html:118
 #, python-format
@@ -3453,13 +3511,7 @@ msgstr ""
 "to win prizes."
 
 #: dpnk/templates/registration/frequency.html:119
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "Skupinová pravidelnost odpovídá podílu všech ekologických cest a "
-#| "celkového počtu zapsaných cest všech členů týmu. Takže si to ráno s tou "
-#| "tramvají dobře rozmyslete. Stačí jedna neekologická cesta a váš tým už na "
-#| "100%% pravidelnost nikdy nedosáhne. Přesvědčte se:\n"
+#, python-format
 msgid ""
 "\n"
 "Skupinová pravidelnost odpovídá podílu všech ekologických cest a celkového "
@@ -3469,7 +3521,8 @@ msgid ""
 msgstr ""
 "\n"
 "Team frequency corresponds to the ratio between ecological trips and total "
-"trips taken by team members. \n"
+"trips taken by team members. Just one non-ecological trip and your team can "
+"never reach 100%% again.\n"
 
 #: dpnk/templates/registration/frequency.html:179
 #, python-format

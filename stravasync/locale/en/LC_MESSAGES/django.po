@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-06 14:19+0200\n"
-"PO-Revision-Date: 2019-05-06 13:52+0200\n"
+"POT-Creation-Date: 2020-01-13 18:45+0100\n"
+"PO-Revision-Date: 2020-01-13 19:45+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -60,23 +60,36 @@ msgstr ""
 "%(hashtag_from)s to the title of your Strava activities.\n"
 "        "
 
-#: stravasync/templates/stravasync/about.html:24
+#: stravasync/templates/stravasync/about.html:22
+msgid ""
+"\n"
+"    Pokud jste při připojení se Stravou nevybral/a \"Synchronizovat i "
+"soukromé jízdy a zóny\". Soukromé jizdy synchronizované nebudou. Pokud "
+"chcete změnit tuhle nastavení, odpojte a připojte znovu.\n"
+"    "
+msgstr ""
+"\n"
+"If you didn't give permission for synchronizing private trips when you "
+"connected Strava, those trips will not be synchronized. You can change that "
+"option by disconnecting and reconnecting."
+
+#: stravasync/templates/stravasync/about.html:27
 msgid "Našli jsme následující aktivity:"
 msgstr "We found the following activities:"
 
-#: stravasync/templates/stravasync/about.html:32
+#: stravasync/templates/stravasync/about.html:35
 msgid "Synchronizace selhala"
 msgstr "Synchronization failed"
 
-#: stravasync/templates/stravasync/about.html:35
+#: stravasync/templates/stravasync/about.html:38
 msgid "Poslední synchronizace proběhla "
 msgstr "Last synchronization time "
 
-#: stravasync/templates/stravasync/about.html:37
+#: stravasync/templates/stravasync/about.html:40
 msgid "Nastala chyba, synchronizace neproběhla."
 msgstr "An error occurred, synchronization failed."
 
-#: stravasync/templates/stravasync/about.html:43
+#: stravasync/templates/stravasync/about.html:46
 msgid ""
 "\n"
 "    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
@@ -88,23 +101,23 @@ msgstr ""
 "www.dopracenakole.cz/en/contact\">call the helpdesk</a>.\n"
 "    "
 
-#: stravasync/templates/stravasync/about.html:51
+#: stravasync/templates/stravasync/about.html:54
 msgid "Synchronizovat"
 msgstr "Synchronize"
 
-#: stravasync/templates/stravasync/about.html:57
+#: stravasync/templates/stravasync/about.html:60
 msgid "Odpojit"
 msgstr "Disconnect"
 
-#: stravasync/templates/stravasync/about.html:60
+#: stravasync/templates/stravasync/about.html:63
 msgid "Ještě nejste propojeni se Stravou "
 msgstr "You haven't connected your account with Strava "
 
-#: stravasync/templates/stravasync/about.html:63
+#: stravasync/templates/stravasync/about.html:66
 msgid "Synchronizovat i soukromé jízdy a zóny"
 msgstr "Synchronize private activities and zones."
 
-#: stravasync/templates/stravasync/about.html:64
+#: stravasync/templates/stravasync/about.html:67
 msgid ""
 "\n"
 "        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href=\"https://"
@@ -118,15 +131,15 @@ msgstr ""
 "\"https://support.strava.com/hc/en-us/articles/115000173384-Privacy-Zones"
 "\">privacy zones</a> in Strava, in order to maintain your privacy."
 
-#: stravasync/templates/stravasync/about.html:68
+#: stravasync/templates/stravasync/about.html:71
 msgid "Propojit se Stravou"
 msgstr "Connect to Strava"
 
-#: stravasync/templates/stravasync/about.html:72
+#: stravasync/templates/stravasync/about.html:75
 msgid "Jak to funguje"
 msgstr "How it works"
 
-#: stravasync/templates/stravasync/about.html:73
+#: stravasync/templates/stravasync/about.html:76
 #, python-format
 msgid ""
 "\n"
@@ -139,14 +152,14 @@ msgstr ""
 "description) of your Strava activities. After that, your Trips will be "
 "synchronized automatically.\n"
 
-#: stravasync/views.py:27
+#: stravasync/views.py:26
 msgid "Propojení se Stravou"
 msgstr "Connect to Strava"
 
-#: stravasync/views.py:51
+#: stravasync/views.py:50
 msgid "Aplikace Strava není dostupná."
 msgstr "Strava is down."
 
-#: stravasync/views.py:53
+#: stravasync/views.py:52
 msgid "API limit vyčerpan."
 msgstr "API limit exceeded."
