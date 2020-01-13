@@ -2,7 +2,7 @@
 Skript na vytvoení anonimizovaných tras z DPNK
 
 1. Run the script ./sync-hosts found in the do-prace-na-kole/scripts directory
-2. Run the script ./generate_gis_export <ip-of-celery-instance> also in the scripts directory. This will take a *long* time.
+2. Run the script ./generate_gis_export <ip-of-celery-instance> also in the scripts directory.
 3. Now go to the [geoserver web interface](https://geoserver.prahounakole.cz/geoserver/web/)
 4. Now select dpnk:dpnk-amazon
 ![](screenshots/screenshot_1.png)
