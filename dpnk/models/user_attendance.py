@@ -24,6 +24,7 @@ from coupons.models import DiscountCoupon
 
 from denorm import denormalized, depend_on_related
 
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
@@ -43,14 +44,14 @@ from .landingpageicon import LandingPageIcon
 from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
-from .util import MAP_DESCRIPTION
+from .util import MAP_DESCRIPTION, WithAdminUrl
 from .. import mailing, util
 # from ..email import register_mail
 
 logger = logging.getLogger(__name__)
 
 
-class UserAttendance(StaleSyncMixin, models.Model):
+class UserAttendance(WithAdminUrl, StaleSyncMixin, models.Model):
     """Účast uživatele v kampani"""
 
     last_sync_string = _("Poslední odeslání notifikačního e-mailu")
@@ -577,6 +578,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
         ).filter(frequency__gte=self.frequency - 0.000000001).count()
         # Frequency returned from the ORM is not exactly the same as in DB
         # (floating point transformations). We need to give it some extra margin to match self.
+
+    def helpdesk_iframe_url(self):
+        return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(
+            queue=settings.HELPDESK_QUEUE,
+            email=self.userprofile.user.email,
+            dpnk_user=self.get_admin_url(),
+        )
 
     def clean(self):
         if self.team and self.approved_for_team != 'denied':

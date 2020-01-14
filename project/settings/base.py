@@ -683,3 +683,6 @@ DBBACKUP_STORAGE_OPTIONS = {
 }
 
 FIOBANK_PAYMENTS_ORDER_MODEL = 'dpnk.Invoice'
+
+HELPDESK_IFRAME_URL = "https://klub.auto-mat.cz/desk/kb_iframe/dpnk/"
+HELPDESK_QUEUE = 3

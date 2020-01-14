@@ -90,7 +90,9 @@
 								{% if user.is_staff %}
 									 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 								{% endif %}
-
+		            <li>
+		                <a href="#" onclick="showHelpdesk();" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>
+		            </li>
 								{% if user.is_authenticated and user_attendance %}
 									{% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap4_blank.html" %}
 								{% endif %}
@@ -128,5 +130,34 @@
 				</div>
 			</div>
 	</div>
+</div>
+
+<script>
+
+function closeHelpdesk() {
+     $('#helpdeskwindow').hide();
+     $('#helpdeskiframe').attr('src','');
+}
+
+function showHelpdesk() {
+     $('#helpdeskiframe').attr('src','{{user_attendance.helpdesk_iframe_url}}');
+     $('#helpdeskwindow').show();
+};
+
+
+
+</script>
+
+<div id="helpdeskwindow" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick=closeHelpdesk()>&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="helpdeskiframe" height="600vh" width="100%" src="" name="iframe_helpdesk"></iframe>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

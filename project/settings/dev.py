@@ -145,3 +145,6 @@ MEDIA_URL = '/media/upload/'
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+
+HELPDESK_IFRAME_URL = "http://localhost:8000/desk/kb_iframe/foo/"
+HELPDESK_QUEUE = 1
