@@ -42,6 +42,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     **urls,
 )
 
+
 class WithAdminUrl:
     def get_admin_url(self):
         try:

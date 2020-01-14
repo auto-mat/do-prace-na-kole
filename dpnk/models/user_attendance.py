@@ -580,7 +580,7 @@ class UserAttendance(WithAdminUrl, StaleSyncMixin, models.Model):
         # (floating point transformations). We need to give it some extra margin to match self.
 
     def helpdesk_iframe_url(self):
-        return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(
+        return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa
             queue=settings.HELPDESK_QUEUE,
             email=self.userprofile.user.email,
             dpnk_user=self.get_admin_url(),
