@@ -19,9 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.contrib.sites.models import Site
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from ..string_lazy import format_lazy
@@ -41,20 +39,3 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 """),
     **urls,
 )
-
-
-class WithAdminUrl:
-    def get_admin_url(self):
-        try:
-            site = Site.objects.get_current()
-        except ImproperlyConfigured:
-            site = Site(domain='configure-django-sites.com')
-        protocol = 'https'
-        return "%s://%s%s" % (
-            protocol,
-            site.domain,
-            reverse(
-                'admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name),
-                args=[self.id],
-            ),
-        )

@@ -27,10 +27,12 @@ from denorm import denormalized, depend_on_related
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.core.exceptions import ValidationError
+from django.contrib.sites.models import Site
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db.models import F
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 
@@ -44,14 +46,14 @@ from .landingpageicon import LandingPageIcon
 from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
-from .util import MAP_DESCRIPTION, WithAdminUrl
+from .util import MAP_DESCRIPTION
 from .. import mailing, util
 # from ..email import register_mail
 
 logger = logging.getLogger(__name__)
 
 
-class UserAttendance(WithAdminUrl, StaleSyncMixin, models.Model):
+class UserAttendance(StaleSyncMixin, models.Model):
     """Účast uživatele v kampani"""
 
     last_sync_string = _("Poslední odeslání notifikačního e-mailu")
@@ -578,6 +580,22 @@ class UserAttendance(WithAdminUrl, StaleSyncMixin, models.Model):
         ).filter(frequency__gte=self.frequency - 0.000000001).count()
         # Frequency returned from the ORM is not exactly the same as in DB
         # (floating point transformations). We need to give it some extra margin to match self.
+
+    def get_admin_url(self):
+        try:
+            site = Site.objects.get_current()
+        except ImproperlyConfigured:
+            site = Site(domain='configure-django-sites.com')
+        protocol = 'https'
+        return "%s://%s.%s%s" % (
+            protocol,
+            self.campaign.slug,
+            site.domain,
+            reverse(
+                'admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name),
+                args=[self.id],
+            ),
+        )
 
     def helpdesk_iframe_url(self):
         return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa
