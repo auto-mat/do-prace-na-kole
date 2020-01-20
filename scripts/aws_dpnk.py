@@ -27,6 +27,7 @@ def get_inventories():
         ('pending', []),
         ('initializing', []),
         ('running', []),
+        ('shutting-down', []),
     ])
 
     inventories = {}
