@@ -205,7 +205,7 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
         });
         reader.readAsText(file);
     },
-}); 
+});
 
 {% endif %}
 {% endfor %}
@@ -321,7 +321,7 @@ function add_vacation(startDate, endDate) {
             loading: true,
         }
         new_event = full_calendar.addEvent(new_event);
-        $.ajax({url: "{% url 'calendar' %}", 
+        $.ajax({url: "{% url 'calendar' %}",
                type: 'POST',
                dataType: 'json',
                headers: {

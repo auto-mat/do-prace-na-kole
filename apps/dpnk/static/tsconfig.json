@@ -1,0 +1,10 @@
+{
+    "files": [
+        "ts/main.ts",
+        "ts/form_functions.ts"
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "es5"
+    }
+}

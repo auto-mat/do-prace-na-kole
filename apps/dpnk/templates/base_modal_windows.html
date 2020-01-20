@@ -1,0 +1,87 @@
+{% load i18n %}
+{% load static %}
+{% load notifications_tags %}
+
+<script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+
+<script>
+
+ {% if user_attendance.helpdesk_iframe_url %}
+ function closeHelpdesk() {
+     $('#helpdeskwindow').hide();
+     $('#helpdeskiframe').attr('src','');
+ }
+
+ function showHelpdesk() {
+     $('#helpdeskiframe').attr('src','{{user_attendance.helpdesk_iframe_url}}');
+     $('#helpdeskwindow').show();
+ };
+
+ {% endif %}
+
+ function closeNotifications() {
+     $('#notificationswindow').hide();
+ }
+
+ function showNotifications() {
+     $('#notificationswindow').show();
+ };
+
+ function dpnk_fill_notification_list(data) {
+     console.log(data);
+     var menus = document.getElementsByClassName(notify_menu_class);
+     if (menus) {
+         var messages = data.all_list.map(function (item) {
+             var message = "";
+             if(item.data && item.data.icon) {
+                 message = `${message} <img class='notification-icon' src='${item.data.icon}'/>`;
+             }
+             if(typeof item.verb !== 'undefined'){
+                 message = `${message} ${item.verb}`;
+             }
+             if(typeof item.timestamp !== 'undefined'){
+                 message = `${message} <div class='notification-timestamp'> ${item.timestamp}  </div>`;
+             }
+             return '<li class="notification-list-item notification-list-item-'+(item.unread && 'un' || '') +'read"> <a href="/inbox/notifications/mark-as-read/' + item.slug + '/?next=' + ((item.data && item.data.url) || "#" ) + '">' + message + '</a></li>';
+         }).join('')
+
+         for (var i = 0; i < menus.length; i++){
+             menus[i].innerHTML = messages;
+         }
+     }
+ }
+
+</script>
+{% register_notify_callbacks callbacks='dpnk_fill_notification_list,fill_notification_badge' api_name='list_all' %}
+
+<!-- Helpdesk -->
+{% if user_attendance.helpdesk_iframe_url %}
+<div id="helpdeskwindow" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 90vh">
+            <div class="modal-header">
+                <button type="button" class="close" onclick=closeHelpdesk()>&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="helpdeskiframe" width="100%" src="" name="iframe_helpdesk" frameborder="0" style="height: 100%; min-height: 80vh;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Notifications -->
+<div id="notificationswindow" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% trans "Notifikace" %}
+                <button type="button" class="close" onclick=closeNotifications()>&times;</button>
+            </div>
+            <div class="modal-body">
+                {% live_notify_list %}
+            </div>
+        </div>
+    </div>
+</div>
+

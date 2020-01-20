@@ -26,7 +26,7 @@ from .base import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJEC
 ADMINS = (
     ('', ''),
 )
-DEBUG = True
+#DEBUG = True
 DEFAULT_FROM_EMAIL = 'Do práce na kole <contact@example.com>'
 SERVER_EMAIL = 'Do práce na kole <contact@example.com>'
 
@@ -57,8 +57,8 @@ CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".for
 
 INSTALLED_APPS += (
     'rosetta',
-    'debug_toolbar',
-    'debug_toolbar_line_profiler',
+    #'debug_toolbar',
+    #'debug_toolbar_line_profiler',
     'template_timings_panel',
     'livereload',
 )
@@ -92,8 +92,8 @@ CORS_ORIGIN_REGEX += [
 ]
 
 MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
     'livereload.middleware.LiveReloadScript',
 ]
 

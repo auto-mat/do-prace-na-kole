@@ -120,6 +120,7 @@ django-reversion = "*"
 django-admin-charts = "*"
 django-inline-static = "*"
 django-admin-tools-stats = "*"
+django-notifications-hq = "*"
 
 [requires]
 python_version = "3.6"

@@ -326,6 +326,7 @@ INSTALLED_APPS = [
     'dbtemplates',
     'reversion',
     'inline_static',
+    'notifications',
 ]
 
 DBTEMPLATES_USE_REVERSION = True
@@ -687,3 +688,5 @@ FIOBANK_PAYMENTS_ORDER_MODEL = 'dpnk.Invoice'
 
 HELPDESK_IFRAME_URL = "https://klub.auto-mat.cz/desk/kb_iframe/dpnk/"
 HELPDESK_QUEUE = 3
+
+DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}

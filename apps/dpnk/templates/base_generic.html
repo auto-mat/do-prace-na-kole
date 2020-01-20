@@ -4,6 +4,7 @@
 {% load scribbler_tags %}
 {% load sitetree %}
 {% load avatar_tags %}
+{% load notifications_tags %}
 {% load inline_static_tags %}
 
 {% block body-class %}application-layout{% endblock %}
@@ -31,6 +32,9 @@
 								<div class="nick">
 									<a href="{% url 'profil' %}">{{ user_attendance }}</a>
 								</div>
+                <h4>
+                    <a href="#" onclick="showNotifications();" ><i class="fa fa-envelope"></i> {% live_notify_badge %}</a>
+                </h4>
 								<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
 								    <span></span>
 								    <span></span>
@@ -104,8 +108,7 @@
 									{% endif %}
 								</ul>
 							</nav>
-						{% endif %}
-
+					{% endif %}
 					{% endif %}
 					<div class="version">
 						{% inline_staticfile "version.txt" %}
@@ -139,33 +142,5 @@
 		</div>
 	</div>
 
-<script>
-
-{% if user_attendance.helpdesk_iframe_url %}
-function closeHelpdesk() {
-     $('#helpdeskwindow').hide();
-     $('#helpdeskiframe').attr('src','');
-}
-
-function showHelpdesk() {
-     $('#helpdeskiframe').attr('src','{{user_attendance.helpdesk_iframe_url}}');
-     $('#helpdeskwindow').show();
-};
-
-{% endif %}
-
-</script>
-
-<div id="helpdeskwindow" class="modal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" style="height: 90vh">
-            <div class="modal-header">
-                <button type="button" class="close" onclick=closeHelpdesk()>&times;</button>
-            </div>
-            <div class="modal-body">
-                <iframe id="helpdeskiframe" width="100%" src="" name="iframe_helpdesk" frameborder="0" style="height: 100%; min-height: 80vh;"></iframe>
-            </div>
-        </div>
-    </div>
-</div>
+{% include "base_modal_windows.html" %}
 {% endblock %}

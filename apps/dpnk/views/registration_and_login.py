@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
@@ -27,6 +28,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView, UpdateView
+
+from notifications.signals import notify
 
 from registration.backends.default.views import RegistrationView as SimpleRegistrationView
 
@@ -106,7 +109,13 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_next_url(self):
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            return 'pozvanky'
+            notify.send(
+                self.user_attendance,
+                recipient=self.user_attendance.userprofile.user,
+                verb=_("Pozvete další členy do Vášeho týámu"),
+                url=reverse('pozvanky'),
+                icon=static("/img/dpnk_logo.png"),
+            )
         return super().get_next_url()
 
     def get_initial(self):

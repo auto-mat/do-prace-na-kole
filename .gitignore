@@ -1,5 +1,6 @@
 !.gitkeep
 third_party
+third-party
 /#*#
 *.mo
 *.pyc
@@ -24,7 +25,7 @@ third_party
 /htmlcov-max/
 .coverage
 /run.sh
-/dpnk/static/css/style.css
+/apps/dpnk/static/css/style.css
 /response.html
 /apps/dpnk/test_files/DSC00002.JPG.*_*.jpg
 /apps/dpnk/test_files/cache
