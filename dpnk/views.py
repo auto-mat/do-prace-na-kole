@@ -780,20 +780,6 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
 
         formset.forms = sorted(formset.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
         formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date, reverse=True)
-
-        # This is hack, to get commute mode queryset cached:
-        qs = models.CommuteMode.objects.all()
-        cache = list(qs)
-
-        class CacheQuerysetAll(object):
-            def __iter__(self):
-                return iter(cache)
-
-            def _prefetch_related_lookups(self):
-                return False
-        qs.all = CacheQuerysetAll
-        for form in formset.forms:
-            form.fields['commute_mode'].queryset = qs
         return formset
 
     def get_context_data(self, *args, **kwargs):
