@@ -11,7 +11,7 @@ class DiplomaField(PdfSandwichFieldABC):
         _("Jméno"): (lambda ua: ua.name()),
         _("Křestní jméno"): (lambda ua: ua.first_name()),
         _("Příjmení"): (lambda ua: ua.last_name()),
-        _("Přezdívka"): (lambda ua: ua.userprofile.nickname),
+        _("Přezdívka"): (lambda ua: ua.userprofile.nickname or ""),
         _("Jméno a příjmení"): (lambda ua: ua.userprofile.user.get_full_name()),
         _("Jméno v plném změní"): (lambda ua: ua.name_for_trusted()),
         _("Jméno vokativ"): (lambda ua: ua.name(cs_vokativ=True)),
