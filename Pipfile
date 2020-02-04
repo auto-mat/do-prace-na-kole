@@ -117,7 +117,7 @@ dj-fiobank-payments = "<=0.3.0"
 asgiref="*"
 django-dbtemplates = "*"
 django-reversion = "*"
-django-admin-charts = {git = "https://github.com/PetrDlouhy/django-admin-charts",editable = true,ref = "develop"}
+django-admin-charts = "*"
 django-inline-static = "*"
 
 [requires]
