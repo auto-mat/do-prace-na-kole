@@ -1450,7 +1450,7 @@ class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
 
 
 @admin.register(models.CommuteMode)
-class CommuteModeAdmin(ImportExportMixin, SortableAdminMixin, TranslationAdmin):
+class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):  # ImportExportMixin was removed, because it prevented ordering
     list_display = (
         'name',
         'slug',
