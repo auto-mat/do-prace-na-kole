@@ -28,7 +28,7 @@ from django.core.validators import MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 import smmapdfs
 import smmapdfs.model_abcs
@@ -36,10 +36,12 @@ import smmapdfs.model_abcs
 
 class CouponField(smmapdfs.model_abcs.PdfSandwichFieldABC):
     fields = {
-        'token': (lambda obj: obj.token),
+        'token': (lambda obj: str(obj)),
         'good_till': (lambda obj: obj.coupon_type.valid_until.strftime("%d. %m. %Y") if obj.coupon_type.valid_until else None),
         'campaign_year': (lambda obj: "%s." % obj.coupon_type.campaign.year),
         'discount': (lambda obj: "%s%%" % obj.discount),
+        'name': (lambda obj: obj.recipient_name),
+        'num_uses': (lambda obj: ("%s×" % str(obj.user_attendance_number)) if obj.user_attendance_number else ""),
     }
 
 
@@ -100,6 +102,12 @@ class DiscountCoupon(models.Model):
     receiver = models.CharField(
         verbose_name=_("příjemce"),
         max_length=50,
+        blank=True,
+        null=True,
+    )
+    recipient_name = models.CharField(
+        verbose_name=_("jméno příjemce"),
+        max_length=100,
         blank=True,
         null=True,
     )

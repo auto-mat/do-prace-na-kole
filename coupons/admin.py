@@ -69,6 +69,7 @@ class DiscountCouponResource(resources.ModelResource):
             'note',
             'coupon_type',
             'receiver',
+            'recipient_name',
             'user_attendance_number',
         )
 
@@ -94,6 +95,7 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         'user_attendance_number',
         'note',
         'receiver',
+        'recipient_name',
         'attached_user_attendances_list',
         'attached_user_attendances_count',
     )
@@ -102,7 +104,7 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         'coupon_pdf',
     )
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
-    list_editable = ('note', 'receiver', 'discount', 'user_attendance_number')
+    list_editable = ('note', 'receiver', 'recipient_name', 'discount', 'user_attendance_number')
     list_filter = (
         campaign_filter_generator('coupon_type__campaign'),
         'coupon_type__name',
