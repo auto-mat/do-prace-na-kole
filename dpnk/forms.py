@@ -483,10 +483,10 @@ class RegistrationFormDPNK(RegistrationBaseForm):
         )
         return ret_val
 
-    def save(self):
-        new_user = super().save()
+    def save(self, *args, **kwargs):
+        new_user = super().save(*args, **kwargs)
+        new_user.save()
         userprofile = models.UserProfile.objects.create(user=new_user)
-
         try:
             team = models.Team.objects.get(invitation_token=self.invitation_token)
             if team.is_full():
