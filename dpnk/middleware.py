@@ -42,7 +42,7 @@ def get_or_create_userattendance(request, campaign_slug):
                 campaign__slug=campaign_slug,
             )
         except UserAttendance.DoesNotExist:
-            if hasattr(request.user, 'userprofile') and request.campaign and request.campaign.phase('registration').is_actual():
+            if hasattr(request.user, 'userprofile') and request.campaign:
                 return UserAttendance.objects.create(
                     userprofile=request.user.userprofile,
                     campaign=request.campaign,
@@ -90,5 +90,3 @@ restart is requried.
                 request.campaign = None
 
         request.user_attendance = get_or_create_userattendance(request, campaign_slug)
-        if request.campaign and request.user_attendance is None:
-            raise Http404(_("Registrace ještě není otevřená. Otvírá se %s.") % request.campaign.phase('registration').date_from)
