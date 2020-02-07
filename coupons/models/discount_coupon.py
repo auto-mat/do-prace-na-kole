@@ -41,7 +41,7 @@ class CouponField(smmapdfs.model_abcs.PdfSandwichFieldABC):
         'campaign_year': (lambda obj: "%s." % obj.coupon_type.campaign.year),
         'discount': (lambda obj: "%s%%" % obj.discount),
         'name': (lambda obj: obj.recipient_name),
-        'num_uses': (lambda obj: ("%s×" % str(obj.user_attendance_number)) if obj.user_attendance_number else ""),
+        'num_uses': (lambda obj: ("%s×" % str(obj.user_attendance_number)) if obj.user_attendance_number and obj.user_attendance_number > 1 else ""),
     }
 
 
