@@ -21,6 +21,8 @@ import denorm
 
 from django.core.exceptions import ValidationError
 
+from donation_chooser.rest import organization_router
+
 from drf_extra_fields.geo_fields import PointField
 
 from rest_framework import permissions, routers, serializers, viewsets
@@ -323,6 +325,7 @@ router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
+router.registry.extend(organization_router.registry)
 # This is disabled, because Abra doesn't cooperate anymore
 # router.register(r'competition', CompetitionSet, basename="competition")
 # router.register(r'team', TeamSet, basename="team")

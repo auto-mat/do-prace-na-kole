@@ -267,6 +267,7 @@ INSTALLED_APPS = [
     'psc',
     'stale_notifications',
     'motivation_messages',
+    'donation_chooser',
 
     'smart_selects',
     'composite_field',
