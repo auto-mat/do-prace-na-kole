@@ -85,7 +85,7 @@ def address_generator(
         )
         recipient = models.CharField(
             verbose_name=recipient_name,
-            help_text=_("Vyplňte pouze pokud má Vaše pobočka kromě vlastní adresy také své oficiální jméno, které se liší od názvu společnosti."),
+            help_text=_("Vyplňte pouze pokud Vaše interní předpisy vyžadují jméno toho, kdo je za vyřízení faktury zodpovědný."),
             default="",
             max_length=50,
             null=True,
