@@ -41,6 +41,7 @@ def normpath(*args):
 PROJECT_ROOT = normpath(__file__, "..", "..", "..")
 BASE_DIR = PROJECT_ROOT
 
+sys.path.append(normpath(PROJECT_ROOT, "apps"))
 sys.path.append(normpath(PROJECT_ROOT, "project"))
 
 DEBUG = os.environ.get('DPNK_DEBUG', False) in (True, "True")
