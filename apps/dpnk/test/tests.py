@@ -219,7 +219,7 @@ class PayuTests(ClearCacheMixin, TestCase):
         self.assertEqual(payment.amount, 150)
         self.assertEqual(payment.status, 99)
 
-    @patch('dpnk.views.logger')
+    @patch('dpnk.views.registration_and_login.logger')
     def test_dpnk_payment_status_bad_amount(self, mock_logger):
         response = self.payment_status_view(amount="15300", trans_sig='ae18ec7f141c252e692d470f4c1744c9')
         self.assertContains(response, "Bad amount", status_code=400)

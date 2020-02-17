@@ -43,8 +43,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from .models import Campaign, Company, CompanyAdmin, Competition, Payment, Subsidiary, UserProfile
 from .models.transactions import Status
 from .resources import UserAttendanceResource
-from .views import RegistrationViewMixin, TitleViewMixin
-from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RequestFormMixin
+from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RegistrationViewMixin, RequestFormMixin, TitleViewMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 

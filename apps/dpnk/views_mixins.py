@@ -20,6 +20,7 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import classonlymethod
 from django.utils.html import format_html, format_html_join
@@ -265,3 +266,11 @@ class ExportViewMixin():
         response = HttpResponse(fformat["export"], content_type=fformat["content_type"])
         response['Content-Disposition'] = 'attachment; filename=results.%s' % fformat["filename_extension"]
         return response
+
+
+class ProfileRedirectMixin(object):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(reverse('profil'))
+        else:
+            return super().get(request, *args, **kwargs)

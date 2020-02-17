@@ -65,7 +65,7 @@ class RestTests(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_dpnk_rest_gpx_gz_parse_error(self):
-        with open('dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
             post_data = {
                 'trip_date': '2010-11-15',
                 'direction': 'trip_to',
@@ -117,7 +117,7 @@ class RestTests(TestCase):
 
     def test_gpx_post(self):
         address = reverse("gpxfile-list")
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-11-19",
                 'direction': 'trip_to',
@@ -146,7 +146,7 @@ class RestTests(TestCase):
             self.assertEqual(trip.direction, "trip_to")
 
     def test_dpnk_rest_gpx_gz(self):
-        with open('dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
             post_data = {
                 'trip_date': '2010-11-17',
                 'direction': 'trip_to',
@@ -163,7 +163,7 @@ class RestTests(TestCase):
         self.client = APIClient(HTTP_HOST="testing-campaign-unknown.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(pk=1128), settings.AUTHENTICATION_BACKENDS[0])
         address = reverse("gpxfile-list")
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-11-19",
                 'direction': 'trip_to',
@@ -186,7 +186,7 @@ class RestTests(TestCase):
             user_attendance=UserAttendance.objects.get(pk=1115),
         )
         trip_id = trip.id
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-11-19",
                 'direction': 'trip_to',
@@ -220,7 +220,7 @@ class RestTests(TestCase):
             direction="trip_to",
             user_attendance=UserAttendance.objects.get(pk=1115),
         )
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 "file": gpxfile,
                 'sourceApplication': 'test_app',
@@ -232,7 +232,7 @@ class RestTests(TestCase):
         self.assertEqual(trip.distance, 13.32)
 
     def test_gpx_inactive(self):
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-11-10",
                 'direction': 'trip_to',

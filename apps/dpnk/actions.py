@@ -81,8 +81,8 @@ recalculate_results.short_description = _(u"Přepočítat výsledky soutěží p
 
 def show_distance(modeladmin, request, queryset):
     trips_query = models.Trip.objects.filter(user_attendance__in=queryset, commute_mode__slug__in=('bicycle', 'by_foot'))
-    length = views.distance(trips_query)
-    trips = views.trips(trips_query)
+    length = views.results_and_competitions.distance(trips_query)
+    trips = views.results_and_competitions.trips(trips_query)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 
 
@@ -149,8 +149,8 @@ remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 
 def show_distance_trips(modeladmin, request, queryset):
-    length = views.distance(queryset)
-    trips = views.trips(queryset)
+    length = views.results_and_competitions.distance(queryset)
+    trips = views.results_and_competitions.trips(queryset)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 
 

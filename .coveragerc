@@ -6,10 +6,10 @@ source =
    project,
    coupons
 omit =
-   dpnk/migrations*,
-   t_shirt_delivery/migrations*,
-   psc/migrations*,
-   coupons/migrations*,
+   apps/dpnk/migrations*,
+   apps/t_shirt_delivery/migrations*,
+   apps/psc/migrations*,
+   apps/coupons/migrations*,
    project/settings_dev.py,
    project/non_html_debug.py
 plugins =
