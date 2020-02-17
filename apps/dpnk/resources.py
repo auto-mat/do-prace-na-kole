@@ -293,6 +293,7 @@ class CompanyAdminResource(resources.ModelResource):
 
 
 class InvoiceResource(resources.ModelResource):
+    campaign_name = Field(column_name=_("campaign_name"))
     class Meta:
         model = models.Invoice
         fields = [
@@ -304,7 +305,7 @@ class InvoiceResource(resources.ModelResource):
             'paid_date',
             'total_amount',
             'payments_count',
-            'campaign__name',
+            'campaign_name',
             'sequence_number',
             'order_number',
             'company__ico',
@@ -323,6 +324,10 @@ class InvoiceResource(resources.ModelResource):
     payments_count = fields.Field(readonly=True, attribute='payments_count')
     company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
     company_admin_telephones = fields.Field(readonly=True, attribute='company_admin_telephones')
+
+    def dehydrate_campaign_name(self, result):
+        return result.campaign.display_name()
+
 
 
 class CompetitionResultResource(resources.ModelResource):

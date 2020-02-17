@@ -731,7 +731,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         if other_user_attendances.count() > 0:
             raise forms.ValidationError(
                 _("Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") %
-                ", ".join([u.campaign.name for u in other_user_attendances]),
+                ", ".join([u.campaign.display_name() for u in other_user_attendances]),
             )
 
         return user_attendance

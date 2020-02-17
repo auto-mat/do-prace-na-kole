@@ -283,6 +283,8 @@ class Campaign(Pricable, models.Model):
     )
 
     def display_name(self):
+        if self.name:
+            return self.name
         if self.campaign_type is None:
             return 'No campaign type ' + str(self.year)
         return self.campaign_type.name + ' ' + str(self.year)
