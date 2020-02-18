@@ -208,8 +208,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             normpath(PROJECT_ROOT, 'templates'),
-            normpath(PROJECT_ROOT, 'dpnk/templates'),
-            normpath(PROJECT_ROOT, 't_shirt_delivery/templates'),
+            normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
+            normpath(PROJECT_ROOT, 'apps/t_shirt_delivery/templates'),
             normpath(PROJECT_ROOT, 'registration-templates/'),
         ],
         'OPTIONS': {

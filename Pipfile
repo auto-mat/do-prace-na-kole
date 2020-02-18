@@ -119,6 +119,7 @@ django-dbtemplates = "*"
 django-reversion = "*"
 django-admin-charts = "*"
 django-inline-static = "*"
+django-admin-tools-stats = "*"
 
 [requires]
 python_version = "3.6"

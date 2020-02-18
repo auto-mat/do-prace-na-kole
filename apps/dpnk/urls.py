@@ -260,11 +260,11 @@ urlpatterns = [
         views.CompetitorCountView.as_view(),
         name="competitor_counts",
     ),
-    url(
-        r'^cykloservis/$',
-        views.BikeRepairView.as_view(),
-        name="bike_repair",
-    ),
+    # url(
+    #     r'^cykloservis/$',
+    #     views.BikeRepairView.as_view(),
+    #     name="bike_repair",
+    # ),
     url(
         r'^package/$',
         views.PackageView.as_view(),

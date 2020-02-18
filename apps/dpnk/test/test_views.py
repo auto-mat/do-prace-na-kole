@@ -138,7 +138,7 @@ class CompetitionsViewTests(ViewsLogon):
 
     def test_upload_team_photo(self):
         address = reverse('upload_team_photo')
-        with open('dpnk/test_files/DSC00002.JPG', 'rb') as fd:
+        with open('apps/dpnk/test_files/DSC00002.JPG', 'rb') as fd:
             post_data = {
                 'image': fd,
             }
@@ -176,6 +176,7 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">', html=True)
         self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">', html=True)
 
+    """
     def test_bike_repair(self):
         address = reverse('bike_repair')
         response = self.client.get(address)
@@ -220,6 +221,7 @@ class CompetitionsViewTests(ViewsLogon):
         response = self.client.post(address, post_data)
         self.assertContains(response, 'Tento uživatel není nováček, soutěžil již v předcházejících kampaních: Testing campaign - last year')
         self.assertEqual(response.status_code, 200)
+    """
 
     feed_value = (
         {
@@ -371,7 +373,7 @@ class PaymentTypeViewTests(TestCase):
         self.assertRedirects(response, reverse("discount_coupon"))
         self.assertContains(response, "<h2>Uplatnit slevový voucher</h2>", html=True)
 
-    @patch('dpnk.views.logger')
+    @patch('dpnk.views.registration_and_login.logger')
     def test_dpnk_payment_type_pay_admin(self, mock_logger):
         post_data = {
             'payment_type': 'pay',
@@ -416,7 +418,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
-    @patch('dpnk.views.logger')
+    @patch('dpnk.views.results_and_competitions.logger')
     def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
         response = self.client.get(address)
@@ -853,7 +855,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertEqual(response.url, reverse("profil"))
 
-    @patch('dpnk.views.logger')
+    @patch('dpnk.views.results_and_competitions.logger')
     def test_questionnaire_view_unknown(self, mock_logger):
         kwargs = {'questionnaire_slug': 'quest1'}
         address = reverse('questionnaire', kwargs=kwargs)
@@ -2218,7 +2220,6 @@ class TestNotLoggedIn(TestCase):
 
     @data(
         "application",
-        "bike_repair",
         "company_admin_application",
         "company_admin_competition",
         "company_admin_competitions",
@@ -2277,7 +2278,7 @@ class TestNotLoggedIn(TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
-    MEDIA_ROOT="dpnk/test_files",
+    MEDIA_ROOT="apps/dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
@@ -2305,7 +2306,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         date = datetime.date(year=2010, month=11, day=2)
         direction = "trip_to"
         address = reverse('trip', kwargs={"date": str(date), "direction": direction})
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'gpx_file': gpxfile,
                 'direction': direction,
@@ -2329,7 +2330,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         date = datetime.date(year=2010, month=12, day=1)
         direction = "trip_from"
         address = reverse('trip', kwargs={"date": date, "direction": direction})
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'gpx_file': gpxfile,
                 'direction': direction,
@@ -2436,7 +2437,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
-    MEDIA_ROOT="dpnk/test_files",
+    MEDIA_ROOT="apps/dpnk/test_files",
 )
 @ddt
 class ViewsTestsUnregistered(DenormMixin, ClearCacheMixin, TestCase):
