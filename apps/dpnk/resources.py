@@ -294,6 +294,7 @@ class CompanyAdminResource(resources.ModelResource):
 
 class InvoiceResource(resources.ModelResource):
     campaign_name = Field(column_name=_("campaign_name"))
+
     class Meta:
         model = models.Invoice
         fields = [
@@ -327,7 +328,6 @@ class InvoiceResource(resources.ModelResource):
 
     def dehydrate_campaign_name(self, result):
         return result.campaign.display_name()
-
 
 
 class CompetitionResultResource(resources.ModelResource):
