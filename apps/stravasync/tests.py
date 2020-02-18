@@ -4,6 +4,8 @@ from django.urls import reverse
 
 from dpnk.test.test_views import ViewsLogon
 
+from stravasync.models import StravaAccount
+
 
 mock_token_response = {
     "access_token": "123456",
@@ -65,3 +67,47 @@ class TestStravaAuth(ViewsLogon):
         self.client.get(reverse('strava_auth'))
         response = self.client.post(reverse('strava_deauth'))
         self.assertRedirects(response, reverse('about_strava'), status_code=302)
+
+    @patch('stravalib.Client')
+    def test_strava_sync_no_activities(self, mock_strava_client):
+        from stravasync.tasks import sync
+        msc = mock_strava_client()
+        msc.exchange_code_for_token.return_value = mock_token_response
+        msc.get_athlete.return_value = MockAthlete()
+        msc.refresh_access_token.return_value = {
+            "access_token": "test_access_token",
+            "refresh_token": "test_refresh_token",
+        }
+        msc.get_activities.return_value = [
+        ]
+        self.client.get(reverse('strava_auth'))
+        strava_account = StravaAccount.objects.all().first()
+        stats = sync(strava_account.pk)
+        self.assertEqual(stats["activities"], [])
+        self.assertEqual(stats["new_trips"], 0)
+        self.assertEqual(stats["synced_trips"], 0)
+        self.assertEqual(stats["synced_activities"], 0)
+        strava_account = StravaAccount.objects.all().first()
+        self.assertEqual(strava_account.errors, "")
+
+    @patch('stravalib.Client')
+    def test_strava_sync_no_activities(self, mock_strava_client):
+        from stravasync.tasks import sync
+        msc = mock_strava_client()
+        msc.exchange_code_for_token.return_value = mock_token_response
+        msc.get_athlete.return_value = MockAthlete()
+        msc.refresh_access_token.return_value = {
+            "access_token": "test_access_token",
+            "refresh_token": "test_refresh_token",
+        }
+        msc.get_activities.return_value = [
+        ]
+        self.client.get(reverse('strava_auth'))
+        strava_account = StravaAccount.objects.all().first()
+        stats = sync(strava_account.pk)
+        self.assertEqual(stats["activities"], [])
+        self.assertEqual(stats["new_trips"], 0)
+        self.assertEqual(stats["synced_trips"], 0)
+        self.assertEqual(stats["synced_activities"], 0)
+        strava_account = StravaAccount.objects.all().first()
+        self.assertEqual(strava_account.errors, "")

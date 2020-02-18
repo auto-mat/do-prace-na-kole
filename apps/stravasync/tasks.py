@@ -2,6 +2,7 @@
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
 import logging
+import traceback
 from datetime import datetime
 
 from celery import shared_task
@@ -42,11 +43,18 @@ def sync(strava_account_id, manual_sync=True):
     Sync with a specific strava account.
     """
     strava_account = StravaAccount.objects.get(id=strava_account_id)
+    stats = {
+        "new_trips": 0,
+        "synced_trips": 0,
+        "synced_activities": 0,
+        "activities": [],
+    }
     try:
         if manual_sync:
             strava_account.user_sync_count += 1
         else:
             strava_account.user_sync_count = 0
+        strava_account.errors = ""
         sclient = stravalib.Client()
         if strava_account.refresh_token:
             token_response = sclient.refresh_access_token(
@@ -68,18 +76,15 @@ def sync(strava_account_id, manual_sync=True):
             before=datetime.combine(latest_end_date, datetime.max.time()),
         )
         strava_account.last_sync_time = datetime.now()
-        stats = {
-            "new_trips": 0,
-            "synced_trips": 0,
-            "synced_activities": 0,
-            "activities": [],
-        }
         for activity in activities:
-            sync_activity(activity, hashtag_table, strava_account, sclient, stats)
-        strava_account.errors = ""
+            try:
+                sync_activity(activity, hashtag_table, strava_account, sclient, stats)
+            except Exception as e:
+                strava_account.errors += "Error syncing activity %s \n%s\n\n" % str(activity), str(e)
     except Exception as e:
-        strava_account.errors = str(e)
-        logger.error(e)
+        tb = traceback.format_exc()
+        strava_account.errors = tb
+        logger.error(tb)
     strava_account.save()
     return stats
 
