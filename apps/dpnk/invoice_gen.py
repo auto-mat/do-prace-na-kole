@@ -45,7 +45,7 @@ def generate_invoice(invoice):
         client.note += "\nČíslo objednávky: %s" % invoice.order_number
 
     provider = Provider(
-        "Auto*Mat, z.s.",
+        "AutoMat, z.s.",
         email="kontakt@dopracenakole.cz",
         address="Vodičkova 704/36",
         zip_code="110 00",
@@ -58,7 +58,7 @@ def generate_invoice(invoice):
         phone="212 240 666",
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
         note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119. "
-             "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít."
+             "AutoMat - společně s vámi tvoříme město, ve kterém chceme žít."
              "\nhttps://www.auto-mat.cz",
     )
 

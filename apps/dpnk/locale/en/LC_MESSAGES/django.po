@@ -839,10 +839,10 @@ msgstr "Participation fee will be paid by my employer."
 
 #: dpnk/forms.py:622
 msgid ""
-"Chci se stát členem Klubu přátel organizace Auto*Mat a podpořit rozvoj "
+"Chci se stát členem Klubu přátel organizace AutoMat a podpořit rozvoj "
 "udržitelné mobility. "
 msgstr ""
-"I want to become member Auto*Mat Friends Club and support sustainable "
+"I want to become member AutoMat Friends Club and support sustainable "
 "mobility."
 
 #: dpnk/forms.py:632
@@ -935,13 +935,13 @@ msgstr ""
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
 "href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů "
-"Auto*Mat z.s.</a> a <a target='_blank' href='http://www.dopracenakole.cz/"
+"AutoMat z.s.</a> a <a target='_blank' href='http://www.dopracenakole.cz/"
 "obchodni-podminky'>Obchodními podmínkami soutěže {campaign}</a>. "
 "{extra_agreement_text}"
 msgstr ""
 "I agree with processing personal details according to the <a target='_blank' "
 "href='http://www.auto-mat.cz/zasady'>Guidelines for the Protection and "
-"Processing of Personal Information Auto*Mat z.s.</a> and with <a "
+"Processing of Personal Information AutoMat z.s.</a> and with <a "
 "target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'> "
 "{campaign} Terms and Conditions</a>. {extra_agreement_text}"
 
@@ -1127,7 +1127,7 @@ msgstr "Free registration cases"
 
 #: dpnk/models/campaign.py:233
 msgid "Povolit integraci s klubem přátel?"
-msgstr "Confirm Auto*Mat Friends Club payment integration?"
+msgstr "Confirm AutoMat Friends Club payment integration?"
 
 #: dpnk/models/campaign.py:237 dpnk/models/user_attendance.py:86
 #: dpnk/models/user_attendance.py:87 dpnk/models/user_attendance.py:93
@@ -1880,9 +1880,9 @@ msgstr "Payment date"
 
 #: dpnk/models/invoice.py:86
 msgid ""
-"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."
+"Moje organizace si přeje podpořit AutoMat a zaplatit benefiční startovné."
 msgstr ""
-"My company wants to support Auto*mat by paying the beneficiary starting fee."
+"My company wants to support Automat by paying the beneficiary starting fee."
 
 #: dpnk/models/invoice.py:90
 msgid "Anonimizovat položky na faktuře"
@@ -2353,12 +2353,12 @@ msgid "platba přes firemního koordinátora"
 msgstr "payment by company coordinator"
 
 #: dpnk/models/transactions.py:196
-msgid "člen Klubu přátel Auto*Matu"
-msgstr "Auto*Mat Friends Club member"
+msgid "člen Klubu přátel AutoMatu"
+msgstr "AutoMat Friends Club member"
 
 #: dpnk/models/transactions.py:197
-msgid "kandidát na členství v Klubu přátel Auto*Matu"
-msgstr "Auto*Mat Friends Club member wannabe"
+msgid "kandidát na členství v Klubu přátel AutoMatu"
+msgstr "AutoMat Friends Club member wannabe"
 
 #: dpnk/models/transactions.py:198
 msgid "neplatí startovné"
@@ -2793,7 +2793,7 @@ msgstr "change company address"
 msgid ""
 "\n"
 "   Do práce na kole pořádá již od roku 2010 nezisková organizace <a title="
-"\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank\">Auto*Mat</"
+"\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank\">AutoMat</"
 "a>, která se již více než 10 let snaží o zlepšení kvality života v našich "
 "městech.\n"
 "   Protože věříme, že jedním ze zásadních faktorů ovliňujících kvalitu "
@@ -2802,18 +2802,18 @@ msgid ""
 "   <br/>\n"
 "   <strong>Nabízíme všem firmám, které se zapojují do soutěže, možnost "
 "zaplatit benefiční startovné</strong>, kterým podpoří přímo činnost "
-"Auto*Matu.\n"
+"AutoMatu.\n"
 "   Zejména tím podpoříte naši činnost v oblasti “cyklo-advokacie”, kde se "
 "snažíme různými způsoby prosazovat chytrá koncepční opatření pro zlepšení "
 "cyklo-infastruktury a související dopravní infrastruktury ve městě.\n"
 "   <br/>\n"
-"   <strong>Pokud si přejete podpořit Auto*Mat benefičním startovným, zvolte "
+"   <strong>Pokud si přejete podpořit AutoMat benefičním startovným, zvolte "
 "možnost níže.</strong>\n"
 "   "
 msgstr ""
 "\n"
 "Bike to work is organised since 2010 by non-profit organisation <a title="
-"\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank\">Auto*Mat</a> "
+"\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank\">AutoMat</a> "
 "that have been trying for more than 10 years to improve the quality of life "
 "in our cities.\n"
 "Because we believe that one of the key factors influencing the quality of "
@@ -2822,12 +2822,12 @@ msgstr ""
 "<br/>\n"
 "<strong>We offer all companies participating in the competition the "
 "opportunity to pay a beneficial participation fee</strong> to directly "
-"support Auto*Matu. In particular, you will support our \"cycling advocacy\" "
+"support AutoMatu. In particular, you will support our \"cycling advocacy\" "
 "activities, where we try to promote smart conceptual measures to improve "
 "cycling infrastructure and related transport infrastructure in the city in "
 "different ways.\n"
 "<br/>\n"
-"<strong>If you wish to support Auto*Mat through beneficial participation "
+"<strong>If you wish to support AutoMat through beneficial participation "
 "fee, select the option below.</strong>"
 
 #: dpnk/templates/company_admin/create_invoice.html:46
@@ -3850,7 +3850,7 @@ msgstr "Apply discount from the participation fee."
 
 #: dpnk/templates/registration/payment_type.html:95
 msgid "Vstupte do Klubu přátel"
-msgstr "Enter the Auto*Mat Friends Club"
+msgstr "Enter the AutoMat Friends Club"
 
 #: dpnk/templates/registration/payment_type.html:100
 msgid "Platba startovného"
@@ -4336,7 +4336,7 @@ msgstr "We don't want your money"
 
 #: dpnk/views.py:421
 msgid "Vaše členství v klubu přátel ještě bude muset být schváleno."
-msgstr "Your Auto*Mat Friends Club membership has yet to be confirmed."
+msgstr "Your AutoMat Friends Club membership has yet to be confirmed."
 
 #: dpnk/views.py:426
 #, python-brace-format
@@ -5243,12 +5243,12 @@ msgstr ""
 #~ msgid ""
 #~ "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
 #~ "href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů "
-#~ "Auto*Mat z.s.</a> a s <a target='_blank' href='http://www.dopracenakole."
+#~ "AutoMat z.s.</a> a s <a target='_blank' href='http://www.dopracenakole."
 #~ "cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>."
 #~ msgstr ""
 #~ "I agree with processing personal details according to the <a "
 #~ "target='_blank' href='http://www.auto-mat.cz/zasady'>Guidelines for the "
-#~ "Protection and Processing of Personal Information Auto*Mat z.s.</a> and "
+#~ "Protection and Processing of Personal Information AutoMat z.s.</a> and "
 #~ "with <a target='_blank' href='http://www.dopracenakole.cz/obchodni-"
 #~ "podminky'>%s Terms and Conditions</a>."
 
@@ -5554,11 +5554,11 @@ msgstr ""
 #~ msgstr "Participation fee payment"
 
 #~ msgid ""
-#~ "Platbou benefičního startovného podpoříte Auto*Mat ve zlepšování "
+#~ "Platbou benefičního startovného podpoříte AutoMat ve zlepšování "
 #~ "dopravních návyků obyvatel měst, v rozšíření kampaně Do práce na kole do "
 #~ "nových lokalit a ve zlepšování podmínek pro městské městské cyklisty."
 #~ msgstr ""
-#~ "By paying beneficiary fee, you will support Auto*Mat in improving city "
+#~ "By paying beneficiary fee, you will support AutoMat in improving city "
 #~ "residents commute habits, development of Bike to work campaign and "
 #~ "improving urban bicycle transportation conditions."
 

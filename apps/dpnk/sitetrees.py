@@ -52,8 +52,8 @@ sitetrees = (
         'about_us', 'O nás', items=[
             item(
                 'O nás', 'https://www.auto-mat.cz/', title_en='About us', children=[
-                    item('O Auto*Matu', 'https://www.auto-mat.cz/', title_en='About Auto*Mat', url_as_pattern=False),
-                    item('Podpořte Auto*Mat', 'https://www.nakrmteautomat.cz/', title_en='Support Auto*Mat', url_as_pattern=False),
+                    item('O AutoMatu', 'https://www.auto-mat.cz/', title_en='About AutoMat', url_as_pattern=False),
+                    item('Podpořte AutoMat', 'https://www.nakrmteautomat.cz/', title_en='Support AutoMat', url_as_pattern=False),
                     item('Svobodný Software', 'https://github.com/auto-mat/do-prace-na-kole', title_en='Free Software', url_as_pattern=False),
                 ],
             ),
