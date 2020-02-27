@@ -1,15 +1,17 @@
-@primary:#FF6F61;
-@secondary:#EF3231;
-@ternary:#EF423B;
+@prime:#473990;
+@octave: #130A41;
+@fourth:#EA4E4F;
+@fifth:#AED9C8;
 @grey: #565656;
 @lightgrey:#c3c3c3;
 @quartus: #1e2d29;
 @quintus: #00201F;
 @white: #fff;
-@fsize: 16px;
-@wg:@fsize/16*15;
+@f: 16px;
+@lh: 20px;
+@wg:@f/16*15;
 @positive:#85e233;
-@negative:@primary;
+@negative:@prime;
 @neutral: lightblue;
 
 // Fix for company select, where users were confused if item is not selected
@@ -22,7 +24,14 @@
    background-color: #f8d7da !important;
    border-color: #f5c6cb !important;
 }
-
+br{
+  display: none;
+}
+p{
+  br{
+    display: block;
+  }
+}
 body{
   background-color: @white;
   font-size:16px;
@@ -41,8 +50,14 @@ a{
   text-decoration: underline;
   .anim2;
   &:hover, &:active, &:focus{
-    color:@primary;
+    color:@prime;
     .anim;
+  }
+}
+a#go_home{
+  text-decoration: none;
+  &:hover, &:active, &:focus{
+    text-decoration: none;
   }
 }
 b, .strong{
@@ -51,8 +66,14 @@ b, .strong{
 p:empty{
   display:none;
 }
+.neg{
+  color:#fff;
+  a{
+    color:#fff;
+  }
+}
 // ratio perfect forth / 1.33
-@ratio: 1.1;
+@ratio: 1.05;
 @elements: h1, h2, h3, h4, h5, h6;
 @iterations: length(@elements); // lehgth of @elements
 
@@ -65,7 +86,7 @@ p:empty{
   }
   .set-font-size(@_i - 1, @_elements, @_fsize * @_ratio, @_ratio);
 }
-.set-font-size(@iterations, @elements, @fsize, @ratio);
+.set-font-size(@iterations, @elements, @f, @ratio);
 
 h1, h2, h3, h5, h5{
   font-weight: 800;
@@ -78,8 +99,8 @@ h2:empty{
   border:0;
 }
 input[type="text"], input[type="password"], input[type="email"], textarea, select, .form-control{
-  background-color:darken(#fff, 5%);
-  border: 3px solid @lightgrey;
+  background-color:darken(#fff, 10%);
+  border: 0;
 }
 input[type="radio"], input[type="checkbox"]{
   margin-right:.3rem;
@@ -92,23 +113,15 @@ input[type="radio"], input[type="checkbox"]{
   background:@lightgrey;
 }
 .form_head{
-  background-color:@primary;
+  background-color:@prime;
   color:#fff;
-  margin-left:@wg;
-  width: 66.66%;
   p{
-    margin:0 1rem 1rem 1rem;
-    padding:0 1rem 1rem 1rem;
+    margin:0 0 @lh 0;
     margin-bottom:0;
   }
   h1, h3{
-    text-align:center;
     margin-bottom:0;
-    padding:@wg;
-  }
-  h1 + h3{
-    margin:0 @wg;
-    padding:0 @wg @wg @wg;
+    padding:@wg 0;
   }
   .lang_switch{
     height:0;
@@ -138,6 +151,22 @@ input[type="radio"], input[type="checkbox"]{
 .application-layout form{
   margin-top: 1em;
 }
+.formality{
+  width:100%;
+  background-color: @prime;
+  margin: .5rem .5rem .5rem .5rem;
+  .form_holder.inner{
+    padding:@f*2;
+  }
+  p, label{
+    a{
+      color:#fff;
+      &:hover, &:active, &:focus{
+        color:#fff;
+      }
+    }
+  }
+}
 form{
   // display: flex;
   // flex-wrap: wrap;
@@ -156,6 +185,14 @@ form{
       .anim;
     }
   }
+  #div_id_username,#div_id_password{
+    width: ~"calc(50% - .7rem)";
+    display: inline-block;
+    vertical-align: text-top;
+  }
+  #div_id_username{
+    margin-right: 1rem;
+  }
 }
 ._subsidiary{
   margin-top:@wg;
@@ -170,16 +207,17 @@ form{
     border-radius:3px;
     ._name{
       display:block;
-      color:@primary;
+      color:@prime;
     }
   }
 }
 .form-inline{
   align-items:flex-start;
 }
-.registration_resend_activation, .register_admin, .password_reset, .login, .registrace, .registration_access, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
-  form{
-    width:66.66%;
+.call{
+  align-items: center;
+  .inner{
+    margin:0 @f*2;
   }
 }
 .modal-body{
@@ -192,11 +230,11 @@ form{
     font-size: 0.9rem;
     margin: @wg 0 0 0;
     display:inline-block;
-    background:@ternary;
-    color:#fff;
+    background:@fifth;
+    color:@octave;
     &:hover{
-      color:#fff;
-      background:spin(@ternary, 10%);
+      color:@octave;
+      background:darken(@fifth, 10%);
     }
   }
 }
@@ -204,14 +242,16 @@ form{
   float:right;
 }
 .remindme,{
-  margin:@wg*0.5 @wg 0 0;
+  margin:@wg*0.5 0 0 0;
   font-size:.9rem;
-  display:inline-block;
+  display:block;
+  float: right;
   opacity:.5;
   text-decoration:none;
+  color:@fifth;
   &:hover{
     opacity:1;
-    color:#000;
+    color:darken(@fifth, 10%);
     text-decoration:none;
   }
 }
@@ -268,8 +308,8 @@ label{
     padding-bottom:0;
   }
 }
-._primary{
-  background-color:@primary;
+._prima{
+  background-color:@prime;
   color:#fff;
   padding:@wg;
 }
@@ -285,8 +325,8 @@ label{
   }
 }
 .login-layout{
+  padding:@f/2;
   .inner{
-    padding:0;
     width:100%;
   }
   .content{
@@ -295,7 +335,7 @@ label{
     min-height: 100vh;
     flex-flow: column;
     .logoutmessage{
-      ._primary;
+      ._prima;
       h2{
         width:100%;
       }
@@ -316,20 +356,18 @@ label{
 	  margin:0 5px 0 0;
   }
   form{
-    background-color:@primary;
-    margin-left: @wg;
-    padding:@wg*3 @wg*3 @wg*2 @wg*3;
+    background-color:@prime;
     color:#fff;
     label{
-      font-size:@fsize*0.9;
+      font-size:@f*0.9;
       width: 100%;
       &.socialLabel{
-        margin:@wg 0 @wg/4 0;
+        margin:0 0 @wg/4 0;
       }
     }
     input[type="submit"]{
       width:100%;
-      background-color:@secondary;
+      background-color:@fourth;
     }
   }
 }
@@ -361,7 +399,7 @@ label{
       font-weight:100;
       padding:@wg/4 @wg;
       &:hover, &[aria-expanded="true"], &.active{
-        color:@primary;
+        color:@prime;
         background-color:transparent;
       }
     }
@@ -380,7 +418,7 @@ label{
       word-wrap: break-word;
       a{
         font-weight:800;
-        color:@primary;
+        color:@prime;
       }
     }
   }
@@ -406,13 +444,13 @@ label{
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size:@fsize*.8;
+        font-size:@f*.8;
         left: 1.2rem;
         margin-top: 0.5rem;
       }
       &.fulfilled{
          &:before{
-          background-color:@primary;
+          background-color:@prime;
         }
       }
       &:nth-child(2){
@@ -475,7 +513,7 @@ label{
   }
   a.active{
     background:transparent;
-    color:@primary;
+    color:@prime;
   }
   .dropdown-item{
     background-color:@quintus;
@@ -500,7 +538,7 @@ label{
     overflow: hidden;
     border-radius:50%;
     padding:4px !important;
-    background: conic-gradient(@primary 0% 35%, #fff 35% 100%);
+    background: conic-gradient(@prime 0% 35%, #fff 35% 100%);
     background-repeat: no-repeat;
     img{
       display:inline-block;
@@ -589,21 +627,24 @@ label{
   width: 100%;
   padding:@wg/2 @wg;
   margin-top: 0;
-  background-color:@lightgrey;
-  color:darken(@grey, 20%);
+  background-color:@octave;
+  color:#fff;
   display:inline-block;
-  font-size:@fsize*.8;
+  font-size:@f*.8;
   .anim2;
   &:hover{
-    color:#000 !important;
+    color:#fff;
     .anim2;
   }
 }
 .invalid-feedback{
   margin:0;
-  background:darken(@primary, 10%);
+  background:darken(@prime, 10%);
   padding:@wg;
   color:#fff;
+  a{
+    color:#fff;
+  }
 }
 table.competition_results_table, .tableheading{
   margin-top:@wg;
@@ -615,24 +656,31 @@ table.competition_results_table, .tableheading{
 }
 
 .col-form-label {
-  margin-left:@wg/2;
   padding-top:0;
 }
 .btn{
   background-color:darken(#fff, 5%);
   text-decoration:none;
   &.btn-default{
-    background-color:lighten(@primary, 10%);
+    background-color:lighten(@prime, 10%);
   }
   &.btn-primary{
-    background-color:@secondary;
+    background-color:@fourth;
   }
-  &.btn-primary, &.btn-default{
+  &.btn-default{
     .anim2;
     &:hover{
       .anim;
-      color:#000;
-      background-color:darken(@primary, 5%);
+      color:#fff;
+      background-color:darken(@prime, 10%);
+    }
+  }
+  &.btn-primary{
+    .anim2;
+    &:hover{
+      .anim;
+      color:#fff;
+      background-color:darken(@fourth, 10%);
     }
   }
   &.btn-secondary {
@@ -646,19 +694,21 @@ table.competition_results_table, .tableheading{
   }
   &.google, &.facebook{
     display:inline-block;
-    background-color:@ternary;
+    background-color:@fourth;
     color:#fff;
     text-decoration:none;
-    width:49%;
+    width: ~"calc(50% - .7rem)";
+    display: inline-block;
+    vertical-align: text-top;
     .anim2;
     &:hover{
       .anim;
       color:#000;
-      background-color:darken(@primary, 5%);
+      background-color:darken(@fourth, 5%);
     }
   }
   &.google{
-    margin-right: 1%;
+    margin-right: 1rem;
   }
   &.facebook{
     margin-left: 1%;
@@ -692,7 +742,7 @@ table.competition_results_table, .tableheading{
   &:hover{
     opacity:1;
     text-decoration:none;
-    border-bottom:1px solid @primary;
+    border-bottom:1px solid @prime;
   }
 }
 .team_members_col{
@@ -829,7 +879,7 @@ div.dataTables_filter input {
     text-decoration:none;
     padding:@wg;
     &.active{
-      background-color:@primary;
+      background-color:@prime;
       color:#fff;
     }
   }
@@ -1158,6 +1208,67 @@ div.dataTables_filter input {
   top: 8px;
   left: 8px;
 }
+
+//  lets keep the pants on
+.x{
+  margin:@f/2;
+  background-color: @prime;
+  height:400px;
+  background-position: center center;
+  background-size: cover;
+  &._0{
+    background-image: url(../img/comeX/t__0.png);
+    flex: ~"0 0 calc(100% - 1rem)";
+    min-height: ~"calc(100% - 1rem)";
+  }
+}
+.register_admin.notAuthetificated{
+  .x._0{
+    background-image: url(../img/handshake.png);
+    background-size: contain;
+    background-position: 0 3rem;
+    background-repeat: no-repeat;
+  }
+}
+
+@iterations: 15;
+.t-loop (@i) when (@i > 0) {
+    ._@{i} {
+        background-image: ~"url(../img/comeX/t__@{i}.png)";
+    }
+    .t-loop(@i - 1);
+}
+.t-loop (@iterations);
+
+// 404
+.wrap_404{
+  width:100vw;
+  max-height: 100vh;
+  overflow: hidden;
+  font-size: 20rem;
+  color:@fourth;
+  .curton{
+    width:40vw;
+    height:110vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  ._404{
+    background-image: ~"url(../img/404_cut.svg)";
+    background-size: cover;
+  }
+  .crouch_home{
+    position:fixed;
+    z-index:100;
+    top:3rem;
+    left:3rem;
+  }
+}
+
+
+
+
 @media all and (max-width: 769px) {
   .col-fifth{
     width: 33%;
@@ -1204,9 +1315,9 @@ div.dataTables_filter input {
   }
   .sidebar{
     ._head{
-      background:@primary;
+      background:@prime;
       .nick{
-        font-size:@fsize;
+        font-size:@f;
         display:inline-block;
         text-align:left;
         a{
@@ -1226,7 +1337,9 @@ div.dataTables_filter input {
 }
 
 .text-muted {
-    color: black !important;
+  &:hover{
+    color: #fff!important;
+  }
 }
 
 // django-autocomplete-light

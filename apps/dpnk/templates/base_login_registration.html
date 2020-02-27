@@ -3,7 +3,6 @@
 {% load i18n %}
 {% block form %}
    {{ block.super }}
-   <br/>
    {% if campaign.campaign_type.slug == 'dpnk' and campaign.get_complementary_school_campaign %}
       <div class="after_form">
          <b>{% trans "Učit se. Učit se. Učit se" %}</b>

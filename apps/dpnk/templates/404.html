@@ -1,27 +1,52 @@
-{% extends "base_login.html" %}
-{% load i18n %}
-
-{% block langchanger %}{% endblock %}
-
-{% block title %} - stránka nenalezena - 404{% endblock %}
-
-{% block caption %}
-<h1>
-{% trans "Kdopak tu loupe perníček, místo aby sportoval." %}
-</h1>
-{% endblock %}
-
-{% block content %}
-<p>
-{% trans "Dejte pozor. Právě bloudíte hlubokým lesem v zóně 404. Vraťte se zpátky na trasu." %}
-</p>
-{% if exception != "Resolver404" %}
-<div class='alert alert-danger'>{{ exception }}</div>
-{% endif %}
-<div class="holder">
-   <a class="btn" href="{% url 'profil' %}">
-     Chci domů
-  </a>
-</div>
-<br/>
-{% endblock %}
+{% load static %}
+<html>
+	<div class="head">
+		<title>
+			 Do Práce! ..stránka nenalezena - 404
+		</title>
+		<style>
+			.wrap_404{
+			  width:100vw;
+			  max-height: 100vh;
+			  overflow: hidden;
+			  font-size: 20rem;
+			  color:@fourth;
+			}
+			.curton{
+				position:absolute;
+				width:40vw;
+				height:110vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			._404{
+				background-image: url({% static "img/404-cut.svg" %});
+				background-size: cover;
+			}
+			.crouch_home{
+				position:fixed;
+				z-index:100;
+				top:3rem;
+				left:3rem;
+			}
+		</style>
+	</div>
+	<body class="wrap_404">
+		<a href="/" class="crouch_home">
+			<img class="dpnk-head-logo" src="{% static "img/dpnk_logo.png" %}" alt="DPNK" />
+		</a>
+		<div class="curton _404"></div>
+		<div class="curton n">
+			4
+		</div>
+		<div class="curton _404"></div>
+		<div class="curton n">
+			0
+		</div>
+		<div class="curton _404"></div>
+		<div class="curton n">
+			4
+		</div>
+	</body>
+</html>
