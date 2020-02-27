@@ -4,12 +4,57 @@
 		<title>
 			 Do Práce! ..stránka nenalezena - 404
 		</title>
+		 <meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		<script>
+			$( document ).ready(function() {
+			  	var ww = $(window).width()
+			  	if(ww > 480){
+				  	var wh = $(window).height()
+				  	var boost = 50;
+				  	var offset = ww/5.5;
+				  	function easy(t){
+				  		return  t*(2-t)
+				  	}
+				  	$('.curton').each(function(index){
+				  		var pos = offset * index;
+				  		console.log(pos);
+				  		$(this).css({
+				  			'left' : pos 
+				  		})
+				  	})
+
+				  	$("body").mousemove(function(e){
+				      var x = e.pageX
+				      var y = e.pageY
+				      $('.curton').each(function(index){
+					  		var l = (offset * index) + ((x - ww) / 50 ) * (index + 1)
+					  		var t = ((y - wh) / 50 ) * (index + 1)
+					  		$(this).css({
+					  			'left' : l ,
+					  			'top' :  t
+					  		})
+					  	})
+				    });
+				  }
+			});
+		</script>
 		<style>
+			html, body{
+				margin:0;
+				padding:0;
+				color:#EA4E4F;
+				font-family: Helvetica, Arial;
+				font-weight: 800;
+			}
+			body *{
+				will-change: transform;
+			}
 			.wrap_404{
 			  width:100vw;
 			  max-height: 100vh;
 			  overflow: hidden;
-			  font-size: 20rem;
+			  font-size: 70vh;
 			  color:@fourth;
 			}
 			.curton{
@@ -19,6 +64,10 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				padding-right: 10vw;
+			}
+			.curton.n b{
+				padding-top: 12vh;
 			}
 			._404{
 				background-image: url({% static "img/404-cut.svg" %});
@@ -30,23 +79,50 @@
 				top:3rem;
 				left:3rem;
 			}
+			.crouch_home img{
+				width:60px;
+			}
+			b{
+				padding-right: 6vw;
+			}
+			.number{
+				display: none;
+			}
+			@media all and (max-width: 480px) {
+				.curton{
+					display: none;
+				}
+				.curton.mobile{
+					display: block;
+					width:100vw;
+				}
+				.number{
+					position: absolute;
+				    z-index: 30;
+				    top: 7rem;
+				    right: 2rem;
+				    font-size: 7rem;
+				    display: block;
+				}
+			}
 		</style>
 	</div>
 	<body class="wrap_404">
+		<div class="curton _404 mobile"></div>
+		<div class="number">404</div>
+		<div class="curton">
+			<b>4</b>
+		</div>
+		<div class="curton _404"></div>
+		<div class="curton n">
+			<b>0</b>
+		</div>
+		<div class="curton _404"></div>
+		<div class="curton">
+			<b>4</b>
+		</div>
 		<a href="/" class="crouch_home">
-			<img class="dpnk-head-logo" src="{% static "img/dpnk_logo.png" %}" alt="DPNK" />
+			<img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
 		</a>
-		<div class="curton _404"></div>
-		<div class="curton n">
-			4
-		</div>
-		<div class="curton _404"></div>
-		<div class="curton n">
-			0
-		</div>
-		<div class="curton _404"></div>
-		<div class="curton n">
-			4
-		</div>
 	</body>
 </html>
