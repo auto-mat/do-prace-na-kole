@@ -675,7 +675,7 @@ class UserAttendanceAdmin(
     RelatedFieldAdmin,
     ImportExportMixin,
     city_admin_mixin_generator('team__subsidiary__city__in'),
-    LeafletGeoAdmin,
+    admin.ModelAdmin,
 ):
     list_display = (
         'avatar_small',
@@ -768,6 +768,10 @@ class UserAttendanceAdmin(
         'created',
         'updated',
         'payment_status',
+    )
+    exclude = (
+        'track',
+        'dont_want_insert_track',
     )
     actions = (
         actions.update_mailing,
