@@ -9,130 +9,132 @@
 {% block body-class %}application-layout{% endblock %}
 
 {% block body %}
-	<div class="container">
+	<div class="container main_container">
 		<div class="row">
 			{# sidebar #}
 			<div class="col-12 col-sm-3 sidebar">
 				{% if user.is_authenticated %}
-					<div class="_head">
-						<a class="logo" {% if campaign %}href="{{campaign.campaign_type.web}}"{%endif%}>
-							 <img src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
-						</a>
+					<div class="head_in_body">
+						<div class="_head">
+							<a class="logo" {% if campaign %}href="{{campaign.campaign_type.web}}"{%endif%}>
+								 <img src="{% static 'img/dpnk_logo.svg' %}" alt="DPNK" />
+							</a>
 
-                  		{% include "lang_switch.html" %}
+	                  		{% include "lang_switch.html" %}
 
-						{% if user.is_authenticated and user_attendance %}
-                     {% url 'profil' as href %}
-                     {% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
-							<h4 class="nick">
-								<a href="{% url 'profil' %}">{{ user_attendance }}</a>
-							</h4>
-							<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
-							    <span></span>
-							    <span></span>
-							    <span></span>
-							</button>
+							{% if user.is_authenticated and user_attendance %}
+		                     	{% url 'profil' as href %}
+		                     	{% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
+								<div class="nick">
+									<a href="{% url 'profil' %}">{{ user_attendance }}</a>
+								</div>
+								<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
+								    <span></span>
+								    <span></span>
+								    <span></span>
+								</button>
+							{% endif %}
+						</div>
+						{# vysledky #}
+					  	{% if request and campaign %}
+					  		<nav class="navbar navbar-expand-sm">
+							  	<ul class="collapse navbar-collapse" id="sideNavbar">
+									{% block main_menu %}
+			                           {% if user_attendance.entered_competition %}
+											{% sitetree_menu from campaign.campaign_type.sitetree_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
+			                           {% endif %}
+									{% endblock %}
+
+			                        {% block second_menu %}
+			                           {% if user_attendance.entered_competition %}
+			                              {{ block.super }}
+			                           {% else %}
+			                           <ul class="steps">
+			                              <li class="{% if registration_phase == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}" style="display: list-item;"> {% trans "Osobní údaje" %}</a></li>
+			                              <li class="{% if registration_phase == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled">
+			                                 <a href="{% url 'zmenit_tym' %}" style="display: list-item;">
+	                                          {% if user_attendance.team_complete %}
+	                                             {% if user_attendance.campaign.competitors_choose_team %}{% trans "Změnit tým" %}{% else %}{% trans "Změnit společnost" %}{% endif %}
+	                                          {% else %}
+	                                             {% if user_attendance.campaign.competitors_choose_team %}{% trans "Tým" %}{% else %}{% trans "Společnost" %}{% endif %}
+	                                          {% endif %}
+			                                 </a>
+			                              </li>
+			                              {% if user_attendance.campaign.has_any_tshirt %}
+			                                 <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled">
+			                                    <a href="{% url 'zmenit_triko' %}" style="display: list-item;">
+	                                             {% if user_attendance.tshirt_complete %}
+	                                                {% trans "Změnit triko" %}
+	                                             {% else %}
+	                                                {% trans "Triko" %}
+	                                             {% endif %}
+			                                    </a>
+			                                 </li>
+			                              {% endif %}
+			                              {% if user_attendance.has_admission_fee %}
+			                                 <li class="
+			                                    {% if not user_attendance.tshirt_complete %}disabled{% endif %}
+			                                    {% if registration_phase == 'typ_platby' %}active{% endif %}
+			                                    {% if not user_attendance.payment_complete %}un{% endif %}fulfilled
+			                                    ">
+			                                    <a href="{% url 'typ_platby' %}"  style="display: list-item;"> {% trans "Platba" %}</a>
+			                                 </li>
+			                              {% endif %}
+			                           </ul>
+			                           {% endif %}
+			                        {% endblock %}
+
+									{% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
+										 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+									{% endif %}
+
+									{% if user.is_staff %}
+										 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+									{% endif %}
+	                {% if user_attendance.helpdesk_iframe_url %}
+			            <li>
+			                <a href="#" onclick="showHelpdesk();" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>
+			            </li>
+									{% endif %}
+									{% if user.is_authenticated and user_attendance %}
+										{% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap4_blank.html" %}
+									{% endif %}
+								</ul>
+							</nav>
 						{% endif %}
+
+					{% endif %}
+					<div class="version">
+						{% inline_staticfile "version.txt" %}
 					</div>
-					{# vysledky #}
-				  	{% if request and campaign %}
-				  		<nav class="navbar navbar-expand-sm">
-						  	<ul class="collapse navbar-collapse" id="sideNavbar">
-								{% block main_menu %}
-		                           {% if user_attendance.entered_competition %}
-										{% sitetree_menu from campaign.campaign_type.sitetree_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
-		                           {% endif %}
-								{% endblock %}
-
-		                        {% block second_menu %}
-		                           {% if user_attendance.entered_competition %}
-		                              {{ block.super }}
-		                           {% else %}
-		                           <ul class="steps">
-		                              <li class="{% if registration_phase == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}" style="display: list-item;"> {% trans "Osobní údaje" %}</a></li>
-		                              <li class="{% if registration_phase == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled">
-		                                 <a href="{% url 'zmenit_tym' %}" style="display: list-item;">
-                                          {% if user_attendance.team_complete %}
-                                             {% if user_attendance.campaign.competitors_choose_team %}{% trans "Změnit tým" %}{% else %}{% trans "Změnit společnost" %}{% endif %}
-                                          {% else %}
-                                             {% if user_attendance.campaign.competitors_choose_team %}{% trans "Tým" %}{% else %}{% trans "Společnost" %}{% endif %}
-                                          {% endif %}
-		                                 </a>
-		                              </li>
-		                              {% if user_attendance.campaign.has_any_tshirt %}
-		                                 <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled">
-		                                    <a href="{% url 'zmenit_triko' %}" style="display: list-item;">
-                                             {% if user_attendance.tshirt_complete %}
-                                                {% trans "Změnit triko" %}
-                                             {% else %}
-                                                {% trans "Triko" %}
-                                             {% endif %}
-		                                    </a>
-		                                 </li>
-		                              {% endif %}
-		                              {% if user_attendance.has_admission_fee %}
-		                                 <li class="
-		                                    {% if not user_attendance.tshirt_complete %}disabled{% endif %}
-		                                    {% if registration_phase == 'typ_platby' %}active{% endif %}
-		                                    {% if not user_attendance.payment_complete %}un{% endif %}fulfilled
-		                                    ">
-		                                    <a href="{% url 'typ_platby' %}"  style="display: list-item;"> {% trans "Platba" %}</a>
-		                                 </li>
-		                              {% endif %}
-		                           </ul>
-		                           {% endif %}
-		                        {% endblock %}
-
-								{% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
-									 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
-								{% endif %}
-
-								{% if user.is_staff %}
-									 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
-								{% endif %}
-                {% if user_attendance.helpdesk_iframe_url %}
-		            <li>
-		                <a href="#" onclick="showHelpdesk();" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>
-		            </li>
-								{% endif %}
-								{% if user.is_authenticated and user_attendance %}
-									{% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap4_blank.html" %}
-								{% endif %}
-							</ul>
-						</nav>
-            <div style="height:20px"></div>
-            <div style="font-size:8px; opacity: 0.1;">
-                {% inline_staticfile "version.txt" %}
-            </div>
-					{% endif %}
-
-				{% endif %}
-			</div>
-
-			{# main content area #}
-			<div class="col-12 col-sm-9 content" id="page-content">
-				<div class="inner">
-					{% block caption %}
-						{% if title %}
-						 	<h2>
-						 		{{ title }}
-						 	</h2>
-						{% endif %}
-					{% endblock %}
-
-					{% if opening_message %}
-					 	{{ opening_message }}
-					{% endif %}
-
-					{% block error %}
-              <div id="inner-content">
-                  {{ block.super }}
-              </div>
-					{% endblock %}
 				</div>
 			</div>
+			{# main content area #}
+			<div class="col-12 col-sm-9 content" id="page-content">
+				<div class="row">
+					<div class="col-12 col-sm-10 offset-sm-1">
+						{% block caption %}
+							{% if title %}
+							 	<h2 class="page_title">
+							 		{{ title }}
+							 	</h2>
+							{% endif %}
+						{% endblock %}
+
+						{% if opening_message %}
+						 	{{ opening_message }}
+						{% endif %}
+
+						{% block error %}
+		              	<div id="inner-content">
+		                  {{ block.super }}
+		              	</div>
+						{% endblock %}
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
 
 <script>
 

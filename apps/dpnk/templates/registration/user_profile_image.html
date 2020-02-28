@@ -14,6 +14,6 @@
 </div>
 <style>
    .avatar_holder#_{{ team_member.id }} {% if link != None %}a{% else %}span{% endif %}{
-      background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, #fff {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
+      background: conic-gradient(#FF6F61 0% {{ team_member.get_frequency_percentage|floatformat:"0" }}%, transparent {{ team_member.get_frequency_percentage|floatformat:"0"  }}% 100%);
    }
 </style>

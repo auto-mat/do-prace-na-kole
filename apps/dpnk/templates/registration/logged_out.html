@@ -15,4 +15,13 @@
 	        </a>
         </div>
 	</div>
+	<script>
+		$( document ).ready(function() {
+			setTimeout(function(){
+			   $([document.documentElement, document.body]).animate({
+	        		scrollTop: $("#formality_holder").offset().top
+	    		}, 800);
+		    }, 400);
+		});
+	</script>
 {% endblock %}

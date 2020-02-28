@@ -89,7 +89,7 @@ p:empty{
 .set-font-size(@iterations, @elements, @f, @ratio);
 
 h1, h2, h3, h5, h5{
-  font-weight: 800;
+  font-weight: 500;
 }
 h2:empty{
   display:none;
@@ -136,7 +136,7 @@ input[type="radio"], input[type="checkbox"]{
   float: right;
   ul{
     padding:0;
-    margin:@wg*.85 @wg 0 0;
+    margin:@f/2 @wg 0 0;
     li{
       display:inline-block;
       border:0;
@@ -165,6 +165,29 @@ input[type="radio"], input[type="checkbox"]{
         color:#fff;
       }
     }
+  }
+}
+@loop_iterations: 17;
+.order-loop (@i) when (@i > 0) {
+    &:nth-child(@{i}) {
+        order: @i;
+    }
+    .order-loop(@i - 1);
+}
+.logout{
+  .comeX .item:nth-child(2) {
+      order: 6;
+  }
+}
+.comeX{
+  .item{
+    .order-loop (@loop_iterations);
+  }
+}
+.main_container{
+  form{
+    margin:@f*2 auto;
+    width: 90%;
   }
 }
 form{
@@ -314,9 +337,10 @@ label{
   padding:@wg;
 }
 .application-layout{
-  background: linear-gradient(to right, rgba(230,230,230,1) 0%,rgba(230,230,230,1) 20%,rgba(255,255,255,1) 20%,rgba(255,255,255,1) 100%,rgba(255,255,255,1) 100%); 
-  .content{
-    margin-top: 4rem;
+  background: #EDEDED;
+  #page-content{
+    padding-top: @f*2;
+    background-color: #fff;
   }
   &.homepage{
     .content{
@@ -372,9 +396,18 @@ label{
   }
 }
 .application-layout{
+  .head_in_body{
+    background-color:@prime;
+  }
+  .version{
+    display: block;
+    font-size: .8rem;
+    color:lighten(@prime, 20%);
+    text-align: right;
+    padding:@f/4 @f;
+  }
   .sidebar{
     font-weight:100;
-    background-color:@quartus;
     min-height:100vh;
     color: #fff;
     line-height: @wg*2.2;
@@ -384,12 +417,12 @@ label{
     ul{
       li{
         list-style:none;
-        border-bottom:1px solid #4f564f;
-        .anim2;
-        &:hover{
-          background-color:darken(@quartus, 2%);
-          .anim;
-        }
+        // .anim2;
+        // &:hover{
+        //   background-color:darken(@prime, 10%);
+        //   .anim;
+        //   color:#fff;
+        // }
       }
     }
     a{
@@ -397,15 +430,17 @@ label{
       text-decoration:none;
       display:block;
       font-weight:100;
-      padding:@wg/4 @wg;
+      padding:@wg/4 @wg*2;
       &:hover, &[aria-expanded="true"], &.active{
-        color:@prime;
+        color:#fff;
+        // background-color:darken(@prime, 10%);
         background-color:transparent;
       }
     }
     .logo{
       width:@wg*2;
       margin:@wg/2 0 0 0;
+      padding-left: @f*1.5;
       display:inline-block;
       img{
         width:@wg*2;
@@ -417,8 +452,7 @@ label{
       margin:@wg 0;
       word-wrap: break-word;
       a{
-        font-weight:800;
-        color:@prime;
+        color:#fff;
       }
     }
   }
@@ -490,7 +524,6 @@ label{
     align-items: normal;
     margin:0;
     padding:0;
-    border-top:1px solid #4f564f;
   }
 }
 // .navbar-nav + .navbar-nav{
@@ -504,8 +537,11 @@ label{
   padding-top:@wg/2;
   padding-left: 0;
   margin: 0;
-  background-color:@quintus;
+  // background:transparent;
+  background-color:darken(@prime, 10%);
+  color:#eee;
   width:100%;
+  border:0;
   &.show{
     display:block;
     position:static !important;
@@ -515,8 +551,15 @@ label{
     background:transparent;
     color:@prime;
   }
-  .dropdown-item{
-    background-color:@quintus;
+  a.dropdown-item{
+    color:#eee;
+    background:transparent;
+    // background-color:darken(@prime, 10%);
+    &:hover{
+      background:transparent;
+      // background-color:darken(@prime, 20%);
+      color:#fff;
+    }
   }
 }
 .aholder{
@@ -526,7 +569,8 @@ label{
   }
 }
 .avatar_holder{
-  padding:0 @wg*4.5;
+  width:105px;
+  margin:0 auto;
   text-align:center;
   a{
     &:hover{
@@ -537,8 +581,8 @@ label{
     display:inline-block;
     overflow: hidden;
     border-radius:50%;
-    padding:4px !important;
-    background: conic-gradient(@prime 0% 35%, #fff 35% 100%);
+    padding:@f/2 !important;
+    background: conic-gradient(@prime 0% 35%, transparent 35% 100%);
     background-repeat: no-repeat;
     img{
       display:inline-block;
@@ -575,8 +619,9 @@ label{
     min-height: 3rem;
   }
   .user_head{
-    background-color:@quintus;
+    background-color:@prime;
     color:#fff;
+    text-align: center;
     padding:@wg*2 0 @wg 0;
     box-shadow: inset 0 0 2px #fff;
   }
@@ -663,6 +708,7 @@ table.competition_results_table, .tableheading{
   text-decoration:none;
   &.btn-default{
     background-color:lighten(@prime, 10%);
+    color:#fff;
   }
   &.btn-primary{
     background-color:@fourth;
@@ -720,17 +766,38 @@ table.competition_results_table, .tableheading{
 }
 .clever_tattle{
   font-weight:300;
-  font-size:1.4rem;
+  font-size:1.2rem;
   line-height:1.85rem;
-  margin:@wg*1.6 @wg @wg*2 @wg;
+  margin:@f*2  auto;
+  width: 90%;
   h1, h2, h3, h4, h5, h6{
-    font-size:1.4rem;
+    font-size:1.2rem;
     font-weight:500;
   }
 }
 .frequencybar{
-  padding:@wg;
-  color:#fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width:250px;
+  height:250px;
+  margin:0 auto;
+  border-radius:50%;
+  font-weight:300;
+  .hollow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    border-radius:50%;
+    width:40%;
+    height: 40%;
+    background-color: #fff;
+  }
+}
+.frequency_title{
+  text-align: right;
+  padding: @f*2 0 @f/2 0;
 }
 .sidenote{
   float:right;
@@ -750,10 +817,8 @@ table.competition_results_table, .tableheading{
   .avatar_holder{
     padding:0 @wg;
   }
-  h6{
-    font-size: .8rem;
-    text-align:center;
-    margin:@wg/2 0 @wg*2 0;
+  .uname{
+    align-items: center;
   }
 }
 .col-fifth{
@@ -1016,6 +1081,7 @@ div.dataTables_filter input {
 
   .active-trip-unfilled {
       background-color: @negative;
+      color:#fff;
   }
   .active-trip-unfilled-vacation{
       background-color: @neutral;
@@ -1142,8 +1208,11 @@ div.dataTables_filter input {
 .anim2 {
   transition: all 0.8s;
 }
+.main_container{
+  margin-top: @f;
+}
 .container{
-  max-width:956px;
+  margin-left: 0;
 }
 .navbar-toggler{
     position: absolute;
@@ -1253,11 +1322,6 @@ div.dataTables_filter input {
   }
 }
 @media all and (min-width: 576px) {
-  .application-layout{
-    .content{
-      margin-top: 4rem;
-    }
-  }
   .navbar-toggler{
     display:none;
   }
@@ -1313,10 +1377,17 @@ div.dataTables_filter input {
 
 .text-muted {
   &:hover{
-    color: #fff!important;
+    color: #fff;
   }
 }
-
+.main_container{
+  .text-muted{
+    background:#c5fdf8;
+    &:hover{
+      color:#000;
+    }
+  }
+}
 // django-autocomplete-light
 .select2-container .select2-selection--single {
     height: 47px !important;

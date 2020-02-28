@@ -7,11 +7,11 @@
 
 {% block body %}
    <div class="container-fluid standalone-login-form">
-      <div class="row">
-         <div class="col-12 col-sm-4 d-flex">
+      <div class="row d-flex comeX">
+         <div class="col-12 col-sm-4 item d-flex">
             <div class="x _0"></div>
          </div>
-         <div class="col-12 col-sm-8 d-flex">
+         <div class="col-12 col-sm-8 d-flex item" id="formality_holder">
             <div class="row formality">
                {% block form %}
                   {% if form %}
@@ -61,7 +61,7 @@
          </div>
          {% with ''|center:15 as range %}
             {% for _ in range %}
-               <div class="col-12 col-sm-4">
+               <div class="col-12 col-sm-4 item">
                   <div class="x _{{ forloop.counter }} {% if forloop.last %}call{% endif %} d-flex ">
                      {% if forloop.last %}
                         <div class="inner neg">
@@ -69,7 +69,7 @@
                               Baví Vás výzva Do práce na kole?
                            </h6>
                            <p>
-                           Rádi byste, aby se udržitelně dopravovalo více a více lidí? Podpořte AutoMat a společně dosáhneme měst, ve kterých je radost žít.".
+                              Rádi byste, aby se udržitelně dopravovalo více a více lidí? Podpořte AutoMat a společně dosáhneme měst, ve kterých je radost žít.".
                            </p>
                            <a href="https://www.nakrmteautomat.cz/do-prace-na-kole" class="btn btn-primary">
                               Podpořte AutoMat

@@ -13,14 +13,10 @@
 				  	var wh = $(window).height()
 				  	var boost = 50;
 				  	var offset = ww/5.5;
-				  	function easy(t){
-				  		return  t*(2-t)
-				  	}
 				  	$('.curton').each(function(index){
 				  		var pos = offset * index;
-				  		console.log(pos);
 				  		$(this).css({
-				  			'left' : pos 
+				  			'left' : pos
 				  		})
 				  	})
 
@@ -95,6 +91,7 @@
 				.curton.mobile{
 					display: block;
 					width:100vw;
+					height:100vh;
 				}
 				.number{
 					position: absolute;
@@ -122,7 +119,7 @@
 			<b>4</b>
 		</div>
 		<a href="/" class="crouch_home">
-			<img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
+			<img class="dpnk-head-logo" src="{% static 'img/dpnk_logo.svg' %}" alt="DPNK" />
 		</a>
 	</body>
 </html>

@@ -4,9 +4,9 @@
 <div id="id-{{ team_member.userprofile.user }}-team-member" class="col-12 col-sm-6 col-md-4 member-item">
    <div class="user_head">
       {% include "./user_profile_image.html" %}
-      <h4>
+      <div class="name">
          {{ team_member.userprofile }}
-      </h4>
+      </div>
       {% if include_approve_buttons %}
       {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.userprofile.user.id %}
       {% endif %}

@@ -4,34 +4,29 @@
 {% load avatar_tags %}
 
 {% block form %}
-{% if not user_attendance.get_asociated_company_admin.exists %}
-<a class="btn btn-sm btn-default password_change" href="{% url 'company_admin_application' %}">
-    {% trans "Chci se stát firemním koordinátorem" %}
-</a>
-<br/><br/>
-{% else %}
-{% trans "Vaším firemním koordinátorem je" %}: {{ user_attendance.company_coordinator_emails }}
-<br/><br/>
-{% endif %}
-<div class="container">
-   <div class="row">
-      <div class="col-md-9">
-         <div class="aholder">
-            <a href="{% url 'avatar_change' %}">
-               {% avatar request.user 150 %}
-            </a>
-            <a href="{% url 'avatar_change' %}">
-               <i class="fa fa-edit"></i>
-            </a>
-            <a href="{% url 'avatar_change' %}">
-               {% trans "Změnit obrázek" %}
-            </a>
-            <a class="btn btn-sm password_change" href="{% url 'password_change' %}">
-               {% trans "Změnit heslo" %}
-            </a>
-         </div>
-         {{ block.super }}
+   {% if not user_attendance.get_asociated_company_admin.exists %}
+      <a class="btn btn-sm btn-default password_change" href="{% url 'company_admin_application' %}">
+          {% trans "Chci se stát firemním koordinátorem" %}
+      </a>
+
+   {% else %}
+      {% trans "Vaším firemním koordinátorem je" %}: {{ user_attendance.company_coordinator_emails }}
+   {% endif %}
+
+      <div class="aholder">
+         <a href="{% url 'avatar_change' %}">
+            {% avatar request.user 150 %}
+         </a>
+         <a href="{% url 'avatar_change' %}">
+            <i class="fa fa-edit"></i>
+         </a>
+         <a href="{% url 'avatar_change' %}">
+            {% trans "Změnit obrázek" %}
+         </a>
+         <a class="btn btn-sm password_change" href="{% url 'password_change' %}">
+            {% trans "Změnit heslo" %}
+         </a>
       </div>
-   </div>
-</div>
+      {{ block.super }}
+
 {% endblock %}
