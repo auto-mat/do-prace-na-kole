@@ -138,6 +138,7 @@ if AWS_ACCESS_KEY_ID:
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'npm.finders.NpmFinder',
 )
 
 
@@ -649,9 +650,9 @@ SMMAPDFS_EMAIL_CONTEXT_HELP = """<br/>
 
 DENORM_MAX_PROCESS_COUNT = os.environ.get('DENORM_MAX_PROCESS_COUNT', 100)
 
-ADMIN_CHARTS_NVD3_JS_PATH = 'bow/nvd3/build/nv.d3.js'
-ADMIN_CHARTS_NVD3_CSS_PATH = 'bow/nvd3/build/nv.d3.css'
-ADMIN_CHARTS_D3_JS_PATH = 'bow/d3/d3.js'
+ADMIN_CHARTS_NVD3_JS_PATH = 'nvd3/build/nv.d3.js'
+ADMIN_CHARTS_NVD3_CSS_PATH = 'nvd3/build/nv.d3.css'
+ADMIN_CHARTS_D3_JS_PATH = 'd3/dist/d3.js'
 
 
 AVATAR_CACHE_ENABLED = False

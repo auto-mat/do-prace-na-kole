@@ -1,7 +1,6 @@
 {
     "files": [
-        "ts/main.ts",
-        "ts/form_functions.ts"
+        "apps/dpnk/static/js/form_functions.ts"
     ],
     "compilerOptions": {
         "noImplicitAny": true,

@@ -19,18 +19,15 @@
 	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 	 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.min.js"%}"></script>
-		<script type="text/javascript" src="{% static "bow/jquery-ui/jquery-ui.min.js"%}"></script>
-		<script type="text/javascript" src="{% static "bow/jquery.are-you-sure/jquery.are-you-sure.js"%}"></script>
+		<script type="text/javascript" src="{% static "jquery/dist/jquery.min.js"%}"></script>
+		<script type="text/javascript" src="{% static "jquery-ui-dist/jquery-ui.min.js"%}"></script>
+		<script type="text/javascript" src="{% static "jquery.are-you-sure/jquery.are-you-sure.js"%}"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 		<script type="text/javascript" src="{% static "bootstrap/bootstrap.min.js"%}"></script>
 		<script type="text/javascript" src="{% static 'scribbler/js/scribbler-min.js' %}"></script>
 		<script type="text/javascript" src="https://cdn.ravenjs.com/3.24.0/raven.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-		<script type="text/javascript" src="{% static "js/bundle.js"%}"></script>
 		<script>
-    var form_functions = require("ts/form_functions.ts");
-
 		Raven.config('http:{% sentry_public_dsn %}').install();
 		{% if user.is_authenticated %}
 			Raven.setUserContext({
@@ -41,12 +38,12 @@
 		</script>
 
 		<link href="{% static 'scribbler/css/scribbler.css' %}" rel="stylesheet">
-		<link href="{% static "bow/lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
+		<link href="{% static "lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
 		<link href="{% static "bootstrap/bootstrap.min.css"%}" rel="stylesheet" media="screen">
-		<link href="{% static "bow/jquery-ui/themes/base/jquery-ui.min.css"%}" rel="stylesheet" media="screen">
 		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700,700i&#038;display=swap&#038;subset=latin-ext' type='text/css' media='all'>
+		<link href="{% static "jquery-ui-dist/jquery-ui.theme.min.css"%}" rel="stylesheet" media="screen">
 		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
-    <link href="{% static "bow/font-awesome/css/all.css"%}" rel="stylesheet">
+    <link href="{% static "font-awesome/css/font-awesome.min.css"%}" rel="stylesheet">
 	{% endblock %}
 
 	{% block extrahead %}
@@ -86,7 +83,7 @@
 
 	});
 </script>
-<script type="text/javascript" src="{% static "bow/lightbox2/dist/js/lightbox.min.js"%}"></script>
+<script type="text/javascript" src="{% static "lightbox2/dist/js/lightbox.min.js"%}"></script>
 </body>
 {% block afterbody %}
 {% endblock %}

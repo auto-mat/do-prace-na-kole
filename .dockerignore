@@ -26,7 +26,4 @@ make_graph.sh
 fabfile.py
 cookies.txt
 docker.env
-apps/dpnk/static/bow/jquery-ui/*
-!apps/dpnk/static/bow/jquery-ui/themes/base
-!apps/dpnk/static/bow/jquery-ui/jquery-ui.min.js
 third_party/

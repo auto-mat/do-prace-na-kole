@@ -5,19 +5,19 @@
 
 
 {% block extrahead %}
-    <link rel='stylesheet' href='{% static "bow/leaflet/dist/leaflet.css"%}'>
-    <link href="{% static "bow/dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet">
-    <script src='{% static "bow/leaflet/dist/leaflet.js"%}'></script>
-    <link rel='stylesheet' href='{% static "bow/leaflet-draw/dist/leaflet.draw.css"%}'>
-    <script src='{% static "bow/leaflet-draw/dist/leaflet.draw.js"%}'></script>
-    <link rel='stylesheet' href='{% static "bow/fullcalendar/dist/core/main.css"%}'> 
-    <script src='{% static "bow/fullcalendar/dist/core/main.js"%}'></script>
-    <script src='{% static "bow/fullcalendar/dist/core/locales-all.js"%}'></script>
-    <script src='{% static "bow/fullcalendar/dist/daygrid/main.js"%}'></script>
-    <script src='{% static "bow/fullcalendar/dist/list/main.js"%}'></script>
-    <script src='{% static "bow/fullcalendar/dist/interaction/main.js"%}'></script>
-    <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
-    <script src="{% static 'bow/leaflet-gpx/gpx.js' %}"></script>
+    <link rel='stylesheet' href='{% static "leaflet/dist/leaflet.css"%}'>
+    <link href="{% static "dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet">
+    <script src='{% static "leaflet/dist/leaflet.js"%}'></script>
+    <link rel='stylesheet' href='{% static "leaflet-draw/dist/leaflet.draw.css"%}'>
+    <script src='{% static "leaflet-draw/dist/leaflet.draw.js"%}'></script>
+    <link rel='stylesheet' href='{% static "@fullcalendar/dist/core/main.css"%}'> 
+    <script src='{% static "@fullcalendar/dist/core/main.js"%}'></script>
+    <script src='{% static "@fullcalendar/dist/core/locales-all.js"%}'></script>
+    <script src='{% static "@fullcalendar/dist/daygrid/main.js"%}'></script>
+    <script src='{% static "@fullcalendar/dist/list/main.js"%}'></script>
+    <script src='{% static "@fullcalendar/dist/interaction/main.js"%}'></script>
+    <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+    <script src="{% static 'leaflet-gpx/gpx.js' %}"></script>
     {{ block.super }}
 {% endblock %}
 {% block caption %}

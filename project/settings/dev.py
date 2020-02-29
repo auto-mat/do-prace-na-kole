@@ -26,7 +26,7 @@ from .base import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJEC
 ADMINS = (
     ('', ''),
 )
-#DEBUG = True
+DEBUG = True
 DEFAULT_FROM_EMAIL = 'Do práce na kole <contact@example.com>'
 SERVER_EMAIL = 'Do práce na kole <contact@example.com>'
 
@@ -127,7 +127,7 @@ def custom_show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'JQUERY_URL': STATIC_URL + "bow/jquery/dist/jquery.js",
+    'JQUERY_URL': STATIC_URL + "jquery/dist/jquery.js",
     'HIDE_DJANGO_SQL': False,
     'TAG': 'div',
 }

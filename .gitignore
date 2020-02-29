@@ -9,7 +9,6 @@ third-party
 *~
 *.orig
 *__pycache__
-/apps/dpnk/static/bow
 /apps/dpnk/static/CACHE
 /sql/
 /dpnk.log*
@@ -53,3 +52,4 @@ pipenv/
 test-dpnk.log
 scripts/ansible-playbooks/get_containers.retry
 scripts/output.sql
+node_modules/
