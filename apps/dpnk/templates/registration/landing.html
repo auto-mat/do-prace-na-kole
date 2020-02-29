@@ -18,7 +18,12 @@
 								{% include "./user_profile_image.html" %}
 							</div>
 							<div class="col-8 d-flex uname">
-								{{ team_member }}
+								<div class="name">
+									{{ team_member }}
+								</div>
+								<div class="gain">
+		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">{{ user_attendance.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ user_attendance.trip_length_total|floatformat:0 }}&nbsp;km</span>
+								</div>
 							</div>
 						</div>
 					{% endfor %}

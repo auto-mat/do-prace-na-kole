@@ -13,15 +13,15 @@
          </div>
          <div class="col-12 col-sm-8 d-flex item" id="formality_holder">
             <div class="row formality">
-               {% block form %}
-                  {% if form %}
-                     <div class="col-12 col-sm-6">
-                        <div class="inner form_holder">
+               {% if form %}
+                  <div class="col-12 col-sm-6">
+                     <div class="inner form_holder">
+                        {% block form %}
                            {% crispy form %}
-                        </div>
+                        {% endblock %}
                      </div>
-                  {% endif %}
-               {% endblock %}
+                  </div>
+               {% endif %}
                <div class="col-12 col-sm-6">
                   <div class="inner">
                      {% block langchanger %}

@@ -14,9 +14,14 @@
 @negative:@prime;
 @neutral: lightblue;
 
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 // Fix for company select, where users were confused if item is not selected
 #hint_id_company.invalid-feedback{
-	color: white !important;
+  color: white !important;
 }
 
 .alert-info, .alert-warning {
@@ -43,7 +48,7 @@ img{
   height:auto;
 }
 #payu_ img {
-	width:auto;
+  width:auto;
 }
 a{
   color:#000;
@@ -375,9 +380,9 @@ label{
   }
 
   .dpnk-head-logo {
-	  height: 50px !important;
-	  width: 50px !important;
-	  margin:0 5px 0 0;
+    height: 50px !important;
+    width: 50px !important;
+    margin:0 5px 0 0;
   }
   form{
     background-color:@prime;
@@ -447,13 +452,17 @@ label{
         height:@wg*2;
       }
     }
-    .nick{
+    .nick, .gain{
       text-align:center;
       margin:@wg 0;
       word-wrap: break-word;
       a{
         color:#fff;
       }
+    }
+    .gain{
+      font-size: @f*1.5;
+      color:lighten(@fourth, 5%);
     }
   }
   .register{
@@ -650,7 +659,7 @@ label{
   padding:@wg;
 }
 .noAsterisks .asteriskField{
-	display: none;
+  display: none;
 }
 .asteriskField{
   color:#911B3D;
@@ -819,6 +828,11 @@ table.competition_results_table, .tableheading{
   }
   .uname{
     align-items: center;
+    flex-flow: column;
+    align-items: baseline;
+    .gain{
+      color: lighten(@fourth, 10%);
+    }
   }
 }
 .col-fifth{
@@ -973,8 +987,8 @@ div.dataTables_filter input {
   .enter_km{
     border-bottom:2px solid @lightgrey;
     border-left:2px solid @lightgrey;
-	  width: 100%;
-	  margin-right: 32px;
+    width: 100%;
+    margin-right: 32px;
     height: 2.5em;
   }
   .enter_km:focus{
@@ -982,10 +996,10 @@ div.dataTables_filter input {
   }
 }
 .cal-km-appendix{
-	background-color: white;
-	position: absolute;
-	right: 3px;
-	width: 30px;
+  background-color: white;
+  position: absolute;
+  right: 3px;
+  width: 30px;
   bottom: 0px;
   text-align: center;
   margin-bottom: 2px;
@@ -1009,13 +1023,13 @@ div.dataTables_filter input {
     text-align:center;
   }
   .cal_event_trip_from>.fc-content {
-		margin-left: -13px;
-		padding-right: 2px;
-	}
+    margin-left: -13px;
+    padding-right: 2px;
+  }
   .cal_event_trip_to>.fc-content {
-		margin-right: -13px;
-		padding-left: 2px;
-	}
+    margin-right: -13px;
+    padding-left: 2px;
+  }
   .fc-event {
     cursor: pointer;
     border:0;
@@ -1055,15 +1069,15 @@ div.dataTables_filter input {
       background-color: #3e3e3e;
       border-radius: 50%;
       font-size: .8rem;
-		text-align: center;
-		height: 24px;
-		width: 24px;
-		line-height: 24px;
-		text-align: center;
-		width: max-content;
-		min-width: 24px;
-		float: none;
-		display: block;
+    text-align: center;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
+    text-align: center;
+    width: max-content;
+    min-width: 24px;
+    float: none;
+    display: block;
     }
   }
   th, td{
@@ -1074,9 +1088,9 @@ div.dataTables_filter input {
     &.cal_event_does_not_count {
         background-color: @neutral;
     }
-	  &.cal_event_not_eco {
-		    background-color: @negative;
-	  }
+    &.cal_event_not_eco {
+        background-color: @negative;
+    }
   }
 
   .active-trip-unfilled {
@@ -1129,16 +1143,16 @@ div.dataTables_filter input {
       &:before, &>.fc-widget-content:before {
         border-left-color: @positive;
       }
-		  &.cal_event_does_not_count {
+      &.cal_event_does_not_count {
           &:before, &>.fc-widget-content:before {
-				      border-left-color: @neutral;
-			    }
+              border-left-color: @neutral;
+          }
       }
       &.cal_event_not_eco {
-			    &:before, &>.fc-widget-content:before {
-				      border-left-color: @negative;
-			    }
-		  }
+          &:before, &>.fc-widget-content:before {
+              border-left-color: @negative;
+          }
+      }
     }
   }
   .cal_event_trip_from {
@@ -1171,16 +1185,16 @@ div.dataTables_filter input {
         &:before, &>.fc-widget-content:before {
             border-right-color: @positive;
         }
-		    &.cal_event_does_not_count {
+        &.cal_event_does_not_count {
             &:before, &>.fc-widget-content:before {
-				        border-right-color: @neutral;
-			      }
+                border-right-color: @neutral;
+            }
         }
         &.cal_event_not_eco {
             &:before, &>.fc-widget-content:before {
-				        border-right-color: @negative;
-			      }
-		    }
+                border-right-color: @negative;
+            }
+        }
     }
   }
   .wp-event {
