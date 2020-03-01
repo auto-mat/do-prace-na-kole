@@ -1,6 +1,7 @@
 {
     "files": [
         "apps/dpnk/static/js/form_functions.ts"
+        "apps/dpnk/static/js/modals.ts"
     ],
     "compilerOptions": {
         "noImplicitAny": true,

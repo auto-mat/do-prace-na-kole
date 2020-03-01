@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "less-watch-compiler less css --run-once",
+    "build:css": "less-watch-compiler apps/dpnk/static/less apps/dpnk/static/css --run-once",
     "build:ts": "tsc",
     "build": "npm run build:css & npm run build:ts",
-    "watch": "tsc --watch & less-watch-compiler less css"
+    "watch": "tsc --watch & less-watch-compiler apps/dpnk/static/less apps/dpnk/static/css"
   },
   "author": "Auto-mat z.s.",
   "license": "GPL-3.0-or-later",
