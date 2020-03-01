@@ -29,8 +29,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView, UpdateView
 
-from notifications.signals import notify
-
 from registration.backends.default.views import RegistrationView as SimpleRegistrationView
 
 from unidecode import unidecode
@@ -106,17 +104,6 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 return _('Přidejte se k týmu')
             else:
                 return _('Vyhledejte svoji společnost')
-
-    def get_next_url(self):
-        if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            notify.send(
-                self.user_attendance,
-                recipient=self.user_attendance.userprofile.user,
-                verb=_("Pozvete další členy do Vášeho týámu"),
-                url=reverse('pozvanky'),
-                icon=static("/img/dpnk_logo.png"),
-            )
-        return super().get_next_url()
 
     def get_initial(self):
         if self.user_attendance.team:
