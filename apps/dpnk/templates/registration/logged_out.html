@@ -8,13 +8,20 @@
 
 {% block content %}
 	<div class="logoutmessage">
-		<div class="inner">
-			{% trans "Naleštěte si pedály, uvidíme se zase zítra na startovní čáře." %}
-			<div class="holder">
-				<a class="btn" href="/login">
-		            {% trans "Přihlásit" %}
-		        </a>
-	        </div>
+		{% trans "Naleštěte si pedály, uvidíme se zase zítra na startovní čáře." %}
+		<div class="holder">
+			<a class="btn btn-primary" href="/login">
+	            {% trans "Přihlásit" %}
+	        </a>
         </div>
 	</div>
+	<script>
+		$( document ).ready(function() {
+			setTimeout(function(){
+			   $([document.documentElement, document.body]).animate({
+	        		scrollTop: $("#formality_holder").offset().top
+	    		}, 800);
+		    }, 400);
+		});
+	</script>
 {% endblock %}

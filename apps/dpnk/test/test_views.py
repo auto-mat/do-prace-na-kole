@@ -162,7 +162,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_team_approval_request(self):
         address = reverse('zaslat_zadost_clenstvi')
         response = self.client.get(address)
-        self.assertContains(response, '<h2>Žádost o ověření členství byla odeslána</h2>', html=True)
+        self.assertContains(response, '<h2 class="page_title">Žádost o ověření členství byla odeslána</h2>', html=True)
         self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test2@test.cz'])
@@ -371,7 +371,7 @@ class PaymentTypeViewTests(TestCase):
         }
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
         self.assertRedirects(response, reverse("discount_coupon"))
-        self.assertContains(response, "<h2>Uplatnit slevový voucher</h2>", html=True)
+        self.assertContains(response, '<h2 class="page_title">Uplatnit slevový voucher</h2>', html=True)
 
     @patch('dpnk.views.registration_and_login.logger')
     def test_dpnk_payment_type_pay_admin(self, mock_logger):
@@ -1270,7 +1270,7 @@ class ViewsTestsLogon(ViewsLogon):
         email = self.user_attendance.userprofile.user.email
         address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
-        self.assertContains(response, "<h2>Pozvánka do týmu</h2>", html=True)
+        self.assertContains(response, '<h2 class="page_title">Pozvánka do týmu</h2>', html=True)
 
         post_data = {
             "question": "on",
@@ -1279,7 +1279,7 @@ class ViewsTestsLogon(ViewsLogon):
             "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "<h2>Vyberte jiný tým</h2>", html=True)
+        self.assertContains(response, '<h2 class="page_title">Vyberte jiný tým</h2>', html=True)
 
     def test_dpnk_team_invitation_post_no_last_team(self):
         token = self.user_attendance.team.invitation_token
@@ -1288,7 +1288,7 @@ class ViewsTestsLogon(ViewsLogon):
         email = self.user_attendance.userprofile.user.email
         address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
-        self.assertContains(response, "<h2>Pozvánka do týmu</h2>", html=True)
+        self.assertContains(response, '<h2 class="page_title">Pozvánka do týmu</h2>', html=True)
 
         post_data = {
             "question": "on",
@@ -1353,7 +1353,6 @@ class ViewsTestsLogon(ViewsLogon):
             'prev': 'Prev',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        print_response(response)
         self.assertRedirects(response, reverse("upravit_profil"))
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
@@ -1810,7 +1809,7 @@ class ChangeTeamViewTests(TestCase):
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
 
-        self.assertRedirects(response, reverse('pozvanky'))
+        self.assertRedirects(response, reverse('upravit_profil'))
         self.user_attendance.refresh_from_db()
         self.assertEqual(self.user_attendance.team, new_team)
         self.assertEqual(self.user_attendance.approved_for_team, "approved")
@@ -2124,12 +2123,12 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "Testing User 1")
         self.assertContains(response, "test@test.cz")
         self.assertContains(response, "platba přes firemního koordinátora")
-        self.assertContains(response, "<div><b>Platba</b>: zaplaceno</div>", html=True)
+        self.assertContains(response, "<div>Platba: <b>zaplaceno</b></div>", html=True)
 
     def test_emission_calculator(self):
         address = reverse('emission_calculator')
         response = self.client.get(address)
-        self.assertContains(response, "<h2>Emisní kalkulačka</h2>", html=True)
+        self.assertContains(response, '<h2 class="page_title">Emisní kalkulačka</h2>', html=True)
         self.assertContains(response, "<tr><td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td></tr>", html=True)
         self.assertContains(response, "<tr><td>CO</td><td>117 280,4&nbsp;mg</td></tr>", html=True)
         self.assertContains(response, "<tr><td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td></tr>", html=True)

@@ -3,16 +3,22 @@
 
 {% block form %}
 <div id="node-payment-result">
-<div class="alert alert-info">
-<p id="payment-result">{{payment_message}}</p>
-</div>
+	<div class="alert alert-info">
+		<p id="payment-result">
+			{{payment_message}}
+		</p>
+	</div>
 
-<p>
-{% if success %}
-<a href="{% url 'profil' %}">{% trans "Pokračujte na stránku jízd" %}</a>
-{% else %}
-<a href="{% url 'typ_platby' %}">{% trans "Zkuste zadat platbu znovu" %}</a>
-{% endif %}
-</p>
+	<p>
+		{% if success %}
+			<a href="{% url 'profil' %}">
+				{% trans "Pokračujte na stránku jízd" %}
+			</a>
+		{% else %}
+			<a href="{% url 'typ_platby' %}">
+				{% trans "Zkuste zadat platbu znovu" %}
+			</a>
+		{% endif %}
+	</p>
 </div>
 {% endblock %}

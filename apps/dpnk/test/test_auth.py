@@ -115,7 +115,7 @@ class TestPasswordForms(ViewsLogonMommy):
         response = self.client.get(address)
         self.assertContains(
             response,
-            '<h3>Obnovení hesla nebylo úspěšné</h3>',
+            '<h4>Obnovení hesla nebylo úspěšné</h4>',
             html=True,
         )
 

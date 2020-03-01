@@ -9,6 +9,8 @@ from django.views.generic import RedirectView
 
 from dpnk.rest import router
 
+import notifications.urls
+
 from rest_framework.documentation import include_docs_urls
 
 admin.autodiscover()
@@ -46,6 +48,7 @@ urlpatterns = [
     url(r'^', include('favicon.urls')),
     url(r'^cs/.*$', OldLanguageRedirectView.as_view()),
     url(r'^register/', include('registration.backends.default.urls')),
+    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 try:

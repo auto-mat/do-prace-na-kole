@@ -6,34 +6,42 @@
 {% load humanize %}
 
 {% block form_intro %}
-<div style="width:80%">
-<a href="{% url "edit_team" %}">Upravit název</a>
-<a href="{% url "edit_team" %}" class="btn primary float-right">
-    <i class="fa fa-pen"></i>
-</a>
-{% if team.lead_photo %}
-<a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
-    <img src="{{team.lead_photo.get_display_url}}"/>
-</a>
-{% else %}
-<div style="background-color: lightgrey">
-<img src="{% static "img/dpnk_logo.svg" %}"/>
-</div>
-{% endif %}
-</div>
+	<div class="team_head">
+		<p>
+			<a href="{% url 'edit_team' %}" class="btn btn-default">
+				{% trans "Upravit název" %}
+			</a>
+			<a href="{% url 'edit_team' %}" class="btn btn-default">
+			    {% trans "Upravit fotku" %}
+		</a>
+		</p>
+		<div class="team_image">
+			{% if team.lead_photo %}
+				<a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
+				    <img src="{{team.lead_photo.get_display_url}}"/>
+				</a>
+			{% else %}
+					<img src="{% static 'img/dpnk_logo.svg' %}"/>
+			{% endif %}
+		</div>
+	</div>
 
-<br/>
-<h4>{% trans "Týmová pravidelnost" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%</h4>
-<a class="btn btn-default" href="{% url "other_team_members_results" %}">{% trans "Výsledky členů týmu" %}</a>
+	<h4>
+		{% trans "Týmová pravidelnost" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
+	</h4>
+	<a class="btn btn-primary" href="{% url "other_team_members_results" %}">
+		{% trans "Výsledky členů týmu" %}
+	</a>
+	<a class="btn btn-primary" href="{% url "pozvanky" %}">
+		{% trans "Pozvat nové členy" %}
+	</a>
 {% endblock %}
 
 {% block form %}
-<form method="post" class="submit-once-form form-inline" id="members-form" action="{% url 'team_members' %}" class="row">
-   {% csrf_token %}
-   {% for team_member in team_members %}
-      {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
-   {% endfor %}
-</form>
-
-<a class="btn btn-default" href="{% url "pozvanky" %}">{% trans "Pozvat nové členy" %}</a>
+	<form method="post" class="submit-once-form form-inline" id="members-form" action="{% url 'team_members' %}" class="row">
+	   {% csrf_token %}
+	   {% for team_member in team_members %}
+	      {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
+	   {% endfor %}
+	</form>
 {% endblock %}

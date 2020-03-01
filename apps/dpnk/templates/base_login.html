@@ -1,51 +1,105 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load dpnk_tags %}
+{% load i18n %}
 {% load crispy_forms_tags %}
 
 {% block body-class %}login-layout{% endblock %}
 
 {% block body %}
-   <div class="container standalone-login-form">
-      <div class="row">
-         <div class="col-12 offset-sm-3 col-sm-9 content">
-            <div class="inner">
-               <div class="form_head">
-                  {% block langchanger %}
-                  {% include "lang_switch.html" %}
-                  {% endblock %}
-                  <h1>
-                     <img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
-                     {% if campaign %}
-                     {{ campaign.display_name|upper }}
-                     {% else %}
-                     {{ request.subdomain|upper }}
-                     {% endif %}
-                  </h1>
-                  {% block caption %}
-                     {% if title %}
-                        <h3>
-                           {{ title }}
-                        </h3>
-                     {% endif %}
-                  {% endblock %}
-                  {% block messages %}
-                     {% include "messages_include.html" %}
-                     {% if message %}
-                        {{ message }}
-                     {% endif %}
-                  {% endblock %}
-                  {% block error %}
-                  {{ block.super }}
-                  {% endblock %}
+   <div class="container-fluid standalone-login-form">
+      <div class="row d-flex comeX">
+         <div class="col-12 col-sm-4 item d-flex">
+            <div class="x _0"></div>
+         </div>
+         <div class="col-12 col-sm-8 d-flex item" id="formality_holder">
+            <div class="row formality">
+               {% if form %}
+                  <div class="col-12 col-sm-6">
+                     <div class="inner form_holder">
+                        {% block form %}
+                           {% crispy form %}
+                        {% endblock %}
+                     </div>
+                  </div>
+               {% endif %}
+               <div class="col-12 col-sm-6">
+                  <div class="inner">
+                     {% block langchanger %}
+                        {% include "lang_switch.html" %}
+                     {% endblock %}
+                     <div class="form_head">
+                        <h1>
+                           <a href="/" id="go_home">
+                              <img class="dpnk-head-logo" src="{% static "img/dpnk_logo.svg" %}" alt="DPNK" />
+                           </a>
+                           {% if campaign %}
+                              {{ campaign.display_name|upper }}
+                           {% else %}
+                              {{ request.subdomain|upper }}
+                           {% endif %}
+                        </h1>
+                        {% block caption %}
+                           {% if title %}
+                              <h3>
+                                 {{ title }}
+                              </h3>
+                           {% endif %}
+                        {% endblock %}
+                        
+                        {% if campaign.campaign_type.slug == 'dpnk' and campaign.get_complementary_school_campaign %}
+                           <div class="after_form">
+                              <b>{% trans "Učit se. Učit se. Učit se" %}</b>
+                           <p>
+                           {% trans "Že už ti to dneska někdo řekl?  Pak vyměň soutěž a jezdi s námi " %}
+                           <a href="{% campaign_base_url campaign.get_complementary_school_campaign %}{{ request.path }}">{{ campaign.get_complementary_school_campaign.display_name }}</a>.
+                           </p>
+                           </div>
+                        {% elif campaign.campaign_type.slug == 'skoly' and campaign.get_complementary_main_campaign %}
+                           <div class="after_form">
+                              <b>{% trans "Tahle soutěž není pro starý" %}</b>
+                           <p>
+                           {% trans "Pokud se učíte pouze jak vycházet s mladou generací, tak prosím vyměňte soutěž a jezděte s námi " %}
+                           <a href="{% campaign_base_url campaign.get_complementary_main_campaign %}{{ request.path }}">{{ campaign.get_complementary_main_campaign.display_name }}</a>.
+                           </p>
+                           </div>
+                        {% endif %}
+
+                        {% block messages %}
+                           {% include "messages_include.html" %}
+                           {% if message %}
+                              {{ message }}
+                           {% endif %}
+                        {% endblock %}
+                        {% block error %}
+                        {{ block.super }}
+                        {% endblock %}
+                     </div>
+                  </div>
                </div>
-               {% block form %}
-                  {% if form %}
-                     {% crispy form %}
-                  {% endif %}
-               {% endblock %}
             </div>
          </div>
+         {% with ''|center:15 as range %}
+            {% for _ in range %}
+               <div class="col-12 col-sm-4 item">
+                  <div class="x _{{ forloop.counter }} {% if forloop.last %}call{% endif %} d-flex ">
+                     {% if forloop.last %}
+                        <div class="inner neg">
+                           <h6>
+                              Baví Vás výzva Do práce na kole?
+                           </h6>
+                           <p>
+                              Rádi byste, aby se udržitelně dopravovalo více a více lidí? Podpořte AutoMat a společně dosáhneme měst, ve kterých je radost žít.".
+                           </p>
+                           <a href="https://www.nakrmteautomat.cz/do-prace-na-kole" class="btn btn-primary">
+                              Podpořte AutoMat
+                           </a>
+                        </div>
+                     {% endif %}
+                  </div>
+               </div>
+            {% endfor %}
+         {% endwith %}
       </div>
    </div>
 {% endblock %}

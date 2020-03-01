@@ -329,8 +329,11 @@ class Campaign(Pricable, models.Model):
 
     def possible_vacation_days(self):
         """ Return days, that can be added as vacation """
-        competition_phase = self.competition_phase()
-        return [d for d in util.daterange(competition_phase.date_from, competition_phase.date_to) if self.vacation_day_active(d)]
+        @cached(60)
+        def get_days(pk):
+            competition_phase = self.competition_phase()
+            return [d for d in util.daterange(competition_phase.date_from, competition_phase.date_to) if self.vacation_day_active(d)]
+        return get_days(self.pk)
 
     def user_attendances_for_delivery(self):
         from t_shirt_delivery.models import PackageTransaction

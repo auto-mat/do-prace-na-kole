@@ -4,14 +4,14 @@
 
 {% block messages %}
 {% trans "Nejprve nám řekněte, odkud pocházíte." %}
-<br/>
+
 {% trans "Zadejte prosím společnost, " %}
 {% if campaign.competitors_choose_team %}
    {% trans "v jaké Váš tým pracuje." %}
 {% else %}
    {% trans "v jaké pracujete." %}
 {% endif %}
-<br/>
+
 {{ block.super }}
 {% endblock %}
 
