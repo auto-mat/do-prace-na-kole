@@ -325,7 +325,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         user_attendance = super().save(*args, **kwargs)
         if user_attendance.approved_for_team != 'approved':
             email.approval_request_mail(user_attendance)
-        if user_attendance.approved_for_team == 'approved' and user_attendance.campaign.competitors_choose_team() and not user_attendance.team.is_full():
+        elif user_attendance.campaign.competitors_choose_team() and not user_attendance.team.is_full():
             notify.send(
                 user_attendance,
                 recipient=user_attendance.userprofile.user,
