@@ -133,8 +133,7 @@ input[type="radio"], input[type="checkbox"]{
   }
 }
 .after_form{
-  width: 66.66%;
-  margin-left:@wg;
+  margin:@f 0;
 }
 .lang_switch{
   font-size:@wg*0.9;
@@ -459,6 +458,38 @@ label{
         height:@wg*2;
       }
     }
+    .nick{
+      position: relative;
+      .name{
+        padding:0;
+        display: inline-block;
+      }
+      .live_badge{
+        display: inline-flex;
+        justify-content: center;
+        align-content: center;
+        position: absolute;
+        margin: -.5rem 0 0 0.2rem;
+        width:20px;
+        max-height: 20px;
+        background: @fourth;
+        line-height: 1.4rem;
+        font-size: .9rem;
+        padding:0;
+        border-radius: 50%;
+        font-weight: 400;
+        &.status_0{
+          color:@prime;
+          background: @fifth;
+          opacity:.6;
+          .anim;
+          &:hover{
+            .anim;
+            opacity:1;
+          }
+        }
+      }
+    }
     .nick, .gain{
       text-align:center;
       margin:@wg 0;
@@ -526,6 +557,7 @@ label{
     }
   }
 }
+
 .navbar{
   padding:0;
 }
@@ -652,8 +684,13 @@ label{
   .userdata{
     padding:@wg;
     font-size:.8rem;
+    line-height: .9rem;
     div{
       margin-bottom:@wg/2;
+    }
+    .name{
+      line-height: 1.1rem;
+      padding-bottom: @f/2;
     }
   }
   .actions{
@@ -669,6 +706,7 @@ label{
     }
   }
 }
+
 .inner{
   padding:@wg;
 }
@@ -1347,15 +1385,108 @@ div.dataTables_filter input {
 .t-loop (@iterations);
 
 
+.text-muted {
+  &:hover{
+    color: #fff !important;
+  }
+}
+.main_container{
+  .text-muted{
+    background:#c5fdf8;
+    &:hover{
+      color:#000;
+    }
+  }
+}
+// django-autocomplete-light
+.select2-container .select2-selection--single {
+    height: 47px !important;
+}
+
+span.select2-dropdown {
+    width: 500px !important;
+}
+
+span.select2.select2-container {
+    flex: 1 1 auto;
+    width: 1% !important;
+    min-width: auto;
+    border: 1px !important;
+    margin: 1px !important;
+}
+
+.select2-container--default .select2-selection--single {
+    border-radius: 0px !important;
+    border: 2px solid @grey;
+    border-bottom-width: 0px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 42px !important;
+}
+
+.notification-icon {
+    width: 50px;
+}
+
+.notification-timestamp {
+    float: right;
+}
+
+.notification-inbox {
+    float: right;
+}
+.live_notify_list{
+  list-style: none;
+  padding:0;
+  a{
+    text-decoration: none;
+    color:@fourth;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: @f;
+    img{
+      border-radius: 50%;
+      border:1px solid @fourth;
+      background: @fourth;
+    }
+  }
+  .notification-list-item-read{
+    a{
+      color:@prime;
+      img{
+        border:1px solid @prime;
+        background: @prime;
+      }
+    }
+  }
+}
 
 
 
-@media all and (max-width: 769px) {
+@media all and (max-width: 1024px) {
   .col-fifth{
     width: 33%;
   }
   .container{
     width:100%;
+    max-width: 100%;
+  }
+  .main_container{
+    margin:0;
+  }
+}
+
+@media all and (max-width: 769px) {
+  .col-fifth{
+    width: 33%;
+  }
+}
+@media all and (max-width: 769px) and (min-width: 576px) {
+  .team_members_col .uname {
+    align-items: center;
   }
 }
 @media all and (min-width: 576px) {
@@ -1373,9 +1504,7 @@ div.dataTables_filter input {
   .member-item{
     margin-bottom: @f;
   }
-  .main_container{
-    margin:0;
-  }
+
   .navbar-toggler{
     top: 5.65rem;
     right: 0rem;
@@ -1450,60 +1579,4 @@ div.dataTables_filter input {
       }
     }
   }
-}
-
-.text-muted {
-  &:hover{
-    color: #fff !important;
-  }
-}
-.main_container{
-  .text-muted{
-    background:#c5fdf8;
-    &:hover{
-      color:#000;
-    }
-  }
-}
-// django-autocomplete-light
-.select2-container .select2-selection--single {
-    height: 47px !important;
-}
-
-span.select2-dropdown {
-    width: 500px !important;
-}
-
-span.select2.select2-container {
-    flex: 1 1 auto;
-    width: 1% !important;
-    min-width: auto;
-    border: 1px !important;
-    margin: 1px !important;
-}
-
-.select2-container--default .select2-selection--single {
-    border-radius: 0px !important;
-    border: 2px solid @grey;
-    border-bottom-width: 0px;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 42px !important;
-}
-
-.notification-list-item-unread {
-    background: @fourth;
-}
-
-.notification-icon {
-    width: 50px;
-}
-
-.notification-timestamp {
-    float: right;
-}
-
-.notification-inbox {
-    float: right;
 }

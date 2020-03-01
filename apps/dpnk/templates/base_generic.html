@@ -13,7 +13,7 @@
 	<div class="container main_container">
 		<div class="row">
 			{# sidebar #}
-			<div class="col-12 col-sm-3 sidebar">
+			<div class="col-12 col-sm-4 col-md-3 sidebar">
 				{% if user.is_authenticated %}
 					<div class="head_in_body">
 						<div class="_head">
@@ -30,11 +30,11 @@
 		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">{{ user_attendance.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ user_attendance.trip_length_total|floatformat:0 }}</span>
 								</div>
 								<div class="nick">
-									<a href="{% url 'profil' %}">{{ user_attendance }}</a>
+									{% live_notify_badge as badge %}
+									<a href="{% url 'profil' %}" class="name">{{ user_attendance }}</a><a href="#" onclick="showNotifications();" class="live_badge status_{{ badge|striptags }} live_notify_badge">
+		                    			{% live_notify_badge %}
+		                    		</a>
 								</div>
-                <h4 class="notification-inbox">
-                    <a href="#" onclick="showNotifications();" ><i class="fa fa-envelope"></i> {% live_notify_badge %}</a>
-                </h4>
 								<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
 								    <span></span>
 								    <span></span>
@@ -116,7 +116,7 @@
 				</div>
 			</div>
 			{# main content area #}
-			<div class="col-12 col-sm-9 content" id="page-content">
+			<div class="col-12 col-sm-8 col-md-9 content" id="page-content">
 				<div class="row">
 					<div class="col-12 col-sm-10 offset-sm-1">
 						{% block caption %}
