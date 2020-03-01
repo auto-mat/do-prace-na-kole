@@ -13,7 +13,7 @@ jobs:
       - run: npm build
       - run: pip install 'Django==2.2.6' "coveralls==1.5.1" django_coverage_plugin
       - run: django-admin compilemessages
-      - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM} $(git rev-parse --short HEAD" > apps/dpnk/static/version.txt
+      - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM} $(git rev-parse --short HEAD)" > apps/dpnk/static/version.txt
       - setup_remote_docker:
           reusable: true
       - run:
