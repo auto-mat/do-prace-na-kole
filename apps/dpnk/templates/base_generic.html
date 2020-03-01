@@ -26,7 +26,7 @@
 		                     	{% url 'profil' as href %}
 		                     	{% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
 		                     	<div class="gain">
-		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">{{ user_attendance.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ user_attendance.trip_length_total|floatformat:0 }}&nbsp;km</span>
+		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">{{ user_attendance.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ user_attendance.trip_length_total|floatformat:0 }}</span>
 								</div>
 								<div class="nick">
 									<a href="{% url 'profil' %}">{{ user_attendance }}</a>
@@ -129,9 +129,9 @@
 						{% endif %}
 
 						{% block error %}
-		              	<div id="inner-content">
-		                  {{ block.super }}
-		              	</div>
+			              	<div id="inner-content">
+			                  {{ block.super }}
+			              	</div>
 						{% endblock %}
 					</div>
 				</div>
@@ -139,22 +139,22 @@
 		</div>
 	</div>
 
-<script>
-
 {% if user_attendance.helpdesk_iframe_url %}
-function closeHelpdesk() {
-     $('#helpdeskwindow').hide();
-     $('#helpdeskiframe').attr('src','');
-}
+	<script>
+		function closeHelpdesk() {
+		     $('#helpdeskwindow').hide();
+		     $('#helpdeskiframe').attr('src','');
+		}
 
-function showHelpdesk() {
-     $('#helpdeskiframe').attr('src','{{user_attendance.helpdesk_iframe_url}}');
-     $('#helpdeskwindow').show();
-};
-
+		function showHelpdesk() {
+		     $('#helpdeskiframe').attr('src','{{user_attendance.helpdesk_iframe_url}}');
+		     $('#helpdeskwindow').show();
+		};
+		$(function () {
+		  $('[data-toggle="tooltip"]').tooltip()
+		})
+	</script>
 {% endif %}
-
-</script>
 
 <div id="helpdeskwindow" class="modal" role="dialog">
     <div class="modal-dialog">
