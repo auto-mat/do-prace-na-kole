@@ -27,7 +27,7 @@
 		                     	{% url 'profil' as href %}
 		                     	{% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
 		                     	<div class="gain">
-		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">{{ user_attendance.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ user_attendance.trip_length_total|floatformat:0 }}&nbsp;km</span>
+		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">{{ user_attendance.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ user_attendance.trip_length_total|floatformat:0 }}</span>
 								</div>
 								<div class="nick">
 									<a href="{% url 'profil' %}">{{ user_attendance }}</a>
@@ -132,9 +132,9 @@
 						{% endif %}
 
 						{% block error %}
-		              	<div id="inner-content">
-		                  {{ block.super }}
-		              	</div>
+			              	<div id="inner-content">
+			                  {{ block.super }}
+			              	</div>
 						{% endblock %}
 					</div>
 				</div>
@@ -143,4 +143,9 @@
 	</div>
 
 {% include "base_modal_windows.html" %}
+<script>
+		$(function () {
+		  $('[data-toggle="tooltip"]').tooltip()
+		})
+</script>
 {% endblock %}
