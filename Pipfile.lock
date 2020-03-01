@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8e84da75e8cba1fcd72d6600f786169d74d2953c104c6c64371dec7c14af44d9"
+            "sha256": "1054aae3aaaace4faa0d9471790fd636fafcc5e5081db050aea0df2157d2b9f3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -555,12 +555,9 @@
             "version": "==3.2.4"
         },
         "django-notifications-hq": {
-            "hashes": [
-                "sha256:debeb71b7076b08487b40bf07664d1cc43b9977c4480bbc969b30236dda7a461",
-                "sha256:dfc6f8bd4034ceae91143bc3802ddfb6e276eaec90e63dd23e2584c052561576"
-            ],
-            "index": "pypi",
-            "version": "==1.6.0"
+            "editable": true,
+            "git": "https://github.com/auto-mat/django-notifications.git",
+            "ref": "e3398d1bbdf05435f3c01a10a431178a040df8f8"
         },
         "django-npm": {
             "hashes": [
