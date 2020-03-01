@@ -329,7 +329,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             notify.send(
                 user_attendance,
                 recipient=user_attendance.userprofile.user,
-                verb=_("Pozvete další členy do Vášeho týmu"),
+                verb=_("Pozvěte další členy do Vášeho týmu"),
                 url=reverse('pozvanky'),
                 icon=static("/img/dpnk_logo.png"),
             )
