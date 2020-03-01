@@ -8,10 +8,10 @@
 {% block form_intro %}
 	<div class="team_head">
 		<p>
-			<a href="{% url 'edit_team' %}" class="btn btn-primary">
+			<a href="{% url 'edit_team' %}" class="btn btn-default">
 				{% trans "Upravit název" %}
 			</a>
-			<a href="{% url 'edit_team' %}" class="btn btn-primary">
+			<a href="{% url 'edit_team' %}" class="btn btn-default">
 			    {% trans "Upravit fotku" %}
 		</a>
 		</p>
@@ -29,8 +29,11 @@
 	<h4>
 		{% trans "Týmová pravidelnost" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
 	</h4>
-	<a class="btn btn-default" href="{% url "other_team_members_results" %}">
+	<a class="btn btn-primary" href="{% url "other_team_members_results" %}">
 		{% trans "Výsledky členů týmu" %}
+	</a>
+	<a class="btn btn-primary" href="{% url "pozvanky" %}">
+		{% trans "Pozvat nové členy" %}
 	</a>
 {% endblock %}
 
@@ -41,9 +44,4 @@
 	      {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
 	   {% endfor %}
 	</form>
-<p>
-	<a class="btn btn-default" href="{% url "pozvanky" %}">
-		{% trans "Pozvat nové členy" %}
-	</a>
-</p>
 {% endblock %}
