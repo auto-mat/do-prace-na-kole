@@ -22,7 +22,7 @@ services:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: python manage.py livereload --host 0.0.0.0
+  entrypoint: pipenv run python manage.py livereload --host 0.0.0.0
   ports:
    - "35729:35729"
   links:
@@ -56,7 +56,7 @@ services:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: celery beat -A project.celery -ldebug
+  entrypoint: pipenv run celery beat -A project.celery -ldebug
   links:
    - postgres
    - redis

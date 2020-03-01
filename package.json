@@ -23,6 +23,9 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.12.1",
     "@fullcalendar/core": "~4.4.0",
+    "@fullcalendar/daygrid": "^4.4.0",
+    "@fullcalendar/interaction": "^4.4.0",
+    "@fullcalendar/list": "^4.4.0",
     "bootstrap": "~3.3.2",
     "bootstrap-social": "~5.1.1",
     "d3": "^5.15.0",

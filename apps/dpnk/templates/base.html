@@ -27,6 +27,7 @@
 		<script type="text/javascript" src="{% static 'scribbler/js/scribbler-min.js' %}"></script>
 		<script type="text/javascript" src="https://cdn.ravenjs.com/3.24.0/raven.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}" charset="utf-8"> </script>
 		<script>
 		Raven.config('http:{% sentry_public_dsn %}').install();
 		{% if user.is_authenticated %}
@@ -43,7 +44,7 @@
 		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700,700i&#038;display=swap&#038;subset=latin-ext' type='text/css' media='all'>
 		<link href="{% static "jquery-ui-dist/jquery-ui.theme.min.css"%}" rel="stylesheet" media="screen">
 		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
-    <link href="{% static "font-awesome/css/font-awesome.min.css"%}" rel="stylesheet">
+    <link href="{% static "@fortawesome/fontawesome-free/css/fontawesome.min.css"%}" rel="stylesheet">
 	{% endblock %}
 
 	{% block extrahead %}
