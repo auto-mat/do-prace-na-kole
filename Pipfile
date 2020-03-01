@@ -121,6 +121,7 @@ django-admin-charts = "*"
 django-inline-static = "*"
 django-admin-tools-stats = "*"
 django-notifications-hq = "*"
+django-npm = "*"
 
 [requires]
 python_version = "3.6"
