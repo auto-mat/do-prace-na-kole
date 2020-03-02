@@ -18,7 +18,6 @@ function showNotifications() {
 };
 
 function dpnk_fill_notification_list(data) {
-    console.log(data);
     var menus = document.getElementsByClassName(notify_menu_class);
     if (menus) {
         var messages = data.all_list.map(function (item) {
