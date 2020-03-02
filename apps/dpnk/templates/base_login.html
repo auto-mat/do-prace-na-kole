@@ -46,24 +46,9 @@
                               </h3>
                            {% endif %}
                         {% endblock %}
-                        
-                        {% if campaign.campaign_type.slug == 'dpnk' and campaign.get_complementary_school_campaign %}
-                           <div class="after_form">
-                              <b>{% trans "Učit se. Učit se. Učit se" %}</b>
-                           <p>
-                           {% trans "Že už ti to dneska někdo řekl?  Pak vyměň soutěž a jezdi s námi " %}
-                           <a href="{% campaign_base_url campaign.get_complementary_school_campaign %}{{ request.path }}">{{ campaign.get_complementary_school_campaign.display_name }}</a>.
-                           </p>
-                           </div>
-                        {% elif campaign.campaign_type.slug == 'skoly' and campaign.get_complementary_main_campaign %}
-                           <div class="after_form">
-                              <b>{% trans "Tahle soutěž není pro starý" %}</b>
-                           <p>
-                           {% trans "Pokud se učíte pouze jak vycházet s mladou generací, tak prosím vyměňte soutěž a jezděte s námi " %}
-                           <a href="{% campaign_base_url campaign.get_complementary_main_campaign %}{{ request.path }}">{{ campaign.get_complementary_main_campaign.display_name }}</a>.
-                           </p>
-                           </div>
-                        {% endif %}
+
+                        {% block side_slogan %}
+                        {% endblock %}
 
                         {% block messages %}
                            {% include "messages_include.html" %}
