@@ -331,7 +331,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                 recipient=user_attendance.userprofile.user,
                 verb=_("Pozvěte další členy do Vášeho týmu"),
                 url=reverse('pozvanky'),
-                icon=static("/img/dpnk_logo.png"),
+                icon=static("/img/dpnk_logo.svg"),
             )
         return user_attendance
 
