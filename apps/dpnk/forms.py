@@ -603,14 +603,14 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             (
                 'pay',
                 format_html(
-                    '<span id="payment_amount">{} Kč</span><br/>{}',
+                    '<span id="payment_amount">{} Kč</span><p class="price-descriptor">{}</p>',
                     round(self.user_attendance.admission_fee()),
                     _("Zaplatím běžné startovné."),
                 ),
             ), (
                 'pay_beneficiary',
                 format_html(
-                    '{} Kč<br/>{}',
+                    '{} Kč<p class="price-descriptor">{}</p>',
                     round(self.user_attendance.beneficiary_admission_fee()),
                     _("Podpořím soutěž benefičním startovným %s Kč.") % (
                         round(self.user_attendance.beneficiary_admission_fee() - self.user_attendance.admission_fee())
@@ -619,7 +619,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             ), (
                 'company',
                 format_html(
-                    '0 Kč<br/>{}',
+                    '0 Kč<p class="price-descriptor">{}</p>',
                     _("Startovné mi platí zaměstnavatel."),
                 ),
             ),
@@ -629,7 +629,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 (
                     'member_wannabe',
                     format_html(
-                        '0 Kč<br/>{}',
+                        '0 Kč<p class="price-descriptor">{}</p>',
                         _("Chci se stát členem Klubu přátel organizace Auto*Mat a podpořit rozvoj udržitelné mobility. "),
                     ),
                 ),
@@ -639,7 +639,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             (
                 'coupon',
                 format_html(
-                    '? Kč<br/>{}',
+                    '? Kč<p class="price-descriptor">{}</p>',
                     _("Chci uplatnit voucher."),
                 ),
             ),
