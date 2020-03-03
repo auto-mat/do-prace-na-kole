@@ -170,7 +170,6 @@ class RestTests(TestCase):
                 'file': gpxfile,
             }
             response = self.client.post(address, post_data)
-            print_response(response)
             self.assertContains(
                 response,
                 '<title>Do Práce! ..stránka nenalezena - 404</title>',
