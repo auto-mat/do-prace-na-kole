@@ -170,9 +170,10 @@ class RestTests(TestCase):
                 'file': gpxfile,
             }
             response = self.client.post(address, post_data)
+            print_response(response)
             self.assertContains(
                 response,
-                '<div class="alert alert-danger">Kampaň s identifikátorem testing-campaign-unknown neexistuje. Zadejte prosím správnou adresu.</div>',
+                '<title>Do Práce! ..stránka nenalezena - 404</title>',
                 html=True,
                 status_code=404,
             )
