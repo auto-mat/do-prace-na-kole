@@ -36,6 +36,9 @@ function dpnk_fill_notification_list(data) {
 
         for (var i = 0; i < menus.length; i++){
             menus[i].innerHTML = messages;
+            if(data.all_list.length == 0) {
+                menus[i].innerHTML = "<b>0</b> <i class='fas fa-times'></i> <i class='fas fa-envelope'></i>";
+            }
         }
     }
 }
