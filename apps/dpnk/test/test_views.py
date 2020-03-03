@@ -430,6 +430,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-tymu'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
+        print_response(response)
         self.assertContains(
             response,
             '<th scope="col" id="result_divident-9">Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů</th>',

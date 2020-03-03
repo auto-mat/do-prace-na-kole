@@ -2,6 +2,7 @@
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
 import logging
+import traceback
 from datetime import datetime
 
 from celery import shared_task
@@ -42,12 +43,21 @@ def sync(strava_account_id, manual_sync=True):
     Sync with a specific strava account.
     """
     strava_account = StravaAccount.objects.get(id=strava_account_id)
+    sclient = stravalib.Client()
+    stats = {
+        "new_trips": 0,
+        "synced_trips": 0,
+        "synced_activities": 0,
+        "activities": [],
+        # TODO
+        "client": sclient,
+    }
     try:
         if manual_sync:
             strava_account.user_sync_count += 1
         else:
             strava_account.user_sync_count = 0
-        sclient = stravalib.Client()
+        strava_account.errors = ""
         if strava_account.refresh_token:
             token_response = sclient.refresh_access_token(
                 client_id=settings.STRAVA_CLIENT_ID,
@@ -68,18 +78,15 @@ def sync(strava_account_id, manual_sync=True):
             before=datetime.combine(latest_end_date, datetime.max.time()),
         )
         strava_account.last_sync_time = datetime.now()
-        stats = {
-            "new_trips": 0,
-            "synced_trips": 0,
-            "synced_activities": 0,
-            "activities": [],
-        }
         for activity in activities:
-            sync_activity(activity, hashtag_table, strava_account, sclient, stats)
-        strava_account.errors = ""
-    except Exception as e:
-        strava_account.errors = str(e)
-        logger.error(e)
+            try:
+                sync_activity(activity, hashtag_table, strava_account, sclient, stats)
+            except Exception as e:
+                strava_account.errors += "Error syncing activity {activity} \n{e}\n\n".format(activity=activity.name, e=str(e))
+    except Exception:
+        tb = traceback.format_exc()
+        strava_account.errors += tb
+        logger.error(tb)
     strava_account.save()
     return stats
 
@@ -98,14 +105,17 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         return
     trip = user_attendance.user_trips.filter(direction=direction, date=date)
     if (not trip.exists()) or (not trip.get().source_id):
-        stats["new_trips"] += 1
         if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
             activity = sclient.get_activity(activity.id)
+        try:
+            commute_mode = get_commute_mode(activity.type).id
+        except KeyError as e:
+            raise Exception("Unknown activity type " + str(e))
         form_data = {
             'date': date,
             'direction': direction,
             'user_attendance': user_attendance.id,
-            'commute_mode': get_commute_mode(activity.type).id,
+            'commute_mode': commute_mode,
             'distance': round(stravalib.unithelper.kilometers(activity.distance).get_num(), 2),
             'duration': activity.elapsed_time.total_seconds(),
             'source_application': 'strava',
@@ -114,8 +124,11 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         }
         if activity.map.summary_polyline:
             form_data['track'] = get_track(activity.map.summary_polyline)
-        if activity.map.polyline:
-            form_data['track'] = get_track(activity.map.polyline)
+        try:
+            if activity.map.polyline:
+                form_data['track'] = get_track(activity.map.polyline)
+        except AttributeError:
+            pass
 
         try:
             trip_form = FullTripForm(data=form_data, instance=trip.get())
@@ -124,9 +137,11 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
 
         if trip_form.is_valid():
             trip_form.save()
+            stats["new_trips"] += 1
         else:
             logger.error("Form error:")
             logger.error(trip_form.errors)
+            raise Exception(trip_form.errors)
 
 
 @shared_task(bind=False)

@@ -4,8 +4,18 @@
 {% load i18n %}
 
 {% block content %}
+<style>
+ .zoomed {
+     font-size: 40px;
+     position: absolute;
+     top: 40vh;
+ }
+ #id_dispatch_id, #submit-id-submit {
+     font-size: 40px !important;
+ }
+</style>
+<div class="zoomed">
 {% crispy form %}
-
 <br/>
    {% if package_message %}
       <div>
@@ -21,4 +31,5 @@
          </strong>
       </div>
    {% endif %}
+</div>
 {% endblock %}

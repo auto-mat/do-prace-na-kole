@@ -23,7 +23,6 @@ from itertools import cycle
 from PyPDF2 import PdfFileReader
 
 from django.core.files.temp import NamedTemporaryFile
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
 from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
@@ -40,13 +39,13 @@ class TestCreateCustomerSheets(TestCase):
             "TShirtSize",
             name="Testing t-shirt size",
             campaign=testing_campaign,
-            t_shirt_preview=SimpleUploadedFile(
-                "t_shirt_preview.svg",
-                b'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">'
-                b'<text>Example SVG text 1</text>'
-                b'<rect x="0" y="0" width="600" height="600"/>'
-                b'</svg>',
-            ),
+            # t_shirt_preview=SimpleUploadedFile(
+            #    "t_shirt_preview.svg",
+            #    b'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">'
+            #    b'<text>Example SVG text 1</text>'
+            #    b'<rect x="0" y="0" width="600" height="600"/>'
+            #    b'</svg>',
+            #    ),
             ship=True,
         )
         mommy.make(
@@ -114,4 +113,5 @@ class TestCreateCustomerSheets(TestCase):
             self.assertTrue("Foo team with max name lenth" in pdf_string)
             self.assertTrue("123456794" in pdf_string)
             self.assertTrue("Testing t-shirt size" in pdf_string)
-            self.assertTrue("Example SVG text 1" in pdf_string)
+            # Previews on customer sheets have been disabled
+            # self.assertTrue("Example SVG text 1" in pdf_string)

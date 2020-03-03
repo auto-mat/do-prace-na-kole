@@ -33,6 +33,13 @@ class TShirtSize(models.Model):
         max_length=40,
         null=False,
     )
+    code = models.CharField(
+        verbose_name=_(u"Kód v skladu"),
+        max_length=80,
+        null=True,
+        default="",
+        blank=False,
+    )
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),

@@ -28,8 +28,6 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Image
 
-from svg2rlg import svg2rlg
-
 
 DIR = os.path.dirname(__file__)
 logo_file = os.path.join(DIR, "static/img/logo.jpg")
@@ -40,7 +38,8 @@ page_width = 15
 text_line_height = 0.4
 first_column = 0.5
 second_column = 2
-third_column = 10
+third_column = 7
+forth_column = 12
 
 
 def make_customer_sheets_pdf(outfile, subsidiary_box):
@@ -113,11 +112,13 @@ def make_sheet(subsidiary_box, canvas):
 
 
 def make_team_sheet(team_package, canvas, package_counter):
-    barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
-    barcode.drawOn(canvas, 8.3 * cm, (page_height - 2.7) * cm)
-    canvas.drawString(9 * cm, (page_height - 0.45) * cm, "ID týmového balíku:")
+    barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm)
+    barcode.drawOn(canvas, 8.3 * cm, (page_height - 3.1) * cm)
+    canvas.setFont('DejaVu', 8)
+    canvas.drawString(8.3 * cm, (page_height - 0.45) * cm, "ID týmového balíku:")
+    canvas.setFont('DejaVuB', 15)
+    canvas.drawString(11.2 * cm, (page_height - 0.65) * cm, team_package.identifier())
 
-    canvas.setFont('DejaVuB', 12)
     canvas.drawString(4.5 * cm, (page_height - 1.2) * cm, "Balíček pro tým")
     canvas.drawString(4.5 * cm, (page_height - 1.8) * cm, package_counter)
     canvas.setFont('DejaVu', 8)
@@ -149,10 +150,14 @@ def make_team_sheet(team_package, canvas, package_counter):
             canvas.setFont('DejaVuB', 10)
             canvas.drawString(third_column * cm, (offset - 1 * text_line_height - 0.1) * cm, package_transaction.t_shirt_size.__str__())
 
-            if package_transaction.t_shirt_size.t_shirt_preview:
-                svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
-                svg_tshirt.scale(1.1 * cm / svg_tshirt.height, 1.1 * cm / svg_tshirt.width)
-                svg_tshirt.drawOn(canvas, 13 * cm, (offset - 3 * text_line_height - 0.05) * cm)
+            canvas.setFont('DejaVuB', 14)
+            canvas.drawString(forth_column * cm, (offset - 1 * text_line_height - 0.1) * cm, package_transaction.t_shirt_size.code)
+
+
+#            if package_transaction.t_shirt_size.t_shirt_preview:
+#                svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
+#                svg_tshirt.scale(1.1 * cm / svg_tshirt.height, 1.1 * cm / svg_tshirt.width)
+#                svg_tshirt.drawOn(canvas, 13 * cm, (offset - 3 * text_line_height - 0.05) * cm)
         canvas.line(0, (offset - 3 * text_line_height - 0.2) * cm, 100 * cm, (offset - 3 * text_line_height - 0.2) * cm)
 
         offset -= 3 * text_line_height + 0.1
