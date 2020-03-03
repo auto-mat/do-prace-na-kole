@@ -57,8 +57,8 @@ CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".for
 
 INSTALLED_APPS += (
     'rosetta',
-    'debug_toolbar',
-    'debug_toolbar_line_profiler',
+    # 'debug_toolbar',
+    # 'debug_toolbar_line_profiler',
     'template_timings_panel',
     'livereload',
 )
@@ -92,8 +92,8 @@ CORS_ORIGIN_REGEX += [
 ]
 
 MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
     'livereload.middleware.LiveReloadScript',
 ]
 
@@ -127,7 +127,7 @@ def custom_show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'JQUERY_URL': STATIC_URL + "bow/jquery/dist/jquery.js",
+    'JQUERY_URL': STATIC_URL + "jquery/dist/jquery.js",
     'HIDE_DJANGO_SQL': False,
     'TAG': 'div',
 }

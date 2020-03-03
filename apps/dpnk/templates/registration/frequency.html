@@ -51,25 +51,31 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
          <div class="card">
               <div class="card-body">
                  {% if user_attendance.get_frequency_percentage == 100 %}
-                     <h5 class="card-title">Gratulujeme! Váš tým má ve vás opravdovou oporu.</h5>
+                    <h5 class="card-title">
+                      Gratulujeme! Váš tým má ve vás opravdovou oporu.
+                    </h5>
                  {% elif user_attendance.get_frequency_percentage > campaign.minimum_percentage %}
-                     <h5 class="card-title">Jste na dobré cestě! Kolegové v týmu jsou určitě šťastní, že vás mají.</h5>
+                    <h5 class="card-title">
+                      Jste na dobré cestě! Kolegové v týmu jsou určitě šťastní, že vás mají.
+                    </h5>
                      <p>
-                     {% trans "Ale neusněte na vavřínech." %}
-                     {% blocktrans count rides_num=user_attendance.get_remaining_rides_count with max_percentage=user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
-                     Do konce soutěže můžete najezdit či naběhat ještě jednu cestu ku vaší až {{ max_percentage }}% pravidelnosti.
-                     {% plural %}
-                     Do konce soutěže můžete najezdit či naběhat ještě {{ rides_num }} cest ku vaší až {{ max_percentage }}% pravidelnosti.
-                     {% endblocktrans %}
+                       {% trans "Ale neusněte na vavřínech." %}
+                       {% blocktrans count rides_num=user_attendance.get_remaining_rides_count with max_percentage=user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
+                       Do konce soutěže můžete najezdit či naběhat ještě jednu cestu ku vaší až {{ max_percentage }}% pravidelnosti.
+                       {% plural %}
+                       Do konce soutěže můžete najezdit či naběhat ještě {{ rides_num }} cest ku vaší až {{ max_percentage }}% pravidelnosti.
+                       {% endblocktrans %}
                      </p>
                  {% else %}
-                     <h5 class="card-title">Šlápněte do pedálů a podpořte svůj tým!</h5>
+                     <h5 class="card-title">
+                      Šlápněte do pedálů a podpořte svůj tým!
+                     </h5>
                      <p>
-                     {% blocktrans count rides_num=user_attendance.get_remaining_rides_count with max_percentage=user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
-                     Do konce soutěže můžete urazit ještě jednu cestu a dosáhnout {{ max_percentage }}% pravidelnosti.
-                     {% plural %}
-                     Do konce soutěže můžete urazit ještě {{ rides_num }} cest a dosáhnout {{ max_percentage }}% pravidelnosti.
-                     {% endblocktrans %}
+                       {% blocktrans count rides_num=user_attendance.get_remaining_rides_count with max_percentage=user_attendance.get_remaining_max_theoretical_frequency_percentage|floatformat|intcomma %}
+                       Do konce soutěže můžete urazit ještě jednu cestu a dosáhnout {{ max_percentage }}% pravidelnosti.
+                       {% plural %}
+                       Do konce soutěže můžete urazit ještě {{ rides_num }} cest a dosáhnout {{ max_percentage }}% pravidelnosti.
+                       {% endblocktrans %}
                      </p>
                  {% endif %}
               </div>
@@ -78,34 +84,35 @@ Jezděte a běhejte s námi do práce a z práce každý den a dosáhnete na s
 </div>
 
 <p>
-<b>
-{% if user_attendance.get_working_rides_base_count != user_attendance.get_minimum_rides_base_proportional %}
-   {% blocktrans count rides_num=user_attendance.get_working_rides_base_count %}
-      K dnešnímu dni už máte mít odsvištěnu jednu cestu, aby vám ostatní neutekli.
-      {% plural %}
-      K dnešnímu dni už máte mít odsvištěno {{ rides_num }} cest, aby vám ostatní neutekli.
-   {% endblocktrans %}
-   {% trans "Nahoďte sportovní outfit a běžte to dohnat!" %}
-{% endif %}
-</b>
+  <b>
+  {% if user_attendance.get_working_rides_base_count != user_attendance.get_minimum_rides_base_proportional %}
+     {% blocktrans count rides_num=user_attendance.get_working_rides_base_count %}
+        K dnešnímu dni už máte mít odsvištěnu jednu cestu, aby vám ostatní neutekli.
+        {% plural %}
+        K dnešnímu dni už máte mít odsvištěno {{ rides_num }} cest, aby vám ostatní neutekli.
+     {% endblocktrans %}
+     {% trans "Nahoďte sportovní outfit a běžte to dohnat!" %}
+  {% endif %}
+  </b>
 </p>
 
 <h3>
    {% trans "Když nejdete do práce, nic se neděje" %}
 </h3>
+
 {% blocktrans with minimum_rides_base=campaign.minimum_rides_base %}
-<p>
-Pravidelností procento se snižuje pouze vlivem neekologických cest do práce a z práce. Máme pochopení pro to, že si chcete vzít dovolenou nebo máte zkrácený úvazek. Dny, kdy nejdete do práce, nemají vliv na celkovou pravidelnost.
-</p>
-<p>
-Pozor, má to háček. Celkem za měsíc musíte ekologicky zvládnout alespoň {{ minimum_rides_base }} cest, ať máte šanci dosáhnout na stoprocentní pravidelnost. Kdyby měl člověk s třítýdenní dovolenou a jednou aktivní cestou do práce 100 %, nebylo by to vůči ostatním fér. 
-</p>
-<p>
-V průběhu května se minimální počet jízd bude pravidelně zvedat o necelý jeden bod každý den (např. v pondělí musíte mít zapsáno minimálně 10 jízd, v úterý už 11 jízd).
-</p>
-<p>
-V praxi to znamená, že se jmenovatel každý den během května automaticky zvedne o necelý jeden bod, ať už si nějakou jízdu zapíšete a nebo ne. Toto číslo se do pravidelnosti započítává pouze pokud je námi předpokládaný počet jízd k danému dni vyšší, než celkový počet vámi zapsaných jízd. 
-</p>
+  <p>
+  Pravidelností procento se snižuje pouze vlivem neekologických cest do práce a z práce. Máme pochopení pro to, že si chcete vzít dovolenou nebo máte zkrácený úvazek. Dny, kdy nejdete do práce, nemají vliv na celkovou pravidelnost.
+  </p>
+  <p>
+  Pozor, má to háček. Celkem za měsíc musíte ekologicky zvládnout alespoň {{ minimum_rides_base }} cest, ať máte šanci dosáhnout na stoprocentní pravidelnost. Kdyby měl člověk s třítýdenní dovolenou a jednou aktivní cestou do práce 100 %, nebylo by to vůči ostatním fér. 
+  </p>
+  <p>
+  V průběhu května se minimální počet jízd bude pravidelně zvedat o necelý jeden bod každý den (např. v pondělí musíte mít zapsáno minimálně 10 jízd, v úterý už 11 jízd).
+  </p>
+  <p>
+  V praxi to znamená, že se jmenovatel každý den během května automaticky zvedne o necelý jeden bod, ať už si nějakou jízdu zapíšete a nebo ne. Toto číslo se do pravidelnosti započítává pouze pokud je námi předpokládaný počet jízd k danému dni vyšší, než celkový počet vámi zapsaných jízd. 
+  </p>
 {% endblocktrans %}
 
 <h3>

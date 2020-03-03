@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block extrahead %}
-<link href="{% static "bow/dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet"/>
+<link href="{% static "dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
@@ -18,7 +18,7 @@
                 <input type="submit" value="{% trans 'Odeslat' %}"/>
             </div>
         </form>
-        <script src="{% static 'bow/dropzone/dist/dropzone.js' %}"></script>
+        <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
         <script>
          dz = $('#team_photo_upload').dropzone({
              dictDefaultMessage: "{% trans "Fotky nahrajete přetažením, nebo kliknutím" %}",

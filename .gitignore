@@ -1,5 +1,6 @@
 !.gitkeep
 third_party
+third-party
 /#*#
 *.mo
 *.pyc
@@ -8,7 +9,6 @@ third_party
 *~
 *.orig
 *__pycache__
-/apps/dpnk/static/bow
 /apps/dpnk/static/CACHE
 /sql/
 /dpnk.log*
@@ -24,7 +24,7 @@ third_party
 /htmlcov-max/
 .coverage
 /run.sh
-/dpnk/static/css/style.css
+/apps/dpnk/static/css/style.css
 /response.html
 /apps/dpnk/test_files/DSC00002.JPG.*_*.jpg
 /apps/dpnk/test_files/cache
@@ -52,3 +52,4 @@ pipenv/
 test-dpnk.log
 scripts/ansible-playbooks/get_containers.retry
 scripts/output.sql
+node_modules/

@@ -104,11 +104,6 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             else:
                 return _('Vyhledejte svoji společnost')
 
-    def get_next_url(self):
-        if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            return 'pozvanky'
-        return super().get_next_url()
-
     def get_initial(self):
         if self.user_attendance.team:
             return {

@@ -1,4 +1,3 @@
-
 $(function(){
    $('.submit-once-form').submit(function () {
        // Bail out if the form contains validation errors

@@ -6,10 +6,14 @@
 
 {% block content %}
 {{ block.super }}
-<h2>{{ competition.name }}</h2>
-<i> {{ competition.type_string|safe }} </i>
+<h2>
+   {{ competition.name }}
+</h2>
+<i>
+   {{ competition.type_string|safe }}
+</i>
 <div>
-{{ competition.rules|safe }}
+   {{ competition.rules|safe }}
 </div>
 {% for competitor in competitors %}
    <h3 id="comp_res_{{competitor.pk}}">{{ competitor }} {% if competitor.user_attendance %}- {{ competitor.user_attendance.team.subsidiary.city }}{% endif %}{% if show_points %} ({{ competitor.result }} b.){% endif %}</h3>
@@ -17,26 +21,26 @@
       {% if answer.comment %}
          {{ answer.comment|linebreaksbr|urlize}}
       {% endif %}
-      <br/>
       <div class="questionnaire-image">
       {% if answer.question.with_attachment %}
-      {% thumbnail answer.attachment "250x250" as foto_thumb %}
-      {% if foto_thumb %}
-         <a data-lightbox="image" href="{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
-         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
-      {% else %}
-         {% if answer.attachment %}
-            <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
+         {% thumbnail answer.attachment "250x250" as foto_thumb %}
+         {% if foto_thumb %}
+            <a data-lightbox="image" href="{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
+            <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
          {% else %}
-            {% trans "Bez přílohy" %}
+            {% if answer.attachment %}
+               <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
+            {% else %}
+               {% trans "Bez přílohy" %}
+            {% endif %}
          {% endif %}
       {% endif %}
-      {% endif %}
       {% if answer.comment_given and show_points %}
-         <br/>
-         <strong>{% trans "Komentář hodnotitele" %}</strong>
+         <strong>
+            {% trans "Komentář hodnotitele" %}
+         </strong>
          <p>
-         {{ answer.comment_given|linebreaks }}
+            {{ answer.comment_given|linebreaks }}
          </p>
       {% endif %}
       </div>

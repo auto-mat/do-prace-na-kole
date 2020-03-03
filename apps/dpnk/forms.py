@@ -33,6 +33,7 @@ from dal import autocomplete
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
@@ -47,6 +48,8 @@ from django_gpxpy import gpx_parse
 from initial_field import InitialFieldsMixin
 
 from leaflet.forms.widgets import LeafletWidget
+
+from notifications.signals import notify
 
 import photologue
 
@@ -322,6 +325,14 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         user_attendance = super().save(*args, **kwargs)
         if user_attendance.approved_for_team != 'approved':
             email.approval_request_mail(user_attendance)
+        elif user_attendance.campaign.competitors_choose_team() and not user_attendance.team.is_full():
+            notify.send(
+                user_attendance,
+                recipient=user_attendance.userprofile.user,
+                verb=_("Pozvěte další členy do Vášeho týmu"),
+                url=reverse('pozvanky'),
+                icon=static("/img/dpnk_logo.svg"),
+            )
         return user_attendance
 
     def __init__(self, *args, **kwargs):
@@ -592,14 +603,14 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             (
                 'pay',
                 format_html(
-                    '<span id="payment_amount">{} Kč</span><br/>{}',
+                    '<span id="payment_amount">{} Kč</span><p class="price-descriptor">{}</p>',
                     round(self.user_attendance.admission_fee()),
                     _("Zaplatím běžné startovné."),
                 ),
             ), (
                 'pay_beneficiary',
                 format_html(
-                    '{} Kč<br/>{}',
+                    '{} Kč<p class="price-descriptor">{}</p>',
                     round(self.user_attendance.beneficiary_admission_fee()),
                     _("Podpořím soutěž benefičním startovným %s Kč.") % (
                         round(self.user_attendance.beneficiary_admission_fee() - self.user_attendance.admission_fee())
@@ -608,7 +619,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             ), (
                 'company',
                 format_html(
-                    '0 Kč<br/>{}',
+                    '0 Kč<p class="price-descriptor">{}</p>',
                     _("Startovné mi platí zaměstnavatel."),
                 ),
             ),
@@ -618,7 +629,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 (
                     'member_wannabe',
                     format_html(
-                        '0 Kč<br/>{}',
+                        '0 Kč<p class="price-descriptor">{}</p>',
                         _("Chci se stát členem Klubu přátel organizace AutoMat a podpořit rozvoj udržitelné mobility. "),
                     ),
                 ),
@@ -628,7 +639,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             (
                 'coupon',
                 format_html(
-                    '? Kč<br/>{}',
+                    '? Kč<p class="price-descriptor">{}</p>',
                     _("Chci uplatnit voucher."),
                 ),
             ),

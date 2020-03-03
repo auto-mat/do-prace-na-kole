@@ -17,7 +17,9 @@
    {% for voucher in user_attendance.voucher_set.all %}
       {% if forloop.first %}
          <div>
-            <h3>{% trans "Vouchery" %}</h3>
+            <h3>
+               {% trans "Vouchery" %}
+            </h3>
             {% scribble 'before_vouchers' %}
             {% load i18n %}
             {% trans "Zde můžete nalézt vouchery" %}

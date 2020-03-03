@@ -3,13 +3,15 @@
 {% load leaflet_tags %}
 
 {% block extrahead %}
-{% include "registration/leaflet_include.html" %}
-{{ block.super }}
+	{% include "registration/leaflet_include.html" %}
+	{{ block.super }}
 {% endblock %}
 
 {% block form %}
-{% url "application" as application_url %}
-<div class="text-info">{% blocktrans %}Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="{{ application_url }}">mobilních aplikací</a>.{% endblocktrans %}</div>
-{{ block.super }}
-{% include "registration/application_link.html" %}
+	{% url "application" as application_url %}
+	<div class="text-info">
+		{% blocktrans %}Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="{{ application_url }}">mobilních aplikací</a>.{% endblocktrans %}
+	</div>
+	{{ block.super }}
+	{% include "registration/application_link.html" %}
 {% endblock %}

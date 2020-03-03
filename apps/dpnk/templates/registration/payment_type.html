@@ -8,7 +8,7 @@
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
 <script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/{{ PAYU_POS_ID }}/{{ PAYU_KEY_1|slice:":2" }}/template:3/ext_calc:0/paytype.js'></script>
-<script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
+<script type="text/javascript" src="{% static "jquery-form/dist/jquery.form.min.js"%}"></script>
 {{ block.super }}
 {% endblock %}
 
