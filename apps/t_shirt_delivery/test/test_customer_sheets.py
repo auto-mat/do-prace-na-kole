@@ -23,7 +23,6 @@ from itertools import cycle
 from PyPDF2 import PdfFileReader
 
 from django.core.files.temp import NamedTemporaryFile
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
 from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign

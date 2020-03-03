@@ -28,8 +28,6 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Image
 
-from svg2rlg import svg2rlg
-
 
 DIR = os.path.dirname(__file__)
 logo_file = os.path.join(DIR, "static/img/logo.jpg")
