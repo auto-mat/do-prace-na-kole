@@ -22,10 +22,8 @@
 									{{ team_member }}
 								</div>
 								<div class="gain">
-		                     		<span data-toggle="tooltip" title="{% trans 'počet jízd' %}">
-		                     			{{ team_member.get_rides_count_denorm }}</span>/<span data-toggle="tooltip" title="{% trans 'Ujetá vzdálenost' %}">{{ team_member.trip_length_total|floatformat:0 }}
-		                     		</span>
-								</div>
+		                <span>{{ team_member.get_rides_count_denorm }} jízd</span>
+                </div>
 							</div>
 						</div>
 					{% endfor %}
