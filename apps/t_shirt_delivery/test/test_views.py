@@ -102,7 +102,7 @@ class ViewsTestsLogon(TestCase):
             ),
         )
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "<h2>Vaše triko je již na cestě</h2>", html=True)
+        self.assertContains(response, '<h2 class="page_title">Vaše triko je již na cestě</h2>', html=True)
         self.assertContains(response, "<pre>Foo company Foo street, Foo City - Foo c City</pre>", html=True)
 
     @patch('slumber.API')
