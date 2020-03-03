@@ -810,7 +810,7 @@ msgstr "Startovné mi platí škola."
 
 #: forms.py:646
 msgid ""
-"Chci se stát členem Klubu přátel organizace Auto*Mat a podpořit rozvoj "
+"Chci se stát členem Klubu přátel organizace AutoMat a podpořit rozvoj "
 "udržitelné mobility. "
 msgstr ""
 
@@ -913,7 +913,7 @@ msgstr ""
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
 "href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů "
-"Auto*Mat z.s.</a> a <a target='_blank' href='http://www.dopracenakole.cz/"
+"AutoMat z.s.</a> a <a target='_blank' href='http://www.dopracenakole.cz/"
 "obchodni-podminky'>Obchodními podmínkami soutěže {campaign}</a>. "
 "{extra_agreement_text}"
 msgstr ""
@@ -1744,7 +1744,7 @@ msgstr ""
 
 #: models/invoice.py:84
 msgid ""
-"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."
+"Moje organizace si přeje podpořit AutoMat a zaplatit benefiční startovné."
 msgstr ""
 
 #: models/invoice.py:88
@@ -2193,11 +2193,11 @@ msgid "platba přes firemního koordinátora"
 msgstr "platba přes školního koordinátora"
 
 #: models/transactions.py:196
-msgid "člen Klubu přátel Auto*Matu"
+msgid "člen Klubu přátel AutoMatu"
 msgstr ""
 
 #: models/transactions.py:197
-msgid "kandidát na členství v Klubu přátel Auto*Matu"
+msgid "kandidát na členství v Klubu přátel AutoMatu"
 msgstr ""
 
 #: models/transactions.py:198
@@ -2588,7 +2588,7 @@ msgstr "změnit adresu školy"
 msgid ""
 "\n"
 "   Do práce na kole pořádá již od roku 2010 nezisková organizace <a title="
-"\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank\">Auto*Mat</"
+"\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank\">AutoMat</"
 "a>, která se již více než 10 let snaží o zlepšení kvality života v našich "
 "městech.\n"
 "   Protože věříme, že jedním ze zásadních faktorů ovliňujících kvalitu "
@@ -2597,12 +2597,12 @@ msgid ""
 "   <br/>\n"
 "   <strong>Nabízíme všem firmám, které se zapojují do soutěže, možnost "
 "zaplatit benefiční startovné</strong>, kterým podpoří přímo činnost "
-"Auto*Matu.\n"
+"AutoMatu.\n"
 "   Zejména tím podpoříte naši činnost v oblasti “cyklo-advokacie”, kde se "
 "snažíme různými způsoby prosazovat chytrá koncepční opatření pro zlepšení "
 "cyklo-infastruktury a související dopravní infrastruktury ve městě.\n"
 "   <br/>\n"
-"   <strong>Pokud si přejete podpořit Auto*Mat benefičním startovným, zvolte "
+"   <strong>Pokud si přejete podpořit AutoMat benefičním startovným, zvolte "
 "možnost níže.</strong>\n"
 "   "
 msgstr ""

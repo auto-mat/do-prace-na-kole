@@ -83,7 +83,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         blank=True,
     )
     company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
+        verbose_name=_("Moje organizace si přeje podpořit AutoMat a zaplatit benefiční startovné."),
         default=False,
     )
     anonymize = models.BooleanField(

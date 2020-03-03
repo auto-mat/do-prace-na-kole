@@ -193,8 +193,8 @@ class Payment(Transaction):
 
         ('fa', _('faktura mimo PayU')),
         ('fc', _('platba přes firemního koordinátora')),
-        ('am', _('člen Klubu přátel Auto*Matu')),
-        ('amw', _('kandidát na členství v Klubu přátel Auto*Matu')),
+        ('am', _('člen Klubu přátel AutoMatu')),
+        ('amw', _('kandidát na členství v Klubu přátel AutoMatu')),
         ('fe', _('neplatí startovné')),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)

@@ -630,7 +630,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                     'member_wannabe',
                     format_html(
                         '0 Kč<p class="price-descriptor">{}</p>',
-                        _("Chci se stát členem Klubu přátel organizace Auto*Mat a podpořit rozvoj udržitelné mobility. "),
+                        _("Chci se stát členem Klubu přátel organizace AutoMat a podpořit rozvoj udržitelné mobility. "),
                     ),
                 ),
             )
@@ -928,7 +928,7 @@ class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['personal_data_opt_in'].required = True
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
-            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
+            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů AutoMat z.s.</a> "
             "a <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže {campaign}</a>."
             " {extra_agreement_text}",
         ).format(campaign=self.campaign, extra_agreement_text=self.campaign.extra_agreement_text)
