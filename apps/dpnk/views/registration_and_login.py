@@ -646,8 +646,8 @@ class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, Logi
             "Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. "
             "Stačí si ještě poradit s pár maličkostmi a dostanete se na startovací čáru."
             "</p>"
-            "<img src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'></img>"
-        )
+            "<img src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'></img>",
+        ),
     )
     registration_phase = 'registration_uncomplete'
 
