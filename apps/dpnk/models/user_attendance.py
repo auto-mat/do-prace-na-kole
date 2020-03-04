@@ -581,21 +581,23 @@ class UserAttendance(StaleSyncMixin, models.Model):
         # Frequency returned from the ORM is not exactly the same as in DB
         # (floating point transformations). We need to give it some extra margin to match self.
 
-    def get_admin_url(self):
+    def get_admin_url(self, method="change", protocol='https'):
         try:
             site = Site.objects.get_current()
         except ImproperlyConfigured:
             site = Site(domain='configure-django-sites.com')
-        protocol = 'https'
         return "%s://%s.%s%s" % (
             protocol,
             self.campaign.slug,
             site.domain,
             reverse(
-                'admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name),
+                'admin:%s_%s_%s' % (self._meta.app_label, self._meta.model_name, method),
                 args=[self.id],
             ),
         )
+
+    def get_admin_delete_url(self):
+        return self.get_admin_url(method="delete", protocol="http")
 
     def helpdesk_iframe_url(self):
         return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa

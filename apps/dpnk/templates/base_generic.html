@@ -106,6 +106,12 @@
 									{% endif %}
 									{% if user.is_authenticated and user_attendance %}
 										{% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap4_blank.html" %}
+                    {% if DEBUG %}
+                    {% load admin_urls %}
+			              <li>
+			                <a href="{{user_attendance.get_admin_delete_url}}" style="display: list-item;">  {% trans "Smazat user attendance (DEBUG)" %}</a>
+			              </li>
+                    {% endif %}
 									{% endif %}
 								</ul>
 							</nav>
