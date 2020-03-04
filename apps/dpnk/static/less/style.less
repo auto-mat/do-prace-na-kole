@@ -470,6 +470,7 @@ label{
       .notification_badge{
           display: inline-flex;
           position: absolute;
+          color:#fff !important;
       }
       .live_badge_count{
         display: inline-flex;
@@ -502,12 +503,11 @@ label{
       margin:@wg 0;
       word-wrap: break-word;
       a{
-        color:#fff;
+        color:lighten(@fourth, 5%);
       }
     }
     .gain{
       font-size: @f*1.5;
-      color:lighten(@fourth, 5%);
     }
   }
   .register{
@@ -1572,9 +1572,6 @@ span.select2.select2-container {
         font-size:@f;
         display:inline-block;
         text-align:left;
-        a{
-          color:#fff;
-        }
       }
     }
     .avatar_holder{

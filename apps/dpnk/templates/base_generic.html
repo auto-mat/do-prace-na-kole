@@ -26,9 +26,6 @@
 							{% if user.is_authenticated and user_attendance %}
 		                     	{% url 'profil' as href %}
 		                     	{% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
-		                     	<div class="gain">
-		                          <span>{{ user_attendance.get_rides_count_denorm }} jízd</span>
-								          </div>
 								<div class="nick">
 									{% live_notify_badge as badge %}
 									  <a href="{% url 'profil' %}" class="name">{{ user_attendance }}</a>
