@@ -11,19 +11,21 @@
     </p>
 {% endif %}
 {% if campaign.campaign_type.slug == 'dpnk' and campaign.get_complementary_school_campaign %}
+       <p>
+         {% trans "Na kole, pěšky či poklusem. Celostátní výzva týmů v květnu 2020." %}
+       </p>
     <div class="after_form">
        <p>
-           {% trans "Pokud naopak potřebujete vyvětrat hlavu cestou ze školy, přihlaste se" %}
-           <a href="{% campaign_base_url campaign.get_complementary_school_campaign %}{{ request.path }}">{{ campaign.get_complementary_school_campaign.display_name }}</a>.
+           {% trans "Nejezdíš do práce, ale do školy? Přihlas se do" %}
+           <a href="{% campaign_base_url campaign.get_complementary_school_campaign %}{{ request.path }}">{{ campaign.get_complementary_school_campaign.display_name }}</a>. {% trans "Je to zdarma." %}
        </p>
     </div>
 {% elif campaign.campaign_type.slug == 'skoly' and campaign.get_complementary_main_campaign %}
     <div class="after_form">
        <p>
-          {% trans "Pokud naopak potřebujete vyvětrat hlavu cestou z práce, přihlaste se" %}
+          {% trans "Už máte školní léta nějaký ten pátek za sebou? Tak s námi jezděte" %}
           <a href="{% campaign_base_url campaign.get_complementary_main_campaign %}{{ request.path }}">{{ campaign.get_complementary_main_campaign.display_name }}</a>.
        </p>
     </div>
 {% endif %}
 {% endblock %}
-
