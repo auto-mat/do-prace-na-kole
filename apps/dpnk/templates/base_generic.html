@@ -31,9 +31,13 @@
 								          </div>
 								<div class="nick">
 									{% live_notify_badge as badge %}
-									<a href="{% url 'profil' %}" class="name">{{ user_attendance }}</a><a href="#" onclick="showNotifications();" class="live_badge status_{{ badge|striptags }} live_notify_badge">
-		                    			{% live_notify_badge %}
-		                    		</a>
+									  <a href="{% url 'profil' %}" class="name">{{ user_attendance }}</a>
+                    <a href="#" onclick="showNotifications();" class="notification_badge" live_notify_badge">
+                      <i class="fas fa-bell"></i>
+                      <div class="live_badge_count status_{{ badge|striptags }}">
+		                  {% live_notify_badge %}
+                      </div>
+		                </a>
 								</div>
 								<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
 								    <span></span>
