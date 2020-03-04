@@ -418,11 +418,6 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "registration-access-form"
         self.helper.layout = Layout(
-            HTML('<p class="welcome_message">'),
-            HTML("Děkujeme že se chcete účastnit soutěže. Začněte registraci zadáním e-mailu."),
-            HTML('<br/>'),
-            HTML("Pokud s námi nejedete poprvé, zadejte stejný e-mail jako v minulém roce a pokračujte rovnou na přihlášení."),
-            HTML('<p/>'),
             'email',
             Submit('submit', _('Pokračovat')),
             social_html(False),
