@@ -640,9 +640,14 @@ def payment_status(request):
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_registration_form.html'
     title = _('Nastal čas seřídit kolo a vyřešit drobné papírování…')
-    opening_message = _(
-        "Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. "
-        "Stačí si ještě poradit s pár maličkostmi a dostanete se na startovací čáru."
+    opening_message = util.mark_safe_lazy(
+        _(
+            "<p>"
+            "Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. "
+            "Stačí si ještě poradit s pár maličkostmi a dostanete se na startovací čáru."
+            "</p>"
+            "<img src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'></img>"
+        )
     )
     registration_phase = 'registration_uncomplete'
 
