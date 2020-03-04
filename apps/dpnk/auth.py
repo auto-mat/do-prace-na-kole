@@ -70,12 +70,13 @@ def clean_email(email):
     else:
         error_text = format_html(
             "{text}"
-            "<br/>"
-            "<a href='{register}'>{register_text}</a>",
-            text=_("Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. "),
+            "<p>"
+            "<a href='{register}' class='register_unknown_mail registerme btn'>{register_text}</a>"
+            "</p>",
+            text=_("Tento e-mail neznáme. "),
             password=reverse('password_reset'),
             register=reverse('registrace', args=(email,)),
-            register_text=_("Jsem tu poprvé a chci se registrovat."),
+            register_text=_("Registrovat"),
         )
         raise forms.ValidationError(error_text)
 
