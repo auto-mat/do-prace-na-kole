@@ -262,8 +262,19 @@ form{
     border:0;
   }
 }
-.register_unknown_mail{
+.login_redirection_button{
     margin-left:30px !important;
+    &.btn{
+        font-size: 0.9rem;
+        margin: @wg 0 0 0;
+        display:inline-block;
+        background:@fifth;
+        color:@octave;
+        &:hover{
+            color:@octave;
+            background:darken(@fifth, 10%);
+        }
+    }
 }
 .registerme,  .register_coordinator{
   &.btn{

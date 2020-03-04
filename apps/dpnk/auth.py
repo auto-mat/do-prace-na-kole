@@ -71,7 +71,7 @@ def clean_email(email):
         error_text = format_html(
             "{text}"
             "<p>"
-            "<a href='{register}' class='register_unknown_mail registerme btn'>{register_text}</a>"
+            "<a href='{register}' class='login_redirection_button btn'>{register_text}</a>"
             "</p>",
             text=_("Tento e-mail neznáme. "),
             password=reverse('password_reset'),

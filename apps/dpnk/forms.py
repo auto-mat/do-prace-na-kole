@@ -463,9 +463,9 @@ class RegistrationBaseForm(EmailUsernameMixin, registration.forms.RegistrationFo
             raise forms.ValidationError(
                 mark_safe(
                     _(
-                        "Tato e-mailová adresa se již používá. "
-                        "Pokud je Vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, "
-                        "nebo použijte <a href='%(password)s'> obnovu hesla</a>."
+                        "Tato e-mailová adresa je již registrovaná. "
+                        "<a href='%(login)s' class='btn login_redirection_button'>Přihlasit se</a>"
+                        "<a href='%(password)s' class='btn login_redirection_button'>Obnovit heslo</a>"
                     ) % {
                         'password': reverse('password_reset'),
                         'login': reverse('login'),
