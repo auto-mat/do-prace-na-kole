@@ -2,21 +2,27 @@
 {% load dpnk_tags %}
 {% load i18n %}
 {% block side_slogan %}
+{% if request.resolver_match.url_name == 'registration_access' %}
+    <p>
+       {% trans "Na palubu týmové výzvy za udržitelnou dopravu se dostanete zadáním e-mailu." %}
+    </p>
+    <p>
+       {% trans "Pokud s námi nejedete poprvé, zadejte stejný e-mail jako v minulém roce a pokračujte rovnou na přihlášení." %}
+    </p>
+{% endif %}
 {% if campaign.campaign_type.slug == 'dpnk' and campaign.get_complementary_school_campaign %}
     <div class="after_form">
-        <b>{% trans "Učit se. Učit se. Učit se" %}</b>
-    <p>
-    {% trans "Že už ti to dneska někdo řekl?  Pak vyměň soutěž a jezdi s námi " %}
-    <a href="{% campaign_base_url campaign.get_complementary_school_campaign %}{{ request.path }}">{{ campaign.get_complementary_school_campaign.display_name }}</a>.
-    </p>
+       <p>
+           {% trans "Pokud naopak potřebujete vyvětrat hlavu cestou ze školy, přihlaste se" %}
+           <a href="{% campaign_base_url campaign.get_complementary_school_campaign %}{{ request.path }}">{{ campaign.get_complementary_school_campaign.display_name }}</a>.
+       </p>
     </div>
 {% elif campaign.campaign_type.slug == 'skoly' and campaign.get_complementary_main_campaign %}
     <div class="after_form">
-        <b>{% trans "Tahle soutěž není pro starý" %}</b>
-    <p>
-    {% trans "Pokud se učíte pouze jak vycházet s mladou generací, tak prosím vyměňte soutěž a jezděte s námi " %}
-    <a href="{% campaign_base_url campaign.get_complementary_main_campaign %}{{ request.path }}">{{ campaign.get_complementary_main_campaign.display_name }}</a>.
-    </p>
+       <p>
+          {% trans "Pokud naopak potřebujete vyvětrat hlavu cestou z práce, přihlaste se" %}
+          <a href="{% campaign_base_url campaign.get_complementary_main_campaign %}{{ request.path }}">{{ campaign.get_complementary_main_campaign.display_name }}</a>.
+       </p>
     </div>
 {% endif %}
 {% endblock %}
