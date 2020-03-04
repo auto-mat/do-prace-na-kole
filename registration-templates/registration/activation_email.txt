@@ -2,7 +2,7 @@
 
 Vítejte mezi námi!
 
-Registrace do soutěže {{ campaign }} vypadá dobře. Jízda Vašeho života už je na spadnutí. Máte o ni zájem? Potvrďte!
+Registrace do výzvy {{ campaign }} vypadá dobře. Jízda Vašeho života už je na spadnutí. Máte o ni zájem? Potvrďte!
 
 Potvrdit emailovou adresu:
 {{ absolute_uri }}{% url 'registration_activate' activation_key %}
@@ -12,7 +12,7 @@ Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero d
 * Vypucujte kolo. Kdo řetěz maže, ten jede.
 * Nastartujte fyzičku. Připravte svá stehna na pravidelnou ranní jízdu.
 * Zapamatujte si svůj přihlašovací e-mail {{ user.email }}>
-* Zapamatujte si, že soutěž začíná {{ campaign.competition_phase.date_from }} a končí {{ campaign.competition_phase.date_to }}.
+* Zapamatujte si, že výzva začíná {{ campaign.competition_phase.date_from }} a končí {{ campaign.competition_phase.date_to }}.
 * Své jízdy si pravidelně zaznamenávejte v profilu ({{ absolute_uri }}{% url 'profil' %}).
 * Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
 * Nezapomeňte pozvat kolegy ({{ absolute_uri }}{% url 'pozvanky' %}) do svého týmu.

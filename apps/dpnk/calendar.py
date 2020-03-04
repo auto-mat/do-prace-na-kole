@@ -43,6 +43,6 @@ def get_events(request):
         events.append(event)
 
     phase = request.campaign.phase("competition")
-    add_event(_("Začatek soutěže"), phase.date_from, css_class="cal-competition-beginning")
-    add_event(_("Konec soutěže"), phase.date_to, css_class="cal-competition-end")
+    add_event(_("Začatek výzvy"), phase.date_from, css_class="cal-competition-beginning")
+    add_event(_("Konec výzvy"), phase.date_to, css_class="cal-competition-end")
     return events
