@@ -47,11 +47,11 @@ class CompanyAdminMixin(SuccessMessageMixin):
             "</p>"
             "<p>"
             "Vaší úlohou bude požádat zaměstnavatele, aby startovné za Váš tým uhradil. "
-            "Poté zajistíte hromadnou platbu přes fakturu. <a href='http://www.dopracenakole.cz/firemni-koordinator'>Jak na to?</a>."
+            "Poté zajistíte hromadnou platbu přes fakturu. <a target='_blank' href='http://www.dopracenakole.cz/pro-firmy/firemni-koordinator'>Jak na to?</a>."
             "</p>"
             "<p>"
             "Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a "
-            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>velkou moc</a>, "
+            "<a target='_blank' href='http://www.dopracenakole.cz/pro-firmy/firemni-koordinator'>velkou moc</a>, "
             "se kterou přichází velká zodpovědost."
             "</p>"
         ),
