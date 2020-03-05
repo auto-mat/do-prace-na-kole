@@ -692,3 +692,5 @@ HELPDESK_IFRAME_URL = "https://klub.auto-mat.cz/desk/kb_iframe/dpnk/"
 HELPDESK_QUEUE = 3
 
 DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}
+
+LOADER_IO_KEY = os.environ.get('LOADER_IO_KEY', 'loaderio-1b36491123a217d5cc6beb268a10595b')
