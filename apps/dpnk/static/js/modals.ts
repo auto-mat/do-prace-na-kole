@@ -29,7 +29,7 @@ function dpnk_fill_notification_list(data) {
                 message = `${message} ${item.verb}`;
             }
             if(typeof item.timestamp !== 'undefined'){
-                message = `${message} <div class='notification-timestamp'> ${item.timestamp}  </div>`;
+                message = `${message} <time class='timeago notification-timestamp' datetime='${item.timestamp}'>  </time>`;
             }
             return `<li class="notification-list-item notification-list-item-${item.unread && 'un' || ''}read"> <a href="/inbox/notifications/mark-as-read/${item.slug}/?next=${((item.data && item.data.url) || "#" )}">${message}</a></li>`;
         }).join('')
@@ -40,5 +40,6 @@ function dpnk_fill_notification_list(data) {
                 menus[i].innerHTML = "<b>0</b> <i class='fas fa-times'></i> <i class='fas fa-envelope'></i>";
             }
         }
+        $("time.timeago").timeago();
     }
 }
