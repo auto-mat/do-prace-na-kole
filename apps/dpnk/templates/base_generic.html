@@ -17,7 +17,7 @@
 				{% if user.is_authenticated %}
 					<div class="head_in_body">
 						<div class="_head">
-							<a class="logo" {% if campaign %}href="{{campaign.campaign_type.web}}"{%endif%}>
+							<a taget="_blank" class="logo" {% if campaign %}href="{{campaign.campaign_type.web}}"{%endif%}>
 								 <img src="{% static 'img/dpnk_logo.svg' %}" alt="DPNK" />
 							</a>
 
