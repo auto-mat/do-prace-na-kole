@@ -49,7 +49,7 @@ urlpatterns = [
     url(r'^cs/.*$', OldLanguageRedirectView.as_view()),
     url(r'^register/', include('registration.backends.default.urls')),
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
-    url(r'^' + settings.LOADER_IO_KEY + '/', lambda r: HttpResponse(settings.LOADER_IO_KEY, content_type="text/plain"))
+    url(r'^' + settings.LOADER_IO_KEY + '/', lambda r: HttpResponse(settings.LOADER_IO_KEY, content_type="text/plain")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 try:
