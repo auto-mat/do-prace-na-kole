@@ -13,10 +13,11 @@
 @positive:#85e233;
 @negative:@prime;
 @neutral: lightblue;
-
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+#page-content{
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 // Fix for company select, where users were confused if item is not selected
@@ -43,7 +44,7 @@ body{
   font-family: 'Open Sans', sans-serif;
 }
 img{
-  width:100%;
+  max-width:100%;
   display:inline-block;
   height:auto;
 }
@@ -1084,6 +1085,7 @@ div.dataTables_filter input {
     width: 100%;
     margin-right: 32px;
     height: 2.5em;
+    padding-right: @f;
   }
   .enter_km:focus{
       box-shadow: 0 1px 14px @neutral inset, 0 0 8px @neutral;
@@ -1431,7 +1433,7 @@ div.dataTables_filter input {
 .text-muted {
   color:@fifth !important;
   &:hover{
-    color: #000 !important;
+    color: @fifth !important;
   }
 }
 .main_container{
