@@ -57,10 +57,11 @@ CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".for
 
 INSTALLED_APPS += (
     'rosetta',
-    # 'debug_toolbar',
-    # 'debug_toolbar_line_profiler',
-    'template_timings_panel',
+    'debug_toolbar',
+    'debug_toolbar_line_profiler',
+#    'template_timings_panel',
     'livereload',
+    "template_profiler_panel",
 )
 
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -92,8 +93,8 @@ CORS_ORIGIN_REGEX += [
 ]
 
 MIDDLEWARE += [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
     'livereload.middleware.LiveReloadScript',
 ]
 
@@ -114,8 +115,9 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
     'debug_toolbar_line_profiler.panel.ProfilingPanel',
+    "template_profiler_panel.panels.template.TemplateProfilerPanel",
     # 'cachalot.panels.CachalotPanel',
-    'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    #'template_timings_panel.panels.TemplateTimings.TemplateTimings',
 ]
 
 
