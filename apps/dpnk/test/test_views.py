@@ -662,7 +662,7 @@ class ViewsTests(DenormMixin, TestCase):
             'password2': 'password11',
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "Tato e-mailová adresa se již používá.")
+        self.assertContains(response, "Tato e-mailová adresa")
 
     @patch('slumber.API')
     def test_dpnk_userattendance_creation(self, slumber_api):

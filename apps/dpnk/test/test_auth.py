@@ -71,8 +71,7 @@ class TestPasswordForms(ViewsLogonMommy):
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(
             response,
-            "<strong>Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. <br/> "
-            "<a href='/registrace/unknown@test.cz/'>Jsem tu poprvé a chci se registrovat.</a></strong>",
+            "<strong>Tento e-mail neznáme. <p><a href='/registrace/unknown@test.cz/' class='login_redirection_button btn'>Registrovat</a></p></strong>",
             html=True,
         )
 
@@ -154,6 +153,6 @@ class TestEmailBackend(TestCase):
         )
         self.assertContains(
             response,
-            '<a href="/registrace/test@test.cz/">Jsem tu poprvé a chci se registrovat.</a>',
+            "<strong>Tento e-mail neznáme. <p><a href='/registrace/test@test.cz/' class='login_redirection_button btn'>Registrovat</a></p></strong>",
             html=True,
         )
