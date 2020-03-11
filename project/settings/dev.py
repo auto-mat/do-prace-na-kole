@@ -59,7 +59,7 @@ INSTALLED_APPS += (
     'rosetta',
     'debug_toolbar',
     'debug_toolbar_line_profiler',
-#    'template_timings_panel',
+    # 'template_timings_panel',
     'livereload',
     "template_profiler_panel",
 )
@@ -117,7 +117,7 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar_line_profiler.panel.ProfilingPanel',
     "template_profiler_panel.panels.template.TemplateProfilerPanel",
     # 'cachalot.panels.CachalotPanel',
-    #'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
 ]
 
 

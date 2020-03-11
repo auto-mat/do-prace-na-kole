@@ -71,7 +71,7 @@ class TestPasswordForms(ViewsLogonMommy):
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(
             response,
-            "<strong>Tento e-mail neznáme. <p><a href='/registrace/unknown@test.cz/' class='login_redirection_button btn'>Registrovat</a></p></strong>",
+            "<strong>Tento e-mail neznáme. <p><a href='/registrace/unknown@test.cz/' class='login_redirection_button btn'>Registrovat</a></p></strong>",  # noqa FUCK FLAKE8
             html=True,
         )
 
