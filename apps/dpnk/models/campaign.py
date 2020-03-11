@@ -352,10 +352,13 @@ class Campaign(Pricable, models.Model):
         ).distinct()
 
     def get_complementary_school_campaign(self):
-        try:
-            return Campaign.objects.get(year=self.year, campaign_type__slug='skoly')
-        except Campaign.DoesNotExist:
-            return None
+        @cached(60)
+        def get_campaign(pk):
+            try:
+                return Campaign.objects.get(year=self.year, campaign_type__slug='skoly')
+            except Campaign.DoesNotExist:
+                return None
+        return get_campaign(self.pk)
 
     def get_complementary_main_campaign(self):
         try:
