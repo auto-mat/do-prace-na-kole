@@ -18,7 +18,7 @@ exec gunicorn wsgi:application \
 	 --bind 0.0.0.0:${GUNICORN_PORT:-"8000"} \
 	 --workers ${GUNICORN_NUM_WORKERS:-"6"} \
 	 --timeout ${GUNICORN_TIMEOUT:-"60"} \
-   --preload \
+	 --preload \
 	 --log-level=debug \
 	 --log-file=- \
 	 --access-logfile=- \
