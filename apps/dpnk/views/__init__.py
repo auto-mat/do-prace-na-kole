@@ -15,6 +15,7 @@ __all__ = (
     status,
     test_errors,
     # team
+    Company,
     UpdateTeam,
     UploadTeamPhoto,
     TeamMembers,

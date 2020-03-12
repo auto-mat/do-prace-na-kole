@@ -191,6 +191,15 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedFo
         return super().get(request, *args, **kwargs)
 
 
+class Company(UserAttendanceViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
+    template_name = 'registration/company.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['company'] = self.user_attendance.team.subsidiary.company
+        return context_data
+
+
 def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
     if deny:
         if not reason:

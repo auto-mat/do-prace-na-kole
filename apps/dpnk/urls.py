@@ -145,6 +145,11 @@ urlpatterns = [
         name="other_team_members_results",
     ),
     url(
+        r'^spolecnost/$',
+        views.Company.as_view(),
+        name="company",
+    ),
+    url(
         r'^pravidelnost/$',
         views.FrequencyView.as_view(),
         name="team_frequency",
