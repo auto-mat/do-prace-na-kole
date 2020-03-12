@@ -693,14 +693,9 @@ label{
   width:100%;
 }
 .member-item{
-  display: flex;
-  .row{
-    width: 100%;
-  }
-  .name{
-    color: @prime;
-    font-size:1.1rem;
-  }
+  display: inline-block;
+  background:darken(@white, 5%);
+  box-shadow: inset 0 0 2px #fff;
   h4{
     padding:0 @wg;
     text-align:center;
@@ -710,8 +705,8 @@ label{
   .user_head{
     color:@prime;
     text-align: center;
-    display: flex;
-    align-items:center;
+    padding:@wg*2 0 @wg 0;
+    box-shadow: inset 0 0 2px #fff;
   }
   .userdata{
     padding:@wg;

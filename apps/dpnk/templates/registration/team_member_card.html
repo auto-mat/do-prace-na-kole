@@ -1,58 +1,68 @@
 {% load dpnk_tags %}
 {% load i18n %}
 {% load humanize %}
-<div id="id-{{ team_member.userprofile.user }}-team-member" class="col-12 member-item">
-   <div class="row">
-      <div class="col-12 col-sm-3 user_head">
-         {% include "./user_profile_image.html" %}
+<div id="id-{{ team_member.userprofile.user }}-team-member" class="col-12 col-sm-6 col-md-4 member-item">
+   <div class="user_head">
+      {% include "./user_profile_image.html" %}
+      <div class="name">
+         {{ team_member.userprofile }}
       </div>
-      <div class="col-12 col-sm-7 userdata">
-         <div>
-            <span class="name">{{ team_member.userprofile }}, {% if team_member.userprofile.user.get_full_name and team_member.userprofile|stringformat:"s" != team_member.userprofile.user.get_full_name|stringformat:"s" %}{{ team_member.userprofile.user.get_full_name }}</span>, {% endif %}{{ team_member.userprofile.user.email }}{% if for_coordinator %}, {{ team_member.userprofile.telephone }}{% endif %}
-         </div>
-         <div>
-            {% trans "Osobní pravidelnost" %}: <b>{{ team_member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%</b>
-         </div>
-         <div>
-            {% trans "Ujetá vzdálenost" %}: <b>{{ team_member.trip_length_total_rounded|intcomma }}&nbsp;km</b>
-         </div>
-         <div>
+      {% if include_approve_buttons %}
+      {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.userprofile.user.id %}
+      {% endif %}
+   </div>
+   {% if include_approve_buttons %}
+   {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.id %}
+   {% endif %}
+   <div class="userdata">
+      <div>
+         <b>{% trans "Osobní pravidelnost" %}</b>: {{ team_member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
+      </div>
+      <div>
+         <b>{% trans "Zdolaná vzdálenost" %}</b>: {{ team_member.trip_length_total_rounded|intcomma }}&nbsp;km
+      </div>
+   </div>
+   <div class="userdata">
+      <div>
+         <b>{% trans "Jméno" %}</b>: {{ team_member.userprofile.user.get_full_name }}
+      </div><div>
+         <b>{% trans "E-mail" %}</b>: {{ team_member.userprofile.user.email }}
+      </div>
+      {% if for_coordinator %}
+      <div>
+         <b>{% trans "Telefon" %}</b>: {{ team_member.userprofile.telephone }}
+      </div>
+      {% endif %}
+      <div>
+         <b>
             {% if for_coordinator %}
                {% trans "Členství v týmu" %}
             {% else %}
                {% trans "Členství" %}
             {% endif %}
-            : <b>{{ team_member.get_approved_for_team_display }}</b>
-         </div>
-         {% if for_coordinator %}
-            <div>
-               {% trans "Typ plaby" %}: <b>{{ team_member.payment_type_string }}</b>
-            </div>
-         {% endif %}
-         <div>
-            {% trans "Platba" %}: <b>{{ team_member.get_payment_status_display }}</b>
-         </div>
+         </b>: {{ team_member.get_approved_for_team_display }}
       </div>
-      <div class="col-12 col-sm-2">
-         <!-- {% if include_approve_buttons %}
-            {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.userprofile.user.id %}
-         {% endif %} -->
-
-         {% if include_approve_buttons %}
-            {% include "messages_include.html" with required_tag="user_attendance_"|addstr:team_member.id %}
-         {% endif %}
-         {% if include_approve_buttons %}
-            {% if team_member.approved_for_team == 'undecided' or team_member.approved_for_team == 'denied' %}
-               <div class="actions">
-                  <button class="submit submit_once btn btn-sm btn-primary" type="submit" id="approve-{{team_member.id}}" name="approve" value="approve-{{team_member.id}}">{% trans "Přijmout do týmu" %}</button>
-                  {% if team_member.approved_for_team == 'undecided' %}
-                     <label for="reason-{{team_member.id}}">{% trans "Důvod odmítnutí" %}</label>
-                     <input id="reason-{{team_member.id}}" name="reason-{{team_member.id}}" type="text"/>
-                     <button class="submit submit_once btn btn-sm btn-primary" type="submit" id="deny-{{team_member.id}}" name="approve" value="deny-{{team_member.id}}">{% trans "Zamítnout" %}</button>
-                  {% endif %}
-               </div>
-            {% endif %}
-         {% endif %}
+      {% if for_coordinator %}
+      <div>
+         <b>{% trans "Typ plaby" %}</b>: {{ team_member.payment_type_string }}
+      </div>
+      {% endif %}
+      <div>
+         <b>{% trans "Platba" %}</b>: {{ team_member.get_payment_status_display }}
       </div>
    </div>
+
+   {% if include_approve_buttons %}
+   {% if team_member.approved_for_team == 'undecided' or team_member.approved_for_team == 'denied' %}
+      <div class="actions">
+         <button class="submit submit_once btn btn-sm btn-primary" type="submit" id="approve-{{team_member.id}}" name="approve" value="approve-{{team_member.id}}">{% trans "Přijmout do týmu" %}</button>
+         {% if team_member.approved_for_team == 'undecided' %}
+            <br/>
+            <label for="reason-{{team_member.id}}">{% trans "Důvod odmítnutí" %}</label>
+            <input id="reason-{{team_member.id}}" name="reason-{{team_member.id}}" type="text"/>
+            <button class="submit submit_once btn btn-sm btn-primary" type="submit" id="deny-{{team_member.id}}" name="approve" value="deny-{{team_member.id}}">{% trans "Zamítnout" %}</button>
+         {% endif %}
+      </div>
+   {% endif %}
+   {% endif %}
 </div>
