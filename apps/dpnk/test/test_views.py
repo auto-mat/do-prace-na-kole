@@ -2120,11 +2120,12 @@ class TripViewTests(ViewsLogon):
         util.rebuild_denorm_models([self.user_attendance])
         address = reverse("company_structure")
         response = self.client.get(address)
+        print_response(response)
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing User 1")
         self.assertContains(response, "test@test.cz")
         self.assertContains(response, "platba přes firemního koordinátora")
-        self.assertContains(response, "<div>Platba: <b>zaplaceno</b></div>", html=True)
+        self.assertContains(response, "<div><b>Platba</b>: zaplaceno</div>", html=True)
 
     def test_emission_calculator(self):
         address = reverse('emission_calculator')
