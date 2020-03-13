@@ -150,6 +150,7 @@ model_mommy = {git = "https://github.com/auto-mat/model_mommy.git",ref = "issue-
 django_coverage_plugin = "*"
 "flake8_strict" = "*"
 django-livereload-server="*"
+django-debug-toolbar-template-profiler = "*"
 
 [pipenv]
 allow_prereleases = true
