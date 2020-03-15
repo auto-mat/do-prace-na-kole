@@ -243,6 +243,7 @@ function add_trip(trip, file, cont) {
         success: function (returndata) {
             $(".tooltip").tooltip("hide");
             display_trip(returndata, true);
+            update_points();
             cont();
         },
         error: function(jqXHR, status, error) {
@@ -265,6 +266,7 @@ function delete_trip(event) {
            displayed_trips = displayed_trips.filter( function (trip) {return trip.id != event.extendedProps.trip_id});
            redraw_everything_trip_related();
            full_calendar.render();
+           update_points();
     });
 }
 
@@ -307,6 +309,14 @@ function display_trip(trip, rerender) {
         reload_route_options();
         full_calendar.render();
     }
+}
+
+function update_points() {
+    $.getJSON('/rest/userattendance/?format=json', function( data ){
+        for (i in data.results) {
+            $("#points-counter").text(data.results[i].get_points.toFixed());
+        }
+    });
 }
 
 function add_vacation(startDate, endDate) {

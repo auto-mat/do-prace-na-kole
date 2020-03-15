@@ -496,6 +496,7 @@ label{
     }
     .nick{
       position: relative;
+      margin-top:@wg;
       .name{
         padding:0;
         display: inline-block;
@@ -525,13 +526,13 @@ label{
     }
     .nick, .gain{
       text-align:center;
-      margin:@wg 0;
       word-wrap: break-word;
       a{
         color:lighten(@fourth, 5%);
       }
     }
     .gain{
+      margin:@wg 0;
       font-size: @f*1.5;
     }
   }
@@ -1658,4 +1659,14 @@ span.select2.select2-container {
 .team-card {
     background-color:darken(#fff, 10%);
     width: 40%;
+}
+
+.points-display {
+    text-align:center;
+    margin-bottom:@wg;
+}
+
+#points-counter {
+    padding: 2px;
+    display: inline-block;
 }

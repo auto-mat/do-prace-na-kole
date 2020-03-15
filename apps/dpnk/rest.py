@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import denorm
+
 from django.core.exceptions import ValidationError
 
 from drf_extra_fields.geo_fields import PointField
@@ -240,18 +242,20 @@ class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
-    user_trips = TripSerializer(many=True, read_only=True)
-
     class Meta:
         model = UserAttendance
-        fields = ('id', 'name', 'team', 'user_trips', 'frequency', 'trip_length_total')
+        fields = ('id', 'name', 'frequency', 'trip_length_total', 'get_points')
 
 
 class UserAttendanceSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return UserAttendance.objects.filter(campaign__slug=self.request.subdomain).select_related('userprofile__user')
+        denorm.flush()
+        return UserAttendance.objects.filter(
+            campaign__slug=self.request.subdomain,
+            userprofile__user=self.request.user,
+        ).select_related('userprofile__user')
     serializer_class = UserAttendanceSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class TeamSerializer(serializers.HyperlinkedModelSerializer):
@@ -318,10 +322,10 @@ class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
+router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
 # This is disabled, because Abra doesn't cooperate anymore
 # router.register(r'competition', CompetitionSet, basename="competition")
 # router.register(r'team', TeamSet, basename="team")
 # router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
 # router.register(r'company', CompanySet, basename="company")
-# router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
 # router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")

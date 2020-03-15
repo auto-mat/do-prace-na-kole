@@ -3,7 +3,6 @@
 {% load static %}
 {% load scribbler_tags %}
 {% load sitetree %}
-{% load avatar_tags %}
 {% load notifications_tags %}
 {% load inline_static_tags %}
 
@@ -36,6 +35,9 @@
                       </div>
 		                </a>
 								</div>
+                <div class="points-display">
+                    <div id="points-counter">{{user_attendance.get_points|floatformat:"0"}}</div> {% trans "bodů" %}
+                </div>
 								<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
 								    <span></span>
 								    <span></span>

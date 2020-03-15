@@ -29,7 +29,7 @@ from django.contrib.gis.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured, ValidationError
-from django.db.models import F
+from django.db.models import F, Sum
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -296,7 +296,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return 0
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Trip')
+    @depend_on_related('Trip', foreign_key='user_attendance')
     def get_rides_count_denorm(self):
         return self.get_rides_count()
 
@@ -580,6 +580,17 @@ class UserAttendance(StaleSyncMixin, models.Model):
         ).filter(frequency__gte=self.frequency - 0.000000001).count()
         # Frequency returned from the ORM is not exactly the same as in DB
         # (floating point transformations). We need to give it some extra margin to match self.
+
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
+    @depend_on_related('Trip')
+    def trip_points_total(self):
+        """
+        Total trip points. Ignores recreational trips.
+        """
+        return Trip.objects.filter(user_attendance=self).aggregate(Sum('commute_mode__points'))['commute_mode__points__sum'] or 0
+
+    def get_points(self):
+        return self.trip_points_total
 
     def get_admin_url(self, method="change", protocol='https'):
         try:

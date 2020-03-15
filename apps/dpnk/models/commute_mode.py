@@ -79,6 +79,10 @@ class CommuteMode(models.Model):
         default=True,
         null=False,
     )
+    points = models.IntegerField(
+        verbose_name=_("Body"),
+        default=0,
+    )
     # The difference between eco and does_count is that
     # does_count is also set for car trips and other
     # non-ecological modes of transportation.
