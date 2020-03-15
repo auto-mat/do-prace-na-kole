@@ -22,8 +22,10 @@ from django.core.exceptions import ValidationError
 from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
 
+from drf_extra_fields.geo_fields import PointField
+
 from .middleware import get_or_create_userattendance
-from .models import City, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
+from .models import City, CityInCampaign, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
 
 
 class InactiveDayGPX(serializers.ValidationError):
@@ -292,8 +294,30 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
+class CityInCampaignSerializer(serializers.HyperlinkedModelSerializer):
+    city__name = serializers.CharField(source="city.name")
+    city__location = PointField(source="city.location")
+
+    class Meta:
+        model = CityInCampaign
+        fields = (
+            'id',
+            'city__name',
+            'city__location',
+            'competitor_count',
+        )
+
+
+class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return CityInCampaign.objects.filter(campaign__slug = self.request.subdomain)
+    serializer_class = CityInCampaignSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
+router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 # This is disabled, because Abra doesn't cooperate anymore
 # router.register(r'competition', CompetitionSet, basename="competition")
 # router.register(r'team', TeamSet, basename="team")

@@ -128,6 +128,11 @@ urlpatterns = [
         name="calendar",
     ),
     url(
+        r'^mapa/$',
+        views.MapView.as_view(),
+        name="map",
+    ),
+    url(
         r'^nekompletni$',
         views.RegistrationUncompleteForm.as_view(),
         name="registration_uncomplete",

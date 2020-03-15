@@ -14,6 +14,7 @@ sitetrees = (
                 ],
             ),
             item('Tým', 'team_members', title_en='Team'),
+            item('Mapa', 'map', title_en='Map'),
             item(
                 'Výsledky', None, title_en='Results', children=[
                     item('Pravidelnostní soutěže', 'competitions', title_en='Regularity Competitions'),

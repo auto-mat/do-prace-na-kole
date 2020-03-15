@@ -6,6 +6,7 @@ from .results_and_competitions import *
 from .results_and_competitions import *
 from .team import *
 from .trips import *
+from .map import *
 
 __all__ = (
     # base
@@ -71,4 +72,6 @@ __all__ = (
     daily_distance_extra_json,
     CompetitorCountView,
     DrawResultsView,
+    # map
+    MapView,
 )

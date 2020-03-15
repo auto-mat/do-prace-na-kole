@@ -1,0 +1,29 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+
+
+{% block extrahead %}
+    <link rel='stylesheet' href='{% static "leaflet/dist/leaflet.css"%}'>
+    <link href="{% static "dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet">
+    <script src='{% static "leaflet/dist/leaflet.js"%}'></script>
+    <link rel='stylesheet' href='{% static "leaflet-draw/dist/leaflet.draw.css"%}'>
+    <script src='{% static "leaflet-draw/dist/leaflet.draw.js"%}'></script>
+    <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+    <script src="{% static 'leaflet-gpx/gpx.js' %}"></script>
+    <link href="{% static "leaflet.awesome-markers/dist/leaflet.awesome-markers.css" %}" type="text/css" rel="stylesheet">
+    <script src="{% static 'leaflet.awesome-markers/dist/leaflet.awesome-markers.min.js' %}"></script>
+    <script src="{% static 'js/map.js' %}"></script>
+    {{ block.super }}
+{% endblock %}
+{% block caption %}
+{% endblock caption %}
+
+{% block form %}
+    {% include "registration/leaflet_settings.html" %}
+    <div id="map" class="leaflet-container-default">
+    </div>
+    <div id="map-info">
+    </div>
+{% endblock %}

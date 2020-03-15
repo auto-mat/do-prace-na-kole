@@ -121,6 +121,7 @@ django-admin-charts = "*"
 django-inline-static = "*"
 django-notifications-hq = {git = "https://github.com/auto-mat/django-notifications.git",editable = true,ref = "list_all"}
 django-npm = "*"
+django-extra-fields = "*"
 
 [requires]
 python_version = "3.6"
