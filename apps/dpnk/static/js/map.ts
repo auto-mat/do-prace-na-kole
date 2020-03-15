@@ -1,28 +1,33 @@
-/*import LocalizedStrings from 'localized-strings';
+import LocalizedStrings from 'localized-strings';
 
-let strings = new LocalizedStrings({
-    en:{
-        competitors: "Competitors",
+let strings = new LocalizedStrings(
+    {
+        en:{
+            competitors: "Competitors",
+        },
+        cs:{
+            competitors: "Účastnicí",
+        }
     },
-    cs:{
-        competitors: "Účastnicí",
-    }
-})*/
+    {
+        customLanguageInterface: function(){return document.documentElement.lang},
+    },
+)
 
 $(function (){
-    map = create_map('map');
+    var map = create_map('map');
     //var editable_layers = new L.FeatureGroup();
     //map.addLayer(editable_layers);
     $.getJSON('/rest/gpx/?format=json', function( data ){
         for (i in data.results) {
-            trip = data.results[i];
+            var trip = data.results[i];
             load_track(map, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, null, function(){});
         }
     });
     $.getJSON('/rest/city_in_campaign/?format=json', function( data ){
         console.log(data);
         for (i in data.results) {
-            city = data.results[i];
+            var city = data.results[i];
             L.marker(
                 [city.city__location.latitude, city.city__location.longitude],
                 {
@@ -35,7 +40,7 @@ $(function (){
                     markerColor: 'white',
                 },
             ).on('click', function (){
-                $('#map-info').html(`<h3>${city.city__name}</h3><p>${city.competitor_count}</p>`); //<b>${strings.competitors}:</b>
+                $('#map-info').html(`<h3>${city.city__name}</h3><p><b>${strings.competitors}:</b> ${city.competitor_count}</p>`);
             })
             .addTo(map);
         }

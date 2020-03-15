@@ -28,6 +28,7 @@
 		<script type="text/javascript" src="https://cdn.ravenjs.com/3.24.0/raven.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}" charset="utf-8"> </script>
+    <script src="{% static 'js/dist/form_functions.js' %}"> </script>
 		<script>
 		Raven.config('http:{% sentry_public_dsn %}').install();
 		{% if user.is_authenticated %}

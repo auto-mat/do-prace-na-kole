@@ -19,10 +19,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.core.exceptions import ValidationError
 
+from drf_extra_fields.geo_fields import PointField
+
 from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
-
-from drf_extra_fields.geo_fields import PointField
 
 from .middleware import get_or_create_userattendance
 from .models import City, CityInCampaign, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
@@ -310,7 +310,7 @@ class CityInCampaignSerializer(serializers.HyperlinkedModelSerializer):
 
 class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return CityInCampaign.objects.filter(campaign__slug = self.request.subdomain)
+        return CityInCampaign.objects.filter(campaign__slug=self.request.subdomain)
     serializer_class = CityInCampaignSerializer
     permission_classes = [permissions.IsAuthenticated]
 

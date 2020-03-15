@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "less-watch-compiler apps/dpnk/static/less apps/dpnk/static/css --run-once",
-    "build:ts": "tsc",
+    "build:ts": "npx webpack",
     "build": "npm run build:css & npm run build:ts",
-    "watch": "tsc --watch & less-watch-compiler apps/dpnk/static/less apps/dpnk/static/css"
+    "watch": "npx webpack --watch & less-watch-compiler apps/dpnk/static/less apps/dpnk/static/css"
   },
   "author": "Auto-mat z.s.",
   "license": "GPL-3.0-or-later",
@@ -18,7 +18,8 @@
     "@types/jquery.validation": "^1.16.6",
     "less": "^3.11.1",
     "less-watch-compiler": "^1.14.6",
-    "typescript": "^3.8.2"
+    "typescript": "^3.8.2",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.12.1",
@@ -47,6 +48,8 @@
     "npm-remote-ls": "^1.3.2",
     "nvd3": "^1.7.1",
     "timeago": "^1.6.7",
+    "ts-loader": "^6.2.1",
+    "webpack": "^4.42.0",
     "yarn": "^1.22.0"
   },
   "resolutions": {

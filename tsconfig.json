@@ -1,9 +1,4 @@
 {
-    "files": [
-        "apps/dpnk/static/js/form_functions.ts",
-        "apps/dpnk/static/js/modals.ts",
-        "apps/dpnk/static/js/map.ts"
-    ],
     "compilerOptions": {
         "noImplicitAny": true,
         "target": "es5"

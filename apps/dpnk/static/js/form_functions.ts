@@ -14,8 +14,8 @@ $(function(){
        });
    });
 
-   $('.upravit_profil form').submit(function (){
-      if($('#id_userprofile-mailing_opt_in_2').prop('checked') == true){
+   $('#personal-data-form').submit(function (){
+      if($('#id_id_userprofile-mailing_opt_in_0_2').prop('checked') == true){
          return window.confirm("Skutečně nechcete dostávat žádné soutěžní emaily? Můžete tak například přijít o některé akce v průběhu soutěže.");
       } else {
          return true;

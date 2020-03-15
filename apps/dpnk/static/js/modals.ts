@@ -1,23 +1,23 @@
-function closeHelpdesk() {
+window.closeHelpdesk = function () {
     $('#helpdeskwindow').hide();
     $('#helpdeskiframe').attr('src','');
 }
 
-function showHelpdesk() {
+window.showHelpdesk = function () {
     $('#helpdeskiframe').attr('src', window.helpdesk_iframe_url);
     $('#helpdeskwindow').show();
 };
 
 
-function closeNotifications() {
+window.closeNotifications = function () {
     $('#notificationswindow').hide();
 }
 
-function showNotifications() {
+window.showNotifications = function () {
     $('#notificationswindow').show();
 };
 
-function dpnk_fill_notification_list(data) {
+window.dpnk_fill_notification_list = function (data) {
     var menus = document.getElementsByClassName(notify_menu_class);
     if (menus) {
         var messages = data.all_list.map(function (item) {
