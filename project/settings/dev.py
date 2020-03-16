@@ -57,12 +57,22 @@ CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".for
 
 INSTALLED_APPS += (
     'rosetta',
-    'debug_toolbar',
-    'debug_toolbar_line_profiler',
-    # 'template_timings_panel',
     'livereload',
-    "template_profiler_panel",
 )
+
+DEBUG_TOOLBAR = os.environ.get('DPNK_DEBUG_TOOLBAR', False)
+
+if DEBUG_TOOLBAR:
+    INSTALLED_APPS +=  (
+        'debug_toolbar',
+        'debug_toolbar_line_profiler',
+        # 'template_timings_panel',
+        "template_profiler_panel",
+    )
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+    ]
 
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
@@ -93,8 +103,6 @@ CORS_ORIGIN_REGEX += [
 ]
 
 MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
     'livereload.middleware.LiveReloadScript',
 ]
 
