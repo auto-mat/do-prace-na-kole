@@ -12,14 +12,6 @@
 {% endblock %}
 {% block form_intro %}
 	<div class="team_head">
-		<p>
-			<a href="{% url 'edit_team' %}" class="btn btn-default">
-				{% trans "Upravit název" %}
-			</a>
-			<a href="{% url 'edit_team' %}" class="btn btn-default">
-			    {% trans "Upravit fotku" %}
-		</a>
-		</p>
 		<div class="team_image">
 			{% if team.lead_photo %}
 				<a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
@@ -28,6 +20,13 @@
 			{% else %}
 					<img src="{% static 'img/dpnk_logo.svg' %}"/>
 			{% endif %}
+      <div id="edit-team-botton-container">
+		      <p id="edit-team-button">
+			        <a href="{% url 'edit_team' %}" class="btn btn-default">
+				          {% trans "Upravit" %}
+			        </a>
+		      </p>
+      </div>
 		</div>
 	</div>
 
@@ -36,9 +35,6 @@
 	</h4>
 	<a class="btn btn-primary" href="{% url "other_team_members_results" %}">
 		{% trans "Výsledky členů týmu" %}
-	</a>
-	<a class="btn btn-primary" href="{% url "pozvanky" %}">
-		{% trans "Pozvat nové členy" %}
 	</a>
 {% endblock %}
 
@@ -49,4 +45,7 @@
 	      {% include "./team_member_card.html" with team_member=team_member include_approve_buttons=True %}
 	   {% endfor %}
 	</form>
+	<a class="btn btn-primary" href="{% url "pozvanky" %}">
+		  {% trans "Pozvat nové členy" %}
+	</a>
 {% endblock %}
