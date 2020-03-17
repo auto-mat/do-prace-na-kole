@@ -63,7 +63,7 @@ INSTALLED_APPS += (
 DEBUG_TOOLBAR = os.environ.get('DPNK_DEBUG_TOOLBAR', False)
 
 if DEBUG_TOOLBAR:
-    INSTALLED_APPS +=  (
+    INSTALLED_APPS += (
         'debug_toolbar',
         'debug_toolbar_line_profiler',
         # 'template_timings_panel',
