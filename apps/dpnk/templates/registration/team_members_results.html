@@ -13,7 +13,6 @@
       <th class="fixed_width_column">{% trans "Počet zapo&shy;čí&shy;ta&shy;ných cest do/z práce" %}</th>
       <th class="fixed_width_column">{% trans "Pro&shy;cen&shy;to jízd" %}</th>
       <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
-      <th class="fixed_width_column">{% trans "Na&shy;sta&shy;ve&shy;ná vzdá&shy;le&shy;nost ce&shy;sty" %}</th>
    </tr>
    {% for user_attendance in team_members %}
       <tr
@@ -37,9 +36,6 @@
       </td>
       <td>
          {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km
-      </td>
-      <td>
-         {{ user_attendance.get_distance|intcomma }}&nbsp;km
       </td>
       {% endif %}
       </tr>
