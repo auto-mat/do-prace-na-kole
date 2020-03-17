@@ -29,6 +29,7 @@ var commute_modes = {
         'choice_description': "{{cm.choice_description|safe}}",
         'does_count': {{cm.does_count|yesno:"true,false" }},
         'icon_html': "{{cm.icon_html|urlencode}}",
+        'points': "{{cm.points_display}}",
     },
     {% endfor %}
 }
@@ -314,7 +315,7 @@ function display_trip(trip, rerender) {
 function update_points() {
     $.getJSON('/rest/userattendance/?format=json', function( data ){
         for (i in data.results) {
-            $("#points-counter").text(data.results[i].get_points.toFixed());
+            $("#points-counter").text(data.results[i].points_display);
         }
     });
 }

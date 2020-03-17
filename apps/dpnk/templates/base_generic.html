@@ -36,7 +36,11 @@
 		                </a>
 								</div>
                 <div class="points-display">
-                    <div id="points-counter">{{user_attendance.get_points|floatformat:"0"}}</div> {% trans "bodů" %}
+                    <div id="points-counter">
+                        {% if user_attendance.points != 0 %}
+                        {{user_attendance.points_display}}
+                        {% endif %}
+                    </div>
                 </div>
 								<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sideNavbar" aria-controls="sideNavbar" aria-expanded="false" aria-label="Toggle navigation">
 								    <span></span>

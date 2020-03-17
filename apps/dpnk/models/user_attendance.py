@@ -589,8 +589,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
         """
         return Trip.objects.filter(user_attendance=self).aggregate(Sum('commute_mode__points'))['commute_mode__points__sum'] or 0
 
-    def get_points(self):
+    @property
+    def points(self):
         return self.trip_points_total
+
+    def points_display(self):
+        from django.utils.translation import ugettext as _
+        return str(round(self.points)) + " " + _("bodů")
 
     def get_admin_url(self, method="change", protocol='https'):
         try:

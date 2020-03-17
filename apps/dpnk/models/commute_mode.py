@@ -93,5 +93,9 @@ class CommuteMode(models.Model):
         default=True,
     )
 
+    def points_display(self):
+        from django.utils.translation import ugettext as _
+        return str(round(self.points)) + " " + _("bodů")
+
     def __str__(self):
         return self.name

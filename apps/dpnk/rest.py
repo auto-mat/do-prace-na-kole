@@ -244,7 +244,7 @@ class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
 class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UserAttendance
-        fields = ('id', 'name', 'frequency', 'trip_length_total', 'get_points')
+        fields = ('id', 'name', 'frequency', 'trip_length_total', 'points', 'points_display')
 
 
 class UserAttendanceSet(viewsets.ReadOnlyModelViewSet):

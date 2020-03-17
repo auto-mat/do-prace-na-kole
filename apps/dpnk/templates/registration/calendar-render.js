@@ -37,6 +37,7 @@ function redraw_shopping_cart(){
     full_calendar.getEventSourceById(2).refetch();
     commute_mode = get_selected_commute_mode();
     $('#trip-shopping-cart').html(decode_description_string(commute_modes[commute_mode].choice_description, ""));
+    $('#trip-shopping-cart-points').html(decode_description_string(commute_modes[commute_mode].points, ""));
 }
 
 function get_placeholder_events(fetchInfo, successCallback, failureCallback){

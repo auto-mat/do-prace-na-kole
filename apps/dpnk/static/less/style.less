@@ -1054,10 +1054,10 @@ div.dataTables_filter input {
     }
   }
 }
-#trip-shopping-cart{
+.trip-shopping-cart-container{
   height: 100%;
   align-items: center;
-  display: flex;
+  position:relative;
   padding:@wg;
   background-color:@lightgrey;
   color:black;
@@ -1669,4 +1669,13 @@ span.select2.select2-container {
 #points-counter {
     padding: 2px;
     display: inline-block;
+}
+
+#trip-shopping-cart-points {
+    background-color:@white;
+    text-align: center;
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
 }
