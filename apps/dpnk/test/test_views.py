@@ -806,6 +806,8 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115]))
+        denorm.flush()
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
