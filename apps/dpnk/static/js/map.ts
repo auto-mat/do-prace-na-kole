@@ -39,10 +39,12 @@ $(function (){
                     }),
                     markerColor: 'white',
                 },
-            ).on('click', function (){
-                $('#map-info').html(`<h3>${city.city__name}</h3><p><b>${strings.competitors}:</b> ${city.competitor_count}</p>`);
-            })
-            .addTo(map);
+            ).on('click', function(city) {
+                var city = city;
+                return function (){
+                    $('#map-info').html(`<h3>${city.city__name}</h3><p><b>${strings.competitors}:</b> ${city.competitor_count}</p>`);
+                }
+            }(city)).addTo(map);
         }
     });
 });
