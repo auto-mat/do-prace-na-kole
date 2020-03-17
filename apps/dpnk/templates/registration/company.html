@@ -12,9 +12,9 @@
 {% if subsidiary.teams.count > 0 %}
 <p>
     {{subsidiary}}
-    <div class="teams-container">
+    <div class="team-card-container row">
         {% for team in subsidiary.teams.all %}
-        <div class="card team-card" >
+        <div class="col-12 col-sm-6 col-md-4 card team-card" >
 			      {% if team.lead_photo %}
 				    <a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
 				        <img src="{{team.lead_photo.get_display_url}}"/>
