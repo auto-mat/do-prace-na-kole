@@ -128,7 +128,6 @@ class CompetitionsViewTests(ViewsLogon):
             html=True,
         )
         self.assertContains(response, '30')
-        self.assertContains(response, '156,9&nbsp;km')
 
     def test_edit_team(self):
         address = reverse('edit_team')
