@@ -581,7 +581,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         # Frequency returned from the ORM is not exactly the same as in DB
         # (floating point transformations). We need to give it some extra margin to match self.
 
-    @denormalized(models.FloatField, null=False, skip={'updated', 'created', 'last_sync_time'})
+    @denormalized(models.FloatField, null=False, default=0, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def trip_points_total(self):
         """
