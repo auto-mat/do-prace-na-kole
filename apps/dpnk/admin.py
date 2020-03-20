@@ -672,9 +672,9 @@ class TripAdminInline(admin.TabularInline):
 class UserAttendanceAdmin(
     StaleSyncMixin,
     AdminAdvancedFiltersMixin,
-    RelatedFieldAdmin,
     ImportExportMixin,
     city_admin_mixin_generator('team__subsidiary__city__in'),
+    RelatedFieldAdmin,
     admin.ModelAdmin,
 ):
     list_display_links = (
