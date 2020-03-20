@@ -677,8 +677,12 @@ class UserAttendanceAdmin(
     city_admin_mixin_generator('team__subsidiary__city__in'),
     LeafletGeoAdmin,
 ):
+    list_display_links = (
+        'id',
+        'name_for_trusted',
+        'userprofile__user__email',
+    )
     list_display = (
-        'avatar_small',
         'id',
         'name_for_trusted',
         'userprofile__user__email',
@@ -786,9 +790,6 @@ class UserAttendanceAdmin(
     list_per_page = 100
     resource_class = resources.UserAttendanceResource
 
-    def avatar_small(self, obj):
-        return avatar(obj.userprofile.user, 30)
-
     def avatar_large(self, obj):
         return avatar(obj.userprofile.user, 150)
 
@@ -802,48 +803,9 @@ class UserAttendanceAdmin(
             'team__subsidiary__city',
             'team__subsidiary__company',
             't_shirt_size__campaign',
-        ).only(
-            'approved_for_team',
-            'campaign__name',
-            'campaign_id',
-            'created',
-            'distance',
-            'frequency',
-            'get_rides_count_denorm',
-            'id',
-            'last_sync_time',
-            'payment_status',
-            'representative_payment__amount',
-            'representative_payment__pay_type',
-            'representative_payment__realized',
-            'representative_payment__status',
-            't_shirt_size',
-            't_shirt_size__campaign__slug',
-            't_shirt_size__name',
-            't_shirt_size__name_cs',
-            't_shirt_size__name_en',
-            't_shirt_size__price',
-            'team',
-            'team__member_count',
-            'team__name',
-            'team__subsidiary',
-            'team__subsidiary__address_city',
-            'team__subsidiary__address_psc',
-            'team__subsidiary__address_recipient',
-            'team__subsidiary__address_street',
-            'team__subsidiary__address_street_number',
-            'team__subsidiary__city',
-            'team__subsidiary__company',
-            'trip_length_total',
-            'updated',
-            'userprofile',
-            'userprofile__nickname',
-            'userprofile__sex',
-            'userprofile__telephone',
-            'userprofile__user__email',
-            'userprofile__user__first_name',
-            'userprofile__user__last_name',
-            'userprofile__user__username',
+        ).defer(
+            'track',
+            'userprofile__user__password',
         )
 
 
