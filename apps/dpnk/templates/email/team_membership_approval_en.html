@@ -1,7 +1,7 @@
 {% extends "email/base.html" %}
 {% block content %}
 <p>
-Good news, {{user_attendance.campaign.display_name}}!
+Good news, {{ user_attendance.userprofile.first_name }}
 </p><p>
 You are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
 </p>
