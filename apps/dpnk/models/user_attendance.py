@@ -660,6 +660,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
             )
         return super().save(*args, **kwargs)
 
+    @classmethod
+    def export_resource_classes(cls):
+        from ..resources import UserAttendanceResource
+        return {
+            'user_attendance': ('User Attendance', UserAttendanceResource),
+        }
+
 
 @receiver(post_save, sender=UserAttendance)
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
