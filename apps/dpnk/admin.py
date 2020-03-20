@@ -778,6 +778,7 @@ class UserAttendanceAdmin(
         actions.touch_items,
         actions.send_notifications,
         make_pdfsandwich,
+        create_export_job_action,
     )
     form = UserAttendanceForm
     inlines = [PaymentInlineUserAttendance, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
