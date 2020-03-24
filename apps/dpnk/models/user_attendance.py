@@ -591,11 +591,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     @property
     def points(self):
-        return self.trip_points_total
+        return self.trip_points_total or 0
 
     def points_display(self):
         from django.utils.translation import ugettext as _
-        return str(round(self.points or 0)) + " " + _("bodů")
+        return str(round(self.points)) + " " + _("bodů")
 
     def get_admin_url(self, method="change", protocol='https'):
         try:
