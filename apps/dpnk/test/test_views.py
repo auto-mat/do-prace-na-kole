@@ -147,7 +147,6 @@ class CompetitionsViewTests(ViewsLogon):
     def test_company_profile(self):
         address = reverse('company')
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, 'Testing team 1')
         self.assertContains(response, 'Team in different subsidiary')
         self.assertNotContains(response, 'Testing team last campaign', html=True)
