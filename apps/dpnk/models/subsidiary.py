@@ -26,7 +26,6 @@ from smart_selects.db_fields import ChainedForeignKey
 
 from .address import Address, get_address_string
 from .city import City
-from .company import Company
 
 
 class ActiveManager(models.Manager):
@@ -43,7 +42,7 @@ class Subsidiary(models.Model):
 
     address = Address()
     company = ChainedForeignKey(
-        Company,
+        'Company',
         related_name="subsidiaries",
         null=False,
         blank=False,
@@ -102,3 +101,15 @@ class Subsidiary(models.Model):
 
     def clean(self):
         Address.clean(self.address, self, Subsidiary)
+
+
+class SubsidiaryInCampaign:
+    def __init__(self, subsidiary, campaign):
+        self.subsidiary = subsidiary
+        self.campaign = campaign
+
+    def teams(self):
+        return self.subsidiary.teams.filter(campaign=self.campaign)
+
+    def __str__(self):
+        return str(self.subsidiary)

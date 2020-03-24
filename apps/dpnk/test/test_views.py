@@ -144,6 +144,14 @@ class CompetitionsViewTests(ViewsLogon):
             response = self.client.post(address, post_data)
         self.assertEqual(response.status_code, 200)
 
+    def test_company_profile(self):
+        address = reverse('company')
+        response = self.client.get(address)
+        print_response(response)
+        self.assertContains(response, 'Testing team 1')
+        self.assertContains(response, 'Team in different subsidiary')
+        self.assertNotContains(response, 'Testing team last campaign', html=True)
+
     def test_daily_chart(self):
         address = reverse(views.daily_chart)
         response = self.client.get(address)

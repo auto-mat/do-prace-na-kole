@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 from stdnumfield.models import StdNumField
 
 from .address import CompanyAddress, get_address_string
+from .subsidiary import SubsidiaryInCampaign
 
 
 ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
@@ -128,3 +129,18 @@ class Company(models.Model):
         return {
             'company_history': ('Company histories', resources.create_company_history_resource()),
         }
+
+    def company_in_campaign(self, campaign):
+        return CompanyInCampaign(self, campaign)
+
+
+class CompanyInCampaign:
+    def __init__(self, company, campaign):
+        self.company = company
+        self.campaign = campaign
+
+    def subsidiaries(self):
+        subsidiaries = []
+        for subsidiary in self.company.subsidiaries.all():
+            subsidiaries.append(SubsidiaryInCampaign(subsidiary, self.campaign))
+        return subsidiaries
