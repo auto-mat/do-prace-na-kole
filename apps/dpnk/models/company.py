@@ -139,6 +139,10 @@ class CompanyInCampaign:
         self.company = company
         self.campaign = campaign
 
+    @property
+    def name(self):
+        return self.company.name
+
     def subsidiaries(self):
         subsidiaries = []
         for subsidiary in self.company.subsidiaries.all():
