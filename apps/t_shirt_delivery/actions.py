@@ -51,7 +51,7 @@ def delivery_batch_generate_pdf(modeladmin, request, queryset):
         batch.submit_gls_order_pdf()
 
 
-delivery_batch_generate_pdf.short_description = _("Nahrát data do GLS a vytvořit PDF")
+delivery_batch_generate_pdf.short_description = _("1) Nahrát data do GLS a vytvořit PDF")
 
 
 def save_filefield(filefield, directory):
@@ -70,6 +70,13 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
             filename = save_filefield(subsidiary_box.customer_sheets, "tmp_pdf/output")
             pdf_files.append(filename)
 
+        if not batch.order_pdf or batch.order_pdf.name == '':
+            modeladmin.message_user(request, _("Chybí PDF z objednávky GLS"))
+            return
+        if not batch.tnt_order or batch.tnt_order.name == '':
+            modeladmin.message_user(request, _("Chybí CSV soubor objednávky"))
+            return
+
         order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf")
         tnt_order_filename = save_filefield(batch.tnt_order, "tmp_pdf")
         subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename, tnt_order_filename])
@@ -79,4 +86,4 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
         subprocess.call(["rm", "tmp_pdf/", "-r"])
 
 
-delivery_batch_generate_pdf_for_opt.short_description = _("Vytvořit PDF pro OPT")
+delivery_batch_generate_pdf_for_opt.short_description = _("2) Vytvořit kombinované PDF pro OPT")
