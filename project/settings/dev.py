@@ -61,11 +61,11 @@ INSTALLED_APPS += (
 )
 
 DEBUG_TOOLBAR = os.environ.get('DPNK_DEBUG_TOOLBAR', False)
+SILK = os.environ.get('DPNK_SILK', False)
 
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += (
         'debug_toolbar',
-        'debug_toolbar_line_profiler',
         # 'template_timings_panel',
         "template_profiler_panel",
     )
@@ -73,6 +73,18 @@ if DEBUG_TOOLBAR:
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
     ]
+
+SILK = os.environ.get('DPNK_SILK', False)
+
+if SILK:
+    INSTALLED_APPS += (
+        'silk',
+    )
+    MIDDLEWARE += [
+        'silk.middleware.SilkyMiddleware',
+    ]
+    SILKY_PYTHON_PROFILER = True
+    SILKY_PYTHON_PROFILER_BINARY = True
 
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
@@ -122,7 +134,6 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
-    'debug_toolbar_line_profiler.panel.ProfilingPanel',
     "template_profiler_panel.panels.template.TemplateProfilerPanel",
     # 'cachalot.panels.CachalotPanel',
     # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
@@ -137,7 +148,6 @@ def custom_show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'JQUERY_URL': STATIC_URL + "jquery/dist/jquery.js",
     'HIDE_DJANGO_SQL': False,
     'TAG': 'div',
 }
