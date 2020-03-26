@@ -1070,6 +1070,7 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
             'commute_mode',
         )
 
+
 @admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
