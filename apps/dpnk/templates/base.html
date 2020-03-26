@@ -30,7 +30,7 @@
     <script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}" charset="utf-8"> </script>
     <script src="{% static 'js/dist/form_functions.js' %}"> </script>
 		<script>
-		Raven.config('http:{% sentry_public_dsn %}').install();
+		Raven.config("{% sentry_public_dsn 'https' %}").install();
 		{% if user.is_authenticated %}
 			Raven.setUserContext({
 				email: '{{ user.email }}',
