@@ -21,7 +21,7 @@
 import os
 
 from .base import *  # noqa
-from .base import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
+from .base import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, TEMPLATES, normpath
 
 ADMINS = (
     ('', ''),
