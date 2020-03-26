@@ -34,9 +34,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
+from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
 
 from motivation_messages.models import MotivationMessage
+
+from notifications.signals import notify
 
 from stale_notifications.model_mixins import StaleSyncMixin
 
@@ -666,6 +669,20 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return {
             'user_attendance': ('User Attendance', UserAttendanceResource),
         }
+
+    def send_templated_notification(self, template):
+        clang = get_language()
+        activate(self.userprofile.language)
+        notify.send(
+            self.campaign,
+            recipient=self.userprofile.user,
+            verb=template.verb,
+            url=template.url,
+            icon=template.icon.url,
+            indempotent=True,
+            action_object=template,
+        )
+        activate(clang)
 
 
 @receiver(post_save, sender=UserAttendance)

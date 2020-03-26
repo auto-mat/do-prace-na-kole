@@ -67,6 +67,8 @@ from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
 from nested_admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
+from notifications.admin import AdminNotifyActionMixin
+
 from polymorphic.admin import PolymorphicChildModelAdmin
 
 from price_level import models as price_level_models
@@ -672,6 +674,7 @@ class TripAdminInline(admin.TabularInline):
 class UserAttendanceAdmin(
     StaleSyncMixin,
     AdminAdvancedFiltersMixin,
+    AdminNotifyActionMixin,
     ImportExportMixin,
     city_admin_mixin_generator('team__subsidiary__city__in'),
     RelatedFieldAdmin,

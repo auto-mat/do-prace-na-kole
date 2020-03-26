@@ -23,6 +23,8 @@ from dpnk.models import CommuteMode
 
 from modeltranslation.translator import TranslationOptions, register
 
+import swapper
+
 
 @register(CommuteMode)
 class CommuteModeTranslationOptions(TranslationOptions):
@@ -54,4 +56,13 @@ class CampaignTranslationOptions(TranslationOptions):
 class CampaignTypeTranslationOptions(TranslationOptions):
     fields = (
         'name',
+    )
+
+
+NotificationTemplate = swapper.load_model("notifications", "NotificationTemplate")
+@register(NotificationTemplate)
+class NotificationTemplateOptions(TranslationOptions):
+    fields = (
+        'verb',
+        'url',
     )
