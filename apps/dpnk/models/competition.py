@@ -214,6 +214,10 @@ class Competition(models.Model):
         verbose_name=_("Započítávají se i rekreační jízdy?"),
         default=False,
     )
+    show_charitative_choices = models.BooleanField(
+        verbose_name=_("Ukázat volbu charitativní organizace ve výsledích"),
+        default=False,
+    )
 
     def get_minimum_rides_base(self):
         return self.minimum_rides_base
@@ -347,6 +351,9 @@ class Competition(models.Model):
             'company': 'get_company',
         }[self.competitor_type]
         columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
+
+        if self.competition_type == 'length' and self.competitor_type == 'single_user' and self.show_charitative_choices:
+            columns.append(('result_value', 'donation_icon', _("Charitativní organizace")))
 
         if self.competitor_type not in ('team', 'company'):
             columns.append(('team', 'get_team_name', _("Tým")))

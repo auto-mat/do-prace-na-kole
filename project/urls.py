@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^rest-docs/', include_docs_urls(title='Do práce na kole API')),
     url(r'^', include("dpnk.urls")),
     url(r'^coupons/', include("coupons.urls")),
+    url(r'^donation/', include("donation_chooser.urls")),
     url(r'^t_shirt/', include("t_shirt_delivery.urls")),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain")),
     url(r'^', include('favicon.urls')),

@@ -50,7 +50,14 @@ def normalize_gpx_filename(instance, filename):
     ])
 
 
-def distance_all_modes(trips):
+def distance_all_modes(trips, campaign=None):
+    if campaign:
+        trips.filter(
+            user_attendance__payment_status__in=('done', 'no_admission'),
+            user_attendance__campaign__slug=campaign.slug,
+            date__gte=campaign.competition_phase().date_from,
+            date__lte=campaign.competition_phase().date_to,
+        )
     return trips.filter(commute_mode__eco=True, commute_mode__does_count=True).aggregate(
         distance__sum=Coalesce(Sum("distance"), 0.0),
         count__sum=Coalesce(Count("id"), 0),
