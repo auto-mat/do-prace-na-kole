@@ -684,6 +684,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
         )
         activate(clang)
 
+    def revoke_templated_notification(self, template):
+        notify.revoke_notification(
+            self.campaign,
+            recipient=self.userprofile.user,
+            action_object=template,
+        )
+
 
 @receiver(post_save, sender=UserAttendance)
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
