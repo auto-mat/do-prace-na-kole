@@ -14,7 +14,18 @@ class CharitativeOrganizationChooserForm(CampaignMixin, SubmitMixin, forms.Model
         self.fields['charitative_organization'].label = _("Vyberte charitativní orgazizaci kterou podpoříte svými cestami")
         self.fields['charitative_organization'].choices = [
             (
-                c.id, format_html("{}<br/><p>{}</p>", c.name, mark_safe(c.description))
+                c.id,
+                format_html(
+                    "<img class='donation-icon' src='{}'/>"
+                    "<div class='donation-heading'>{}</div>"
+                    "<br/>"
+                    "<img class='donation-image' src='{}'/>"
+                    "<p class='donation-description'>{}</p>",
+                    c.icon.url,
+                    c.name,
+                    c.image.url,
+                    mark_safe(c.description),
+                ),
             ) for c in CharitativeOrganization.objects.filter(campaign=self.campaign)
         ]
 

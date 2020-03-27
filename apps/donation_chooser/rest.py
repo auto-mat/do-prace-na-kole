@@ -12,6 +12,8 @@ class CharitativeOrganizationSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'ridden_distance',
+            'image',
+            'icon',
         )
 
 

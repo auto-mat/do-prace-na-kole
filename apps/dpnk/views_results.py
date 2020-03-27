@@ -28,6 +28,8 @@ from django.views.generic.base import TemplateView, View
 
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
+from donation_chooser.models import get_charitative_results_column
+
 from . import models
 from . import resources
 from .views_mixins import (
@@ -96,6 +98,8 @@ class CompetitionResultListJson(BaseDatatableView):
             return str(row.team.member_count)
         if column == 'user_attendance':
             return escape(row.user_attendance)
+        if column == 'donation_icon':
+            return get_charitative_results_column(row.user_attendance)
         if column == 'get_sequence_range':
             sequence_range = self.rank_dict[row.id]
             if sequence_range[0] == sequence_range[1]:

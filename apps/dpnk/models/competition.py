@@ -348,6 +348,9 @@ class Competition(models.Model):
         }[self.competitor_type]
         columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
 
+        if self.competition_type == 'length' and self.competitor_type == 'single_user':
+            columns.append(('result_value', 'donation_icon', _("Charitativní organizace")))
+
         if self.competitor_type not in ('team', 'company'):
             columns.append(('team', 'get_team_name', _("Tým")))
 
