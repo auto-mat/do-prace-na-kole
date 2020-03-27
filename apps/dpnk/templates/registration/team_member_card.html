@@ -16,10 +16,16 @@
    {% endif %}
    <div class="userdata">
       <div>
-         <b>{% trans "Osobní pravidelnost" %}</b>: {{ team_member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
+          <b>{% trans "Osobní pravidelnost" %}</b>
+          <div class="member-item-statistic">
+          {{ team_member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
+          </div>
       </div>
       <div>
-         <b>{% trans "Zdolaná vzdálenost" %}</b>: {{ team_member.trip_length_total_rounded|intcomma }}&nbsp;km
+          <b>{% trans "Zdolaná vzdálenost" %}</b>
+          <div class="member-item-statistic">
+          {{ team_member.trip_length_total_rounded|intcomma }}&nbsp;km
+          </div>
       </div>
    </div>
    <div class="userdata">
