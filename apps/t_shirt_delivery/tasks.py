@@ -27,7 +27,7 @@ from django.conf import settings
 
 import tablib
 
-from .models import SubsidiaryBox
+from .models import DeliveryBatch, SubsidiaryBox
 
 
 @shared_task(bind=True)
@@ -48,3 +48,37 @@ def update_dispatched_boxes(self):
         except ValueError:
             box_filter = {'carrier_identification': carrier_identification}
         SubsidiaryBox.objects.filter(**box_filter).update(**update_info)
+
+
+@shared_task(bind=True)
+def delivery_batch_generate_pdf(ids):
+    batches = DeliveryBatch.objects.filter(pk__in=ids)
+    for batch in batches:
+        batch.submit_gls_order_pdf()
+
+
+def save_filefield(filefield, directory):
+    filename = directory + "/" + os.path.basename(filefield.name)
+    with open(filename, "wb+") as f:
+        f.write(filefield.read())
+    return filename
+
+
+@shared_task(bind=True)
+def delivery_batch_generate_pdf_for_opt(ids):
+    batches = DeliveryBatch.objects.filter(pk__in=ids)
+    for batch in batches:
+        subprocess.call(["rm", "tmp_pdf/", "-r"])
+        subprocess.call(["mkdir", "tmp_pdf/output", "--parents"])
+        pdf_files = []
+        for subsidiary_box in batch.subsidiarybox_set.all():
+            filename = save_filefield(subsidiary_box.customer_sheets, "tmp_pdf/output")
+            pdf_files.append(filename)
+
+        order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf")
+        tnt_order_filename = save_filefield(batch.tnt_order, "tmp_pdf")
+        subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename, tnt_order_filename])
+
+        with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
+            batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
+        subprocess.call(["rm", "tmp_pdf/", "-r"])

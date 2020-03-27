@@ -17,14 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import os
-import subprocess
-
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk import actions
 from dpnk.models import Campaign
 
+from t_shirt_delivery import tasks
 from t_shirt_delivery.models import DeliveryBatch
 
 
@@ -47,43 +45,23 @@ delivery_box_batch_download.short_description = _("Hromadně stáhnout PDF")
 
 
 def delivery_batch_generate_pdf(modeladmin, request, queryset):
-    for batch in queryset.all():
-        batch.submit_gls_order_pdf()
+    ids = [batch.pk for batch in queryset.all()]
+    tasks.delivery_batch_generate_pdf.delay(ids)
 
 
 delivery_batch_generate_pdf.short_description = _("1) Nahrát data do GLS a vytvořit PDF")
 
 
-def save_filefield(filefield, directory):
-    filename = directory + "/" + os.path.basename(filefield.name)
-    with open(filename, "wb+") as f:
-        f.write(filefield.read())
-    return filename
-
-
 def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
     for batch in queryset.all():
-        subprocess.call(["rm", "tmp_pdf/", "-r"])
-        subprocess.call(["mkdir", "tmp_pdf/output", "--parents"])
-        pdf_files = []
-        for subsidiary_box in batch.subsidiarybox_set.all():
-            filename = save_filefield(subsidiary_box.customer_sheets, "tmp_pdf/output")
-            pdf_files.append(filename)
-
         if not batch.order_pdf or batch.order_pdf.name == '':
             modeladmin.message_user(request, _("Chybí PDF z objednávky GLS"))
             return
         if not batch.tnt_order or batch.tnt_order.name == '':
             modeladmin.message_user(request, _("Chybí CSV soubor objednávky"))
             return
-
-        order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf")
-        tnt_order_filename = save_filefield(batch.tnt_order, "tmp_pdf")
-        subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename, tnt_order_filename])
-
-        with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
-            batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
-        subprocess.call(["rm", "tmp_pdf/", "-r"])
+    ids = [batch.pk for batch in queryset.all()]
+    tasks.delivery_batch_generate_pdf_for_opt.delay(ids)
 
 
 delivery_batch_generate_pdf_for_opt.short_description = _("2) Vytvořit kombinované PDF pro OPT")
