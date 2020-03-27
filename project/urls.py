@@ -81,7 +81,7 @@ except ImportError:
 
 handler403 = 'dpnk.exceptions.permission_denied_view'
 
-if settings.SILK:
+if getattr(settings, 'SILK', False):
     urlpatterns += [
         url(r'^silk/', include('silk.urls', namespace='silk')),
     ]
