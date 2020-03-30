@@ -34,7 +34,7 @@ WORKDIR "/home/aplikace"
 run pip3 install pipenv
 copy Pipfile /home/aplikace/Pipfile
 copy Pipfile.lock /home/aplikace/Pipfile.lock
-run pipenv install --system --ignore-pipfile --verbose
+run pipenv install --system --ignore-pipfile --verbose --dev
 
 copy . .
 
