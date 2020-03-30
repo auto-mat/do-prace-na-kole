@@ -122,6 +122,10 @@ django-inline-static = "*"
 django-notifications-hq = {git = "https://github.com/auto-mat/django-notifications.git",editable = true,ref = "list_all"}
 django-npm = "*"
 django-extra-fields = "*"
+django-debug-toolbar = "*"
+django-debug-toolbar-template-timings = "*"
+django-debug-toolbar-request-history = "*"
+django-silk = "*"
 
 [requires]
 python_version = "3.6"
@@ -130,10 +134,7 @@ python_version = "3.6"
 coverage = "*"
 freezegun = "*"
 django-admin-smoke-tests = "*"
-django-debug-toolbar = "*"
 django-debug-toolbar-line-profiler = "*"
-django-debug-toolbar-template-timings = "*"
-django-debug-toolbar-request-history = "*"
 django-nose = "*"
 nose-parameterized = "*"
 nose-timer = "*"
@@ -152,7 +153,6 @@ django_coverage_plugin = "*"
 "flake8_strict" = "*"
 django-livereload-server="*"
 django-debug-toolbar-template-profiler = "*"
-django-silk = "*"
 
 [pipenv]
 allow_prereleases = true
