@@ -51,7 +51,7 @@ def update_dispatched_boxes(self):
 
 
 @shared_task(bind=True)
-def delivery_batch_generate_pdf(ids):
+def delivery_batch_generate_pdf(self, ids):
     batches = DeliveryBatch.objects.filter(pk__in=ids)
     for batch in batches:
         batch.submit_gls_order_pdf()
@@ -65,7 +65,7 @@ def save_filefield(filefield, directory):
 
 
 @shared_task(bind=True)
-def delivery_batch_generate_pdf_for_opt(ids):
+def delivery_batch_generate_pdf_for_opt(self, ids):
     batches = DeliveryBatch.objects.filter(pk__in=ids)
     for batch in batches:
         subprocess.call(["rm", "tmp_pdf/", "-r"])
