@@ -38,7 +38,7 @@ run pipenv install --system --ignore-pipfile --verbose --dev
 
 copy . .
 
-run DPNK_SECRET_KEY="fake_key" python manage.py collectstatic --noinput
+run DPNK_SECRET_KEY="fake_key" DPNK_DEBUG_TOOLBAR=True DPNK_SILK=True python manage.py collectstatic --noinput
 
 EXPOSE 8000
 RUN mkdir media logs -p
