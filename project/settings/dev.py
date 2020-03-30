@@ -141,8 +141,9 @@ DEBUG_TOOLBAR_PANELS = [
 
 
 def custom_show_toolbar(request):
-    if request.META['SERVER_NAME'] != 'testserver':
-        return True  # Always show toolbar, for example purposes only.
+    if request.user and request.user.is_superuser and 'debug_toolbar' in request.GET:
+        return True
+    return False
 
 
 DEBUG_TOOLBAR_CONFIG = {
