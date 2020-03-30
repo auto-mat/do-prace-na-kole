@@ -45,6 +45,13 @@ delivery_box_batch_download.short_description = _("Hromadně stáhnout PDF")
 
 
 def delivery_batch_generate_pdf(modeladmin, request, queryset):
+    for batch in queryset.all():
+        if not batch.tnt_order or batch.tnt_order.name == '':
+            modeladmin.message_user(request, _("Chybí CSV soubor objednávky"))
+            return
+        if batch.t_shirt_count() <= 0:
+            modeladmin.message_user(request, _("V jedné z dávek chybí trika k odeslání"))
+            return
     ids = [batch.pk for batch in queryset.all()]
     tasks.delivery_batch_generate_pdf.delay(ids)
 

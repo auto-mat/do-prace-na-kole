@@ -445,7 +445,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
     def package_transaction_count(self, obj):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
-        return models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj).count()
+        return obj.t_shirt_count()
     package_transaction_count.short_description = _("Trik k odeslání")
 
     def t_shirt_sizes(self, obj):

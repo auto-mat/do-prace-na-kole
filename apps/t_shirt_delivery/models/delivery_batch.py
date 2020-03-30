@@ -115,6 +115,9 @@ class DeliveryBatch(models.Model):
         self.save()
         subprocess.call(["rm", "tmp_gls/", "-r"])
 
+    def t_shirt_count(self):
+        return PackageTransaction.objects.filter(team_package__box__delivery_batch=self).count()
+
     def t_shirt_size_counts(self):
         if not self.pk:
             package_transactions = self.campaign.user_attendances_for_delivery()
