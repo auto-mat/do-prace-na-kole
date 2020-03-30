@@ -60,32 +60,6 @@ INSTALLED_APPS += (
     'livereload',
 )
 
-DEBUG_TOOLBAR = os.environ.get('DPNK_DEBUG_TOOLBAR', False)
-SILK = os.environ.get('DPNK_SILK', False)
-
-if DEBUG_TOOLBAR:
-    INSTALLED_APPS += (
-        'debug_toolbar',
-        # 'template_timings_panel',
-        "template_profiler_panel",
-    )
-    MIDDLEWARE += [
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-        'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
-    ]
-
-SILK = os.environ.get('DPNK_SILK', False)
-
-if SILK:
-    INSTALLED_APPS += (
-        'silk',
-    )
-    MIDDLEWARE += [
-        'silk.middleware.SilkyMiddleware',
-    ]
-    SILKY_PYTHON_PROFILER = True
-    SILKY_PYTHON_PROFILER_BINARY = True
-
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
 
@@ -117,40 +91,6 @@ CORS_ORIGIN_REGEX += [
 MIDDLEWARE += [
     'livereload.middleware.LiveReloadScript',
 ]
-
-
-DEBUG_TOOLBAR_PANELS = [
-    'ddt_request_history.panels.request_history.RequestHistoryPanel',
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-    'debug_toolbar.panels.profiling.ProfilingPanel',
-    "template_profiler_panel.panels.template.TemplateProfilerPanel",
-    # 'cachalot.panels.CachalotPanel',
-    # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
-]
-
-
-def custom_show_toolbar(request):
-    if request.META['SERVER_NAME'] != 'testserver':
-        return True  # Always show toolbar, for example purposes only.
-
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
-    # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'HIDE_DJANGO_SQL': False,
-    'TAG': 'div',
-}
 
 TEMPLATES[0]['OPTIONS']['debug'] = True
 TEMPLATES[0]['OPTIONS']['loaders'] = [

@@ -701,3 +701,27 @@ IMPORT_EXPORT_CELERY_MODELS = {
 }
 
 NOTIFICATIONS_NOTIFICATIONTEMPLATE_MODEL = "dpnk.DpnkNotificationTemplate"
+
+DEBUG_TOOLBAR = os.environ.get('DPNK_DEBUG_TOOLBAR', False)
+if DEBUG_TOOLBAR:
+    INSTALLED_APPS += (
+        'debug_toolbar',
+        # 'template_timings_panel',
+        "template_profiler_panel",
+    )
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+    ]
+    from .includes.debug_toolbar import *  # noqa
+
+SILK = os.environ.get('DPNK_SILK', False)
+if SILK:
+    INSTALLED_APPS += (
+        'silk',
+    )
+    MIDDLEWARE += [
+        'silk.middleware.SilkyMiddleware',
+    ]
+    SILKY_PYTHON_PROFILER = True
+    SILKY_PYTHON_PROFILER_BINARY = True
