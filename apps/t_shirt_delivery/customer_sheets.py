@@ -30,7 +30,7 @@ from reportlab.platypus import Image
 
 
 DIR = os.path.dirname(__file__)
-logo_file = os.path.join(DIR, "static/img/logo.jpg")
+logo_file = os.path.join(DIR, "static/img/automat-mono-cerne.png")
 
 page_height = 10
 page_width = 15
@@ -113,24 +113,24 @@ def make_sheet(subsidiary_box, canvas):
 
 def make_team_sheet(team_package, canvas, package_counter):
     barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm)
-    barcode.drawOn(canvas, 8.57 * cm, (page_height - 3.1) * cm)
+    barcode.drawOn(canvas, 8.57 * cm, (page_height - 2.5) * cm)
     canvas.setFont('DejaVu', 8)
-    canvas.drawString(8.3 * cm, (page_height - 0.45) * cm, "ID týmového balíku:")
+    canvas.drawString(9.2 * cm, (page_height - 0.42) * cm, "ID týmového balíku:")
     canvas.setFont('DejaVuB', 15)
-    canvas.drawString(11.2 * cm, (page_height - 0.65) * cm, team_package.identifier())
+    canvas.drawString(9.2 * cm, (page_height - 3.0) * cm, team_package.identifier())
 
-    canvas.drawString(4.5 * cm, (page_height - 1.2) * cm, "Balíček pro tým")
-    canvas.drawString(4.5 * cm, (page_height - 1.8) * cm, package_counter)
+    canvas.setFont('DejaVuB', 11)
+    canvas.drawString(4.0 * cm, (page_height - 0.9) * cm, "Balíček pro tým %s" % package_counter)
+    canvas.setFont('DejaVuB', 16)
+    canvas.drawString(4.0 * cm, (page_height - 1.5) * cm, "Do krab. č. %s" % team_package.box.id)
     canvas.setFont('DejaVu', 8)
-    canvas.drawString(first_column * cm, (page_height - 2.3) * cm, "Tým: ")
-    canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name or "")
-    canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "ID krab.: ")
-    canvas.drawString(second_column * cm, (page_height - 2.65) * cm, "%s" % team_package.box.id)
+    canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "Tým: ")
+    canvas.drawString(second_column * cm, (page_height - 2.65) * cm, team_package.team.name or "")
     canvas.drawString(first_column * cm, (page_height - 3.0) * cm, "Spol.:")
     canvas.drawString(second_column * cm, (page_height - 3.0) * cm, "%s" % team_package.team.subsidiary.company)
 
     im = Image(logo_file, 3.98 * cm, 1.5 * cm)
-    im.drawOn(canvas, first_column * cm, (page_height - 2) * cm)
+    im.drawOn(canvas, first_column * cm - 0.4 * cm, (page_height - 1.8) * cm)
 
     offset = page_height - 3.2
     canvas.line(0, offset * cm, 100 * cm, offset * cm)
