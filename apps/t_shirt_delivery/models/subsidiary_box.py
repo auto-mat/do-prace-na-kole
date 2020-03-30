@@ -171,7 +171,14 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
 @receiver(post_save, sender=SubsidiaryBox)
 def create_customer_sheets(sender, instance, created, **kwargs):
     if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
+        create_customer_sheets_action(queryset=[instance])
+
+def create_customer_sheets_action(modeladmin=None, request=None, queryset=None):
+    for box in queryset:
         with NamedTemporaryFile() as temp:
-            customer_sheets.make_customer_sheets_pdf(temp, instance)
-            instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
-            instance.save()
+            customer_sheets.make_customer_sheets_pdf(temp, box)
+            box.customer_sheets.save("customer_sheets_%s_%s.pdf" % (box.pk, box.created.strftime("%Y-%m-%d")), File(temp))
+            box.save()
+
+create_customer_sheets_action.short_description = _("Přegenerovat PDF")
+

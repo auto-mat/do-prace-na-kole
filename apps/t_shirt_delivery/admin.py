@@ -204,7 +204,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'customer_sheets',
         'created',
     )
-    actions = [actions.delivery_box_batch_download]
+    actions = [actions.delivery_box_batch_download, models.subsidiary_box.create_customer_sheets_action]
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',

@@ -113,7 +113,7 @@ def make_sheet(subsidiary_box, canvas):
 
 def make_team_sheet(team_package, canvas, package_counter):
     barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm)
-    barcode.drawOn(canvas, 8.3 * cm, (page_height - 3.1) * cm)
+    barcode.drawOn(canvas, 8.57 * cm, (page_height - 3.1) * cm)
     canvas.setFont('DejaVu', 8)
     canvas.drawString(8.3 * cm, (page_height - 0.45) * cm, "ID týmového balíku:")
     canvas.setFont('DejaVuB', 15)
@@ -151,7 +151,7 @@ def make_team_sheet(team_package, canvas, package_counter):
             canvas.drawString(third_column * cm, (offset - 1 * text_line_height - 0.1) * cm, package_transaction.t_shirt_size.__str__())
 
             canvas.setFont('DejaVuB', 14)
-            canvas.drawString(forth_column * cm, (offset - 1 * text_line_height - 0.1) * cm, package_transaction.t_shirt_size.code)
+            canvas.drawString(forth_column * cm, (offset - 1 * text_line_height - 0.2) * cm, package_transaction.t_shirt_size.code)
 
 
 #            if package_transaction.t_shirt_size.t_shirt_preview:
