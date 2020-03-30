@@ -303,9 +303,10 @@ class Campaign(Pricable, models.Model):
     def active(self):
         return self.day_active(util.today())
 
-    def day_active(self, day):
+    def day_active(self, day, day_today=None):
         """ Return if this day can be changed by user """
-        day_today = util.today()
+        if day_today is None:
+            day_today = util.today()
         try:
             entry_phase = self.phase('entry_enabled')
             if not entry_phase.is_actual():
@@ -315,8 +316,13 @@ class Campaign(Pricable, models.Model):
         competition_phase = self.phase('competition')
         return (
             (day <= day_today) and competition_phase.day_in_phase(day) and
-            (day > day_today - datetime.timedelta(days=self.days_active))
+            (day > self._first_possibly_active_day(day_today=day_today))
         )
+
+    def _first_possibly_active_day(self, day_today=None):
+        if day_today is None:
+            day_today = util.today()
+        return day_today - datetime.timedelta(days=self.days_active)
 
     def vacation_day_active(self, day):
         """ Return if this day can be added as vacation """
