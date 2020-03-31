@@ -103,7 +103,7 @@ class TestBatchCsv(TestCase):
             )
             self.assertEquals(
                 ';Foo recipient (Foo company);CZ;Foo city;Foo street 123;12234;Testing User;'
-                'foo@email.cz;123456789;;;;;;1603824;0.5;0.125;1;ID Krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;',
+                'foo@email.cz;123456789;;;;;;1603824;0.5;0.125;1;č. krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;',
                 csv_string_lines[1],
             )
         os.system("rm %s" % temp_file.name)
@@ -121,7 +121,7 @@ class TestBatchCsv(TestCase):
             csv_string_lines = temp_file.read().split("\n")
             self.assertEquals(
                 ';Foo recipient (Foo company);CZ;Foo city;Foo street 123;12234;Addressee name;'
-                'addressee@email.cz;987654321;;;;;;1603824;0.5;0.125;1;ID Krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;',
+                'addressee@email.cz;987654321;;;;;;1603824;0.5;0.125;1;č. krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;',
                 csv_string_lines[1],
             )
         os.system("rm %s" % temp_file.name)
