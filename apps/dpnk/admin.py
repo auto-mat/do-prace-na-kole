@@ -1062,15 +1062,31 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
     readonly_fields = ('created', 'author', 'updated_by')
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
+    inlines = [GpxFileInline, ]
     resource_class = resources.TripResource
     save_as = True
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related(
-            'user_attendance',
-            'user_attendance__userprofile__user',
             'commute_mode',
+            'user_attendance__userprofile__user',
+        ).only(
+            'commute_mode',
+            'date',
+            'direction',
+            'distance',
+            'duration',
+            'from_application',
+            'source_application',
+            'source_id',
+            'user_attendance',
+            'user_attendance__team',
+            'user_attendance__userprofile__nickname',
+            'user_attendance__userprofile__user__email',
+            'user_attendance__userprofile__user__first_name',
+            'user_attendance__userprofile__user__last_name',
+            'user_attendance__userprofile__user__username',
         )
 
 
