@@ -961,7 +961,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         )
         self.assertContains(
             response,
-            '<label for="id_name" class="col-form-label  requiredField">'
+            '<label for="id_name" class=" requiredField">'
             'Název společnosti'
             '<span class="asteriskField">*</span>'
             '</label>',
@@ -1622,7 +1622,7 @@ class ViewsTestsLogon(ViewsLogon):
 
         self.assertContains(
             response,
-            '<label for="id_motivation_company_admin" class="col-form-label  requiredField">'
+            '<label for="id_motivation_company_admin" class=" requiredField">'
             'S kým máme tu čest?'
             '<span class="asteriskField">*</span>'
             '</label>',
