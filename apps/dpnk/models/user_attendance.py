@@ -39,7 +39,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from motivation_messages.models import MotivationMessage
 
-from notifications.signals import notify
+from notifications.signals import notify, revoke_notification
 
 from stale_notifications.model_mixins import StaleSyncMixin
 
@@ -689,7 +689,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         activate(clang)
 
     def revoke_templated_notification(self, template):
-        notify.revoke_notification(
+        revoke_notification.send(
             self.campaign,
             recipient=self.userprofile.user,
             action_object=template,
