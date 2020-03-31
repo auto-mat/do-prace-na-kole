@@ -22,9 +22,9 @@ class CharitativeOrganizationChooserForm(CampaignMixin, SubmitMixin, forms.Model
                     "<img class='donation-image' src='{}'/>"
                     "{}"
                     "</p>",
-                    c.icon.url,
+                    c.icon.url if c.icon else "",
                     c.name,
-                    c.image.url,
+                    c.image.url if c.image else "",
                     mark_safe(c.description),
                 ),
             ) for c in CharitativeOrganization.objects.filter(campaign=self.campaign)

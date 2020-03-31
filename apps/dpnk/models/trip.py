@@ -60,6 +60,7 @@ def distance_all_modes(trips, campaign=None):
         )
     return trips.filter(commute_mode__eco=True, commute_mode__does_count=True).aggregate(
         distance__sum=Coalesce(Sum("distance"), 0.0),
+        user_count=Coalesce(Count("user_attendance__id", distinct=True), 0),
         count__sum=Coalesce(Count("id"), 0),
         count_bicycle=Sum(
             Case(
