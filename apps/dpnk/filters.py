@@ -73,8 +73,12 @@ class CampaignFilter(SimpleListFilter):
             campaign_slug = self.value()
         else:
             campaign_slug = request.subdomain
-        campaign = models.Campaign.objects.get(slug=campaign_slug)
-        campaign_queryarg = {self.field: campaign}
+        try:
+            campaign = models.Campaign.objects.get(slug=campaign_slug)
+            campaign_queryarg = {self.field: campaign}
+        except models.Campaign.DoesNotExist:
+            campaign_queryarg = {}
+
         none_queryarg = {self.field: None}
 
         if self.value() == 'none':
