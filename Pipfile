@@ -30,7 +30,7 @@ polyline = "*"
 InvoiceGenerator = "*"
 django-related-admin = "*"
 newrelic = "*"
-django-crispy-forms = "==1.7.2" # https://github.com/django-crispy-forms/django-crispy-forms/issues/913
+django-crispy-forms = "*"
 django-class-based-auth-views = "*"
 slumber = "*"
 geopy = "*"
