@@ -673,12 +673,16 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def send_templated_notification(self, template):
         clang = get_language()
         activate(self.userprofile.language)
+        try:
+            icon_url = template.icon.url
+        except ValueError:
+            icon_url = ""
         notify.send(
             self.campaign,
             recipient=self.userprofile.user,
             verb=template.verb,
             url=template.url,
-            icon=template.icon.url,
+            icon=icon_url,
             indempotent=True,
             action_object=template,
         )
