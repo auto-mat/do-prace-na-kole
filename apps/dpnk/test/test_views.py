@@ -409,6 +409,7 @@ class DistanceTests(TestCase):
                 'count__sum': 3,
                 'count_bicycle': 2,
                 'count_foot': 1,
+                'user_count': 1,
             },
         )
 
