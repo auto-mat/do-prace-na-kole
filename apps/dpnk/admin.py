@@ -1035,10 +1035,8 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         'direction',
         'commute_mode',
         'source_application',
-        'from_application',
         'source_id',
         'distance',
-        'duration',
         'id')
     search_fields = (
         'user_attendance__userprofile__nickname',
@@ -1055,14 +1053,12 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         'commute_mode',
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
-        'from_application',
         'source_application',
         'user_attendance__payment_status',
     )
     readonly_fields = ('created', 'author', 'updated_by')
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
-    inlines = [GpxFileInline, ]
     resource_class = resources.TripResource
     save_as = True
 
@@ -1076,8 +1072,6 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
             'date',
             'direction',
             'distance',
-            'duration',
-            'from_application',
             'source_application',
             'source_id',
             'user_attendance',
