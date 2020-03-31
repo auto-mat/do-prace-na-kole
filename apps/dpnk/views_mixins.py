@@ -21,11 +21,14 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import classonlymethod
-from django.utils.html import format_html, format_html_join
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
+from dpnk import models
+from dpnk import notification_types
 
 from .util import mark_safe_lazy
 from .views_permission_mixins import MustBeInRegistrationPhaseMixin
@@ -143,17 +146,12 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                 )
 
         if self.registration_phase == 'profile_view':
-            if self.user_attendance.has_unanswered_questionnaires:
-                competitions = format_html_join(
-                    ", ",
-                    "<a href='{}'>{}</a>",
-                    ((
-                        reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}),
-                        q.name
-                    ) for q in self.user_attendance.unanswered_questionnaires().all()),
-                )
-                messages.error(request, format_html(_('Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!'), competitions))
-
+            questionnaires = models.Competition.objects.filter(
+                campaign=self.user_attendance.campaign,
+                competition_type='questionnaire',
+            )
+            for questionnaire in questionnaires:
+                notification_types.questionnaire_factory(questionnaire).update(self.user_attendance)
         company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
             messages.error(request, _('Vaše žádost o funkci koordinátora organizace čeká na vyřízení.'))
