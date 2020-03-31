@@ -2021,12 +2021,16 @@ class RegistrationMixinTests(ViewsLogon):
         m = MagicMock()
         m.feed.get.return_value = []
         slumber_api.return_value = m
+        response = self.client.get(reverse('notifications:live_all_notification_list'))
+        self.assertNotContains(
+            response,
+            "Dotazn\\u00edk spole\\u010dnost\\u00ed",
+        )
         response = self.client.get(reverse('rides'))
+        response = self.client.get(reverse('notifications:live_all_notification_list'))
         self.assertContains(
             response,
-            "Nezapomeňte vyplnit odpovědi v následujících soutěžích: "
-            "<a href='/otazka/dotaznik-spolecnosti/'>Dotazník společností</a>, "
-            "<a href='/otazka/team-questionnaire/'>Dotazník týmů</a>!",
+            "Dotazn\\u00edk spole\\u010dnost\\u00ed",
         )
 
     @patch('slumber.API')
