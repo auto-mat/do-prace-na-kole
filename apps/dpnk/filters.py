@@ -70,10 +70,11 @@ class CampaignFilter(SimpleListFilter):
         if self.value() == 'all':
             return queryset
         elif self.value():
-            campaign = self.value()
+            campaign_slug = self.value()
         else:
-            campaign = request.subdomain
-        campaign_queryarg = {self.field + "__slug": campaign}
+            campaign_slug = request.subdomain
+        campaign = models.Campaign.objects.get(slug=campaign_slug)
+        campaign_queryarg = {self.field: campaign}
         none_queryarg = {self.field: None}
 
         if self.value() == 'none':
