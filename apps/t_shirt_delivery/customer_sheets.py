@@ -121,8 +121,10 @@ def make_team_sheet(team_package, canvas, package_counter):
 
     canvas.setFont('DejaVuB', 11)
     canvas.drawString(4.0 * cm, (page_height - 0.9) * cm, "Balíček pro tým %s" % package_counter)
+    canvas.setFont('DejaVuB', 12)
+    canvas.drawString(4.0 * cm, (page_height - 1.5) * cm, "Do krab. č.:")
     canvas.setFont('DejaVuB', 16)
-    canvas.drawString(4.0 * cm, (page_height - 1.5) * cm, "Do krab. č. %s" % team_package.box.id)
+    canvas.drawString(6.85 * cm, (page_height - 1.5) * cm, "%s" % team_package.box.id)
     canvas.setFont('DejaVu', 8)
     canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "Tým: ")
     canvas.drawString(second_column * cm, (page_height - 2.65) * cm, team_package.team.name or "")
