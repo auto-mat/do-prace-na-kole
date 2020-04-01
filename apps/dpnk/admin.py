@@ -1061,6 +1061,7 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
     list_max_show_all = 100000
     resource_class = resources.TripResource
     save_as = True
+    list_per_page = 5
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
