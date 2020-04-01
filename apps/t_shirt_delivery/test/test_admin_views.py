@@ -104,7 +104,7 @@ class DispatchViewTests(TestCase):
         response = self.client.post(reverse('dispatch'), post_data, follow=True)
         self.assertContains(
             response,
-            '<strong style="color:red">Balíček/krabice nebyl nalezen.</strong>',
+            '<strong style="color:red">Balíček/krabice T123 nebyl nalezen.</strong>',
             html=True,
         )
 
