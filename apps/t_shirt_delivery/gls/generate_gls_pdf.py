@@ -181,8 +181,8 @@ def generate_pdf_part(csv_file):
 def generate_pdf(csv_file):
     subprocess.call(["rm", "tmp_gls", "-R"])
     subprocess.call(["mkdir", "tmp_gls"])
-    from .. import actions
-    csv_filename = actions.save_filefield(csv_file, "tmp_gls")
+    from .. import tasks
+    csv_filename = tasks.save_filefield(csv_file, "tmp_gls")
     subprocess.call(["scripts/batch_generation/split_csv.sh", csv_filename, "500"])
     p = Popen(['bash', '-c', 'ls tmp_gls/delivery_batch_splitted_*'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate()
