@@ -64,14 +64,16 @@ class DispatchView(StaffuserRequiredMixin, FormView):
                     package.dispatched = True
                     package.save()
                     context['package_message'] = _("Balíček/krabice zařazen jako sestavený: %s") % package
+                    context['package'] = package
                     context['package_message_color'] = "green"
+                    context['form'] = DispatchForm()
 
             if package_class == TeamPackage:
                 context['box'] = package.box
             elif package_class == SubsidiaryBox:
                 context['box'] = package
         except ObjectDoesNotExist:
-            context['package_message'] = _("Balíček/krabice nebyl nalezen.")
+            context['package_message'] = _("Balíček/krabice %s nebyl nalezen." % dispatch_id)
             context['package_message_color'] = "red"
         return self.render_to_response(context)
 

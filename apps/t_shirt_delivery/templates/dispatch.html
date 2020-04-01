@@ -13,6 +13,10 @@
  #id_dispatch_id, #submit-id-submit {
      font-size: 40px !important;
  }
+ li {
+     font-size: 40px !important;
+     line-height: 45px !important;
+ }
 </style>
 <div class="zoomed">
 {% crispy form %}
@@ -31,5 +35,15 @@
          </strong>
       </div>
    {% endif %}
+      {% if package %}
+      <p>
+          {% trans "Balík obsahuje:" %}
+      </p>
+      <list>
+          {% for item in package.packagetransaction_set.all %}
+          <li>{{item.t_shirt_size.name}}: <b>{{item.t_shirt_size.code}}</b></li>
+          {% endfor %}
+      </list>
+      {% endif %}
 </div>
 {% endblock %}
