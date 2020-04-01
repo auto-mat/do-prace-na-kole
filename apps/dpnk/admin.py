@@ -1068,7 +1068,10 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
             'commute_mode',
             'user_attendance__userprofile__user',
         ).only(
-            'commute_mode',
+            'commute_mode__name',
+            'commute_mode__name_cs',
+            'commute_mode__name_en',
+            'commute_mode__name_dsnkcs',
             'date',
             'direction',
             'distance',
