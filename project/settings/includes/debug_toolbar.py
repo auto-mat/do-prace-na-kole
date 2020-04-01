@@ -21,7 +21,7 @@ DEBUG_TOOLBAR_PANELS = [
 
 
 def custom_show_toolbar(request):
-    if request.user and request.user.is_superuser and 'debug_toolbar' in request.GET:
+    if request.user and request.user.is_superuser:
         return True
     return False
 
