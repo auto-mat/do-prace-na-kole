@@ -15,7 +15,7 @@ function start_editing(){
 $('.nav-tabs').on('shown.bs.tab', function(){
     redraw_shopping_cart();
     {% for cm in commute_modes %}
-    {% if cm.does_count and cm.eco %}
+    {% if cm.distance_important %}
     hide_map_{{cm.slug}}();
     {%endif%}
     {%endfor%}
@@ -23,7 +23,7 @@ $('.nav-tabs').on('shown.bs.tab', function(){
 });
 
 {% for cm in commute_modes %}
-{% if cm.does_count and cm.eco %}
+{% if cm.distance_important %}
 $('#km-{{cm.slug}}').bind('keyup change mouseup', redraw_shopping_cart)
 {%endif%}
 {%endfor%}
@@ -205,7 +205,7 @@ function reload_route_options() {
         return db - da;
     });
     {% for cm in commute_modes %}
-    {% if cm.does_count and cm.eco %}
+    {% if cm.distance_important %}
     route_options_{{cm.slug}} = jQuery.extend({}, basic_route_options_{{cm.slug}});
     route_option_ids_{{cm.slug}} = jQuery.extend({}, basic_route_option_ids_{{cm.slug}});
     for(var i in displayed_trips) {

@@ -72,10 +72,10 @@
                     <div class="tab-content" id="nav-tabContent">
                         {% for cm in commute_modes %}
                             <div class="tab-pane show {% if cm.slug == 'bicycle' %}active{% endif %}" id="tab-for-{{cm.slug}}" role="tabpanel">
-                                {% if cm.does_count and cm.eco %}
-                                    <div class="cm_tolltip tip">
-                                        {{ cm.tooltip|linebreaks }}
-                                    </div>
+                                <div class="cm_tolltip tip">
+                                    {{ cm.tooltip|linebreaks }}
+                                </div>
+                                {% if cm.distance_important %}
                                     <div class="input-group">
                                         <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
                                         <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}" class="enter_km" /><span class="cal-km-appendix">&nbsp;km</span>
@@ -86,9 +86,9 @@
                                             <i class="fa fa-eye"></i> {% trans 'Zobrazit mapu' %}
                                         </button>
                                     </div>
-                                {% else %}
-                                    <div class="cm_tolltip tip">
-                                        {{ cm.tooltip|linebreaks }}
+                                {% elif cm.duration_important %}
+                                    <div class="input-group">
+                                        <input type="number" style="text-align: right;" max="1000" step="any" id="duration-min-{{cm.slug}}" class="enter_duration_min" /><span class="cal-min-appendix">&nbsp;{% trans "min" %}</span>
                                     </div>
                                 {%endif%}
                             </div>
@@ -106,7 +106,7 @@
 
             <div class="col-12">
                 {% for cm in commute_modes %}
-                    {% if cm.does_count and cm.eco %}
+                    {% if cm.distance_important %}
                         <div id="track_holder_{{cm.slug}}" style="display:none;">
                             <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye-slash">
                                 </i> {% trans 'Skrýt mapu' %}

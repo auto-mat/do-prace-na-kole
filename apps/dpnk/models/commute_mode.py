@@ -83,6 +83,24 @@ class CommuteMode(models.Model):
         verbose_name=_("Body"),
         default=0,
     )
+    minimum_distance = models.FloatField(
+        verbose_name=_("Minimální vzdalenost (km)"),
+        default=0,
+    )
+    minimum_duration = models.PositiveIntegerField(
+        verbose_name=_("Minimální doba ve sekundách"),
+        default=0,
+    )
+    distance_important = models.BooleanField(
+        verbose_name=_("Je vzdalenost důležité"),
+        default=True,
+        null=False,
+    )
+    duration_important = models.BooleanField(
+        verbose_name=_("Je doba důležité"),
+        default=True,
+        null=False,
+    )
     # The difference between eco and does_count is that
     # does_count is also set for car trips and other
     # non-ecological modes of transportation.

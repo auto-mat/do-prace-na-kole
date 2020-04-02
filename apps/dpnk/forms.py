@@ -42,6 +42,7 @@ from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ngettext
 
 from django_gpxpy import gpx_parse
 
@@ -976,6 +977,10 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
         label=_("Vzdálenost (km)"),
         required=False,
     )
+    duration = CommaFloatField(
+        label=_("Doba (min)"),
+        required=False,
+    )
 
     def working_day(self):
         return util.working_day(self.initial['date'])
@@ -994,11 +999,16 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
 
         if 'commute_mode' in cleaned_data:
             commute_mode_slug = cleaned_data['commute_mode'].slug
-            if commute_mode_slug in ('bicycle', 'by_foot') and not cleaned_data.get('distance', False):
+            cm = models.CommuteMode.objects.get(slug=commute_mode_slug)
+            if cm.distance_important and not cleaned_data.get('distance', False):
                 raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
 
-            if commute_mode_slug == 'by_foot' and cleaned_data['distance'] < 1.5:
-                raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
+            if cleaned_data['distance'] < cm.minimum_distance:
+                raise forms.ValidationError(ngettext("Cesta musí mít minimálně %(km)d kilometru") % {'km': cm.minimum_distance / 1000})
+            if cleaned_data['duration']:
+                cleaned_data['duration'] = cleaned_data['duration'] * 60
+                if cleaned_data['duration'] < cm.minimum_duration:
+                    raise forms.ValidationError(ngettext("Činnost musí trvat minimálně %(min)d minutů") % {'min': cm.minimum_duration / 60})
         return cleaned_data
 
     def has_changed(self, *args, **kwargs):

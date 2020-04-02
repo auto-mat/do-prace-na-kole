@@ -30,6 +30,10 @@ var commute_modes = {
         'does_count': {{cm.does_count|yesno:"true,false" }},
         'icon_html': "{{cm.icon_html|urlencode}}",
         'points': "{{cm.points_display}}",
+        'minimum_distnace': {{cm.minimum_distance|unlocalize}},
+        'minimum_duration': {{cm.minimum_duration|unlocalize}},
+        'distance_important': {{cm.distance_important|yesno:"true,false" }},
+        'duration_important': {{cm.duration_important|yesno:"true,false" }}
     },
     {% endfor %}
 }
@@ -49,7 +53,7 @@ direction_names = {
 
 {% for cm in commute_modes %}
 var editable_layers_{{cm.slug}} = null;
-{% if cm.does_count and cm.eco %}
+{% if cm.distance_important %}
 var editable_layers_{{cm.slug}} = new L.FeatureGroup();
 var map_{{cm.slug}} = null;
 
@@ -140,7 +144,7 @@ function load_initial_trips() {
     for(i in displayed_trips) {
         trip = displayed_trips[i];
         {% for cm in commute_modes %}
-        {% if cm.does_count and cm.eco %}
+        {% if cm.distance_important %}
         if(trip.commuteMode == '{{cm.slug}}' && get_selected_commute_mode() == '{{cm.slug}}') {
             $("#option-{{cm.slug}}" + trip.trip_date + trip.direction).prop('selected', true);
             on_route_select_{{cm.slug}}();
@@ -216,8 +220,8 @@ dz_{{cm.slug}} = $('#gpx_upload_{{cm.slug}}').dropzone({
 
 
 function add_trip(trip, file, cont) {
-    if(trip.commuteMode == "by_foot" && trip.distanceMeters < 1500) {
-        show_message("{% trans 'Pěší cesta se počítá od minimální vzdálenost 1,5 km.' %}")
+    if(trip.commuteMode == "by_foot" && trip.distanceMeters < (commute_modes[trip.commuteMode].minimum_distance * 1000)) {
+        show_message("{% trans 'Cesta se počítá od minimální vzdálenost ' %}" + commute_modes[trip.commuteMode].minimum_distance + "km.")
     }
     trip.sourceApplication = "web";
     var formData = new FormData();
@@ -302,8 +306,12 @@ function display_trip(trip, rerender) {
         trip_id: trip.id,
         className: trip_class,
     }
-    if (commute_mode.does_count && commute_mode.eco) {
-        new_event.title = display_meters(trip.distanceMeters) + " km";
+    new_event.title = ""
+    if (commute_mode.distance_important) {
+        new_event.title += display_meters(trip.distanceMeters) + " km ";
+    }
+    if (commute_mode.duration_important) {
+        new_event.title += trip.durationSeconds / 60 + " min";
     }
     event = full_calendar.addEvent(new_event);
     if(rerender){
@@ -410,6 +418,11 @@ function get_selected_distance() {
     return Number($('#km-'+commute_mode).val());
 }
 
+function get_selected_duration() {
+    commute_mode = get_selected_commute_mode();
+    return Number($('#duration-min-'+commute_mode).val());
+}
+
 function get_selected_distance_string() {
     return get_selected_distance().toLocaleString("{{ current_language_code }}");
 }
@@ -437,8 +450,11 @@ function eventClick(info) {
            "direction": info.event.extendedProps.direction,
            "commuteMode": commute_mode,
         }
-        if (commute_modes[commute_mode].does_count && commute_modes[commute_mode].eco) {
+        if (commute_modes[commute_mode].distance_important) {
             trip["distanceMeters"] = get_selected_distance() * 1000;
+        }
+        if (commute_modes[commute_mode].duration_important) {
+            trip["durationSeconds"] = get_selected_duration() * 60;
         }
         els = eval('editable_layers_' + commute_mode);
         if (els) {
@@ -499,7 +515,7 @@ function eventClick(info) {
 document.addEventListener('DOMContentLoaded', function() {
     {% if interactive_entry_enabled %}
     {% for cm in commute_modes %}
-    {% if cm.does_count and cm.eco %}
+    {% if cm.distance_important %}
     map_{{cm.slug}} = create_map('map_{{cm.slug}}')
 
     map_{{cm.slug}}.addLayer(editable_layers_{{cm.slug}});
