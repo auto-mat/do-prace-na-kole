@@ -8,49 +8,28 @@
 
 {% block content %}
 	<div id="landing_page_intro">
-		<div class="row team_dash">
-			{% if user_attendance.campaign.competitors_choose_team %}
-				{# team members #}
-				<div class="col-12 col-sm-12 col-md-6 team_members_col">
-					{% for team_member in user_attendance.team.members %}
-						<div class="row each">
-							<div class="col-4 col-sm-6 col-md-4">
-								{% include "./user_profile_image.html" %}
-							</div>
-							<div class="col-8 col-sm-6 col-md-8 d-flex uname">
-								<div class="name">
-									{{ team_member }}
-								</div>
-								<div class="gain">
-		                <span>{{ team_member.get_rides_count_denorm }} jízd</span>
-                </div>
-							</div>
-						</div>
-					{% endfor %}
-				</div>
-			{% endif %}
-
-			<div class="col-12 col-sm-12 col-md-6 team_info">
-				<!-- 
+      {% with user_attendance.get_team_frequency_icons as frequency_icons %}
+      {% if frequency_icons %}
+      <img src="{{frequency_icons.main}}"/>
+      {% endif %}
+      {% endwith %}
+		<div class="team_dash">
+			<div class="team_info">
 				<div class="frequencybar">
-					<div class="hollow">
 						{{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%
-					</div>
 				</div>
 				<style>
 					.frequencybar{
-						background: conic-gradient(#FF6F61 0% {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, #AED9C8 {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}% 100%)
-						/*background: linear-gradient(90deg, rgba(251,115,93,1) 0%, rgba(251,115,93,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) 100%);*/
+						  background: linear-gradient(90deg, #473990 0%, #473990 {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) {{ user_attendance.team.get_frequency_percentage|floatformat:"0" }}%, rgba(113,113,113,1) 100%);
 					}
 				</style>
 				<div class="frequency_title">
 					{% if user_attendance.campaign.competitors_choose_team %} {% trans "Týmová" %} {% else %} {% trans "Osobní" %} {% endif %} {% trans 'pravidelnost' %}
-				</div> 
+				</div>
 
 				{% if user_attendance.campaign.competitors_choose_team %}
 					<a class="sidenote" href="{% url "team_frequency" %}">jak se počítá</a>
 				{% endif %}
-				-->
 
 				{# clever tattle #}
 				{% if user_attendance.get_random_motivation_message.message %}
@@ -67,6 +46,26 @@
 				{% endif %}
 			</div>
 		</div>
+		{% if user_attendance.campaign.competitors_choose_team %}
+		{# team members #}
+		<div class="col-12 col-sm-12 col-md-6 team_members_col">
+				{% for team_member in user_attendance.team.members %}
+				<div class="row each">
+						<div class="col-4 col-sm-6 col-md-4">
+								{% include "./user_profile_image.html" %}
+						</div>
+						<div class="col-8 col-sm-6 col-md-8 d-flex uname">
+								<div class="name">
+									  {{ team_member }}
+								</div>
+								<div class="gain">
+		                <span>{{ team_member.get_rides_count_denorm }} jízd</span>
+                </div>
+						</div>
+				</div>
+				{% endfor %}
+		</div>
+		{% endif %}
 	</div>
 
 	<script>
