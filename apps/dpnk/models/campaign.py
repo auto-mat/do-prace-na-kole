@@ -82,7 +82,8 @@ class Campaign(Pricable, models.Model):
     )
     previous_campaign = models.ForeignKey(
         'Campaign',
-        verbose_name=_(u"Předchozí kampaň"),
+        verbose_name=_("Předchozí kampaň"),
+        help_text=_("Kampaň, ze které se přebírá velikost trička, nazev týmu atd... při vytváření nové účasti v kampani"),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
