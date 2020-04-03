@@ -12,15 +12,18 @@ window.helpdesk_iframe_url = '';
 </script>
 <script src="{% static 'js/dist/modals.js' %}" type="text/javascript"></script>
 
-{% register_notify_callbacks callbacks='dpnk_fill_notification_list,fill_notification_badge' api_name='list_all' refresh_period=200 %}
+{% register_notify_callbacks callbacks='window.dpnk_fill_notification_list,fill_notification_badge' api_name='list_all' refresh_period=60 %}
+<script>
+    window.notify_menu_class = notify_menu_class;
+</script>
 
 <!-- Helpdesk -->
 {% if user_attendance.helpdesk_iframe_url %}
-<div id="helpdeskwindow" class="modal" role="dialog">
+<div id="helpdeskwindow" class="modal normalmodal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content helpdesk-modal-content">
             <div class="modal-header">
-                <button type="button" class="close" onclick=closeHelpdesk()>&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <iframe id="helpdeskiframe" src="" name="iframe_helpdesk" frameborder="0" class="helpdesk-iframe"></iframe>
@@ -32,12 +35,12 @@ window.helpdesk_iframe_url = '';
 {% endif %}
 
 <!-- Notifications -->
-<div id="notificationswindow" class="modal" role="dialog">
+<div id="notificationswindow" class="modal normalmodal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 {% trans "Upozornění" %}
-                <button type="button" class="close" onclick=closeNotifications()>&times;</button>
+                <button type="button" id="notificationswindow-close" data-dismiss="modal" class="close">&times;</button>
             </div>
             <div class="modal-body">
                 {% live_notify_list %}

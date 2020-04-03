@@ -1,19 +1,36 @@
 const path = require('path');
 
 module.exports = {
+    resolve: {
+        extensions: ["", ".webpack.js", ".web.js", ".js", ".ts"]
+    },
     entry: {
-        map: './apps/dpnk/static/ts/map.ts',
-        modals: './apps/dpnk/static/ts/modals.ts',
-        form_functions: './apps/dpnk/static/ts/form_functions.ts',
-        calendar: './apps/dpnk/static/ts/calendar.ts',
+        map: './frontend/ts/map.ts',
+        modals: './frontend/ts/modals.ts',
+        form_functions: './frontend/ts/form_functions.ts',
+        calendar: './frontend/ts/calendar.ts',
+        leaflet_settings: './frontend/ts/leaflet_settings.ts',
     },
     module: {
         rules: [
             {
-                loader: 'ts-loader',
-                options: {ignoreDiagnostics: [2304, 2339, 7006, 2393],},
-                exclude: [/node_modules/],
+                test: /\.tsx?$/,
+                loader: 'awesome-typescript-loader',
+                exclude: /static/,
+                options: {ignoreDiagnostics: [2686]},
             },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)$/i,
+                loader: 'file-loader',
+            },
+            {
+                test: /\.less$/i,
+                use: ['style-loader', 'css-loader', 'less-loader'],
+            }
         ],
     },
     resolve: {
@@ -21,5 +38,6 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'apps/dpnk/static/js/dist')
-    }
+    },
+    mode: "development",
 }

@@ -1,4 +1,11 @@
 import LocalizedStrings from 'localized-strings';
+import "leaflet.awesome-markers";
+import {RestTrips, RestCityInCampaign}  from "./dpnk/rest"
+
+import {
+    load_track,
+    create_map,
+} from "./leaflet";
 
 let strings = new LocalizedStrings(
     {
@@ -16,17 +23,15 @@ let strings = new LocalizedStrings(
 
 $(function (){
     var map = create_map('map');
-    //var editable_layers = new L.FeatureGroup();
-    //map.addLayer(editable_layers);
-    $.getJSON('/rest/gpx/?format=json', function( data ){
-        for (i in data.results) {
+
+    $.getJSON('/rest/gpx/?format=json', function( data: RestTrips ){
+        for (var i in data.results) {
             var trip = data.results[i];
             load_track(map, "/trip_geojson/" + trip.trip_date + "/" + trip.direction, {}, null, function(){});
         }
     });
-    $.getJSON('/rest/city_in_campaign/?format=json', function( data ){
-        console.log(data);
-        for (i in data.results) {
+    $.getJSON('/rest/city_in_campaign/?format=json', function( data: RestCityInCampaign ){
+        for (var i in data.results) {
             var city = data.results[i];
             L.marker(
                 [city.city__location.latitude, city.city__location.longitude],
@@ -37,10 +42,10 @@ $(function (){
                         className: 'awesome-marker awesome-marker-square',
                         iconAnchor:   [17, 22],
                     }),
-                    markerColor: 'white',
                 },
             ).on('click', function(city) {
                 var city = city;
+                console.log(strings);
                 return function (){
                     $('#map-info').html(`<h3>${city.city__name}</h3><p><b>${strings.competitors}:</b> ${city.competitor_count}</p>`);
                 }
