@@ -18,6 +18,7 @@
     <script src='{% static "@fullcalendar/interaction/main.js"%}'></script>
     <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
     <script src="{% static 'leaflet-gpx/gpx.js' %}"></script>
+    <script src="{% static 'js/dist/calendar.js' %}"> </script>
     {{ block.super }}
 {% endblock %}
 {% block caption %}
@@ -190,5 +191,4 @@
     <script>
      {% include "registration/calendar.js" %}
     </script>
-
 {% endblock %}
