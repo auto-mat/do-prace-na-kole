@@ -500,14 +500,14 @@ label{
     }
     .nick{
       position: relative;
-      margin-top:@wg;
+      margin-top:2em;
       .name{
         padding:0;
         display: inline-block;
       }
       .notification_badge{
           display: inline-flex;
-          position: absolute;
+          padding-left: 0.17em;
           color:#fff !important;
       }
       .live_badge_count{
@@ -890,7 +890,7 @@ table.competition_results_table, .tableheading{
 }
 .frequency_title{
   text-align: right;
-  padding: @f*2 0 @f/2 0;
+  padding: @f 0 @f/2 0;
 }
 .sidenote{
   float:right;
@@ -906,7 +906,7 @@ table.competition_results_table, .tableheading{
   }
 }
 .team_members_col{
-  margin-top:@wg*.9;
+  margin-top:3em;
   .avatar_holder{
     padding:0 @wg;
   }
@@ -1577,7 +1577,6 @@ span.select2.select2-container {
     right: 0rem;
   }
   .team_dash{
-    display: flex;
     .team_info{
       order:1;
     }
@@ -1598,6 +1597,11 @@ span.select2.select2-container {
     }
     .nick{
       padding-left: @f*1.5;
+    }
+    #points-counter {
+        padding-left: @f*1.5;
+        text-align: left;
+        display: block;
     }
     .logo{
       padding-left: 15px;
