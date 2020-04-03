@@ -41,8 +41,8 @@ from django.urls import reverse
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ngettext
+from django.utils.translation import ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
 
