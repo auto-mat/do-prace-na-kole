@@ -1080,6 +1080,19 @@ div.dataTables_filter input {
   &:empty{
     display:none;
   }
+  #trip-shopping-cart-points {
+      background-color:@white;
+      text-align: center;
+      bottom: 4px;
+      left: 4px;
+      right: 4px;
+      @media all and (min-width: 576px) {
+          position: absolute;
+      }
+      @media all and (max-width: 576px) {
+          margin-top: 5px;
+      }
+  }
 }
 .tip{
   font-size:.8rem;
@@ -1689,15 +1702,6 @@ span.select2.select2-container {
 #points-counter {
     padding: 2px;
     display: inline-block;
-}
-
-#trip-shopping-cart-points {
-    background-color:@white;
-    text-align: center;
-    position: absolute;
-    bottom: 4px;
-    left: 4px;
-    right: 4px;
 }
 
 .donation-results-logo, .donation-icon {
