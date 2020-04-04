@@ -427,6 +427,8 @@ CORS_ORIGIN_REGEX = [
     r'^(https?://)?(\w+\.)?dopracenakole\.cz$',
 ]
 
+CORS_ORIGIN_REGEX_WHITELIST = CORS_ORIGIN_REGEX
+
 DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')
 
 MAX_COMPETITIONS_PER_COMPANY = 8
