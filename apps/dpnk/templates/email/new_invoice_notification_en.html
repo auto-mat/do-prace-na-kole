@@ -6,7 +6,7 @@
 <p>
 Hello, {{ user_attendance.userprofile.first_name }}
 </p><p>
-Your {{ user_attendance.team.subsidiary.company.name }} company invoice for the {{ user_attendance.campaign.name }} competition is ready. Please check it before the due date {{invoice.taxable_date}}.
+Your {{ user_attendance.team.subsidiary.company.name }} company invoice for the {{ user_attendance.campaign.name }} competition is ready. Please check it before the due date {{invoice.payback_date}}.
 </p>
 
 {% url 'invoices' as button_link %}
