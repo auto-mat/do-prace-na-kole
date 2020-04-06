@@ -5,7 +5,7 @@
 <p>
 Is everything OK, {{ user_attendance.userprofile.first_name }}?
 </p><p>
-We haven't get Your payment for the team invoice issued on {{ invoice.exposure_date }} with the due date {{invoice.taxable_date}}.
+We haven't get Your payment for the team invoice issued on {{ invoice.exposure_date }} with the due date {{invoice.payback_date}}.
 </p>
 
 {% url 'invoices' as button_link %}
