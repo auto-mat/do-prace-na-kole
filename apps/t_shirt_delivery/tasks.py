@@ -76,8 +76,7 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
             pdf_files.append(filename)
 
         order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf")
-        tnt_order_filename = save_filefield(batch.tnt_order, "tmp_pdf")
-        subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename, tnt_order_filename])
+        subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename])
 
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
             batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
