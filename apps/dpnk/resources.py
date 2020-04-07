@@ -194,6 +194,8 @@ class UserAttendanceResource(resources.ModelResource):
             'userprofile__user__email',
             'userprofile__occupation',
             'userprofile__age_group',
+            'userprofile__mailing_opt_in',
+            'userprofile__telephone_opt_in',
             'subsidiary_name',
             'team__subsidiary__company__name',
             'company_admin_emails',
