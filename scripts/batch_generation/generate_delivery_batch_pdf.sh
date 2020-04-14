@@ -15,5 +15,5 @@ echo rotate
 for i in tmp_pdf/output/*.pdf; do pdfjam --angle '90' --outfile "$i-rot" -- $i; mv "$i-rot" $i; done
 pdfjam --angle '90' --outfile "$1-rot" -- $1
 mv "$1-rot" $1
-echo pdfunite
-pdfunite tmp_pdf/output/*.pdf* tmp_pdf/combined_sheets-rotated.pdf
+echo concatenate pdf
+pdftk tmp_pdf/output/*.pdf* cat output tmp_pdf/combined_sheets-rotated.pdf

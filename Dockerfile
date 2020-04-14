@@ -21,6 +21,7 @@ run apt-get update && apt-get install -y \
    memcached \
    poppler-utils \
    texlive-extra-utils \
+   pdftk-java \
    postgresql-common \
    postgresql-client \
    python-tk \
