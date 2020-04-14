@@ -2,18 +2,16 @@
 
 # Usage: ./generate_delivery_batch_pdf.sh delivery_batch.pdf
 
-pdfseparate $1 tmp_pdf/output/pg_%04d.pdf
+pdftk $1 burst output tmp_pdf/output/pg_%04d.pdf
 
 (
    cd tmp_pdf/output
    for file in pg_*.pdf; do
-      mv $file customer_sheets_`pdftotext $file - | grep "č. krab." | sed "s/č. krab. \([0-9]*\).*/\\1/"`.gls_label.pdf
+      mv $file customer_sheets_`pdftotext $file - | grep "č. krab." | sed "s/č. krab. \([0-9]*\).*/\\1/"`__gls_label.pdf
    done
 )
 
-echo rotate
-for i in tmp_pdf/output/*.pdf; do pdfjam --angle '90' --outfile "$i-rot" -- $i; mv "$i-rot" $i; done
-pdfjam --angle '90' --outfile "$1-rot" -- $1
-mv "$1-rot" $1
 echo concatenate pdf
-pdftk tmp_pdf/output/*.pdf* cat output tmp_pdf/combined_sheets-rotated.pdf
+pdftk tmp_pdf/output/*.pdf* cat output tmp_pdf/combined_sheets.pdf
+echo rotate
+pdftk A=tmp_pdf/combined_sheets.pdf rotate Awest output tmp_pdf/combined_sheets-rotated.pdf
