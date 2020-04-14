@@ -61,6 +61,7 @@ def save_filefield(filefield, directory):
     filename = directory + "/" + os.path.basename(filefield.name)
     with open(filename, "wb+") as f:
         f.write(filefield.read())
+        filefield.close()
     return filename
 
 
