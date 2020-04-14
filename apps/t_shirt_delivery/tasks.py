@@ -81,4 +81,5 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
 
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
             batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
+            batch.save()
         subprocess.call(["rm", "tmp_pdf/", "-r"])
