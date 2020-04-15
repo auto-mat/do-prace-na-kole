@@ -12,6 +12,6 @@ pdftk $1 burst output tmp_pdf/output/pg_%04d.pdf
 )
 
 echo concatenate pdf
-pdftk tmp_pdf/output/*.pdf* cat output tmp_pdf/combined_sheets.pdf
+pdftk `ls tmp_pdf/output/*.pdf* | sort` cat output tmp_pdf/combined_sheets.pdf
 echo rotate
 pdftk A=tmp_pdf/combined_sheets.pdf rotate Awest output tmp_pdf/combined_sheets-rotated.pdf
