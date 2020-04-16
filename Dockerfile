@@ -19,6 +19,7 @@ run apt-get update && apt-get install -y \
    libxml2-dev \
    libxslt-dev \
    memcached \
+   poppler-utils \
    texlive-extra-utils \
    pdftk-java \
    postgresql-common \
