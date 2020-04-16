@@ -20,7 +20,7 @@ sql
 db
 run
 dpnk.log*
-project/settings_local.py
+project/settings/local.py
 amazon_script.sh
 make_graph.sh
 fabfile.py
