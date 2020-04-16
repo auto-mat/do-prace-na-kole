@@ -1,4 +1,5 @@
 import datetime
+import logging
 import subprocess
 from subprocess import PIPE, Popen
 
@@ -10,6 +11,8 @@ from django.conf import settings
 
 import requests
 
+logger = logging.getLogger(__name__)
+
 
 def generate_pdf_part(csv_file):
     gls_url = settings.GLS_BASE_URL
@@ -20,7 +23,7 @@ def generate_pdf_part(csv_file):
         'username': settings.GLS_USERNAME,
         'lessersecurity': "on",
     }
-    response = session.post(gls_url + '/login.php', data=login_data)
+    response0 = session.post(gls_url + '/login.php', data=login_data)
     # print_response(response)
 
     # ----------remove uploaded file-------------------------
@@ -38,7 +41,7 @@ def generate_pdf_part(csv_file):
         "importfile_encoding": "UTF-8",
     }
 
-    response = session.post(gls_url + '/subindex.php', data=data)
+    response1a = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response1a.html")
 
     # ----------choose preset----------------------------
@@ -54,7 +57,7 @@ def generate_pdf_part(csv_file):
         "assignment_id": "0",
     }
 
-    response = session.post(gls_url + '/subindex.php', data=data)
+    response1 = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response1.html")
 
     # -----------upload new file---------------------
@@ -75,7 +78,7 @@ def generate_pdf_part(csv_file):
 
     files = {'importfile': ('test_batch.csv', csv_file, 'text/csv')}
 
-    response = session.post(gls_url + '/subindex.php', files=files, data=data)
+    response2 = session.post(gls_url + '/subindex.php', files=files, data=data)
     # print_response(response, filename="response2.html")
 
     # -----------------------------------------------
@@ -128,7 +131,7 @@ def generate_pdf_part(csv_file):
         "saveParcelImportTemplate": "",
     }
 
-    response = session.post(gls_url + '/subindex.php', data=data)
+    response3 = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response3.html")
 
     # -----------download failed pages-------------------------
@@ -148,7 +151,7 @@ def generate_pdf_part(csv_file):
         "targetpnum": "0",
     }
 
-    response = session.post(gls_url + '/subindex.php', data=data)
+    response4 = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response4.html")
 
     # -----------------------------------------------
@@ -168,10 +171,24 @@ def generate_pdf_part(csv_file):
         "targetpnum": "0",
     }
 
-    response = session.post(gls_url + '/subindex.php', data=data)
+    response5 = session.post(gls_url + '/subindex.php', data=data)
     # print_response(response, filename="response5.html")
-    soup = BeautifulSoup(response.text, features="lxml")
-    addr = gls_url + "/" + soup.find('body').find('iframe').attrs['src']
+    soup = BeautifulSoup(response5.text, features="lxml")
+    try:
+        addr = gls_url + "/" + soup.find('body').find('iframe').attrs['src']
+    except AttributeError:
+        logger.exception(
+            'Failed to communicate with GLS website',
+            extra={
+                'response0': response0.text,
+                'response1': response1.text,
+                'response1a': response1a.text,
+                'response2': response2.text,
+                'response3': response3.text,
+                'response4': response4.text,
+                'response5': response5.text,
+            },
+        )
     response = session.get(addr)
     # with open("batch.pdf", "wb") as f:
     #     f.write(response.content)
