@@ -44,7 +44,12 @@ BASE_DIR = PROJECT_ROOT
 sys.path.append(normpath(PROJECT_ROOT, "apps"))
 sys.path.append(normpath(PROJECT_ROOT, "project"))
 
-DEBUG = os.environ.get('DPNK_DEBUG', False) in (True, "True")
+
+def str_to_bool(string):
+    return string in (True, 'true', 'True')
+
+
+DEBUG = str_to_bool(os.environ.get('DPNK_DEBUG', False))
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -704,7 +709,7 @@ IMPORT_EXPORT_CELERY_MODELS = {
 
 NOTIFICATIONS_NOTIFICATIONTEMPLATE_MODEL = "dpnk.DpnkNotificationTemplate"
 
-DEBUG_TOOLBAR = os.environ.get('DPNK_DEBUG_TOOLBAR', False)
+DEBUG_TOOLBAR = str_to_bool(os.environ.get('DPNK_DEBUG_TOOLBAR', False))
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += (
         'debug_toolbar',
@@ -717,7 +722,7 @@ if DEBUG_TOOLBAR:
     ]
     from .includes.debug_toolbar import *  # noqa
 
-SILK = os.environ.get('DPNK_SILK', False)
+SILK = str_to_bool(os.environ.get('DPNK_SILK', False))
 if SILK:
     INSTALLED_APPS += (
         'silk',
