@@ -34,6 +34,7 @@ class CharitativeOrganization(models.Model):
     campaign = models.ForeignKey('dpnk.Campaign', on_delete=models.CASCADE, null=False, blank=False)
     image = models.ImageField(upload_to='charitative_organization/image', null=True, blank=True)
     icon = models.ImageField(upload_to='charitative_organization/image', null=True, blank=True)
+    order = models.IntegerField(null=True, blank=True)
 
     def get_ridden_distance(self):
         return distance_all_modes(
@@ -45,6 +46,9 @@ class CharitativeOrganization(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ('order', 'name',)
 
 
 class CharitativeOrganizationForm(forms.ModelForm):
