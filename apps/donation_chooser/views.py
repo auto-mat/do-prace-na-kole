@@ -1,3 +1,4 @@
+from braces.views import LoginRequiredMixin
 
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
@@ -8,7 +9,7 @@ from .forms import CharitativeOrganizationChooserForm
 from .models import UserChoice
 
 
-class CharitativeOrganizationChooserView(CampaignFormKwargsMixin, UserAttendanceViewMixin, UpdateView):
+class CharitativeOrganizationChooserView(LoginRequiredMixin, CampaignFormKwargsMixin, UserAttendanceViewMixin, UpdateView):
     template_name = 'base_generic_registration_form.html'
     model = UserChoice
     form_class = CharitativeOrganizationChooserForm
