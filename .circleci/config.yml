@@ -9,7 +9,8 @@ jobs:
       - checkout
       - run: curl -sL https://deb.nodesource.com/setup_10.x | bash -
       - run: apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
-      - run: npm install --dev
+      - run: npm install
+      - run: npm install --only=dev
       - run: npm run build || true
       - run: pip install 'Django==2.2.6' "coveralls==1.5.1" django_coverage_plugin
       - run: django-admin compilemessages
