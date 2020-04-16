@@ -1,4 +1,5 @@
 
+from adminsortable2.admin import SortableAdminMixin
 
 from django.contrib import admin
 
@@ -6,7 +7,7 @@ from .models import CharitativeOrganization, CharitativeOrganizationForm, UserCh
 
 
 @admin.register(CharitativeOrganization)
-class CharitativeOrganizdationAdmin(admin.ModelAdmin):
+class CharitativeOrganizdationAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'campaign')
     list_filter = ('campaign',)
     form = CharitativeOrganizationForm
