@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
+import datetime
 import os
 import subprocess
 
@@ -80,6 +81,7 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
         subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename])
 
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
-            batch.combined_opt_pdf.save("tmp_pdf/combined_sheets_rotated_%s.pdf" % batch.pk, f)
+            filename = "tmp_pdf/combined_sheets_rotated_%s_%s.pdf" % (batch.pk, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            batch.combined_opt_pdf.save(filename, f)
             batch.save()
         subprocess.call(["rm", "tmp_pdf/", "-r"])

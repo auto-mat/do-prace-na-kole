@@ -111,7 +111,8 @@ class DeliveryBatch(models.Model):
     def submit_gls_order_pdf(self):
         pdf_filename = generate_pdf(self.tnt_order)
         with open(pdf_filename, "rb+") as f:
-            self.order_pdf.save("batch%s.pdf" % self.id, f)
+            filename = "batch_%s_%s.pdf" % (self.id, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            self.order_pdf.save(filename, f)
         self.save()
         subprocess.call(["rm", "tmp_gls/", "-r"])
 
