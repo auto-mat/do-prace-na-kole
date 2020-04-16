@@ -36,6 +36,7 @@ from django import forms
 from django.contrib import admin
 from django.db.models import Case, CharField, Count, TextField, When
 from django.forms import Textarea
+from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -423,7 +424,6 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         'dispatched_count',
         't_shirt_sizes',
     )
-    inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
     resource_class = DeliveryBatchResource
@@ -450,6 +450,16 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
     def t_shirt_sizes(self, obj):
         return format_html_join(mark_safe("<br/>"), "{}: {}", obj.t_shirt_size_counts(campaign=getattr(self, 'campaign', None)))
     t_shirt_sizes.short_description = _(u"Velikosti trik")
+
+    def box_count(self, obj):
+        if obj.pk:
+            return format_html(
+                "<a href='{}?delivery_batch__id={}&amp;campaign={}'>{}</a>",
+                reverse("admin:t_shirt_delivery_subsidiarybox_changelist"),
+                obj.pk,
+                obj.campaign.slug,
+                obj.box_count(),
+            )
 
     def customer_sheets__url(self, obj):
         if obj.customer_sheets:
