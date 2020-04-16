@@ -412,6 +412,8 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         'combined_opt_pdf_url',
     ]
     actions = [
+        actions.recreate_delivery_csv,
+        actions.regenerate_all_box_pdfs,
         actions.delivery_batch_generate_pdf,
         actions.delivery_batch_generate_pdf_for_opt,
     ]

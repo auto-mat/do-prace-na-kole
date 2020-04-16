@@ -72,3 +72,26 @@ def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
 
 
 delivery_batch_generate_pdf_for_opt.short_description = _("2) Vytvořit kombinované PDF pro OPT")
+
+
+def regenerate_all_box_pdfs(modeladmin, request, queryset):
+    for batch in queryset.all():
+        for box in batch.subsidiarybox_set.all():
+            box.customer_sheets = None
+            box.save()
+    ids = [batch.pk for batch in queryset.all()]
+    tasks.delivery_batch_generate_pdf_for_opt.delay(ids)
+
+
+regenerate_all_box_pdfs.short_description = _("Přegenerovat všechna PDF všech krabic u vybraných dávek")
+
+
+def recreate_delivery_csv(modeladmin, request, queryset):
+    for batch in queryset.all():
+        batch.tnt_order = None
+        batch.save()
+    ids = [batch.pk for batch in queryset.all()]
+    tasks.delivery_batch_generate_pdf_for_opt.delay(ids)
+
+
+recreate_delivery_csv.short_description = _("Přegenerovat CSV u vybraných dávek")
