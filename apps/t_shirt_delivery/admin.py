@@ -483,7 +483,8 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         return obj.dispatched_count
 
     def add_view(self, request, *args, **kwargs):
-        self.campaign = request.campaign
+        if hasattr(request, 'campaign'):
+            self.campaign = request.campaign
         return super().add_view(request, *args, **kwargs)
 
     def get_queryset(self, request):
