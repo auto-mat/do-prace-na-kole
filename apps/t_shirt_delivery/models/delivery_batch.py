@@ -118,9 +118,11 @@ class DeliveryBatch(models.Model):
     def t_shirt_count(self):
         return PackageTransaction.objects.filter(team_package__box__delivery_batch=self).count()
 
-    def t_shirt_size_counts(self):
+    def t_shirt_size_counts(self, campaign=None):
+        if hasattr(self, 'campaign'):
+            campaign = self.campaign
         if not self.pk:
-            package_transactions = self.campaign.user_attendances_for_delivery()
+            package_transactions = campaign.user_attendances_for_delivery()
             t_shirts = TShirtSize.objects.filter(userattendance__in=package_transactions)
             t_shirts = t_shirts.annotate(size_count=models.Count('userattendance'))
         else:
@@ -131,7 +133,7 @@ class DeliveryBatch(models.Model):
         ordered_t_shirt_counts = collections.OrderedDict(
             [
                 (size.name, 0) for size in TShirtSize.objects.filter(
-                    campaign=self.campaign,
+                    campaign=campaign,
                 ).order_by('name')
             ]
         )

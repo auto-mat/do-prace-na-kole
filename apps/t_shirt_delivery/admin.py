@@ -358,7 +358,7 @@ class DeliveryBatchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         if hasattr(self, 'request') and hasattr(self.request, 'campaign'):
-            self.instance.campaign = self.request.campaign
+            self.fields['campaign'].initial = self.request.campaign
         return ret_val
 
 
@@ -415,7 +415,6 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         actions.delivery_batch_generate_pdf_for_opt,
     ]
     readonly_fields = (
-        'campaign',
         'author',
         'created',
         'updated_by',
@@ -444,12 +443,12 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
 
     def package_transaction_count(self, obj):
         if not obj.pk:
-            return obj.campaign.user_attendances_for_delivery().count()
+            return self.campaign.user_attendances_for_delivery().count()
         return obj.t_shirt_count()
     package_transaction_count.short_description = _("Trik k odeslání")
 
     def t_shirt_sizes(self, obj):
-        return format_html_join(mark_safe("<br/>"), "{}: {}", obj.t_shirt_size_counts())
+        return format_html_join(mark_safe("<br/>"), "{}: {}", obj.t_shirt_size_counts(campaign=getattr(self, 'campaign', None)))
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):
@@ -470,6 +469,10 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
 
     def dispatched_count(self, obj):
         return obj.dispatched_count
+
+    def add_view(self, request, *args, **kwargs):
+        self.campaign = request.campaign
+        return super().add_view(request, *args, **kwargs)
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
