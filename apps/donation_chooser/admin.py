@@ -10,6 +10,7 @@ class CharitativeOrganizdationAdmin(admin.ModelAdmin):
     list_display = ('name', 'campaign')
     list_filter = ('campaign',)
     form = CharitativeOrganizationForm
+    save_as = True
 
 
 @admin.register(UserChoice)
