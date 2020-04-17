@@ -35,8 +35,8 @@ from django.utils.translation import ugettext_lazy as _
 from dpnk.models import Subsidiary
 
 from .package_transaction import PackageTransaction, Status
-from .team_package import TeamPackage
 from .t_shirt_size import TShirtSize
+from .team_package import TeamPackage
 from .. import batch_csv
 from ..gls.generate_gls_pdf import generate_pdf
 
