@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 from dpnk.models import Subsidiary
 
 from .package_transaction import PackageTransaction, Status
+from .team_package import TeamPackage
 from .t_shirt_size import TShirtSize
 from .. import batch_csv
 from ..gls.generate_gls_pdf import generate_pdf
@@ -107,6 +108,9 @@ class DeliveryBatch(models.Model):
 
     def box_count(self):
         return self.subsidiarybox_set.count()
+
+    def team_package_count(self):
+        return TeamPackage.objects.filter(box__delivery_batch=self).count()
 
     def submit_gls_order_pdf(self):
         pdf_filename = generate_pdf(self.tnt_order)

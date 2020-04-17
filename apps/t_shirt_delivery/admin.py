@@ -405,6 +405,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         'package_transaction_count',
         'dispatched_count',
         'box_count',
+        'team_package_count',
         'author',
         'customer_sheets__url',
         'pdf_data_url',
@@ -423,6 +424,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         'updated_by',
         'package_transaction_count',
         'box_count',
+        'team_package_count',
         'dispatched_count',
         't_shirt_sizes',
     )
@@ -451,7 +453,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
 
     def t_shirt_sizes(self, obj):
         return format_html_join(mark_safe("<br/>"), "{}: {}", obj.t_shirt_size_counts(campaign=getattr(self, 'campaign', None)))
-    t_shirt_sizes.short_description = _(u"Velikosti trik")
+    t_shirt_sizes.short_description = _("Velikosti trik")
 
     def box_count(self, obj):
         if obj.pk:
@@ -462,6 +464,17 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
                 obj.campaign.slug,
                 obj.box_count(),
             )
+
+    def team_package_count(self, obj):
+        if obj.pk:
+            return format_html(
+                "<a href='{}?box__delivery_batch__id={}&amp;campaign={}'>{}</a>",
+                reverse("admin:t_shirt_delivery_teampackage_changelist"),
+                obj.pk,
+                obj.campaign.slug,
+                obj.team_package_count(),
+            )
+    team_package_count.short_description = _("Týmových balíčků k odeslání")
 
     def customer_sheets__url(self, obj):
         if obj.customer_sheets:
