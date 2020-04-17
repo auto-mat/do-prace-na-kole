@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from smart_selects.db_fields import ChainedForeignKey
@@ -101,6 +102,13 @@ class Subsidiary(models.Model):
 
     def clean(self):
         Address.clean(self.address, self, Subsidiary)
+        if self.box_addressee_name or self.box_addressee_email or self.box_addressee_telephone:
+            if not self.box_addressee_name:
+                raise ValidationError({'box_addressee_name': _("Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho jméno")})
+            if not self.box_addressee_email:
+                raise ValidationError({'box_addressee_email': _("Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho e-mail")})
+            if not self.box_addressee_telephone:
+                raise ValidationError({'box_addressee_telephone': _("Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho telefon")})
 
 
 class SubsidiaryInCampaign:
