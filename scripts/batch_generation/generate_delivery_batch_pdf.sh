@@ -2,7 +2,7 @@
 
 # Usage: ./generate_delivery_batch_pdf.sh delivery_batch.pdf
 
-pdftk $1 burst output tmp_pdf/output/pg_%04d.pdf
+pdfseparate $1 tmp_pdf/output/pg_%04d.pdf
 
 (
    cd tmp_pdf/output
