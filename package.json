@@ -44,7 +44,7 @@
     "datatables.net-bs4": "^1.10.20",
     "dropzone": "^5.7.0",
     "file-loader": "^6.0.0",
-    "jquery": "^2.2.0",
+    "jquery": "^3.4.0",
     "jquery-editable-select": "^2.2.5",
     "jquery-form": "^4.2.2",
     "jquery-ui": "^1.12.1",
