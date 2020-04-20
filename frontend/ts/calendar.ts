@@ -98,6 +98,27 @@ function hookup_callbacks() {
     });
 }
 
+function load_trips_from_rest( data: RestTrips ){
+    for (i in data.results) {
+        calendar.display_trip(data.results[i], false);
+    }
+    if (data.next) {
+        $.getJSON(data.next, load_trips_from_rest);
+    } else {
+        render.redraw_everything_trip_related();
+        load_initial_trips();
+        Globals.full_calendar.render();
+        if (interactive_entry_enabled) {
+            for(var i in Globals.displayed_trips) {
+                if(Globals.displayed_trips[i].distanceMeters) {
+                    break;
+                }
+            }
+        }
+        $(".main-loading-overlay").hide();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     load_globals();
     if (interactive_entry_enabled) {
@@ -196,20 +217,5 @@ document.addEventListener('DOMContentLoaded', function() {
         eventClick: actions.eventClick,
         dayRender: render.dayRender,
     });
-    $.getJSON('/rest/gpx/?format=json', function( data: RestTrips ){
-        for (i in data.results) {
-            calendar.display_trip(data.results[i], false);
-        }
-        render.redraw_everything_trip_related();
-        load_initial_trips();
-        Globals.full_calendar.render();
-        if (interactive_entry_enabled) {
-            for(var i in Globals.displayed_trips) {
-                if(Globals.displayed_trips[i].distanceMeters) {
-                    break;
-                }
-            }
-        }
-        $(".main-loading-overlay").hide();
-    });
+    $.getJSON('/rest/gpx/?format=json', load_trips_from_rest);
 });
