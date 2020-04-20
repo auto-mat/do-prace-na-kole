@@ -25,6 +25,7 @@ third-party
 .coverage
 /run.sh
 /apps/dpnk/static/css/style.css
+/apps/dpnk/static/css/leaflet.css
 /response.html
 /apps/dpnk/test_files/DSC00002.JPG.*_*.jpg
 /apps/dpnk/test_files/cache

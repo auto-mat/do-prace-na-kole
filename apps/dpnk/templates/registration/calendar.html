@@ -5,20 +5,9 @@
 
 
 {% block extrahead %}
-    <link rel='stylesheet' href='{% static "leaflet/dist/leaflet.css"%}'>
-    <link href="{% static "dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet">
-    <script src='{% static "leaflet/dist/leaflet.js"%}'></script>
-    <link rel='stylesheet' href='{% static "leaflet-draw/dist/leaflet.draw.css"%}'>
-    <script src='{% static "leaflet-draw/dist/leaflet.draw.js"%}'></script>
-    <link rel='stylesheet' href='{% static "@fullcalendar/core/main.css"%}'> 
-    <script src='{% static "@fullcalendar/core/main.js"%}'></script>
-    <script src='{% static "@fullcalendar/core/locales-all.js"%}'></script>
-    <script src='{% static "@fullcalendar/daygrid/main.js"%}'></script>
-    <script src='{% static "@fullcalendar/list/main.js"%}'></script>
-    <script src='{% static "@fullcalendar/interaction/main.js"%}'></script>
-    <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
-    <script src="{% static 'leaflet-gpx/gpx.js' %}"></script>
     <script src="{% static 'js/dist/calendar.js' %}"> </script>
+    <link rel='stylesheet' href='{% static "leaflet/dist/leaflet.css"%}'>
+    <link rel='stylesheet' href='{% static "leaflet-draw/dist/leaflet.draw.css"%}'>
     {{ block.super }}
 {% endblock %}
 {% block caption %}
@@ -78,18 +67,18 @@
                                 </div>
                                 {% if cm.distance_important %}
                                     <div class="input-group">
-                                        <select type="text" class="form-control" id="route_select_{{cm.slug}}" onchange="on_route_select_{{cm.slug}}()"/>
-                                        <input type="number" style="text-align: right;" max="1000" step="any" id="km-{{cm.slug}}" class="enter_km" /><span class="cal-km-appendix">&nbsp;km</span>
+                                        <select type="text" class="form-control" id="route_select_{{cm.slug}}"/>
+                                        <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="km-{{cm.slug}}" class="enter_km" /><span class="cal-km-appendix">&nbsp;km</span>
                                     </div>
 
                                     <div id="map_shower_{{cm.slug}}" style="display:none;">
-                                        <button class="btn" onclick="show_map_{{cm.slug}}()">
+                                        <button class="btn" id="map_shower_{{cm.slug}}">
                                             <i class="fa fa-eye"></i> {% trans 'Zobrazit mapu' %}
                                         </button>
                                     </div>
                                 {% elif cm.duration_important %}
                                     <div class="input-group">
-                                        <input type="number" style="text-align: right;" max="1000" step="any" id="duration-min-{{cm.slug}}" class="enter_duration_min" /><span class="cal-min-appendix">&nbsp;{% trans "min" %}</span>
+                                        <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="duration-min-{{cm.slug}}" class="enter_duration_min" /><span class="cal-min-appendix">&nbsp;{% trans "min" %}</span>
                                     </div>
                                 {%endif%}
                             </div>
@@ -109,10 +98,10 @@
                 {% for cm in commute_modes %}
                     {% if cm.distance_important %}
                         <div id="track_holder_{{cm.slug}}" style="display:none;">
-                            <button class="btn" onclick="hide_map_{{cm.slug}}()"><i class="fa fa-eye-slash">
+                            <button class="btn" id="map_hider_{{cm.slug}}"><i class="fa fa-eye-slash">
                                 </i> {% trans 'Skrýt mapu' %}
                             </button>
-                            <button class="btn" onclick="toggle_map_size_{{cm.slug}}()" id="resize-button-{{cm.slug}}">
+                            <button class="btn" id="map_size_toggler"" id="resize-map-button-{{cm.slug}}">
                                 <div id="enlarge_map_text_{{cm.slug}}">
                                     <i class="fa fa-expand"></i> {% trans 'Zvětšit mapu' %}
                                 </div>

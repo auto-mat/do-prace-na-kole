@@ -27,8 +27,8 @@
 		                     	{% include "registration/user_profile_image.html" with team_member=user_attendance link=True %}
 								<div class="nick">
 									{% live_notify_badge as badge %}
-									  <a href="{% url 'profil' %}" class="name">{{ user_attendance }}</a>
-                    <a href="#" onclick="showNotifications();" class="notification_badge" live_notify_badge">
+									  <a href="#" class="name notifications-shower">{{ user_attendance }}</a>
+                    <a href="#" class="notification_badge notifications-shower" live_notify_badge">
                       <i class="fas fa-bell"></i>
                       <div class="live_badge_count status_{{ badge|striptags }}">
                       ●
@@ -107,7 +107,7 @@
 									{% endif %}
 	                {% if user_attendance.helpdesk_iframe_url %}
 			            <li>
-			                <a href="#" onclick="showHelpdesk();" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>
+			                <a href="#" class="helpdesk-shower" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>
 			            </li>
 									{% endif %}
 									{% if user.is_authenticated and user_attendance %}
@@ -149,13 +149,13 @@
 			                  {{ block.super }}
 			              	</div>
 						{% endblock %}
+                      {% include "base_modal_windows.html" %}
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-{% include "base_modal_windows.html" %}
 <script>
 		$(function () {
 		  $('[data-toggle="tooltip"]').tooltip()

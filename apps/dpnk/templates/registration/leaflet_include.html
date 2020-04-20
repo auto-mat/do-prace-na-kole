@@ -1,9 +1,10 @@
-{% load leaflet_tags %}
-{% leaflet_js plugins="ALL" %}
-{% leaflet_css plugins="ALL" %}
+{% load static %}
 {% include "registration/leaflet_settings.html" %}
+<script src="{% static '/leaflet/leaflet.forms.js' %}" type="text/javascript"></script>
+<script src="{% static '/leaflet/leaflet.extras.js' %}" type="text/javascript"></script>
 
 <script>
+ $(document).ready(function (){
 ClearableGeometryField = L.GeometryField.extend({
     addTo: function (map) {
         L.GeometryField.prototype.addTo.call(this, map);
@@ -20,4 +21,5 @@ ClearableGeometryField = L.GeometryField.extend({
 	      console.log(this.drawnItems)
 	  },
 });
+ });
 </script>

@@ -74,9 +74,8 @@
      }
  }
 
- //load_old_map({{trip.pk}})
  $(function (){
-     load_route_list("#route_select", 2, route_options, route_option_ids);
+     window.load_route_list("#route_select", 2, Object.keys(route_options), route_option_ids);
  });
 </script>
 <div class="form-group row">
