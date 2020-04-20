@@ -11,7 +11,7 @@ class CharitativeOrganizationChooserForm(CampaignMixin, SubmitMixin, forms.Model
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['charitative_organization'].empty_label = None
-        self.fields['charitative_organization'].label = _("Vyberte charitativní orgazizaci kterou podpoříte svými cestami")
+        self.fields['charitative_organization'].label = _("Vyberte charitativní organizaci kterou podpoříte svými cestami")
         self.fields['charitative_organization'].choices = [
             (
                 c.id,
