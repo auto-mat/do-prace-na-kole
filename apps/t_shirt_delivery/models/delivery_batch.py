@@ -113,9 +113,10 @@ class DeliveryBatch(models.Model):
         return TeamPackage.objects.filter(box__delivery_batch=self).count()
 
     def submit_gls_order_pdf(self):
-        pdf_filename = generate_pdf(self.tnt_order)
+        pdf_filename, pdf_ext = generate_pdf(self.tnt_order)
         with open(pdf_filename, "rb+") as f:
-            filename = "batch_%s_%s.pdf" % (self.id, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            date_time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            filename = f"batch_{self.id}_{date_time_str}.{pdf_ext}"
             self.order_pdf.save(filename, f)
         self.save()
         subprocess.call(["rm", "tmp_gls/", "-r"])

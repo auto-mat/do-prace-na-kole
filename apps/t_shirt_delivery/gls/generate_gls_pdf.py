@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 def generate_pdf_part(csv_file):
+    print("generating PDF from GLS")
+    print(f"File: {csv_file}")
     gls_url = settings.GLS_BASE_URL
     session = requests.Session()
 
@@ -24,7 +26,9 @@ def generate_pdf_part(csv_file):
         'lessersecurity': "on",
     }
     response0 = session.post(gls_url + '/login.php', data=login_data)
-    # print_response(response)
+    # print_response(response0)
+    if "Database connection error" in response0.content.decode('utf-8'):
+        return response0.content, '.error.txt'
 
     # ----------remove uploaded file-------------------------
     data = {
@@ -42,7 +46,7 @@ def generate_pdf_part(csv_file):
     }
 
     response1a = session.post(gls_url + '/subindex.php', data=data)
-    # print_response(response, filename="response1a.html")
+    # print_response(response1a, filename="response1a.html")
 
     # ----------choose preset----------------------------
 
@@ -58,7 +62,7 @@ def generate_pdf_part(csv_file):
     }
 
     response1 = session.post(gls_url + '/subindex.php', data=data)
-    # print_response(response, filename="response1.html")
+    # print_response(response1, filename="response1.html")
 
     # -----------upload new file---------------------
 
@@ -79,7 +83,7 @@ def generate_pdf_part(csv_file):
     files = {'importfile': ('test_batch.csv', csv_file, 'text/csv')}
 
     response2 = session.post(gls_url + '/subindex.php', files=files, data=data)
-    # print_response(response, filename="response2.html")
+    # print_response(response2, filename="response2.html")
 
     # -----------------------------------------------
 
@@ -132,7 +136,7 @@ def generate_pdf_part(csv_file):
     }
 
     response3 = session.post(gls_url + '/subindex.php', data=data)
-    # print_response(response, filename="response3.html")
+    # print_response(response3, filename="response3.html")
 
     # -----------download failed pages-------------------------
 
@@ -152,7 +156,15 @@ def generate_pdf_part(csv_file):
     }
 
     response4 = session.post(gls_url + '/subindex.php', data=data)
-    # print_response(response, filename="response4.html")
+    # print_response(response4, filename="response4.html")
+
+    try:
+        error_csv_filename = response4.content.decode('utf8').split('\n')[0].split('value="')[1].split('"')[0]
+    except IndexError:
+        pass
+    else:
+        error_csv = session.get(gls_url + '/' + error_csv_filename)
+        return error_csv.content, '.error.csv'
 
     # -----------------------------------------------
 
@@ -172,7 +184,7 @@ def generate_pdf_part(csv_file):
     }
 
     response5 = session.post(gls_url + '/subindex.php', data=data)
-    # print_response(response, filename="response5.html")
+    # print_response(response5, filename="response5.html")
     soup = BeautifulSoup(response5.text, features="lxml")
     try:
         addr = gls_url + "/" + soup.find('body').find('iframe').attrs['src']
@@ -192,7 +204,8 @@ def generate_pdf_part(csv_file):
     response = session.get(addr)
     # with open("batch.pdf", "wb") as f:
     #     f.write(response.content)
-    return response.content
+    print("Generating PDF from GLS completed")
+    return response.content, 'pdf'
 
 
 def generate_pdf(csv_file):
@@ -206,8 +219,10 @@ def generate_pdf(csv_file):
     for csv_file_part in output.decode("utf-8").split("\n"):
         if csv_file_part:
             with open(csv_file_part) as f:
-                pdf_part = generate_pdf_part(f)
+                pdf_part, pdf_ext = generate_pdf_part(f)
             with open(csv_file_part + ".pdf", "wb+") as f:
                 f.write(pdf_part)
+            if '.error.' in pdf_ext:  # We return errors after first occurrence
+                return csv_file_part + ".pdf", pdf_ext
     subprocess.call(["bash", "-c", "pdftk tmp_gls/*.pdf cat output tmp_gls/gls_sheet.pdf"])
-    return "tmp_gls/gls_sheet.pdf"
+    return "tmp_gls/gls_sheet.pdf", 'pdf'
