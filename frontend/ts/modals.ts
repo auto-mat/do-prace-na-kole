@@ -7,6 +7,7 @@ $(document).ready(function() {
     });
 
     $('.notifications-shower').click(function () {
+        update_notifications_modal_contents();
         $('#notificationswindow').modal("show");
     });
     $('#notificationswindow-close').click(function () {
@@ -49,11 +50,15 @@ interface DjangoNotifications {
     unread_list?: DjangoNotification[];
 }
 
-var dpnk_fill_notification_list = function (data: DjangoNotifications) {
+export class Notifications {
+    public static notifications_list: DjangoNotifications;
+}
+
+function update_notifications_modal_contents () {
+    let data = Notifications.notifications_list;
     //@ts-ignore
     const notify_menu_class: string = window.notify_menu_class
     var menus = document.getElementsByClassName(notify_menu_class);
-    console.log(notify_menu_class);
     if (menus) {
         var messages = data.all_list.map(function (item: DjangoNotification) {
             var message = "";
@@ -77,6 +82,19 @@ var dpnk_fill_notification_list = function (data: DjangoNotifications) {
         }
         $("time.timeago").timeago();
     }
+}
+
+var dpnk_fill_notification_list = function (data: DjangoNotifications) {
+    Notifications.notifications_list = data;
+    let cl = $(".live_badge_count")[0].classList;
+    let status_cls;
+    cl.forEach(function(cls){
+        if(cls.indexOf("status_") != -1){
+            status_cls = cls;
+        }
+    });
+    cl.remove(status_cls);
+    cl.add(`status_${data.unread_count}`);
 }
 //@ts-ignore
 window.dpnk_fill_notification_list = dpnk_fill_notification_list;
