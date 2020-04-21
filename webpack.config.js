@@ -1,6 +1,8 @@
 const path = require('path');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
+    plugins: [new CompressionPlugin()],
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".js", ".ts"]
     },
