@@ -36,14 +36,6 @@ import {
     load_globals,
 } from "./calendar/globals";
 
-import {
-    create_map,
-} from "./leaflet";
-import * as _L from 'leaflet-draw';
-import * as Dropzone from 'dropzone';
-const dz = Dropzone
-dz.autoDiscover = false;
-
 let strings = load_strings();
 
 export function load_initial_trips() {
@@ -122,49 +114,6 @@ function load_trips_from_rest( data: RestTrips ){
 document.addEventListener('DOMContentLoaded', function() {
     load_globals();
     if (interactive_entry_enabled) {
-        for (var cm_slug in commute_modes) {
-            let cm = commute_modes[cm_slug];
-            if (cm.distance_important) {
-                let map = create_map(`map_${cm_slug}`);
-                Maps.editable_layers[cm_slug] = new L.FeatureGroup();
-                map.addLayer(Maps.editable_layers[cm_slug]);
-
-                var draw_options = {
-                    draw: {
-                        polygon: (false as false),
-                        marker: (false as false),
-                        rectangle: (false as false),
-                        circle: (false as false),
-                        circlemarker: (false as false),
-                        polyline: {
-                            metric: true,
-                            feet: false,
-                            showLength: true,
-                        }
-                    },
-                    edit: {
-                        featureGroup: Maps.editable_layers[cm_slug],
-                        remove: (true as any),
-                    },
-                    //'delete': {}
-                };
-                var drawControl = new L.Control.Draw(draw_options);
-                map.addControl(drawControl);
-                //@ts-ignore
-                map.on(L.Draw.Event.DRAWSTOP, update_distance_from_map(cm_slug));
-                //@ts-ignore
-                map.on(L.Draw.Event.EDITSTOP, update_distance_from_map(cm_slug));
-                //@ts-ignore
-                map.on(L.Draw.Event.DELETESTOP, update_distance_from_map(cm_slug));
-                {
-                    let cm_slug_closure = cm_slug;
-                    map.on(L.Draw.Event.CREATED, function (e: {layer: L.Layer}) {
-                        Maps.editable_layers[cm_slug_closure].addLayer(e.layer);
-                    });
-                }
-                Maps.maps[cm_slug] = map;
-            }
-        }
         hookup_callbacks();
     }
     load_dropozones();

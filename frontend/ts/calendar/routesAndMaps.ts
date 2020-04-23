@@ -7,7 +7,10 @@ import {load_strings_gpx} from "../dropzone/Localization";
 load_strings_gpx();
 
 import {commute_modes, csrf_token} from "./globals";
-import {load_track} from "../leaflet";
+import {
+    load_track,
+    create_map,
+} from "../leaflet";
 import * as Dropzone from 'dropzone';
 import "dropzone/dist/basic.css";
 import "dropzone/dist/dropzone.css";
@@ -69,7 +72,58 @@ export function load_dropozones() {
     }
 }
 
+function load_map(cm_slug: string) {
+    if (typeof Maps.maps[cm_slug] != 'undefined') {
+        return;
+    }
+    let cm = commute_modes[cm_slug];
+    if (cm.distance_important) {
+        let map = create_map(`map_${cm_slug}`);
+        Maps.editable_layers[cm_slug] = new L.FeatureGroup();
+        map.addLayer(Maps.editable_layers[cm_slug]);
+
+        var draw_options = {
+            draw: {
+                polygon: (false as false),
+                marker: (false as false),
+                rectangle: (false as false),
+                circle: (false as false),
+                circlemarker: (false as false),
+                polyline: {
+                    metric: true,
+                    feet: false,
+                    showLength: true,
+                }
+            },
+            edit: {
+                featureGroup: Maps.editable_layers[cm_slug],
+                remove: (true as any),
+            },
+            //'delete': {}
+        };
+        var drawControl = new L.Control.Draw(draw_options);
+        map.addControl(drawControl);
+        //@ts-ignore
+        map.on(L.Draw.Event.DRAWSTOP, update_distance_from_map(cm_slug));
+        //@ts-ignore
+        map.on(L.Draw.Event.EDITSTOP, update_distance_from_map(cm_slug));
+        //@ts-ignore
+        map.on(L.Draw.Event.DELETESTOP, update_distance_from_map(cm_slug));
+        {
+            let cm_slug_closure = cm_slug;
+            map.on(L.Draw.Event.CREATED, function (e: {layer: L.Layer}) {
+                Maps.editable_layers[cm_slug_closure].addLayer(e.layer);
+            });
+        }
+        Maps.maps[cm_slug] = map;
+    }
+}
+
+
 export function show_map(cm_slug: string){
+    if (typeof Maps.maps[cm_slug] == 'undefined') {
+        load_map(cm_slug);
+    }
     $(`#track_holder_${cm_slug}`).show();
     $(`#map_shower_${cm_slug}`).hide();
     Maps.maps[cm_slug].invalidateSize();

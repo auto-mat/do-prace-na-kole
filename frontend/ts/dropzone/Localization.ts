@@ -1,5 +1,7 @@
 import LocalizedStrings from 'localized-strings';
 import * as Dropzone from 'dropzone';
+const dz = Dropzone
+dz.autoDiscover = false;
 
 const strings = new LocalizedStrings(
     {
