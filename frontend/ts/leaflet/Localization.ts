@@ -8,12 +8,12 @@ const strings = new LocalizedStrings(
         en:{
             save: "Save",
             save_track: "Save track",
-            same_as: "Stejně jako...",
+            same_as: "Same as...",
         },
         cs:{
             save: "Uložit",
             save_track: "Uložit trasu",
-            same_as: "Same as...",
+            same_as: "Stejně jako...",
         }
     },
     {
