@@ -23,6 +23,8 @@ import datetime
 
 from django.utils.translation import ugettext as _
 
+from dpnk.models import Phase
+
 
 def get_events(request):
     events = []
@@ -42,7 +44,11 @@ def get_events(request):
             event.update(extra_attrs)
         events.append(event)
 
-    phase = request.campaign.phase("competition")
-    add_event(_("Začatek výzvy"), phase.date_from, css_class="cal-competition-beginning")
-    add_event(_("Konec výzvy"), phase.date_to, css_class="cal-competition-end")
+    try:
+        phase = request.campaign.phase("entry_enabled")
+        add_event(_("Konec zápisu"), phase.date_to, css_class="cal-entry-end")
+    except Phase.DoesNotExist:
+        pass
+    # add_event(_("Začatek výzvy"), phase.date_from, css_class="cal-competition-beginning")
+    # add_event(_("Konec výzvy"), phase.date_to, css_class="cal-competition-end")
     return events
