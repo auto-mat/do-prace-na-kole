@@ -67,21 +67,21 @@
                                 {% if cm.distance_important %}
                                     <div class="input-group">
                                         <div>
-                                            <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="km-{{cm.slug}}" class="enter_km" /><span class="cal-km-appendix">&nbsp;km</span>
+                                            <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="km-{{cm.slug}}" class="enter_km"><span class="cal-km-appendix">&nbsp;km</span>
                                         </div>
                                         <select type="text" class="form-control" id="route_select_{{cm.slug}}"/>
                                     </div>
                                 {% elif cm.duration_important %}
                                     <div class="input-group">
-                                        <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="duration-min-{{cm.slug}}" class="enter_duration_min" /><span class="cal-min-appendix">&nbsp;{% trans "min" %}</span>
+                                        <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="duration-min-{{cm.slug}}" class="enter_duration_min"><span class="cal-min-appendix">&nbsp;{% trans "min" %}</span>
                                     </div>
                                 {%endif%}
                             </div>
                         {% endfor %}
                     </div>
                 </div>
-            <!-- Virtual shopping cart -->
             </div>
+            <!-- Virtual shopping cart -->
             <div class="col-12 col-sm-4">
                 <div class="trip-shopping-cart-container">
                     <div id="trip-shopping-cart"></div>
