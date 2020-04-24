@@ -1,6 +1,7 @@
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/list/main.css';
+import '../less/calendar.less';
 
 import {load_strings} from "./calendar/Localization";
 import { Calendar } from '@fullcalendar/core';
