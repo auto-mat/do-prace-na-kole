@@ -17,12 +17,68 @@ import "dropzone/dist/dropzone.css";
 import Trip from "../dpnk/trip";
 
 export class Maps{
-    public static editable_layers: { [index: string]: L.FeatureGroup} = {};
-    public static maps: {[index:string]: L.Map} = {};
+    static editable_layers: { [index: string]: L.FeatureGroup} = {};
+    static maps: {[index:string]: L.Map} = {};
+    public static draw_controls: {[index:string]: any} = {};
     public static route_options: { [index: string]: {[index: string]: any}} = {};
     public static route_option_ids: { [index: string]: {[index:string]: string}} = {};
     public static gpx_files: { [index: string]: any} = {};
     public static dzs: {[index: string]: any } = {};
+
+    static editable_layer(cm_slug: string) {
+        if (typeof Maps.editable_layers[cm_slug] == 'undefined') {
+            Maps.get_map(cm_slug);
+        }
+        return Maps.editable_layers[cm_slug];
+    }
+    static get_map(cm_slug: string) {
+        if (typeof Maps.maps[cm_slug] != 'undefined') {
+            return Maps.maps[cm_slug];
+        }
+        let cm = commute_modes[cm_slug];
+        if (cm.distance_important) {
+            let map = create_map(`map_${cm_slug}`);
+            Maps.editable_layers[cm_slug] = new L.FeatureGroup();
+            map.addLayer(Maps.editable_layers[cm_slug]);
+
+            var draw_options = {
+                draw: {
+                    polygon: (false as false),
+                    marker: (false as false),
+                    rectangle: (false as false),
+                    circle: (false as false),
+                    circlemarker: (false as false),
+                    polyline: {
+                        metric: true,
+                        feet: false,
+                        showLength: true,
+                    }
+                },
+                edit: {
+                    featureGroup: Maps.editable_layers[cm_slug],
+                    remove: (true as any),
+                },
+                //'delete': {}
+            };
+            var drawControl = new L.Control.Draw(draw_options);
+            Maps.draw_controls[cm_slug] = drawControl;
+            Maps.draw_controls[cm_slug].addTo(map);
+            //@ts-ignore
+            map.on(L.Draw.Event.DRAWSTOP, update_distance_from_map(cm_slug));
+            //@ts-ignore
+            map.on(L.Draw.Event.EDITSTOP, update_distance_from_map(cm_slug));
+            //@ts-ignore
+            map.on(L.Draw.Event.DELETESTOP, update_distance_from_map(cm_slug));
+            {
+                let cm_slug_closure = cm_slug;
+                map.on(L.Draw.Event.CREATED, function (e: {layer: L.Layer}) {
+                    Maps.editable_layer(cm_slug_closure).addLayer(e.layer);
+                });
+            }
+            Maps.maps[cm_slug] = map;
+            return map;
+        }
+    }
 }
 
 export function load_dropozones() {
@@ -53,10 +109,10 @@ export function load_dropozones() {
                                     //let gpx = e.target;
                                     //Maps.maps[cm_slug_inner].fitBounds(gpx.getBounds());
                                 });
-                            Maps.editable_layers[cm_slug_inner].clearLayers();
+                            Maps.editable_layer(cm_slug_inner).clearLayers();
                             //@ts-ignore
-                            gpx.getLayers()[0].getLayers()[0].addTo(Maps.editable_layers[cm_slug_inner]);
-                            Maps.maps[cm_slug_inner].fitBounds(Maps.editable_layers[cm_slug_inner].getBounds());
+                            gpx.getLayers()[0].getLayers()[0].addTo(Maps.editable_layer(cm_slug_inner));
+                            Maps.get_map(cm_slug_inner).fitBounds(Maps.editable_layer(cm_slug_inner).getBounds());
                             //gpx.addTo(Maps.editable_layers[cm_slug_inner]);
                             update_distance_from_map(cm_slug_inner);
                             file.status = Dropzone.SUCCESS;
@@ -72,61 +128,9 @@ export function load_dropozones() {
     }
 }
 
-function load_map(cm_slug: string) {
-    if (typeof Maps.maps[cm_slug] != 'undefined') {
-        return;
-    }
-    let cm = commute_modes[cm_slug];
-    if (cm.distance_important) {
-        let map = create_map(`map_${cm_slug}`);
-        Maps.editable_layers[cm_slug] = new L.FeatureGroup();
-        map.addLayer(Maps.editable_layers[cm_slug]);
-
-        var draw_options = {
-            draw: {
-                polygon: (false as false),
-                marker: (false as false),
-                rectangle: (false as false),
-                circle: (false as false),
-                circlemarker: (false as false),
-                polyline: {
-                    metric: true,
-                    feet: false,
-                    showLength: true,
-                }
-            },
-            edit: {
-                featureGroup: Maps.editable_layers[cm_slug],
-                remove: (true as any),
-            },
-            //'delete': {}
-        };
-        var drawControl = new L.Control.Draw(draw_options);
-        map.addControl(drawControl);
-        //@ts-ignore
-        map.on(L.Draw.Event.DRAWSTOP, update_distance_from_map(cm_slug));
-        //@ts-ignore
-        map.on(L.Draw.Event.EDITSTOP, update_distance_from_map(cm_slug));
-        //@ts-ignore
-        map.on(L.Draw.Event.DELETESTOP, update_distance_from_map(cm_slug));
-        {
-            let cm_slug_closure = cm_slug;
-            map.on(L.Draw.Event.CREATED, function (e: {layer: L.Layer}) {
-                Maps.editable_layers[cm_slug_closure].addLayer(e.layer);
-            });
-        }
-        Maps.maps[cm_slug] = map;
-    }
-}
-
-
 export function show_map(cm_slug: string){
-    if (typeof Maps.maps[cm_slug] == 'undefined') {
-        load_map(cm_slug);
-    }
     $(`#track_holder_${cm_slug}`).show();
-    $(`#map_shower_${cm_slug}`).hide();
-    Maps.maps[cm_slug].invalidateSize();
+    Maps.get_map(cm_slug).invalidateSize();
 }
 
 export function hide_map(cm_slug: string){
@@ -134,33 +138,22 @@ export function hide_map(cm_slug: string){
     $(`#map_shower_${cm_slug}`).show();
 }
 
-export function toggle_map_size(cm_slug: string){
-    $(`#map_${cm_slug}`).toggleClass('leaflet-container-default');
-    $(`#map_${cm_slug}`).toggleClass('leaflet-container-large');
-    $(`#enlarge_map_text_${cm_slug}`).toggle();
-    $(`#shrink_map_text_${cm_slug}`).toggle();
-    setTimeout(function(){ Maps.maps[cm_slug].invalidateSize()}, 400);
-    $('html, body').animate({
-        scrollTop: $(`#resize-button-${cm_slug}`).offset().top
-    }, 'fast');
-}
-
 export function basic_route_options(cm_slug: string): {[index: string]: any} {
     let options: {[index: string]: any} = {};
     options[strings.manual_entry] = function () {
         $(`#km-${cm_slug}`).val(0);
-        Maps.editable_layers[cm_slug].clearLayers();
+        Maps.editable_layer(cm_slug).clearLayers();
         hide_map(cm_slug);
         $(`#map_shower_${cm_slug}`).hide();
         $(`#gpx_upload_${cm_slug}`).hide();
     };
     options[strings.draw_track] = function () {
-        Maps.editable_layers[cm_slug].clearLayers();
+        Maps.editable_layer(cm_slug).clearLayers();
         $(`#gpx_upload_${cm_slug}`).hide();
         show_map(cm_slug);
     };
     options[strings.upload_gpx] = function () {
-        Maps.editable_layers[cm_slug].clearLayers();
+        Maps.editable_layer(cm_slug).clearLayers();
         $(`#gpx_upload_${cm_slug}`).show();
         show_map(cm_slug);
     };
@@ -182,10 +175,10 @@ export function select_old_trip(cm_slug: string, trip: Trip){
         $(`#gpx_upload_${cm_slug}`).hide();
         show_map(cm_slug);
         load_track(
-            Maps.maps[cm_slug],
+            Maps.get_map(cm_slug),
             `/trip_geojson/` + trip.trip_date + `/` + trip.direction,
             {},
-            Maps.editable_layers[cm_slug],
+            Maps.editable_layer(cm_slug),
             function(){hide_map(cm_slug);}
         );
     }
@@ -198,7 +191,7 @@ export function select_old_trip(cm_slug: string, trip: Trip){
 export function on_route_select(cm_slug: string) {
     return function () {
         var sel = <HTMLSelectElement>document.getElementById(`route_select_${cm_slug}`);
-        if(sel.value){
+        if(typeof sel != 'undefined' && sel && sel.value){
             Maps.route_options[cm_slug][sel.value]();
         }
         R.redraw_shopping_cart();
@@ -209,7 +202,7 @@ export function update_distance_from_map(cm_slug: string) {
    // https://stackoverflow.com/questions/31221088/how-to-calculate-the-distance-of-a-polyline-in-leaflet-like-geojson-io#31223825
     return function () {
         var totalDistance = 0.00000;
-        $.each(Maps.editable_layers[cm_slug].getLayers(), function(i, layer: L.Polyline){
+        $.each(Maps.editable_layer(cm_slug).getLayers(), function(i, layer: L.Polyline){
             var tempLatLng: any = null;
             $.each(layer.getLatLngs(), function(i, latlng){
                 if(tempLatLng == null){

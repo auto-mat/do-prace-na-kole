@@ -210,7 +210,7 @@ export function eventClick(info: any) {
         if (commute_modes[commute_mode].duration_important) {
             trip["durationSeconds"] = UIS.get_selected_duration() * 60;
         }
-        let els = Maps.editable_layers[commute_mode];
+        let els = Maps.editable_layer(commute_mode);
         if (els) {
             let layers = els.getLayers();
             let geojson = {

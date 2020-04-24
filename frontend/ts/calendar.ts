@@ -20,7 +20,6 @@ import * as UIS from "./calendar/ui_state";
 import {
     Maps,
     update_distance_from_map,
-    toggle_map_size,
     hide_map,
     show_map,
     on_route_select,
@@ -58,7 +57,6 @@ export function load_initial_trips() {
                 } else if (cm.duration_important) {
                     select_old_trip(cm_slug, trip);
                 }
-                hide_map(cm_slug);
                 loaded_modes.push(cm_slug);
             }
         }
@@ -67,22 +65,14 @@ export function load_initial_trips() {
 }
 
 function hookup_callbacks() {
-    for (var cm_slug_ in commute_modes) {
-        (function (){
-            var cm_slug = cm_slug_;
-            $(`#map_shower_${cm_slug}`).click(function(){show_map(cm_slug)});
-            $(`#map_hider_${cm_slug}`).click(function(){hide_map(cm_slug)});
-            $(`#resize-map-button-${cm_slug}`).click(function(){toggle_map_size(cm_slug)});
-        })();
-    }
     $(`#nav-commute-modes`).click(function(){
-        for(var cm_slug in commute_modes) {
-            let cm = commute_modes[cm_slug];
-            if (cm.distance_important) {
-                hide_map(cm_slug);
-            }
+        for (var cm_slug in commute_modes) {
+            hide_map(cm_slug);
         }
-        render.redraw_shopping_cart();
+        setTimeout(function(){
+            let cm_slug = UIS.get_selected_commute_mode();
+            on_route_select(cm_slug)();
+        }, 0);
     });
 
     $(`.enter_km`).on("change paste", function(){
