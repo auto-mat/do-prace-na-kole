@@ -45,7 +45,7 @@ import {
 } from "./routesAndMaps";
 
 function add_trip(trip: Trip, file: any, cont: any) {
-    if(trip.commuteMode == "by_foot" && trip.distanceMeters < (commute_modes[trip.commuteMode].minimum_distance * 1000)) {
+    if(commute_modes[trip.commuteMode].minimum_distance && trip.distanceMeters < (commute_modes[trip.commuteMode].minimum_distance * 1000)) {
         show_message(strings.min_distance_error + commute_modes[trip.commuteMode].minimum_distance + "km.")
     }
     trip.sourceApplication = "web";
@@ -75,6 +75,7 @@ function add_trip(trip: Trip, file: any, cont: any) {
         },
         success: function (returndata) {
             $(".tooltip").tooltip("hide");
+            Maps.saved_distances[trip.commuteMode] = trip.distanceMeters;
             display_trip(returndata, true);
             update_points();
             cont();

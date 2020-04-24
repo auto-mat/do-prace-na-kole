@@ -55,6 +55,7 @@ export function load_initial_trips() {
                 if(cm.distance_important){
                     $(`#option-${cm_slug}` + trip.trip_date + trip.direction).prop('selected', true);
                     on_route_select(cm_slug)();
+                    Maps.saved_distances[trip.commuteMode] = trip.distanceMeters;
                 } else if (cm.duration_important) {
                     select_old_trip(cm_slug, trip);
                 }
@@ -91,6 +92,13 @@ function hookup_callbacks() {
             })();
         }
     }
+
+    $(window).on('beforeunload',function(){
+        let cm_slug = UIS.get_selected_commute_mode();
+        if ( Maps.distance_changed(cm_slug) ) {
+            return '';
+        }
+    });
 }
 
 function load_trips_from_rest( data: RestTrips ){

@@ -11,6 +11,7 @@ import {
     load_track,
     create_map,
 } from "../leaflet";
+import * as UIS from './ui_state';
 import * as Dropzone from 'dropzone';
 import "dropzone/dist/basic.css";
 import "dropzone/dist/dropzone.css";
@@ -24,6 +25,11 @@ export class Maps{
     public static route_option_ids: { [index: string]: {[index:string]: string}} = {};
     public static gpx_files: { [index: string]: any} = {};
     public static dzs: {[index: string]: any } = {};
+    public static saved_distances: {[index: string]: number} = {};
+
+    static distance_changed(cm_slug: string) {
+        return UIS.get_selected_distance() * 1000 != Maps.saved_distances[cm_slug];
+    }
 
     static editable_layer(cm_slug: string) {
         if (typeof Maps.editable_layers[cm_slug] == 'undefined') {
