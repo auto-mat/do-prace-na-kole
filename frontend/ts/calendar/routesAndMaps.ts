@@ -152,17 +152,20 @@ export function basic_route_options(cm_slug: string): {[index: string]: any} {
     let options: {[index: string]: any} = {};
     options[strings.manual_entry] = function () {
         $(`#km-${cm_slug}`).val(0);
+        $(`#km-${cm_slug}`).prop('disabled', false);
         Maps.editable_layer(cm_slug).clearLayers();
         hide_map(cm_slug);
         $(`#map_shower_${cm_slug}`).hide();
         $(`#gpx_upload_${cm_slug}`).hide();
     };
     options[strings.draw_track] = function () {
+        $(`#km-${cm_slug}`).prop('disabled', true);
         Maps.editable_layer(cm_slug).clearLayers();
         $(`#gpx_upload_${cm_slug}`).hide();
         show_map(cm_slug);
     };
     options[strings.upload_gpx] = function () {
+        $(`#km-${cm_slug}`).prop('disabled', true);
         Maps.editable_layer(cm_slug).clearLayers();
         $(`#gpx_upload_${cm_slug}`).show();
         show_map(cm_slug);
@@ -179,9 +182,11 @@ export function basic_route_option_ids(cm_slug: string): {[index: string]: strin
 }
 
 export function select_old_trip(cm_slug: string, trip: Trip){
+    $(`#km-${cm_slug}`).prop('disabled', true);
     let cm = commute_modes[cm_slug];
     if (cm.distance_important) {
         $(`#km-${cm_slug}`).val(trip.distanceMeters / 1000);
+        Maps.saved_distances[cm_slug] = trip.distanceMeters;
         $(`#gpx_upload_${cm_slug}`).hide();
         show_map(cm_slug);
         load_track(
@@ -189,7 +194,10 @@ export function select_old_trip(cm_slug: string, trip: Trip){
             `/trip_geojson/` + trip.trip_date + `/` + trip.direction,
             {},
             Maps.editable_layer(cm_slug),
-            function(){hide_map(cm_slug);}
+            function(){
+                hide_map(cm_slug);
+                $(`#km-${cm_slug}`).prop('disabled', false);
+            }
         );
     }
     if (cm.duration_important) {
@@ -236,5 +244,9 @@ export function save_current_edits(cm_slug: string){
     if (dcs._toolbars.draw._activeMode) {
         dcs._toolbars.draw._activeMode.handler.completeShape();
     }
+    let old_distance = UIS.get_selected_distance();
     update_distance_from_map(cm_slug)();
+    if (UIS.get_selected_distance() == 0) {
+        $(`#km-${cm_slug}`).val(old_distance);
+    }
 }
