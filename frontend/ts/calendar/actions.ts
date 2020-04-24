@@ -45,9 +45,6 @@ import {
 } from "./routesAndMaps";
 
 function add_trip(trip: Trip, file: any, cont: any) {
-    if(commute_modes[trip.commuteMode].minimum_distance && trip.distanceMeters < (commute_modes[trip.commuteMode].minimum_distance * 1000)) {
-        show_message(strings.min_distance_error + commute_modes[trip.commuteMode].minimum_distance + "km.")
-    }
     trip.sourceApplication = "web";
     var formData = new FormData();
     for(var key in trip) {
@@ -207,9 +204,17 @@ export function eventClick(info: any) {
         }
         if (commute_modes[commute_mode].distance_important) {
             trip["distanceMeters"] = UIS.get_selected_distance() * 1000;
+            if(commute_modes[trip.commuteMode].minimum_distance && trip.distanceMeters < (commute_modes[trip.commuteMode].minimum_distance * 1000)) {
+                show_message(strings.min_distance_error + (commute_modes[trip.commuteMode].minimum_distance) + "km.");
+                return;
+            }
         }
         if (commute_modes[commute_mode].duration_important) {
             trip["durationSeconds"] = UIS.get_selected_duration() * 60;
+            if(commute_modes[trip.commuteMode].minimum_duration && trip.durationSeconds < (commute_modes[trip.commuteMode].minimum_duration)) {
+                show_message(strings.min_duration_error + (commute_modes[trip.commuteMode].minimum_duration / 60) + "min.");
+                return;
+            }
         }
         let els = Maps.editable_layer(commute_mode);
         if (els) {

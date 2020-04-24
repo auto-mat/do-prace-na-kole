@@ -20,8 +20,8 @@ const strings = new LocalizedStrings(
             vacation: "Vacation",
             event: "Event",
             enter_distance_fist: "You need to enter the distance you traveled",
-            max_distance_error: "You cannot enter trips of more than 999km. If you really rode that far, please contact the helpdesk.",
             min_distance_error: "You cannot enter trips less than ",
+            min_duration_error: "You cannot enter trips less than ",
         },
         cs:{
             save: "Uložit",
@@ -41,6 +41,7 @@ const strings = new LocalizedStrings(
             enter_distance_fist: 'Nejdříve zadejte vzdalenost.',
             max_distance_error: 'Vzdalenost nesmí být delší než 999 km. Pokud jste opravdu tak daleko jeli, kontaktujte helpdesk.',
             min_distance_error: 'Cesta se počítá od minimální vzdálenost ',
+            min_duration_error: 'Minimální doba je ',
         }
     },
     {
