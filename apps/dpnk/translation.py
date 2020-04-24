@@ -60,6 +60,8 @@ class CampaignTypeTranslationOptions(TranslationOptions):
 
 
 NotificationTemplate = swapper.load_model("notifications", "NotificationTemplate")
+
+
 @register(NotificationTemplate)
 class NotificationTemplateOptions(TranslationOptions):
     fields = (
