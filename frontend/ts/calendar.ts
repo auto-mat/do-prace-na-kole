@@ -74,6 +74,19 @@ function hookup_callbacks() {
         }
         setTimeout(function(){
             let cm_slug = UIS.get_selected_commute_mode();
+            let cm = commute_modes[cm_slug];
+            $(".cart-button").removeClass("eco-trip-color");
+            $(".cart-button").removeClass("bad-trip-color");
+            $(".cart-button").removeClass("neutral-trip-color");
+            if(cm.eco) {
+                if (cm.does_count){
+                    $(".cart-button").addClass("eco-trip-color");
+                } else {
+                    $(".cart-button").addClass("neutral-trip-color");
+                }
+            } else {
+                $(".cart-button").addClass("bad-trip-color");
+            }
             on_route_select(cm_slug)();
         }, 0);
     });

@@ -1,6 +1,18 @@
 @import "./constants.less";
 @import "./anim.less";
 
+.eco-trip-color {
+    background-color: @positive;
+}
+
+.neutral-trip-color {
+    background-color: @neutral;
+}
+
+.bad-trip-color {
+    background-color: @fourth;
+}
+
 .active-day {
     background-color: #ffffff;
 }
@@ -84,7 +96,7 @@
   align-items: center;
   position:relative;
   padding:@wg;
-  background-color:@lightgrey;
+  background-color:lighten(@lightgrey, 10%);
   color:black;
   font-size:.8rem;
   justify-content:center;
@@ -210,21 +222,21 @@
     padding:@wg/4 @wg/2;
   }
   .active-trip-filled, .locked-trip {
-    background-color: @positive;
+    .eco-trip-color;
     &.cal_event_does_not_count {
-        background-color: @neutral;
+        .neutral-trip-color;
     }
     &.cal_event_not_eco {
-        background-color: @fourth;
+        .bad-trip-color;
     }
   }
 
   .active-trip-unfilled {
-      background-color: @negative;
+      .bad-trip-color;
       color:#fff;
   }
   .active-trip-unfilled-vacation{
-      background-color: @neutral;
+      .neutral-trip-color;
       &.cal_event_trip_to:before, &.cal_event_trip_to>.fc-widget-content:before {
           border-left-color: @neutral !important;
       }
@@ -302,7 +314,7 @@
     &>.fc-widget-content:before {
       border-width: 15px;
       left: -15px;
-      margin-top: -3px; 
+      margin-top: -3px;
     }
     &.fc-list-item{
        border-left-width: 28px;
@@ -328,7 +340,7 @@
   }
 
   .cal-vacation {
-      background-color: @neutral;
+      .neutral-trip-color;
   }
 
 }
@@ -336,4 +348,11 @@
 .trash-button {
     border-radius: 10%;
     padding: 3px;
+}
+
+#trip-shopping-cart-select-date {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
 }
