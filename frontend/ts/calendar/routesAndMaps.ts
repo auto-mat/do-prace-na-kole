@@ -221,3 +221,14 @@ export function update_distance_from_map(cm_slug: string) {
         R.redraw_shopping_cart();
     }
 }
+
+export function save_current_edits(cm_slug: string){
+    let dcs = Maps.draw_controls[cm_slug];
+    if (dcs._toolbars.edit._activeMode) {
+        dcs._toolbars.edit._activeMode.handler.save();
+    }
+    if (dcs._toolbars.draw._activeMode) {
+        dcs._toolbars.draw._activeMode.handler.completeShape();
+    }
+    update_distance_from_map(cm_slug)();
+}
