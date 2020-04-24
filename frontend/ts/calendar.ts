@@ -66,8 +66,8 @@ export function load_initial_trips() {
 
 function hookup_callbacks() {
     $(`#nav-commute-modes`).click(function(){
-        for (var cm_slug in commute_modes) {
-            hide_map(cm_slug);
+        for (var cm_slug_to_hide in commute_modes) {
+            hide_map(cm_slug_to_hide);
         }
         setTimeout(function(){
             let cm_slug = UIS.get_selected_commute_mode();

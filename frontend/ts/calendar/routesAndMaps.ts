@@ -129,13 +129,17 @@ export function load_dropozones() {
 }
 
 export function show_map(cm_slug: string){
+    for (var cm_slug_to_hide in commute_modes) {
+        if (cm_slug_to_hide != cm_slug) {
+            hide_map(cm_slug_to_hide);
+        }
+    }
     $(`#track_holder_${cm_slug}`).show();
     Maps.get_map(cm_slug).invalidateSize();
 }
 
 export function hide_map(cm_slug: string){
     $(`#track_holder_${cm_slug}`).hide();
-    $(`#map_shower_${cm_slug}`).show();
 }
 
 export function basic_route_options(cm_slug: string): {[index: string]: any} {
