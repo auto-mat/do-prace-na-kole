@@ -28,7 +28,12 @@ export class Maps{
     public static saved_distances: {[index: string]: number} = {};
 
     static distance_changed(cm_slug: string) {
-        return UIS.get_selected_distance() * 1000 != Maps.saved_distances[cm_slug];
+        let cm = commute_modes[cm_slug];
+        if (cm.distance_important) {
+            return UIS.get_selected_distance() * 1000 != Maps.saved_distances[cm_slug];
+        } else {
+            return false;
+        }
     }
 
     static editable_layer(cm_slug: string) {
