@@ -66,8 +66,8 @@
                                 </div>
                                 {% if cm.distance_important %}
                                     <div class="input-group">
-                                        <div>
-                                            <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="km-{{cm.slug}}" class="enter_km"><span class="cal-km-appendix">&nbsp;km</span>
+                                        <div class="enter_km_container">
+                                            <input type="number" max="1000" step="any" value="0" id="km-{{cm.slug}}" class="enter_km"><span class="cal-km-appendix">&nbsp;km</span>
                                         </div>
                                         <select type="text" class="form-control" id="route_select_{{cm.slug}}"></select>
                                     </div>

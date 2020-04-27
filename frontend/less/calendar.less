@@ -122,27 +122,27 @@
   select.form-control{
     width:100%;
   }
+  .enter_km_container{
+      background-color: white;
+      width:100%;
+  }
   .enter_km{
-    border-bottom:2px solid @lightgrey;
-    border-left:2px solid @lightgrey;
     width: 100%;
-    margin-right: 32px;
+    padding-right: 32px;
     height: 2.5em;
-    padding-right: @f;
+    text-align: right;
+  }
+  .cal-km-appendix{
+      position: absolute;
+      right: 3px;
+      top: 0px;
+      text-align: center;
+      height: ~"calc(2.5em - 2px)"; // https://stackoverflow.com/questions/16323310/how-can-i-instruct-less-to-ignore-math-for-certain-styles
+      line-height: 2.5em; // https://stackoverflow.com/questions/9249359/vertically-align-text-within-a-div
   }
   .enter_km:focus{
       box-shadow: 0 1px 14px @neutral inset, 0 0 8px @neutral;
   }
-}
-.cal-km-appendix{
-  background-color: white;
-  position: absolute;
-  right: 3px;
-  width: 30px;
-  top: 0px;
-  text-align: center;
-  height: ~"calc(2.5em - 2px)"; // https://stackoverflow.com/questions/16323310/how-can-i-instruct-less-to-ignore-math-for-certain-styles
-  line-height: 2.5em; // https://stackoverflow.com/questions/9249359/vertically-align-text-within-a-div
 }
 .calendar{
   h2{
