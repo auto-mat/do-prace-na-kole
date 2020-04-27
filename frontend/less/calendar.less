@@ -126,13 +126,16 @@
       background-color: white;
       width:100%;
   }
-  .enter_km{
+  .enter_km, .enter_duration_min{
     width: 100%;
     padding-right: 32px;
     height: 2.5em;
     text-align: right;
   }
-  .cal-km-appendix{
+  .enter_duration_min{
+      margin-right: 3px;
+  }
+  .cal-km-appendix, .cal-min-appendix{
       position: absolute;
       right: 3px;
       top: 0px;
@@ -142,6 +145,9 @@
   }
   .enter_km:focus{
       box-shadow: 0 1px 14px @neutral inset, 0 0 8px @neutral;
+  }
+  .duration_input_container{
+      background-color: white;
   }
 }
 .calendar{

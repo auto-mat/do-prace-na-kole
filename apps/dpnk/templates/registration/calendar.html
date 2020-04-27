@@ -72,7 +72,7 @@
                                         <select type="text" class="form-control" id="route_select_{{cm.slug}}"></select>
                                     </div>
                                 {% elif cm.duration_important %}
-                                    <div class="input-group">
+                                    <div class="input-group duration_input_container">
                                         <input type="number" style="text-align: right;" max="1000" step="any" value="0" id="duration-min-{{cm.slug}}" class="enter_duration_min"><span class="cal-min-appendix">&nbsp;{% trans "min" %}</span>
                                     </div>
                                 {%endif%}
