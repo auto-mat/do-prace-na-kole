@@ -40,17 +40,15 @@ import {
 let strings = load_strings();
 
 export function load_initial_trips() {
-    let mode_selected = false;
+    let selected_mode = null;
     let loaded_modes = [];
     for(var i in Globals.displayed_trips) {
         var trip = Globals.displayed_trips[i];
         let cm_slug = trip.commuteMode;
         let cm = commute_modes[cm_slug];
         if (cm.distance_important || cm.duration_important) {
-            if (!mode_selected){
-                $("#nav-" + trip.commuteMode + "-tab").tab('show');
-                $("#nav-" + trip.commuteMode + "-tab").trigger('click');
-                mode_selected = true;
+            if (selected_mode == null){
+                selected_mode = trip.commuteMode;
             }
             if (loaded_modes.indexOf(cm_slug) == -1) {
                 if(cm.distance_important){
@@ -63,6 +61,10 @@ export function load_initial_trips() {
                 loaded_modes.push(cm_slug);
             }
         }
+    }
+    if(selected_mode != null) {
+        $("#nav-" + selected_mode + "-tab").tab('show');
+        $("#nav-" + selected_mode + "-tab").trigger('click');
     }
     render.redraw_shopping_cart();
 }
