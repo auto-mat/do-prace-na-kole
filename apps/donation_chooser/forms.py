@@ -18,9 +18,9 @@ class CharitativeOrganizationChooserForm(CampaignMixin, SubmitMixin, forms.Model
                 format_html(
                     "<div class='donation-heading'>"
                     "<img class='donation-icon' src='{}'/>"
-                    "<div class='donation-name'>"
+                    "<h4 class='donation-name'>"
                     "{}"
-                    "</div>"
+                    "</h4>"
                     "</div>"
                     "<p class='donation-description'>"
                     "<img class='donation-image' src='{}'/>"
