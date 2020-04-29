@@ -315,7 +315,6 @@ class Campaign(Pricable, models.Model):
         competition_phase = self.phase('competition')
         return self.day_recent(day, day_today) and competition_phase.day_in_phase(day)
 
-
     def day_recent(self, day, day_today=None):
         """
         Returns true if the current day is today or in the recent past. Recent beting defined by "campaign.days_active".
@@ -326,7 +325,6 @@ class Campaign(Pricable, models.Model):
             (day <= day_today) and
             (day > self._first_possibly_active_day(day_today=day_today))
         )
-
 
     def _first_possibly_active_day(self, day_today=None):
         if day_today is None:

@@ -1,10 +1,10 @@
 from braces.views import LoginRequiredMixin
 
 from django.urls import reverse_lazy
-from django.views.generic.edit import UpdateView
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic.edit import UpdateView
 
-from dpnk.views_mixins import CampaignFormKwargsMixin, UserAttendanceViewMixin, TitleViewMixin
+from dpnk.views_mixins import CampaignFormKwargsMixin, TitleViewMixin, UserAttendanceViewMixin
 
 from .forms import CharitativeOrganizationChooserForm
 from .models import UserChoice
