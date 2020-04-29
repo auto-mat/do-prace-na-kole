@@ -105,7 +105,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         validated_data = super().validate(data)
-        if 'date' in validated_data and not self.user_attendance.campaign.day_active(validated_data['date']):
+        if 'date' in validated_data and not self.user_attendance.campaign.day_recent(validated_data['date']):
             raise InactiveDayGPX
         return validated_data
 

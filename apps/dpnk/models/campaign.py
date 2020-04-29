@@ -306,8 +306,6 @@ class Campaign(Pricable, models.Model):
 
     def day_active(self, day, day_today=None):
         """ Return if this day can be changed by user """
-        if day_today is None:
-            day_today = util.today()
         try:
             entry_phase = self.phase('entry_enabled')
             if not entry_phase.is_actual():
@@ -315,10 +313,20 @@ class Campaign(Pricable, models.Model):
         except Phase.DoesNotExist:
             pass
         competition_phase = self.phase('competition')
+        return self.day_recent(day, day_today) and competition_phase.day_in_phase(day)
+
+
+    def day_recent(self, day, day_today=None):
+        """
+        Returns true if the current day is today or in the recent past. Recent beting defined by "campaign.days_active".
+        """
+        if day_today is None:
+            day_today = util.today()
         return (
-            (day <= day_today) and competition_phase.day_in_phase(day) and
+            (day <= day_today) and
             (day > self._first_possibly_active_day(day_today=day_today))
         )
+
 
     def _first_possibly_active_day(self, day_today=None):
         if day_today is None:
