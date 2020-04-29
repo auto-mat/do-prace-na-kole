@@ -11,7 +11,7 @@ from .models import UserChoice
 
 
 class CharitativeOrganizationChooserView(TitleViewMixin, LoginRequiredMixin, CampaignFormKwargsMixin, UserAttendanceViewMixin, UpdateView):
-    template_name = 'base_generic_registration_form.html'
+    template_name = 'donation_chooser.html'
     model = UserChoice
     form_class = CharitativeOrganizationChooserForm
     success_url = reverse_lazy("choose_charitative_organization")
