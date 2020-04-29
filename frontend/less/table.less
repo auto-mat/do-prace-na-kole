@@ -1,0 +1,52 @@
+@import "./constants.less";
+#rides-form{
+    .controls{
+        width:100%;
+    }
+    @media (min-device-width: 500px) {
+        .btn-group{
+            display:block;
+        }
+        .radio{
+            width:50%;
+        }
+    }
+    @media (max-device-width: 500px) {
+        .radio{
+            display: block;
+        }
+    }
+    .radio{
+        padding:0;
+        border:1px solid #fff;
+        input{
+            display:none;
+        }
+    }
+    table{
+        th, td{
+            border:0;
+        }
+    }
+    label{
+        font-size:.8rem;
+        &:hover{
+            text-decoration:underline;
+        }
+    }
+    input:checked + label{
+        background-color:@positive;
+        margin-bottom:0;
+        padding:@wg/4 0;
+        &:hover{
+            text-decoration:none;
+        }
+    }
+    th.date{
+        font-size:1.4rem;
+        font-weight:300;
+        margin-top:@wg/2;
+        border-bottom:1px solid @lightgrey;
+        padding-bottom:0;
+    }
+}
