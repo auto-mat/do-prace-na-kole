@@ -78,35 +78,8 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
     def get(self, request, *args, **kwargs):  # noqa
         ret_val = super().get(request, *args, **kwargs)
 
-        if self.registration_phase in ('registration_uncomplete', 'profile_view'):
-            if self.user_attendance.approved_for_team == 'approved' and \
-                    self.user_attendance.team and \
-                    self.user_attendance.team.unapproved_member_count and \
-                    self.user_attendance.team.unapproved_member_count > 0:
-                messages.error(
-                    request,
-                    mark_safe(
-                        _('Ve Vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
-                    ),
-                )
-            elif self.user_attendance.is_libero() and self.user_attendance.campaign.phase('registration').is_actual():
-                # TODO: get WP slug for city
-                messages.error(
-                    request,
-                    format_html(
-                        _(
-                            '<b>Opusťte svoji pevnost osamění.</b><br/>'
-                            'Když <a href="{invite_url}">nepozvete parťáky do týmu</a>, '
-                            'zůstanete na ocet s možností účastnit se pouze v soutěžích jednotlivců. '
-                            'Také se můžete <a href="{join_team_url}">přidat k jinému týmu</a>. Čím víc členů, tím víc zábavy!'
-                        ),
-                        invite_url=reverse('pozvanky'),
-                        join_team_url=reverse('zmenit_tym'),
-                        city=self.user_attendance.team.subsidiary.city.slug,
-                    ),
-                    # extra_tags="tagsss",
-                )
-
+        notification_types.UnapprovedMembersInTeam(self.registration_phase).update(self.user_attendance)
+        notification_types.AloneInTeam(self.registration_phase).update(self.user_attendance)
         if self.registration_phase == 'registration_uncomplete':
             if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
@@ -151,7 +124,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                 competition_type='questionnaire',
             )
             for questionnaire in questionnaires:
-                notification_types.questionnaire_factory(questionnaire).update(self.user_attendance)
+                notification_types.Questionnaire(questionnaire).update(self.user_attendance)
         company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
             messages.error(request, _('Vaše žádost o funkci koordinátora organizace čeká na vyřízení.'))
