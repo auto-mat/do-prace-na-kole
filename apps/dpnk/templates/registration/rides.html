@@ -5,6 +5,7 @@
 {% load bootstrap4 %}
 {% load cache %}
 {% load scribbler_tags %}
+{% load static %}
 
 {% cache 3600 "commute_mode_tooltips" %}
 <script type="text/javascript">
@@ -16,12 +17,12 @@
    })
 </script>
 {% endcache %}
+<script src="{% static 'js/dist/table.js' %}"> </script>
 <script type="text/javascript">
-   {% if formset.errors %}
-      $(function () {
-         $('#rides-form').trigger('checkform.areYouSure');
-      })
-   {% endif %}
+ window.formset_errors = false;
+ {% if formset.errors %}
+ window.formset_errors = true;
+ {% endif %}
 </script>
 <table class="table table-condensed table-bordered">
 <tr class="info">

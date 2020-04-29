@@ -10,8 +10,9 @@ module.exports = {
         map: './frontend/ts/map.ts',
         modals: './frontend/ts/modals.ts',
         form_functions: './frontend/ts/form_functions.ts',
-        calendar: './frontend/ts/calendar.ts',
         leaflet_settings: './frontend/ts/leaflet_settings.ts',
+        calendar: './frontend/ts/calendar.ts',
+        table: './frontend/ts/table.ts',
     },
     module: {
         rules: [
