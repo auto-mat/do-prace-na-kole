@@ -74,14 +74,15 @@ class StravaAuth(RegistrationCompleteMixin, generic.View):
             client_secret=settings.STRAVA_CLIENT_SECRET,
             code=code,
         )
-        models.StravaAccount.objects.create(
+        acct, _ = models.StravaAccount.objects.get_or_create(
             user_id=request.user.id,
-            strava_username=sclient.get_athlete().username or "",
-            first_name=sclient.get_athlete().firstname or "",
-            last_name=sclient.get_athlete().lastname or "",
-            access_token=token_response['access_token'],
-            refresh_token=token_response['refresh_token'],
         )
+        acct.strava_username=sclient.get_athlete().username or ""
+        acct.first_name=sclient.get_athlete().firstname or ""
+        acct.last_name=sclient.get_athlete().lastname or ""
+        acct.access_token=token_response['access_token']
+        acct.refresh_token=token_response['refresh_token']
+        acct.save()
         return http.HttpResponseRedirect(reverse('about_strava'))
 
 
