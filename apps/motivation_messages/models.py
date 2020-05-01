@@ -43,11 +43,13 @@ class MotivationMessage(models.Model):
     )
     day_from = models.IntegerField(
         verbose_name=_("Ode dne"),
+        help_text=_("Počet dní od začátku soutěžní fáze kampaně. Možno zadat i záporné hodnoty pro období před kampaní."),
         null=True,
         blank=True,
     )
     day_to = models.IntegerField(
         verbose_name=_("Do dne"),
+        help_text=_("Počet dní od začátku soutěžní fáze kampaně. Možno zadat i záporné hodnoty pro období před kampaní."),
         null=True,
         blank=True,
     )
