@@ -714,11 +714,11 @@ if DEBUG_TOOLBAR:
     INSTALLED_APPS += (
         'debug_toolbar',
         # 'template_timings_panel',
-        "template_profiler_panel",
+        # "template_profiler_panel",
     )
     MIDDLEWARE += [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
-        'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+        # 'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
     ]
     from .includes.debug_toolbar import *  # noqa
 

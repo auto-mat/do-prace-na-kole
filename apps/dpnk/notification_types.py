@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 
 from notifications.notification_types import NotificationType
 
+
 class RegistrationPhaseNotification(NotificationType):
     def __init__(self, phase):
         self.phase = phase
@@ -25,6 +26,7 @@ class AloneInTeam(RegistrationPhaseNotification):
            recipient.team.unapproved_member_count == 0:
             return True
         return False
+
 
 class UnapprovedMembersInTeam(RegistrationPhaseNotification):
     slug = "unapproved-team-members"
@@ -53,7 +55,7 @@ class Questionnaire(NotificationType):
     def populate(self, template):
         template.verb = "Nezapomeňte výplnit '" + self.questionnaire.name + "'"
         template.verb_en = "Don't forget to fill out '" + self.questionnaire.name + "'"
-        template.url = reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug})
+        template.url = reverse_lazy("questionnaire", kwargs={"questionnaire_slug": self.questionnaire.slug})
 
     def check_condition(self, recipient):
         return recipient.unanswered_questionnaires().filter(pk=self.questionnaire.pk).exists()

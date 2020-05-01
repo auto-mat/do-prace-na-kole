@@ -97,6 +97,11 @@ class DeliveryBatch(models.Model):
         null=True,
         blank=True,
     )
+    pickup_date = models.DateField(
+        verbose_name=_("Datum vyzvednutí"),
+        default=datetime.datetime.now,
+        null=False,
+    )
 
     class Meta:
         verbose_name = _(u"Dávka objednávek")
@@ -113,7 +118,7 @@ class DeliveryBatch(models.Model):
         return TeamPackage.objects.filter(box__delivery_batch=self).count()
 
     def submit_gls_order_pdf(self):
-        pdf_filename, pdf_ext = generate_pdf(self.tnt_order)
+        pdf_filename, pdf_ext = generate_pdf(self.tnt_order, self)
         with open(pdf_filename, "rb+") as f:
             date_time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             filename = f"batch_{self.id}_{date_time_str}.{pdf_ext}"

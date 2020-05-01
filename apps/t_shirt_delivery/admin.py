@@ -411,6 +411,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         'pdf_data_url',
         'csv_data_url',
         'combined_opt_pdf_url',
+        'pickup_date',
     ]
     actions = [
         actions.recreate_delivery_csv,
