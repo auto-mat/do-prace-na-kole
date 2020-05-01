@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 
 from notifications.notification_types import NotificationType
 
+
 class RegistrationPhaseNotification(NotificationType):
     def __init__(self, phase):
         self.phase = phase
@@ -25,6 +26,7 @@ class AloneInTeam(RegistrationPhaseNotification):
            recipient.team.unapproved_member_count == 0:
             return True
         return False
+
 
 class UnapprovedMembersInTeam(RegistrationPhaseNotification):
     slug = "unapproved-team-members"

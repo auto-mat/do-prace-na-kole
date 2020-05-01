@@ -2,9 +2,10 @@ from django.contrib import admin
 from django.db.models import Q
 from django.utils.html import mark_safe
 
+from dpnk.models import CampaignType
+
 from import_export.admin import ImportExportMixin
 
-from dpnk.models import CampaignType
 from . import models
 
 
