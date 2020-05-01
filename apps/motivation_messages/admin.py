@@ -55,6 +55,7 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'team_backwards_rank_to',
     )
     list_filter = (
+        'enabled',
         CampaignTypeFilter,
         MyMessagesFilter,
     )

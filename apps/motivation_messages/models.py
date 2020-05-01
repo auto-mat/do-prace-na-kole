@@ -41,12 +41,12 @@ class MotivationMessage(models.Model):
         null=True,
         blank=True,
     )
-    day_from = models.PositiveIntegerField(
+    day_from = models.IntegerField(
         verbose_name=_("Ode dne"),
         null=True,
         blank=True,
     )
-    day_to = models.PositiveIntegerField(
+    day_to = models.IntegerField(
         verbose_name=_("Do dne"),
         null=True,
         blank=True,
