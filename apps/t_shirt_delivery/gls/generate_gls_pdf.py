@@ -1,4 +1,3 @@
-import datetime
 import logging
 import subprocess
 from subprocess import PIPE, Popen
@@ -14,7 +13,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-def generate_pdf_part(csv_file):
+def generate_pdf_part(csv_file, batch):
     print("generating PDF from GLS")
     print(f"File: {csv_file}")
     gls_url = settings.GLS_BASE_URL
@@ -124,7 +123,7 @@ def generate_pdf_part(csv_file):
         "to_phone": "9",
         "to_email": "8",
         "pickupd_const": "on",
-        "pickupd": datetime.date.today().strftime("%d.%m.%Y"),
+        "pickupd": batch.pickup_date.strftime("%d.%m.%Y"),
         "pcount_const": "on",
         "pcount": "1",
         "pinfo": "19",
@@ -208,7 +207,7 @@ def generate_pdf_part(csv_file):
     return response.content, 'pdf'
 
 
-def generate_pdf(csv_file):
+def generate_pdf(csv_file, batch):
     subprocess.call(["rm", "tmp_gls", "-R"])
     subprocess.call(["mkdir", "tmp_gls"])
     from .. import tasks
@@ -219,7 +218,7 @@ def generate_pdf(csv_file):
     for csv_file_part in output.decode("utf-8").split("\n"):
         if csv_file_part:
             with open(csv_file_part) as f:
-                pdf_part, pdf_ext = generate_pdf_part(f)
+                pdf_part, pdf_ext = generate_pdf_part(f, batch)
             with open(csv_file_part + ".pdf", "wb+") as f:
                 f.write(pdf_part)
             if '.error.' in pdf_ext:  # We return errors after first occurrence
