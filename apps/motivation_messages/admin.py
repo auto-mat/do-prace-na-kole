@@ -1,9 +1,37 @@
 from django.contrib import admin
+from django.db.models import Q
 from django.utils.html import mark_safe
 
 from import_export.admin import ImportExportMixin
 
+from dpnk.models import CampaignType
 from . import models
+
+
+class CampaignTypeFilter(admin.SimpleListFilter):
+    title = 'campaign type'
+    parameter_name = 'campaign_type'
+
+    def lookups(self, request, model_admin):
+        return [(c.id, c.name) for c in CampaignType.objects.all()]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(Q(campaign_types=self.value()) | Q(campaign_types__isnull=True))
+
+
+class MyMessagesFilter(admin.SimpleListFilter):
+    title = 'Filter my messages'
+    parameter_name = 'my_messages'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('my', 'My messages'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'my':
+            return models.MotivationMessage._get_all_messages(request.user_attendance)
 
 
 @admin.register(models.MotivationMessage)
@@ -13,6 +41,7 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'message_html',
         'note',
         'enabled',
+        'get_campaign_types',
         'priority',
         'frequency_min',
         'frequency_max',
@@ -26,7 +55,8 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         'team_backwards_rank_to',
     )
     list_filter = (
-        'campaign_types',
+        CampaignTypeFilter,
+        MyMessagesFilter,
     )
     list_editable = (
         'enabled',
@@ -48,5 +78,13 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     save_as = True
 
+    def get_campaign_types(self, obj):
+        return ", ".join(c.name for c in obj.campaign_types.all())
+
     def message_html(self, obj):
         return mark_safe(obj.message)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related(
+            'campaign_types',
+        )
