@@ -361,7 +361,9 @@ export function dayRender(cell: any) {
 export function update_points() {
     $.getJSON('/rest/userattendance/?format=json', function( data: any ){
         for (var i in data.results) {
-            $("#points-counter").text(data.results[i].points_display);
+            if(data.results[i].points > 0) {
+                $("#points-counter").text(data.results[i].points_display);
+            }
         }
     });
 }
