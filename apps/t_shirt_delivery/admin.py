@@ -236,6 +236,10 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
             queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         return queryset, use_distinct
 
+    def teampackage(self):
+        # This is here just to fix smoke tests
+        pass
+
 
 @admin.register(models.TeamPackage)
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin, NestedModelAdmin):
