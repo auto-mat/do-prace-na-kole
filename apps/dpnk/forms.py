@@ -977,10 +977,20 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
         label=_("Vzdálenost (km)"),
         required=False,
     )
-    duration = CommaFloatField(
+    duration = forms.IntegerField(
         label=_("Doba (min)"),
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.get('initial', {})
+        instance = kwargs.get('instance', None)
+        if instance is not None and instance.duration:
+            initial['duration'] = instance.duration / 60
+        else:
+            initial['duration'] = 0
+        kwargs['initial'] = initial
+        super().__init__(*args, **kwargs)
 
     def working_day(self):
         return util.working_day(self.initial['date'])
@@ -1003,7 +1013,7 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
             if cm.distance_important and not cleaned_data.get('distance', False):
                 raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
 
-            if cleaned_data['distance'] < cm.minimum_distance:
+            if cleaned_data['distance'] is not None and cleaned_data['distance'] < cm.minimum_distance:
                 raise forms.ValidationError(ngettext("Cesta musí mít minimálně %(km)d kilometru") % {'km': cm.minimum_distance / 1000})
             if cleaned_data['duration']:
                 cleaned_data['duration'] = cleaned_data['duration'] * 60
@@ -1016,7 +1026,7 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
 
     class Meta:
         model = models.Trip
-        fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
+        fields = ('commute_mode', 'distance', 'duration', 'direction', 'user_attendance', 'date')
         widgets = {
             'user_attendance': forms.HiddenInput(),
             'commute_mode': CommuteModeSelect(),
@@ -1031,6 +1041,7 @@ class TrackTripForm(FormWithTrackMixin, SubmitMixin, TripForm):
         fields = (
             'commute_mode',
             'distance',
+            'duration',
             'direction',
             'user_attendance',
             'date',
