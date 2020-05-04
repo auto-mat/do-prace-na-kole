@@ -209,6 +209,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',
+        'teampackage__packagetransaction__t_shirt_size__name',
         filters.AllPackagesDispatched,
         ('delivery_batch__created', DateRangeFilter),
         'delivery_batch__id',
