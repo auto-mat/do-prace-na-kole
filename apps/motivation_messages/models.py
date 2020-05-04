@@ -87,10 +87,15 @@ class MotivationMessage(models.Model):
         verbose_name=_("Povoleno"),
         default=True,
     )
-    priority = models.PositiveIntegerField(
+    priority = models.IntegerField(
         verbose_name=_("Priorita"),
-        null=True,
-        blank=True,
+        help_text=_(
+            "Priorita hlášky. Zobrazuje se vždy náhodná hláška z těch, které mají nejvyšší prioritu splňují ostatní podmínky."
+            "Možno nastavit záporě pro hlášky které mají mít zobrazovat jen pokud není žádní lepší k dispozici."
+        ),
+        null=False,
+        blank=False,
+        default=0,
     )
 
     def __str__(self):
