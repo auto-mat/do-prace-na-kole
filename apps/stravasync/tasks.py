@@ -9,6 +9,10 @@ from celery import shared_task
 
 from django.conf import settings
 from django.contrib.gis.geos import (LineString, MultiLineString)
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.urls import reverse
+
+from notifications.signals import notify
 
 from dpnk.forms import FullTripForm
 from dpnk.models.phase import Phase
@@ -38,6 +42,34 @@ def sync_task(strava_account_id):
     sync(strava_account_id, manual_sync=False)
 
 
+def refresh_tokens(strava_account, sclient):
+    if strava_account.refresh_token:
+        token_response = sclient.refresh_access_token(
+            client_id=settings.STRAVA_CLIENT_ID,
+            client_secret=settings.STRAVA_CLIENT_SECRET,
+            refresh_token=strava_account.refresh_token,
+        )
+        strava_account.access_token = token_response['access_token']
+        strava_account.refresh_token = token_response['refresh_token']
+        sclient.refresh_token = strava_account.refresh_token
+    sclient.access_token = strava_account.access_token
+
+
+def destroy_account_and_notify(strava_account, sclient):
+    try:
+        sclient.deauthorize()
+    except stravalib.exc.AccessUnauthorized:
+        pass
+    notify.send(
+        strava_account.user,
+        recipient=strava_account.user,
+        verb="Nedařilo se připojit se stravou. Zkuste znovu projit autentifikace.",
+        url=reverse('about_strava'),
+        icon=static("/img/strava-logo.png"),
+    )
+    strava_account.delete()
+
+
 def sync(strava_account_id, manual_sync=True):
     """
     Sync with a specific strava account.
@@ -58,16 +90,7 @@ def sync(strava_account_id, manual_sync=True):
         else:
             strava_account.user_sync_count = 0
         strava_account.errors = ""
-        if strava_account.refresh_token:
-            token_response = sclient.refresh_access_token(
-                client_id=settings.STRAVA_CLIENT_ID,
-                client_secret=settings.STRAVA_CLIENT_SECRET,
-                refresh_token=strava_account.refresh_token,
-            )
-            strava_account.access_token = token_response['access_token']
-            strava_account.refresh_token = token_response['refresh_token']
-            sclient.refresh_token = strava_account.refresh_token
-        sclient.access_token = strava_account.access_token
+        refresh_tokens(strava_account, sclient)
         earliest_start_date, latest_end_date = Phase.get_active_range('entry_enabled')
         campaigns = []
         for competition_phase in Phase.get_active().filter(phase_type='entry_enabled'):
@@ -83,6 +106,9 @@ def sync(strava_account_id, manual_sync=True):
                 sync_activity(activity, hashtag_table, strava_account, sclient, stats)
             except Exception as e:
                 strava_account.errors += "Error syncing activity {activity} \n{e}\n\n".format(activity=activity.name, e=str(e))
+    except stravalib.exc.AccessUnauthorized:
+        destroy_account_and_notify(strava_account, sclient)
+        return stats
     except Exception:
         tb = traceback.format_exc()
         strava_account.errors += tb
