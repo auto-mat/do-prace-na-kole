@@ -1978,8 +1978,9 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.personal_data_opt_in = False
         self.user_attendance.save()
         denorm.flush()
-        response = self.client.get(reverse('registration_uncomplete'))
-        self.assertContains(response, "<b>Opusťte svoji pevnost osamění.</b>", html=True)
+        self.client.get(reverse('registration_uncomplete'))
+        response = self.client.get(reverse('notifications:live_all_notification_list'))
+        self.assertEqual(response.json()['all_list'][0]['verb'], "Jsi sám v týmu. Pozvěte další členové.")
 
     def test_dpnk_registration_unapproved_users(self):
         for team_member in self.user_attendance.team.all_members():
@@ -1991,7 +1992,8 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.team.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
-        self.assertContains(response, "Ve Vašem týmu jsou neschválení členové")
+        response = self.client.get(reverse('notifications:live_all_notification_list'))
+        self.assertEqual(response.json()['all_list'][0]['verb'], "Ve Vašem týmu jsou neschválení členové, prosíme, posuďte jejich členství.")
 
     def test_dpnk_registration_unapproved(self):
         self.user_attendance.approved_for_team = 'undecided'
