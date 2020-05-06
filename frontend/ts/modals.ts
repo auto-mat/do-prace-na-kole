@@ -88,11 +88,11 @@ var dpnk_fill_notification_list = function (data: DjangoNotifications) {
     Notifications.notifications_list = data;
     let cl = $(".live_badge_count")[0].classList;
     let status_cls;
-    cl.forEach(function(cls){
-        if(cls.indexOf("status_") != -1){
-            status_cls = cls;
-        }
-    });
+    for(var i = 0; i < cl.length; i++){
+        if(cl[i].indexOf("status_") != -1){
+            status_cls = cl[i];
+        };
+    };
     cl.remove(status_cls);
     cl.add(`status_${data.unread_count}`);
 }

@@ -159,11 +159,9 @@ def generate_pdf_part(csv_file, batch):
 
     try:
         error_csv_filename = response4.content.decode('utf8').split('\n')[0].split('value="')[1].split('"')[0]
-    except IndexError:
-        pass
-    else:
         error_csv = session.get(gls_url + '/' + error_csv_filename)
-        return error_csv.content, '.error.csv'
+    except IndexError:
+        error_csv = None
 
     # -----------------------------------------------
 
@@ -183,6 +181,12 @@ def generate_pdf_part(csv_file, batch):
     }
 
     response5 = session.post(gls_url + '/subindex.php', data=data)
+
+    if error_csv:
+        # In case when there is error CSV, we want it to be the only output.
+        # But we need to print PDF to clear the package queue.
+        return error_csv.content, '.error.csv'
+
     # print_response(response5, filename="response5.html")
     soup = BeautifulSoup(response5.text, features="lxml")
     try:
