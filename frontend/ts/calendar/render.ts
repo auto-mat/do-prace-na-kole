@@ -156,7 +156,7 @@ export function get_wordpress_events(fetchInfo: any, successCallback: any, failu
             var events_by_day: {[index: string]: Event[]} = {};
            for (var i in data) {
                let event = data[i];
-               if(typeof event.start_date !== 'undefined' && event.start_date.startsWith("{{campaign.year}}")){
+               if(typeof event.start_date !== 'undefined' && event.start_date.startsWith(new Date().getFullYear())){
                    if(!(event.start_date in events_by_day)) {
                        events_by_day[event.start_date] = [];
                    }

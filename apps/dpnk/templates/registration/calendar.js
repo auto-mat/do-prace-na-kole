@@ -33,4 +33,4 @@ document.addEventListener('scroll', function (event) {
 window.csrf_token = "{{ csrf_token }}";
 window.calendar_url = "{% url 'calendar' %}";
 window.initial_events = {{events|safe}};
-window.wp_api_url = '{{campaign.campaign_type.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.slug}}'
+window.wp_api_url = '{{campaign.campaign_type.wp_api_url}}/feed/?orderby=start_date&feed=content_to_backend&_post_type=locations&_page_subtype=event&_number=100&_post_parent={{user_attendance.team.subsidiary.city.get_wp_slug}}'
