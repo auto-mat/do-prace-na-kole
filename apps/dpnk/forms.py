@@ -1015,10 +1015,13 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
 
             if cleaned_data['distance'] is not None and cleaned_data['distance'] < cm.minimum_distance:
                 raise forms.ValidationError(ngettext("Cesta musí mít minimálně %(km)d kilometru") % {'km': cm.minimum_distance / 1000})
-            if cleaned_data['duration']:
-                cleaned_data['duration'] = cleaned_data['duration'] * 60
-                if cleaned_data['duration'] < cm.minimum_duration:
-                    raise forms.ValidationError(ngettext("Činnost musí trvat minimálně %(min)d minutů") % {'min': cm.minimum_duration / 60})
+            try:
+                if cleaned_data['duration']:
+                    cleaned_data['duration'] = cleaned_data['duration'] * 60
+                    if cleaned_data['duration'] < cm.minimum_duration:
+                        raise forms.ValidationError(ngettext("Činnost musí trvat minimálně %(min)d minutů") % {'min': cm.minimum_duration / 60})
+            except KeyError:
+                cleaned_data['duration'] = 0
         return cleaned_data
 
     def has_changed(self, *args, **kwargs):
