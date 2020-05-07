@@ -215,6 +215,9 @@ class Trip(models.Model):
     def get_direction_display(self):
         return self.DIRECTIONS_DICT[self.direction]
 
+    def duration_minutes(self):
+        return self.duration / 60
+
     def get_application_link(self):
         app_links = {
             "strava": "https://www.strava.com/",
