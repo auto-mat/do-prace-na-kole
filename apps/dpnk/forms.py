@@ -977,7 +977,7 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
         label=_("Vzdálenost (km)"),
         required=False,
     )
-    duration = forms.IntegerField(
+    duration = CommaFloatField(
         label=_("Doba (min)"),
         required=False,
     )
