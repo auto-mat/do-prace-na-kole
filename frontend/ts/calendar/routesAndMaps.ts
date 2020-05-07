@@ -125,11 +125,11 @@ export function load_dropozones() {
                             gpx.getLayers()[0].getLayers()[0].addTo(Maps.editable_layer(cm_slug_inner));
                             Maps.get_map(cm_slug_inner).fitBounds(Maps.editable_layer(cm_slug_inner).getBounds());
                             //gpx.addTo(Maps.editable_layers[cm_slug_inner]);
-                            update_distance_from_map(cm_slug_inner);
                             file.status = Dropzone.SUCCESS;
                             dz.emit("success", file);
                             dz.emit("complete", file);
                             Maps.gpx_files[cm_slug_inner] = file;
+                            update_distance_from_map(cm_slug_inner)();
                         });
                         reader.readAsText(file);
                     }
