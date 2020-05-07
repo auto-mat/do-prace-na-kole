@@ -12,11 +12,11 @@ from django.contrib.gis.geos import (LineString, MultiLineString)
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.urls import reverse
 
-from notifications.signals import notify
-
 from dpnk.forms import FullTripForm
 from dpnk.models.phase import Phase
 from dpnk.models.trip import Trip
+
+from notifications.signals import notify
 
 import polyline
 
@@ -106,7 +106,7 @@ def sync(strava_account_id, manual_sync=True):
                 sync_activity(activity, hashtag_table, strava_account, sclient, stats)
             except Exception as e:
                 strava_account.errors += "Error syncing activity {activity} \n{e}\n\n".format(activity=activity.name, e=str(e))
-    except stravalib.exc.AccessUnauthorized:
+    except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault):
         destroy_account_and_notify(strava_account, sclient)
         return stats
     except Exception:
