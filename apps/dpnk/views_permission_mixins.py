@@ -199,7 +199,7 @@ class MustBeCompanyAdminMixin(object):
 
 def registration_complete_gate(user_attendance):
     if user_attendance is None:
-        return None
+        return redirect(reverse_lazy("login"))
     reason = user_attendance.entered_competition_reason()
     if reason is True:
         if user_attendance.has_unanswered_questionnaires:
