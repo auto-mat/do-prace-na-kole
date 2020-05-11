@@ -216,6 +216,8 @@ class Trip(models.Model):
         return self.DIRECTIONS_DICT[self.direction]
 
     def duration_minutes(self):
+        if self.duration is None:
+            return 0
         return self.duration / 60
 
     def get_application_link(self):
