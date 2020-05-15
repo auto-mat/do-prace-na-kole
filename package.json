@@ -43,7 +43,7 @@
     "d3": "3.5.17",
     "datatables.net": "^1.10.20",
     "datatables.net-bs4": "^1.10.20",
-    "dropzone": "^5.7.0",
+    "dropzone": "^5.5.1",
     "file-loader": "^6.0.0",
     "jquery": "^2.2.0",
     "jquery-editable-select": "^2.2.5",
