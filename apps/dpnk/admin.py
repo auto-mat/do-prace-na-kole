@@ -847,7 +847,12 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
         'paid_member_count',
         'author',
         'updated_by',
+        'link_to_gallery',
     ]
+
+    def link_to_gallery(self, obj):
+        link = reverse("admin:photologue_gallery_change", args=[obj.gallery.id])
+        return format_html(u'<a href="{link}">team photos</a>', link=link)
 
     def members(self, obj):
         return admin_links(
