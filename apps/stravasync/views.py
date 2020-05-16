@@ -104,7 +104,10 @@ class StravaConnect(RegistrationCompleteMixin, generic.View):
 
 class StravaDisconnect(RegistrationCompleteMixin, generic.View):
     def post(self, request, *args, **kwargs):
-        strava_account = request.user.stravaaccount
+        try:
+            strava_account = request.user.stravaaccount
+        except models.StravaAccount.DoesNotExist:
+            return http.HttpResponseRedirect(reverse('about_strava'))
         sclient = stravalib.Client(access_token=strava_account.access_token)
         try:
             sclient.deauthorize()
