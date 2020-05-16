@@ -149,7 +149,9 @@
 			                  {{ block.super }}
 			              	</div>
 						{% endblock %}
+				    {% if user.is_authenticated %}
                       {% include "base_modal_windows.html" %}
+            {% endif %}
 					</div>
 				</div>
 			</div>
