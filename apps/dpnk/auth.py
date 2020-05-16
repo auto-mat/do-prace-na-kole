@@ -26,7 +26,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy, NoReverseMatch
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
@@ -68,16 +68,20 @@ def clean_email(email):
             )
         return email
     else:
-        error_text = format_html(
-            "{text}"
-            "<p>"
-            "<a href='{register}' class='login_redirection_button btn'>{register_text}</a>"
-            "</p>",
-            text=_("Tento e-mail neznáme. "),
-            password=reverse('password_reset'),
-            register=reverse('registrace', args=(email,)),
-            register_text=_("Registrovat"),
-        )
+        try:
+            register = reverse('registrace', args=(email,)),
+        except NoReverseMatch:
+            error_text = _("Neplatný email")
+        else:
+            error_text = format_html(
+                "{text}"
+                "<p>"
+                "<a href='{register}' class='login_redirection_button btn'>{register_text}</a>"
+                "</p>",
+                text=_("Tento e-mail neznáme. "),
+                register=register,
+                register_text=_("Registrovat"),
+            )
         raise forms.ValidationError(error_text)
 
 
