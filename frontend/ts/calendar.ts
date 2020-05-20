@@ -20,7 +20,7 @@ import * as util from "./calendar/util";
 import * as UIS from "./calendar/ui_state";
 import {
     Maps,
-    update_distance_from_map,
+    update_distance_from_map_factory,
     hide_map,
     show_map,
     on_route_select,
@@ -101,9 +101,9 @@ function hookup_callbacks() {
         if (cm.distance_important) {
             (function(){
                 let cm_slug_inner = cm_slug;
-                $(`#map_${cm_slug}`).mouseleave(function(){
-                    update_distance_from_map(cm_slug_inner);
-                });
+                $(`#map_${cm_slug}`).mouseleave(
+                    update_distance_from_map_factory(cm_slug_inner)
+                );
             })();
         }
     }

@@ -75,11 +75,20 @@ export class Maps{
             Maps.draw_controls[cm_slug] = drawControl;
             Maps.draw_controls[cm_slug].addTo(map);
             //@ts-ignore
-            map.on(L.Draw.Event.DRAWSTOP, update_distance_from_map(cm_slug));
+            map.on(L.Draw.Event.DRAWSTOP, update_distance_from_map_factory(cm_slug));
             //@ts-ignore
-            map.on(L.Draw.Event.EDITSTOP, update_distance_from_map(cm_slug));
+            map.on(L.Draw.Event.EDITSTOP, update_distance_from_map_factory(cm_slug));
             //@ts-ignore
-            map.on(L.Draw.Event.DELETESTOP, update_distance_from_map(cm_slug));
+            map.on(L.Draw.Event.EDITVERTEX, function(){
+                update_distance_from_map_factory(cm_slug)();
+            });
+            //@ts-ignore
+            map.on(L.Draw.Event.DRAWVERTEX, function(e){
+                //@ts-ignore
+                update_distance_from_map_factory(cm_slug, [e.layers._layers])();
+            });
+            //@ts-ignore
+            map.on(L.Draw.Event.DELETESTOP, update_distance_from_map_factory(cm_slug));
             {
                 let cm_slug_closure = cm_slug;
                 map.on(L.Draw.Event.CREATED, function (e: {layer: L.Layer}) {
@@ -129,7 +138,7 @@ export function load_dropozones() {
                             dz.emit("success", file);
                             dz.emit("complete", file);
                             Maps.gpx_files[cm_slug_inner] = file;
-                            update_distance_from_map(cm_slug_inner)();
+                            update_distance_from_map_factory(cm_slug_inner)();
                         });
                         reader.readAsText(file);
                     }
@@ -221,13 +230,23 @@ export function on_route_select(cm_slug: string) {
     }
 }
 
-export function update_distance_from_map(cm_slug: string) {
+export function update_distance_from_map_factory(cm_slug: string, additional_layers?: any) {
    // https://stackoverflow.com/questions/31221088/how-to-calculate-the-distance-of-a-polyline-in-leaflet-like-geojson-io#31223825
     return function () {
         var totalDistance = 0.00000;
         let add_layer_to_distance = function(i: number, layer: L.Polyline){
             var tempLatLng: any = null;
-            $.each(layer.getLatLngs(), function(i: number, latlng){
+            var latLngs: L.LatLng[] = null;
+            if(layer.getLatLngs){
+                latLngs = <L.LatLng[]>layer.getLatLngs();
+            } else {
+                let draw_layer: any = <any>layer;
+                latLngs= [];
+                $.each(draw_layer, function(n: number, marker){
+                    latLngs.push(new L.LatLng(marker._latlng.lat, marker._latlng.lng));
+                } );
+            }
+            $.each(latLngs, function(i: number, latlng){
                 if(tempLatLng == null){
                     tempLatLng = latlng;
                     return;
@@ -237,6 +256,9 @@ export function update_distance_from_map(cm_slug: string) {
             });
         };
         $.each(Maps.editable_layer(cm_slug).getLayers(), add_layer_to_distance);
+        if (additional_layers) {
+            $.each(additional_layers, add_layer_to_distance);
+        }
         $(`#km-${cm_slug}`).val((totalDistance / 1000).toFixed(2));
         R.redraw_shopping_cart();
     }
@@ -251,7 +273,7 @@ export function save_current_edits(cm_slug: string){
         dcs._toolbars.draw._activeMode.handler.completeShape();
     }
     let old_distance = UIS.get_selected_distance();
-    update_distance_from_map(cm_slug)();
+    update_distance_from_map_factory(cm_slug)();
     if (UIS.get_selected_distance() == 0) {
         $(`#km-${cm_slug}`).val(old_distance);
     }
