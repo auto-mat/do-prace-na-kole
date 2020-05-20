@@ -96,18 +96,6 @@ function hookup_callbacks() {
         render.redraw_shopping_cart();
     });
 
-    for (var cm_slug in commute_modes) {
-        let cm = commute_modes[cm_slug];
-        if (cm.distance_important) {
-            (function(){
-                let cm_slug_inner = cm_slug;
-                $(`#map_${cm_slug}`).mouseleave(
-                    update_distance_from_map_factory(cm_slug_inner)
-                );
-            })();
-        }
-    }
-
     $(window).on('beforeunload',function(){
         let cm_slug = UIS.get_selected_commute_mode();
         if ( Maps.distance_changed(cm_slug) ) {
