@@ -225,9 +225,9 @@ export function update_distance_from_map(cm_slug: string) {
    // https://stackoverflow.com/questions/31221088/how-to-calculate-the-distance-of-a-polyline-in-leaflet-like-geojson-io#31223825
     return function () {
         var totalDistance = 0.00000;
-        $.each(Maps.editable_layer(cm_slug).getLayers(), function(i, layer: L.Polyline){
+        let add_layer_to_distance = function(i: number, layer: L.Polyline){
             var tempLatLng: any = null;
-            $.each(layer.getLatLngs(), function(i, latlng){
+            $.each(layer.getLatLngs(), function(i: number, latlng){
                 if(tempLatLng == null){
                     tempLatLng = latlng;
                     return;
@@ -235,7 +235,8 @@ export function update_distance_from_map(cm_slug: string) {
                 totalDistance += tempLatLng.distanceTo(latlng);
                 tempLatLng = latlng;
             });
-        });
+        };
+        $.each(Maps.editable_layer(cm_slug).getLayers(), add_layer_to_distance);
         $(`#km-${cm_slug}`).val((totalDistance / 1000).toFixed(2));
         R.redraw_shopping_cart();
     }

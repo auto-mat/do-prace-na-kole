@@ -26,7 +26,6 @@ import {
     on_route_select,
     load_dropozones,
     select_old_trip,
-    save_current_edits,
 } from './calendar/routesAndMaps';
 import {RestTrips} from "./dpnk/rest";
 import {
@@ -103,7 +102,7 @@ function hookup_callbacks() {
             (function(){
                 let cm_slug_inner = cm_slug;
                 $(`#map_${cm_slug}`).mouseleave(function(){
-                    save_current_edits(cm_slug_inner);
+                    update_distance_from_map(cm_slug_inner);
                 });
             })();
         }

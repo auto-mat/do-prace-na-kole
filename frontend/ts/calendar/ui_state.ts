@@ -2,7 +2,7 @@ export function get_selected_commute_mode(): string {
     try {
         return (<HTMLAnchorElement>$("div#nav-commute-modes a.active")[0]).hash.substr("#tab-for-".length);
     } catch (e) {
-        console.log(e);
+        //console.log(e);
         return "bicycle";
     }
 }

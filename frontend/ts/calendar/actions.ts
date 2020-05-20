@@ -41,7 +41,8 @@ import {
 } from "./calendar";
 
 import {
-    Maps
+    Maps,
+    save_current_edits,
 } from "./routesAndMaps";
 
 function add_trip(trip: Trip, file: any, cont: any) {
@@ -176,13 +177,14 @@ export function remove_vacation(info: any) {
 }
 
 export function eventClick(info: any) {
+    var commute_mode = UIS.get_selected_commute_mode();
+    save_current_edits(commute_mode);
     $(".tooltip").tooltip("hide");
     if(info.event.extendedProps.vacation){
         return;
     }
     if(info.event.extendedProps.placeholder){
         var distance = UIS.get_selected_distance();
-        var commute_mode = UIS.get_selected_commute_mode();
         if (distance <= 0) {
             alert(strings.enter_distance_fist)
             $("#km-"+commute_mode).focus()
