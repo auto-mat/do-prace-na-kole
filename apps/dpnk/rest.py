@@ -191,6 +191,42 @@ class TripSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class TripRangeSet(viewsets.ModelViewSet):
+    """
+    Documentation: https://www.dopracenakole.cz/rest-docs/
+
+    get:
+    Return a list of all trips in date range for logged user.
+
+    get on /rest/gpx/{id}:
+    Return track detail including a track geometry.
+    """
+
+    def get_queryset(self):
+        qs = Trip.objects.filter(
+            user_attendance__userprofile__user=self.request.user,
+        )
+        campaign_slug = self.request.query_params.get('campaign', None)
+        if campaign_slug:
+            qs = qs.filter(
+                user_attendance__campaign__slug=campaign_slug,
+            )
+        start_date = self.request.query_params.get('start', None)
+        end_date = self.request.query_params.get('end', None)
+        if start_date and end_date:
+            qs = qs.filter(
+                date__range=[start_date, end_date]
+            )
+        return qs
+
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return TripUpdateSerializer
+        return TripDetailSerializer if self.action == 'retrieve' else TripSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
     results = serializers.SerializerMethodField()
 
@@ -323,6 +359,7 @@ class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
 
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
+router.register(r'trips', TripRangeSet, basename="trip")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
 router.registry.extend(organization_router.registry)
