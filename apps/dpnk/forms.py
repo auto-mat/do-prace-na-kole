@@ -1019,11 +1019,13 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
                 if cleaned_data['duration']:
                     cleaned_data['duration'] = cleaned_data['duration'] * 60
                     if cleaned_data['duration'] < cm.minimum_duration:
-                        raise forms.ValidationError(ngettext(
-                            "Činnost musí trvat minimálně %(min)d minuta",
-                            "Činnost musí trvat minimálně %(min)d minut",
-                            cm.minimum_duration / 60,
-                        ) % {'min': cm.minimum_duration / 60})
+                        raise forms.ValidationError(
+                            ngettext(
+                                "Činnost musí trvat minimálně %(min)d minuta",
+                                "Činnost musí trvat minimálně %(min)d minut",
+                                cm.minimum_duration / 60,
+                            ) % {'min': cm.minimum_duration / 60},
+                        )
             except KeyError:
                 cleaned_data['duration'] = 0
         return cleaned_data

@@ -26,7 +26,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.urls import reverse, reverse_lazy, NoReverseMatch
+from django.urls import NoReverseMatch, reverse, reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 

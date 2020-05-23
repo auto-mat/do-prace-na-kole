@@ -215,7 +215,7 @@ class TripRangeSet(viewsets.ModelViewSet):
         end_date = self.request.query_params.get('end', None)
         if start_date and end_date:
             qs = qs.filter(
-                date__range=[start_date, end_date]
+                date__range=[start_date, end_date],
             )
         return qs
 
