@@ -11,33 +11,8 @@ const strings = load_strings();
 // Hack to fix Leaflet Draw behaviour, which added point when moving map.
 $(document).ready(function() {
     //@ts-ignore
-    var originalOnTouch = L.Draw.Polyline.prototype._onTouch;
-    //@ts-ignore
-    L.Draw.Polyline.prototype._onTouch = function( e: any ) {
-        if( e.originalEvent.pointerType != 'mouse' ) {
-            if(this._calculateFinishDistance(e.latlng) > 10){ // dissables https://github.com/Leaflet/Leaflet.draw/blob/6e4e2c3806dcaeab2e569a82d5c6d2081b2e51db/src/draw/handler/Draw.Polyline.js#L305
-                return originalOnTouch.call(this, e);
-            }
-        }
-    }
-    // https://github.com/Leaflet/Leaflet.draw/issues/789
-    //@ts-ignore
-    L.Draw.Polyline.prototype._updateFinishHandler = function( e: any ) {
-        var markerCount = this._markers.length;
-        // The last marker should have a click handler to close the polyline
-        if (markerCount > 2) {
-            setTimeout(function(){
-                if ( this._markers === undefined ) {
-                    return;
-                }
-                this._markers[this._markers.length - 1].on('click', this._finishShape, this);
-            }.bind(this), 300);
-        }
-        // Remove the old marker click handler (as only the last point should close the polyline)
-        if (markerCount > 2) {
-            this._markers[markerCount - 2].off('click', this._finishShape, this);
-        }
-    }
+    L.Draw.Polyline.prototype._onTouch = L.Util.falseFn;
+    // https://github.com/Leaflet/Leaflet.draw/issues/695
 });
 
 // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
@@ -112,6 +87,7 @@ export function create_map(element_id: string){
     let options = {
         maxZoom: 18,
         minZoom: 7,
+        tap: false,
     };
     var map = L.map(element_id, options).setView(
         [50.0866699218750000, 14.4387817382809995],
