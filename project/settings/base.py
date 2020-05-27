@@ -230,6 +230,7 @@ TEMPLATES = [
                 # This is causing lots of database hits on every request and probaly isn't needed:
                 # 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'django.template.context_processors.static',
             ),
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
@@ -287,6 +288,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'adminsortable2',
     'reportlab',
+    'report_builder',
     'dbbackup',
     'related_admin',
     'easy_thumbnails',

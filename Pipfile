@@ -127,6 +127,7 @@ django-debug-toolbar-template-timings = "*"
 django-debug-toolbar-request-history = "*"
 django-silk = "*"
 pre-commit = "*"
+django-report-builder = "*"
 
 [requires]
 python_version = "3.6"
