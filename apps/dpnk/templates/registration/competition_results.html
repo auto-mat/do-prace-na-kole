@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load dpnk_tags %}
 {% load humanize %}
+{% load bleach_tags %}
 
 {% block extrahead %}
 	{% include "datatables_header.html" %}
@@ -18,6 +19,11 @@
 
 	{% if competition.rules %}
 	{% endif %}
+  {% if competition.results_text %}
+  <p>
+  {{ competition.results_text | bleach }}
+  </p>
+  {% endif %}
 	<div>
 	   {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
 	   {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}

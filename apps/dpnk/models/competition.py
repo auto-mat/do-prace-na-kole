@@ -197,6 +197,12 @@ class Competition(models.Model):
         blank=True,
         null=True,
     )
+    results_text = models.TextField(
+        verbose_name=_(u"Text u výsledek"),
+        default=None,
+        blank=True,
+        null=True,
+    )
     mandatory = models.BooleanField(
         verbose_name=_("Povinný dotazník"),
         help_text=_("Dotazník je potřeba vyplnit před tím, než je možné zadávat jízdy"),
@@ -459,6 +465,7 @@ class CompetitionForm(forms.ModelForm):
         exclude = ()
         widgets = {
             'rules': RedactorEditor(),
+            'results_text': RedactorEditor(),
         }
 
     def save(self, *args, **kwargs):
