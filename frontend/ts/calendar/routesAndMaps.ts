@@ -265,6 +265,10 @@ export function update_distance_from_map_factory(cm_slug: string, additional_lay
 }
 
 export function save_current_edits(cm_slug: string){
+    let cm = commute_modes[cm_slug];
+    if (!cm.distance_important) {
+        return;
+    }
     let dcs = Maps.draw_controls[cm_slug];
     if (dcs._toolbars.edit._activeMode) {
         dcs._toolbars.edit._activeMode.handler.save();
