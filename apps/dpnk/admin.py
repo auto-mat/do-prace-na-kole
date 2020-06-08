@@ -986,6 +986,10 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
         if obj.attachment:
             return format_html(u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment)
 
+    actions = (
+        create_export_job_action,
+    )
+
 
 @admin.register(models.Question)
 class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, AdminViews, admin.ModelAdmin):

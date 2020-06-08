@@ -256,6 +256,13 @@ class Answer(models.Model):
     def str_choices_ids(self):
         return ", ".join([(str(ch.pk)) for ch in self.choices.all()])
 
+    @classmethod
+    def export_resource_classes(cls):
+        from .. import resources
+        return {
+            'Answers': ('Answers', resources.AnswerResource),
+        }
+
     # TODO: repair tests with this
     # def __str__(self):
     #      return "%s" % self.str_choices()
