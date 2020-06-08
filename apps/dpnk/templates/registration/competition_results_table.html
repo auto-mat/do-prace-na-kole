@@ -19,7 +19,16 @@
             "serverSide": true,
             "ordering": false,
             "searching": true,
-            "buttons": ["csv"],
+            "buttons": [{
+                extend: "csv",
+                exportOptions: {
+                    modifier: {
+                        page: 'all',
+                        search: 'none'
+                    }
+                }
+            }
+            ],
             "searchCols": [
                 { "search": searchString },
             ],
