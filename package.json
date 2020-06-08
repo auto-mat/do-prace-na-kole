@@ -46,7 +46,7 @@
     "datatables.net-buttons": "^1.6.2",
     "dropzone": "^5.5.1",
     "file-loader": "^6.0.0",
-    "jquery": "^2.2.0",
+    "jquery": "^3.5.0",
     "jquery-editable-select": "^2.2.5",
     "jquery-form": "^4.2.2",
     "jquery-ui": "^1.12.1",
