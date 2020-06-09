@@ -10,6 +10,7 @@ class TeamDiplomaField(PdfSandwichFieldABC):
         _("Název"): (lambda team: team.name),
         _("Pravidelnost"): (lambda team: intcomma(round(team.get_frequency_percentage(), 0)) + '%'),
         _("Újetych kilometrů"): (lambda team: str(round(team.get_length()))),
+        _("Název firmy"): (lambda team: team.subsidiary.company.name if team else ""),
     }
 
 
