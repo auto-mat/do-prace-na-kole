@@ -129,7 +129,7 @@ AWS_DEFAULT_ACL = "private"
 if AWS_ACCESS_KEY_ID:
     THUMBNAIL_DEFAULT_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    CELERY_EMAIL_BACKEND = os.environ.get('DPNK_CELERY_EMAIL_BACKEND', 'django_ses.SESBackend')
+    EMAIL_BACKEND = os.environ.get('DPNK_CELERY_EMAIL_BACKEND', 'django_ses.SESBackend')
     AWS_SES_REGION_NAME = 'eu-west-1'
     AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
 
