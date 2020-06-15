@@ -233,7 +233,7 @@ class Team(models.Model):
 
     def get_length(self):
         from .. import results
-        return results.get_team_length(self, self.campaign.phase("competition"))[2]
+        return results.get_team_length(self, self.campaign.phase("competition"))
 
     @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})

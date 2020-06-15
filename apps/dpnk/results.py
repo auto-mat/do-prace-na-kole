@@ -246,17 +246,20 @@ def get_userprofile_frequency(user_attendance, competition=None, day=None):
 
 
 def get_team_length(team, competition):
-    member_count = team.paid_member_count
     members = team.paid_members().all()
-
-    if member_count == 0 or member_count is None:
-        return 0, 0, 0
-    members = team.paid_members().all()
-    # distance_from = Trip.objects.filter(user__in=members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-    # distance_to   = Trip.objects.filter(user__in=members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
     for member in members:
         distance += get_userprofile_length([member], competition)
+    return distance
+
+
+def get_team_avg_length(team, competition):
+    member_count = team.paid_member_count
+
+    if member_count == 0 or member_count is None:
+        return 0, 0, 0
+
+    distance = get_team_length(team, competition)
     return distance, member_count, float(distance) / float(member_count)
 
 
@@ -323,7 +326,7 @@ def recalculate_result(competition, competitor):  # noqa
         if competition.competition_type == 'questionnaire':
             competition_result.result = float(points_questionnaire(members, competition))
         elif competition.competition_type == 'length':
-            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
+            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_avg_length(team, competition)
         elif competition.competition_type == 'frequency':
             (
                 competition_result.result_divident,
