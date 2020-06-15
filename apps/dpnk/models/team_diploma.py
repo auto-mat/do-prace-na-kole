@@ -7,7 +7,7 @@ from smmapdfs.model_abcs import PdfSandwichABC, PdfSandwichFieldABC
 class TeamDiplomaField(PdfSandwichFieldABC):
     fields = {
         _("Název"): (lambda team: team.name),
-        _("Pravidelnost"): (lambda team: int(round(team.get_frequency_percentage(), 0)) + '%'),
+        _("Pravidelnost"): (lambda team: '%d%%' % team.get_frequency_percentage()),
         _("Újetych kilometrů"): (lambda team: str(round(team.get_length()))),
         _("Název firmy"): (lambda team: team.subsidiary.company.name if team else ""),
     }
