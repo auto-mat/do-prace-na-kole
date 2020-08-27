@@ -579,7 +579,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_HSTS_SECONDS = 60
-SECURE_SSL_REDIRECT = os.environ.get("DPNK_SECURE_SSL_REDIRECT", True)
+SECURE_SSL_REDIRECT = eval(os.environ.get("DPNK_SECURE_SSL_REDIRECT", True))
 SESSION_COOKIE_SECURE = os.environ.get("DPNK_SESSION_COOKIE_SECURE", True)
 SECURE_REDIRECT_EXEMPT = [r"version\.txt"]
 X_FRAME_OPTIONS = 'DENY'
@@ -707,6 +707,7 @@ LOADER_IO_KEY = os.environ.get('LOADER_IO_KEY', 'loaderio-1b36491123a217d5cc6beb
 
 IMPORT_EXPORT_CELERY_MODELS = {
     "UserAttendance": {'app_label': 'dpnk', 'model_name': 'UserAttendance'},
+    "Voucher": {'app_label': 'dpnk', 'model_name': 'Voucher'},
 }
 
 NOTIFICATIONS_NOTIFICATIONTEMPLATE_MODEL = "dpnk.DpnkNotificationTemplate"

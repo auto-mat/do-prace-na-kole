@@ -70,9 +70,11 @@
 	</div>
   {% cache 60 "profile_voucher" user_attendance.id %}
   <hr />
+  <a name="third-party-vouchers">
   <h3>
       {% trans "Vouchery" %}
   </h3>
+  </a>
   {% scribble 'before_vouchers' %}
   {% endscribble %}
   <div class="row">
