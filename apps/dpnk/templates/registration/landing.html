@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load l10n %}
 {% load scribbler_tags %}
+{% load cache %}
 
 {% block caption %}
 {% endblock %}
@@ -67,6 +68,31 @@
 		</div>
 		{% endif %}
 	</div>
+  {% cache 60 "profile_voucher" user_attendance.id %}
+  <hr />
+  <h3>
+      {% trans "Vouchery" %}
+  </h3>
+  {% scribble 'before_vouchers' %}
+  {% endscribble %}
+  <div class="row">
+      {% for voucher in user_attendance.voucher_set.all %}
+      <div class="col-12 col-sm-6 col-md-4 card" >
+          {% if voucher.voucher_type1.teaser_img %}
+          <img src="{{voucher.voucher_type1.teaser_img.url}}"/>
+          {% else %}
+          {% endif %}
+          <p class="voucher-code"><b>Kód: </b>{{voucher.token}}</p>
+			    <a href="{{voucher.voucher_type1.eshop_url}}" target="_" class="btn btn-default">{% trans "Otevřit E-Shop" %}</a>
+      </div>
+      {% endfor %}
+  </div>
+          <div>
+              {% scribble 'after_vouchers' %}{% endscribble %}
+          </div>
+  </div>
+  {% endcache %}
+
 
 	<script>
 		jQuery(document).ready(function($) {

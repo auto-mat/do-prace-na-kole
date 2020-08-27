@@ -3,7 +3,6 @@
 {% load dpnk_tags %}
 {% load i18n %}
 {% load thumbnail %}
-{% load cache %}
 {% load scribbler_tags %}
 
 {% block form %}
@@ -12,38 +11,6 @@
 </div>
 
 {% get_current_language as current_language_code %}
-
-{% cache 3600 "profile_voucher" user_attendance.id %}
-   {% for voucher in user_attendance.voucher_set.all %}
-      {% if forloop.first %}
-         <div>
-            <h3>
-               {% trans "Vouchery" %}
-            </h3>
-            {% scribble 'before_vouchers' %}
-            {% load i18n %}
-            {% trans "Zde můžete nalézt vouchery" %}
-            {% endscribble %}
-      {% endif %}
-
-      <table class="table">
-         <tr>
-            <td>
-               {{ voucher.get_voucher_type_display }}
-            </td>
-            <td>
-               {{ voucher.token }}
-            </td>
-         </tr>
-      </table>
-
-      {% if forloop.last %}
-            {% scribble 'after_vouchers' %}{% endscribble %}
-         </div>
-      {% endif %}
-
-   {% endfor %}
-{% endcache %}
 
 {% scribble 'profile_before_news' %}{% endscribble %}
 {% endblock %}

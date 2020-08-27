@@ -1415,9 +1415,14 @@ class ScribbleAdmin(admin.ModelAdmin):
 
 @admin.register(models.Voucher)
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'voucher_type', 'token', 'user_attendance', 'campaign')
+    list_display = ('id', 'voucher_type1', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
     list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
+
+
+@admin.register(models.VoucherType)
+class VoucherTypeAdmin(ImportMixin, admin.ModelAdmin):
+    list_display = ('id', 'name', 'teaser_img')
 
 
 @admin.register(models.LandingPageIcon)

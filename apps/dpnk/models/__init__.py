@@ -55,7 +55,7 @@ from .transactions import (
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .user_profile import UserProfile
-from .voucher import Voucher
+from .voucher import Voucher, VoucherType
 from .. import mailing
 
 __all__ = (
@@ -97,6 +97,7 @@ __all__ = (
     UserAttendance,
     UserProfile,
     Voucher,
+    VoucherType,
     LandingPageIcon,
     change_invoice_payments_status,
     pre_user_team_changed,

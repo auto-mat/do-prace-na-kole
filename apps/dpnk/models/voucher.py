@@ -27,17 +27,12 @@ from .user_attendance import UserAttendance
 
 
 class Voucher(models.Model):
-    TYPES = [
-        ('rekola', _(u"ReKola")),
-        ('sportlife', _(u"SportLife")),
-    ]
-    voucher_type = models.CharField(
-        verbose_name=_(u"typ voucheru"),
-        choices=TYPES,
-        max_length=10,
-        null=False,
-        blank=False,
-        default='rekola',
+    voucher_type1 = models.ForeignKey(
+        'VoucherType',
+        verbose_name=_("Typ voucheru"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     token = models.TextField(
         verbose_name=_(u"token"),
@@ -60,3 +55,49 @@ class Voucher(models.Model):
     class Meta:
         verbose_name = _("Voucher třetí strany")
         verbose_name_plural = _("Vouchery třetích stran")
+
+    #DEPRECATED
+    TYPES = [
+        ('rekola', _("ReKola")),
+        ('sportlife', _("SportLife")),
+        ('am-eshop', _("Automat benefiční obchod")),
+    ]
+    voucher_type = models.CharField(
+        verbose_name=_(u"DEPRECATED"),
+        choices=TYPES,
+        max_length=10,
+        null=False,
+        blank=False,
+        default='rekola',
+    )
+
+
+class VoucherType(models.Model):
+    class Meta:
+        verbose_name = _("Druh voucheru třetí strany")
+        verbose_name_plural = _("Druhy voucherů třetích stran")
+
+    name = models.CharField(
+        verbose_name=_("Jméno"),
+        max_length=255,
+        null=False,
+        blank=False,
+        default='Rekola',
+    )
+
+    eshop_url = models.CharField(
+        verbose_name=_("E-Shop URL"),
+        max_length=255,
+        null=False,
+        blank=False,
+        default='https://obchod.auto-mat.cz',
+    )
+    teaser_img = models.ImageField(
+        verbose_name=_("Teaser image"),
+        upload_to='3rd_party_voucher_teaser_images/image',
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.name
