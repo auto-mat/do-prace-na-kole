@@ -39,6 +39,11 @@ class Voucher(models.Model):
         blank=False,
         null=True,
     )
+    amount = models.TextField(
+        verbose_name=_(u"hodnota"),
+        blank=True,
+        null=True,
+    )
     user_attendance = models.ForeignKey(
         UserAttendance,
         null=True,

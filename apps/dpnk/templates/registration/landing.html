@@ -82,7 +82,8 @@
           <img src="{{voucher.voucher_type1.teaser_img.url}}"/>
           {% else %}
           {% endif %}
-          <p class="voucher-code"><b>Kód: </b>{{voucher.token}}</p>
+          <p class="voucher-code"><b>Kód: </b><input readonly value="{{voucher.token}}" type="textbox" /></p>
+          <p class="voucher-amount"><b>{{voucher.amount}}</b></p>
 			    <a href="{{voucher.voucher_type1.eshop_url}}" target="_" class="btn btn-default">{% trans "Otevřit E-Shop" %}</a>
       </div>
       {% endfor %}
