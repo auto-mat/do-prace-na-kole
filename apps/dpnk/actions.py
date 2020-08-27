@@ -21,13 +21,13 @@ import datetime
 
 from django.contrib import messages
 from django.http import HttpResponse
+from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
-from django.urls import reverse
-
-from . import mailing, models, results, tasks, views
 
 from notifications.signals import notify
+
+from . import mailing, models, results, tasks, views
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):
@@ -106,8 +106,8 @@ def assign_vouchers(modeladmin, request, queryset):
     done_count = 0
     for user_attendance, voucher in zip(queryset, vouchers):
         assigned_vouchers = models.Voucher.objects.filter(
-           user_attendance=user_attendance,
-           voucher_type1=voucher.voucher_type1,
+            user_attendance=user_attendance,
+            voucher_type1=voucher.voucher_type1,
         ).count()
         if assigned_vouchers:
             continue

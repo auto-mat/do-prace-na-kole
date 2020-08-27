@@ -61,7 +61,7 @@ class Voucher(models.Model):
         verbose_name = _("Voucher třetí strany")
         verbose_name_plural = _("Vouchery třetích stran")
 
-    #DEPRECATED
+    # DEPRECATED
     TYPES = [
         ('rekola', _("ReKola")),
         ('sportlife', _("SportLife")),
