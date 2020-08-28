@@ -117,7 +117,7 @@ def assign_vouchers(modeladmin, request, queryset):
         notify.send(
             user_attendance,
             recipient=user_attendance.userprofile.user,
-            verb=_("%s: Bylo Vám přiřazen nový voucher s kódem %s") % (voucher.voucher_type1.name, voucher.token),
+            verb=_("%s: Byl vám přiřazen nový voucher s kódem %s") % (voucher.voucher_type1.name, voucher.token),
             url=reverse("profil") + "#third-party-vouchers",
             icon=voucher.voucher_type1.teaser_img.url,
         )
