@@ -271,8 +271,8 @@ class Payment(Transaction):
         related_name=("payment_set"),
     )
 
-    # TODO: This is hack which allows making denorms dependend only on Payment and not on any other type of transaction.
-    # Better would be to add some kind of conditions ti denorms
+    # TODO: This is a hack which allows making denorms dependend only on Payment and not on any other type of transaction.
+    # Better would be to add some kind of conditions to denorms
     @denormalized(models.ForeignKey, 'UserAttendance', null=True, blank=False, default=None, on_delete=models.CASCADE)
     @depend_on_related('Transaction', foreign_key='transaction_ptr', skip={'updated', 'created'})
     def payment_user_attendance(self):
