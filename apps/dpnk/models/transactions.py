@@ -278,8 +278,8 @@ class Payment(Transaction):
     def payment_user_attendance(self):
         return self.user_attendance
 
-    # TODO: This is hack which allows making denorms dependend only on Payment and not on any other type of transaction.
-    # Better would be to add some kind of conditions ti denorms
+    # TODO: This is a hack which allows making denorms dependend only on Payment and not on any other type of transaction.
+    # Better would be to add some kind of conditions to denorms
     @denormalized(models.PositiveIntegerField, default=0, choices=STATUS, null=True, blank=True)
     @depend_on_related('Transaction', foreign_key='transaction_ptr', skip={'updated', 'created'})
     def payment_status(self):
