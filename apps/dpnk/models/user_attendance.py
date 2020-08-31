@@ -670,6 +670,17 @@ class UserAttendance(StaleSyncMixin, models.Model):
             'user_attendance': ('User Attendance', UserAttendanceResource),
         }
 
+    def assign_vouchers(self):
+        from . import Voucher, VoucherType
+        from .. import tasks
+        assigned_vouchers = 0
+        for voucher_type in VoucherType.objects.all():
+            if Voucher.objects.filter(voucher_type1=voucher_type, user_attendance=self).count() == 0:
+                voucher = Voucher.objects.filter(voucher_type1=voucher_type, user_attendance__isnull=True).first()
+                tasks.assign_voucher.delay(voucher.pk, self.pk)
+                assigned_vouchers += 1
+        return assigned_vouchers
+
     def send_templated_notification(self, template):
         clang = get_language()
         activate(self.userprofile.language)
@@ -700,3 +711,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         mailing.add_or_update_user(instance)
+
+
+@receiver(post_save, sender=UserAttendance)
+def assign_vouchers(sender, instance, created, **kwargs):
+    if instance.payment_status == 'done':
+        instance.assign_vouchers()

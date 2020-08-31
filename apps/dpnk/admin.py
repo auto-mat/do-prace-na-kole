@@ -1425,6 +1425,16 @@ class VoucherTypeAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'name', 'teaser_img')
 
 
+@admin.register(models.VoucherPDF)
+class VoucherPDFAdmin(admin.ModelAdmin):
+    list_display = ('obj', 'pdf')
+
+
+@admin.register(models.VoucherPDFField)
+class VoucherPDFFieldAdmin(PdfSandwichFieldAdmin):
+    pass
+
+
 @admin.register(models.LandingPageIcon)
 class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('role', 'file', 'min_frequency', 'max_frequency')

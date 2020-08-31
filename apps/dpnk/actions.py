@@ -19,13 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from django.contrib import messages
 from django.http import HttpResponse
-from django.urls import reverse
-from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
-
-from notifications.signals import notify
 
 from . import mailing, models, results, tasks, views
 
@@ -94,35 +89,9 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
 def assign_vouchers(modeladmin, request, queryset):
-    count = queryset.count()
-    vouchers = models.Voucher.objects.filter(
-        user_attendance=None,
-        campaign__slug=request.subdomain,
-    ).all()[:count]
-    if vouchers.count() != count:
-        messages.error(request, _(u"Není dost volných voucherů"))
-        return
-    admin_language = translation.get_language()
     done_count = 0
-    for user_attendance, voucher in zip(queryset, vouchers):
-        assigned_vouchers = models.Voucher.objects.filter(
-            user_attendance=user_attendance,
-            voucher_type1=voucher.voucher_type1,
-        ).count()
-        if assigned_vouchers:
-            continue
-        translation.activate(user_attendance.userprofile.language)
-        voucher.user_attendance = user_attendance
-        voucher.save()
-        notify.send(
-            user_attendance,
-            recipient=user_attendance.userprofile.user,
-            verb=_("%s: Byl vám přiřazen nový voucher s kódem %s") % (voucher.voucher_type1.name, voucher.token),
-            url=reverse("profil") + "#third-party-vouchers",
-            icon=voucher.voucher_type1.teaser_img.url,
-        )
-        done_count += 1
-    translation.activate(admin_language)
+    for user_attendance in queryset:
+        done_count += user_attendance.assign_vouchers()
     modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (done_count)))
 
 

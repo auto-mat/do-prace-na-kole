@@ -28,9 +28,17 @@ import denorm
 from dj_fiobank_payments.statement import parse
 
 from django.contrib import contenttypes
+from django.urls import reverse
+from django.utils import translation
+from django.utils.translation import ugettext as _
+
+from notifications.signals import notify
+
+import smmapdfs.email
+import smmapdfs.tasks
 
 from . import email, mailing, util
-from .models import Campaign, Company, Competition, Invoice, Team, UserAttendance, payments_to_invoice
+from .models import Campaign, Company, Competition, Invoice, Team, UserAttendance, Voucher, payments_to_invoice
 
 
 @shared_task(bind=True)
@@ -165,3 +173,35 @@ def create_invoice_if_needed(self, pk=None, campaign_slug=''):
 @shared_task(bind=True)
 def request_page(self, page):
     urlopen(page)
+
+
+@shared_task(bind=True)
+def assign_voucher(self, voucher_pk, userattendance_pk):
+    current_language = translation.get_language()
+    # Assign voucher
+    voucher = Voucher.objects.get(pk=voucher_pk)
+    user_attendance = UserAttendance.objects.get(pk=userattendance_pk)
+    voucher.user_attendance = user_attendance
+    voucher.save()
+    translation.activate(user_attendance.userprofile.language)
+    # Send notification
+    notify.send(
+        user_attendance,
+        recipient=user_attendance.userprofile.user,
+        verb=_("%s: Byl vám přiřazen nový voucher s kódem %s") % (voucher.voucher_type1.name, voucher.token),
+        url=reverse("profil") + "#third-party-vouchers",
+        icon=voucher.voucher_type1.teaser_img.url,
+    )
+    # Send email
+    base_url = util.get_base_url(slug=user_attendance.campaign.slug)
+
+    def continuation(sandwich):
+        smmapdfs.email.send_pdfsandwich(sandwich, base_url)
+    content_type = contenttypes.models.ContentType.objects.get_for_model(voucher)
+    smmapdfs.tasks.make_pdfsandwich(
+        content_type.app_label,
+        content_type.model,
+        voucher.pk,
+        continuation,
+    )
+    translation.activate(current_language)

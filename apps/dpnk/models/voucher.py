@@ -22,8 +22,38 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .campaign import Campaign
-from .user_attendance import UserAttendance
+from smmapdfs.model_abcs import PdfSandwichABC, PdfSandwichFieldABC
+from smmapdfs.models import PdfSandwichType
+
+
+class VoucherPDFField(PdfSandwichFieldABC):
+    fields = {
+        "token": (lambda v: v.token),
+        "amount": (lambda v: v.amount),
+        "good_till": (lambda v: str(v.good_till)),
+    }
+
+
+class VoucherPDF(PdfSandwichABC):
+    field_model = VoucherPDFField
+    obj = models.ForeignKey(
+        "Voucher",
+        null=False,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
+    )
+
+    def get_email(self):
+        return self.obj.user_attendance.userprofile.user.email
+
+    def get_context(self, base_url):
+        context = super().get_context(base_url)
+        context["base_url"] = base_url
+        return context
+
+    def get_language(self):
+        return self.obj.user_attendance.userprofile.language
 
 
 class Voucher(models.Model):
@@ -44,18 +74,27 @@ class Voucher(models.Model):
         blank=True,
         null=True,
     )
+    good_till = models.DateField(
+        blank=True,
+        null=True,
+    )
     user_attendance = models.ForeignKey(
-        UserAttendance,
+        'UserAttendance',
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
-        Campaign,
+        'Campaign',
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
+
+    def get_sandwich_type(self):
+        return self.voucher_type1.sandwich_type
+
+    sandwich_model = VoucherPDF
 
     class Meta:
         verbose_name = _("Voucher třetí strany")
@@ -102,6 +141,13 @@ class VoucherType(models.Model):
         upload_to='3rd_party_voucher_teaser_images/image',
         null=True,
         blank=True,
+    )
+    sandwich_type = models.ForeignKey(
+        PdfSandwichType,
+        null=True,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):

@@ -355,6 +355,12 @@ def update_mailing_payment(sender, instance, created, **kwargs):
         mailing.add_or_update_user(instance.user_attendance)
 
 
+@receiver(post_save, sender=Payment)
+def assign_vouchers(sender, instance, created, **kwargs):
+    if instance.user_attendance and instance.user_attendance.payment_status == 'done':
+        instance.user_attendance.assign_vouchers()
+
+
 @receiver(pre_save, sender=Payment)
 def payment_set_realized_date(sender, instance, **kwargs):
     if instance.status in Payment.done_statuses and not instance.realized:

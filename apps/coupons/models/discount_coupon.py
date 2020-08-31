@@ -188,7 +188,7 @@ class DiscountCoupon(models.Model):
 
 @receiver(post_save, sender=DiscountCoupon)
 def create_coupon_file(sender, instance, created, **kwargs):
-    smmapdfs.actions.make_pdfsandwich_task.delay(
+    smmapdfs.tasks.make_pdfsandwich.delay(
         instance._meta.app_label,
         instance._meta.object_name,
         instance.pk,
