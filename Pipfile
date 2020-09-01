@@ -69,7 +69,7 @@ whitenoise = "*"
 django-favicon = "*"
 django-mass-edit = "*"
 fiobank = "*"
-django-ipware = "*"
+django-ipware = "<=2.1.0"
 djangorestframework-gis = "*"
 django-table-select-widget = {git = "https://github.com/willardmr/DjangoTableSelectMultipleWidget.git",editable = true,ref = "master"} # https://github.com/willardmr/DjangoTableSelectMultipleWidget/pull/6 Waiting on pypi release
 redis = "*"
