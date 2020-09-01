@@ -31,6 +31,7 @@ class VoucherPDFField(PdfSandwichFieldABC):
         "token": (lambda v: v.token),
         "amount": (lambda v: v.amount),
         "good_till": (lambda v: str(v.good_till)),
+        "eshop_url": (lambda v: v.voucher_type1.eshop_url),
     }
 
 

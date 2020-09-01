@@ -55,7 +55,7 @@ from .transactions import (
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .user_profile import UserProfile
-from .voucher import Voucher, VoucherType, VoucherPDF, VoucherPDFField
+from .voucher import Voucher, VoucherPDF, VoucherPDFField, VoucherType
 from .. import mailing
 
 __all__ = (
