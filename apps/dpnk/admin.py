@@ -1429,8 +1429,14 @@ class VoucherTypeAdmin(ImportMixin, admin.ModelAdmin):
 
 
 @admin.register(models.VoucherPDF)
-class VoucherPDFAdmin(admin.ModelAdmin):
-    list_display = ('obj', 'pdf')
+class VoucherPDFAdmin(PdfSandwichAdmin):
+    search_fields = (
+        'obj__user_attendance__userprofile__user__email',
+        'obj__user_attendance__userprofile__nickname',
+        'obj__user_attendance__userprofile__user__first_name',
+        'obj__user_attendance__userprofile__user__last_name',
+        'obj__user_attendance__userprofile__user__username',
+    )
 
 
 @admin.register(models.VoucherPDFField)
