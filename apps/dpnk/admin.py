@@ -1418,6 +1418,9 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type1', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
     list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
+    actions = (
+        make_pdfsandwich,
+    )
 
 
 @admin.register(models.VoucherType)
