@@ -675,10 +675,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         from .. import tasks
         assigned_vouchers = 0
         for voucher_type in VoucherType.objects.all():
-            if Voucher.objects.filter(voucher_type1=voucher_type, user_attendance=self).count() == 0:
-                voucher = Voucher.objects.filter(voucher_type1=voucher_type, user_attendance__isnull=True).first()
-                tasks.assign_voucher.delay(voucher.pk, self.pk)
-                assigned_vouchers += 1
+            if Voucher.objects.filter(voucher_type1=voucher_type, user_attendance=self, campaign=self.campaign).count() == 0:
+                voucher = Voucher.objects.filter(voucher_type1=voucher_type, user_attendance__isnull=True, campaign=self.campaign).first()
+                if voucher is not None:
+                    tasks.assign_voucher.delay(voucher.pk, self.pk)
+                    assigned_vouchers += 1
         return assigned_vouchers
 
     def send_templated_notification(self, template):
