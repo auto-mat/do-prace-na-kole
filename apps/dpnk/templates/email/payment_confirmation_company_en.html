@@ -4,7 +4,11 @@
 Your everyday ride has begun, {{ user_attendance.userprofile.first_name }}!
 </p><p>
 The {{ company }} company coordinator just confirmed the payment of your participation fee in the {{ user_attendance.campaign }} competition. That's a nice start.
-</p><p>
-We are looking forward to sending You a starting pack with a T-shirt.
 </p>
+
+{% if user_attendance.campaign.has_any_tshirt %}
+<p>
+We are looking forward to sending you a starting pack with a T-shirt.
+</p>
+{% endif %}
 {% endblock %}
