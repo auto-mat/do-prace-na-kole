@@ -53,7 +53,7 @@ DEBUG = str_to_bool(os.environ.get('DPNK_DEBUG', False))
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Petr Dlouhý', 'petr.dlouhy@auto-mat.cz'),
+    ('Timothy Hobbs', 'it@auto-mat.cz'),
 )
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
