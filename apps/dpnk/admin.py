@@ -1414,7 +1414,7 @@ class ScribbleAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Voucher)
-class VoucherAdmin(ImportMixin, admin.ModelAdmin):
+class VoucherAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type1', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
     search_fields = (
