@@ -158,7 +158,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def diploma(self):
         try:
-            return Diploma.objects.get(obj=self)
+            return Diploma.objects.filter(obj=self).first()
         except Diploma.DoesNotExist:
             return None
 
