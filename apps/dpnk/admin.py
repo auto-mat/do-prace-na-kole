@@ -1414,9 +1414,16 @@ class ScribbleAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Voucher)
-class VoucherAdmin(ImportMixin, admin.ModelAdmin):
+class VoucherAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type1', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
+    search_fields = (
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username',
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__email',
+    )
     list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
     actions = (
         make_pdfsandwich,
