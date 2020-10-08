@@ -15,7 +15,7 @@ class DiplomaField(PdfSandwichFieldABC):
         _("Jméno a příjmení"): (lambda ua: ua.userprofile.user.get_full_name()),
         _("Jméno v plném změní"): (lambda ua: ua.name_for_trusted()),
         _("Jméno vokativ"): (lambda ua: ua.name(cs_vokativ=True)),
-        _("Pravidelnost"): (lambda ua: str(round(ua.get_frequency_percentage(), 0)) + '%'),
+        _("Pravidelnost"): (lambda ua: "{0:d}%".format(int(round(ua.get_frequency_percentage())))),
         _("Újetých kilometrů"): (lambda ua: str(round(ua.trip_length_total_rounded()))),
         _("Újetych kilometrů vč. výlety"): (lambda ua: str(round(ua.trip_length_total_including_recreational_rounded()))),
         _("Ušetřeno oxidu uhličitého"): (lambda ua: intcomma(ua.get_emissions()["co2"]) + " CO2"),
