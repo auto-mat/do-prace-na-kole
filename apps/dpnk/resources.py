@@ -280,15 +280,14 @@ class CompanyAdminResource(resources.ModelResource):
             'userprofile__user__last_name',
             'userprofile__telephone',
             'company_admin_approved',
-            'administrated_company__name',
             'can_confirm_payments',
             'will_pay_opt_in',
             'note',
             'sitetree_postfix',
             'motivation_company_admin',
             'campaign',
-            'tracks',
-            'recreational',
+            'administrated_company__name',
+            'administrated_company__pk',
         ]
 
 
