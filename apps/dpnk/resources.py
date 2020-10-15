@@ -287,7 +287,7 @@ class CompanyAdminResource(resources.ModelResource):
             'motivation_company_admin',
             'campaign',
             'administrated_company__name',
-            'administrated_company__pk',
+            'administrated_company__id',
         ]
 
 
