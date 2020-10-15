@@ -62,18 +62,24 @@ class CompetitionResultsView(WithCompetitionMixin, TitleViewMixin, TemplateView)
         return super().get(request, *args, **kwargs)
 
 
-def should_include_personal_info(request, organization):
-    company_admin = request.user_attendance.related_company_admin
-    if request.user.is_superuser or (company_admin and company_admin.administrated_company == organization):
+def should_include_personal_info(user, campaign, organization):
+    if user.is_superuser:
         return True
+    userprofile = models.UserProfile.objects.get(user=user)
+    try:
+        company_admin = models.CompanyAdmin.objects.get(userprofile=userprofile, campaign=campaign)
+        return company_admin.administrated_company == organization
+    except models.CompanyAdmin.DoesNotExist:
+        return False
     return False
 
 
 class ExportCompetitionResults(WithCompetitionMixin, ExportViewMixin, View):
     def dispatch(self, request, *args, extension="csv", organization=None, **kwargs):
         super().dispatch(request, *args, **kwargs)
+        competition = self.get_object()
         queryset = models.CompetitionResult.objects.filter(
-            competition=self.get_object(),
+            competition=competition,
         )
         if organization:
             organization = models.Company.objects.get(pk=organization)
@@ -81,7 +87,8 @@ class ExportCompetitionResults(WithCompetitionMixin, ExportViewMixin, View):
                 Q(user_attendance__team__subsidiary__company=organization) |
                 Q(team__subsidiary__company=organization),
             )
-        export_data = resources.CompetitionResultResource(should_include_personal_info(request, organization)).export(queryset)
+        campaign = competition.campaign
+        export_data = resources.CompetitionResultResource(should_include_personal_info(request.user, campaign, organization)).export(queryset)
         return self.generate_export(export_data, extension)
 
 
