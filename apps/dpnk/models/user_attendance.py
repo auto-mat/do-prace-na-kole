@@ -492,6 +492,19 @@ class UserAttendance(StaleSyncMixin, models.Model):
             days = []
         return self.get_trips(days)
 
+    def eco_trip_count(self):
+        from .. import results
+        return results.get_rides_count(self, self.campaign.phase("competition"))
+
+    def avatar_url(self):
+        import avatar.models
+        try:
+            return avatar.models.Avatar.objects.get(
+                user=self.userprofile.user
+            ).get_absolute_url()
+        except avatar.models.Avatar.DoesNotExist:
+            return ""
+
     def company_admin_emails(self):
         if self.team:
             return self.team.subsidiary.company.admin_emails(self.campaign)

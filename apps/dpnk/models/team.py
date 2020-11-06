@@ -37,6 +37,7 @@ import photologue.models
 from .phase import Phase
 from .subsidiary import Subsidiary
 from .team_diploma import TeamDiploma
+from .. import mailing, util
 
 logger = logging.getLogger(__name__)
 
@@ -216,12 +217,24 @@ class Team(models.Model):
         working_rides_base = self.get_working_trips_count()
         return math.ceil((rides_count - minimal_percentage * working_rides_base) / (minimal_percentage - 1))
 
-    def get_frequency(self):
+    def get_frequency_result_(self):
         from .. import results
+        return results.get_team_frequency(self.members(), self.campaign.phase("competition"))
+
+    def get_frequency(self):
         try:
-            return results.get_team_frequency(self.members(), self.campaign.phase("competition"))[2]
+            return self.get_frequency_result_()[2]
         except Phase.DoesNotExist:
             return 0
+
+    def get_eco_trip_count(self):
+        try:
+            return self.get_frequency_result_()[0]
+        except Phase.DoesNotExist:
+            return 0
+
+    def get_emissions(self, distance=None):
+        return util.get_emissions(self.get_length())
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})

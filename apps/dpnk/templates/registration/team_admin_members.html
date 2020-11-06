@@ -7,7 +7,7 @@
 {% block caption %}
 <h2 class="team-name-title"><b> {{team.name}}</b> </h2>
 <div class="team-breadcrumb">
-<a href="{% url 'company' %}"> {{team.subsidiary.company.name}} </a> • <a href="https://dopracenakole.cz/mesta/{{team.subsidiary.city.get_wp_slug}}" target="_none"> {{team.subsidiary.city.name}} </a>: {{team.subsidiary}}
+<a href="{% url 'company' %}"> {{team.subsidiary.company.name}} </a> • <a href="{{team.subsidiary.city.get_wp_url}}" target="_none"> {{team.subsidiary.city.name}} </a>: {{team.subsidiary}}
 </div>
 {% endblock %}
 {% block form_intro %}

@@ -85,6 +85,11 @@ class TripSerializer(serializers.ModelSerializer):
         source='source_application',
         help_text='Any string identifiing the source application of the track',
     )
+    sourceId = serializers.CharField(
+        required=True,
+        source='source_id',
+        help_text='Any string identifiing the id in the source application',
+    )
     trip_date = serializers.DateField(
         required=False,
         source='date',
@@ -135,6 +140,7 @@ class TripSerializer(serializers.ModelSerializer):
             'durationSeconds',
             'distanceMeters',
             'sourceApplication',
+            'sourceId',
         )
         extra_kwargs = {
             'track': {
@@ -160,6 +166,7 @@ class TripUpdateSerializer(TripSerializer):
             'durationSeconds',
             'distanceMeters',
             'sourceApplication',
+            'sourceId',
         )
 
 
@@ -170,7 +177,7 @@ class TripSet(viewsets.ModelViewSet):
     get:
     Return a list of all tracks for logged user.
 
-    get on /rest/gpx/{id}:
+    get on /rest/trip/{id}:
     Return track detail including a track geometry.
 
     post:
@@ -242,47 +249,70 @@ class CompetitionSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Competition.objects.filter(campaign__slug=self.request.subdomain)
     serializer_class = CompetitionSerializer
-    permission_classes = [permissions.AllowAny]
-
-
-class CitySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = City
-        fields = ('id', 'name',)
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
+    subsidiaries = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='subsidiary-detail',
+    )
     class Meta:
         model = Company
-        fields = ('id', 'name',)
+        fields = (
+            'id',
+            'name',
+            'subsidiaries',
+        )
 
 
 class CompanySet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Company.objects.filter(subsidiaries__teams__campaign__slug=self.request.subdomain, active=True).distinct()
     serializer_class = CompanySerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
-    city = CitySerializer(read_only=True)
-
+    teams = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='team-detail',
+    )
     class Meta:
         model = Subsidiary
-        fields = ('id', 'address_street', 'company', 'city')
+        fields = (
+            'id',
+            'address_street',
+            'company',
+            'teams',
+            #'city', TODO
+        )
 
 
 class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Subsidiary.objects.filter(teams__campaign__slug=self.request.subdomain, active=True).distinct()
     serializer_class = SubsidiarySerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UserAttendance
-        fields = ('id', 'name', 'frequency', 'trip_length_total', 'points', 'points_display')
+        fields = (
+            'id',
+            'name',
+            'frequency',
+            'trip_length_total',
+            'points',
+            'points_display',
+            'eco_trip_count',
+            'team',
+            'get_emissions',
+            'avatar_url',
+        )
 
 
 class UserAttendanceSet(viewsets.ReadOnlyModelViewSet):
@@ -305,14 +335,25 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'subsidiary', 'members', 'get_frequency', 'get_length')
+        fields = (
+            'id',
+            'name',
+            'subsidiary',
+            'members',
+            'get_frequency',
+            'get_length',
+            'get_eco_trip_count',
+            'get_emissions',
+        )
 
 
 class TeamSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return Team.objects.filter(campaign__slug=self.request.subdomain)
+        return Team.objects.filter(
+            campaign__slug=self.request.subdomain,
+        )
     serializer_class = TeamSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
@@ -333,12 +374,13 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
             raise CompetitionDoesNotExist
         return competition.get_results().select_related('team')
     serializer_class = CompetitionResultSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CityInCampaignSerializer(serializers.HyperlinkedModelSerializer):
     city__name = serializers.CharField(source="city.name")
     city__location = PointField(source="city.location")
+    city__wp_url =  serializers.CharField(source="city.get_wp_url")
 
     class Meta:
         model = CityInCampaign
@@ -346,6 +388,7 @@ class CityInCampaignSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'city__name',
             'city__location',
+            'city__wp_url',
             'competitor_count',
         )
 
@@ -357,15 +400,41 @@ class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class CommuteModeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CommuteMode
+        fields = (
+            'id',
+            'slug',
+            'does_count',
+            'eco',
+            'distance_important',
+            'duration_important',
+            'name_en',
+            'name_cs',
+            'points',
+            # icon TODO
+        )
+
+
+class CommuteModeSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return CommuteMode.objects.all()
+    serializer_class = CommuteModeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'trips', TripRangeSet, basename="trip")
+router.register(r'team', TeamSet, basename="team")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
+router.register(r'commute_mode', CommuteModeSet, basename="commute_mode")
 router.registry.extend(organization_router.registry)
 # This is disabled, because Abra doesn't cooperate anymore
 # router.register(r'competition', CompetitionSet, basename="competition")
-# router.register(r'team', TeamSet, basename="team")
-# router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
-# router.register(r'company', CompanySet, basename="company")
-# router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
+router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
+router.register(r'company', CompanySet, basename="company")
+router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")

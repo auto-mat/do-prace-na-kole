@@ -68,3 +68,8 @@ class City(models.Model):
         if self.wp_slug:
             return self.wp_slug
         return self.slug
+
+    def get_wp_url(self):
+        # TODO
+        return "https://dopracenakole.cz/mesta/" + self.get_wp_slug()
+
