@@ -332,6 +332,8 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             'team',
             'get_emissions',
             'avatar_url',
+            'get_working_rides_base_count',
+            'get_remaining_rides_count',
         )
 
 
