@@ -61,6 +61,7 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        related_name='campaigns',
     )
     year = models.CharField(
         unique=False,
