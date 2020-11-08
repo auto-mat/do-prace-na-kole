@@ -296,7 +296,7 @@ class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
         lambda sub, req:
         [serializers.HyperlinkedRelatedField(
             read_only=True,
-            view_name='team-detail').get_url(sub, 'team-detail', req, None)
+            view_name='team-detail').get_url(team, 'team-detail', req, None)
          for team
          in Team.objects.filter(subsidiary=sub, campaign=req.campaign)]
     )
@@ -434,6 +434,18 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     emissions = RequestSpecificField(
         lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).emissions()
     )
+    subsidiaries = RequestSpecificField(
+        lambda city, req:
+        [serializers.HyperlinkedRelatedField(
+            read_only=True,
+            view_name='subsidiary-detail').get_url(subsidiary, 'subsidiary-detail', req, None)
+         for subsidiary
+         in Subsidiary.objects.filter(
+             id__in=Team.objects.filter(
+                 subsidiary__city=city,
+                 campaign=req.campaign,
+             ).values_list('subsidiary', flat=True))]
+    )
 
     class Meta:
         model = City
@@ -446,6 +458,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             'trip_stats',
             #'frequency', TODO
             'emissions',
+            'subsidiaries',
         )
 
 
