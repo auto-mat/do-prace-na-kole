@@ -32,6 +32,8 @@ from stdnumfield.models import StdNumField
 from .address import CompanyAddress, get_address_string
 from .subsidiary import SubsidiaryInCampaign
 
+from .. import util
+
 
 ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
 DIC_ERROR_MESSAGE = _(
@@ -148,3 +150,16 @@ class CompanyInCampaign:
         for subsidiary in self.company.subsidiaries.all():
             subsidiaries.append(SubsidiaryInCampaign(subsidiary, self.campaign))
         return subsidiaries
+
+    def eco_trip_count(self):
+        return sum([subsidiary.eco_trip_count() for subsidiary in self.subsidiaries()])
+
+    def frequency(self):
+        subsidiaries = self.subsidiaries()
+        return sum([subsidiary.frequency() for subsidiary in subsidiaries])/len(subsidiaries)
+
+    def distance(self):
+        return sum([subsidiary.distance() for subsidiary in self.subsidiaries()])
+
+    def emissions(self):
+        return util.get_emissions(self.distance())

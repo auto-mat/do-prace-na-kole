@@ -30,6 +30,8 @@ from rest_framework.reverse import reverse
 
 from .middleware import get_or_create_userattendance
 from .models import Campaign, CampaignType, City, CityInCampaign, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
+from .models.subsidiary import SubsidiaryInCampaign
+from .models.company import CompanyInCampaign
 
 
 class RequestSpecificField(serializers.Field):
@@ -269,11 +271,36 @@ class CompetitionSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class CompanyInCampaignField(RequestSpecificField):
+    def to_representation(self, value):
+        comp_in_campaign = CompanyInCampaign(value, self.context['request'].campaign)
+        return self.method(comp_in_campaign, self.context['request'])
+
+
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
-    subsidiaries = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='subsidiary-detail',
+    subsidiaries = CompanyInCampaignField(
+        lambda cic, req:
+        [serializers.HyperlinkedRelatedField(
+            read_only=True,
+            view_name='subsidiary-detail').get_url(subsidiary.subsidiary, 'subsidiary-detail', req, None)
+         for subsidiary
+         in cic.subsidiaries()]
+    )
+    eco_trip_count = CompanyInCampaignField(
+        lambda cic, req:
+        cic.eco_trip_count()
+    )
+    frequency = CompanyInCampaignField(
+        lambda cic, req:
+        cic.frequency()
+    )
+    emissions = CompanyInCampaignField(
+        lambda cic, req:
+        cic.emissions()
+    )
+    distance = CompanyInCampaignField(
+        lambda cic, req:
+        cic.distance()
     )
     class Meta:
         model = Company
@@ -281,6 +308,10 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'name',
             'subsidiaries',
+            'eco_trip_count',
+            'frequency',
+            'emissions',
+            'distance',
         )
 
 
@@ -291,14 +322,36 @@ class CompanySet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class SubsidiaryInCampaignField(RequestSpecificField):
+    def to_representation(self, value):
+        sub_in_campaign = SubsidiaryInCampaign(value, self.context['request'].campaign)
+        return self.method(sub_in_campaign, self.context['request'])
+
+
 class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
-    teams = RequestSpecificField(
-        lambda sub, req:
+    teams = SubsidiaryInCampaignField(
+        lambda sic, req:
         [serializers.HyperlinkedRelatedField(
             read_only=True,
             view_name='team-detail').get_url(team, 'team-detail', req, None)
          for team
-         in Team.objects.filter(subsidiary=sub, campaign=req.campaign)]
+         in sic.teams()]
+    )
+    eco_trip_count = SubsidiaryInCampaignField(
+        lambda sic, req:
+        sic.eco_trip_count()
+    )
+    frequency = SubsidiaryInCampaignField(
+        lambda sic, req:
+        sic.frequency()
+    )
+    emissions = SubsidiaryInCampaignField(
+        lambda sic, req:
+        sic.emissions()
+    )
+    distance = SubsidiaryInCampaignField(
+        lambda sic, req:
+        sic.distance()
     )
     class Meta:
         model = Subsidiary
@@ -308,6 +361,10 @@ class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
             'company',
             'teams',
             'city',
+            'eco_trip_count',
+            'frequency',
+            'emissions',
+            'distance',
         )
 
 
