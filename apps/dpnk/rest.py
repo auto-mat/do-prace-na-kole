@@ -20,6 +20,8 @@
 import denorm
 
 from django.core.exceptions import ValidationError
+from django.db.models import Window, F
+from django.db.models.functions import DenseRank
 
 from donation_chooser.rest import organization_router
 
@@ -472,10 +474,11 @@ class TeamSet(viewsets.ReadOnlyModelViewSet):
 class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
     user_attendance = serializers.CharField(read_only=True)
     company = serializers.CharField(read_only=True)
+    place = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = CompetitionResult
-        fields = ('id', 'user_attendance', 'team', 'company', 'competition', 'result')
+        fields = ('id', 'user_attendance', 'team', 'company', 'competition', 'result', 'place')
 
 
 class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
@@ -485,7 +488,12 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
             competition = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
             raise CompetitionDoesNotExist
-        return competition.get_results().select_related('team')
+        return competition.get_results().select_related('team').order_by('-result').annotate(
+            place=Window(
+                expression=DenseRank(),
+                order_by=[
+                    F('result').desc(),
+                ]))
     serializer_class = CompetitionResultSerializer
     permission_classes = [permissions.IsAuthenticated]
 
