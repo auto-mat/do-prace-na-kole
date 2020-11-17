@@ -67,7 +67,7 @@ class CommuteMode(models.Model):
         null=False,
     )
     description = models.TextField(
-        verbose_name=_("Vysvětlivka výběru módu"),
+        verbose_name=_("Vysvětlivka módu"),
         help_text=_("A basic description of the commute mode."),
         default=None,
         blank=True,
