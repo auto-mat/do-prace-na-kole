@@ -66,6 +66,13 @@ class CommuteMode(models.Model):
         default="",
         null=False,
     )
+    description = models.TextField(
+        verbose_name=_("Vysvětlivka výběru módu"),
+        help_text=_("A basic description of the commute mode."),
+        default=None,
+        blank=True,
+        null=True,
+    )
     choice_description = models.TextField(
         verbose_name=_("Vysvětlivka výběru módu"),
         help_text=_("Use {{distance}} to insert distance."),
@@ -100,6 +107,11 @@ class CommuteMode(models.Model):
         verbose_name=_("Je doba důležité"),
         default=True,
         null=False,
+    )
+    icon = models.ImageField(
+        upload_to="commute_mode_icons/",
+        null=True,
+        blank=True,
     )
     # The difference between eco and does_count is that
     # does_count is also set for car trips and other
