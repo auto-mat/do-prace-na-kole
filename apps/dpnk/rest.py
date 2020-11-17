@@ -376,21 +376,38 @@ class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
+    distance = serializers.FloatField(
+        source='trip_length_total',
+        help_text='Distance ecologically traveled in Km',
+    )
+    emissions = serializers.JSONField(
+        source='get_emissions',
+        help_text='Emission reduction estimate',
+    )
+    working_rides_base_count = serializers.IntegerField(
+        source='get_working_rides_base_count',
+        help_text='Max number of possible trips',
+    )
+    remaining_rides_count = serializers.IntegerField(
+        source='get_remaining_rides_count',
+        help_text='Remaining number of possible trips',
+    )
+
     class Meta:
         model = UserAttendance
         fields = (
             'id',
             'name',
             'frequency',
-            'trip_length_total',
+            'distance',
             'points',
             'points_display',
             'eco_trip_count',
             'team',
-            'get_emissions',
+            'emissions',
             'avatar_url',
-            'get_working_rides_base_count',
-            'get_remaining_rides_count',
+            'working_rides_base_count',
+            'remaining_rides_count',
         )
 
 
@@ -411,6 +428,22 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         view_name='userattendance-detail',
     )
+    distance = serializers.FloatField(
+        source='get_length',
+        help_text='Distance ecologically traveled in Km',
+    )
+    frequency = serializers.FloatField(
+        source='get_frequency',
+        help_text='Fequeny of travel in as a fraction (multiply by 100 to get percentage)',
+    )
+    emissions = serializers.JSONField(
+        source='get_emissions',
+        help_text='Emission reduction estimate',
+    )
+    eco_trip_count = serializers.IntegerField(
+        source='get_eco_trip_count',
+        help_text='Number of ecologically traveled trips by team members',
+    )
 
     class Meta:
         model = Team
@@ -419,10 +452,10 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'subsidiary',
             'members',
-            'get_frequency',
-            'get_length',
-            'get_eco_trip_count',
-            'get_emissions',
+            'frequency',
+            'distance',
+            'eco_trip_count',
+            'emissions',
             'campaign',
         )
 
@@ -505,6 +538,9 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
                  campaign=req.campaign,
              ).values_list('subsidiary', flat=True))]
     )
+    wp_url = serializers.CharField(
+        source='get_wp_url',
+    )
 
     class Meta:
         model = City
@@ -512,7 +548,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'name',
             'location',
-            'get_wp_url',
+            'wp_url',
             'competitor_count',
             'trip_stats',
             #'frequency', TODO
@@ -604,8 +640,7 @@ router.register(r'commute_mode', CommuteModeSet, basename="commute_mode")
 router.register(r'campaign', CampaignSet, basename="campaign")
 router.register(r'campaign_type', CampaignTypeSet, basename="campaigntype")
 router.registry.extend(organization_router.registry)
-# This is disabled, because Abra doesn't cooperate anymore
-# router.register(r'competition', CompetitionSet, basename="competition")
+router.register(r'competition', CompetitionSet, basename="competition")
 router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
 router.register(r'company', CompanySet, basename="company")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
