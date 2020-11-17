@@ -260,7 +260,7 @@ class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Competition
-        fields = ('id', 'name', 'slug', 'competitor_type', 'competition_type', 'url', 'results')
+        fields = ('id', 'name', 'slug', 'competitor_type', 'competition_type', 'url', 'results', 'priority')
 
     def get_results(self, obj):
         return reverse("result-list", kwargs={"competition_slug": obj.slug}, request=self.context['request'])
