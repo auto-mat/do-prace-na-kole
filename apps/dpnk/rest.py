@@ -534,6 +534,12 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     emissions = RequestSpecificField(
         lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).emissions()
     )
+    distance = RequestSpecificField(
+        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distance()
+    )
+    eco_trip_count = RequestSpecificField(
+        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).eco_trip_count()
+    )
     subsidiaries = RequestSpecificField(
         lambda city, req:
         [serializers.HyperlinkedRelatedField(
@@ -562,6 +568,8 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             #'frequency', TODO
             'emissions',
             'subsidiaries',
+            'eco_trip_count',
+            'distance',
         )
 
 

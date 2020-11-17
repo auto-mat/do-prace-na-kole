@@ -83,6 +83,12 @@ class CityInCampaign(models.Model):
             return distance_all_modes(Trip.objects.filter(user_attendance__in=self.competitors()))
         return actually_get_distances(self.pk)
 
+    def eco_trip_count(self):
+        return self.distances()["count__sum"]
+
+    def distance(self):
+        return self.distances()["distance__sum"]
+
     def emissions(self):
         return get_emissions(self.distances()['distance__sum'])
 
