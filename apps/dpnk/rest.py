@@ -266,7 +266,7 @@ class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
 
 class CompetitionSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return Competition.objects.filter(campaign__slug=self.request.subdomain)
+        return self.request.user_attendance.get_competitions()
     serializer_class = CompetitionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
