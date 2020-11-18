@@ -407,12 +407,19 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class UserAttendanceSet(viewsets.ReadOnlyModelViewSet):
+class AllUserAttendanceSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        denorm.flush()
+        return UserAttendance.objects.all().select_related('userprofile__user')
+    serializer_class = UserAttendanceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class MyUserAttendanceSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         denorm.flush()
         return UserAttendance.objects.filter(
-            campaign__slug=self.request.subdomain,
-            userprofile__user=self.request.user,
+            id=self.request.user_attendance.id,
         ).select_related('userprofile__user')
     serializer_class = UserAttendanceSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -648,7 +655,8 @@ router.register(r'trips', TripRangeSet, basename="trip")
 router.register(r'team', TeamSet, basename="team")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 router.register(r'city', CitySet, basename="city")
-router.register(r'userattendance', UserAttendanceSet, basename="userattendance")
+router.register(r'userattendance', MyUserAttendanceSet, basename="myuserattendance")
+router.register(r'all_userattendance', AllUserAttendanceSet, basename="userattendance")
 router.register(r'commute_mode', CommuteModeSet, basename="commute_mode")
 router.register(r'campaign', CampaignSet, basename="campaign")
 router.register(r'campaign_type', CampaignTypeSet, basename="campaigntype")
