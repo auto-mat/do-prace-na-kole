@@ -207,8 +207,7 @@ class TripSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Trip.objects.filter(
-            user_attendance__userprofile__user=self.request.user,
-            user_attendance__campaign=self.request.campaign,
+            user_attendance=self.request.user_attendance,
         )
 
     def get_serializer_class(self):
@@ -232,13 +231,8 @@ class TripRangeSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Trip.objects.filter(
-            user_attendance__userprofile__user=self.request.user,
+            user_attendance=self.request.userattendance,
         )
-        campaign_slug = self.request.query_params.get('campaign', None)
-        if campaign_slug:
-            qs = qs.filter(
-                user_attendance__campaign__slug=campaign_slug,
-            )
         start_date = self.request.query_params.get('start', None)
         end_date = self.request.query_params.get('end', None)
         if start_date and end_date:
