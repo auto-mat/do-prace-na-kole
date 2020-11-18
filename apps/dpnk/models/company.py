@@ -155,7 +155,10 @@ class CompanyInCampaign:
 
     def frequency(self):
         subsidiaries = self.subsidiaries()
-        return sum(subsidiary.frequency() for subsidiary in subsidiaries) / len(subsidiaries)
+        if subsidiaries:
+            return sum(subsidiary.frequency() for subsidiary in subsidiaries) / len(subsidiaries)
+        else:
+            return 0
 
     def distance(self):
         return sum(subsidiary.distance() for subsidiary in self.subsidiaries())

@@ -125,7 +125,10 @@ class SubsidiaryInCampaign:
 
     def frequency(self):
         teams = self.teams()
-        return sum(team.get_frequency() for team in teams) / len(teams)
+        if teams:
+            return sum(team.get_frequency() for team in teams) / len(teams)
+        else:
+            return 0
 
     def distance(self):
         return sum(team.get_length() for team in self.teams())
