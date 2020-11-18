@@ -31,7 +31,6 @@ from stdnumfield.models import StdNumField
 
 from .address import CompanyAddress, get_address_string
 from .subsidiary import SubsidiaryInCampaign
-
 from .. import util
 
 
@@ -152,14 +151,14 @@ class CompanyInCampaign:
         return subsidiaries
 
     def eco_trip_count(self):
-        return sum([subsidiary.eco_trip_count() for subsidiary in self.subsidiaries()])
+        return sum(subsidiary.eco_trip_count() for subsidiary in self.subsidiaries())
 
     def frequency(self):
         subsidiaries = self.subsidiaries()
-        return sum([subsidiary.frequency() for subsidiary in subsidiaries])/len(subsidiaries)
+        return sum(subsidiary.frequency() for subsidiary in subsidiaries) / len(subsidiaries)
 
     def distance(self):
-        return sum([subsidiary.distance() for subsidiary in self.subsidiaries()])
+        return sum(subsidiary.distance() for subsidiary in self.subsidiaries())
 
     def emissions(self):
         return util.get_emissions(self.distance())

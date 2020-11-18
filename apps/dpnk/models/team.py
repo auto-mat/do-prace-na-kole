@@ -37,7 +37,7 @@ import photologue.models
 from .phase import Phase
 from .subsidiary import Subsidiary, SubsidiaryInCampaign
 from .team_diploma import TeamDiploma
-from .. import mailing, util
+from .. import util
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +107,6 @@ class Team(models.Model):
             return self.get_gallery().photos.order_by('-date_added')[0]
         except IndexError:
             return None
-
 
     def subsidiary_in_campaign(self):
         return SubsidiaryInCampaign(self.subsidiary, self.campaign)

@@ -27,7 +27,6 @@ from smart_selects.db_fields import ChainedForeignKey
 
 from .address import Address, get_address_string
 from .city import City
-
 from .. import util
 
 
@@ -122,14 +121,14 @@ class SubsidiaryInCampaign:
         return self.subsidiary.teams.filter(campaign=self.campaign)
 
     def eco_trip_count(self):
-        return sum([team.get_eco_trip_count() for team in self.teams()])
+        return sum(team.get_eco_trip_count() for team in self.teams())
 
     def frequency(self):
         teams = self.teams()
-        return sum([team.get_frequency() for team in teams])/len(teams)
+        return sum(team.get_frequency() for team in teams) / len(teams)
 
     def distance(self):
-        return sum([team.get_length() for team in self.teams()])
+        return sum(team.get_length() for team in self.teams())
 
     def emissions(self):
         return util.get_emissions(self.distance())

@@ -500,7 +500,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         import avatar.models
         try:
             return avatar.models.Avatar.objects.get(
-                user=self.userprofile.user
+                user=self.userprofile.user,
             ).get_absolute_url()
         except avatar.models.Avatar.DoesNotExist:
             return ""

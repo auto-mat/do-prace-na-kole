@@ -20,7 +20,7 @@
 import denorm
 
 from django.core.exceptions import ValidationError
-from django.db.models import Window, F
+from django.db.models import F, Window
 from django.db.models.functions import DenseRank
 
 from donation_chooser.rest import organization_router
@@ -31,9 +31,22 @@ from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
 
 from .middleware import get_or_create_userattendance
-from .models import Campaign, CampaignType, City, CityInCampaign, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
-from .models.subsidiary import SubsidiaryInCampaign
+from .models import (
+    Campaign,
+    CampaignType,
+    City,
+    CityInCampaign,
+    CommuteMode,
+    Company,
+    Competition,
+    CompetitionResult,
+    Subsidiary,
+    Team,
+    Trip,
+    UserAttendance,
+)
 from .models.company import CompanyInCampaign
+from .models.subsidiary import SubsidiaryInCampaign
 
 
 class RequestSpecificField(serializers.Field):
@@ -276,28 +289,25 @@ class CompanyInCampaignField(RequestSpecificField):
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     subsidiaries = CompanyInCampaignField(
         lambda cic, req:
-        [serializers.HyperlinkedRelatedField(
+        [serializers.HyperlinkedRelatedField(  # noqa
             read_only=True,
-            view_name='subsidiary-detail').get_url(subsidiary.subsidiary, 'subsidiary-detail', req, None)
+            view_name='subsidiary-detail',).get_url(subsidiary.subsidiary, 'subsidiary-detail', req, None)
          for subsidiary
          in cic.subsidiaries()]
     )
     eco_trip_count = CompanyInCampaignField(
-        lambda cic, req:
-        cic.eco_trip_count()
+        lambda cic, req: cic.eco_trip_count(),
     )
     frequency = CompanyInCampaignField(
-        lambda cic, req:
-        cic.frequency()
+        lambda cic, req: cic.frequency(),
     )
     emissions = CompanyInCampaignField(
-        lambda cic, req:
-        cic.emissions()
+        lambda cic, req: cic.emissions(),
     )
     distance = CompanyInCampaignField(
-        lambda cic, req:
-        cic.distance()
+        lambda cic, req: cic.distance(),
     )
+
     class Meta:
         model = Company
         fields = (
@@ -327,28 +337,26 @@ class SubsidiaryInCampaignField(RequestSpecificField):
 class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req:
-        [serializers.HyperlinkedRelatedField(
+        [serializers.HyperlinkedRelatedField(  # noqa
             read_only=True,
-            view_name='team-detail').get_url(team, 'team-detail', req, None)
-         for team
-         in sic.teams()]
+            view_name='team-detail',
+        ).get_url(team, 'team-detail', req, None)
+        for team  # noqa
+        in sic.teams()]  # noqa
     )
     eco_trip_count = SubsidiaryInCampaignField(
-        lambda sic, req:
-        sic.eco_trip_count()
+        lambda sic, req: sic.eco_trip_count(),
     )
     frequency = SubsidiaryInCampaignField(
-        lambda sic, req:
-        sic.frequency()
+        lambda sic, req: sic.frequency(),
     )
     emissions = SubsidiaryInCampaignField(
-        lambda sic, req:
-        sic.emissions()
+        lambda sic, req: sic.emissions(),
     )
     distance = SubsidiaryInCampaignField(
-        lambda sic, req:
-        sic.distance()
+        lambda sic, req: sic.distance(),
     )
+
     class Meta:
         model = Subsidiary
         fields = (
@@ -494,7 +502,9 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
                 expression=DenseRank(),
                 order_by=[
                     F('result').desc(),
-                ]))
+                ],
+            ),
+        )
     serializer_class = CompetitionResultSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -502,7 +512,7 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
 class CityInCampaignSerializer(serializers.HyperlinkedModelSerializer):
     city__name = serializers.CharField(source="city.name")
     city__location = PointField(source="city.location")
-    city__wp_url =  serializers.CharField(source="city.get_wp_url")
+    city__wp_url = serializers.CharField(source="city.get_wp_url")
 
     class Meta:
         model = CityInCampaign
@@ -524,34 +534,36 @@ class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
 
 class CitySerializer(serializers.HyperlinkedModelSerializer):
     competitor_count = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).competitor_count()
+        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).competitor_count(),
     )
     trip_stats = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distances()
+        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distances(),
     )
-    #frequency = RequestSpecificField(  TODO
-    #    lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distances()
-    #)
+    # frequency = RequestSpecificField(  TODO
+    #     lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distances()
+    # )
     emissions = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).emissions()
+        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).emissions(),
     )
     distance = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distance()
+        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distance(),
     )
     eco_trip_count = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).eco_trip_count()
+        lambda city, req:
+        CityInCampaign.objects.get(city=city, campaign=req.campaign).eco_trip_count(),
     )
     subsidiaries = RequestSpecificField(
         lambda city, req:
-        [serializers.HyperlinkedRelatedField(
+        [serializers.HyperlinkedRelatedField(  # noqa
             read_only=True,
-            view_name='subsidiary-detail').get_url(subsidiary, 'subsidiary-detail', req, None)
-         for subsidiary
-         in Subsidiary.objects.filter(
+            view_name='subsidiary-detail',
+        ).get_url(subsidiary, 'subsidiary-detail', req, None)
+        for subsidiary
+        in Subsidiary.objects.filter(
              id__in=Team.objects.filter(
                  subsidiary__city=city,
                  campaign=req.campaign,
-             ).values_list('subsidiary', flat=True))]
+             ).values_list('subsidiary', flat=True),)]
     )
     wp_url = serializers.CharField(
         source='get_wp_url',
@@ -566,7 +578,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             'wp_url',
             'competitor_count',
             'trip_stats',
-            #'frequency', TODO
+            # 'frequency', TODO
             'emissions',
             'subsidiaries',
             'eco_trip_count',

@@ -72,4 +72,3 @@ class City(models.Model):
     def get_wp_url(self):
         # TODO
         return "https://dopracenakole.cz/mesta/" + self.get_wp_slug()
-
