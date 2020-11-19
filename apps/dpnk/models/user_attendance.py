@@ -703,7 +703,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         except ValueError:
             icon_url = ""
         notify.send(
-            self.campaign,
+            self,
             recipient=self.userprofile.user,
             verb=template.verb,
             url=template.url,
@@ -715,7 +715,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def revoke_templated_notification(self, template):
         revoke_notification.send(
-            self.campaign,
+            self,
             recipient=self.userprofile.user,
             action_object=template,
         )

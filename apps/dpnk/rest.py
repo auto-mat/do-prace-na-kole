@@ -20,12 +20,15 @@
 import denorm
 
 from django.core.exceptions import ValidationError
-from django.db.models import F, Window
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import F, Q, Window
 from django.db.models.functions import DenseRank
 
 from donation_chooser.rest import organization_router
 
 from drf_extra_fields.geo_fields import PointField
+
+from notifications.models import Notification
 
 from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
@@ -661,6 +664,35 @@ class CampaignSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class NotificationSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = (
+            'id',
+            'level',
+            'unread',
+            'deleted',
+            'verb',
+            'description',
+            'timestamp',
+            'data',
+            # 'mark_read',
+        )
+
+
+class NotificationSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        user_content_type = ContentType.objects.get(app_label="auth", model="user")
+        user_attendance_content_type = ContentType.objects.get(app_label="dpnk", model="userattendance")
+        return self.request.user.notifications.filter(
+            Q(actor_content_type=user_content_type.id, actor_object_id=self.request.user.id) |
+            Q(actor_content_type=user_attendance_content_type.id, actor_object_id=self.request.user_attendance.id),
+        )
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'trips', TripRangeSet, basename="trip")
@@ -676,4 +708,5 @@ router.registry.extend(organization_router.registry)
 router.register(r'competition', CompetitionSet, basename="competition")
 router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
 router.register(r'company', CompanySet, basename="company")
+router.register(r'notification', NotificationSet, basename="notification")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
