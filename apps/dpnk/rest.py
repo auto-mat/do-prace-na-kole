@@ -665,6 +665,12 @@ class CampaignSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
+    mark_as_read = RequestSpecificField(
+        lambda notification, req: req.build_absolute_uri(reverse('notifications:mark_as_read', args=(notification.slug, ))),
+    )
+    mark_as_unread = RequestSpecificField(
+        lambda notification, req: req.build_absolute_uri(reverse('notifications:mark_as_unread', args=(notification.slug, ))),
+    )
 
     class Meta:
         model = Notification
@@ -677,7 +683,8 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
             'description',
             'timestamp',
             'data',
-            # 'mark_read',
+            'mark_as_read',
+            'mark_as_unread',
         )
 
 
