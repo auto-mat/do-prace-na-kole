@@ -247,7 +247,7 @@ class TripRangeSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Trip.objects.filter(
-            user_attendance=self.request.userattendance,
+            user_attendance=self.request.user_attendance,
         )
         start_date = self.request.query_params.get('start', None)
         end_date = self.request.query_params.get('end', None)
