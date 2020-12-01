@@ -19,8 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import denorm
 
-from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db.models import F, Q, Window
 from django.db.models.functions import DenseRank
 
@@ -561,12 +561,12 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             read_only=True,
             view_name='subsidiary-detail',
         ).get_url(subsidiary, 'subsidiary-detail', req, None)
-        for subsidiary
-        in Subsidiary.objects.filter(
-             id__in=Team.objects.filter(
-                 subsidiary__city=city,
-                 campaign=req.campaign,
-             ).values_list('subsidiary', flat=True),)]
+        for subsidiary  # noqa
+        in Subsidiary.objects.filter(  # noqa
+            id__in=Team.objects.filter(
+                subsidiary__city=city,
+                campaign=req.campaign,
+            ).values_list('subsidiary', flat=True),)]
     )
     wp_url = serializers.CharField(
         source='get_wp_url',
