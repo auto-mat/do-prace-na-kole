@@ -402,6 +402,9 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     sesame_token = RequestSpecificField(
         lambda ua, req: ua.userprofile.get_sesame_token() if ua == req.user_attendance else None,
     )
+    registration_complete = RequestSpecificField(
+        lambda ua, req: ua.entered_competition(),
+    )
 
     class Meta:
         model = UserAttendance
@@ -419,6 +422,7 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             'working_rides_base_count',
             'remaining_rides_count',
             'sesame_token',
+            'registration_complete',
         )
 
 
