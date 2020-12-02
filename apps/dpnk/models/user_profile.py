@@ -185,6 +185,10 @@ class UserProfile(models.Model):
     def company_admin_count(self):
         return self.company_admin.count()
 
+    def get_sesame_token(self):
+        from sesame.utils import get_token
+        return get_token(self.user)
+
     def first_name(self):
         return self.user.first_name
 

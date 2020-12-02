@@ -160,6 +160,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'sesame.middleware.AuthenticationMiddleware',
     'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
@@ -174,7 +175,10 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
+    "sesame.backends.ModelBackend",
 )
+SESAME_MAX_AGE = 600
+
 ROOT_URLCONF = 'urls'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'

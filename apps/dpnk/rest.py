@@ -399,6 +399,9 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         source='get_remaining_rides_count',
         help_text='Remaining number of possible trips',
     )
+    sesame_token = RequestSpecificField(
+        lambda ua, req: ua.userprofile.get_sesame_token() if ua == req.user_attendance else None,
+    )
 
     class Meta:
         model = UserAttendance
@@ -415,6 +418,7 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             'avatar_url',
             'working_rides_base_count',
             'remaining_rides_count',
+            'sesame_token',
         )
 
 

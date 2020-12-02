@@ -65,6 +65,8 @@ django-photologue = {git = "https://github.com/auto-mat/django-photologue.git",e
 boto3 = "*"
 django-google-tag-manager = "*"
 django-ses = "*"
+django-sesame = "*"
+ua-parser = "*"
 whitenoise = "*"
 django-favicon = "*"
 django-mass-edit = "*"
