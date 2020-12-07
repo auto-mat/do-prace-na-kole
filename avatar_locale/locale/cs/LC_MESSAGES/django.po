@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-29 13:30+0100\n"
+"POT-Creation-Date: 2020-12-07 13:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Petr Dlouhý <petr.dlouhy@email.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,143 +18,2817 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: admin.py:26
-msgid "Avatar"
-msgstr "Profilový obrázek"
-
-#: forms.py:24 models.py:100 models.py:109
-msgid "avatar"
-msgstr "profilový obrázek"
-
-#: forms.py:37
-#, python-format
-msgid ""
-"%(ext)s is an invalid file extension. Authorized extensions are : "
-"%(valid_exts_list)s"
+#: apps/donation_chooser/views.py:18
+msgid "Vyberte charitativní organizaci"
 msgstr ""
-"Přípona souboru %(ext)s není povolena. Povolené přípony jsou: "
-"%(valid_exts_list)s"
 
-#: forms.py:44
-#, python-format
-msgid ""
-"Your file is too big (%(size)s), the maximum allowed size is "
-"%(max_valid_size)s"
+#: apps/motivation_messages/models.py:15
+msgid "Motivační hláška"
 msgstr ""
-"Soubor je příliš velký (%(size)s), maximální povolená velikost souboru je "
-"%(max_valid_size)s"
 
-#: forms.py:54
-#, python-format
-msgid ""
-"You already have %(nb_avatars)d avatars, and the maximum allowed is "
-"%(nb_max_avatars)d."
+#: apps/motivation_messages/models.py:16
+msgid "Motivační hlášky"
 msgstr ""
-"Již máte %(nb_avatars)d nahraných profilových obrázků, povolené maximum je "
-"%(nb_max_avatars)d."
 
-#: forms.py:71 forms.py:84
-msgid "Choices"
-msgstr "Volby"
+#: apps/motivation_messages/models.py:24
+msgid "Hláška"
+msgstr ""
 
-#: models.py:93
-msgid "user"
-msgstr "uživatel"
+#: apps/motivation_messages/models.py:29
+msgid "Poznámka"
+msgstr ""
 
-#: models.py:96
-msgid "primary"
-msgstr "primární"
+#: apps/motivation_messages/models.py:35
+msgid "Min pravidelnost"
+msgstr ""
 
-#: models.py:103
-msgid "uploaded at"
-msgstr "nahráno"
+#: apps/motivation_messages/models.py:40
+msgid "Max pravidelnost"
+msgstr ""
 
-#: models.py:110
-msgid "avatars"
-msgstr "profilové obrázky"
+#: apps/motivation_messages/models.py:45
+msgid "Ode dne"
+msgstr ""
 
-#: templates/avatar/add.html:5 templates/avatar/change.html:5
+#: apps/motivation_messages/models.py:46 apps/motivation_messages/models.py:52
+msgid ""
+"Počet dní od začátku soutěžní fáze kampaně. Možno zadat i záporné hodnoty "
+"pro období před kampaní."
+msgstr ""
+
+#: apps/motivation_messages/models.py:51
+msgid "Do dne"
+msgstr ""
+
+#: apps/motivation_messages/models.py:57
+msgid "Od pořadí v týmu"
+msgstr ""
+
+#: apps/motivation_messages/models.py:62
+msgid "Do pořadí v týmu"
+msgstr ""
+
+#: apps/motivation_messages/models.py:67
+msgid "Od pořadí v týmu od konce"
+msgstr ""
+
+#: apps/motivation_messages/models.py:72
+msgid "Do pořadí v týmu od konce"
+msgstr ""
+
+#: apps/motivation_messages/models.py:77
+msgid "Datum od"
+msgstr ""
+
+#: apps/motivation_messages/models.py:82
+msgid "Datum do"
+msgstr ""
+
+#: apps/motivation_messages/models.py:87
+msgid "Povoleno"
+msgstr ""
+
+#: apps/motivation_messages/models.py:91
+msgid "Priorita"
+msgstr ""
+
+#: apps/motivation_messages/models.py:93
+msgid ""
+"Priorita hlášky. Zobrazuje se vždy náhodná hláška z těch, které mají "
+"nejvyšší prioritu splňují ostatní podmínky.Možno nastavit záporě pro hlášky "
+"které mají mít zobrazovat jen pokud není žádní lepší k dispozici."
+msgstr ""
+
+#: apps/psc/models/psc.py:31
+msgid "Poštovní směrovací číslo"
+msgstr ""
+
+#: apps/psc/models/psc.py:32
+msgid "Poštovní směrovací čísla"
+msgstr ""
+
+#: apps/psc/models/psc.py:35
+msgid "Název obce"
+msgstr ""
+
+#: apps/psc/models/psc.py:41
+msgid "Název části obce"
+msgstr ""
+
+#: apps/psc/models/psc.py:47
+msgid "Název okresu"
+msgstr ""
+
+#: apps/psc/models/psc.py:53
+msgid "PSČ"
+msgstr ""
+
+#: apps/psc/models/psc.py:54
+msgid "Např.: „130 00“"
+msgstr ""
+
+#: apps/psc/models/psc.py:61
+msgid "Název pošty"
+msgstr ""
+
+#: apps/psc/models/psc.py:67
+msgid "Kód"
+msgstr ""
+
+#: apps/stale_notifications/model_mixins.py:10
+msgid "Poslední synchronizace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_403_html.html:88
+#: htmlcov/apps_dpnk_templates_500_html.html:74
+#: htmlcov/dpnk_templates_403_html.html:103
+#: htmlcov/dpnk_templates_404_html.html:103
+#: htmlcov/dpnk_templates_500_html.html:89
+msgid "DPNK"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_403_html.html:93
+#: htmlcov/dpnk_templates_403_html.html:108
+msgid "Na tuto str&#225;nku nem&#225;te povolen&#253; p&#345;&#237;stup."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_500_html.html:79
+#: htmlcov/dpnk_templates_500_html.html:94
+msgid ""
+"Do&#353;lo k chyb&#283;. O t&#233;to ud&#225;losti jsme dostali hl&#225;"
+"&#353;en&#237;, tak&#382;e se je mo&#382;n&#233;, &#382;e se v tuto chv&#237;"
+"li u&#382; pokou&#353;&#237;me probl&#233;m opravit. Je tak&#233; mo&#382;"
+"n&#233;, &#382;e probl&#233;m je pouze do&#269;asn&#253; a za p&#225;r minut "
+"ji&#382; v&#353;e bude fungovat spr&#225;vn&#283;. Pokud chyba p&#345;"
+"etrv&#225;v&#225; del&#353;&#237; dobu, pros&#237;me obra&#357;te se na &lt;"
+"a href='mailto:kontakt@dopracenakole.cz?subject=Chybov&#225; str&#225;"
+"nka'>kontakt@dopracenakole.cz&lt;/a> s podrobn&#253;m popisem, jak tato "
+"chyba nastala."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_avatar_change_html.html:82
 msgid "Your current avatar: "
 msgstr "Současný profilový obrázek: "
 
-#: templates/avatar/add.html:8 templates/avatar/change.html:8
-msgid "You haven't uploaded an avatar yet. Please upload one now."
-msgstr "Ještě jste nenahráli žádný avatar. Nyní ho můžete nahrát."
+#: htmlcov/apps_dpnk_templates_avatar_change_html.html:89
+msgid "Zru&#353;it"
+msgstr ""
 
-#: templates/avatar/add.html:12 templates/avatar/change.html:19
+#: htmlcov/apps_dpnk_templates_avatar_change_html.html:90
 msgid "Upload New Image"
 msgstr "Nahrát nový obrázek"
 
-#: templates/avatar/change.html:14
-msgid "Choose new Default"
-msgstr "Zvolit nový výchozí obrázek"
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:292
+#: htmlcov/dpnk_templates_base_generic_registration_form_html.html:120
+msgid "Osobn&#237; &#250;daje"
+msgstr ""
 
-#: templates/avatar/confirm_delete.html:5
-msgid "Please select the avatars that you would like to delete."
-msgstr "Prosím vyberte profilový obrázek, který chcete smazat."
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:296
+msgid "Zm&#283;nit t&#253;m"
+msgstr ""
 
-#: templates/avatar/confirm_delete.html:8
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:296
+msgid "Zm&#283;nit spole&#269;nost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:298
+#: htmlcov/dpnk_templates_base_generic_registration_form_html.html:121
+msgid "T&#253;m"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:298
+msgid "Spole&#269;nost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:306
+msgid "Zm&#283;nit triko"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:308
+#: htmlcov/dpnk_templates_base_generic_registration_form_html.html:123
+msgid "Triko"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:319
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:190
+#: htmlcov/dpnk_templates_base_generic_registration_form_html.html:131
+msgid "Platba"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:335
+msgid "Pomoc"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_generic_html.html:343
+msgid "Smazat user attendance (DEBUG)"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_login_registration_html.html:94
+msgid ""
+"Na kole, p&#283;&#353;ky &#269;i poklusem. Celost&#225;tn&#237; v&#253;zva v "
+"z&#225;&#345;&#237; 2020."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_login_registration_html.html:99
+msgid ""
+"Pokud s n&#225;mi nejedete poprv&#233;, zadejte stejn&#253; e-mail jako v "
+"minul&#233;m roce a pokra&#269;ujte rovnou na p&#345;ihl&#225;&#353;en&#237;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_login_registration_html.html:105
+msgid "Nejezd&#237;&#353; do pr&#225;ce, ale do &#353;koly? P&#345;ihlas se do"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_login_registration_html.html:106
+msgid "Je to zdarma."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_login_registration_html.html:112
+msgid ""
+"U&#382; m&#225;te &#353;koln&#237; l&#233;ta n&#283;jak&#253; ten p&#225;tek "
+"za sebou? Tak s n&#225;mi jezd&#283;te"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_base_modal_windows_html.html:152
+msgid "Upozorn&#283;n&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:97
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:135
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:166
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:112
+msgid "Jm&#233;no"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:98
+#: htmlcov/apps_dpnk_templates_company_admin_related_competitions_html.html:95
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:113
+#: htmlcov/dpnk_templates_company_admin_related_competitions_html.html:110
+msgid "Typ sout&#283;&#382;e"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:99
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:114
+msgid "Typ sout&#283;&#382;&#237;c&#237;ch"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:100
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:115
+msgid "Pohlav&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:101
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:116
+msgid "M&#243;dy dopravy"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:102
+#: htmlcov/apps_dpnk_templates_registration_team_admin_members_html.html:136
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:117
+msgid "Upravit"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:103
+#: htmlcov/apps_dpnk_templates_company_admin_related_competitions_html.html:96
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:214
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:118
+#: htmlcov/dpnk_templates_company_admin_related_competitions_html.html:111
+#: htmlcov/dpnk_templates_registration_competitions_html.html:227
+msgid "V&#253;sledky"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:116
+#: htmlcov/apps_dpnk_templates_company_admin_structure_html.html:124
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:131
+#: htmlcov/dpnk_templates_company_admin_structure_html.html:142
+msgid "upravit"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_competitions_html.html:117
+#: htmlcov/dpnk_templates_company_admin_competitions_html.html:132
+msgid "v&#253;sledky"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:144
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:159
+msgid "Vystavit novou fakturu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:146
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:161
+msgid "Adresa organizace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:154
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:169
+msgid "I&#268;O: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:156
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:171
+msgid "DI&#268;: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:158
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:173
+msgid "Pokud jsou &#250;daje nespr&#225;vn&#233;, m&#367;&#382;ete"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:158
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:173
+msgid "zm&#283;nit adresu organizace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:160
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:175
+msgid "Benefi&#269;n&#237; startovn&#233;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:164
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t33\" class=\"stm mis\"><span class=\"txt\">   Do pr&#225;ce na kole "
+"po&#345;&#225;d&#225; ji&#382; od roku 2010 neziskov&#225; organizace &lt;a "
+"title=\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank"
+"\">AutoMat&lt;/a>, kter&#225; se ji&#382; v&#237;ce ne&#382; 10 let sna&#382;"
+"&#237; o zlep&#353;en&#237; kvality &#382;ivota v na&#353;ich m&#283;stech.</"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t34\" class=\"stm mis\"><span class=\"txt\">   Proto&#382;e v&#283;"
+"&#345;&#237;me, &#382;e jedn&#237;m ze z&#225;sadn&#237;ch faktor&#367; "
+"ovli&#328;uj&#237;c&#237;ch kvalitu &#382;ivota ve m&#283;st&#283; je "
+"organizace a pl&#225;nov&#225;n&#237; dopravy, sna&#382;&#237;me se na&#353;"
+"e m&#283;sto a &#382;ivot v n&#283;m m&#283;nit pr&#225;v&#283; skrze tuto "
+"sf&#233;ru.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t35\" class=\"stm mis\"><span class=\"txt\">   &lt;br/></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t36\" class=\"stm mis\"><span class=\"txt\">   &lt;strong>Nab&#237;"
+"z&#237;me v&#353;em firm&#225;m, kter&#233; se zapojuj&#237; do sout&#283;"
+"&#382;e, mo&#382;nost zaplatit benefi&#269;n&#237; startovn&#233;&lt;/"
+"strong>, kter&#253;m podpo&#345;&#237; p&#345;&#237;mo &#269;innost AutoMatu."
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t37\" class=\"stm mis\"><span class=\"txt\">   Zejm&#233;na t&#237;m "
+"podpo&#345;&#237;te na&#353;i &#269;innost v oblasti &#8220;cyklo-"
+"advokacie&#8221;, kde se sna&#382;&#237;me r&#367;zn&#253;mi zp&#367;soby "
+"prosazovat chytr&#225; koncep&#269;n&#237; opat&#345;en&#237; pro zlep&#353;"
+"en&#237; cyklo-infastruktury a souvisej&#237;c&#237; dopravn&#237; "
+"infrastruktury ve m&#283;st&#283;.</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t38\" class=\"stm mis\"><span class=\"txt\">   &lt;br/></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t39\" class=\"stm mis\"><span class=\"txt\">   &lt;strong>Pokud si "
+"p&#345;ejete podpo&#345;it AutoMat benefi&#269;n&#237;m startovn&#253;m, "
+"zvolte mo&#382;nost n&#237;&#382;e.&lt;/strong></span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t40\" class=\"stm mis\"><span class=\"txt\">   "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:178
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:193
+msgid "Seznam sout&#283;&#382;&#237;c&#237;ch na faktu&#345;e"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:179
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:194
 #, python-format
 msgid ""
-"You have no avatars to delete. Please <a href=\"%(avatar_change_url)s"
-"\">upload one</a> now."
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t48\" class=\"stm mis\"><span class=\"txt\">Vytvo&#345;it fakturu "
+"pro n&#225;sleduj&#237;cho sout&#283;&#382;&#237;c&#237;ho:</span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t49\" class=\"stm mis\"><span class=\"txt\">"
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t50\" class=\"stm mis\"><span class=\"txt\">Vytvo&#345;it fakturu "
+"pro n&#225;sleduj&#237;c&#237;ch %(competitors_count)s sout&#283;&#382;&#237;"
+"c&#237;ch:</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t51\" class=\"pln\"><span class=\"txt\">"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:187
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:202
+msgid "&#218;&#269;astn&#237;k"
 msgstr ""
-"Nemáte žádný profilový obrázek, který by bylo možné smazat. Prosím <a href="
-"\"%(avatar_change_url)s\">nahrajte</a> avatar."
 
-#: templates/avatar/confirm_delete.html:14
-msgid "Delete These"
-msgstr "Smazat tyto"
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:188
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:134
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:203
+msgid "&#268;&#225;stka"
+msgstr ""
 
-#: templates/notification/avatar_friend_updated/full.txt:1
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:199
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:214
+msgid "Faktura"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_create_invoice_html.html:202
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:217
+msgid ""
+"Nem&#225;te &#382;&#225;dn&#233; dal&#353;&#237; sout&#283;&#382;&#237;"
+"c&#237;, pro kter&#233; by bylo mo&#382;n&#233; vytvo&#345;it fakturu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:101
+msgid "P&#345;i placen&#237; startovn&#233;ho postupujte n&#225;sledovn&#283;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:103
+msgid "Pro ka&#382;dou fakturu vytvo&#345;te samostatn&#253; p&#345;evod."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:104
+msgid ""
+"Pe&#269;liv&#283; z&#160;faktury opi&#353;te &lt;b>&#269;&#237;slo &#250;"
+"&#269;tu&lt;/b>."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:105
+msgid ""
+"Zadejte &lt;b>variabiln&#237; symbol&lt;/b>. V&#160;opa&#269;n&#233;m p&#345;"
+"&#237;pad&#283; neru&#269;&#237;me za jej&#237; &#250;sp&#283;&#353;n&#233; "
+"p&#345;ijet&#237;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:110
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:117
+msgid "Den vystaven&#237; da&#328;ov&#233;ho dokladu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:111
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:118
+msgid "Soubor s fakturou"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:112
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:119
+msgid "Po&#269;et plateb"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:113
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:120
+msgid "Povinn&#253; variabiln&#237; symbol"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:114
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:121
+msgid "&#268;&#225;stka v&#269;etn&#283; DPH"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:115
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:122
+msgid "Datum potvrzen&#237; zaplacen&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:121
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:128
+msgid "PDF soubor"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:123
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:130
+msgid "Pohoda&amp;nbsp;XML"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_invoices_html.html:131
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:138
+msgid "Zaplacen&#237; nepotvrzeno"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_related_competitions_html.html:93
+#: htmlcov/dpnk_templates_company_admin_related_competitions_html.html:108
+msgid "Jm&#233;no sout&#283;&#382;e"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_related_competitions_html.html:94
+#: htmlcov/dpnk_templates_company_admin_related_competitions_html.html:109
+msgid "M&#283;sta"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_related_competitions_html.html:107
+#: htmlcov/dpnk_templates_company_admin_related_competitions_html.html:122
+msgid "v&#253;sledky za moj&#237; organizaci"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:129
+msgid "J&#237;&#382; schv&#225;len&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:136
+msgid "P&#345;&#237;jmen&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:137
+msgid "P&#345;ezd&#237;vka"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:138
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:168
+msgid "E-mail"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:139
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:192
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:201
+msgid "M&#283;sto"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:140
+msgid "&#268;as registrace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:154
+msgid "Celkem schv&#225;len&#253;ch"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_select_users_pay_for_html.html:155
+msgid "Celkem schv&#225;leno"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_company_admin_structure_html.html:146
+#: htmlcov/dpnk_templates_company_admin_structure_html.html:186
+msgid "Exportovat &#250;&#269;astn&#237;ky za moj&#237; spole&#269;nost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_fm_modal_html.html:133
+msgid "Cancel"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_fm_modal_html.html:136
+msgid "OK"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_likes_inclusion_tags_likes_html.html:89
+#: htmlcov/dpnk_templates_likes_inclusion_tags_likes_html.html:104
+msgid "Hlas&#367;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_likes_inclusion_tags_likes_html.html:91
+#: htmlcov/dpnk_templates_likes_inclusion_tags_likes_html.html:106
+msgid "D&#225;t hlas"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_address_html.html:80
+#: htmlcov/dpnk_templates_registration_address_html.html:91
+msgid ""
+"P&#345;ed v&#253;b&#283;rem trika, pros&#237;m, zkontrolujte n&#225;"
+"sleduj&#237;c&#237; adresu pobo&#269;ky, na kterou bude doru&#269;en "
+"startovn&#237; bal&#237;&#269;ek. V p&#345;&#237;pad&#283;, &#382;e je &#353;"
+"patn&#283;, napi&#353;te na "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_address_html.html:82
+#: htmlcov/dpnk_templates_registration_address_html.html:93
+msgid "Jm&#233;no: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_address_html.html:85
+#: htmlcov/apps_dpnk_templates_registration_package_html.html:89
+#: htmlcov/dpnk_templates_registration_address_html.html:95
+#: htmlcov/dpnk_templates_registration_package_html.html:104
+msgid "Adresa: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_address_html.html:89
+#: htmlcov/dpnk_templates_registration_address_html.html:97
+msgid ""
+"Nem&#225;te vybran&#253; t&#253;m a t&#237;m p&#225;dem ani p&#345;id&#283;"
+"lenou adresu pobo&#269;ky, na kterou bude doru&#269;en bal&#237;&#269;ek. "
+"Pros&#237;m, zkontrolujte si p&#345;i v&#253;b&#283;ru t&#253;mu, jestli "
+"adresa va&#353;&#237; pobo&#269;ky odpov&#237;d&#225; realit&#283;. V p&#345;"
+"&#237;pad&#283;, &#382;e je &#353;apatn&#283; napi&#353;te na "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_application_link_html.html:72
+#: htmlcov/dpnk_templates_registration_application_link_html.html:85
+msgid "Tato j&#237;zda byla nahr&#225;na z aplikace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_applications_html.html:108
+#: htmlcov/dpnk_templates_registration_applications_html.html:100
+msgid ""
+"Odkazy zobrazen&#233; jen pro testovac&#237; &#250;&#269;ely. Umo&#382;nit "
+"p&#345;istup k odkaz&#367;m p&#345;es nastaven&#237; kampan&#283;:"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_applications_html.html:108
+#: htmlcov/dpnk_templates_registration_applications_html.html:100
+msgid "Uk&#225;zat odkazy na aplikace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_applications_html.html:115
+#: htmlcov/apps_dpnk_templates_registration_applications_html.html:120
+#: htmlcov/dpnk_templates_registration_applications_html.html:104
+#: htmlcov/dpnk_templates_registration_applications_html.html:108
+msgid "Propojit s"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_applications_html.html:127
+#: htmlcov/dpnk_templates_registration_applications_html.html:113
+msgid "Propojit se Stravou"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:253
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t23\" class=\"stm mis\"><span class=\"txt\">                V&#160;"
+"pr&#367;b&#283;hu sout&#283;&#382;e</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t24\" class=\"stm mis\"><span class=\"txt\">            "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:256
+#: htmlcov/apps_dpnk_templates_registration_competition_results_html.html:120
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:241
+#: htmlcov/dpnk_templates_registration_competition_results_html.html:119
+#: htmlcov/dpnk_templates_registration_competitions_html.html:169
+msgid "od"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:257
+#: htmlcov/apps_dpnk_templates_registration_competition_results_html.html:121
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:242
+#: htmlcov/dpnk_templates_registration_competition_results_html.html:120
+#: htmlcov/dpnk_templates_registration_competitions_html.html:170
+msgid "do"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:257
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t27\" class=\"stm mis\"><span class=\"txt\">                budeme "
+"zapsan&#233; j&#237;zdy bedliv&#283; sledovat a vypo&#269;&#237;t&#225;vat "
+"osobn&#237; jezdeckou pravidelnost, kter&#225; V&#225;s dovede k&#160;v&#237;"
+"t&#283;zstv&#237;.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t28\" class=\"stm mis\"><span class=\"txt\">            "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:261
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t31\" class=\"stm mis\"><span class=\"txt\">            Je&#353;"
+"t&#283; p&#345;ed za&#269;&#225;tkem sout&#283;&#382;e si m&#367;&#382;ete "
+"v&#160;kalend&#225;&#345;i pozna&#269;it pl&#225;novanou dovolenou. T&#237;"
+"mto zp&#367;sobem se nap&#345;&#237;klad v&#253;lety do Chorvatska "
+"negativn&#283; neodraz&#237; na celkov&#233;m sk&#243;re.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t32\" class=\"stm mis\"><span class=\"txt\">        "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:274
+msgid ""
+"Sv&#233; j&#237;zdy si m&#367;&#382;ete zapsat do kalend&#225;&#345;e nebo "
+"zadat pomoc&#237; tabulky."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:275
 #, python-format
 msgid ""
-"%(avatar_creator)s has updated their avatar %(avatar)s.\n"
-"\n"
-"http://%(current_site)s%(avatar_url)s\n"
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t45\" class=\"stm mis\"><span class=\"txt\">           Nezapome&#328;"
+"te, &#382;e si sv&#233; j&#237;zdy m&#367;&#382;ete zapisovat pouze %(days)s "
+"dn&#237; zp&#283;tn&#283;.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t46\" class=\"stm mis\"><span class=\"txt\">           "
 msgstr ""
-"%(avatar_creator)s změnil svůj profilový obrázek %(avatar)s.\n"
-"\n"
-"http://%(current_site)s%(avatar_url)s\n"
 
-#: templates/notification/avatar_friend_updated/notice.html:2
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:307
+msgid "min"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:323
+msgid "Vybrat datum"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:336
+#: htmlcov/apps_dpnk_templates_registration_edit_team_html.html:106
+#: htmlcov/apps_dpnk_templates_registration_questionaire_html.html:155
+#: htmlcov/dpnk_templates_registration_questionaire_html.html:170
+msgid "Odeslat"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:349
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t119\" class=\"stm mis\"><span class=\"txt\">            Sout&#283;"
+"&#382; j&#237;&#382; skon&#269;ila. D&#283;kujeme v&#225;m za &#250;&#269;"
+"ast.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t120\" class=\"stm mis\"><span class=\"txt\">        "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:360
+msgid "Hla&#353;en&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:372
+msgid "J&#237;zda"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:379
+msgid "Editovat"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:380
+msgid "Smazat"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_calendar_html.html:396
+msgid "J&#237;zdy se po zad&#225;n&#237; automaticky ukladaj&#237;. "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_change_team_html.html:139
+#: htmlcov/dpnk_templates_registration_change_team_html.html:133
+msgid "Nejprve n&#225;m &#345;ekn&#283;te, odkud poch&#225;z&#237;te."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_change_team_html.html:141
+msgid "Zadejte pros&#237;m spole&#269;nost, "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_change_team_html.html:143
+msgid "v jak&#233; V&#225;&#353; t&#253;m pracuje."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_change_team_html.html:145
+msgid "v jak&#233; pracujete."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_change_track_html.html:92
 #, python-format
 msgid ""
-"<a href=\"%(user_url)s\">%(avatar_creator)s</a> has updated their avatar <a "
-"href=\"%(avatar_url)s\">%(avatar)s</a>."
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t12\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t13\" class=\"stm mis\"><span class=\"txt\">\t\t\tNa t&#233;to "
+"str&#225;nce m&#367;&#382;ete bu&#271; zadat trasu, nebo jen vzd&#225;lenost "
+"va&#353;&#237; denn&#237; trasy do pr&#225;ce.</span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t14\" class=\"stm mis\"><span class=\"txt\">\t\t\tZadan&#225; "
+"vzd&#225;lenost nebo d&#233;lka trasy se potom pou&#382;ije jako p&#345;"
+"edvypln&#283;n&#225; vzd&#225;lenost pro jednotliv&#233; j&#237;zdy.</"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t15\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t16\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t17\" class=\"stm mis\"><span class=\"txt\">\t\t\tPokud budete "
+"zad&#225;vat trasy pro jednotliv&#233; dny, tak se tato trasa pou&#382;ije "
+"jako z&#225;klad, kter&#253; p&#345;&#237;padn&#283; m&#367;&#382;ete m&#283;"
+"nit.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t18\" class=\"stm mis\"><span class=\"txt\">\t\t\tJednotliv&#233; "
+"j&#237;zdy m&#367;&#382;ete zad&#225;vat tak&#233; pomoc&#237; &lt;a href="
+"\"%(application_url)s\">mobiln&#237;ch aplikac&#237;&lt;/a>.</span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t19\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t20\" class=\"stm mis\"><span class=\"txt\">\t"
 msgstr ""
-"<a href=\"%(user_url)s\">%(avatar_creator)s</a> změnili svůj profilový obrázek <a href="
-"\"%(avatar_url)s\">%(avatar)s</a>."
 
-#: templates/notification/avatar_updated/full.txt:1
+#: htmlcov/apps_dpnk_templates_registration_company_html.html:115
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:126
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:150
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:259
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:141
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:165
+msgid "Pravidelnost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competition_results_html.html:108
+#: htmlcov/dpnk_templates_registration_competition_results_html.html:113
+msgid "V&#253;sledky v sout&#283;&#382;i "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competition_results_html.html:120
+#: htmlcov/dpnk_templates_registration_competition_results_html.html:119
+msgid "Sout&#283;&#382; trv&#225;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competition_results_table_html.html:155
+#: htmlcov/dpnk_templates_registration_competition_results_table_html.html:166
+msgid "Organizace:"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competition_results_table_html.html:183
+#: htmlcov/dpnk_templates_registration_competition_results_table_html.html:190
+msgid "V&#253;sledky t&#233;to sout&#283;&#382;e se nezobrazuj&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:164
+#: htmlcov/dpnk_templates_registration_competitions_html.html:177
+msgid " m&#237;sto z "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:166
+#: htmlcov/dpnk_templates_registration_competitions_html.html:179
+msgid "jednotlivc&#367;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:168
+#: htmlcov/dpnk_templates_registration_competitions_html.html:181
+msgid "liberos"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:170
+#: htmlcov/dpnk_templates_registration_competitions_html.html:183
+msgid "t&#253;m&#367;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:172
+#: htmlcov/dpnk_templates_registration_competitions_html.html:185
+msgid "organizac&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:180
+#: htmlcov/dpnk_templates_registration_competitions_html.html:193
+msgid "ve"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:180
+#: htmlcov/dpnk_templates_registration_competitions_html.html:193
+msgid "lidech"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:185
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:265
+#: htmlcov/dpnk_templates_registration_competitions_html.html:198
+msgid "z"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:185
+#: htmlcov/dpnk_templates_registration_competitions_html.html:198
+msgid "j&#237;zd"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:193
+#: htmlcov/dpnk_templates_registration_competitions_html.html:206
+msgid "Tato sout&#283;&#382; je&#353;t&#283; neza&#269;ala"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:198
+#: htmlcov/dpnk_templates_registration_competitions_html.html:211
+msgid "Vyplnit odpov&#283;di"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:203
+#: htmlcov/dpnk_templates_registration_competitions_html.html:216
+msgid "V&#353;echny odpov&#283;di"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:208
+#: htmlcov/dpnk_templates_registration_competitions_html.html:221
+msgid "Zobrazit vyhodnocen&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:220
+#: htmlcov/apps_dpnk_templates_registration_questionaire_html.html:118
+#: htmlcov/dpnk_templates_registration_competitions_html.html:231
+#: htmlcov/dpnk_templates_registration_questionaire_html.html:133
+msgid "Dal&#353;&#237; informace o sout&#283;&#382;i"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitions_html.html:228
+#: htmlcov/dpnk_templates_registration_competitions_html.html:236
+msgid ""
+"Moment&#225;ln&#283; nejsou vyps&#225;ny &#382;&#225;dn&#233; sout&#283;"
+"&#382;e."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:193
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:202
+msgid "Po&#269;et sout&#283;&#382;&#237;c&#237;ch"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:194
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:203
+msgid "Vzd&#225;lenost na kole (km)"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:195
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:204
+msgid "Vzd&#225;lenost p&#283;&#353;ky (km)"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:196
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:205
+msgid "Celkov&#225; vzd&#225;lenost (km)"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:197
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:206
+msgid "Po&#269;et cest na kole"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:198
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:207
+msgid "Po&#269;et cest p&#283;&#353;ky"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:199
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:208
+msgid "U&#353;et&#345;en&#233; emise CO&lt;sub>2&lt;/sub> (g)"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:218
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:227
+msgid "bez vybran&#233;ho m&#283;sta"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_competitor_count_html.html:228
+#: htmlcov/dpnk_templates_registration_competitor_count_html.html:237
+msgid "celkem"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:124
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:139
+msgid "Kampa&#328;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:127
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:151
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:142
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:166
+msgid "Ujet&#253;ch kilometr&#367;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:128
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:152
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:143
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:167
+msgid "Diplom"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:139
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:163
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:154
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:178
+msgid "PDF s diplomem"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:146
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:161
+msgid "T&#253;mov&#233; v&#253;sledky"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:148
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:163
+msgid "Kampan&#283;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_diplomas_html.html:149
+#: htmlcov/dpnk_templates_registration_diplomas_html.html:164
+msgid "Jm&#233;no t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_edit_team_html.html:101
+msgid "T&#253;mov&#233; fotky"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_edit_team_html.html:112
+msgid "Fotky nahrajete p&#345;eta&#382;en&#237;m, nebo kliknut&#237;m"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_emission_calculator_html.html:114
+#: htmlcov/dpnk_templates_registration_emission_calculator_html.html:129
+msgid "Ujet&#225; vzd&#225;lenost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_emission_calculator_html.html:135
+#: htmlcov/dpnk_templates_registration_emission_calculator_html.html:150
+msgid "Pevn&#233; &#269;&#225;stice"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_emission_calculator_html.html:138
+#: htmlcov/dpnk_templates_registration_emission_calculator_html.html:153
+msgid "Olovo"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_emission_calculator_html.html:145
+#: htmlcov/dpnk_templates_registration_emission_calculator_html.html:160
+msgid "Popis emisn&#237; kalkula&#269;ky"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_emission_calculator_html.html:146
+#: htmlcov/dpnk_templates_registration_emission_calculator_html.html:161
+msgid ""
+"V kalkula&#269;ce je metoda p&#345;epo&#269;tu celkov&#253;ch ud&#225;"
+"van&#253;ch emis&#237; z individu&#225;ln&#237; automobilov&#233; dopravy "
+"(IAD) v &#268;R na jej&#237; v&#253;kon. V&#253;sledkem jsou hmotnostn&#237; "
+"jednotky dan&#253;ch l&#225;tek na kilometr. Zdrojem dat je Ro&#269;enka "
+"dopravy &#268;R za rok 2013."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:271
+msgid "Pravidelnost je nejlep&#353;&#237; p&#345;&#237;tel &#269;lov&#283;ka"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:272
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t9\" class=\"stm mis\"><span class=\"txt\">&lt;p></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t10\" class=\"stm mis\"><span class=\"txt\">Chceme v&#225;s odm&#283;"
+"nit za va&#353;e vrcholov&#233; v&#253;kony a tlesk&#225;me za ka&#382;"
+"d&#233; zdolan&#233; p&#345;ev&#253;&#353;en&#237;. Ale hlavn&#283; chceme "
+"zm&#283;nit &#269;esk&#225; m&#283;sta k&#160;lep&#353;&#237;mu. M&#225;me "
+"sen o sv&#283;t&#283;, kde si v&#353;ichni r&#225;di vyjedeme do pr&#225;ce "
+"na kole nebo r&#225;no vyb&#283;hneme do &#353;koly ne proto, &#382;e za "
+"p&#283;t minut zvon&#237;, ale pro radost z pohybu.</span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t11\" class=\"stm mis\"><span class=\"txt\">&lt;/p>&lt;p></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t12\" class=\"stm mis\"><span class=\"txt\">A k&#160;tomu pot&#345;"
+"ebujeme pravidelnost. Je to jeden z&#160;p&#345;&#237;rodn&#237;ch z&#225;"
+"kon&#367;. Den, noc, jaro, l&#233;to, &#345;e&#269;i o po&#269;as&#237;, "
+"v&#353;e se pravideln&#283; opakuje. Jednor&#225;zov&#233; extr&#233;"
+"mn&#237; v&#253;kony vyvolaj&#237; povyk. Pravidelnost m&#367;&#382;e "
+"postupn&#283; zm&#283;nit sv&#283;t.</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t13\" class=\"stm mis\"><span class=\"txt\">&lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t14\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:279
+msgid "Jak se po&#269;&#237;t&#225; osobn&#237; pravidelnost?"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:280
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t17\" class=\"stm mis\"><span class=\"txt\">&lt;p></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t18\" class=\"stm mis\"><span class=\"txt\">Jezd&#283;te a b&#283;"
+"hejte s&#160;n&#225;mi do pr&#225;ce a z&#160;pr&#225;ce ka&#382;d&#253; den "
+"a dos&#225;hnete na stoprocentn&#237; pravidelnost. Kdy&#382; se naopak v "
+"kv&#283;tnu vyd&#225;te do pr&#225;ce autem, MHD, tax&#237;kem, letadlem, "
+"lod&#237; &#269;i na motorce, va&#353;e procento t&#237;m utrp&#237;. A hned "
+"v&#225;m to spo&#269;&#237;t&#225;me:</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t19\" class=\"stm mis\"><span class=\"txt\">&lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t20\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:290
+#, python-format
+msgid "M&#225;te jednu ekologickou cestu"
+msgid_plural "M&#225;te %(rides_num)s ekologick&#253;ch cest"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:307
+#, python-format
+msgid "z celkov&#233;ho po&#269;tu jedn&#233; zapsan&#233; cesty."
+msgid_plural "z celkov&#233;ho po&#269;tu %(rides_num)s zapsan&#253;ch cest."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:326
+msgid "Ale neusn&#283;te na vav&#345;&#237;nech."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:327
 #, python-format
 msgid ""
-"Your avatar has been updated.  %(avatar)s\n"
-"\n"
-"http://%(current_site)s%(avatar_url)s\n"
-msgstr ""
-"Váš profilový obrázek byl změněn.  %(avatar)s\n"
-"\n"
-"http://%(current_site)s%(avatar_url)s\n"
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t64\" class=\"stm mis\"><span class=\"txt\">                       "
+"Do konce sout&#283;&#382;e m&#367;&#382;ete najezdit &#269;i nab&#283;hat "
+"je&#353;t&#283; jednu cestu ku va&#353;&#237; a&#382; %(max_percentage)s%% "
+"pravidelnosti.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t65\" class=\"stm mis\"><span class=\"txt\">                       "
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t66\" class=\"stm mis\"><span class=\"txt\">                       "
+"Do konce sout&#283;&#382;e m&#367;&#382;ete najezdit &#269;i nab&#283;hat "
+"je&#353;t&#283; %(rides_num)s cest ku va&#353;&#237; a&#382; "
+"%(max_percentage)s%% pravidelnosti.</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t67\" class=\"stm mis\"><span class=\"txt\">                       "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
-#: templates/notification/avatar_updated/notice.html:2
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:338
 #, python-format
-msgid "You have updated your avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t75\" class=\"stm mis\"><span class=\"txt\">                       "
+"Do konce sout&#283;&#382;e m&#367;&#382;ete urazit je&#353;t&#283; jednu "
+"cestu a dos&#225;hnout %(max_percentage)s%% pravidelnosti.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t76\" class=\"stm mis\"><span class=\"txt\">                       "
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t77\" class=\"stm mis\"><span class=\"txt\">                       "
+"Do konce sout&#283;&#382;e m&#367;&#382;ete urazit je&#353;t&#283; "
+"%(rides_num)s cest a dos&#225;hnout %(max_percentage)s%% pravidelnosti.</"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t78\" class=\"stm mis\"><span class=\"txt\">                       "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:353
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t90\" class=\"stm mis\"><span class=\"txt\">        K&#160;dne&#353;"
+"n&#237;mu dni u&#382; m&#225;te m&#237;t odsvi&#353;t&#283;nu jednu cestu, "
+"aby v&#225;m ostatn&#237; neutekli.</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t91\" class=\"stm mis\"><span class=\"txt\">        "
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t92\" class=\"stm mis\"><span class=\"txt\">        K&#160;dne&#353;"
+"n&#237;mu dni u&#382; m&#225;te m&#237;t odsvi&#353;t&#283;no %(rides_num)s "
+"cest, aby v&#225;m ostatn&#237; neutekli.</span><span class=\"strut\">&nbsp;"
+"</span></p>\n"
+"<p id=\"t93\" class=\"stm mis\"><span class=\"txt\">     "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:358
+msgid "Naho&#271;te sportovn&#237; outfit a b&#283;&#382;te to dohnat!"
 msgstr ""
-"Právě jste změnili Váš avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 
-#: templatetags/avatar_tags.py:45
-msgid "Default Avatar"
-msgstr "Výchozí profilový obrázek"
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:364
+msgid "Kdy&#382; nejdete do pr&#225;ce, nic se ned&#283;je"
+msgstr ""
 
-#: views.py:73
-msgid "Successfully uploaded a new avatar."
-msgstr "Nový profilový obrázek byl úspěšně nahrán."
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:367
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t104\" class=\"stm mis\"><span class=\"txt\">  &lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t105\" class=\"stm mis\"><span class=\"txt\">  Pravidelnost&#237; "
+"procento se sni&#382;uje pouze vlivem neekologick&#253;ch cest do pr&#225;ce "
+"a z pr&#225;ce. M&#225;me pochopen&#237; pro to, &#382;e si chcete vz&#237;t "
+"dovolenou nebo m&#225;te zkr&#225;cen&#253; &#250;vazek. Dny, kdy nejdete do "
+"pr&#225;ce, nemaj&#237; vliv na celkovou pravidelnost.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t106\" class=\"stm mis\"><span class=\"txt\">  &lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t107\" class=\"stm mis\"><span class=\"txt\">  &lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t108\" class=\"stm mis\"><span class=\"txt\">  Pozor, m&#225; to "
+"h&#225;&#269;ek. Celkem za m&#283;s&#237;c mus&#237;te ekologicky zvl&#225;"
+"dnout alespo&#328; %(minimum_rides_base)s cest, a&#357; m&#225;te &#353;anci "
+"dos&#225;hnout na stoprocentn&#237; pravidelnost. Kdyby m&#283;l &#269;"
+"lov&#283;k s&#160;t&#345;&#237;t&#253;denn&#237; dovolenou a jednou "
+"aktivn&#237; cestou do pr&#225;ce 100 %%, nebylo by to v&#367;&#269;i "
+"ostatn&#237;m f&#233;r. </span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t109\" class=\"stm mis\"><span class=\"txt\">  &lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t110\" class=\"stm mis\"><span class=\"txt\">  &lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t111\" class=\"stm mis\"><span class=\"txt\">  V&#160;pr&#367;b&#283;"
+"hu kv&#283;tna se minim&#225;ln&#237; po&#269;et j&#237;zd bude "
+"pravideln&#283; zvedat o necel&#253; jeden bod ka&#382;d&#253; den "
+"(nap&#345;. v pond&#283;l&#237; mus&#237;te m&#237;t zaps&#225;no minim&#225;"
+"ln&#283; 10 j&#237;zd, v &#250;ter&#253; u&#382; 11 j&#237;zd).</span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t112\" class=\"stm mis\"><span class=\"txt\">  &lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t113\" class=\"stm mis\"><span class=\"txt\">  &lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t114\" class=\"stm mis\"><span class=\"txt\">  V&#160;praxi to "
+"znamen&#225;, &#382;e se jmenovatel ka&#382;d&#253; den b&#283;hem kv&#283;"
+"tna automaticky zvedne o necel&#253; jeden bod, a&#357; u&#382; si n&#283;"
+"jakou j&#237;zdu zap&#237;&#353;ete a nebo ne. Toto &#269;&#237;slo se do "
+"pravidelnosti zapo&#269;&#237;t&#225;v&#225; pouze pokud je n&#225;mi p&#345;"
+"edpokl&#225;dan&#253; po&#269;et j&#237;zd k&#160;dan&#233;mu dni vy&#353;"
+"&#353;&#237;, ne&#382; celkov&#253; po&#269;et v&#225;mi zapsan&#253;ch "
+"j&#237;zd. </span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t115\" class=\"stm mis\"><span class=\"txt\">  &lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t116\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
 
-#: views.py:111
-msgid "Successfully updated your avatar."
-msgstr "Nový profilový obrázek byl úspěšně změněn."
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:383
+msgid "Jak se po&#269;&#237;t&#225; skupinov&#225; pravidelnost?"
+msgstr ""
 
-#: views.py:154
-msgid "Successfully deleted the requested avatars."
-msgstr "Vybrané profilový obrázeky byly úspěšně změněny."
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:386
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t123\" class=\"stm mis\"><span class=\"txt\">Do pr&#225;ce na kole "
+"jezd&#237; hlavn&#283; skupinov&#237; hr&#225;&#269;i, a proto je pro n&#225;"
+"s tato pravidelnost nejd&#367;le&#382;it&#283;j&#353;&#237;.</span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t124\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:389
+#, python-format
+msgid ""
+"Nezapome&#328;te, &#382;e pot&#345;ebujete m&#237;t minim&#225;ln&#283; 66%% "
+"t&#253;movou pravidelnost, abychom v&#225;s za&#345;adili do slosov&#225;"
+"n&#237; o v&#283;cn&#233; ceny."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:390
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t127\" class=\"stm mis\"><span class=\"txt\">Skupinov&#225; "
+"pravidelnost odpov&#237;d&#225; pod&#237;lu v&#353;ech ekologick&#253;ch "
+"cest a celkov&#233;ho po&#269;tu zapsan&#253;ch cest v&#353;ech &#269;"
+"len&#367; t&#253;mu. Tak&#382;e si to r&#225;no s&#160;t&#237;m autem "
+"dob&#345;e rozmyslete. Sta&#269;&#237; jedna neekologick&#225; cesta a "
+"v&#225;&#353; t&#253;m u&#382; na 100%% pravidelnost nikdy nedos&#225;hne. "
+"P&#345;esv&#283;d&#269;te se:</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t128\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:450
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t187\" class=\"stm mis\"><span class=\"txt\">                Do "
+"konce sout&#283;&#382;e m&#367;&#382;ete najezdit &#269;i nab&#283;hat "
+"je&#353;t&#283; jednu cestu ku va&#353;&#237; a&#382; %(percentage)s%% "
+"pravidelnosti.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t188\" class=\"stm mis\"><span class=\"txt\">                "
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t189\" class=\"stm mis\"><span class=\"txt\">                Do "
+"konce sout&#283;&#382;e m&#367;&#382;ete najezdit &#269;i nab&#283;hat "
+"je&#353;t&#283; %(rides_num)s cest ku va&#353;&#237; a&#382; %(percentage)s"
+"%% pravidelnosti.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t190\" class=\"stm mis\"><span class=\"txt\">                "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_frequency_html.html:459
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t196\" class=\"stm mis\"><span class=\"txt\">                "
+"Sch&#225;z&#237; v&#225;m je&#353;t&#283; jedna cesta, ne&#382; budete "
+"pravideln&#283; jezdit na 66&amp;nbsp;%%.</span><span class=\"strut\">&nbsp;"
+"</span></p>\n"
+"<p id=\"t197\" class=\"stm mis\"><span class=\"txt\">                "
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t198\" class=\"stm mis\"><span class=\"txt\">                "
+"Sch&#225;z&#237; v&#225;m je&#353;t&#283; %(rides_num)s cest, ne&#382; "
+"budete pravideln&#283; jezdit na 66&amp;nbsp;%%.</span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t199\" class=\"stm mis\"><span class=\"txt\">                "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_gpx_file_html.html:83
+#: htmlcov/apps_dpnk_templates_registration_trip_html.html:89
+#: htmlcov/dpnk_templates_registration_gpx_file_html.html:98
+#, python-format
+msgid ""
+"Tip: Trasy v&#353;ech sv&#253;ch cest m&#367;&#382;ete nahr&#225;vat "
+"pomoc&#237; &lt;a href=\"%(application_url)s\">mobiln&#237;ch aplikac&#237;"
+"&lt;/a>."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_help_html.html:115
+#: htmlcov/dpnk_templates_registration_help_html.html:142
+msgid "Editace tras"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_help_html.html:116
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t13\" class=\"stm mis\"><span class=\"txt\">  &lt;ul></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t14\" class=\"stm mis\"><span class=\"txt\">   &lt;li>&lt;"
+"strong>Zad&#225;v&#225;n&#237; trasy zah&#225;j&#237;te kliknut&#237;m na "
+"tla&#269;&#237;tko &lt;span style=\"display: inline-block;\" class=\"leaflet-"
+"draw-toolbar leaflet-bar leaflet-draw-toolbar-top\">&lt;a class=\"leaflet-"
+"draw-draw-polyline\">&lt;/a>&lt;/span>.&lt;/strong>&lt;/li></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t15\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Dal&#353;"
+"&#237; body zad&#225;v&#225;te kliknut&#237;m do mapy, &lt;strong>c&#237;"
+"lov&#253; bod zad&#225;te dvojklikem na koncov&#253; bod&lt;/strong> nebo "
+"kliknut&#237; na tla&#269;&#237;tko \"Finish\".&lt;/li></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t16\" class=\"stm mis\"><span class=\"txt\">   &lt;video width="
+"\"640\" height=\"480\" controls></span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t17\" class=\"stm mis\"><span class=\"txt\">    &lt;source src="
+"\"http://thobbs.cz/create.webm\" type=\"video/webm\"></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t18\" class=\"stm mis\"><span class=\"txt\">   &lt;/video></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t19\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Zm&#283;nu "
+"trasy provedete po p&#345;epnut&#237; do re&#382;imu &#250;prav (&lt;span "
+"style=\"display: inline-block;\" class=\"leaflet-draw-toolbar leaflet-bar"
+"\">&lt;a class=\"leaflet-draw-edit-edit\">&lt;/a>&lt;/span>) a kliknut&#237;"
+"m na trasu.&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t20\" class=\"stm mis\"><span class=\"txt\">   &lt;video width="
+"\"640\" height=\"480\" controls></span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t21\" class=\"stm mis\"><span class=\"txt\">    &lt;source src="
+"\"http://thobbs.cz/edit.webm\" type=\"video/webm\"></span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t22\" class=\"stm mis\"><span class=\"txt\">   &lt;/video></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t23\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Trasa se "
+"d&#225; taky smazat.&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t24\" class=\"stm mis\"><span class=\"txt\">   &lt;video width="
+"\"640\" height=\"480\" controls></span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t25\" class=\"stm mis\"><span class=\"txt\">    &lt;source src="
+"\"http://thobbs.cz/delete.webm\" type=\"video/webm\"></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t26\" class=\"stm mis\"><span class=\"txt\">   &lt;/video></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t27\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Trasu sta&#269;"
+"&#237; zadat tak, &#382;e bude z&#345;ejm&#233;, kter&#253;mi ulicemi vede.</"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t28\" class=\"stm mis\"><span class=\"txt\">   (Zad&#225;n&#237; "
+"p&#345;esn&#283;j&#353;&#237;ho pr&#367;b&#283;hu n&#225;m v&#353;ak m&#367;"
+"&#382;e pomoci l&#233;pe zjistit, jak se lid&#233; na kole "
+"pohybuj&#237;.)&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t29\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Trasu bude "
+"mo&#382;n&#233; zm&#283;nit nebo up&#345;esnit i pozd&#283;ji v pr&#367;"
+"b&#283;hu sout&#283;&#382;e.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t30\" class=\"stm mis\"><span class=\"txt\">   (Trasy za "
+"jednotliv&#233; dny v&#353;ak jen 7 dn&#237; nazp&#283;t.)&lt;/li></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t31\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Polohu za&#269;"
+"&#225;tku a konce trasy sta&#269;&#237; zad&#225;vat se 100m p&#345;"
+"esnost&#237;.&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t32\" class=\"stm mis\"><span class=\"txt\">  &lt;/ul></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t33\" class=\"stm mis\"><span class=\"txt\">  Trasa slou&#382;&#237; "
+"k v&#253;po&#269;tu vzd&#225;lenosti a pom&#367;&#382;e n&#225;m l&#233;pe "
+"ur&#269;it pot&#345;eby lid&#237; pohybuj&#237;c&#237;ch se ve m&#283;"
+"st&#283; na kole.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t34\" class=\"stm mis\"><span class=\"txt\">  &lt;br/>Trasy v&#353;"
+"ech &#250;&#269;astn&#237;k&#367; budou v anonymizovan&#233; podob&#283; "
+"zobrazen&#233; na &lt;a href=\"https://mapa.prahounakole.cz/?zoom=13&amp;"
+"lat=50.08741&amp;lon=14.4211&amp;layers=_Wgt\">map&#283; Prahou na kole&lt;/"
+"a>.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t35\" class=\"stm mis\"><span class=\"txt\">&nbsp;</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t36\" class=\"stm mis\"><span class=\"txt\">  "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_help_html.html:143
+#: htmlcov/dpnk_templates_registration_help_html.html:170
+msgid "Dal&#353;&#237; pomoc"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_help_html.html:144
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t41\" class=\"stm mis\"><span class=\"txt\">  Chcete mluvit s &#382;"
+"iv&#253;m &#269;lov&#283;kem? &lt;a target='_blank' href=\"https://www."
+"dopracenakole.cz/kontakt\">volejte na helpdesk&lt;/a>.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t42\" class=\"stm mis\"><span class=\"txt\">  "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:194
+msgid "T&#253;mov&#225;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:194
+msgid "Osobn&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:194
+msgid "pravidelnost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:206
+msgid ""
+"Zpr&#225;va pro nejlep&#353;&#237;ho t&#253;mov&#233;ho hr&#225;&#269;e:"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:210
+msgid "A to na"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:241
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:179
+msgid "Vouchery"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_landing_html.html:255
+msgid "Otev&#345;it E-Shop"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_logged_out_html.html:92
+msgid "D&#283;kujeme za dne&#353;n&#237; luxusn&#237; j&#237;zdu!"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_logged_out_html.html:97
+msgid ""
+"Nale&#353;t&#283;te si ped&#225;ly, uvid&#237;me se zase z&#237;tra na "
+"startovn&#237; &#269;&#225;&#345;e."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_logged_out_html.html:100
+msgid "P&#345;ihl&#225;sit"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_package_html.html:85
+#: htmlcov/dpnk_templates_registration_package_html.html:100
+msgid "Datum p&#345;ijet&#237; k sestaven&#237;: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_package_html.html:87
+#: htmlcov/dpnk_templates_registration_package_html.html:102
+msgid "Triko: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_package_html.html:92
+#: htmlcov/dpnk_templates_registration_package_html.html:107
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t15\" class=\"stm mis\"><span class=\"txt\">Bal&#237;&#269;ek m&#367;"
+"&#382;ete &lt;a href=\"%(tnt_href)s\">sledovat pomoc&#237; TNT&lt;/a></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t16\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_change_done_html.html:70
+#: htmlcov/dpnk_templates_registration_password_change_done_html.html:85
+msgid "Heslo bylo zm&#283;n&#283;no."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_change_done_html.html:70
+#: htmlcov/dpnk_templates_registration_password_change_done_html.html:85
+msgid "Zp&#283;t na &#250;pravu profilu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_complete_html.html:70
+#: htmlcov/dpnk_templates_registration_password_reset_complete_html.html:85
+msgid "Va&#353;e nov&#233; heslo bylo nastaveno. Nyn&#237; se m&#367;&#382;ete"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_complete_html.html:70
+#: htmlcov/dpnk_templates_registration_password_reset_complete_html.html:85
+msgid "p&#345;ihl&#225;sit"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_confirm_html.html:92
+#: htmlcov/dpnk_templates_registration_password_reset_confirm_html.html:104
+msgid "Vlo&#382;te nov&#233; heslo"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_confirm_html.html:94
+#: htmlcov/dpnk_templates_registration_password_reset_confirm_html.html:106
+msgid ""
+"Zvolte si nov&#233; heslo a zapi&#353;te jej pro kontrolu dvakr&#225;t pod "
+"sebe."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_confirm_html.html:101
+#: htmlcov/dpnk_templates_registration_password_reset_confirm_html.html:113
+msgid "Obnoven&#237; hesla nebylo &#250;sp&#283;&#353;n&#233;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_confirm_html.html:103
+#: htmlcov/dpnk_templates_registration_password_reset_confirm_html.html:115
+msgid ""
+"Tento odkaz na obnoven&#237; hesla nen&#237; platn&#253;, mo&#382;n&#225; "
+"proto, &#382;e ji&#382; byl pou&#382;it. Po&#382;&#225;dejte pros&#237;m o "
+"obnoven&#237; hesla znovu."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_done_html.html:74
+#: htmlcov/dpnk_templates_registration_password_reset_done_html.html:89
+msgid "Obnova hesla"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_done_html.html:76
+#: htmlcov/dpnk_templates_registration_password_reset_done_html.html:91
+msgid ""
+"Pr&#225;v&#283; jsme v&#225;m zaslali e-mailem instrukce, jak si nastavit "
+"nov&#233; heslo. E-mail byste m&#283;li brzy obdr&#382;et na v&#225;mi "
+"zadanou adresu."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_done_html.html:78
+#: htmlcov/dpnk_templates_registration_password_reset_done_html.html:93
+msgid ""
+"Pokud jste e-mail nedostali, pros&#237;m zkontrolujte, jestli jste zadali e-"
+"mail, se kter&#253;m jste se zalogovali a jestli neskon&#269;il ve spamu."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_form_html.html:77
+#: htmlcov/dpnk_templates_registration_password_reset_form_html.html:96
+msgid "Nespr&#225;vn&#233; heslo?"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_password_reset_form_html.html:82
+#: htmlcov/dpnk_templates_registration_password_reset_form_html.html:101
+msgid ""
+"&#381;&#225;dn&#253; probl&#233;m. Kdy&#382; zapomenete heslo, po&#353;leme "
+"v&#225;m e-mailem odkaz na jeho obnoven&#237;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_result_html.html:98
+#: htmlcov/dpnk_templates_registration_payment_result_html.html:104
+msgid "Pokra&#269;ujte na str&#225;nku j&#237;zd"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_result_html.html:102
+#: htmlcov/dpnk_templates_registration_payment_result_html.html:106
+msgid "Zkuste zadat platbu znovu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:194
+msgid "Vyberte zp&#367;sob platby a m&#367;&#382;ete vyrazit."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:254
+msgid "Platba startovn&#233;ho zam&#283;stnavatelem"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:257
+msgid "Startovn&#233; za m&#283; plat&#237;: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:260
+msgid "M&#367;j firemn&#237; koordin&#225;tor: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:261
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:278
+msgid "E-mail na koordin&#225;tora: "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:264
+msgid ""
+"Je n&#225;m l&#237;to. V&#225;&#353; zam&#283;stnavatel bu&#271; nem&#225; "
+"zvolen&#233;ho firemn&#237;ho koordin&#225;tora nebo neumo&#382;&#328;uje "
+"platbu startovn&#233;ho."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:265
+msgid "Chci se s&#225;m st&#225;t koordin&#225;torem sv&#233; organizace."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:269
+msgid "Platba startovn&#233;ho pomoc&#237; voucheru"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:270
+msgid "Uplatn&#283;te slevu z&#160;startovn&#233;ho."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:273
+msgid "Vstupte do Klubu p&#345;&#225;tel"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:278
+msgid "Platba startovn&#233;ho"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:281
+msgid "Platba benefi&#269;n&#237;ho startovn&#233;ho"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:285
+msgid ""
+"D&#283;kujeme, &#382;e se zaj&#237;m&#225;te o ve&#345;ejn&#253; prostor."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:293
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:312
+msgid "P&#345;edchoz&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_payment_type_html.html:294
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:313
+msgid "Zaplatit"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_profile_update_detailed_html.html:100
+msgid "Chci se st&#225;t firemn&#237;m koordin&#225;torem"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_profile_update_detailed_html.html:104
+msgid "Va&#353;&#237;m firemn&#237;m koordin&#225;torem je"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_profile_update_detailed_html.html:115
+msgid "Zm&#283;nit obr&#225;zek"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_profile_update_detailed_html.html:118
+#: htmlcov/dpnk_templates_base_generic_html.html:406
+msgid "Zm&#283;nit heslo"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_profile_update_html.html:73
+msgid ""
+"a zkontrolujte &#250;daje, kter&#233; jsou ji&#382; p&#345;edvypln&#283;"
+"n&#233;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_questionaire_html.html:123
+#: htmlcov/dpnk_templates_registration_questionaire_html.html:138
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t15\" class=\"stm mis\"><span class=\"txt\">   Odpov&#283;&#271; na "
+"jednu ot&#225;zku obsahuje chybu. Pros&#237;m opravte tuto chybu a znovu "
+"stiskn&#283;te tla&#269;&#237;tko Odeslat.</span><span class=\"strut\">&nbsp;"
+"</span></p>\n"
+"<p id=\"t16\" class=\"stm mis\"><span class=\"txt\">   "
+msgid_plural ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t17\" class=\"stm mis\"><span class=\"txt\">   Odpov&#283;di na "
+"%(invalid_count)s ot&#225;zky obsahuj&#237; chybu. Pros&#237;m opravte tyto "
+"chyby a znovu stiskn&#283;te tla&#269;&#237;tko Odeslat.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t18\" class=\"stm mis\"><span class=\"txt\">   "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: htmlcov/apps_dpnk_templates_registration_questionaire_html.html:143
+#: htmlcov/dpnk_templates_registration_questionaire_html.html:158
+msgid "b"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_questionaire_html.html:147
+#: htmlcov/apps_dpnk_templates_registration_questionnaire_answers_all_html.html:153
+#: htmlcov/dpnk_templates_registration_questionaire_html.html:162
+#: htmlcov/dpnk_templates_registration_questionnaire_answers_all_html.html:161
+msgid "Koment&#225;&#345; hodnotitele"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_questionnaire_answers_all_html.html:147
+#: htmlcov/dpnk_templates_registration_questionnaire_answers_all_html.html:155
+msgid "Bez p&#345;&#237;lohy"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_request_team_approval_html.html:74
+msgid ""
+"V&#225;&#353; nadch&#225;zej&#237;c&#237; t&#253;m byl upozorn&#283;n na "
+"svou neaktivitu. Z&#367;sta&#328;te v&#160;o&#269;ek&#225;v&#225;n&#237; na "
+"odpov&#283;&#271;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_details_html.html:128
+msgid "Sout&#283;&#382;n&#237; j&#237;zdy"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_details_html.html:136
+#: htmlcov/apps_dpnk_templates_registration_rides_details_html.html:161
+msgid "km"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_details_html.html:155
+msgid "Dal&#353;&#237; nahran&#233; j&#237;zdy"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:240
+msgid "Celkem"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:248
+msgid "Celkov&#225; ura&#382;en&#225; vzd&#225;lenost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:254
+msgid "Ura&#382;en&#225; zapo&#269;&#237;tan&#225; vzd&#225;lenost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:254
+msgid "Podrobn&#253; p&#345;ehled j&#237;zd"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:265
+msgid "Po&#269;et zapo&#269;&#237;tan&#253;ch cest"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:269
+#, python-format
+msgid ""
+"Do konce sout&#283;&#382;e je pot&#345;eba urazit alespo&#328; "
+"%(minimum_rides_base)s cest."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:270
+#, python-format
+msgid ""
+"Po&#269;et Va&#353;ich cest byl tedy zv&#253;&#353;en pom&#283;rov&#283; k "
+"tomuto &#269;&#237;slu na %(get_minimum_rides_base_proportional)s cest."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:279
+msgid "Pravidelnost va&#353;eho t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:279
+msgid "P&#345;ehled o va&#353;em t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:285
+msgid "U&#353;et&#345;en&#233; mno&#382;stv&#237; oxidu uhli&#269;it&#233;ho"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:285
+msgid "Emisn&#237; kalkula&#269;ka"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:292
+msgid "Podrobn&#233; v&#253;sledky naleznete na str&#225;nce"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:293
+msgid "v&#253;sledk&#367; jednotliv&#253;ch sout&#283;&#382;&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:303
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:170
+msgid "Moje j&#237;zdy"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:304
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:348
+msgid "Zapsat j&#237;zdy"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:308
+msgid ""
+"J&#237;zdy nebyly zad&#225;ny spr&#225;vn&#283;. Pros&#237;m zkontrolujte "
+"chyby n&#237;&#382;e v tabulce."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:314
+#: htmlcov/apps_dpnk_templates_widgets_leaflet_html.html:194
+msgid "Do pr&#225;ce"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:315
+msgid "Z pr&#225;ce"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:317
+msgid "V&#253;lety"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:333
+msgid "Zadat trasu v map&#283; nebo nahr&#225;t GPX soubor"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:354
+#, python-format
+msgid "Zde si budete od %(date_from)s zad&#225;vat sv&#233; j&#237;zdy."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_html.html:356
+msgid "Zde jste si zad&#225;vali sv&#233; j&#237;zdy."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_view_switcher_html.html:79
+msgid "Kalend&#225;&#345;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_view_switcher_html.html:82
+msgid "Tabulka"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_rides_view_switcher_html.html:86
+msgid "Aplikace"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_admin_members_html.html:144
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:114
+msgid "T&#253;mov&#225; pravidelnost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_admin_members_html.html:147
+msgid "V&#253;sledky &#269;len&#367; t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_admin_members_html.html:159
+msgid "Pozvat nov&#233; &#269;leny"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:152
+msgid "Osobn&#237; pravidelnost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:158
+msgid "Zdolan&#225; vzd&#225;lenost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:172
+msgid "Telefon"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:178
+msgid "&#268;lenstv&#237; v t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:180
+msgid "&#268;lenstv&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:186
+msgid "Typ plaby"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:197
+msgid "P&#345;ijmout do t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:200
+msgid "D&#367;vod odm&#237;tnut&#237;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_member_card_html.html:202
+msgid "Zam&#237;tnout"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_html.html:103
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:117
+msgid "Jm&#233;&amp;shy;no"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_html.html:104
+msgid "E&amp;shy;mail"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_html.html:105
+msgid "&#268;len&amp;shy;stv&#237; v t&#253;&amp;shy;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_html.html:106
+msgid "Pla&amp;shy;tba"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:113
+msgid "V&#253;sledky t&#253;mu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:118
+msgid "Po&amp;shy;&#269;et j&#237;zd"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:119
+msgid ""
+"Po&#269;et zapo&amp;shy;&#269;&#237;&amp;shy;ta&amp;shy;n&#253;ch cest do/z "
+"pr&#225;ce"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:120
+msgid "Pro&amp;shy;cen&amp;shy;to j&#237;zd"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:121
+msgid "U&amp;shy;je&amp;shy;t&#225; vzd&#225;&amp;shy;le&amp;shy;nost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:129
+msgid ""
+"Registrace nebyla dokon&#269;ena, nepo&#269;&#237;t&#225; se do v&#253;"
+"sledk&#367;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_team_members_results_html.html:151
+#, python-format
+msgid ""
+"Do konce sout&#283;&#382;e mus&#237;te urazit alespo&#328; "
+"%(minimum_rides_base)s cest, aby Va&#353;e pravidelnost byla "
+"stoprocentn&#237;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:126
+#, python-format
+msgid ""
+"Podle pravidel sout&#283;&#382;e, nem&#367;&#382;ete zadavat ani zm&#283;nit "
+"j&#237;zdy star&#353;&#237; ne&#382; %(days_active)s dn&#367;."
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:130
+msgid "Den"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:134
+msgid "Sm&#283;r"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:138
+msgid "Dopravn&#237; prost&#345;edek"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:143
+msgid "Doba"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:149
+msgid "Vzd&#225;lenost"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:153
+msgid "Trasa"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_view_trip_html.html:163
+msgid "&#381;&#225;dn&#225; trasa nebyla zad&#225;na"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_registration_working_schedule_html.html:81
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t6\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;strong></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t7\" class=\"stm mis\"><span class=\"txt\">\t\t\tP&#345;i "
+"nestandardn&#237;m pracovn&#237;m rozvrhu vypl&#328;te n&#225;sleduj&#237;"
+"c&#237; tabulku:</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t8\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;/strong></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t9\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t10\" class=\"stm mis\"><span class=\"txt\">\t\t\tZatrhn&#283;te, "
+"kdy budete cestovat do nebo z pr&#225;ce (jak&#253;mkoliv dopravn&#237;m "
+"prost&#345;edkem):  </span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t11\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t12\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t13\" class=\"stm mis\"><span class=\"txt\">\t\t\tRozvrh bude v "
+"pr&#367;b&#283;hu sout&#283;&#382;e mo&#382;n&#233; m&#283;nit, v&#382;dy "
+"v&#353;ak pouze do budoucnosti.</span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t14\" class=\"stm mis\"><span class=\"txt\">\t\t&lt;/p></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t15\" class=\"stm mis\"><span class=\"txt\">\t"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_templatetags_cyklistesobe_html.html:99
+msgid "Obr&#225;zek k podn&#283;tu"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_templatetags_wp_news_html.html:97
+msgid " ve m&#283;st&#283; "
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_widgets_leaflet_html.html:195
+msgid "Dom&#367;"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_widgets_leaflet_html.html:196
+msgid "V&#253;let"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_widgets_leaflet_html.html:201
+#: htmlcov/apps_dpnk_templates_widgets_leaflet_html.html:204
+msgid "Vyprazdnit"
+msgstr ""
+
+#: htmlcov/apps_dpnk_templates_widgets_leaflet_html.html:229
+msgid "Vyberte z p&#345;edchoz&#237;ch tras"
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_dispatch_html.html:148
+msgid "Bal&#237;k obsahuje:"
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_change_tshirt_html.html:92
+msgid ""
+"Jak&#225; velikost bude v kv&#283;tnu ta prav&#225;? Je &#269;as si vybrat."
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_change_tshirt_html.html:95
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t12\" class=\"stm mis\"><span class=\"txt\">&#218;&#269;astn&#237;"
+"k&#367;m zaregistrovan&#253;m do %(deadline)s budeme trika i n&#225;kr&#269;"
+"n&#237;ky hromadn&#283; odes&#237;lat od %(delivery_from)s do "
+"%(delivery_to)s. Jednoho dne pak na Va&#353;i pracovn&#237; adresu zaklepe "
+"bal&#237;k s triky pro v&#353;echny &#269;leny t&#253;mu.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t13\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_change_tshirt_html.html:100
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t17\" class=\"stm mis\"><span class=\"txt\">Zkontrolujte si tedy "
+"pe&#269;liv&#283; doru&#269;ovac&#237; adresu spole&#269;nosti. P&#345;&#237;"
+"padnou chybu nahlaste na e-mail %(emails)s.</span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t18\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_tshirt_delivery_html.html:92
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t8\" class=\"stm mis\"><span class=\"txt\">      Sna&#382;&#237;me "
+"se &#353;et&#345;it &#382;ivotn&#237; prost&#345;ed&#237;, a proto trika "
+"pos&#237;l&#225;me v&#382;dy hromadn&#283;. Nejbli&#382;&#353;&#237; z&#225;"
+"silku, ve kter&#233; bude i va&#353;e triko ode&#353;leme co nejd&#345;&#237;"
+"ve.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t9\" class=\"stm mis\"><span class=\"txt\">   "
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_tshirt_delivery_html.html:96
+#, python-format
+msgid ""
+"Bal&#237;&#269;ek doraz&#237; kolem %(batch_delivery)s na n&#225;sleduj&#237;"
+"c&#237; adresu."
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_tshirt_delivery_html.html:98
+msgid ""
+"Bal&#237;&#269;ek by ka&#382;dou chv&#237;l&#237; m&#283;l dorazit na n&#225;"
+"sleduj&#237;c&#237; adresu."
+msgstr ""
+
+#: htmlcov/apps_t_shirt_delivery_templates_registration_tshirt_delivery_html.html:108
+msgid ""
+"Z&#225;silku m&#367;&#382;ete sledovat pomoc&#237; trackovac&#237;ho &#269;"
+"&#237;sla"
+msgstr ""
+
+#: htmlcov/dpnk_templates_404_html.html:108
+msgid ""
+"Omlouv&#225;me se, ale takov&#225; str&#225;nka zde neexistuje. Pokud si "
+"mysl&#237;te, &#382;e by zde b&#253;t m&#283;la, pros&#237;m kontaktujte &lt;"
+"a href='mailto:kontakt@dopracenakole.cz?subject=Neexistuj&#237;c&#237; "
+"str&#225;nka'>kontakt@dopracenakole.cz&lt;/a>"
+msgstr ""
+
+#: htmlcov/dpnk_templates_base_generic_html.html:383
+msgid ""
+"Bohu&#382;el pou&#382;&#237;v&#225;te &lt;strong>zastaral&#253;&lt;/strong> "
+"prohl&#237;&#382;e&#269; internetu. P&#345;es na&#353;i snahu nemus&#237; "
+"n&#283;kter&#233; &#269;&#225;sti webu dob&#345;e fungovat. Pokud m&#367;"
+"&#382;ete, &lt;a href=\"http://www.whatbrowser.org/intl/cs\">nainstalujte si "
+"nov&#283;j&#353;&#237; prohl&#237;&#382;e&#269;"
+msgstr ""
+
+#: htmlcov/dpnk_templates_base_generic_html.html:403
+msgid "U&#382;ivatel: "
+msgstr ""
+
+#: htmlcov/dpnk_templates_base_generic_html.html:404
+msgid "E-mail: "
+msgstr ""
+
+#: htmlcov/dpnk_templates_base_generic_html.html:405
+msgid "T&#253;m: "
+msgstr ""
+
+#: htmlcov/dpnk_templates_base_generic_html.html:408
+msgid "Odhl&#225;sit"
+msgstr ""
+
+#: htmlcov/dpnk_templates_base_generic_registration_form_html.html:121
+msgid "Organizace"
+msgstr ""
+
+#: htmlcov/dpnk_templates_company_admin_create_invoice_html.html:179
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t33\" class=\"stm mis\"><span class=\"txt\">   Do pr&#225;ce na kole "
+"po&#345;&#225;d&#225; ji&#382; od roku 2010 neziskov&#225; organizace &lt;a "
+"title=\"Auto-Mat\" href=\"http://www.auto-mat.cz/\" target=\"_blank"
+"\">Auto*Mat&lt;/a>, kter&#225; se ji&#382; v&#237;ce ne&#382; 10 let "
+"sna&#382;&#237; o zlep&#353;en&#237; kvality &#382;ivota v na&#353;ich "
+"m&#283;stech.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t34\" class=\"stm mis\"><span class=\"txt\">   Proto&#382;e v&#283;"
+"&#345;&#237;me, &#382;e jedn&#237;m ze z&#225;sadn&#237;ch faktor&#367; "
+"ovli&#328;uj&#237;c&#237;ch kvalitu &#382;ivota ve m&#283;st&#283; je "
+"organizace a pl&#225;nov&#225;n&#237; dopravy, sna&#382;&#237;me se na&#353;"
+"e m&#283;sto a &#382;ivot v n&#283;m m&#283;nit pr&#225;v&#283; skrze tuto "
+"sf&#233;ru.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t35\" class=\"stm mis\"><span class=\"txt\">   &lt;br/></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t36\" class=\"stm mis\"><span class=\"txt\">   &lt;strong>Nab&#237;"
+"z&#237;me v&#353;em firm&#225;m, kter&#233; se zapojuj&#237; do sout&#283;"
+"&#382;e, mo&#382;nost zaplatit benefi&#269;n&#237; startovn&#233;&lt;/"
+"strong>, kter&#253;m podpo&#345;&#237; p&#345;&#237;mo &#269;innost "
+"Auto*Matu.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t37\" class=\"stm mis\"><span class=\"txt\">   Zejm&#233;na t&#237;m "
+"podpo&#345;&#237;te na&#353;i &#269;innost v oblasti &#8220;cyklo-"
+"advokacie&#8221;, kde se sna&#382;&#237;me r&#367;zn&#253;mi zp&#367;soby "
+"prosazovat chytr&#225; koncep&#269;n&#237; opat&#345;en&#237; pro zlep&#353;"
+"en&#237; cyklo-infastruktury a souvisej&#237;c&#237; dopravn&#237; "
+"infrastruktury ve m&#283;st&#283;.</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t38\" class=\"stm mis\"><span class=\"txt\">   &lt;br/></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t39\" class=\"stm mis\"><span class=\"txt\">   &lt;strong>Pokud si "
+"p&#345;ejete podpo&#345;it Auto*Mat benefi&#269;n&#237;m startovn&#253;m, "
+"zvolte mo&#382;nost n&#237;&#382;e.&lt;/strong></span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t40\" class=\"stm mis\"><span class=\"txt\">   "
+msgstr ""
+
+#: htmlcov/dpnk_templates_company_admin_invoices_html.html:113
+msgid ""
+"Upozorn&#283;n&#237;: B&#283;hem odesl&#237;l&#225;n&#237; platby je "
+"pot&#345;eba zadat variabiln&#237; symbol a &#269;&#237;slo &#250;&#269;tu "
+"p&#345;esn&#283; podle faktury. Pokud m&#225;te faktur v&#237;ce, vytvo&#345;"
+"te pro ka&#382;dou z nich samostatn&#253; p&#345;evod."
+msgstr ""
+
+#: htmlcov/dpnk_templates_company_admin_structure_html.html:171
+msgid "&#382;&#225;dn&#225; platba"
+msgstr ""
+
+#: htmlcov/dpnk_templates_company_admin_structure_html.html:174
+msgid "neschv&#225;len&#233; &#269;lenstv&#237; v t&#253;mu"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_change_team_html.html:135
+msgid ""
+"Zadejte pros&#237;m, v&#160;jak&#233; spole&#269;nosti V&#225;&#353; t&#253;"
+"m pracuje."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_change_track_html.html:104
+#, python-format
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t12\" class=\"stm mis\"><span class=\"txt\">Na t&#233;to str&#225;"
+"nce m&#367;&#382;ete bu&#271; zadat trasu, nebo jen vzd&#225;lenost va&#353;"
+"&#237; denn&#237; trasy do pr&#225;ce. </span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t13\" class=\"stm mis\"><span class=\"txt\">Zadan&#225; vzd&#225;"
+"lenost nebo d&#233;lka trasy se potom pou&#382;ije jako p&#345;edvypln&#283;"
+"n&#225; vzd&#225;lenost pro jednotliv&#233; j&#237;zdy.</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t14\" class=\"stm mis\"><span class=\"txt\">&lt;br/></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t15\" class=\"stm mis\"><span class=\"txt\">Pokud budete zad&#225;"
+"vat trasy pro jednotliv&#233; dny, tak se tato trasa pou&#382;ije jako "
+"z&#225;klad, kter&#253; p&#345;&#237;padn&#283; m&#367;&#382;ete m&#283;nit."
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t16\" class=\"stm mis\"><span class=\"txt\">Jednotliv&#233; j&#237;"
+"zdy m&#367;&#382;ete zad&#225;vat tak&#233; pomoc&#237; &lt;a href="
+"\"%(application_url)s\">mobiln&#237;ch aplikac&#237;&lt;/a>.</span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t17\" class=\"pln\"><span class=\"txt\">"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:182
+msgid "Zde m&#367;&#382;ete nal&#233;zt vouchery"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:215
+msgid "P&#345;&#237;sp&#283;vky z kreativn&#237;ch sout&#283;&#382;&#237;"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:217
+msgid "Nahr&#225;t vlastn&#237; p&#345;&#237;sp&#283;vek"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:220
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:226
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:227
+msgid "V&#353;echny p&#345;&#237;sp&#283;vky z t&#233;to sout&#283;&#382;e"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_competition_profile_html.html:221
+msgid "P&#345;&#237;sp&#283;vek do kreativn&#237; sout&#283;&#382;e"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_help_html.html:136
+msgid "Zm&#283;nit vychoz&#237; trasu"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_help_html.html:137
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t13\" class=\"stm mis\"><span class=\"txt\">  V&#253;choz&#237; "
+"trasu m&#367;&#382;ete zm&#283;nit kliknut&#237;m na \"M&#367;j profil\" a "
+"pot&#233; \"Typick&#225; trasa\". P&#345;&#237;padn&#283; kliknut&#237;m na "
+"odkaz zde:</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t14\" class=\"stm mis\"><span class=\"txt\">  "
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_help_html.html:143
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t19\" class=\"stm mis\"><span class=\"txt\">  &lt;ul></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t20\" class=\"stm mis\"><span class=\"txt\">   &lt;li>&lt;"
+"strong>Zad&#225;v&#225;n&#237; trasy zah&#225;j&#237;te kliknut&#237;m na "
+"tla&#269;&#237;tko &lt;span style=\"display: inline-block;\" class=\"leaflet-"
+"draw-toolbar leaflet-bar leaflet-draw-toolbar-top\">&lt;a class=\"leaflet-"
+"draw-draw-polyline\">&lt;/a>&lt;/span>.&lt;/strong>&lt;/li></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t21\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Dal&#353;"
+"&#237; body zad&#225;v&#225;te kliknut&#237;m do mapy, &lt;strong>c&#237;"
+"lov&#253; bod zad&#225;te dvojklikem na koncov&#253; bod&lt;/strong> nebo "
+"kliknut&#237; na tla&#269;&#237;tko \"Finish\".&lt;/li></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t22\" class=\"stm mis\"><span class=\"txt\">   &lt;video width="
+"\"640\" height=\"480\" controls></span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t23\" class=\"stm mis\"><span class=\"txt\">    &lt;source src="
+"\"http://thobbs.cz/create.webm\" type=\"video/webm\"></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t24\" class=\"stm mis\"><span class=\"txt\">   &lt;/video></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t25\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Zm&#283;nu "
+"trasy provedete po p&#345;epnut&#237; do re&#382;imu &#250;prav (&lt;span "
+"style=\"display: inline-block;\" class=\"leaflet-draw-toolbar leaflet-bar"
+"\">&lt;a class=\"leaflet-draw-edit-edit\">&lt;/a>&lt;/span>) a kliknut&#237;"
+"m na trasu.&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t26\" class=\"stm mis\"><span class=\"txt\">   &lt;video width="
+"\"640\" height=\"480\" controls></span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t27\" class=\"stm mis\"><span class=\"txt\">    &lt;source src="
+"\"http://thobbs.cz/edit.webm\" type=\"video/webm\"></span><span class=\"strut"
+"\">&nbsp;</span></p>\n"
+"<p id=\"t28\" class=\"stm mis\"><span class=\"txt\">   &lt;/video></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t29\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Trasa se "
+"d&#225; taky smazat.&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t30\" class=\"stm mis\"><span class=\"txt\">   &lt;video width="
+"\"640\" height=\"480\" controls></span><span class=\"strut\">&nbsp;</span></"
+"p>\n"
+"<p id=\"t31\" class=\"stm mis\"><span class=\"txt\">    &lt;source src="
+"\"http://thobbs.cz/delete.webm\" type=\"video/webm\"></span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t32\" class=\"stm mis\"><span class=\"txt\">   &lt;/video></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t33\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Trasu sta&#269;"
+"&#237; zadat tak, &#382;e bude z&#345;ejm&#233;, kter&#253;mi ulicemi vede.</"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t34\" class=\"stm mis\"><span class=\"txt\">   (Zad&#225;n&#237; "
+"p&#345;esn&#283;j&#353;&#237;ho pr&#367;b&#283;hu n&#225;m v&#353;ak m&#367;"
+"&#382;e pomoci l&#233;pe zjistit, jak se lid&#233; na kole "
+"pohybuj&#237;.)&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t35\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Trasu bude "
+"mo&#382;n&#233; zm&#283;nit nebo up&#345;esnit i pozd&#283;ji v pr&#367;"
+"b&#283;hu sout&#283;&#382;e.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t36\" class=\"stm mis\"><span class=\"txt\">   (Trasy za "
+"jednotliv&#233; dny v&#353;ak jen 7 dn&#237; nazp&#283;t.)&lt;/li></"
+"span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t37\" class=\"stm mis\"><span class=\"txt\">   &lt;li>Polohu za&#269;"
+"&#225;tku a konce trasy sta&#269;&#237; zad&#225;vat se 100m p&#345;"
+"esnost&#237;.&lt;/li></span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t38\" class=\"stm mis\"><span class=\"txt\">  &lt;/ul></span><span "
+"class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t39\" class=\"stm mis\"><span class=\"txt\">  Trasa slou&#382;&#237; "
+"k v&#253;po&#269;tu vzd&#225;lenosti a pom&#367;&#382;e n&#225;m l&#233;pe "
+"ur&#269;it pot&#345;eby lid&#237; pohybuj&#237;c&#237;ch se ve m&#283;"
+"st&#283; na kole.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t40\" class=\"stm mis\"><span class=\"txt\">  &lt;br/>Trasy v&#353;"
+"ech &#250;&#269;astn&#237;k&#367; budou v anonymizovan&#233; podob&#283; "
+"zobrazen&#233; na &lt;a href=\"https://mapa.prahounakole.cz/?zoom=13&amp;"
+"lat=50.08741&amp;lon=14.4211&amp;layers=_Wgt\">map&#283; Prahou na kole&lt;/"
+"a>.</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t41\" class=\"stm mis\"><span class=\"txt\">&nbsp;</span><span class="
+"\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t42\" class=\"stm mis\"><span class=\"txt\">  "
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_help_html.html:171
+msgid ""
+"</span><span class=\"strut\">&nbsp;</span></p>\n"
+"<p id=\"t47\" class=\"stm mis\"><span class=\"txt\">  Chcete mluvit s &#382;"
+"iv&#253;m &#269;lov&#283;kem? &lt;a href=\"https://www.dopracenakole.cz/"
+"kontakt\">volejte na helpdesk&lt;/a>.</span><span class=\"strut\">&nbsp;</"
+"span></p>\n"
+"<p id=\"t48\" class=\"stm mis\"><span class=\"txt\">  "
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_logged_out_html.html:89
+msgid ""
+"Nale&#353;t&#283;te si ped&#225;ly, uvid&#237;me se zase z&#237;tra na "
+"startovac&#237; &#269;&#225;&#345;e."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:211
+msgid "Je&#353;t&#283; vyberte zp&#367;sob platby a m&#367;&#382;ete vyrazit."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:272
+msgid "&#218;&#269;astnick&#253; poplatek plat&#237; zam&#283;stnavatel"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:273
+msgid ""
+"&#218;&#269;astnick&#253; poplatek za m&#283; plat&#237; zam&#283;stnavatel, "
+"m&#225;m to s n&#237;m nebo jeho koordin&#225;torem domluven&#233;."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:275
+msgid "Zam&#283;stnavatel: "
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:277
+msgid "Firmn&#237; koordin&#225;tor: "
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:282
+msgid ""
+"V&#225;&#353; zam&#283;stnavatel je&#353;t&#283; nem&#225; zvolen&#233;ho "
+"firemn&#237;ho koordin&#225;tora nebo neumo&#382;&#328;uje platbu za "
+"zam&#283;stnance. Pokud chcete zvolit tento typ platby, je pot&#345;eba, aby "
+"byla platba &#250;&#269;astnick&#233;ho poplatku fakturou dohodnut&#225; s "
+"va&#353;&#237;m zam&#283;stnavatelem."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:285
+msgid "Chci se s&#225;m st&#225;t koordin&#225;torem m&#233; organizace."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:289
+msgid "Slevov&#253; voucher"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:290
+msgid ""
+"Pokud jste obdr&#382;eli voucher, v n&#225;sleduj&#237;c&#237;m kroku m&#367;"
+"&#382;ete uplatnit slevu, nebo n&#225;rok na sout&#283;&#382; zdarma."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:293
+msgid "Vstup do Klubu p&#345;&#225;tel"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:298
+msgid "Platba &#250;&#269;astnick&#233;ho poplatku"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:302
+msgid ""
+"Platbou benefi&#269;n&#237;ho startovn&#233;ho podpo&#345;&#237;te Auto*Mat "
+"ve zlep&#353;ov&#225;n&#237; dopravn&#237;ch n&#225;vyk&#367; obyvatel "
+"m&#283;st, v roz&#353;&#237;&#345;en&#237; kampan&#283; Do pr&#225;ce na "
+"kole do nov&#253;ch lokalit a ve zlep&#353;ov&#225;n&#237; podm&#237;nek pro "
+"m&#283;stsk&#233; m&#283;stsk&#233; cyklisty."
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:306
+msgid "Sout&#283;&#382;&#237;c&#237;:"
+msgstr ""
+
+#: htmlcov/dpnk_templates_registration_payment_type_html.html:307
+msgid "&#218;&#269;astnick&#253; poplatek:"
+msgstr ""
+
+#: project/settings/base.py:99
+msgid "Do školy na kole - czech"
+msgstr ""
+
+#: project/settings/base.py:100
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_email.py:24
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_email.py:24
+msgid "Czech"
+msgstr ""
+
+#: project/settings/base.py:101
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_email.py:23
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_email.py:23
+msgid "English"
+msgstr ""
+
+#: project/settings/base.py:422
+msgid "cyklomapa"
+msgstr ""
+
+#: project/settings/base.py:426
+msgid "Všeobecná mapa"
+msgstr ""
+
+#: project/settings/base.py:625
+msgid "Základní"
+msgstr ""
+
+#: project/settings/base.py:625
+msgid "Pro firmy"
+msgstr ""
+
+#: registration-templates/registration/activation_complete.html:4
+msgid "Účet aktivován"
+msgstr ""
+
+#: registration-templates/registration/activation_complete.html:8
+msgid ""
+"\n"
+"    Malý krok pro člověka, velká jízda pro cyklistu, běžce, koloběžce či "
+"chodce právě začíná.\n"
+"    Vítejte ve svém soutěžním profilu!\n"
+"    "
+msgstr ""
+
+#: registration-templates/registration/activation_complete.html:13
+msgid ""
+"\n"
+"    A teď alou dokončit registraci. Tedy až si vychutnáte sklenku "
+"šampaňského na oslavu podpory udržitelného rozvoje svého města.\n"
+"    "
+msgstr ""
+
+#: registration-templates/registration/activation_email_subject.txt:1
+msgid "Potvrzení e-mailové adresy"
+msgstr ""
+
+#: registration-templates/registration/registration_complete.html:4
+msgid "Pozvánka odeslána"
+msgstr ""
+
+#: registration-templates/registration/registration_complete.html:7
+msgid ""
+"Pozvánka k dokončení registrace odeslána. Prosím, zkontrolujte svůj e-mail. "
+"Pokud jste ji nenašli, radši prozkoumejte i složku hromadné korespondence či "
+"spamu."
+msgstr ""
+
+#: registration-templates/registration/resend_activation_complete.html:4
+msgid "Aktivační e-mail odeslán"
+msgstr ""
+
+#: registration-templates/registration/resend_activation_complete.html:8
+#, python-format
+msgid ""
+"\n"
+"  E-mail s aktivačními instrukcemi byl odeslán na %(email)s.\n"
+"  "
+msgstr ""
+
+#: registration-templates/registration/resend_activation_form.html:5
+msgid "Znovu poslat aktivační e-mail"
+msgstr ""
+
+#: registration-templates/registration/resend_activation_form.html:9
+msgid ""
+"\n"
+"Pro znovuodeslání aktivačního e-mailu zadejte adresu.\n"
+msgstr ""
+
+#: registration-templates/registration/resend_activation_form.html:20
+msgid "Submit"
+msgstr ""
+
+#: src/django-adminfilters/src/adminfilters/filters.py:63
+#: src/django-adminfilters/src/adminfilters/multiselect.py:42
+msgid "All"
+msgstr ""
+
+#: src/django-adminfilters/src/adminfilters/filters.py:69
+#: src/django-modeltranslation/modeltranslation/widgets.py:25
+msgid "None"
+msgstr ""
+
+#: src/django-adminfilters/src/adminfilters/templates/adminfilters/combobox.html:2
+#: src/django-adminfilters/src/adminfilters/templates/adminfilters/fieldcombobox.html:2
+#: src/django-adminfilters/src/adminfilters/templates/adminfilters/fieldradio.html:2
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: src/django-adminfilters/src/adminfilters/templates/adminfilters/fieldcheckbox.html:2
+#, python-format
+msgid " By %(filter_title)s"
+msgstr ""
+
+#: src/django-advanced-filters/tests/customers/models.py:17
+msgid "email address"
+msgstr ""
+
+#: src/django-advanced-filters/tests/customers/models.py:18
+msgid "first name"
+msgstr ""
+
+#: src/django-advanced-filters/tests/customers/models.py:19
+msgid "last name"
+msgstr ""
+
+#: src/django-advanced-filters/tests/customers/models.py:21
+msgid "active"
+msgstr ""
+
+#: src/django-advanced-filters/tests/customers/models.py:22
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: src/django-advanced-filters/tests/customers/models.py:25
+msgid "date joined"
+msgstr ""
+
+#: src/django-braces/tests/views.py:225
+msgid "Test Headline"
+msgstr ""
+
+#: src/django-braces/tests/views.py:313
+msgid "Invalid"
+msgstr ""
+
+#: src/django-braces/tests/views.py:314
+msgid "Valid"
+msgstr ""
+
+#: src/django-likes/likes/templates/likes/inclusion_tags/likes.html:13
+msgid "I Like"
+msgstr ""
+
+#: src/django-likes/likes/templates/likes/inclusion_tags/likes.html:15
+msgid "Likes"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/models.py:9
+#: src/django-modeltranslation/modeltranslation/tests/models.py:32
+#: src/django-modeltranslation/modeltranslation/tests/models.py:40
+#: src/django-modeltranslation/modeltranslation/tests/models.py:49
+#: src/django-modeltranslation/modeltranslation/tests/models.py:58
+#: src/django-modeltranslation/modeltranslation/tests/models.py:62
+#: src/django-modeltranslation/modeltranslation/tests/models.py:79
+#: src/django-modeltranslation/modeltranslation/tests/models.py:268
+#: src/django-modeltranslation/modeltranslation/tests/models.py:293
+#: src/django-modeltranslation/modeltranslation/tests/models.py:311
+#: src/django-modeltranslation/modeltranslation/tests/models.py:327
+#: src/django-modeltranslation/modeltranslation/tests/models.py:333
+#: src/django-modeltranslation/modeltranslation/tests/models.py:345
+#: src/django-modeltranslation/modeltranslation/tests/models.py:353
+msgid "title"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/models.py:158
+#: src/django-modeltranslation/modeltranslation/tests/models.py:176
+msgid "title a"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/models.py:162
+#: src/django-modeltranslation/modeltranslation/tests/models.py:187
+msgid "title b"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/models.py:166
+msgid "title c"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/models.py:170
+msgid "title d"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/models.py:269
+msgid "visits"
+msgstr ""
+
+#: src/django-modeltranslation/modeltranslation/tests/translation.py:44
+msgid "Sorry, translation is not available."
+msgstr ""
+
+#: src/django-stdnumfield/stdnumfield/validators.py:19
+#, python-format
+msgid "Value does not match with any of the formats: \"%(format_list)s\""
+msgstr ""
+
+#: src/django-wysiwyg-redactor/redactor/views.py:43
+msgid ""
+"ImproperlyConfigured: Neither Pillow nor PIL could be imported: No module "
+"named 'Image'"
+msgstr ""
+
+#: src/django-wysiwyg-redactor/redactor/views.py:55
+msgid "Invalid file."
+msgstr ""
+
+#: src/svg2rlg/svg2rlg_render_test.py:65
+#, python-format
+msgid "Message: %s"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/actions.py:26
+#: third_party/smmapdfs/smmapdfs/actions.py:26
+msgid "Make PDF Sandwich"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/actions.py:38
+#: third_party/smmapdfs/smmapdfs/actions.py:38
+msgid "Make and send PDF Sandwich"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/actions.py:52
+#: third_party/smmapdfs/smmapdfs/actions.py:52
+msgid "Send PDF Sandwich"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_abc.py:18
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_abc.py:18
+msgid "PDF sandwich template/type"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_abc.py:25
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_abc.py:25
+msgid "pdfsandwich PDF"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_abc.py:32
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_abc.py:32
+msgid "Sent time"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_abc.py:35
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_abc.py:35
+msgid "Status"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_field_abc.py:44
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_field_abc.py:44
+msgid "field"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_field_abc.py:47
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_field_abc.py:47
+msgid "Font size"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_field_abc.py:52
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_field_abc.py:52
+msgid "X (mm)"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_field_abc.py:53
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_field_abc.py:53
+msgid "Y (mm)"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/model_abcs/pdfsandwich_field_abc.py:55
+#: third_party/smmapdfs/smmapdfs/model_abcs/pdfsandwich_field_abc.py:55
+msgid "alignment"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_email.py:25
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_email.py:25
+msgid "Škola"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_email.py:43
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_email.py:43
+msgid "Language"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_email.py:51
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_email.py:51
+msgid "Subject"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_email.py:55
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_email.py:55
+msgid "Background template"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_font.py:12
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_font.py:12
+msgid "Font name"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_font.py:15
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_font.py:15
+msgid "Font"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_type.py:27
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_type.py:27
+msgid "Template name"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_type.py:30
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_type.py:30
+msgid "PDF template"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_type.py:36
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_type.py:36
+msgid "Height (mm)"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_type.py:37
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_type.py:37
+msgid "Width (mm)"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_type.py:51
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_type.py:51
+#, python-format
+msgid ""
+"\n"
+"Corrupt font file for font '%s'. Font must be a valid TTF file.\n"
+msgstr ""
+
+#: third_party/smmapdfs/build/lib/smmapdfs/models/pdfsandwich_type.py:66
+#: third_party/smmapdfs/smmapdfs/models/pdfsandwich_type.py:66
+msgid ""
+"\n"
+"No fields rendered.\n"
+msgstr ""
+
+#~ msgid "Avatar"
+#~ msgstr "Profilový obrázek"
+
+#~ msgid "avatar"
+#~ msgstr "profilový obrázek"
+
+#~ msgid ""
+#~ "%(ext)s is an invalid file extension. Authorized extensions are : "
+#~ "%(valid_exts_list)s"
+#~ msgstr ""
+#~ "Přípona souboru %(ext)s není povolena. Povolené přípony jsou: "
+#~ "%(valid_exts_list)s"
+
+#~ msgid ""
+#~ "Your file is too big (%(size)s), the maximum allowed size is "
+#~ "%(max_valid_size)s"
+#~ msgstr ""
+#~ "Soubor je příliš velký (%(size)s), maximální povolená velikost souboru je "
+#~ "%(max_valid_size)s"
+
+#~ msgid ""
+#~ "You already have %(nb_avatars)d avatars, and the maximum allowed is "
+#~ "%(nb_max_avatars)d."
+#~ msgstr ""
+#~ "Již máte %(nb_avatars)d nahraných profilových obrázků, povolené maximum "
+#~ "je %(nb_max_avatars)d."
+
+#~ msgid "Choices"
+#~ msgstr "Volby"
+
+#~ msgid "user"
+#~ msgstr "uživatel"
+
+#~ msgid "primary"
+#~ msgstr "primární"
+
+#~ msgid "uploaded at"
+#~ msgstr "nahráno"
+
+#~ msgid "avatars"
+#~ msgstr "profilové obrázky"
+
+#~ msgid "You haven't uploaded an avatar yet. Please upload one now."
+#~ msgstr "Ještě jste nenahráli žádný avatar. Nyní ho můžete nahrát."
+
+#~ msgid "Choose new Default"
+#~ msgstr "Zvolit nový výchozí obrázek"
+
+#~ msgid "Please select the avatars that you would like to delete."
+#~ msgstr "Prosím vyberte profilový obrázek, který chcete smazat."
+
+#~ msgid ""
+#~ "You have no avatars to delete. Please <a href=\"%(avatar_change_url)s"
+#~ "\">upload one</a> now."
+#~ msgstr ""
+#~ "Nemáte žádný profilový obrázek, který by bylo možné smazat. Prosím <a "
+#~ "href=\"%(avatar_change_url)s\">nahrajte</a> avatar."
+
+#~ msgid "Delete These"
+#~ msgstr "Smazat tyto"
+
+#~ msgid ""
+#~ "%(avatar_creator)s has updated their avatar %(avatar)s.\n"
+#~ "\n"
+#~ "http://%(current_site)s%(avatar_url)s\n"
+#~ msgstr ""
+#~ "%(avatar_creator)s změnil svůj profilový obrázek %(avatar)s.\n"
+#~ "\n"
+#~ "http://%(current_site)s%(avatar_url)s\n"
+
+#~ msgid ""
+#~ "<a href=\"%(user_url)s\">%(avatar_creator)s</a> has updated their avatar "
+#~ "<a href=\"%(avatar_url)s\">%(avatar)s</a>."
+#~ msgstr ""
+#~ "<a href=\"%(user_url)s\">%(avatar_creator)s</a> změnili svůj profilový "
+#~ "obrázek <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+
+#~ msgid ""
+#~ "Your avatar has been updated.  %(avatar)s\n"
+#~ "\n"
+#~ "http://%(current_site)s%(avatar_url)s\n"
+#~ msgstr ""
+#~ "Váš profilový obrázek byl změněn.  %(avatar)s\n"
+#~ "\n"
+#~ "http://%(current_site)s%(avatar_url)s\n"
+
+#~ msgid ""
+#~ "You have updated your avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+#~ msgstr ""
+#~ "Právě jste změnili Váš avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+
+#~ msgid "Default Avatar"
+#~ msgstr "Výchozí profilový obrázek"
+
+#~ msgid "Successfully uploaded a new avatar."
+#~ msgstr "Nový profilový obrázek byl úspěšně nahrán."
+
+#~ msgid "Successfully updated your avatar."
+#~ msgstr "Nový profilový obrázek byl úspěšně změněn."
+
+#~ msgid "Successfully deleted the requested avatars."
+#~ msgstr "Vybrané profilový obrázeky byly úspěšně změněny."

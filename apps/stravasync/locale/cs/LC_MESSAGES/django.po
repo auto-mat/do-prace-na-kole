@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-06 13:55+0200\n"
+"POT-Creation-Date: 2020-12-07 13:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: stravasync/models.py:15
+#: apps/stravasync/models.py:15
 msgid "Účet Strava"
 msgstr ""
 
-#: stravasync/models.py:16
+#: apps/stravasync/models.py:16
 msgid "Účty Strava"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:9
+#: apps/stravasync/templates/stravasync/about.html:9
 msgid "Jste propojeni s účtem "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:13
+#: apps/stravasync/templates/stravasync/about.html:13
 #, python-format
 msgid ""
 "\n"
@@ -40,33 +40,42 @@ msgid ""
 "        "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:19
+#: apps/stravasync/templates/stravasync/about.html:19
 #, python-format
 msgid ""
 "\n"
 "        Ve Stravě máte  %(synced_activities)s aktivit ale žadné nejsou "
-"označené s hashtagem. Přidejte hashtagy %(hashtag_to)s nebo %(hashtag_from)s "
-"do názvu aktivity aby se počítaly jako jízdy do práce a z práce.\n"
+"označené hashtagem. Přidejte hashtagy %(hashtag_to)s nebo %(hashtag_from)s "
+"do názvu aktivit aby se počítaly jako jízdy do práce a z práce.\n"
 "        "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:24
+#: apps/stravasync/templates/stravasync/about.html:22
+msgid ""
+"\n"
+"    Pokud jste při připojení se Stravou nevybral/a \"Synchronizovat i "
+"soukromé jízdy a zóny\", soukromé jízdy synchronizované nebudou. Pokud "
+"chcete změnit tohle nastavení, odpojte a připojte znovu.\n"
+"    "
+msgstr ""
+
+#: apps/stravasync/templates/stravasync/about.html:27
 msgid "Našli jsme následující aktivity:"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:32
+#: apps/stravasync/templates/stravasync/about.html:35
 msgid "Synchronizace selhala"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:35
+#: apps/stravasync/templates/stravasync/about.html:38
 msgid "Poslední synchronizace proběhla "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:37
+#: apps/stravasync/templates/stravasync/about.html:40
 msgid "Nastala chyba, synchronizace neproběhla."
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:43
+#: apps/stravasync/templates/stravasync/about.html:46
 msgid ""
 "\n"
 "    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
@@ -74,23 +83,23 @@ msgid ""
 "    "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:51
+#: apps/stravasync/templates/stravasync/about.html:54
 msgid "Synchronizovat"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:57
+#: apps/stravasync/templates/stravasync/about.html:60
 msgid "Odpojit"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:60
+#: apps/stravasync/templates/stravasync/about.html:63
 msgid "Ještě nejste propojeni se Stravou "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:63
+#: apps/stravasync/templates/stravasync/about.html:66
 msgid "Synchronizovat i soukromé jízdy a zóny"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:64
+#: apps/stravasync/templates/stravasync/about.html:67
 msgid ""
 "\n"
 "        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href=\"https://"
@@ -100,15 +109,15 @@ msgid ""
 "        "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:68
+#: apps/stravasync/templates/stravasync/about.html:71
 msgid "Propojit se Stravou"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:72
+#: apps/stravasync/templates/stravasync/about.html:75
 msgid "Jak to funguje"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:73
+#: apps/stravasync/templates/stravasync/about.html:76
 #, python-format
 msgid ""
 "\n"
@@ -117,14 +126,14 @@ msgid ""
 "synchronizovat.\n"
 msgstr ""
 
-#: stravasync/views.py:27
+#: apps/stravasync/views.py:26
 msgid "Propojení se Stravou"
 msgstr ""
 
-#: stravasync/views.py:51
+#: apps/stravasync/views.py:50
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: stravasync/views.py:53
+#: apps/stravasync/views.py:52
 msgid "API limit vyčerpan."
 msgstr ""
