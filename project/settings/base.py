@@ -702,7 +702,9 @@ DBBACKUP_STORAGE_OPTIONS = {
 
 FIOBANK_PAYMENTS_ORDER_MODEL = 'dpnk.Invoice'
 
-HELPDESK_IFRAME_URL = "https://klub.auto-mat.cz/desk/kb_iframe/dpnk/"
+HELPDESK_IFRAME_URL = os.environ.get('HELPDESK_IFRAME_URL', "https://klub.auto-mat.cz/desk/kb_iframe/dpnk/")
+if HELPDESK_IFRAME_URL in ("None","False"):
+    HELPDESK_IFRAME_URL = None
 HELPDESK_QUEUE = 3
 
 DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}
