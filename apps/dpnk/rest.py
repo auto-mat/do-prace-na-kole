@@ -43,6 +43,7 @@ from .models import (
     Company,
     Competition,
     CompetitionResult,
+    Phase,
     Subsidiary,
     Team,
     Trip,
@@ -661,7 +662,19 @@ class CampaignTypeSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class PhaseSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Phase
+        fields = (
+            'phase_type',
+            'date_from',
+            'date_to',
+        )
+
+
 class CampaignSerializer(serializers.HyperlinkedModelSerializer):
+    phase_set = PhaseSerializer(many=True, read_only=True)
+
     class Meta:
         model = Campaign
         fields = (
@@ -670,6 +683,7 @@ class CampaignSerializer(serializers.HyperlinkedModelSerializer):
             'days_active',
             'year',
             'campaign_type',
+            'phase_set',
         )
 
 
