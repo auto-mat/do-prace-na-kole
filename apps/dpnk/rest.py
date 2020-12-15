@@ -69,6 +69,14 @@ class RequestSpecificField(serializers.Field):
         return self.method(value, self.context['request'])
 
 
+class UserAttendanceMixin():
+    def ua(self):
+        ua = self.request.user_attendance
+        if not ua:
+            ua = get_or_create_userattendance(self.request, self.request.subdomain)
+        return ua
+
+
 class InactiveDayGPX(serializers.ValidationError):
     status_code = 410
     default_code = 'invalid_date'
@@ -207,7 +215,7 @@ class TripUpdateSerializer(TripSerializer):
         )
 
 
-class TripSet(viewsets.ModelViewSet):
+class TripSet(UserAttendanceMixin, viewsets.ModelViewSet):
     """
     Documentation: https://www.dopracenakole.cz/rest-docs/
 
@@ -223,7 +231,7 @@ class TripSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Trip.objects.filter(
-            user_attendance=self.request.user_attendance,
+            user_attendance=self.ua(),
         )
 
     def get_serializer_class(self):
@@ -234,7 +242,7 @@ class TripSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class TripRangeSet(viewsets.ModelViewSet):
+class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
     """
     Documentation: https://www.dopracenakole.cz/rest-docs/
 
@@ -247,7 +255,7 @@ class TripRangeSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Trip.objects.filter(
-            user_attendance=self.request.user_attendance,
+            user_attendance=self.ua(),
         )
         start_date = self.request.query_params.get('start', None)
         end_date = self.request.query_params.get('end', None)
@@ -276,9 +284,9 @@ class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
         return reverse("result-list", kwargs={"competition_slug": obj.slug}, request=self.context['request'])
 
 
-class CompetitionSet(viewsets.ReadOnlyModelViewSet):
+class CompetitionSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return self.request.user_attendance.get_competitions()
+        return self.ua().get_competitions()
     serializer_class = CompetitionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -400,7 +408,7 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         help_text='Remaining number of possible trips',
     )
     sesame_token = RequestSpecificField(
-        lambda ua, req: ua.userprofile.get_sesame_token() if ua == req.user_attendance else None,
+        lambda ua, req: ua.userprofile.get_sesame_token() if ua.userprofile.user.pk == req.user.pk else None,
     )
     registration_complete = RequestSpecificField(
         lambda ua, req: ua.entered_competition(),
@@ -434,11 +442,11 @@ class AllUserAttendanceSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class MyUserAttendanceSet(viewsets.ReadOnlyModelViewSet):
+class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         denorm.flush()
         return UserAttendance.objects.filter(
-            id=self.request.user_attendance.id,
+            id=self.ua().id,
         ).select_related('userprofile__user')
     serializer_class = UserAttendanceSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -696,13 +704,13 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class NotificationSet(viewsets.ReadOnlyModelViewSet):
+class NotificationSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user_content_type = ContentType.objects.get(app_label="auth", model="user")
         user_attendance_content_type = ContentType.objects.get(app_label="dpnk", model="userattendance")
         return self.request.user.notifications.filter(
             Q(actor_content_type=user_content_type.id, actor_object_id=self.request.user.id) |
-            Q(actor_content_type=user_attendance_content_type.id, actor_object_id=self.request.user_attendance.id),
+            Q(actor_content_type=user_attendance_content_type.id, actor_object_id=self.ua().id),
         )
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
