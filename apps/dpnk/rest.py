@@ -123,7 +123,7 @@ class TripSerializer(serializers.ModelSerializer):
         help_text='Any string identifiing the source application of the track',
     )
     sourceId = serializers.CharField(
-        required=True,
+        required=False,
         source='source_id',
         help_text='Any string identifiing the id in the source application',
     )
