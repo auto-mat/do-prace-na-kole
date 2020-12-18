@@ -624,6 +624,8 @@ class CommuteModeSerializer(serializers.HyperlinkedModelSerializer):
             'eco',
             'distance_important',
             'duration_important',
+            'minimum_distance',
+            'minimum_duration',
             'description_en',
             'description_cs',
             'icon',
