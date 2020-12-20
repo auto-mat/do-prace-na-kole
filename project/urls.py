@@ -12,6 +12,7 @@ from dpnk.rest import router
 import notifications.urls
 
 from rest_framework.documentation import include_docs_urls
+import rest_framework.authtoken.views
 
 admin.autodiscover()
 
@@ -40,6 +41,7 @@ urlpatterns = [
     url(r'^likes/', include('likes.urls')),
     url(r'^avatar/', include('avatar.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api-token-auth/', rest_framework.authtoken.views.obtain_auth_token),
     url(r'^rest-docs/', include_docs_urls(title='Do práce na kole API')),
     url(r'^', include("dpnk.urls")),
     url(r'^coupons/', include("coupons.urls")),
