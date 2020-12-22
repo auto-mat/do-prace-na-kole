@@ -401,6 +401,13 @@ class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class MySubsidiarySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Subsidiary.objects.filter(pk=self.ua().team.subsidiary.pk)
+    serializer_class = SubsidiarySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     distance = serializers.FloatField(
         source='trip_length_total',
@@ -871,7 +878,7 @@ router.register(r'campaign_type', CampaignTypeSet, basename="campaigntype")
 router.registry.extend(organization_router.registry)
 router.register(r'competition', CompetitionSet, basename="competition")
 router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
-#router.register(r'my-subsidiary', MySubsidiarySet, basename="my-subsidiary")
+router.register(r'my_subsidiary', MySubsidiarySet, basename="my-subsidiary")
 router.register(r'company', CompanySet, basename="company")
 #router.register(r'my-company', MyCompanySet, basename="my-company")
 router.register(r'notification', NotificationSet, basename="notification")
