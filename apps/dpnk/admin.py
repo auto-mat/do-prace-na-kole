@@ -249,6 +249,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
         'address_city',
         'address_psc',
         'id',
+        'icon',
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
     list_filter = [
@@ -312,6 +313,7 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         'address_psc',
         'user_count',
         'team_count',
+        'icon',
     )
     list_editable = (
         'address_psc',
