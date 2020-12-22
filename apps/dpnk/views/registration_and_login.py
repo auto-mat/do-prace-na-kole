@@ -25,7 +25,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import TemplateView
+from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView, UpdateView
 
 from registration.backends.default.views import RegistrationView as SimpleRegistrationView
@@ -765,3 +765,25 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
                     messages.add_message(self.request, messages.SUCCESS, _("Odeslána pozvánka na e-mail %s") % email, fail_silently=True)
 
         return super().form_valid(form)
+
+
+class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
+    template_name = "registration/applications.html"
+    title = _("Aplikace")
+    registration_phase = "application"
+
+
+class OpenApplicationWithRestTokenView(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        from rest_framework.authtoken.models import Token
+        try:
+            app_id = int(kwargs["app_id"])
+        except ValueError:
+            return "./"
+        rough_url = settings.DPNK_MOBILE_APP_URLS[app_id]
+        token, _ = Token.objects.get_or_create(user=self.request.user)
+        campaign_slug_identifier = self.request.campaign.slug_identifier
+        return rough_url.format(
+            auth_token=token.key,
+            campaign_slug_identifier=campaign_slug_identifier
+        )

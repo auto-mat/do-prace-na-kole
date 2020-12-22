@@ -286,6 +286,11 @@ urlpatterns = [
         name="application",
     ),
     url(
+        r'^open-app-with-rest-token/(?P<app_id>[0-9]+)/$',
+        views.OpenApplicationWithRestTokenView.as_view(),
+        name="open-application-with-rest-token",
+    ),
+    url(
         r'^address/$',
         views.UserAttendanceView.as_view(
             template_name="registration/address.html",

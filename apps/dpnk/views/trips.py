@@ -265,12 +265,6 @@ class CalendarView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessag
         return HttpResponse(json.dumps(existing_trips))
 
 
-class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
-    template_name = "registration/applications.html"
-    title = _("Aplikace")
-    registration_phase = "application"
-
-
 def view_edit_trip(request, date, direction):
     incomplete = registration_complete_gate(request.user_attendance)
     if incomplete is not None:
