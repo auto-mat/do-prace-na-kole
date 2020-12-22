@@ -32,7 +32,7 @@ from drf_extra_fields.geo_fields import PointField
 from notifications.models import Notification
 import photologue
 
-from rest_framework import permissions, routers, serializers, viewsets
+from rest_framework import mixins, permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
 
 from .middleware import get_or_create_userattendance
@@ -476,25 +476,30 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     distance = serializers.FloatField(
         source='get_length',
         help_text='Distance ecologically traveled in Km',
+        read_only=True,
     )
     frequency = serializers.FloatField(
         source='get_frequency',
         help_text='Fequeny of travel in as a fraction (multiply by 100 to get percentage)',
+        read_only=True,
     )
     emissions = serializers.JSONField(
         source='get_emissions',
         help_text='Emission reduction estimate',
+        read_only=True,
     )
     eco_trip_count = serializers.IntegerField(
         source='get_eco_trip_count',
         help_text='Number of ecologically traveled trips by team members',
+        read_only=True,
     )
 
     class Meta:
         model = Team
         fields = (
-            'id',
             'name',
+            'icon',
+            'id',
             'subsidiary',
             'members',
             'frequency',
@@ -502,7 +507,19 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
             'eco_trip_count',
             'emissions',
             'campaign',
-            'icon',
+            'icon_url',
+            'gallery',
+            'gallery_slug',
+        )
+        read_only_fields = (
+            'id',
+            'subsidiary',
+            'members',
+            'frequency',
+            'distance',
+            'eco_trip_count',
+            'emissions',
+            'campaign',
             'icon_url',
             'gallery',
             'gallery_slug',
@@ -514,6 +531,19 @@ class TeamSet(viewsets.ReadOnlyModelViewSet):
         return Team.objects.filter(
             campaign__slug=self.request.subdomain,
         )
+    serializer_class = TeamSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class MyTeamSet(
+        UserAttendanceMixin,
+        mixins.RetrieveModelMixin,
+        mixins.UpdateModelMixin,
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet,
+):
+    def get_queryset(self):
+        return Team.objects.filter(pk=self.ua().team.pk)
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -813,17 +843,22 @@ router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'trips', TripRangeSet, basename="trip")
 router.register(r'team', TeamSet, basename="team")
+router.register(r'my_team', MyTeamSet, basename="my_team")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 router.register(r'city', CitySet, basename="city")
+#router.register(r'my-city', MyCitySet, basename="my-city")
 router.register(r'userattendance', MyUserAttendanceSet, basename="myuserattendance")
 router.register(r'all_userattendance', AllUserAttendanceSet, basename="userattendance")
 router.register(r'commute_mode', CommuteModeSet, basename="commute_mode")
 router.register(r'campaign', CampaignSet, basename="campaign")
+#router.register(r'this-campaign', ThisCampaignSet, basename="this-campaign")
 router.register(r'campaign_type', CampaignTypeSet, basename="campaigntype")
 router.registry.extend(organization_router.registry)
 router.register(r'competition', CompetitionSet, basename="competition")
 router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
+#router.register(r'my-subsidiary', MySubsidiarySet, basename="my-subsidiary")
 router.register(r'company', CompanySet, basename="company")
+#router.register(r'my-company', MyCompanySet, basename="my-company")
 router.register(r'notification', NotificationSet, basename="notification")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
 router.register(r'photo', PhotoSet, basename="photo")
