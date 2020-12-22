@@ -346,6 +346,13 @@ class CompanySet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class MyCompanySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Company.objects.filter(pk=self.ua().team.subsidiary.company.pk)
+    serializer_class = CompanySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class SubsidiaryInCampaignField(RequestSpecificField):
     def to_representation(self, value):
         sub_in_campaign = SubsidiaryInCampaign(value, self.context['request'].campaign)
@@ -880,7 +887,7 @@ router.register(r'competition', CompetitionSet, basename="competition")
 router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
 router.register(r'my_subsidiary', MySubsidiarySet, basename="my-subsidiary")
 router.register(r'company', CompanySet, basename="company")
-#router.register(r'my-company', MyCompanySet, basename="my-company")
+router.register(r'my_company', MyCompanySet, basename="my-company")
 router.register(r'notification', NotificationSet, basename="notification")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
 router.register(r'photo', PhotoSet, basename="photo")
