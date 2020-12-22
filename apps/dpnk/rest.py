@@ -752,6 +752,13 @@ class CampaignSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class ThisCampaignSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Campaign.objects.filter(slug=self.request.subdomain)
+    serializer_class = CampaignSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     mark_as_read = RequestSpecificField(
         lambda notification, req: req.build_absolute_uri(reverse('notifications:mark_as_read', args=(notification.slug, ))),
@@ -859,7 +866,7 @@ router.register(r'userattendance', MyUserAttendanceSet, basename="myuserattendan
 router.register(r'all_userattendance', AllUserAttendanceSet, basename="userattendance")
 router.register(r'commute_mode', CommuteModeSet, basename="commute_mode")
 router.register(r'campaign', CampaignSet, basename="campaign")
-#router.register(r'this-campaign', ThisCampaignSet, basename="this-campaign")
+router.register(r'this_campaign', ThisCampaignSet, basename="this-campaign")
 router.register(r'campaign_type', CampaignTypeSet, basename="campaigntype")
 router.registry.extend(organization_router.registry)
 router.register(r'competition', CompetitionSet, basename="competition")
