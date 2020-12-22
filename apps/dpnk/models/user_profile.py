@@ -33,11 +33,12 @@ from vokativ import vokativ
 
 from .occupation import Occupation
 from .. import mailing, util
+from ..model_mixins import WithGalleryMixin
 
 logger = logging.getLogger(__name__)
 
 
-class UserProfile(models.Model):
+class UserProfile(WithGalleryMixin, models.Model):
     """Uživatelský profil"""
 
     class Meta:
@@ -177,6 +178,13 @@ class UserProfile(models.Model):
         default=None,
         null=False,
         blank=True,
+    )
+    gallery = models.ForeignKey(
+        'photologue.Gallery',
+        verbose_name=_("Galerie fotek"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
 
     @denormalized(models.IntegerField, default=0)

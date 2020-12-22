@@ -833,7 +833,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
     list_filter = [CampaignFilter, 'subsidiary__city', 'member_count', 'paid_member_count']
     list_max_show_all = 10000
-    raw_id_fields = ['subsidiary', ]
+    raw_id_fields = ['subsidiary', 'icon', ]
     actions = (
         actions.touch_items,
         make_pdfsandwich,

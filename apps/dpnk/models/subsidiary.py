@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -28,6 +27,7 @@ from smart_selects.db_fields import ChainedForeignKey
 from .address import Address, get_address_string
 from .city import City
 from .. import util
+from ..model_mixins import WithGalleryMixin
 
 
 class ActiveManager(models.Manager):
@@ -35,7 +35,7 @@ class ActiveManager(models.Manager):
         return super().get_queryset().filter(active=True)
 
 
-class Subsidiary(models.Model):
+class Subsidiary(WithGalleryMixin, models.Model):
     """Pobočka"""
 
     class Meta:
@@ -80,6 +80,20 @@ class Subsidiary(models.Model):
         verbose_name=_("Email adresáta krabice pro pobočku"),
         null=True,
         blank=True,
+    )
+    gallery = models.ForeignKey(
+        'photologue.Gallery',
+        verbose_name=_("Galerie fotek"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    icon = models.ForeignKey(
+        'photologue.Photo',
+        verbose_name=_("Ikona"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     objects = models.Manager()

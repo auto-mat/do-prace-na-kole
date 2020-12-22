@@ -38,12 +38,13 @@ from .phase import Phase
 from .subsidiary import Subsidiary, SubsidiaryInCampaign
 from .team_diploma import TeamDiploma
 from .. import util
+from ..model_mixins import WithGalleryMixin
 
 logger = logging.getLogger(__name__)
 
 
 @with_author
-class Team(models.Model):
+class Team(WithGalleryMixin, models.Model):
     """Profil týmu"""
 
     class Meta:
@@ -83,24 +84,20 @@ class Team(models.Model):
         on_delete=models.CASCADE,
     )
     gallery = models.ForeignKey(
-        photologue.models.Gallery,
+        'photologue.Gallery',
         verbose_name=_("Galerie týmových fotek"),
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
+    icon = models.ForeignKey(
+        'photologue.Photo',
+        verbose_name=_("Ikona"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
-    def get_gallery(self):
-        if self.gallery:
-            return self.gallery
-        title_slug = "team-%s-photos" % self.pk
-        self.gallery, _ = photologue.models.Gallery.objects.get_or_create(
-            title=title_slug,
-            slug=title_slug,
-            is_public=False,
-        )
-        self.save()
-        return self.gallery
 
     def lead_photo(self):
         try:
@@ -308,7 +305,7 @@ class TeamAdminForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ("name", "subsidiary", "campaign")  # Required for fast loading after @with_author was added
+        fields = ("name", "subsidiary", "campaign", "icon", )  # Required for fast loading after @with_author was added
 
 
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):

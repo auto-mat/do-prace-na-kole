@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 from author.decorators import with_author
 
 from django.contrib.gis.db import models
@@ -32,6 +31,7 @@ from stdnumfield.models import StdNumField
 from .address import CompanyAddress, get_address_string
 from .subsidiary import SubsidiaryInCampaign
 from .. import util
+from ..model_mixins import WithGalleryMixin
 
 
 ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
@@ -43,7 +43,7 @@ DIC_ERROR_MESSAGE = _(
 
 
 @with_author
-class Company(models.Model):
+class Company(WithGalleryMixin, models.Model):
     """Organizace"""
 
     class Meta:
@@ -81,6 +81,20 @@ class Company(models.Model):
         error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
         blank=True,
         null=True,
+    )
+    gallery = models.ForeignKey(
+        'photologue.Gallery',
+        verbose_name=_("Galerie fotek"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    icon = models.ForeignKey(
+        'photologue.Photo',
+        verbose_name=_("Ikona"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     def has_filled_contact_information(self):

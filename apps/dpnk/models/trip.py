@@ -40,6 +40,7 @@ from django_gpxpy import gpx_parse
 
 from .util import MAP_DESCRIPTION
 from .. import util
+from ..model_mixins import WithGalleryMixin
 
 
 def normalize_gpx_filename(instance, filename):
@@ -94,7 +95,7 @@ def distance_all_modes(trips, campaign=None):
 
 
 @with_author
-class Trip(models.Model):
+class Trip(WithGalleryMixin, models.Model):
     """Jízdy"""
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
@@ -202,6 +203,13 @@ class Trip(models.Model):
         verbose_name=_(u"Datum poslední změny"),
         auto_now=True,
         null=True,
+    )
+    gallery = models.ForeignKey(
+        "photologue.Gallery",
+        verbose_name=_("Galerie fotek"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
 
     def active(self):

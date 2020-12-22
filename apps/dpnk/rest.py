@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import denorm
+import time
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -29,6 +30,7 @@ from donation_chooser.rest import organization_router
 from drf_extra_fields.geo_fields import PointField
 
 from notifications.models import Notification
+import photologue
 
 from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
@@ -330,6 +332,10 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             'frequency',
             'emissions',
             'distance',
+            'icon',
+            'icon_url',
+            'gallery',
+            'gallery_slug',
         )
 
 
@@ -381,6 +387,10 @@ class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
             'frequency',
             'emissions',
             'distance',
+            'icon',
+            'icon_url',
+            'gallery',
+            'gallery_slug',
         )
 
 
@@ -414,6 +424,9 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     registration_complete = RequestSpecificField(
         lambda ua, req: ua.entered_competition(),
     )
+    gallery = RequestSpecificField(
+        lambda ua, req: serializers.HyperlinkedRelatedField(read_only=True, view_name='gallery-detail').get_url(ua.userprofile.get_gallery(), 'gallery-detail', req, None),
+    )
 
     class Meta:
         model = UserAttendance
@@ -432,6 +445,7 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             'remaining_rides_count',
             'sesame_token',
             'registration_complete',
+            'gallery',
         )
 
 
@@ -488,6 +502,10 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
             'eco_trip_count',
             'emissions',
             'campaign',
+            'icon',
+            'icon_url',
+            'gallery',
+            'gallery_slug',
         )
 
 
@@ -732,6 +750,65 @@ class NotificationSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class PhotoSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = photologue.models.Photo
+        fields = (
+            'id',
+            'caption',
+            'image',
+        )
+
+    def create(self, validated_data, *args, **kwargs):
+        request = self.context['request']
+        self.user_attendance = request.user_attendance
+        if not self.user_attendance:
+            self.user_attendance = get_or_create_userattendance(request, request.subdomain)
+        validated_data["slug"] = "ua%s-%s" % (self.user_attendance.pk, round(time.time() * 1000))
+        validated_data["title"] = validated_data["slug"]
+        photo = super().create(validated_data, *args, **kwargs)
+        self.user_attendance.userprofile.get_gallery().photos.add(photo)
+        self.user_attendance.team.get_gallery().photos.add(photo)
+        self.user_attendance.team.subsidiary.get_gallery().photos.add(photo)
+        self.user_attendance.team.subsidiary.company.get_gallery().photos.add(photo)
+        return photo
+
+
+class PhotoSet(UserAttendanceMixin, viewsets.ModelViewSet):
+    def get_queryset(self):
+        return self.ua().team.subsidiary.company.get_gallery().photos.all()
+    serializer_class = PhotoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class PhotoSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = photologue.models.Photo
+        fields = (
+            'id',
+            'caption',
+            'image',
+        )
+
+
+class GallerySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = photologue.models.Gallery
+        fields = (
+            'title',
+            'slug',
+            'description',
+            'photos',
+        )
+
+
+class GallerySet(UserAttendanceMixin, viewsets.ModelViewSet):
+    def get_queryset(self):
+        return photologue.models.Gallery.objects.all()
+    serializer_class = GallerySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'trips', TripRangeSet, basename="trip")
@@ -749,3 +826,5 @@ router.register(r'subsidiary', SubsidiarySet, basename="subsidiary")
 router.register(r'company', CompanySet, basename="company")
 router.register(r'notification', NotificationSet, basename="notification")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
+router.register(r'photo', PhotoSet, basename="photo")
+router.register(r'gallery', GallerySet, basename="gallery")
