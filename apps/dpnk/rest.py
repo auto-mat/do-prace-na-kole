@@ -662,6 +662,14 @@ class CitySet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class MyCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        city_ids = CityInCampaign.objects.filter(campaign__slug=self.request.subdomain, city=self.ua().team.subsidiary.city).values_list('city', flat=True)
+        return City.objects.filter(id__in=city_ids)
+    serializer_class = CitySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class CommuteModeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CommuteMode
@@ -846,7 +854,7 @@ router.register(r'team', TeamSet, basename="team")
 router.register(r'my_team', MyTeamSet, basename="my_team")
 router.register(r'city_in_campaign', CityInCampaignSet, basename="city_in_campaign")
 router.register(r'city', CitySet, basename="city")
-#router.register(r'my-city', MyCitySet, basename="my-city")
+router.register(r'my_city', MyCitySet, basename="my-city")
 router.register(r'userattendance', MyUserAttendanceSet, basename="myuserattendance")
 router.register(r'all_userattendance', AllUserAttendanceSet, basename="userattendance")
 router.register(r'commute_mode', CommuteModeSet, basename="commute_mode")
