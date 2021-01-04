@@ -294,6 +294,9 @@ class Campaign(Pricable, models.Model):
     def __str__(self):
         return self.display_name()
 
+    def tagline(self):
+        return self.campaign_type.tagline % str(self.year)
+
     def competitors_choose_team(self):
         return self.max_team_members > 1
 

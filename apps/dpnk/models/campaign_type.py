@@ -51,6 +51,9 @@ class CampaignType(models.Model):
         null=True,
         blank=True,
     )
+    tagline = models.TextField(
+        default="Na kole, pěšky či poklusem. Celostátní výzva v lednu %s",
+    )
 
     def __str__(self):
         return self.name
