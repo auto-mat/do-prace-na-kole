@@ -69,6 +69,7 @@
 		{% endif %}
 	</div>
   {% cache 60 "profile_voucher" user_attendance.id %}
+  {% if user_attendance.voucher_set.exists %}
   <hr />
   <a name="third-party-vouchers">
   <h3>
@@ -94,8 +95,8 @@
               {% scribble 'after_vouchers' %}{% endscribble %}
           </div>
   </div>
+  {% endif %}
   {% endcache %}
-
 
 	<script>
 		jQuery(document).ready(function($) {
