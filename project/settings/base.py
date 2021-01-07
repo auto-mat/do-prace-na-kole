@@ -267,6 +267,8 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django.contrib.sites',
 
+    'photologue',
+
     'registration',
 
     'price_level',
@@ -333,7 +335,6 @@ INSTALLED_APPS = [
     'social_django',
     'fm',
     # 'cachalot',
-    'photologue',
     'sortedm2m',
     # 'dj_anonymizer',
     'dbtemplates',
@@ -703,7 +704,7 @@ DBBACKUP_STORAGE_OPTIONS = {
 FIOBANK_PAYMENTS_ORDER_MODEL = 'dpnk.Invoice'
 
 HELPDESK_IFRAME_URL = os.environ.get('HELPDESK_IFRAME_URL', "https://klub.auto-mat.cz/desk/kb_iframe/dpnk/")
-if HELPDESK_IFRAME_URL in ("None","False"):
+if HELPDESK_IFRAME_URL in ("None", "False"):
     HELPDESK_IFRAME_URL = None
 HELPDESK_QUEUE = 3
 
@@ -742,4 +743,4 @@ if SILK:
     SILKY_PYTHON_PROFILER = True
     SILKY_PYTHON_PROFILER_BINARY = True
 
-DPNK_MOBILE_APP_URLS = os.environ.get('DPNK_MOBILE_APP_URLS', "https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.ucpraha&utm_source={campaign_slug_identifier}&amv=202&isi=1213867293&ibi=com.umotional.ucpraha&at={campaign_slug_identifier} https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.bikeapp&utm_source={campaign_slug_identifier}&amv=202&isi=1213867271&ibi=com.umotional.bikeapp&at={campaign_slug_identifier}").split(" ")
+DPNK_MOBILE_APP_URLS = os.environ.get('DPNK_MOBILE_APP_URLS', "https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.ucpraha&utm_source={campaign_slug_identifier}&amv=202&isi=1213867293&ibi=com.umotional.ucpraha&at={campaign_slug_identifier} https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.bikeapp&utm_source={campaign_slug_identifier}&amv=202&isi=1213867271&ibi=com.umotional.bikeapp&at={campaign_slug_identifier}").split(" ")  # noqa
