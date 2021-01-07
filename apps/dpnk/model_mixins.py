@@ -1,5 +1,6 @@
 import photologue
 
+
 class WithGalleryMixin:
     def get_gallery(self):
         if self.gallery:

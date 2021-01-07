@@ -44,8 +44,8 @@ DATABASES = {
         'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
         'PORT': os.environ.get('DPNK_DB_PORT', ''),
         'TEST': {
-            'NAME':  os.environ.get('DB', 'circle_test'),
-        }
+            'NAME': os.environ.get('DB', 'circle_test'),
+        },
     },
 }
 

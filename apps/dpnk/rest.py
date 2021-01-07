@@ -17,8 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import denorm
 import time
+
+import denorm
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -30,6 +31,7 @@ from donation_chooser.rest import organization_router
 from drf_extra_fields.geo_fields import PointField
 
 from notifications.models import Notification
+
 import photologue
 
 from rest_framework import mixins, permissions, routers, serializers, viewsets
@@ -439,7 +441,15 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         lambda ua, req: ua.entered_competition(),
     )
     gallery = RequestSpecificField(
-        lambda ua, req: serializers.HyperlinkedRelatedField(read_only=True, view_name='gallery-detail').get_url(ua.userprofile.get_gallery(), 'gallery-detail', req, None),
+        lambda ua, req: serializers.HyperlinkedRelatedField(
+            read_only=True,
+            view_name='gallery-detail',
+        ).get_url(
+            ua.userprofile.get_gallery(),
+            'gallery-detail',
+            req,
+            None,
+        ),
     )
 
     class Meta:
@@ -678,7 +688,10 @@ class CitySet(viewsets.ReadOnlyModelViewSet):
 
 class MyCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        city_ids = CityInCampaign.objects.filter(campaign__slug=self.request.subdomain, city=self.ua().team.subsidiary.city).values_list('city', flat=True)
+        city_ids = CityInCampaign.objects.filter(
+            campaign__slug=self.request.subdomain,
+            city=self.ua().team.subsidiary.city,
+        ).values_list('city', flat=True)
         return City.objects.filter(id__in=city_ids)
     serializer_class = CitySerializer
     permission_classes = [permissions.IsAuthenticated]

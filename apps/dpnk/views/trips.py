@@ -34,7 +34,6 @@ from ..models import Trip
 from ..rest import TripSerializer
 from ..views_mixins import (
     RegistrationMessagesMixin,
-    RegistrationViewMixin,
     TitleViewMixin,
     UserAttendanceParameterMixin,
 )

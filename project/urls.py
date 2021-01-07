@@ -11,8 +11,8 @@ from dpnk.rest import router
 
 import notifications.urls
 
-from rest_framework.documentation import include_docs_urls
 import rest_framework.authtoken.views
+from rest_framework.documentation import include_docs_urls
 
 admin.autodiscover()
 

@@ -785,5 +785,5 @@ class OpenApplicationWithRestTokenView(LoginRequiredMixin, RedirectView):
         campaign_slug_identifier = self.request.campaign.slug_identifier
         return rough_url.format(
             auth_token=token.key,
-            campaign_slug_identifier=campaign_slug_identifier
+            campaign_slug_identifier=campaign_slug_identifier,
         )

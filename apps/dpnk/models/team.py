@@ -32,8 +32,6 @@ from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator
 from django.utils.translation import ugettext_lazy as _
 
-import photologue.models
-
 from .phase import Phase
 from .subsidiary import Subsidiary, SubsidiaryInCampaign
 from .team_diploma import TeamDiploma
@@ -97,7 +95,6 @@ class Team(WithGalleryMixin, models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-
 
     def lead_photo(self):
         try:
