@@ -157,6 +157,8 @@ class CityAdmin(LeafletGeoAdmin):
 class CityInCampaignAdmin(RelatedFieldAdmin):
     list_display = (
         'name',
+        'organizer',
+        'organizer_url',
     )
     list_filter = (
         CampaignFilter,

@@ -644,6 +644,14 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
         lambda city, req:
         CityInCampaign.objects.get(city=city, campaign=req.campaign).eco_trip_count(),
     )
+    organizer = RequestSpecificField(
+        lambda city, req:
+        CityInCampaign.objects.get(city=city, campaign=req.campaign).organizer,
+    )
+    organizer_url = RequestSpecificField(
+        lambda city, req:
+        CityInCampaign.objects.get(city=city, campaign=req.campaign).organizer_url,
+    )
     subsidiaries = RequestSpecificField(
         lambda city, req:
         [serializers.HyperlinkedRelatedField(  # noqa
@@ -675,6 +683,8 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             'subsidiaries',
             'eco_trip_count',
             'distance',
+            'organizer',
+            'organizer_url',
         )
 
 
