@@ -130,6 +130,7 @@ def get_activities_as_rest_trips(strava_account):
 
 
 def get_activity_as_rest_trip(activity):
+    track = None
     if activity.map.summary_polyline:
         track = get_track(activity.map.summary_polyline)
     try:
