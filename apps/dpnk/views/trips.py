@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import BooleanField, Case, Q, When
 from django.forms.models import BaseModelFormSet
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -366,6 +366,6 @@ class ThirdPartyRoutesView(LoginRequiredMixin, View):
         from stravasync.models import StravaAccount
         try:
             stravaaccount = StravaAccount.objects.get(user=request.user)
-            return HttpResponse(get_activities_as_rest_trips(stravaaccount))
+            return JsonResponse({"routes": get_activities_as_rest_trips(stravaaccount)})
         except StravaAccount.DoesNotExist:
-            return HttpResponse([])
+            return JsonResponse({"routes": []})
