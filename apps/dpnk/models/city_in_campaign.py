@@ -62,10 +62,12 @@ class CityInCampaign(models.Model):
     organizer = models.TextField(
         verbose_name=_(u"Jméno pořadatele"),
         default="",
+        blank=True,
     )
     organizer_url = models.URLField(
         verbose_name=_(u"URL pořadatele"),
         default="",
+        blank=True,
     )
 
     @property
