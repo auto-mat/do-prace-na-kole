@@ -23,7 +23,7 @@ import polyline
 import stravalib
 
 from stravasync import hashtags
-from stravasync.commute_modes import get_commute_mode
+from stravasync.commute_modes import get_commute_mode, get_commute_mode_slug
 from stravasync.models import StravaAccount
 
 logger = logging.getLogger(__name__)
@@ -115,6 +115,39 @@ def sync(strava_account_id, manual_sync=True):
         logger.error(tb)
     strava_account.save()
     return stats
+
+
+def get_activities_as_rest_trips(strava_account):
+    sclient = stravalib.Client()
+    strava_account.errors = ""
+    refresh_tokens(strava_account, sclient)
+    earliest_start_date, latest_end_date = Phase.get_active_range('entry_enabled')
+    activities = sclient.get_activities(
+        after=datetime.combine(earliest_start_date, datetime.min.time()),
+        before=datetime.combine(latest_end_date, datetime.max.time()),
+    )
+    return [get_activity_as_rest_trip(activity) for activity in activities]
+
+
+def get_activity_as_rest_trip(activity):
+    if activity.map.summary_polyline:
+        track = get_track(activity.map.summary_polyline)
+    try:
+        if activity.map.polyline:
+            track = get_track(activity.map.polyline)
+    except AttributeError:
+        pass
+    return {
+        "commuteMode": get_commute_mode_slug(activity.type).id,
+        "durationSeconds": activity.elapsed_time.total_seconds(),
+        "distanceMeters": round(stravalib.unithelper.meters(activity.distance).get_num(), 0),
+        "trip_date": str(activity.start_date.date()),
+        "sourceApplication": "strava",
+        "sourceId": activity.id,
+        "direction": None,
+        "file": None,
+        "track": track,
+    }
 
 
 def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # noqa

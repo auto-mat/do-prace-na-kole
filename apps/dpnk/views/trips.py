@@ -355,3 +355,17 @@ class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
         else:
             track_json = {}
         return HttpResponse(track_json)
+
+
+class ThirdPartyRoutesView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        """
+        Return a list of routes pulled from third party services.
+        """
+        from stravasync.tasks import get_activities_as_rest_trips
+        from stravasync.models import StravaAccount
+        try:
+            stravaaccount = StravaAccount.objects.get(user=request.user)
+            return HttpResponse(get_activities_as_rest_trips(stravaaccount))
+        except StravaAccount.DoesNotExist:
+            return HttpResponse([])

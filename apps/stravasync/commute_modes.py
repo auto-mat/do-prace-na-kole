@@ -18,7 +18,8 @@ strava_commute_modes = {
     "canoeing": 'by_other_vehicle',
 }
 
+def get_commute_mode_slug(strava_mode):
+    return strava_commute_modes[strava_mode.lower()]
 
 def get_commute_mode(strava_mode):
-    slug = strava_commute_modes[strava_mode.lower()]
-    return CommuteMode.objects.get(slug=slug)
+    return CommuteMode.objects.get(get_commute_mode_slug(strava_mode))

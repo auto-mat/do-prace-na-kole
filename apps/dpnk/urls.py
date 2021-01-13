@@ -312,6 +312,11 @@ urlpatterns = [
         name="trip_geojson",
     ),
     url(
+        r'^third_party_routes/$',
+        views.ThirdPartyRoutesView.as_view(),
+        name="third_party_routes",
+    ),
+    url(
         r'^emisni_kalkulacka/$',
         views.UserAttendanceView.as_view(
             template_name="registration/emission_calculator.html",
