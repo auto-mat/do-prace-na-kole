@@ -55,6 +55,7 @@ from .models import (
 )
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
+from stravasync.models import StravaAccount
 
 
 class RequestSpecificField(serializers.Field):
@@ -891,6 +892,26 @@ class GallerySet(UserAttendanceMixin, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class StravaAccountSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = StravaAccount
+        fields = (
+            'strava_username',
+            'first_name',
+            'last_name',
+            'user_sync_count',
+            'errors',
+        )
+
+
+class StravaAccountSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return StravaAccount.objects.filter(user=self.request.user)
+
+    serializer_class = StravaAccountSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r'gpx', TripSet, basename="gpxfile")
 router.register(r'trips', TripRangeSet, basename="trip")
@@ -915,3 +936,4 @@ router.register(r'notification', NotificationSet, basename="notification")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, basename="result")
 router.register(r'photo', PhotoSet, basename="photo")
 router.register(r'gallery', GallerySet, basename="gallery")
+router.register(r'strava_account', StravaAccountSet, basename="strava_account")
