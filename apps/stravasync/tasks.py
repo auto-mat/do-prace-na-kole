@@ -138,7 +138,7 @@ def get_activity_as_rest_trip(activity):
     except AttributeError:
         pass
     return {
-        "commuteMode": get_commute_mode_slug(activity.type).id,
+        "commuteMode": get_commute_mode_slug(activity.type),
         "durationSeconds": activity.elapsed_time.total_seconds(),
         "distanceMeters": round(stravalib.unithelper.meters(activity.distance).get_num(), 0),
         "trip_date": str(activity.start_date.date()),
