@@ -22,7 +22,7 @@ import time
 import denorm
 
 from django.core.exceptions import ValidationError
-from django.db.models import Window
+from django.db.models import F, Window
 from django.db.models.functions import DenseRank
 
 from donation_chooser.rest import organization_router
@@ -675,6 +675,12 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
                 campaign=req.campaign,
             ).values_list('subsidiary', flat=True),)]
     )
+    competitions = RequestSpecificField(
+        lambda city, req:
+        [CompetitionSerializer(competition, context={"request": req}).data
+        for competition  # noqa
+        in Competition.objects.filter(city__id=city.id)]
+    )
     wp_url = serializers.CharField(
         source='get_wp_url',
     )
@@ -695,6 +701,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             'distance',
             'organizer',
             'organizer_url',
+            'competitions',
         )
 
 
