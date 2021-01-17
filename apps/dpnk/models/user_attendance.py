@@ -25,11 +25,12 @@ from coupons.models import DiscountCoupon
 from denorm import denormalized, depend_on_related
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured, ValidationError
-from django.db.models import F, Sum
+from django.db.models import Q, F, Sum
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -720,6 +721,15 @@ class UserAttendance(StaleSyncMixin, models.Model):
             recipient=self.userprofile.user,
             action_object=template,
         )
+
+    def notifications(self):
+        user_content_type = ContentType.objects.get(app_label="auth", model="user")
+        user_attendance_content_type = ContentType.objects.get(app_label="dpnk", model="userattendance")
+        notifications = self.userprofile.user.notifications.filter(
+            Q(actor_content_type=user_content_type.id, actor_object_id=self.userprofile.user.id) |
+            Q(actor_content_type=user_attendance_content_type.id, actor_object_id=self.id),
+        )
+        return notifications
 
 
 @receiver(post_save, sender=UserAttendance)

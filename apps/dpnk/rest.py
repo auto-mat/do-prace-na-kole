@@ -21,9 +21,8 @@ import time
 
 import denorm
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import F, Q, Window
+from django.db.models import Window
 from django.db.models.functions import DenseRank
 
 from donation_chooser.rest import organization_router
@@ -458,6 +457,9 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             None,
         ),
     )
+    unread_notification_count = RequestSpecificField(
+        lambda ua, req: ua.notifications().filter(unread=True).count(),
+    )
 
     class Meta:
         model = UserAttendance
@@ -477,6 +479,7 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             'sesame_token',
             'registration_complete',
             'gallery',
+            'unread_notification_count',
         )
 
 
@@ -829,12 +832,7 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
 
 class NotificationSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        user_content_type = ContentType.objects.get(app_label="auth", model="user")
-        user_attendance_content_type = ContentType.objects.get(app_label="dpnk", model="userattendance")
-        return self.request.user.notifications.filter(
-            Q(actor_content_type=user_content_type.id, actor_object_id=self.request.user.id) |
-            Q(actor_content_type=user_attendance_content_type.id, actor_object_id=self.ua().id),
-        )
+        return self.ua().notifications()
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
