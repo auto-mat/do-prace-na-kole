@@ -148,6 +148,7 @@ def get_activity_as_rest_trip(activity):
         "direction": None,
         "file": None,
         "track": track,
+        "description": activity.description,
     }
 
 

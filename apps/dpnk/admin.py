@@ -668,6 +668,7 @@ class TripAdminInline(admin.TabularInline):
         'source_id',
         'distance',
         'duration',
+        'description',
     )
     raw_id_fields = ('user_attendance',)
     extra = 0

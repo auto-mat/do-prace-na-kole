@@ -211,6 +211,12 @@ class Trip(WithGalleryMixin, models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+    description = models.TextField(
+        verbose_name=_(u"Popis cesty"),
+        default="",
+        null=False,
+        blank=True,
+    )
 
     def active(self):
         return self.user_attendance.campaign.day_active(self.date)

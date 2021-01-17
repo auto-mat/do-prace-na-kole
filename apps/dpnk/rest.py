@@ -151,6 +151,11 @@ class TripSerializer(serializers.ModelSerializer):
         source='gpx_file',
         help_text='GPX file with the track',
     )
+    description = serializers.CharField(
+        required=False,
+        source='description',
+        help_text='Description of the trip as input by user'
+    )
 
     def is_valid(self, *args, **kwargs):
         request = self.context['request']
@@ -192,6 +197,7 @@ class TripSerializer(serializers.ModelSerializer):
             'distanceMeters',
             'sourceApplication',
             'sourceId',
+            'description',
         )
         extra_kwargs = {
             'track': {
