@@ -679,7 +679,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
         lambda city, req:
         [CompetitionSerializer(competition, context={"request": req}).data
         for competition  # noqa
-        in Competition.objects.filter(city__id=city.id)]
+        in Competition.objects.filter(city__id=city.id, campaign=req.campaign, company=None, is_public=True)]
     )
     wp_url = serializers.CharField(
         source='get_wp_url',
