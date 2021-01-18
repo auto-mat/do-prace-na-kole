@@ -308,13 +308,9 @@ class CompanyInCampaignField(RequestSpecificField):
 
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
-    subsidiaries = CompanyInCampaignField(
-        lambda cic, req:
-        [serializers.HyperlinkedRelatedField(  # noqa
-            read_only=True,
-            view_name='subsidiary-detail',).get_url(subsidiary.subsidiary, 'subsidiary-detail', req, None)
-         for subsidiary
-         in cic.subsidiaries()]
+    subsidiaries = RequestSpecificField(
+        lambda company, req:
+        [MinimalSubsidiarySerializer(sub, context={"request": req}).data for sub in company.subsidiaries.all()]
     )
     eco_trip_count = CompanyInCampaignField(
         lambda cic, req: cic.eco_trip_count(),
@@ -366,27 +362,41 @@ class SubsidiaryInCampaignField(RequestSpecificField):
         return self.method(sub_in_campaign, self.context['request'])
 
 
-class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
+class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
+    frequency = SubsidiaryInCampaignField(
+        lambda sic, req: sic.frequency(),
+    )
+    distance = SubsidiaryInCampaignField(
+        lambda sic, req: sic.distance(),
+    )
+    rest_url = RequestSpecificField(
+        lambda sub, req:
+        serializers.HyperlinkedRelatedField(read_only=True, view_name='subsidiary-detail')
+        .get_url(sub, 'subsidiary-detail', req, None)
+    )
+
+    class Meta:
+        model = Subsidiary
+        fields = (
+            'id',
+            'address_street',
+            'city',
+            'frequency',
+            'distance',
+            'icon_url',
+            'rest_url',
+        )
+
+class SubsidiarySerializer(MinimalSubsidiarySerializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req:
-        [serializers.HyperlinkedRelatedField(  # noqa
-            read_only=True,
-            view_name='team-detail',
-        ).get_url(team, 'team-detail', req, None)
-        for team  # noqa
-        in sic.teams()]  # noqa
+        [MinimalTeamSerializer(team, context={"request": req}).data for team in sic.teams()]
     )
     eco_trip_count = SubsidiaryInCampaignField(
         lambda sic, req: sic.eco_trip_count(),
     )
-    frequency = SubsidiaryInCampaignField(
-        lambda sic, req: sic.frequency(),
-    )
     emissions = SubsidiaryInCampaignField(
         lambda sic, req: sic.emissions(),
-    )
-    distance = SubsidiaryInCampaignField(
-        lambda sic, req: sic.distance(),
     )
 
     class Meta:
@@ -422,11 +432,29 @@ class MySubsidiarySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
+class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     distance = serializers.FloatField(
         source='trip_length_total',
         help_text='Distance ecologically traveled in Km',
     )
+    rest_url = RequestSpecificField(
+        lambda ua, req:
+        serializers.HyperlinkedRelatedField(read_only=True, view_name='userattendance-detail')
+        .get_url(ua, 'userattendance-detail', req, None)
+    )
+    class Meta:
+        model = UserAttendance
+        fields = (
+            'id',
+            'rest_url',
+            'name',
+            'frequency',
+            'distance',
+            'avatar_url',
+        )
+
+
+class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
     emissions = serializers.JSONField(
         source='get_emissions',
         help_text='Emission reduction estimate',
@@ -457,7 +485,7 @@ class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         ),
     )
     unread_notification_count = RequestSpecificField(
-        lambda ua, req: ua.notifications().filter(unread=True).count(),
+        lambda ua, req: ua.notifications().filter(unread=True).count() if ua.userprofile.user.pk == req.user.pk else None,
     )
 
     class Meta:
@@ -500,12 +528,7 @@ class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class TeamSerializer(serializers.HyperlinkedModelSerializer):
-    members = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='userattendance-detail',
-    )
+class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
     distance = serializers.FloatField(
         source='get_length',
         help_text='Distance ecologically traveled in Km',
@@ -514,6 +537,28 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
     frequency = serializers.FloatField(
         source='get_frequency',
         help_text='Fequeny of travel in as a fraction (multiply by 100 to get percentage)',
+        read_only=True,
+    )
+    rest_url = RequestSpecificField(
+        lambda team, req:
+        serializers.HyperlinkedRelatedField(read_only=True, view_name='team-detail')
+        .get_url(team, 'team-detail', req, None)
+    )
+    class Meta:
+        model = Team
+        fields = (
+            'name',
+            'id',
+            'frequency',
+            'distance',
+            'icon_url',
+            'rest_url',
+        )
+
+
+class TeamSerializer(MinimalTeamSerializer):
+    members = MinimalUserAttendanceSerializer(
+        many=True,
         read_only=True,
     )
     emissions = serializers.JSONField(
