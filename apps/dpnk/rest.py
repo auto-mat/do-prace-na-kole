@@ -152,7 +152,6 @@ class TripSerializer(serializers.ModelSerializer):
     )
     description = serializers.CharField(
         required=False,
-        source='description',
         help_text='Description of the trip as input by user'
     )
 
