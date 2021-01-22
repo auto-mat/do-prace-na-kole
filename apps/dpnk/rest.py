@@ -369,6 +369,12 @@ class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
     distance = SubsidiaryInCampaignField(
         lambda sic, req: sic.distance(),
     )
+    eco_trip_count = SubsidiaryInCampaignField(
+        lambda sic, req: sic.eco_trip_count(),
+    )
+    emissions = SubsidiaryInCampaignField(
+        lambda sic, req: sic.emissions(),
+    )
     rest_url = RequestSpecificField(
         lambda sub, req:
         serializers.HyperlinkedRelatedField(read_only=True, view_name='subsidiary-detail')
@@ -391,12 +397,6 @@ class SubsidiarySerializer(MinimalSubsidiarySerializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req:
         [MinimalTeamSerializer(team, context={"request": req}).data for team in sic.teams()]
-    )
-    eco_trip_count = SubsidiaryInCampaignField(
-        lambda sic, req: sic.eco_trip_count(),
-    )
-    emissions = SubsidiaryInCampaignField(
-        lambda sic, req: sic.emissions(),
     )
 
     class Meta:
@@ -442,6 +442,14 @@ class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         serializers.HyperlinkedRelatedField(read_only=True, view_name='userattendance-detail')
         .get_url(ua, 'userattendance-detail', req, None)
     )
+    emissions = serializers.JSONField(
+        source='get_emissions',
+        help_text='Emission reduction estimate',
+    )
+    working_rides_base_count = serializers.IntegerField(
+        source='get_working_rides_base_count',
+        help_text='Max number of possible trips',
+    )
     class Meta:
         model = UserAttendance
         fields = (
@@ -451,18 +459,13 @@ class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             'frequency',
             'distance',
             'avatar_url',
+            'eco_trip_count',
+            'working_rides_base_count',
+            'emissions',
         )
 
 
 class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
-    emissions = serializers.JSONField(
-        source='get_emissions',
-        help_text='Emission reduction estimate',
-    )
-    working_rides_base_count = serializers.IntegerField(
-        source='get_working_rides_base_count',
-        help_text='Max number of possible trips',
-    )
     remaining_rides_count = serializers.IntegerField(
         source='get_remaining_rides_count',
         help_text='Remaining number of possible trips',
@@ -539,6 +542,16 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
         help_text='Fequeny of travel in as a fraction (multiply by 100 to get percentage)',
         read_only=True,
     )
+    emissions = serializers.JSONField(
+        source='get_emissions',
+        help_text='Emission reduction estimate',
+        read_only=True,
+    )
+    eco_trip_count = serializers.IntegerField(
+        source='get_eco_trip_count',
+        help_text='Number of ecologically traveled trips by team members',
+        read_only=True,
+    )
     rest_url = RequestSpecificField(
         lambda team, req:
         serializers.HyperlinkedRelatedField(read_only=True, view_name='team-detail')
@@ -553,22 +566,14 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
             'distance',
             'icon_url',
             'rest_url',
+            'eco_trip_count',
+            'emissions',
         )
 
 
 class TeamSerializer(MinimalTeamSerializer):
     members = MinimalUserAttendanceSerializer(
         many=True,
-        read_only=True,
-    )
-    emissions = serializers.JSONField(
-        source='get_emissions',
-        help_text='Emission reduction estimate',
-        read_only=True,
-    )
-    eco_trip_count = serializers.IntegerField(
-        source='get_eco_trip_count',
-        help_text='Number of ecologically traveled trips by team members',
         read_only=True,
     )
 
