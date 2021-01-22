@@ -1,7 +1,7 @@
 1. `apt install qgis`
 1. nastavit security groups v AWS abych měl přístup z lokálního počítače
 ![](screenshots_qgis/Screenshot2.png)
-1. nastavit PSQL připojení
+1. nastavit PSQL připojení (it is necessary to add your IP address to the RDS security group in the AWS console. This security group is linked from the about information in the RDS db admin).
 ![](screenshots_qgis/Screenshot1.png)
 1. stáhnout vrstvu `dpnk_trip_anonymized`
 ![](screenshots_qgis/Screenshot3.png)
