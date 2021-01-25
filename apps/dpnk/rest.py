@@ -391,6 +391,8 @@ class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
             'distance',
             'icon_url',
             'rest_url',
+            'emissions',
+            'eco_trip_count',
         )
 
 class SubsidiarySerializer(MinimalSubsidiarySerializer):
