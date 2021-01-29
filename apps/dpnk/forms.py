@@ -148,6 +148,9 @@ def social_html(login=True):
             '</a>'
             '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
             'Facebook'
+            '</a>'
+            '<a class="btn apple" href="{{% url "social:begin" "apple-id" %}}">'
+            'AppleId'
             '</a>',
             action_word,
         ),

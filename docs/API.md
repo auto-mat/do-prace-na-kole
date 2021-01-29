@@ -52,6 +52,8 @@ The currently supported OAuth2 webview URLs are:
 
 `https://dpnk.dopracenakole.cz/social/login/facebook/?next=/open-app-with-rest-token/1/`
 
+`https://dpnk.dopracenakole.cz/social/login/apple-id/?next=/open-app-with-rest-token/1/`
+
 Where 1 is the number for the redirect URL. A URL for Apple will be added shortly.
 
 The redirect URLs must be explicitly configured in the DPNK backend and are refered to by number. This is for security reasons, if DPNK could be tricked into sending auth tokens via redirect to any random URL, then it would be very vulnerable to XXS attacks.

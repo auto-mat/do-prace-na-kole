@@ -171,6 +171,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.open_id.OpenIdAuth',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.apple.AppleIdAuth',
 
     'django.contrib.auth.backends.ModelBackend',
     'dpnk.auth.EmailModelBackend',
@@ -190,6 +191,13 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
     'fields': 'id,name,email,gender',
 }
+
+SOCIAL_AUTH_APPLE_ID_CLIENT = os.environ.get('DPNK_SOCIAL_AUTH_APPLE_ID_CLIENT', '')
+SOCIAL_AUTH_APPLE_ID_TEAM = os.environ.get('DPNK_SOCIAL_AUTH_APPLE_ID_TEAM', '')
+SOCIAL_AUTH_APPLE_ID_KEY = os.environ.get('DPNK_SOCIAL_AUTH_APPLE_ID_KEY', '')
+SOCIAL_AUTH_APPLE_ID_SECRET = os.environ.get('DPNK_SOCIAL_AUTH_APPLE_ID_SECRET', '')
+SOCIAL_AUTH_APPLE_ID_SCOPE = ['email']
+SOCIAL_AUTH_APPLE_ID_EMAIL_AS_USERNAME = os.environ.get('DPNK_SOCIAL_AUTH_APPLE_ID_EMAIL_AS_USERNAME', True)
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
