@@ -317,6 +317,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_gis',
     'rest_framework.authtoken',
+    'dj_rest_auth',
     'bulk_update',
     'denorm',
     'subdomains',

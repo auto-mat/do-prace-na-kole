@@ -130,6 +130,7 @@ django-debug-toolbar-request-history = "*"
 django-silk = "*"
 pre-commit = "*"
 django-report-builder = "*"
+dj-rest-auth = "*"
 
 [requires]
 python_version = "3.6"

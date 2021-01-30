@@ -42,6 +42,7 @@ urlpatterns = [
     url(r'^avatar/', include('avatar.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api-token-auth/', rest_framework.authtoken.views.obtain_auth_token),
+    path('dj-rest-auth/', include('dj_rest_auth.urls')),
     url(r'^rest-docs/', include_docs_urls(title='Do práce na kole API')),
     url(r'^', include("dpnk.urls")),
     url(r'^coupons/', include("coupons.urls")),
