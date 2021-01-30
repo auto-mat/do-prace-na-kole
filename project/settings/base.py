@@ -160,7 +160,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'sesame.middleware.AuthenticationMiddleware',
+    'dpnk.middleware.SesameAuthenticationMiddleware',
     'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',

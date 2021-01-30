@@ -24,6 +24,8 @@ from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 
+from sesame.middleware import AuthenticationMiddleware
+
 from .models import Campaign, UserAttendance
 
 
@@ -90,3 +92,10 @@ restart is requried.
                 request.campaign = None
 
         request.user_attendance = get_or_create_userattendance(request, campaign_slug)
+
+
+class SesameAuthenticationMiddleware(AuthenticationMiddleware):
+    def is_safari(self, request):
+        if request.GET.get('sesame-no-redirect'):
+            return True
+        return super().is_safari(request)
