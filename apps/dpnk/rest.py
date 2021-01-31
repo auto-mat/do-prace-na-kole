@@ -637,10 +637,22 @@ class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
     user_attendance = serializers.CharField(read_only=True)
     company = serializers.CharField(read_only=True)
     place = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(source='__str__')
+    icon_url = serializers.CharField(source='get_icon_url')
 
     class Meta:
         model = CompetitionResult
-        fields = ('id', 'user_attendance', 'team', 'company', 'competition', 'result', 'place')
+        fields = (
+            'id',
+            'user_attendance',
+            'team',
+            'company',
+            'competition',
+            'result',
+            'place',
+            'name',
+            'icon_url',
+        )
 
 
 class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):

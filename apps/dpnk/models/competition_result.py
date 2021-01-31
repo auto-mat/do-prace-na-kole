@@ -177,17 +177,31 @@ class CompetitionResult(models.Model):
         else:
             return 0
 
-    def __str__(self):
+    def competitor_attr(self, team_getter, company_getter, user_attendance_getter, default=""):
         if self.competition.competitor_type == 'team':
             if self.team:
-                return "%s" % self.team.name
+                team_getter(self.team)
         elif self.competition.competitor_type == 'company':
             if self.company:
-                return "%s" % self.company.name
+                company_getter(self.company)
         else:
             if self.user_attendance:
-                return "%s" % self.user_attendance.userprofile.name()
-        return ""
+                user_attendance_getter(self.user_attendance)
+        return default
+
+    def get_icon_url(self):
+        return self.competitor_attr(
+            lambda team: "%s" % team.icon_url(),
+            lambda company: "%s" % company.icon_url(),
+            lambda user_attendance: "%s" % user_attendance.avatar_url(),
+        )
+
+    def __str__(self):
+        return self.competitor_attr(
+            lambda team: "%s" % team.name,
+            lambda company: "%s" % company.name,
+            lambda user_attendance: "%s" % user_attendance.userprofile.name(),
+        )
 
     def user_attendances(self):
         competition = self.competition
