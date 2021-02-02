@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-07 13:28+0100\n"
+"POT-Creation-Date: 2021-02-02 15:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Petr Dlouhý <petr.dlouhy@email.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2396,19 +2396,19 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: project/settings/base.py:422
+#: project/settings/base.py:432
 msgid "cyklomapa"
 msgstr ""
 
-#: project/settings/base.py:426
+#: project/settings/base.py:436
 msgid "Všeobecná mapa"
 msgstr ""
 
-#: project/settings/base.py:625
+#: project/settings/base.py:635
 msgid "Základní"
 msgstr ""
 
-#: project/settings/base.py:625
+#: project/settings/base.py:635
 msgid "Pro firmy"
 msgstr ""
 

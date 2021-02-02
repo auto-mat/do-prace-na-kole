@@ -23,6 +23,7 @@ from cache_utils.decorators import cached
 
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import translation
 
 from dpnk.util import get_emissions
 
@@ -104,6 +105,10 @@ class CityInCampaign(models.Model):
 
     def __str__(self):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
+
+    def description(self, language="cs"):
+        with translation.override(language):
+            return _("Do práce na kole v tomto městě pořádá %s") % (self.organizer)
 
     sandwich_model = CityInCampaignDiploma
 

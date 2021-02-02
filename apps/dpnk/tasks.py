@@ -188,7 +188,10 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
     notify.send(
         user_attendance,
         recipient=user_attendance.userprofile.user,
-        verb=_("%s: Byl vám přiřazen nový voucher s kódem %s") % (voucher.voucher_type1.name, voucher.token),
+        verb=_("{name}: Byl vám přiřazen nový voucher s kódem {token}").format(
+            name=voucher.voucher_type1.name,
+            token=voucher.token
+        ),
         url=reverse("profil") + "#third-party-vouchers",
         icon=voucher.voucher_type1.teaser_img.url,
     )

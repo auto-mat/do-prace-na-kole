@@ -7,134 +7,141 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-13 18:45+0100\n"
+"POT-Creation-Date: 2021-02-02 15:47+0100\n"
 "PO-Revision-Date: 2020-01-13 19:46+0100\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
+"Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Translated-Using: django-rosetta 0.7.12\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.8.11\n"
 
-#: coupons/admin.py:45
+#: apps/coupons/admin.py:45
 msgid "Účastník kampaně"
 msgstr "Campaign attendee"
 
-#: coupons/admin.py:50
+#: apps/coupons/admin.py:50
 msgid "Přiřazen"
 msgstr "Assigned"
 
-#: coupons/admin.py:51
+#: apps/coupons/admin.py:51
 msgid "Nepřiřazen"
 msgstr "Not assigned"
 
-#: coupons/forms.py:37
+#: apps/coupons/forms.py:37
 msgid "Kód voucheru"
 msgstr "Voucher code"
 
-#: coupons/forms.py:41
+#: apps/coupons/forms.py:41
 msgid "Nesprávný formát voucheru"
 msgstr "Invalid voucher format"
 
-#: coupons/forms.py:59
+#: apps/coupons/forms.py:59
 msgid "Tento slevový kupón již byl použit"
 msgstr "This voucher has already been used"
 
-#: coupons/forms.py:62
+#: apps/coupons/forms.py:62
 msgid "Tento slevový kupón neexistuje, nebo již byl použit"
 msgstr "This voucher does not exist or has been used"
 
-#: coupons/models/discount_coupon.py:68
+#: apps/coupons/models/discount_coupon.py:70
 msgid "typ voucheru"
 msgstr "voucher type"
 
-#: coupons/models/discount_coupon.py:75
+#: apps/coupons/models/discount_coupon.py:77
 msgid "token"
 msgstr "token"
 
-#: coupons/models/discount_coupon.py:81
+#: apps/coupons/models/discount_coupon.py:83
 msgid "sleva (v procentech)"
 msgstr "discount (in percent)"
 
-#: coupons/models/discount_coupon.py:88
+#: apps/coupons/models/discount_coupon.py:90
 msgid "Počet možných využití"
 msgstr "Number of allowed usage"
 
-#: coupons/models/discount_coupon.py:89
+#: apps/coupons/models/discount_coupon.py:91
 msgid "Pokud se nevyplní, bude počet využití neomezený"
 msgstr "If blank, the count is not limited"
 
-#: coupons/models/discount_coupon.py:95
+#: apps/coupons/models/discount_coupon.py:97
 msgid "poznámka"
 msgstr "note"
 
-#: coupons/models/discount_coupon.py:101
+#: apps/coupons/models/discount_coupon.py:103
 msgid "příjemce"
 msgstr "receiver"
 
-#: coupons/models/discount_coupon.py:107
+#: apps/coupons/models/discount_coupon.py:109
+#, fuzzy
+#| msgid "příjemce"
+msgid "jméno příjemce"
+msgstr "receiver"
+
+#: apps/coupons/models/discount_coupon.py:115
 msgid "Datum vytvoření"
 msgstr "Date of creation"
 
-#: coupons/models/discount_coupon.py:112
+#: apps/coupons/models/discount_coupon.py:120
 msgid "Datum poslední změny"
 msgstr "Date of last change"
 
-#: coupons/models/discount_coupon.py:117 coupons/models/discount_coupon.py:122
+#: apps/coupons/models/discount_coupon.py:125
+#: apps/coupons/models/discount_coupon.py:130
 msgid "DEPRECATED"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:137
+#: apps/coupons/models/discount_coupon.py:145
 msgid "PDF file"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:141
+#: apps/coupons/models/discount_coupon.py:149
 msgid "PDF"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:153
+#: apps/coupons/models/discount_coupon.py:161
 msgid "Slevový kupón"
 msgstr "Discount voucher"
 
-#: coupons/models/discount_coupon.py:154
+#: apps/coupons/models/discount_coupon.py:162
 msgid "Slevové kupóny"
 msgstr "Discount vouchers"
 
-#: coupons/models/discount_coupon_type.py:31
+#: apps/coupons/models/discount_coupon_type.py:31
 msgid "Prefix musí mít aspon dva pismena"
 msgstr "Prefix must have at least two letters"
 
-#: coupons/models/discount_coupon_type.py:36
+#: apps/coupons/models/discount_coupon_type.py:36
 msgid "jméno typu voucheru"
 msgstr "name of discount voucher"
 
-#: coupons/models/discount_coupon_type.py:43
+#: apps/coupons/models/discount_coupon_type.py:43
 msgid "Kampaň"
 msgstr "Campaign"
 
-#: coupons/models/discount_coupon_type.py:49
+#: apps/coupons/models/discount_coupon_type.py:49
 msgid "Platný do"
 msgstr "Valid until"
 
-#: coupons/models/discount_coupon_type.py:58
+#: apps/coupons/models/discount_coupon_type.py:58
 msgid "Prefix musí sestávat pouze z velkých písmen"
 msgstr "Prefix must consist of upper case letters"
 
-#: coupons/models/discount_coupon_type.py:63
+#: apps/coupons/models/discount_coupon_type.py:63
 msgid "prefix"
 msgstr "prefix"
 
-#: coupons/models/discount_coupon_type.py:81
+#: apps/coupons/models/discount_coupon_type.py:81
 msgid "Typ slevového kupónu"
 msgstr "Discount voucher type"
 
-#: coupons/models/discount_coupon_type.py:82
+#: apps/coupons/models/discount_coupon_type.py:82
 msgid "Typy slevového kupónu"
 msgstr "Discount voucher types"
 
-#: coupons/views.py:49
+#: apps/coupons/views.py:49
 msgid "Uplatnit slevový voucher"
 msgstr "Redeem discount voucher"
 

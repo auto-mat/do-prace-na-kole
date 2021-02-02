@@ -736,6 +736,10 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
         lambda city, req:
         CityInCampaign.objects.get(city=city, campaign=req.campaign).eco_trip_count(),
     )
+    description = RequestSpecificField(
+        lambda city, req:
+        CityInCampaign.objects.get(city=city, campaign=req.campaign).description(language=req.query_params.get('lang', 'cs')),
+    )
     organizer = RequestSpecificField(
         lambda city, req:
         CityInCampaign.objects.get(city=city, campaign=req.campaign).organizer,
@@ -783,6 +787,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             'distance',
             'organizer',
             'organizer_url',
+            'description',
             'competitions',
         )
 

@@ -6,3 +6,7 @@ RUN useradd test
 RUN chsh test -s /bin/bash
 RUN mkdir /home/test ; chown test /home/test ; chgrp test /home/test
 RUN cd /home/aplikace ; pipenv install --dev --system --ignore-pipfile
+RUN apt-get install -y libgirepository1.0-dev idle3
+RUN apt-get -qq update
+run apt-get install -y python3-gi
+RUN apt-get install -y gtk+3
