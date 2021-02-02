@@ -372,6 +372,9 @@ class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
     eco_trip_count = SubsidiaryInCampaignField(
         lambda sic, req: sic.eco_trip_count(),
     )
+    working_rides_base_count = SubsidiaryInCampaignField(
+        lambda sic, req: sic.working_rides_base_count(),
+    )
     emissions = SubsidiaryInCampaignField(
         lambda sic, req: sic.emissions(),
     )
@@ -393,6 +396,7 @@ class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
             'rest_url',
             'emissions',
             'eco_trip_count',
+            'working_rides_base_count',
         )
 
 class SubsidiarySerializer(MinimalSubsidiarySerializer):
@@ -417,6 +421,7 @@ class SubsidiarySerializer(MinimalSubsidiarySerializer):
             'icon_url',
             'gallery',
             'gallery_slug',
+            'working_rides_base_count',
         )
 
 
@@ -554,6 +559,10 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
         help_text='Number of ecologically traveled trips by team members',
         read_only=True,
     )
+    working_rides_base_count = serializers.IntegerField(
+        source='get_working_trips_count',
+        read_only=True,
+    )
     rest_url = RequestSpecificField(
         lambda team, req:
         serializers.HyperlinkedRelatedField(read_only=True, view_name='team-detail')
@@ -570,6 +579,7 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
             'rest_url',
             'eco_trip_count',
             'emissions',
+            'working_rides_base_count',
         )
 
 
@@ -590,6 +600,7 @@ class TeamSerializer(MinimalTeamSerializer):
             'frequency',
             'distance',
             'eco_trip_count',
+            'working_rides_base_count',
             'emissions',
             'campaign',
             'icon_url',

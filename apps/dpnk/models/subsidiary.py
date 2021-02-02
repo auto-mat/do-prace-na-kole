@@ -137,6 +137,9 @@ class SubsidiaryInCampaign:
     def eco_trip_count(self):
         return sum(team.get_eco_trip_count() for team in self.teams())
 
+    def working_rides_base_count(self):
+        return sum(team.get_working_trips_count() for team in self.teams())
+
     def frequency(self):
         teams = self.teams()
         if teams:
