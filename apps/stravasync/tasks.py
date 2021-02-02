@@ -130,12 +130,20 @@ def get_activities_as_rest_trips(strava_account):
 
 
 def get_activity_as_rest_trip(activity):
-    track = None
+    geojson = None
     if activity.map.summary_polyline:
         track = get_track(activity.map.summary_polyline)
     try:
         if activity.map.polyline:
             track = get_track(activity.map.polyline)
+            try:
+                geojsons = [{
+                    'type': 'MultiLineString',
+                    'coordinates': geom
+                } for geom in track]
+                geojson = geojsons[0]
+            except IndexError:
+                geojson = None
     except AttributeError:
         pass
     return {
@@ -147,7 +155,7 @@ def get_activity_as_rest_trip(activity):
         "sourceId": activity.id,
         "direction": None,
         "file": None,
-        "track": track,
+        "track": geojson,
         "description": activity.name,
     }
 
