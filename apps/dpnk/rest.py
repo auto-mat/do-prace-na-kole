@@ -637,8 +637,11 @@ class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
     user_attendance = serializers.CharField(read_only=True)
     company = serializers.CharField(read_only=True)
     place = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(source='__str__')
-    icon_url = serializers.CharField(source='get_icon_url')
+    name = serializers.CharField(source='__str__', read_only=True)
+    icon_url = serializers.CharField(source='get_icon_url', read_only=True)
+    divident = serializers.IntegerField(source='result_divident', read_only=True)
+    divisor = serializers.IntegerField(source='result_divisor', read_only=True)
+    emissions = serializers.JSONField(source='get_emissions', read_only=True)
 
     class Meta:
         model = CompetitionResult
@@ -652,6 +655,11 @@ class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
             'place',
             'name',
             'icon_url',
+            'frequency',
+            'divident',
+            'divisor',
+            'distance',
+            'emissions',
         )
 
 

@@ -20,6 +20,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
+from django.db.models import Sum
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from .company import Company
@@ -95,6 +98,18 @@ class CompetitionResult(models.Model):
         verbose_name=_(u"Datum poslední změny"),
         auto_now=True,
         null=True,
+    )
+    frequency = models.FloatField(
+        verbose_name=_("Pravidelnost"),
+        null=True,
+        blank=True,
+        default=0,
+    )
+    distance = models.FloatField(
+        verbose_name=_("Vzdalenost"),
+        null=True,
+        blank=True,
+        default=0,
     )
 
     def get_sequence_range(self):
@@ -177,6 +192,10 @@ class CompetitionResult(models.Model):
         else:
             return 0
 
+    def get_emissions(self):
+        from ..util import get_emissions
+        return get_emissions(self.distance)
+
     def competitor_attr(self, team_getter, company_getter, user_attendance_getter, default=""):
         if self.competition.competitor_type == 'team':
             if self.team:
@@ -211,3 +230,17 @@ class CompetitionResult(models.Model):
             return self.team.members()
         elif competition.competitor_type == 'company':
             return UserAttendance.objects.filter(team__subsidiary__company=self.company)
+
+@receiver(pre_save, sender=CompetitionResult)
+def calculate_general_results(sender, instance, *args, **kwargs):
+    from .. import results
+    participants = instance.user_attendances()
+    competition = instance.competition
+    frequency_result = results.get_team_frequency(participants, competition)
+    instance.frequency = frequency_result[2]
+    trips = results.get_trips(participants, competition)
+    instance.distance = trips.aggregate(Sum('distance'))['distance__sum'] or 0
+    if instance.result_divident is None:
+        instance.result_divident = frequency_result[0]
+    if instance.result_divisor is None:
+        instance.result_divisor = frequency_result[1]
