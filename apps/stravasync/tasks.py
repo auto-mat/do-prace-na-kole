@@ -131,21 +131,23 @@ def get_activities_as_rest_trips(strava_account):
 
 def get_activity_as_rest_trip(activity):
     geojson = None
+    track = None
     if activity.map.summary_polyline:
         track = get_track(activity.map.summary_polyline)
     try:
         if activity.map.polyline:
             track = get_track(activity.map.polyline)
-            try:
-                geojsons = [{
-                    'type': 'MultiLineString',
-                    'coordinates': geom
-                } for geom in track]
-                geojson = geojsons[0]
-            except IndexError:
-                geojson = None
     except AttributeError:
         pass
+    if track is not None:
+        try:
+            geojsons = [{
+                'type': 'MultiLineString',
+                'coordinates': geom
+            } for geom in track]
+            geojson = geojsons[0]
+        except IndexError:
+            geojson = None
     return {
         "commuteMode": get_commute_mode_slug(activity.type),
         "durationSeconds": activity.elapsed_time.total_seconds(),
