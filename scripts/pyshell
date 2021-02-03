@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+import yaml
+import sys
+import subprocess
+import argparse
+
+parser = argparse.ArgumentParser(description='Load interactive django shell on server')
+parser.add_argument('server', metavar='server', type=str,
+                    help='dpnk for prod dpnk-test for test')
+
+args = parser.parse_args()
+
+with open("ansible-aws-inventory.yml") as fd:
+     yml = yaml.load(fd.read())
+     ip = next(iter(yml[args.server]['hosts']))
+
+subprocess.run([
+     "ssh",
+     "-t",
+     "ubuntu@" + ip,
+     "sudo",
+     "docker",
+     "exec",
+     "-it",
+     "ubuntu_dpnk-web_1",
+     "python3",
+     "manage.py",
+     "shell_plus",
+])
+
+
+
