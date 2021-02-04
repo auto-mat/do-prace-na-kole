@@ -1085,7 +1085,6 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         'commute_mode',
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
-        'source_application',
         'user_attendance__payment_status',
     )
     readonly_fields = ('created', 'author', 'updated_by')
