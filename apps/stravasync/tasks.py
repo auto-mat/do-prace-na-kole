@@ -143,7 +143,7 @@ def get_activity_as_rest_trip(activity):
         try:
             geojsons = [{
                 'type': 'MultiLineString',
-                'coordinates': geom.coords
+                'coordinates': [ geom.coords ],
             } for geom in track]
             geojson = geojsons[0]
         except IndexError:
