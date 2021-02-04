@@ -7,26 +7,53 @@ import argparse
 parser = argparse.ArgumentParser(description='Load interactive django shell on server')
 parser.add_argument('server', metavar='server', type=str,
                     help='dpnk for prod dpnk-test for test')
+parser.add_argument('--cmd', dest='cmd', type=str,
+                    help='misto django shell pust cmd v dockeru')
+parser.add_argument('--sys-cmd', dest='syscmd', type=str,
+                    help='misto django shell pust cmd')
+parser.add_argument('--instance', dest='instance', type=int, default=0,
+                    help='index instancu ve seznamu')
 
 args = parser.parse_args()
 
+subprocess.call(["./sync-hosts.py"])
+
 with open("ansible-aws-inventory.yml") as fd:
      yml = yaml.load(fd.read())
-     ip = next(iter(yml[args.server]['hosts']))
+     ips = list(yml[args.server]['hosts'].keys())
+     ips.sort()
+     try:
+          ip = ips[args.instance]
+     except IndexError:
+          exit("Instance %s does not exist." % args.instance)
 
-subprocess.run([
+connect_with_ssh = [
      "ssh",
      "-t",
      "ubuntu@" + ip,
+]
+
+lauch_docker = [
      "sudo",
      "docker",
      "exec",
      "-it",
      "ubuntu_dpnk-web_1",
+]
+
+run_django_command = [
      "python3",
      "manage.py",
-     "shell_plus",
-])
+]
+
+def get_cmd():
+     cmd = connect_with_ssh
+     if args.syscmd:
+          return cmd + [ args.syscmd ]
+     cmd = cmd + lauch_docker
+     if args.cmd:
+          return cmd + [ args.cmd ]
+     return cmd + run_django_command + [ "shell_plus" ]
 
 
-
+subprocess.run(get_cmd())
