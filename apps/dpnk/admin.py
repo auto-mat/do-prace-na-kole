@@ -144,6 +144,10 @@ class TeamInline(admin.TabularInline):
 class SubsidiaryInline(NestedTabularInline):
     model = models.Subsidiary
     extra = 0
+    raw_id_fields = (
+        'icon',
+        'gallery',
+    )
 
 
 @admin.register(models.City)
@@ -275,6 +279,10 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
         'ico',
         'dic',
     )
+    raw_id_fields = (
+        'icon',
+        'gallery',
+    )
     list_max_show_all = 10000
     form = CompanyForm
     try:
@@ -345,7 +353,11 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         'city',
         'address_psc',
     )
-    raw_id_fields = ('company',)
+    raw_id_fields = (
+        'company',
+        'icon',
+        'gallery',
+    )
     list_max_show_all = 10000
     save_as = True
 
@@ -670,7 +682,10 @@ class TripAdminInline(admin.TabularInline):
         'duration',
         'description',
     )
-    raw_id_fields = ('user_attendance',)
+    raw_id_fields = (
+        'user_attendance',
+        'gallery',
+    )
     extra = 0
     model = models.Trip
 
@@ -1060,7 +1075,10 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         'user_attendance__userprofile__user__email',
         'user_attendance__team__subsidiary__company__name',
     )
-    raw_id_fields = ('user_attendance',)
+    raw_id_fields = (
+        'user_attendance',
+        'gallery',
+    )
     list_filter = (
         campaign_filter_generator('user_attendance__campaign'),
         'direction',
