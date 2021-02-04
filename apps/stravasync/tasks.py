@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
+import json
 import logging
 import traceback
 from datetime import datetime
@@ -157,7 +158,7 @@ def get_activity_as_rest_trip(activity):
         "sourceId": activity.id,
         "direction": None,
         "file": None,
-        "track": geojson,
+        "track": json.dumps(geojson),
         "description": activity.name,
     }
 
