@@ -18,14 +18,14 @@ from django.contrib.auth import logout
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import RedirectView, TemplateView
+from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
 
 from registration.backends.default.views import RegistrationView as SimpleRegistrationView
@@ -773,8 +773,8 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = "application"
 
 
-class OpenApplicationWithRestTokenView(LoginRequiredMixin, RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
+class OpenApplicationWithRestTokenView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
         from rest_framework.authtoken.models import Token
         try:
             app_id = int(kwargs["app_id"])
@@ -783,7 +783,8 @@ class OpenApplicationWithRestTokenView(LoginRequiredMixin, RedirectView):
         rough_url = settings.DPNK_MOBILE_APP_URLS[app_id]
         token, _ = Token.objects.get_or_create(user=self.request.user)
         campaign_slug_identifier = self.request.campaign.slug_identifier
-        return rough_url.format(
+        HttpResponseRedirect.allowed_schemes.append('dpnk')
+        return HttpResponseRedirect(rough_url.format(
             auth_token=token.key,
             campaign_slug_identifier=campaign_slug_identifier,
-        )
+        ))
