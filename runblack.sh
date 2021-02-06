@@ -1,3 +1,3 @@
 #!/bin/bash
-black apps --exclude migraitons
+black --exclude migrations apps/
 black project
