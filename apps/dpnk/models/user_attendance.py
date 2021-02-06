@@ -523,7 +523,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return self.team.member_count
 
     def tshirt_complete(self):
-        return (not self.campaign.has_any_tshirt) or self.t_shirt_size
+        return (not self.campaign.has_any_tshirt) or (self.t_shirt_size is not None)
 
     def team_complete(self):
         return self.team
