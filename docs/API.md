@@ -20,21 +20,44 @@ http https://test2019.dopracenakole.cz/rest/trips/?end=2020-12-14\;start=2020-12
 Here is an example of requesting an auth token by providing a username and password:
 
 ```
-http post http://test.lvh.me:8021/api-token-auth/ username=foo@bar.cz password=foobarbaz
+$ http post http://test.lvh.me:8021/dj-rest-auth/login/ username=foo@bar.cz password=foobarbaz
 HTTP/1.1 200 OK
 Allow: POST, OPTIONS
 Content-Language: cs
-Content-Length: 52
+Content-Length: 50
 Content-Type: application/json
-Date: Sun, 20 Dec 2020 23:39:37 GMT
+Date: Sat, 06 Feb 2021 20:13:51 GMT
 Server: WSGIServer/0.2 CPython/3.6.10
-Vary: Accept-Language, Cookie, Origin
+Set-Cookie: sessionid=s3602x5r282j0hs8g9d3c4ietsajyd2g; expires=Sat, 20 Feb 2021 20:13:51 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
+Set-Cookie: csrftoken=m9qkhibUmL4F3S38SGmFd6oclybeRR0BYK3lNRhOZVZjtNhImiqorrcLMHW7RMio; expires=Sat, 05 Feb 2022 20:13:51 GMT; Max-Age=31449600; Path=/; SameSite=Lax
+Vary: Accept, Accept-Language, Cookie, Origin
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
 X-XSS-Protection: 1; mode=block
 
 {
-    "token": "a4ba6792079aa4c62fb9cb1c9f80218f955f74f7"
+    "key": "6188eb97e96b118c074bb30d13c6300f5809466a"
+}
+```
+
+You can invalidate a token by using the `dj-rest-auth/logout/` endpoint.
+
+```
+http POST http://test.lvh.me:8021/dj-rest-auth/logout/ Authorization:'Token 6188eb97e96b118c074bb30d13c6300f5809466a'
+HTTP/1.1 200 OK
+Allow: GET, POST, HEAD, OPTIONS
+Content-Language: cs
+Content-Length: 47
+Content-Type: application/json
+Date: Sat, 06 Feb 2021 20:17:30 GMT
+Server: WSGIServer/0.2 CPython/3.6.10
+Vary: Accept, Accept-Language, Cookie, Origin
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+{
+    "detail": "Byli jste úspěšně odhlášeni."
 }
 ```
 
