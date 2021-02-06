@@ -3,6 +3,8 @@
 # Start Gunicorn processes
 echo Starting tests
 pipenv install --dev --system
+black --check --exclude migrations apps
+black --check project
 flake8
 ./runtests.sh $TEST_PARAMS
 mkdir reports -p

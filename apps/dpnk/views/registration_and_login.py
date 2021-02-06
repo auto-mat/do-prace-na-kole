@@ -25,7 +25,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import RedirectView, TemplateView, View
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
 
 from registration.backends.default.views import (

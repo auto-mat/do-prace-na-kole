@@ -40,7 +40,6 @@ from advanced_filters.admin import AdminAdvancedFiltersMixin
 
 from avatar.templatetags.avatar_tags import avatar
 
-from daterange_filter.filter import DateRangeFilter
 
 from django import forms
 from django.contrib import admin

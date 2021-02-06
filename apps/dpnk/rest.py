@@ -54,6 +54,7 @@ from .models import (
 )
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
+
 from stravasync.models import StravaAccount
 
 
