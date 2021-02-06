@@ -37,45 +37,51 @@ from . import models
 
 @admin.register(models.DiscountCouponType)
 class DiscountCouponTypeAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('name', 'campaign', 'valid_until', 'prefix')
+    list_display = (
+        "name",
+        "campaign",
+        "valid_until",
+        "prefix",
+    )
     list_filter = (CampaignFilter,)
 
 
 class NullUserAttendanceListFilter(SimpleListFilter):
-    title = _('Účastník kampaně')
-    parameter_name = 'userattendance'
+    title = _("Účastník kampaně")
+    parameter_name = "userattendance"
 
     def lookups(self, request, model_admin):
         return (
-            ('False', _('Přiřazen'), ),
-            ('True', _('Nepřiřazen'), ),
+            ("False", _("Přiřazen"),),
+            ("True", _("Nepřiřazen"),),
         )
 
     def queryset(self, request, queryset):
-        if self.value() in ('False', 'True'):
+        if self.value() in ("False", "True"):
             kwargs = {
-                '{0}__isnull'.format(self.parameter_name): self.value() == 'True',
+                "{0}__isnull".format(self.parameter_name): self.value() == "True",
             }
             return queryset.filter(**kwargs).distinct()
         return queryset
 
 
 class DiscountCouponResource(resources.ModelResource):
-
     class Meta:
         model = models.DiscountCoupon
         fields = (
-            'discount',
-            'note',
-            'coupon_type',
-            'receiver',
-            'recipient_name',
-            'user_attendance_number',
+            "discount",
+            "note",
+            "coupon_type",
+            "receiver",
+            "recipient_name",
+            "user_attendance_number",
         )
 
     def import_field(self, field, obj, data, **kwargs):
-        if field.column_name == 'coupon_type':
-            obj.coupon_type = models.DiscountCouponType.objects.get(prefix=data['coupon_type'])
+        if field.column_name == "coupon_type":
+            obj.coupon_type = models.DiscountCouponType.objects.get(
+                prefix=data["coupon_type"]
+            )
         else:
             super().import_field(field, obj, data, **kwargs)
 
@@ -86,32 +92,48 @@ class DiscountCouponResource(resources.ModelResource):
 @admin.register(models.DiscountCoupon)
 class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
-        'name',
-        'coupon_type__prefix',
-        'token',
-        'get_pdf',
-        'coupon_type',
-        'discount',
-        'user_attendance_number',
-        'note',
-        'receiver',
-        'recipient_name',
-        'attached_user_attendances_list',
-        'attached_user_attendances_count',
+        "name",
+        "coupon_type__prefix",
+        "token",
+        "get_pdf",
+        "coupon_type",
+        "discount",
+        "user_attendance_number",
+        "note",
+        "receiver",
+        "recipient_name",
+        "attached_user_attendances_list",
+        "attached_user_attendances_count",
     )
     exclude = (
-        'sent',
-        'coupon_pdf',
+        "sent",
+        "coupon_pdf",
     )
-    readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
-    list_editable = ('note', 'receiver', 'recipient_name', 'discount', 'user_attendance_number')
+    readonly_fields = (
+        "token",
+        "created",
+        "updated",
+        "author",
+        "updated_by",
+    )
+    list_editable = (
+        "note",
+        "receiver",
+        "recipient_name",
+        "discount",
+        "user_attendance_number",
+    )
     list_filter = (
-        campaign_filter_generator('coupon_type__campaign'),
-        'coupon_type__name',
-        'user_attendance_number',
+        campaign_filter_generator("coupon_type__campaign"),
+        "coupon_type__name",
+        "user_attendance_number",
         NullUserAttendanceListFilter,
     )
-    search_fields = ('token', 'note', 'receiver')
+    search_fields = (
+        "token",
+        "note",
+        "receiver",
+    )
 
     resource_class = DiscountCouponResource
     actions = (smmapdfs.actions.make_pdfsandwich,)
