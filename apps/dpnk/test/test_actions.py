@@ -85,7 +85,7 @@ class TestActionsMommy(TestCase):
         )
         self.assertEqual(voucher.user_attendance, None)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEqual(str(message), "Není dost volných voucherů")
+        self.assertEqual(str(message), "Nejsou žádné vouchery k přiřazení")
 
 
 @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)

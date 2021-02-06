@@ -800,7 +800,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         from . import Voucher, VoucherType
         from .. import tasks
 
-        assigned_vouchers = 0
+        assigned_vouchers = []
         for voucher_type in VoucherType.objects.all():
             if (
                 Voucher.objects.filter(
@@ -817,7 +817,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
                 ).first()
                 if voucher is not None:
                     tasks.assign_voucher.delay(voucher.pk, self.pk)
-                    assigned_vouchers += 1
+                    assigned_vouchers.add(voucher_type.name)
         return assigned_vouchers
 
     def send_templated_notification(self, template):

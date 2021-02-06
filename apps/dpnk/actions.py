@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from collections import Counter
 import datetime
 
 from django.http import HttpResponse
@@ -111,10 +112,23 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
 def assign_vouchers(modeladmin, request, queryset):
-    done_count = 0
+    voucher_counter = Counter()
     for user_attendance in queryset:
-        done_count += user_attendance.assign_vouchers()
-    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (done_count)))
+        voucher_counter.update(user_attendance.assign_vouchers())
+    if len(voucher_counter) == 0:
+        modeladmin.message_user(request, _("Nejsou žádné vouchery k přiřazení"))
+    else:
+        voucher_counter_description = ", ".join(
+            ["%s: %s" % (key, val) for (key, val) in voucher_counter.items()]
+        )
+        modeladmin.message_user(
+            request,
+            _(
+                "Přiřazeno vouchery k {users} uživatelům: {vouchers}".format(
+                    users=queryset.count(), vouchers=voucher_counter_description
+                )
+            ),
+        )
 
 
 assign_vouchers.short_description = _(u"Přiřadit vouchery")
