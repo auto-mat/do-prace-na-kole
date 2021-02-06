@@ -279,11 +279,13 @@ class TokenAuthenticationTests(TestCase):
                 "id": trip.id,
                 "trip_date": "2010-11-20",
                 "direction": "trip_to",
+                "description": "",
                 "file": None,
                 "commuteMode": "bicycle",
                 "durationSeconds": None,
                 "distanceMeters": 111240,
                 "sourceApplication": 'test_app',
+                "sourceId": None,
             },
         )
 
