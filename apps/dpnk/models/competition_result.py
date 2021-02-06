@@ -188,13 +188,13 @@ class CompetitionResult(models.Model):
     ):
         if self.competition.competitor_type == "team":
             if self.team:
-                team_getter(self.team)
+                return team_getter(self.team)
         elif self.competition.competitor_type == "company":
             if self.company:
-                company_getter(self.company)
+                return company_getter(self.company)
         else:
             if self.user_attendance:
-                user_attendance_getter(self.user_attendance)
+                return user_attendance_getter(self.user_attendance)
         return default
 
     def get_icon_url(self):
