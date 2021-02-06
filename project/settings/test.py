@@ -22,48 +22,38 @@ import os
 from .base import *  # noqa
 from .base import INSTALLED_APPS, LOGGING, MIDDLEWARE, TEMPLATES
 
-ADMINS = (
-    ('', ''),
-)
+ADMINS = (("", ""),)
 DEBUG = True
-DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@test.cz>'
-SERVER_EMAIL = 'Do práce na kole <kontakt@tests.cz>'
+DEFAULT_FROM_EMAIL = "Do práce na kole <kontakt@test.cz>"
+SERVER_EMAIL = "Do práce na kole <kontakt@tests.cz>"
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    },
+    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",},
 }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('DB', 'circle_test'),
-        'USER': os.environ.get('DPNK_DB_USER', 'ubuntu'),
-        'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
-        'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DPNK_DB_PORT', ''),
-        'TEST': {
-            'NAME': os.environ.get('DB', 'circle_test'),
-        },
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.environ.get("DB", "circle_test"),
+        "USER": os.environ.get("DPNK_DB_USER", "ubuntu"),
+        "PASSWORD": os.environ.get("DPNK_DB_PASSWORD", ""),
+        "HOST": os.environ.get("DPNK_DB_HOST", "localhost"),
+        "PORT": os.environ.get("DPNK_DB_PORT", ""),
+        "TEST": {"NAME": os.environ.get("DB", "circle_test"),},
     },
 }
 
-PASSWORD_HASHERS = (
-    'django.contrib.auth.hashers.MD5PasswordHasher',
-)
+PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
 UNUSED_MIDDLEWARES = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'oauth2_provider.middleware.OAuth2TokenMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "oauth2_provider.middleware.OAuth2TokenMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
-INSTALLED_APPS += (
-    'django_nose',
-)
+INSTALLED_APPS += ("django_nose",)
 
-INSTALLED_APPS.remove('adminactions')
+INSTALLED_APPS.remove("adminactions")
 
 for mid in UNUSED_MIDDLEWARES:
     try:
@@ -71,11 +61,11 @@ for mid in UNUSED_MIDDLEWARES:
     except ValueError:
         pass
 
-DJANGO_URL = 'http://localhost:8000'
+DJANGO_URL = "http://localhost:8000"
 
-ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
+ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost",)
 
-SECRET_KEY = 'bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5'
+SECRET_KEY = "bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5"
 
 
 class InvalidStringError(str):
@@ -85,15 +75,15 @@ class InvalidStringError(str):
 
 
 ALLOWED_HOSTS = [
-    '.testserver',
-    'example.com',
-    '.example.com',
+    ".testserver",
+    "example.com",
+    ".example.com",
 ]
 
-TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s")
-TEMPLATES[0]['OPTIONS']['debug'] = True
+TEMPLATES[0]["OPTIONS"]["string_if_invalid"] = InvalidStringError("%s")
+TEMPLATES[0]["OPTIONS"]["debug"] = True
 
-LOGGING['handlers']['logfile']['filename'] = "test-dpnk.log"
+LOGGING["handlers"]["logfile"]["filename"] = "test-dpnk.log"
 
 CELERY_ALWAYS_EAGER = True
 
