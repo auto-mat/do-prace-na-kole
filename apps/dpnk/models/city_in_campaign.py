@@ -40,7 +40,11 @@ class CityInCampaign(models.Model):
         verbose_name = _(u"Město v kampani")
         verbose_name_plural = _(u"Města v kampani")
         unique_together = (("city", "campaign"),)
-        ordering = ('campaign', 'city__name',)
+        ordering = (
+            "campaign",
+            "city__name",
+        )
+
     city = models.ForeignKey(
         City,
         null=False,
@@ -49,10 +53,7 @@ class CityInCampaign(models.Model):
         on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
-        "Campaign",
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
+        "Campaign", null=False, blank=False, on_delete=models.CASCADE,
     )
     allow_adding_rides = models.BooleanField(
         verbose_name=_(u"povolit zapisování jízd"),
@@ -61,14 +62,10 @@ class CityInCampaign(models.Model):
         default=True,
     )
     organizer = models.TextField(
-        verbose_name=_(u"Jméno pořadatele"),
-        default="",
-        blank=True,
+        verbose_name=_(u"Jméno pořadatele"), default="", blank=True,
     )
     organizer_url = models.URLField(
-        verbose_name=_(u"URL pořadatele"),
-        default="",
-        blank=True,
+        verbose_name=_(u"URL pořadatele"), default="", blank=True,
     )
 
     @property
@@ -81,8 +78,9 @@ class CityInCampaign(models.Model):
             return UserAttendance.objects.filter(
                 campaign=self.campaign,
                 team__subsidiary__city=self.city,
-                payment_status__in=('done', 'no_admission'),
+                payment_status__in=("done", "no_admission"),
             )
+
         return actually_get_competitors(self.pk)
 
     def competitor_count(self):
@@ -91,7 +89,10 @@ class CityInCampaign(models.Model):
     def distances(self):
         @cached(60)
         def actually_get_distances(pk):
-            return distance_all_modes(Trip.objects.filter(user_attendance__in=self.competitors()))
+            return distance_all_modes(
+                Trip.objects.filter(user_attendance__in=self.competitors())
+            )
+
         return actually_get_distances(self.pk)
 
     def eco_trip_count(self):
@@ -101,10 +102,13 @@ class CityInCampaign(models.Model):
         return self.distances()["distance__sum"]
 
     def emissions(self):
-        return get_emissions(self.distances()['distance__sum'])
+        return get_emissions(self.distances()["distance__sum"])
 
     def __str__(self):
-        return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
+        return "%(city)s (%(campaign)s)" % {
+            "campaign": self.campaign.name,
+            "city": self.city.name,
+        }
 
     def description(self, language="cs"):
         with translation.override(language):

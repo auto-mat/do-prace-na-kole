@@ -38,12 +38,12 @@ class TestCampaignMethods(ClearCacheMixin, TestCase):
         self.assertEqual(campaign.phase("competition"), phase)
 
         campaign1 = models.Campaign.objects.create(name="Campaign 1", slug="campaign1")
-        phase1 = models.Phase.objects.create(campaign=campaign1, phase_type="competition")
+        phase1 = models.Phase.objects.create(
+            campaign=campaign1, phase_type="competition"
+        )
         self.assertEqual(campaign1.phase("competition"), phase1)
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
     def test_day_active(self):
         campaign = mommy.make("Campaign")
         models.Phase.objects.create(
@@ -64,9 +64,7 @@ class TestCampaignMethods(ClearCacheMixin, TestCase):
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 21)))
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 23)))
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
     def test_day_active_no_entry_enabled_phase(self):
         campaign = mommy.make("Campaign")
         models.Phase.objects.create(
@@ -80,9 +78,7 @@ class TestCampaignMethods(ClearCacheMixin, TestCase):
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 13)))
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 21)))
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
     def test_vacation_day_active(self):
         phase = mommy.make("Phase", phase_type="competition", date_to="2010-12-14")
         campaign = phase.campaign
@@ -102,28 +98,25 @@ class TestMethods(TestCase):
 class TestUserAttendancesForDelivery(TestCase):
     def test_no_admission(self):
         user_attendance = mommy.make_recipe(
-            'dpnk.test.UserAttendanceRecipe',
+            "dpnk.test.UserAttendanceRecipe",
             t_shirt_size__ship=True,
             team__name="Foo team",
             userprofile__user__first_name="Foo",
         )
         self.assertEqual(
-            user_attendance.payment_status,
-            'no_admission',
+            user_attendance.payment_status, "no_admission",
         )
         self.assertQuerysetEqual(
             user_attendance.campaign.user_attendances_for_delivery(),
-            ['<UserAttendance: Foo>'],
+            ["<UserAttendance: Foo>"],
         )
 
     def test_token_user(self):
         token = mommy.make(
-            'DiscountCoupon',
-            discount=100,
-            coupon_type__name="Foo coupon type",
+            "DiscountCoupon", discount=100, coupon_type__name="Foo coupon type",
         )
         user_attendance = mommy.make_recipe(
-            'dpnk.test.UserAttendanceRecipe',
+            "dpnk.test.UserAttendanceRecipe",
             discount_coupon=token,
             t_shirt_size__ship=True,
             team__name="Foo team",
@@ -133,22 +126,21 @@ class TestUserAttendancesForDelivery(TestCase):
             "price_level.PriceLevel",
             takes_effect_on=datetime.date(year=2010, month=2, day=1),
             price=100,
-            category='basic',
+            category="basic",
             pricable=user_attendance.campaign,
         )
         user_attendance.save()
         self.assertEqual(
-            user_attendance.payment_status,
-            'done',
+            user_attendance.payment_status, "done",
         )
         self.assertQuerysetEqual(
             user_attendance.campaign.user_attendances_for_delivery(),
-            ['<UserAttendance: Foo>'],
+            ["<UserAttendance: Foo>"],
         )
 
     def test_none(self):
         user_attendance = mommy.make_recipe(
-            'dpnk.test.UserAttendanceRecipe',
+            "dpnk.test.UserAttendanceRecipe",
             t_shirt_size__ship=True,
             team__name="Foo team",
             userprofile__user__first_name="Foo",
@@ -157,15 +149,13 @@ class TestUserAttendancesForDelivery(TestCase):
             "price_level.PriceLevel",
             takes_effect_on=datetime.date(year=2010, month=2, day=1),
             price=100,
-            category='basic',
+            category="basic",
             pricable=user_attendance.campaign,
         )
         user_attendance.save()
         self.assertEqual(
-            user_attendance.payment_status,
-            'none',
+            user_attendance.payment_status, "none",
         )
         self.assertQuerysetEqual(
-            user_attendance.campaign.user_attendances_for_delivery(),
-            [],
+            user_attendance.campaign.user_attendances_for_delivery(), [],
         )

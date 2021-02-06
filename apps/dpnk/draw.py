@@ -27,8 +27,10 @@ def all_members_paid(team):
     """Has all members of team paid?"""
 
     for userattendance in team.members():
-        if userattendance.userprofile.user.is_active \
-                and userattendance.payment_status != 'done':
+        if (
+            userattendance.userprofile.user.is_active
+            and userattendance.payment_status != "done"
+        ):
             return False
     return True
 
@@ -39,16 +41,18 @@ def draw(competition_slug, limit=10):
     competition = Competition.objects.get(slug=competition_slug)
     threshold = competition.campaign.minimum_percentage / 100.0
     condition = {}
-    condition['competition'] = competition
-    if competition.competition_type == 'frequency':
-        condition['result__gt'] = threshold
-    results = CompetitionResult.objects.filter(**condition).order_by('result')
+    condition["competition"] = competition
+    if competition.competition_type == "frequency":
+        condition["result__gt"] = threshold
+    results = CompetitionResult.objects.filter(**condition).order_by("result")
 
-    if competition.competitor_type == 'team':
-        results = \
-            [result for result in results if all_members_paid(result.team)]
+    if competition.competitor_type == "team":
+        results = [result for result in results if all_members_paid(result.team)]
 
-    if competition.competition_type == 'frequency' and competition.competitor_type == 'team':
+    if (
+        competition.competition_type == "frequency"
+        and competition.competitor_type == "team"
+    ):
         return draw_weighed(results)
 
     results = sorted(results[:limit], key=lambda x: random.random())

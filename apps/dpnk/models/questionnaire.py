@@ -35,26 +35,20 @@ from .user_attendance import UserAttendance
 
 class ChoiceType(models.Model):
     """Typ volby"""
+
     class Meta:
         verbose_name = _(u"Typ volby")
         verbose_name_plural = _(u"Typ volby")
         unique_together = (("competition", "name"),)
 
     competition = models.ForeignKey(
-        Competition,
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
+        Competition, null=False, blank=False, on_delete=models.CASCADE,
     )
     name = models.CharField(
-        verbose_name=_(u"Jméno"),
-        unique=True,
-        max_length=40,
-        null=True,
+        verbose_name=_(u"Jméno"), unique=True, max_length=40, null=True,
     )
     universal = models.BooleanField(
-        verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
-        default=False,
+        verbose_name=_(u"Typ volby je použitelný pro víc otázek"), default=False,
     )
 
     def __str__(self):
@@ -64,57 +58,53 @@ class ChoiceType(models.Model):
 class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if hasattr(self, 'request') and not self.request.user.is_superuser:
-            administrated_cities = self.request.user.userprofile.administrated_cities.all()
+        if hasattr(self, "request") and not self.request.user.is_superuser:
+            administrated_cities = (
+                self.request.user.userprofile.administrated_cities.all()
+            )
             campaign_slug = self.request.subdomain
-            self.fields['competition'].queryset = Competition.objects.filter(city__in=administrated_cities, campaign__slug=campaign_slug).distinct()
+            self.fields["competition"].queryset = Competition.objects.filter(
+                city__in=administrated_cities, campaign__slug=campaign_slug
+            ).distinct()
 
-        if hasattr(self.instance, 'competition'):
-            self.fields['choice_type'].queryset = ChoiceType.objects.filter(Q(competition=self.instance.competition) | Q(universal=True))
+        if hasattr(self.instance, "competition"):
+            self.fields["choice_type"].queryset = ChoiceType.objects.filter(
+                Q(competition=self.instance.competition) | Q(universal=True)
+            )
         else:
-            self.fields['choice_type'].queryset = ChoiceType.objects.filter(universal=True)
+            self.fields["choice_type"].queryset = ChoiceType.objects.filter(
+                universal=True
+            )
 
 
 class Question(models.Model):
-
     class Meta:
         verbose_name = _(u"Anketní otázka")
         verbose_name_plural = _(u"Anketní otázky")
         ordering = ("order",)
 
     QTYPES = (
-        ('text', _(u"Text")),
-        ('choice', _(u"Výběr odpovědi")),
-        ('multiple-choice', _(u"Výběr z více odpovědí")),
+        ("text", _(u"Text")),
+        ("choice", _(u"Výběr odpovědi")),
+        ("multiple-choice", _(u"Výběr z více odpovědí")),
     )
 
     COMMENT_TYPES = (
         (None, _(u"Nic")),
-        ('text', _(u"Text")),
-        ('link', _(u"Odkaz")),
-        ('one-liner', _(u"Jeden řádek textu")),
+        ("text", _(u"Text")),
+        ("link", _(u"Odkaz")),
+        ("one-liner", _(u"Jeden řádek textu")),
     )
 
     name = models.CharField(
-        verbose_name=_(u"Jméno"),
-        max_length=60,
-        null=True,
-        blank=True,
+        verbose_name=_(u"Jméno"), max_length=60, null=True, blank=True,
     )
-    text = models.TextField(
-        verbose_name=_(u"Otázka"),
-        null=True,
-        blank=True,
-    )
-    date = models.DateField(
-        verbose_name=_(u"Den"),
-        null=True,
-        blank=True,
-    )
+    text = models.TextField(verbose_name=_(u"Otázka"), null=True, blank=True,)
+    date = models.DateField(verbose_name=_(u"Den"), null=True, blank=True,)
     question_type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=QTYPES,
-        default='text',
+        default="text",
         max_length=16,
         null=False,
     )
@@ -127,15 +117,9 @@ class Question(models.Model):
         null=True,
     )
     with_attachment = models.BooleanField(
-        verbose_name=_(u"Povolit přílohu"),
-        default=False,
-        null=False,
+        verbose_name=_(u"Povolit přílohu"), default=False, null=False,
     )
-    order = models.IntegerField(
-        verbose_name=_(u"Pořadí"),
-        null=True,
-        blank=True,
-    )
+    order = models.IntegerField(verbose_name=_(u"Pořadí"), null=True, blank=True,)
     competition = models.ForeignKey(
         Competition,
         verbose_name=_(u"Soutěž"),
@@ -152,25 +136,27 @@ class Question(models.Model):
         on_delete=models.CASCADE,
     )
     required = models.BooleanField(
-        verbose_name=_(u"Povinná otázka"),
-        default=True,
-        null=False,
+        verbose_name=_(u"Povinná otázka"), default=True, null=False,
     )
 
     def __str__(self):
         return "%s" % (self.name or self.text)
 
     def with_answer(self):
-        return self.comment_type or self.with_attachment or self.question_type != 'text' or self.choice_type is not None
+        return (
+            self.comment_type
+            or self.with_attachment
+            or self.question_type != "text"
+            or self.choice_type is not None
+        )
 
 
 class Choice(models.Model):
-
     class Meta:
         verbose_name = _(u"Nabídka k anketním otázce")
         verbose_name_plural = _(u"Nabídky k anketním otázkám")
         unique_together = (("choice_type", "text"),)
-        ordering = ("order", )
+        ordering = ("order",)
 
     choice_type = models.ForeignKey(
         ChoiceType,
@@ -180,75 +166,54 @@ class Choice(models.Model):
         on_delete=models.CASCADE,
     )
     text = models.CharField(
-        verbose_name=_(u"Nabídka"),
-        max_length=250,
-        db_index=True,
-        null=False,
+        verbose_name=_(u"Nabídka"), max_length=250, db_index=True, null=False,
     )
     points = models.IntegerField(
-        verbose_name=_(u"Body"),
-        null=True,
-        blank=True,
-        default=None,
+        verbose_name=_(u"Body"), null=True, blank=True, default=None,
     )
-    order = models.PositiveIntegerField(
-        default=0,
-        blank=False,
-        null=False,
-    )
+    order = models.PositiveIntegerField(default=0, blank=False, null=False,)
 
     def __str__(self):
         return "%s" % self.text
 
 
 def questionnaire_filename(instance, filename):
-    return 'questionaire/dpnk-%s/%s/%s' % (instance.question.competition.campaign.pk, instance.question.competition.slug, slugify(filename))
+    return "questionaire/dpnk-%s/%s/%s" % (
+        instance.question.competition.campaign.pk,
+        instance.question.competition.slug,
+        slugify(filename),
+    )
 
 
 class Answer(models.Model):
     """Odpověď"""
+
     class Meta:
         verbose_name = _(u"Odpověď")
         verbose_name_plural = _(u"Odpovědi")
-        ordering = ('user_attendance__team__subsidiary__city', 'pk')
+        ordering = ("user_attendance__team__subsidiary__city", "pk")
         unique_together = (("user_attendance", "question"),)
 
     user_attendance = models.ForeignKey(
-        UserAttendance,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
+        UserAttendance, null=True, blank=True, on_delete=models.CASCADE,
     )
-    question = models.ForeignKey(
-        Question,
-        null=False,
-        on_delete=models.CASCADE,
-    )
-    choices = models.ManyToManyField(
-        Choice,
-        blank=True,
-    )
+    question = models.ForeignKey(Question, null=False, on_delete=models.CASCADE,)
+    choices = models.ManyToManyField(Choice, blank=True,)
     comment = models.TextField(
-        verbose_name=_(u"Komentář"),
-        max_length=600,
-        null=True, blank=True,
+        verbose_name=_(u"Komentář"), max_length=600, null=True, blank=True,
     )
-    points_given = models.FloatField(
-        null=True, blank=True, default=None,
-    )
+    points_given = models.FloatField(null=True, blank=True, default=None,)
     comment_given = models.TextField(
-        verbose_name=_("Hodnotitelský komentář"),
-        null=True,
-        blank=True,
+        verbose_name=_("Hodnotitelský komentář"), null=True, blank=True,
     )
     attachment = models.FileField(
-        upload_to=questionnaire_filename,
-        max_length=600,
-        blank=True,
+        upload_to=questionnaire_filename, max_length=600, blank=True,
     )
 
     def has_any_answer(self):
-        return self.comment or self.choices.all() or self.attachment or self.points_given
+        return (
+            self.comment or self.choices.all() or self.attachment or self.points_given
+        )
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
@@ -259,8 +224,9 @@ class Answer(models.Model):
     @classmethod
     def export_resource_classes(cls):
         from .. import resources
+
         return {
-            'Answers': ('Answers', resources.AnswerResource),
+            "Answers": ("Answers", resources.AnswerResource),
         }
 
     # TODO: repair tests with this
@@ -274,10 +240,14 @@ secretballot.enable_voting_on(Answer)
 @receiver(post_save, sender=Answer)
 def answer_post_save(sender, instance, **kwargs):
     from .. import results
+
     competition = instance.question.competition
-    if competition.competitor_type == 'team':
+    if competition.competitor_type == "team":
         results.recalculate_result(competition, instance.user_attendance.team)
-    elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+    elif (
+        competition.competitor_type == "single_user"
+        or competition.competitor_type == "liberos"
+    ):
         results.recalculate_result(competition, instance.user_attendance)
-    elif competition.competitor_type == 'company':
+    elif competition.competitor_type == "company":
         results.recalculate_result(competition, instance.user_attendance.company())

@@ -49,7 +49,7 @@ class TestCreateCustomerSheets(TestCase):
             ship=True,
         )
         mommy.make(
-            'price_level.PriceLevel',
+            "price_level.PriceLevel",
             takes_effect_on=datetime.date(year=2017, month=1, day=1),
             pricable=testing_campaign,
         )

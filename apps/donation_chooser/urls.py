@@ -26,7 +26,7 @@ from . import views
 
 urlpatterns = [
     path(
-        'vybrat_charitativni_organizaci/',
+        "vybrat_charitativni_organizaci/",
         views.CharitativeOrganizationChooserView.as_view(),
         name="choose_charitative_organization",
     ),

@@ -26,14 +26,10 @@ from . import admin_views, views
 
 urlpatterns = [
     url(
-        r'^zmenit_triko/$',
+        r"^zmenit_triko/$",
         views.tshirt_view,
-        {'success_url': 'typ_platby'},
+        {"success_url": "typ_platby"},
         name="zmenit_triko",
     ),
-    url(
-        r'^admin/dispatch/$',
-        admin_views.DispatchView.as_view(),
-        name="dispatch",
-    ),
+    url(r"^admin/dispatch/$", admin_views.DispatchView.as_view(), name="dispatch",),
 ]

@@ -37,17 +37,19 @@ def update_dispatched_boxes(self):
     my_env["password"] = settings.GLS_PASSWORD
     my_env["username"] = settings.GLS_USERNAME
 
-    subprocess.call("scripts/batch_generation/download_dispatched_subsidiary_boxes.sh", env=my_env)
+    subprocess.call(
+        "scripts/batch_generation/download_dispatched_subsidiary_boxes.sh", env=my_env
+    )
     dataset = tablib.Dataset().load(open("dispatched_subsidiary_boxes.csv").read())
     for carrier_identification, box_id, dispatched in dataset:
         update_info = {}
-        update_info['carrier_identification'] = carrier_identification
+        update_info["carrier_identification"] = carrier_identification
         if dispatched:
-            update_info['dispatched'] = dispatched
+            update_info["dispatched"] = dispatched
         try:
-            box_filter = {'id': int(box_id)}
+            box_filter = {"id": int(box_id)}
         except ValueError:
-            box_filter = {'carrier_identification': carrier_identification}
+            box_filter = {"carrier_identification": carrier_identification}
         SubsidiaryBox.objects.filter(**box_filter).update(**update_info)
 
 
@@ -78,10 +80,18 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
             pdf_files.append(filename)
 
         order_pdf_filename = save_filefield(batch.order_pdf, "tmp_pdf")
-        subprocess.call(["scripts/batch_generation/generate_delivery_batch_pdf.sh", order_pdf_filename])
+        subprocess.call(
+            [
+                "scripts/batch_generation/generate_delivery_batch_pdf.sh",
+                order_pdf_filename,
+            ]
+        )
 
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
-            filename = "tmp_pdf/combined_sheets_rotated_%s_%s.pdf" % (batch.pk, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            filename = "tmp_pdf/combined_sheets_rotated_%s_%s.pdf" % (
+                batch.pk,
+                datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+            )
             batch.combined_opt_pdf.save(filename, f)
             batch.save()
         subprocess.call(["rm", "tmp_pdf/", "-r"])

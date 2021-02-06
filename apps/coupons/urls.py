@@ -20,9 +20,11 @@
 from django.conf.urls import url
 
 from . import views
+
 urlpatterns = [
     url(
-        r'^voucher/$',
+        # black
+        r"^voucher/$",
         views.DiscountCouponView.as_view(),
         name="discount_coupon",
     ),

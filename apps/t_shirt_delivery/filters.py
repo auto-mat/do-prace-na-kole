@@ -23,17 +23,17 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class AllPackagesDispatched(SimpleListFilter):
-    title = _('Všechny balíčky vyřízeny')
-    parameter_name = 'all_packages_dispatched'
+    title = _("Všechny balíčky vyřízeny")
+    parameter_name = "all_packages_dispatched"
 
     def lookups(self, request, model_admin):
         return (
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
+            ("yes", _("Ano")),
+            ("no", _("Ne")),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'yes':
+        if self.value() == "yes":
             return queryset.exclude(teampackage__dispatched=False)
-        if self.value() == 'no':
+        if self.value() == "no":
             return queryset.filter(teampackage__dispatched=False)

@@ -31,18 +31,22 @@ class TestAllPackagesDispatchedFilter(TestCase):
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
 
-        mommy.make('TeamPackage', dispatched=False),
-        mommy.make('TeamPackage', dispatched=True),
-        subsidiary_box = mommy.make('SubsidiaryBox')
-        mommy.make('TeamPackage', box=subsidiary_box, dispatched=False),
-        mommy.make('TeamPackage', box=subsidiary_box, dispatched=True),
+        mommy.make("TeamPackage", dispatched=False),
+        mommy.make("TeamPackage", dispatched=True),
+        subsidiary_box = mommy.make("SubsidiaryBox")
+        mommy.make("TeamPackage", box=subsidiary_box, dispatched=False),
+        mommy.make("TeamPackage", box=subsidiary_box, dispatched=True),
 
     def test_yes(self):
-        f = filters.AllPackagesDispatched(self.request, {"all_packages_dispatched": "yes"}, SubsidiaryBox, None)
+        f = filters.AllPackagesDispatched(
+            self.request, {"all_packages_dispatched": "yes"}, SubsidiaryBox, None
+        )
         q = f.queryset(self.request, SubsidiaryBox.objects.all())
         self.assertEquals(q.count(), 1)
 
     def test_no(self):
-        f = filters.AllPackagesDispatched(self.request, {"all_packages_dispatched": "no"}, SubsidiaryBox, None)
+        f = filters.AllPackagesDispatched(
+            self.request, {"all_packages_dispatched": "no"}, SubsidiaryBox, None
+        )
         q = f.queryset(self.request, SubsidiaryBox.objects.all())
         self.assertEquals(q.count(), 2)

@@ -30,22 +30,20 @@ class CompanyAdmin(models.Model):
     """Profil firemního koordinátora"""
 
     COMPANY_APPROVAL = (
-        ('approved', _(u"Odsouhlasený")),
-        ('undecided', _(u"Nerozhodnuto")),
-        ('denied', _(u"Zamítnutý")),
+        ("approved", _(u"Odsouhlasený")),
+        ("undecided", _(u"Nerozhodnuto")),
+        ("denied", _(u"Zamítnutý")),
     )
 
     class Meta:
         verbose_name = _("Firemní koordinátor")
         verbose_name_plural = _(u"Firemní koordinátoři")
-        unique_together = (
-            ("userprofile", "campaign"),
-        )
+        unique_together = (("userprofile", "campaign"),)
 
     userprofile = models.ForeignKey(
         UserProfile,
         verbose_name=_(u"Uživatelský profil"),
-        related_name='company_admin',
+        related_name="company_admin",
         null=False,
         blank=False,
         on_delete=models.CASCADE,
@@ -56,12 +54,14 @@ class CompanyAdmin(models.Model):
         choices=COMPANY_APPROVAL,
         max_length=16,
         null=False,
-        default='approved',
+        default="approved",
     )
 
     motivation_company_admin = models.TextField(
         verbose_name=_(u"Zaměstnanecká pozice"),
-        help_text=_("Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
+        help_text=_(
+            "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"
+        ),
         default="",
         max_length=5000,
         null=True,
@@ -78,23 +78,15 @@ class CompanyAdmin(models.Model):
     )
 
     campaign = models.ForeignKey(
-        'Campaign',
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
+        "Campaign", null=False, blank=False, on_delete=models.CASCADE,
     )
 
     note = models.TextField(
-        verbose_name=_(u"Interní poznámka"),
-        max_length=500,
-        null=True,
-        blank=True,
+        verbose_name=_(u"Interní poznámka"), max_length=500, null=True, blank=True,
     )
 
     can_confirm_payments = models.BooleanField(
-        verbose_name=_(u"Může potvrzovat platby"),
-        default=True,
-        null=False,
+        verbose_name=_(u"Může potvrzovat platby"), default=True, null=False,
     )
     will_pay_opt_in = models.BooleanField(
         verbose_name=_(u"Uživatel potvrdil, že bude plati za zaměstnance."),
@@ -103,13 +95,16 @@ class CompanyAdmin(models.Model):
     )
 
     def is_approved(self):
-        return self.company_admin_approved == 'approved'
+        return self.company_admin_approved == "approved"
 
     def company_has_invoices(self):
-        return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
+        return self.administrated_company.invoice_set.filter(
+            campaign=self.campaign
+        ).exists()
 
     def user_attendance(self):
         from .user_attendance import UserAttendance
+
         try:
             return self.userprofile.userattendance_set.get(campaign=self.campaign)
         except UserAttendance.DoesNotExist:
@@ -124,11 +119,13 @@ class CompanyAdmin(models.Model):
     def save(self, *args, **kwargs):
         status_before_update = None
         if self.id:
-            status_before_update = CompanyAdmin.objects.get(pk=self.id).company_admin_approved
+            status_before_update = CompanyAdmin.objects.get(
+                pk=self.id
+            ).company_admin_approved
         super().save(*args, **kwargs)
 
         if status_before_update != self.company_admin_approved:
-            if self.company_admin_approved == 'approved':
+            if self.company_admin_approved == "approved":
                 company_admin_approval_mail(self)
-            elif self.company_admin_approved == 'denied':
+            elif self.company_admin_approved == "denied":
                 company_admin_rejected_mail(self)

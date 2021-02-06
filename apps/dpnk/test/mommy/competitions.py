@@ -6,7 +6,7 @@ from model_mommy import mommy
 class Competitions:
     def __init__(self, cities, campaigns, companies, commute_modes, **kwargs):
         self.individual_frequency_C2010 = mommy.make(  # pk=12
-            'dpnk.Competition',
+            "dpnk.Competition",
             campaign=campaigns.c2010,
             city=[],
             company=companies.basic,
@@ -26,7 +26,7 @@ class Competitions:
             commute_modes=[commute_modes.bicycle, commute_modes.by_foot],
         )
         self.team_frequency_c2010 = mommy.make(  # pk=3
-            'dpnk.Competition',
+            "dpnk.Competition",
             campaign=campaigns.c2010,
             city=[],
             company=None,

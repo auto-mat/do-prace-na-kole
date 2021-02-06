@@ -28,41 +28,26 @@ class CommuteMode(models.Model):
         ordering = ["order"]
 
     name = models.CharField(
-        verbose_name=_("Název módu dopravy"),
-        max_length=160,
-        unique=False,
-        null=False,
+        verbose_name=_("Název módu dopravy"), max_length=160, unique=False, null=False,
     )
     slug = models.SlugField(
-        verbose_name=_("Identifikátor"),
-        unique=True,
-        null=False,
-        max_length=20,
+        verbose_name=_("Identifikátor"), unique=True, null=False, max_length=20,
     )
-    order = models.IntegerField(
-        verbose_name=_("Pořadí"),
-        null=True,
-        blank=True,
-    )
+    order = models.IntegerField(verbose_name=_("Pořadí"), null=True, blank=True,)
     tooltip = models.TextField(
-        verbose_name=_("Vysvětlivka módu"),
-        default=None,
-        blank=False,
-        null=False,
+        verbose_name=_("Vysvětlivka módu"), default=None, blank=False, null=False,
     )
     button_html = models.TextField(
-        verbose_name=_("Html of selector buttons"),
-        default="",
-        null=False,
+        verbose_name=_("Html of selector buttons"), default="", null=False,
     )
     icon_html = models.TextField(
-        verbose_name=_("Html of summary icon"),
-        default="",
-        null=False,
+        verbose_name=_("Html of summary icon"), default="", null=False,
     )
     add_command = models.TextField(
         verbose_name=_("Tooltip command for adding trip."),
-        help_text=_("Use {{distance}} to insert distance and {{direction}} for direction."),
+        help_text=_(
+            "Use {{distance}} to insert distance and {{direction}} for direction."
+        ),
         default="",
         null=False,
     )
@@ -86,46 +71,31 @@ class CommuteMode(models.Model):
         default=True,
         null=False,
     )
-    points = models.IntegerField(
-        verbose_name=_("Body"),
-        default=0,
-    )
+    points = models.IntegerField(verbose_name=_("Body"), default=0,)
     minimum_distance = models.FloatField(
-        verbose_name=_("Minimální vzdalenost (km)"),
-        default=0,
+        verbose_name=_("Minimální vzdalenost (km)"), default=0,
     )
     minimum_duration = models.PositiveIntegerField(
-        verbose_name=_("Minimální doba ve sekundách"),
-        default=0,
+        verbose_name=_("Minimální doba ve sekundách"), default=0,
     )
     distance_important = models.BooleanField(
-        verbose_name=_("Je vzdalenost důležité"),
-        default=True,
-        null=False,
+        verbose_name=_("Je vzdalenost důležité"), default=True, null=False,
     )
     duration_important = models.BooleanField(
-        verbose_name=_("Je doba důležité"),
-        default=True,
-        null=False,
+        verbose_name=_("Je doba důležité"), default=True, null=False,
     )
-    icon = models.ImageField(
-        upload_to="commute_mode_icons/",
-        null=True,
-        blank=True,
-    )
+    icon = models.ImageField(upload_to="commute_mode_icons/", null=True, blank=True,)
     # The difference between eco and does_count is that
     # does_count is also set for car trips and other
     # non-ecological modes of transportation.
     # does_count is not set only for the commute mode
     # "No trip".
-    eco = models.BooleanField(
-        verbose_name=_("Ekologický"),
-        default=True,
-    )
+    eco = models.BooleanField(verbose_name=_("Ekologický"), default=True,)
 
     def points_display(self):
         if self.points > 0:
             from django.utils.translation import ugettext as _
+
             return str(round(self.points)) + " " + _("bodů")
         else:
             return ""

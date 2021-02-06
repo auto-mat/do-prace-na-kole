@@ -26,13 +26,10 @@ class TestTeamPackage(TestCase):
         Test that __str__ returns TeamPackage string
         """
         team_package = mommy.make(
-            'TeamPackage',
-            team__name="Foo team",
-            team__campaign__slug="foo_slug",
+            "TeamPackage", team__name="Foo team", team__campaign__slug="foo_slug",
         )
         self.assertEqual(
-            str(team_package),
-            "Balíček pro tým Foo team",
+            str(team_package), "Balíček pro tým Foo team",
         )
 
     def test_str_noteam(self):
@@ -40,36 +37,25 @@ class TestTeamPackage(TestCase):
         Test that __str__ returns TeamPackage string
         when team is None
         """
-        team_package = mommy.make(
-            'TeamPackage',
-            team=None,
-        )
+        team_package = mommy.make("TeamPackage", team=None,)
         self.assertEqual(
-            str(team_package),
-            "Balíček bez týmu",
+            str(team_package), "Balíček bez týmu",
         )
 
     def test_identifier(self):
         """
         Test identifier()
         """
-        team_package = mommy.make(
-            'TeamPackage',
-            id=1,
-        )
+        team_package = mommy.make("TeamPackage", id=1,)
         self.assertEqual(
-            team_package.identifier(),
-            "T1",
+            team_package.identifier(), "T1",
         )
 
     def test_identifier_new(self):
         """
         Test identifier() on new package
         """
-        team_package = mommy.prepare(
-            'TeamPackage',
-        )
+        team_package = mommy.prepare("TeamPackage",)
         self.assertEqual(
-            team_package.identifier(),
-            None,
+            team_package.identifier(), None,
         )

@@ -23,7 +23,7 @@ from django.apps import AppConfig
 
 
 class DPNKConfig(AppConfig):
-    name = 'dpnk'
+    name = "dpnk"
     verbose_name = "Do práce na kole"
 
     def ready(self):
@@ -31,9 +31,22 @@ class DPNKConfig(AppConfig):
         from . import models as dpnk_models
         from fieldsignals import post_save_changed, pre_save_changed
         from django.conf import settings
+
         if not settings.DATABASE_CONFIGURED:
             return
 
-        post_save_changed.connect(dpnk_models.change_invoice_payments_status, sender=dpnk_models.Invoice, fields=['paid_date'])
-        pre_save_changed.connect(dpnk_models.pre_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])
-        post_save_changed.connect(dpnk_models.post_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])
+        post_save_changed.connect(
+            dpnk_models.change_invoice_payments_status,
+            sender=dpnk_models.Invoice,
+            fields=["paid_date"],
+        )
+        pre_save_changed.connect(
+            dpnk_models.pre_user_team_changed,
+            sender=dpnk_models.UserAttendance,
+            fields=["team"],
+        )
+        post_save_changed.connect(
+            dpnk_models.post_user_team_changed,
+            sender=dpnk_models.UserAttendance,
+            fields=["team"],
+        )

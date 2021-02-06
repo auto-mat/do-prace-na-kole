@@ -28,7 +28,7 @@ class PackageTransaction(Transaction):
     """Transakce balíku"""
 
     t_shirt_size = models.ForeignKey(
-        't_shirt_delivery.TShirtSize',
+        "t_shirt_delivery.TShirtSize",
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=False,
@@ -42,7 +42,7 @@ class PackageTransaction(Transaction):
         default=None,
     )
     team_package = models.ForeignKey(
-        't_shirt_delivery.TeamPackage',
+        "t_shirt_delivery.TeamPackage",
         verbose_name=_("Týmový balíček"),
         null=False,
         blank=False,
@@ -60,7 +60,7 @@ class PackageTransaction(Transaction):
     class Meta:
         verbose_name = _("Transakce trika")
         verbose_name_plural = _("Transakce trika")
-        db_table = 't_shirt_delivery_packagetransaction'
+        db_table = "t_shirt_delivery_packagetransaction"
 
     def save(self, *args, **kwargs):
         if not self.t_shirt_size:

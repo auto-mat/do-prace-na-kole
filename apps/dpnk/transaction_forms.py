@@ -26,7 +26,9 @@ from . import models
 class PaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=tuple(models.PAYMENT_STATUSES))
+        self.fields["status"] = forms.ChoiceField(
+            choices=tuple(models.PAYMENT_STATUSES)
+        )
 
     class Meta:
         model = models.Payment
@@ -36,7 +38,9 @@ class PaymentForm(forms.ModelForm):
 class UserActionTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=tuple(models.COMPETITION_STATUSES))
+        self.fields["status"] = forms.ChoiceField(
+            choices=tuple(models.COMPETITION_STATUSES)
+        )
 
     class Meta:
         model = models.UserActionTransaction

@@ -43,34 +43,32 @@ from .. import util
 
 
 def default_commute_modes():
-    return CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot'))
+    return CommuteMode.objects.filter(slug__in=("bicycle", "by_foot"))
 
 
 class Competition(models.Model):
     """Soutěžní kategorie"""
 
     CTYPES = (
-        ('length', _("Výkonnost")),
-        ('frequency', _("Pravidelnost")),
-        ('questionnaire', _(u"Dotazník")),
+        ("length", _("Výkonnost")),
+        ("frequency", _("Pravidelnost")),
+        ("questionnaire", _(u"Dotazník")),
     )
 
     CCOMPETITORTYPES = (
-        ('single_user', _(u"Jednotliví soutěžící")),
-        ('liberos', _(u"Liberos")),
-        ('team', _(u"Týmy")),
-        ('company', _(u"Soutěž organizací")),
+        ("single_user", _(u"Jednotliví soutěžící")),
+        ("liberos", _(u"Liberos")),
+        ("team", _(u"Týmy")),
+        ("company", _(u"Soutěž organizací")),
     )
 
     class Meta:
         verbose_name = _(u"Soutěžní kategorie")
         verbose_name_plural = _(u"Soutěžní kategorie")
-        ordering = ('-campaign', '-priority', 'name')
+        ordering = ("-campaign", "-priority", "name")
 
     name = models.CharField(
-        unique=False,
-        verbose_name=_("Název soutěže"),
-        max_length=160, null=False,
+        unique=False, verbose_name=_("Název soutěže"), max_length=160, null=False,
     )
     campaign = models.ForeignKey(
         Campaign,
@@ -80,10 +78,7 @@ class Competition(models.Model):
         on_delete=models.CASCADE,
     )
     slug = models.SlugField(
-        unique=True,
-        default="",
-        verbose_name=u"Doména v URL",
-        blank=False,
+        unique=True, default="", verbose_name=u"Doména v URL", blank=False,
     )
     url = models.URLField(
         default="",
@@ -94,14 +89,18 @@ class Competition(models.Model):
     )
     date_from = models.DateField(
         verbose_name=_("Datum začátku soutěže"),
-        help_text=_("Od tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"),
+        help_text=_(
+            "Od tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"
+        ),
         default=None,
         null=True,
         blank=False,
     )
     date_to = models.DateField(
         verbose_name=_("Datum konce soutěže"),
-        help_text=_("Do tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"),
+        help_text=_(
+            "Do tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"
+        ),
         default=None,
         null=True,
         blank=False,
@@ -110,15 +109,18 @@ class Competition(models.Model):
         verbose_name=_(u"Typ"),
         help_text=_(
             u"Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost),"
-            u" nebo na pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže,"
-            u" cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."),
+            u' nebo na pravidelnost. Volba "Dotazník" slouží pro kreativní soutěže,'
+            u" cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."
+        ),
         choices=CTYPES,
         max_length=16,
         null=False,
     )
     competitor_type = models.CharField(
         verbose_name=_("Počet soutěžících"),
-        help_text=_(u"Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."),
+        help_text=_(
+            u"Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."
+        ),
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False,
@@ -126,14 +128,18 @@ class Competition(models.Model):
     commute_modes = models.ManyToManyField(
         CommuteMode,
         verbose_name=_("Způsoby dopravy"),
-        help_text=_("Můžete vybrat víc položek pomocí klávesy control. Většina soutěží je vypsána jako kolo + pěšky"),
+        help_text=_(
+            "Můžete vybrat víc položek pomocí klávesy control. Většina soutěží je vypsána jako kolo + pěšky"
+        ),
         blank=True,
         default=default_commute_modes,
     )
     city = models.ManyToManyField(
         City,
         verbose_name=_(u"Soutěž pouze pro města"),
-        help_text=_(u"Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."),
+        help_text=_(
+            u"Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."
+        ),
         blank=True,
     )
     company = models.ForeignKey(
@@ -157,15 +163,15 @@ class Competition(models.Model):
     )
     minimum_rides_base = models.PositiveIntegerField(
         verbose_name=_("Minimální základ počtu jízd"),
-        help_text=_("Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"),
+        help_text=_(
+            "Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"
+        ),
         default=28,
         blank=False,
         null=False,
     )
     public_answers = models.BooleanField(
-        verbose_name=_(u"Zveřejňovat soutěžní odpovědi"),
-        default=False,
-        null=False,
+        verbose_name=_(u"Zveřejňovat soutěžní odpovědi"), default=False, null=False,
     )
     is_public = models.BooleanField(
         verbose_name=_(u"Soutěž je veřejná"),
@@ -192,16 +198,10 @@ class Competition(models.Model):
         null=False,
     )
     rules = models.TextField(
-        verbose_name=_(u"Pravidla soutěže"),
-        default=None,
-        blank=True,
-        null=True,
+        verbose_name=_(u"Pravidla soutěže"), default=None, blank=True, null=True,
     )
     results_text = models.TextField(
-        verbose_name=_(u"Text u výsledek"),
-        default=None,
-        blank=True,
-        null=True,
+        verbose_name=_(u"Text u výsledek"), default=None, blank=True, null=True,
     )
     mandatory = models.BooleanField(
         verbose_name=_("Povinný dotazník"),
@@ -217,8 +217,7 @@ class Competition(models.Model):
         null=False,
     )
     recreational = models.BooleanField(
-        verbose_name=_("Započítávají se i rekreační jízdy?"),
-        default=False,
+        verbose_name=_("Započítávají se i rekreační jízdy?"), default=False,
     )
     show_charitative_choices = models.BooleanField(
         verbose_name=_("Ukázat volbu charitativní organizace ve výsledích"),
@@ -229,12 +228,13 @@ class Competition(models.Model):
         return self.minimum_rides_base
 
     def show_competition_results(self):
-        if self.competition_type == 'questionnaire' and not self.has_finished():
+        if self.competition_type == "questionnaire" and not self.has_finished():
             return False
         return self.show_results
 
     def get_competitors(self):
         from .. import results
+
         return results.get_competitors(self)
 
     def get_competitors_count(self):
@@ -242,6 +242,7 @@ class Competition(models.Model):
 
     def get_results(self):
         from .. import results
+
         return results.get_results(self)
 
     def select_related_results(self, results):
@@ -249,21 +250,18 @@ class Competition(models.Model):
         Add select_related objects to the results queryeset
         which are needed to display results.
         """
-        if self.competitor_type == 'single_user' or self.competitor_type == 'libero':
+        if self.competitor_type == "single_user" or self.competitor_type == "libero":
             results = results.select_related(
-                'user_attendance__userprofile__user',
-                'user_attendance__team__subsidiary__company',
-                'user_attendance__team__subsidiary__city',
+                "user_attendance__userprofile__user",
+                "user_attendance__team__subsidiary__company",
+                "user_attendance__team__subsidiary__city",
             )
-        elif self.competitor_type == 'team':
+        elif self.competitor_type == "team":
             results = results.select_related(
-                'team__subsidiary__company',
-                'team__subsidiary__city',
+                "team__subsidiary__company", "team__subsidiary__city",
             )
-        elif self.competitor_type == 'company':
-            results = results.select_related(
-                'company',
-            )
+        elif self.competitor_type == "company":
+            results = results.select_related("company",)
         return results
 
     def annotate_results_rank(self, results):
@@ -272,8 +270,7 @@ class Competition(models.Model):
         The result cannot be filtered, so use get_result_id_rank_list function to get the rank list.
         """
         results = results.annotate(
-            lower_rank=Rank('result'),
-            upper_rank=UpperRank('result'),
+            lower_rank=Rank("result"), upper_rank=UpperRank("result"),
         )
         return results
 
@@ -281,7 +278,9 @@ class Competition(models.Model):
         """
         Make dict {result_id: (lower_rank, upper_rank)} out from results annotated with their ranks.
         """
-        return {i[0]: i[1:] for i in results.values_list('id', 'lower_rank', 'upper_rank')}
+        return {
+            i[0]: i[1:] for i in results.values_list("id", "lower_rank", "upper_rank")
+        }
 
     def has_started(self):
         if self.date_from:
@@ -291,7 +290,10 @@ class Competition(models.Model):
 
     def has_entry_not_opened(self):
         if self.date_from:
-            return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
+            return (
+                self.date_from + datetime.timedelta(self.entry_after_beginning_days)
+                <= util.today()
+            )
         else:
             return False
 
@@ -306,84 +308,142 @@ class Competition(models.Model):
 
     def recalculate_results(self):
         from .. import results
+
         return results.recalculate_result_competition(self)
 
     def get_company_querystring(self):
         """
         Returns string with wich is possible to filter results of this competition by company.
         """
-        if self.competitor_type in ('single_user', 'liberos'):
-            return 'user_attendance__team__subsidiary__company'
-        elif self.competitor_type == 'team':
-            return 'team__subsidiary__company'
-        elif self.competitor_type == 'company':
-            return 'company'
+        if self.competitor_type in ("single_user", "liberos"):
+            return "user_attendance__team__subsidiary__company"
+        elif self.competitor_type == "team":
+            return "team__subsidiary__company"
+        elif self.competitor_type == "company":
+            return "company"
 
     def get_columns(self):
-        columns = [('result_order', 'get_sequence_range', _("Po&shy;řa&shy;dí"))]
+        columns = [("result_order", "get_sequence_range", _("Po&shy;řa&shy;dí"))]
 
-        if self.competitor_type not in ('single_user', 'liberos') and self.competition_type != 'questionnaire':
+        if (
+            self.competitor_type not in ("single_user", "liberos")
+            and self.competition_type != "questionnaire"
+        ):
             average_string = _(" prů&shy;měr&shy;ně")
         else:
             average_string = ""
 
         columns.append(
             {
-                'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s") % average_string),
-                'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s") % average_string),
-                'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s") % average_string),
+                "length": (
+                    "result_value",
+                    "get_result",
+                    _("Ki&shy;lo&shy;me&shy;trů%s") % average_string,
+                ),
+                "frequency": (
+                    "result_value",
+                    "get_result_percentage",
+                    _("%% jízd%s") % average_string,
+                ),
+                "questionnaire": (
+                    "result_value",
+                    "get_result",
+                    _("Bo&shy;dů%s") % average_string,
+                ),
             }[self.competition_type],
         )
 
-        if self.competition_type == 'frequency':
-            columns.append(('result_divident', 'get_result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
-            columns.append(('result_divisor', 'get_result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
-        elif self.competition_type == 'length' and self.competitor_type == 'team':
-            columns.append(('result_divident', 'get_result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
+        if self.competition_type == "frequency":
+            columns.append(
+                (
+                    "result_divident",
+                    "get_result_divident",
+                    _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd"),
+                )
+            )
+            columns.append(
+                (
+                    "result_divisor",
+                    "get_result_divisor",
+                    _("Cel&shy;ko&shy;vý po&shy;čet cest"),
+                )
+            )
+        elif self.competition_type == "length" and self.competitor_type == "team":
+            columns.append(
+                (
+                    "result_divident",
+                    "get_result_divident",
+                    _(
+                        "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů"
+                    ),
+                )
+            )
 
-        if self.competitor_type not in ('single_user', 'liberos', 'company'):
+        if self.competitor_type not in ("single_user", "liberos", "company"):
             where = {
-                'team': _("v&nbsp;tý&shy;mu"),
-                'single_user': "",
-                'liberos': "",
-                'company': _("ve&nbsp;fir&shy;mě"),
+                "team": _("v&nbsp;tý&shy;mu"),
+                "single_user": "",
+                "liberos": "",
+                "company": _("ve&nbsp;fir&shy;mě"),
             }[self.competitor_type]
-            columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s") % where))
+            columns.append(
+                (
+                    "member_count",
+                    "team__member_count",
+                    _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s") % where,
+                )
+            )
 
         competitor = {
-            'team': 'get_team_name',
-            'single_user': 'user_attendance',
-            'liberos': 'user_attendance',
-            'company': 'get_company',
+            "team": "get_team_name",
+            "single_user": "user_attendance",
+            "liberos": "user_attendance",
+            "company": "get_company",
         }[self.competitor_type]
-        columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
+        columns.append(("competitor", competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
 
-        if self.competition_type == 'length' and self.competitor_type == 'single_user' and self.show_charitative_choices:
-            columns.append(('result_value', 'donation_icon', _("Charitativní organizace")))
+        if (
+            self.competition_type == "length"
+            and self.competitor_type == "single_user"
+            and self.show_charitative_choices
+        ):
+            columns.append(
+                ("result_value", "donation_icon", _("Charitativní organizace"))
+            )
 
-        if self.competitor_type not in ('team', 'company'):
-            columns.append(('team', 'get_team_name', _("Tým")))
+        if self.competitor_type not in ("team", "company"):
+            columns.append(("team", "get_team_name", _("Tým")))
 
-        if self.competitor_type != 'company':
-            columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))
+        if self.competitor_type != "company":
+            columns.append(("company", "get_company", _("Spo&shy;leč&shy;nost")))
 
-        if self.competitor_type in ('single_user', 'liberos'):
-            columns.append(('occupation', 'get_occupation', _("Pro&shy;fe&shy;se")))
-            columns.append(('sex', 'get_sex', _("Po&shy;hla&shy;ví")))
+        if self.competitor_type in ("single_user", "liberos"):
+            columns.append(("occupation", "get_occupation", _("Pro&shy;fe&shy;se")))
+            columns.append(("sex", "get_sex", _("Po&shy;hla&shy;ví")))
 
-        if self.competitor_type != 'company':
-            columns.append(('city', 'get_city', _("Měs&shy;to")))
+        if self.competitor_type != "company":
+            columns.append(("city", "get_city", _("Měs&shy;to")))
 
         return columns
 
     def has_admission(self, user_attendance):
         if not user_attendance.entered_competition():
             return False
-        if self.competitor_type == 'liberos' and not user_attendance.is_libero():
+        if self.competitor_type == "liberos" and not user_attendance.is_libero():
             return False
-        if self.company and user_attendance.team and self.company != user_attendance.team.subsidiary.company:
+        if (
+            self.company
+            and user_attendance.team
+            and self.company != user_attendance.team.subsidiary.company
+        ):
             return False
-        if user_attendance.team and self.city.exists() and not self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
+        if (
+            user_attendance.team
+            and self.city.exists()
+            and not self.city.filter(
+                pk=user_attendance.team.subsidiary.city.pk
+            ).exists()
+        ):
             return False
 
         return True
@@ -396,19 +456,19 @@ class Competition(models.Model):
 
     def type_string(self):
         CTYPES_STRINGS = {
-            'questionnaire': _('dotazník'),
-            'frequency': _('soutěž na pravidelnost'),
-            'length': _('soutěž na vzdálenost'),
+            "questionnaire": _("dotazník"),
+            "frequency": _("soutěž na pravidelnost"),
+            "length": _("soutěž na vzdálenost"),
         }
         CCOMPETITORTYPES_STRINGS = {
-            'single_user': _('jednotlivců'),
-            'liberos': _('liberos'),
-            'team': _('týmů'),
-            'company': _('organizací'),
+            "single_user": _("jednotlivců"),
+            "liberos": _("liberos"),
+            "team": _("týmů"),
+            "company": _("organizací"),
         }
         SEX_STRINGS = {
-            'male': _('pro muže'),
-            'female': _('pro ženy'),
+            "male": _("pro muže"),
+            "female": _("pro ženy"),
         }
         if self.company:
             company_string_before = _("vnitrofiremní")
@@ -420,12 +480,8 @@ class Competition(models.Model):
         cities = self.city.all()
         if cities:
             city_string = ungettext_lazy(
-                "ve městě %(cities)s",
-                "ve městech %(cities)s",
-                len(cities),
-            ) % {
-                'cities': ", ".join([city.name for city in cities]),
-            }
+                "ve městě %(cities)s", "ve městech %(cities)s", len(cities),
+            ) % {"cities": ", ".join([city.name for city in cities]),}
         else:
             city_string = ""
 
@@ -434,8 +490,10 @@ class Competition(models.Model):
         else:
             sex_string = ""
 
-        if self.competition_type != 'questionnaire' and self.commute_modes.exists():
-            commute_modes_string = " pro cesty s prostředky %s" % ", ".join(self.commute_modes.values_list('name', flat=True))
+        if self.competition_type != "questionnaire" and self.commute_modes.exists():
+            commute_modes_string = " pro cesty s prostředky %s" % ", ".join(
+                self.commute_modes.values_list("name", flat=True)
+            )
         else:
             commute_modes_string = ""
 
@@ -456,7 +514,13 @@ class Competition(models.Model):
     def clean(self):
         if self.date_to and self.date_from:
             if self.date_to < self.date_from:
-                raise ValidationError({'date_from': _("Datum začátku soutěže musí být menší, než datum konce soutěže")})
+                raise ValidationError(
+                    {
+                        "date_from": _(
+                            "Datum začátku soutěže musí být menší, než datum konce soutěže"
+                        )
+                    }
+                )
 
 
 class CompetitionForm(forms.ModelForm):
@@ -464,28 +528,33 @@ class CompetitionForm(forms.ModelForm):
         model = Competition
         exclude = ()
         widgets = {
-            'rules': RedactorEditor(),
-            'results_text': RedactorEditor(),
+            "rules": RedactorEditor(),
+            "results_text": RedactorEditor(),
         }
 
     def save(self, *args, **kwargs):
         competition = super().save(*args, **kwargs)
-        if not hasattr(competition, 'campaign'):
+        if not hasattr(competition, "campaign"):
             competition.campaign = self.request.campaign
         return competition
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not hasattr(self.instance, 'campaign'):
-            if hasattr(self, 'request') and hasattr(self.request, 'campaign'):
-                self.initial['campaign'] = self.request.campaign
+        if not hasattr(self.instance, "campaign"):
+            if hasattr(self, "request") and hasattr(self.request, "campaign"):
+                self.initial["campaign"] = self.request.campaign
 
-        if hasattr(self, "request") and not self.request.user.has_perm('dpnk.can_edit_all_cities'):
-            self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
+        if hasattr(self, "request") and not self.request.user.has_perm(
+            "dpnk.can_edit_all_cities"
+        ):
+            self.fields[
+                "city"
+            ].queryset = self.request.user.userprofile.administrated_cities
             self.fields["city"].required = True
 
 
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
     from .. import tasks
+
     tasks.recalculate_competitions_results.apply_async(args=((instance.pk,),))

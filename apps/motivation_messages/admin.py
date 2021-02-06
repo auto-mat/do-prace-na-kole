@@ -10,73 +10,75 @@ from . import models
 
 
 class CampaignTypeFilter(admin.SimpleListFilter):
-    title = 'campaign type'
-    parameter_name = 'campaign_type'
+    title = "campaign type"
+    parameter_name = "campaign_type"
 
     def lookups(self, request, model_admin):
         return [(c.id, c.name) for c in CampaignType.objects.all()]
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(Q(campaign_types=self.value()) | Q(campaign_types__isnull=True))
+            return queryset.filter(
+                Q(campaign_types=self.value()) | Q(campaign_types__isnull=True)
+            )
 
 
 class MyMessagesFilter(admin.SimpleListFilter):
-    title = 'Filter my messages'
-    parameter_name = 'my_messages'
+    title = "Filter my messages"
+    parameter_name = "my_messages"
 
     def lookups(self, request, model_admin):
         return [
-            ('my', 'My messages'),
+            ("my", "My messages"),
         ]
 
     def queryset(self, request, queryset):
-        if self.value() == 'my':
+        if self.value() == "my":
             return models.MotivationMessage._get_all_messages(request.user_attendance)
 
 
 @admin.register(models.MotivationMessage)
 class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
-        'id',
-        'message_html',
-        'note',
-        'enabled',
-        'get_campaign_types',
-        'priority',
-        'frequency_min',
-        'frequency_max',
-        'day_from',
-        'day_to',
-        'date_from',
-        'date_to',
-        'team_rank_from',
-        'team_rank_to',
-        'team_backwards_rank_from',
-        'team_backwards_rank_to',
+        "id",
+        "message_html",
+        "note",
+        "enabled",
+        "get_campaign_types",
+        "priority",
+        "frequency_min",
+        "frequency_max",
+        "day_from",
+        "day_to",
+        "date_from",
+        "date_to",
+        "team_rank_from",
+        "team_rank_to",
+        "team_backwards_rank_from",
+        "team_backwards_rank_to",
     )
     list_filter = (
-        'enabled',
+        "enabled",
         CampaignTypeFilter,
         MyMessagesFilter,
     )
     list_editable = (
-        'enabled',
-        'priority',
-        'frequency_min',
-        'frequency_max',
-        'day_from',
-        'day_to',
-        'date_from',
-        'date_to',
-        'team_rank_from',
-        'team_rank_to',
-        'team_backwards_rank_from',
-        'team_backwards_rank_to',
+        "enabled",
+        "priority",
+        "frequency_min",
+        "frequency_max",
+        "day_from",
+        "day_to",
+        "date_from",
+        "date_to",
+        "team_rank_from",
+        "team_rank_to",
+        "team_backwards_rank_from",
+        "team_backwards_rank_to",
     )
     readonly_fields = (
-        'author',
-        'updated_by',
+        "author",
+        "updated_by",
     )
     save_as = True
 
@@ -87,6 +89,4 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         return mark_safe(obj.message)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related(
-            'campaign_types',
-        )
+        return super().get_queryset(request).prefetch_related("campaign_types",)

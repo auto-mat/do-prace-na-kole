@@ -39,11 +39,11 @@ from t_shirt_delivery.models import TShirtSize
 class ViewsTestsLogon(TestCase):
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
         self.t_shirt_size = mommy.make(
-            "TShirtSize",
-            campaign=testing_campaign,
-            name="Foo t-shirt size",
+            "TShirtSize", campaign=testing_campaign, name="Foo t-shirt size",
         )
         mommy.make(
             "price_level.PriceLevel",
@@ -51,9 +51,7 @@ class ViewsTestsLogon(TestCase):
             pricable=testing_campaign,
         )
         mommy.make(
-            "Phase",
-            phase_type="payment",
-            campaign=testing_campaign,
+            "Phase", phase_type="payment", campaign=testing_campaign,
         )
         self.user_attendance = UserAttendanceRecipe.make(
             approved_for_team="approved",
@@ -61,21 +59,23 @@ class ViewsTestsLogon(TestCase):
             userprofile__user__first_name="Testing",
             userprofile__user__last_name="User",
             userprofile__user__email="testing.user@email.com",
-            userprofile__sex='male',
+            userprofile__sex="male",
             personal_data_opt_in=True,
             distance=5,
         )
         self.user_attendance.campaign.save()
         self.user_attendance.save()
-        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
+        )
 
     def test_dpnk_t_shirt_size(self):
         post_data = {
-            'userprofile-telephone': '123456789',
-            'userattendance-t_shirt_size': self.t_shirt_size.pk,
-            'next': 'Next',
+            "userprofile-telephone": "123456789",
+            "userattendance-t_shirt_size": self.t_shirt_size.pk,
+            "next": "Next",
         }
-        response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
+        response = self.client.post(reverse("zmenit_triko"), post_data, follow=True)
         self.assertRedirects(response, reverse("typ_platby"))
         self.user_attendance.refresh_from_db()
         self.assertTrue(self.user_attendance.t_shirt_size.name, "Foo t-shirt size")
@@ -83,7 +83,7 @@ class ViewsTestsLogon(TestCase):
     def test_dpnk_t_shirt_size_no_sizes(self):
         TShirtSize.objects.all().delete()
         self.user_attendance.campaign.save()
-        response = self.client.get(reverse('zmenit_triko'))
+        response = self.client.get(reverse("zmenit_triko"))
         self.assertRedirects(response, reverse("typ_platby"), target_status_code=200)
 
     def test_dpnk_t_shirt_size_shipped(self):
@@ -101,11 +101,19 @@ class ViewsTestsLogon(TestCase):
                 company=mommy.make("Company", name="Foo company"),
             ),
         )
-        response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, '<h2 class="page_title">Vaše triko je již na cestě</h2>', html=True)
-        self.assertContains(response, "<pre>Foo company Foo street, Foo City - Foo c City</pre>", html=True)
+        response = self.client.get(reverse("zmenit_triko"))
+        self.assertContains(
+            response,
+            '<h2 class="page_title">Vaše triko je již na cestě</h2>',
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<pre>Foo company Foo street, Foo City - Foo c City</pre>",
+            html=True,
+        )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = []
@@ -113,13 +121,13 @@ class ViewsTestsLogon(TestCase):
         TShirtSize.objects.all().delete()
         PriceLevel.objects.all().delete()
         self.user_attendance.campaign.save()
-        response = self.client.get(reverse('zmenit_triko'), follow=True)
+        response = self.client.get(reverse("zmenit_triko"), follow=True)
         self.assertRedirects(response, reverse("profil"))
 
     def test_dpnk_t_shirt_size_no_team(self):
         self.user_attendance.team = None
         self.user_attendance.save()
-        response = self.client.get(reverse('zmenit_triko'))
+        response = self.client.get(reverse("zmenit_triko"))
         self.assertContains(
             response,
             "<div class=\"alert alert-warning\">Nejdříve se <a href='/tym/'>přidejte k týmu</a> a pak si vyberte tričko.</div>",
@@ -128,13 +136,13 @@ class ViewsTestsLogon(TestCase):
         )
 
     def test_dpnk_t_shirt_size_get(self):
-        response = self.client.get(reverse('zmenit_triko'))
+        response = self.client.get(reverse("zmenit_triko"))
         self.assertContains(
             response,
             '<label for="id_userattendance-t_shirt_size" class=" requiredField">'
-            'Vyberte velikost trika'
+            "Vyberte velikost trika"
             '<span class="asteriskField">*</span>'
-            '</label>',
+            "</label>",
             html=True,
         )
 
@@ -147,11 +155,13 @@ class ViewsTestsLogon(TestCase):
             delivery_from="2019-02-01",
             delivery_to="2019-03-01",
         )
-        response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, 'Účastníkům zaregistrovaným do 1. ledna 2019')
+        response = self.client.get(reverse("zmenit_triko"))
+        self.assertContains(response, "Účastníkům zaregistrovaným do 1. ledna 2019")
 
     def test_dpnk_team_invitation_logout(self):
         self.client.logout()
-        response = self.client.get(reverse('zmenit_triko'))
+        response = self.client.get(reverse("zmenit_triko"))
         print_response(response)
-        self.assertRedirects(response, "/login?next=/zmenit_triko/", target_status_code=200)
+        self.assertRedirects(
+            response, "/login?next=/zmenit_triko/", target_status_code=200
+        )

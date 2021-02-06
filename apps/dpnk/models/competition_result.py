@@ -32,6 +32,7 @@ from .user_attendance import UserAttendance
 
 class CompetitionResult(models.Model):
     """Výsledek soutěže"""
+
     class Meta:
         verbose_name = _(u"Výsledek soutěže")
         verbose_name_plural = _(u"Výsledky soutěží")
@@ -62,7 +63,7 @@ class CompetitionResult(models.Model):
         on_delete=models.CASCADE,
     )
     competition = models.ForeignKey(
-        'Competition',
+        "Competition",
         related_name="results",
         null=False,
         blank=False,
@@ -78,38 +79,22 @@ class CompetitionResult(models.Model):
         db_index=True,
     )
     result_divident = models.FloatField(
-        verbose_name=_("Dělenec"),
-        null=True,
-        blank=True,
-        default=None,
+        verbose_name=_("Dělenec"), null=True, blank=True, default=None,
     )
     result_divisor = models.FloatField(
-        verbose_name=_("Dělitel"),
-        null=True,
-        blank=True,
-        default=None,
+        verbose_name=_("Dělitel"), null=True, blank=True, default=None,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
-        auto_now_add=True,
-        null=True,
+        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
-        auto_now=True,
-        null=True,
+        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
     )
     frequency = models.FloatField(
-        verbose_name=_("Pravidelnost"),
-        null=True,
-        blank=True,
-        default=0,
+        verbose_name=_("Pravidelnost"), null=True, blank=True, default=0,
     )
     distance = models.FloatField(
-        verbose_name=_("Vzdalenost"),
-        null=True,
-        blank=True,
-        default=0,
+        verbose_name=_("Vzdalenost"), null=True, blank=True, default=0,
     )
 
     def get_sequence_range(self):
@@ -117,35 +102,36 @@ class CompetitionResult(models.Model):
         Return range of places of this result.
         Means, that the competitor is placed on one or more places.
         """
-        lower_range = CompetitionResult.objects.filter(
-            competition=self.competition,
-            result__gt=self.result,
-        ).count() + 1
+        lower_range = (
+            CompetitionResult.objects.filter(
+                competition=self.competition, result__gt=self.result,
+            ).count()
+            + 1
+        )
         upper_range = CompetitionResult.objects.filter(
-            competition=self.competition,
-            result__gte=self.result,
+            competition=self.competition, result__gte=self.result,
         ).count()
         return lower_range, upper_range
 
     def get_occupation(self):
         if self.user_attendance:
-            return getattr(self.user_attendance.userprofile.occupation, 'name', '-')
+            return getattr(self.user_attendance.userprofile.occupation, "name", "-")
 
     def get_sex(self):
         if self.user_attendance:
             return self.user_attendance.userprofile.get_sex_display()
 
     def get_team(self):
-        if self.competition.competitor_type in ['liberos', 'single_user']:
+        if self.competition.competitor_type in ["liberos", "single_user"]:
             return self.user_attendance.team
-        if self.competition.competitor_type == 'team':
+        if self.competition.competitor_type == "team":
             return self.team
 
     def get_team_name(self):
         return self.get_team().name or ""
 
     def get_company(self):
-        if self.competition.competitor_type == 'company':
+        if self.competition.competitor_type == "company":
             return self.company
         team = self.get_team()
         if team:
@@ -171,13 +157,13 @@ class CompetitionResult(models.Model):
         return round(self.result, 1)
 
     def get_result_divisor(self):
-        if self.competition.competition_type == 'frequency':
+        if self.competition.competition_type == "frequency":
             return int(round(self.result_divisor))
         else:
             return round(self.result_divisor, 1)
 
     def get_result_divident(self):
-        if self.competition.competition_type == 'frequency':
+        if self.competition.competition_type == "frequency":
             return int(round(self.result_divident))
         else:
             return round(self.result_divident, 1)
@@ -194,13 +180,16 @@ class CompetitionResult(models.Model):
 
     def get_emissions(self):
         from ..util import get_emissions
+
         return get_emissions(self.distance)
 
-    def competitor_attr(self, team_getter, company_getter, user_attendance_getter, default=""):
-        if self.competition.competitor_type == 'team':
+    def competitor_attr(
+        self, team_getter, company_getter, user_attendance_getter, default=""
+    ):
+        if self.competition.competitor_type == "team":
             if self.team:
                 team_getter(self.team)
-        elif self.competition.competitor_type == 'company':
+        elif self.competition.competitor_type == "company":
             if self.company:
                 company_getter(self.company)
         else:
@@ -224,22 +213,27 @@ class CompetitionResult(models.Model):
 
     def user_attendances(self):
         competition = self.competition
-        if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
+        if (
+            competition.competitor_type == "single_user"
+            or competition.competitor_type == "libero"
+        ):
             return [self.user_attendance]
-        elif competition.competitor_type == 'team':
+        elif competition.competitor_type == "team":
             return self.team.members()
-        elif competition.competitor_type == 'company':
+        elif competition.competitor_type == "company":
             return UserAttendance.objects.filter(team__subsidiary__company=self.company)
+
 
 @receiver(pre_save, sender=CompetitionResult)
 def calculate_general_results(sender, instance, *args, **kwargs):
     from .. import results
+
     participants = instance.user_attendances()
     competition = instance.competition
     frequency_result = results.get_team_frequency(participants, competition)
     instance.frequency = frequency_result[2]
     trips = results.get_trips(participants, competition)
-    instance.distance = trips.aggregate(Sum('distance'))['distance__sum'] or 0
+    instance.distance = trips.aggregate(Sum("distance"))["distance__sum"] or 0
     if instance.result_divident is None:
         instance.result_divident = frequency_result[0]
     if instance.result_divisor is None:

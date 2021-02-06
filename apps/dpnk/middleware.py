@@ -33,22 +33,19 @@ def get_or_create_userattendance(request, campaign_slug):
     if request.user and request.user.is_authenticated:
         try:
             return UserAttendance.objects.select_related(
-                'campaign',
-                'team__subsidiary__city',
-                't_shirt_size',
-                'userprofile__user',
-                'representative_payment',
-                'related_company_admin',
-            ).get(
-                userprofile__user=request.user,
-                campaign__slug=campaign_slug,
-            )
+                "campaign",
+                "team__subsidiary__city",
+                "t_shirt_size",
+                "userprofile__user",
+                "representative_payment",
+                "related_company_admin",
+            ).get(userprofile__user=request.user, campaign__slug=campaign_slug,)
         except UserAttendance.DoesNotExist:
-            if hasattr(request.user, 'userprofile') and request.campaign:
+            if hasattr(request.user, "userprofile") and request.campaign:
                 return UserAttendance.objects.create(
                     userprofile=request.user.userprofile,
                     campaign=request.campaign,
-                    approved_for_team='undecided',
+                    approved_for_team="undecided",
                 )
 
 
@@ -60,15 +57,20 @@ class UserAttendanceMiddleware(MiddlewareMixin):
             request.campaign = Campaign.objects.get(slug=campaign_slug)
 
             # Change language, if not available in campaign
-            available_language_codes = list(zip(*request.campaign.campaign_type.get_available_languages()))[0]
+            available_language_codes = list(
+                zip(*request.campaign.campaign_type.get_available_languages())
+            )[0]
             if get_language() not in available_language_codes:
                 new_language = available_language_codes[0]
                 translation.activate(new_language)
                 request.session[translation.LANGUAGE_SESSION_KEY] = new_language
         except Campaign.DoesNotExist:
-            if '/admin/' not in request.path:  # We want to make admin accessible to be able to set campaigns.
+            if (
+                "/admin/" not in request.path
+            ):  # We want to make admin accessible to be able to set campaigns.
                 if campaign_slug is None:
                     from django.conf import settings
+
                     current_site = Site.objects.get(pk=int(settings.SITE_ID))
                     raise Http404(
                         """Could not read subdomain.
@@ -84,10 +86,25 @@ Current sites are
 
 Note: after updating the sites list in the admin interface, server
 restart is requried.
-""" % (settings.SITE_ID, str(current_site), "\n\n".join(["domain: %s id: %s" % (site.domain, str(site.id)) for site in Site.objects.all()])),
+"""
+                        % (
+                            settings.SITE_ID,
+                            str(current_site),
+                            "\n\n".join(
+                                [
+                                    "domain: %s id: %s" % (site.domain, str(site.id))
+                                    for site in Site.objects.all()
+                                ]
+                            ),
+                        ),
                     )
 
-                raise Http404(_("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
+                raise Http404(
+                    _(
+                        "Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu."
+                    )
+                    % campaign_slug
+                )
             else:
                 request.campaign = None
 
@@ -96,6 +113,6 @@ restart is requried.
 
 class SesameAuthenticationMiddleware(AuthenticationMiddleware):
     def is_safari(self, request):
-        if request.GET.get('sesame-no-redirect'):
+        if request.GET.get("sesame-no-redirect"):
             return True
         return super().is_safari(request)

@@ -1,4 +1,3 @@
-
 from sitetree.models import TreeItemBase
 
 

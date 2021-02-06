@@ -46,35 +46,35 @@ class UserProfile(WithGalleryMixin, models.Model):
         verbose_name_plural = _(u"Uživatelské profily")
         ordering = ["user__last_name", "user__first_name"]
 
-        permissions = (
-            ('can_edit_all_cities', _('Může editovat všechna města')),
-        )
+        permissions = (("can_edit_all_cities", _("Může editovat všechna města")),)
 
     GENDER = [
-        ('male', _(u'Muž')),
-        ('female', _(u'Žena')),
+        ("male", _(u"Muž")),
+        ("female", _(u"Žena")),
     ]
 
     LANGUAGE = [
-        ('cs', _(u"Čeština")),
-        ('en', _(u"Angličtna")),
+        ("cs", _(u"Čeština")),
+        ("en", _(u"Angličtna")),
     ]
     RIDES_VIEWS = [
-        ('calendar', _("Kalendář")),
-        ('table', _("Tabulka")),
+        ("calendar", _("Kalendář")),
+        ("table", _("Tabulka")),
     ]
 
     user = models.OneToOneField(
         User,
-        related_name='userprofile',
+        related_name="userprofile",
         unique=True,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     nickname = models.CharField(
-        _('Přezdívka'),
-        help_text=_('Chcete zůstat inkognito? Soutěžní přezdívka se zobrazuje ve veřejných výsledcích místo Vašeho jména.'),
+        _("Přezdívka"),
+        help_text=_(
+            "Chcete zůstat inkognito? Soutěžní přezdívka se zobrazuje ve veřejných výsledcích místo Vašeho jména."
+        ),
         max_length=60,
         blank=True,
         null=True,
@@ -84,22 +84,30 @@ class UserProfile(WithGalleryMixin, models.Model):
         max_length=30,
         null=False,
         validators=[
-            RegexValidator(r'^[0-9+ ]*$', _('Jak se do lesa volá, když nemáme správné číslo? Zkontrolujte si prosím vyplněný telefon.')),
-            MinLengthValidator(9, message='Opravdu má Váš telefon %(show_value)s cifer?'),
+            RegexValidator(
+                r"^[0-9+ ]*$",
+                _(
+                    "Jak se do lesa volá, když nemáme správné číslo? Zkontrolujte si prosím vyplněný telefon."
+                ),
+            ),
+            MinLengthValidator(
+                9, message="Opravdu má Váš telefon %(show_value)s cifer?"
+            ),
         ],
         help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
     telephone_opt_in = models.NullBooleanField(
-        verbose_name=_("Povolení telefonovat"),
-        default=None,
+        verbose_name=_("Povolení telefonovat"), default=None,
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
-        help_text=_("V tomto jazyce Vám budou přicházet e-maily z registračního systému"),
+        help_text=_(
+            "V tomto jazyce Vám budou přicházet e-maily z registračního systému"
+        ),
         choices=LANGUAGE,
         max_length=16,
         null=False,
-        default='cs',
+        default="cs",
     )
     default_rides_view = models.CharField(
         verbose_name=_("Defaultní předvolba vyplňování jízd"),
@@ -127,22 +135,18 @@ class UserProfile(WithGalleryMixin, models.Model):
     )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
-        help_text=_("Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií."),
+        help_text=_(
+            "Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií."
+        ),
         choices=GENDER,
         max_length=50,
         null=True,
         blank=True,
         default=None,
     )
-    note = models.TextField(
-        verbose_name=_(u"Interní poznámka"),
-        null=True,
-        blank=True,
-    )
+    note = models.TextField(verbose_name=_(u"Interní poznámka"), null=True, blank=True,)
     administrated_cities = models.ManyToManyField(
-        'City',
-        related_name="city_admins",
-        blank=True,
+        "City", related_name="city_admins", blank=True,
     )
     mailing_opt_in = models.NullBooleanField(
         verbose_name=_("Soutěžní e-maily"),
@@ -180,7 +184,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         blank=True,
     )
     gallery = models.ForeignKey(
-        'photologue.Gallery',
+        "photologue.Gallery",
         verbose_name=_("Galerie fotek"),
         null=True,
         blank=True,
@@ -188,13 +192,14 @@ class UserProfile(WithGalleryMixin, models.Model):
     )
 
     @denormalized(models.IntegerField, default=0)
-    @depend_on_related('CompanyAdmin')
+    @depend_on_related("CompanyAdmin")
     # This is here to update related_admin property on UserAttendance model
     def company_admin_count(self):
         return self.company_admin.count()
 
     def get_sesame_token(self):
         from sesame.utils import get_token
+
         return get_token(self.user)
 
     def first_name(self):
@@ -249,13 +254,24 @@ class UserProfile(WithGalleryMixin, models.Model):
         return self.name()
 
     def competition_edition_allowed(self, competition):
-        return not competition.city.exists() or not self.administrated_cities.filter(pk__in=competition.city.values_list("pk", flat=True)).exists()
+        return (
+            not competition.city.exists()
+            or not self.administrated_cities.filter(
+                pk__in=competition.city.values_list("pk", flat=True)
+            ).exists()
+        )
 
     def profile_complete(self):
         return self.sex and self.first_name() and self.last_name() and self.user.email
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
+        if (
+            self.mailing_id
+            and UserProfile.objects.exclude(pk=self.pk)
+            .filter(mailing_id=self.mailing_id)
+            .count()
+            > 0
+        ):
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
 
         if self.pk is None:
@@ -266,7 +282,9 @@ class UserProfile(WithGalleryMixin, models.Model):
 
 @receiver(post_save, sender=UserProfile)
 def update_mailing_userprofile(sender, instance, created, **kwargs):
-    if not getattr(instance, 'don_save_mailing', False):  # this signal was not caused by mailing id/hash update
+    if not getattr(
+        instance, "don_save_mailing", False
+    ):  # this signal was not caused by mailing id/hash update
         for user_attendance in instance.userattendance_set.all():
-            if not kwargs.get('raw', False) and user_attendance.campaign:
+            if not kwargs.get("raw", False) and user_attendance.campaign:
                 mailing.add_or_update_user(user_attendance)

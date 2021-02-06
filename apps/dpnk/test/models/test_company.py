@@ -56,7 +56,10 @@ class TestCompany(TestCase):
         """
         models.Company.objects.create(name="Foo company")
         company = models.Company(name="Foo Čömpany")
-        with self.assertRaisesRegex(ValidationError, "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající."):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.",
+        ):
             company.clean()
 
     def test_clean_name_self(self):

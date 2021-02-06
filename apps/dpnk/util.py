@@ -61,8 +61,13 @@ def working_day(day):
 def dates(competition, day=None):
     if not day:
         day = _today()
-    start_day = competition.date_from or competition.campaign.phase("competition").date_from
-    end_day = min(competition.date_to or competition.campaign.phase("competition").date_to or day, day)
+    start_day = (
+        competition.date_from or competition.campaign.phase("competition").date_from
+    )
+    end_day = min(
+        competition.date_to or competition.campaign.phase("competition").date_to or day,
+        day,
+    )
     return start_day, end_day
 
 
@@ -89,12 +94,18 @@ def days_count(competition, day=None):
 def days_active(competition):
     """ Get editable days for this competition/campaign """
     day_today = today()
-    potential_days = daterange(competition.campaign._first_possibly_active_day(day_today=day_today), day_today)
-    return [d for d in potential_days if competition.campaign.day_active(d, day_today=day_today)]
+    potential_days = daterange(
+        competition.campaign._first_possibly_active_day(day_today=day_today), day_today
+    )
+    return [
+        d
+        for d in potential_days
+        if competition.campaign.day_active(d, day_today=day_today)
+    ]
 
 
 def _today():
-    if hasattr(settings, 'FAKE_DATE'):
+    if hasattr(settings, "FAKE_DATE"):
         return settings.FAKE_DATE
     return datetime.date.today()
 
@@ -121,10 +132,11 @@ def format_psc(integer):
 # TODO: move this to denorm application
 def rebuild_denorm_models(models):
     for model in models:
-        content_type = contenttypes.models.ContentType.objects.get_for_model(model.__class__)
+        content_type = contenttypes.models.ContentType.objects.get_for_model(
+            model.__class__
+        )
         denorm.models.DirtyInstance.objects.create(
-            content_type=content_type,
-            object_id=model.pk,
+            content_type=content_type, object_id=model.pk,
         )
         denorm.flush()
 
@@ -138,20 +150,20 @@ def parse_date(date):
 
 def get_emissions(distance):
     return {
-        'co2': round(distance * 129, 1),
-        'co': round(distance * 724.4, 1),
-        'nox': round(distance * 169.7, 1),
-        'n2o': round(distance * 25.0, 1),
-        'voc': round(distance * 82.9, 1),
-        'ch4': round(distance * 7.7, 1),
-        'so2': round(distance * 4.9, 1),
-        'solid': round(distance * 35.0, 1),
-        'pb': round(distance * 0.011, 1),
+        "co2": round(distance * 129, 1),
+        "co": round(distance * 724.4, 1),
+        "nox": round(distance * 169.7, 1),
+        "n2o": round(distance * 25.0, 1),
+        "voc": round(distance * 82.9, 1),
+        "ch4": round(distance * 7.7, 1),
+        "so2": round(distance * 4.9, 1),
+        "solid": round(distance * 35.0, 1),
+        "pb": round(distance * 0.011, 1),
     }
 
 
 def get_base_url(request=None, slug=None):
-    return '%s://%s.%s' % (
+    return "%s://%s.%s" % (
         request.scheme if request else "https",
         slug if slug is not None else request.campaign.slug,
         get_current_site(request).domain,
@@ -177,5 +189,7 @@ def get_multilinestring_length(mls):
     length = 0
     for linestring in mls:
         for (start_long, start_lat), (end_long, end_lat) in pairwise(linestring):
-            length += geopy.distance.vincenty((start_lat, start_long), (end_lat, end_long)).km
+            length += geopy.distance.vincenty(
+                (start_lat, start_long), (end_lat, end_long)
+            ).km
     return length

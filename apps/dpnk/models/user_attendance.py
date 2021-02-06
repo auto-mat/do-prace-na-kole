@@ -52,6 +52,7 @@ from .transactions import Payment, Transaction
 from .trip import Trip
 from .util import MAP_DESCRIPTION
 from .. import mailing, util
+
 # from ..email import register_mail
 
 logger = logging.getLogger(__name__)
@@ -68,13 +69,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
         unique_together = (("userprofile", "campaign"),)
 
     TEAMAPPROVAL = (
-        ('approved', _(u"Odsouhlasený")),
-        ('undecided', _(u"Nerozhodnuto")),
-        ('denied', _(u"Zamítnutý")),
+        ("approved", _(u"Odsouhlasený")),
+        ("undecided", _(u"Nerozhodnuto")),
+        ("denied", _(u"Zamítnutý")),
     )
 
     campaign = models.ForeignKey(
-        'Campaign',
+        "Campaign",
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
@@ -105,13 +106,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         geography=True,
     )
     dont_want_insert_track = models.BooleanField(
-        verbose_name=_(u"DEPRECATED"),
-        default=False,
-        null=False,
+        verbose_name=_(u"DEPRECATED"), default=False, null=False,
     )
     team = models.ForeignKey(
-        'Team',
-        related_name='users',
+        "Team",
+        related_name="users",
         verbose_name=_(u"Tým"),
         null=True,
         blank=True,
@@ -123,10 +122,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         choices=TEAMAPPROVAL,
         max_length=16,
         null=False,
-        default='undecided',
+        default="undecided",
     )
     t_shirt_size = models.ForeignKey(
-        't_shirt_delivery.TShirtSize',
+        "t_shirt_delivery.TShirtSize",
         verbose_name=_("Velikost trika"),
         null=True,
         blank=True,
@@ -140,14 +139,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         on_delete=models.SET_NULL,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
-        auto_now_add=True,
-        null=True,
+        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
-        auto_now=True,
-        null=True,
+        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
     )
     personal_data_opt_in = models.BooleanField(
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
@@ -177,12 +172,14 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def name(self, cs_vokativ=False):
         return self.userprofile.name(cs_vokativ=cs_vokativ)
-    name.admin_order_field = 'userprofile__user__last_name'
+
+    name.admin_order_field = "userprofile__user__last_name"
     name.short_description = _(u"Jméno")
 
     def name_for_trusted(self):
         return self.userprofile.name_for_trusted()
-    name_for_trusted.admin_order_field = 'userprofile__user__last_name'
+
+    name_for_trusted.admin_order_field = "userprofile__user__last_name"
     name_for_trusted.short_description = _(u"Jméno")
 
     def __str__(self):
@@ -201,7 +198,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return 1
 
     def admission_fee_for_category(self, category):
-        price_level = self.campaign.get_current_price_level(date_time=util.today(), category=category)
+        price_level = self.campaign.get_current_price_level(
+            date_time=util.today(), category=category
+        )
         if price_level:
             base_price = price_level.price
         else:
@@ -209,75 +208,101 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return (base_price + self.t_shirt_price()) * self.discount_multiplier()
 
     def admission_fee(self):
-        return self.admission_fee_for_category('basic')
+        return self.admission_fee_for_category("basic")
 
     def has_admission_fee(self):
-        return self.campaign.get_current_price_level(date_time=util.today(), category='basic') is not None or \
-            self.campaign.get_current_price_level(date_time=util.today(), category='company') is not None
+        return (
+            self.campaign.get_current_price_level(
+                date_time=util.today(), category="basic"
+            )
+            is not None
+            or self.campaign.get_current_price_level(
+                date_time=util.today(), category="company"
+            )
+            is not None
+        )
 
     def beneficiary_admission_fee(self):
         return self.campaign.benefitial_admission_fee + self.t_shirt_price()
 
     def company_admission_fee(self):
-        return self.admission_fee_for_category('company')
+        return self.admission_fee_for_category("company")
 
     def company_admission_fee_intcomma(self):
         return intcomma(self.company_admission_fee())
 
-    @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Payment', foreign_key='payment_user_attendance', skip={'updated', 'created'})
+    @denormalized(
+        models.ForeignKey,
+        to="Payment",
+        null=True,
+        on_delete=models.SET_NULL,
+        skip={"updated", "created", "last_sync_time"},
+    )
+    @depend_on_related(
+        "Payment", foreign_key="payment_user_attendance", skip={"updated", "created"}
+    )
     def representative_payment(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return None
 
         try:
-            return self.payments().filter(status__in=Payment.done_statuses).latest('id')
+            return self.payments().filter(status__in=Payment.done_statuses).latest("id")
         except Transaction.DoesNotExist:
             pass
 
         try:
-            return self.payments().filter(status__in=Payment.waiting_statuses).latest('id')
+            return (
+                self.payments().filter(status__in=Payment.waiting_statuses).latest("id")
+            )
         except Transaction.DoesNotExist:
             pass
 
         try:
-            return self.payments().latest('id')
+            return self.payments().latest("id")
         except Transaction.DoesNotExist:
             pass
 
         return None
 
     PAYMENT_CHOICES = (
-        ('no_admission', _(u'neplatí se')),
-        ('none', _(u'žádné platby')),
-        ('done', _(u'zaplaceno')),
-        ('waiting', _(u'nepotvrzeno')),
-        ('unknown', _(u'neznámý')),
+        ("no_admission", _(u"neplatí se")),
+        ("none", _(u"žádné platby")),
+        ("done", _(u"zaplaceno")),
+        ("waiting", _(u"nepotvrzeno")),
+        ("unknown", _(u"neznámý")),
     )
 
-    @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Payment', foreign_key='payment_user_attendance', skip={'updated', 'created'})
+    @denormalized(
+        models.CharField,
+        choices=PAYMENT_CHOICES,
+        max_length=20,
+        null=True,
+        skip={"updated", "created", "last_sync_time"},
+    )
+    @depend_on_related(
+        "Payment", foreign_key="payment_user_attendance", skip={"updated", "created"}
+    )
     def payment_status(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
-            return 'no_admission'
+            return "no_admission"
         if self.admission_fee() == 0:
-            return 'done'
+            return "done"
         payment = self.representative_payment
         if not payment:
-            return 'none'
+            return "none"
         if payment.status in Payment.done_statuses:
-            return 'done'
+            return "done"
         if payment.status in Payment.waiting_statuses:
-            return 'waiting'
-        return 'unknown'
+            return "waiting"
+        return "unknown"
 
     def payment_class(self):
         payment_classes = {
-            'no_admission': 'success',
-            'none': 'error',
-            'done': 'success',
-            'waiting': 'warning',
-            'unknown': 'warning',
+            "no_admission": "success",
+            "none": "error",
+            "done": "success",
+            "waiting": "warning",
+            "unknown": "warning",
         }
         return payment_classes[self.payment_status]
 
@@ -290,29 +315,38 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def get_competitions(self, competition_types=None):
         from .. import results
+
         return results.get_competitions_with_info(self, competition_types)
 
     def get_rides_count(self):
         from .. import results
+
         try:
             return results.get_rides_count(self, self.campaign.phase("competition"))
         except Phase.DoesNotExist:
             return 0
 
-    @denormalized(models.IntegerField, null=True, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Trip', foreign_key='user_attendance')
+    @denormalized(
+        models.IntegerField, null=True, skip={"updated", "created", "last_sync_time"}
+    )
+    @depend_on_related("Trip", foreign_key="user_attendance")
     def get_rides_count_denorm(self):
         return self.get_rides_count()
 
     def get_frequency(self, day=None):
         from .. import results
+
         try:
-            return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)[2]
+            return results.get_userprofile_frequency(
+                self, self.campaign.phase("competition"), day
+            )[2]
         except Phase.DoesNotExist:
             return 0
 
-    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Trip')
+    @denormalized(
+        models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
+    )
+    @depend_on_related("Trip")
     def frequency(self):
         return self.get_frequency()
 
@@ -325,7 +359,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def get_frequency_icons(self, frequency):
         roles = {}
-        for icon in LandingPageIcon.objects.filter(max_frequency__gte=round(frequency), min_frequency__lte=round(frequency)):
+        for icon in LandingPageIcon.objects.filter(
+            max_frequency__gte=round(frequency), min_frequency__lte=round(frequency)
+        ):
             roles[icon.role] = icon.file.url
 
         return roles
@@ -338,27 +374,37 @@ class UserAttendance(StaleSyncMixin, models.Model):
         frequency = self.team.get_frequency_percentage()
         return self.get_frequency_icons(frequency)
 
-    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Trip')
+    @denormalized(
+        models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
+    )
+    @depend_on_related("Trip")
     def trip_length_total(self):
         """
         Total trip length NOT including recreational trips.
         """
         from .. import results
+
         try:
-            return results.get_userprofile_length([self], self.campaign.phase("competition"))
+            return results.get_userprofile_length(
+                [self], self.campaign.phase("competition")
+            )
         except Phase.DoesNotExist:
             return 0
 
     def trip_length_total_rounded(self):
         return round(self.trip_length_total or 0, 2)
 
-    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Trip')
+    @denormalized(
+        models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
+    )
+    @depend_on_related("Trip")
     def total_trip_length_including_recreational(self):
         from .. import results
+
         try:
-            return results.get_userprofile_length([self], self.campaign.phase("competition"), recreational=True)
+            return results.get_userprofile_length(
+                [self], self.campaign.phase("competition"), recreational=True
+            )
         except Phase.DoesNotExist:
             return 0
 
@@ -368,6 +414,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def get_working_rides_base_count(self):
         """ Return number of rides, that should be acomplished to this date """
         from .. import results
+
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
 
     def get_remaining_rides_count(self):
@@ -384,13 +431,19 @@ class UserAttendance(StaleSyncMixin, models.Model):
         remaining_rides = self.get_remaining_rides_count()
         rides_count = self.get_rides_count_denorm
         competition_phase = self.campaign.competition_phase()
-        working_rides_base = results.get_working_trips_count_without_minimum(self, competition_phase) + remaining_rides
+        working_rides_base = (
+            results.get_working_trips_count_without_minimum(self, competition_phase)
+            + remaining_rides
+        )
         working_rides_count = max(working_rides_base, self.campaign.minimum_rides_base)
         return ((rides_count + remaining_rides) / working_rides_count) * 100
 
     def get_minimum_rides_base_proportional(self):
         from .. import results
-        return results.get_minimum_rides_base_proportional(self.campaign.phase("competition"), util.today())
+
+        return results.get_minimum_rides_base_proportional(
+            self.campaign.phase("competition"), util.today()
+        )
 
     def get_distance(self, round_digits=2):
         track = self.get_initial_track()
@@ -400,21 +453,30 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return self.distance
         else:
             return 0
-    get_distance.short_description = _('Vzdálenost (km) do práce')
-    get_distance.admin_order_field = 'distance'
+
+    get_distance.short_description = _("Vzdálenost (km) do práce")
+    get_distance.admin_order_field = "distance"
 
     def get_userprofile(self):
         return self.userprofile
 
     def is_libero(self):
-        if self.team and self.team_member_count() and self.campaign.competitors_choose_team():
+        if (
+            self.team
+            and self.team_member_count()
+            and self.campaign.competitors_choose_team()
+        ):
             return self.team_member_count() <= 1
         else:
             return False
 
     def package_shipped(self):
         from t_shirt_delivery.models import PackageTransaction
-        return self.transactions.filter(instance_of=PackageTransaction, status__in=PackageTransaction.shipped_statuses).last()
+
+        return self.transactions.filter(
+            instance_of=PackageTransaction,
+            status__in=PackageTransaction.shipped_statuses,
+        ).last()
 
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
@@ -424,33 +486,37 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return self.team.subsidiary.company
 
         try:
-            return self.userprofile.company_admin.get(campaign=self.campaign).administrated_company
+            return self.userprofile.company_admin.get(
+                campaign=self.campaign
+            ).administrated_company
         except CompanyAdmin.DoesNotExist:
             return None
 
     def entered_competition_reason(self):
         if not self.userprofile.profile_complete() or not self.personal_data_opt_in:
-            return 'profile_uncomplete'
+            return "profile_uncomplete"
         if not self.is_team_approved():
             if self.team_complete():
-                return 'team_waiting'
+                return "team_waiting"
             else:
-                return 'team_uncomplete'
+                return "team_uncomplete"
         if not self.tshirt_complete():
-            return 'tshirt_uncomplete'
+            return "tshirt_uncomplete"
         if not self.has_paid():
             if self.payment_complete():
-                return 'payment_waiting'
+                return "payment_waiting"
             else:
-                return 'payment_uncomplete'
+                return "payment_uncomplete"
         return True
 
     def entered_competition(self):
-        return self.tshirt_complete() and\
-            self.is_team_approved() and\
-            self.has_paid() and\
-            self.userprofile.profile_complete() and\
-            self.personal_data_opt_in
+        return (
+            self.tshirt_complete()
+            and self.is_team_approved()
+            and self.has_paid()
+            and self.userprofile.profile_complete()
+            and self.personal_data_opt_in
+        )
 
     def team_member_count(self):
         if self.team:
@@ -463,10 +529,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.team
 
     def is_team_approved(self):
-        return self.team and self.approved_for_team == 'approved'
+        return self.team and self.approved_for_team == "approved"
 
     def payment_complete(self):
-        return self.payment_status not in ('none', None)
+        return self.payment_status not in ("none", None)
 
     def payment_complete_date(self):
         if self.representative_payment is not None:
@@ -477,7 +543,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.created
 
     def has_paid(self):
-        return self.payment_status in ('done', 'no_admission') or (not self.has_admission_fee())
+        return self.payment_status in ("done", "no_admission") or (
+            not self.has_admission_fee()
+        )
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.trip_length_total)
@@ -495,10 +563,12 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def eco_trip_count(self):
         from .. import results
+
         return results.get_rides_count(self, self.campaign.phase("competition"))
 
     def avatar_url(self):
         import avatar.models
+
         try:
             return avatar.models.Avatar.objects.get(
                 user=self.userprofile.user,
@@ -518,35 +588,54 @@ class UserAttendance(StaleSyncMixin, models.Model):
         @return days without trip
         """
         trips = Trip.objects.filter(user_attendance=self, date__in=days)
-        trip_days = trips.values_list('date', 'direction')
-        expected_trip_days = [(day, direction) for day in days for direction in self.campaign.get_directions()]
+        trip_days = trips.values_list("date", "direction")
+        expected_trip_days = [
+            (day, direction)
+            for day in days
+            for direction in self.campaign.get_directions()
+        ]
         uncreated_trips = sorted(set(expected_trip_days) - set(trip_days))
         return trips, uncreated_trips
 
     def get_initial_track(self):
         trips, _ = self.get_all_trips()
-        previous_trip_with_track = trips.filter(track__isnull=False).order_by('-date', '-direction').first()
+        previous_trip_with_track = (
+            trips.filter(track__isnull=False).order_by("-date", "-direction").first()
+        )
         if previous_trip_with_track:
             return previous_trip_with_track.track
         if self.track:
             return self.track
         return None
 
-    @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('UserProfile', skip={'mailing_hash'})
+    @denormalized(
+        models.ForeignKey,
+        to="CompanyAdmin",
+        null=True,
+        on_delete=models.SET_NULL,
+        skip={"updated", "created", "last_sync_time"},
+    )
+    @depend_on_related("UserProfile", skip={"mailing_hash"})
     def related_company_admin(self):
         """ Get company coordinator profile for this user attendance """
         try:
-            return CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
+            return CompanyAdmin.objects.get(
+                userprofile=self.userprofile, campaign=self.campaign
+            )
         except CompanyAdmin.DoesNotExist:
             return None
 
     def unanswered_questionnaires(self):
         from .. import results
+
         return results.get_unanswered_questionnaires(self)
 
-    @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated', 'last_sync_time'})
-    @depend_on_related('Answer')
+    @denormalized(
+        models.NullBooleanField,
+        default=None,
+        skip={"created", "updated", "last_sync_time"},
+    )
+    @depend_on_related("Answer")
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
 
@@ -555,8 +644,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if not self.team:
             return None
         return self.team.subsidiary.company.company_admin.filter(
-            campaign=self.campaign,
-            company_admin_approved='approved',
+            campaign=self.campaign, company_admin_approved="approved",
         )
 
     def get_asociated_company_admin_with_payments(self):
@@ -565,7 +653,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def company_coordinator_emails(self):
         company_admins = self.get_asociated_company_admin()
         if company_admins:
-            return format_html_join(_(" nebo "), '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
+            return format_html_join(
+                _(" nebo "),
+                '<a href="mailto:{0}">{0}</a>',
+                ((ca.userprofile.user.email,) for ca in company_admins),
+            )
         else:
             return format_html(
                 '<a href="mailto:kontakt@dopracenakole.cz?subject={subject}">kontakt@dopracenakole.cz</a>',
@@ -574,8 +666,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def company_coordinator_mail_text(self):
         return format_html(
-            _("Napište svému firemnímu koordinátorovi na e-mail {email_link}.") if
-            self.get_asociated_company_admin() else _("Napište nám prosím na {email_link}."),
+            _("Napište svému firemnímu koordinátorovi na e-mail {email_link}.")
+            if self.get_asociated_company_admin()
+            else _("Napište nám prosím na {email_link}."),
             email_link=self.company_coordinator_emails(),
         )
 
@@ -591,20 +684,32 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return message
 
     def get_frequency_rank_in_team(self):
-        return self.team.members().order_by(
-            F('frequency').desc(nulls_last=True),
-            'get_rides_count_denorm',
-        ).filter(frequency__gte=self.frequency - 0.000000001).count()
+        return (
+            self.team.members()
+            .order_by(F("frequency").desc(nulls_last=True), "get_rides_count_denorm",)
+            .filter(frequency__gte=self.frequency - 0.000000001)
+            .count()
+        )
         # Frequency returned from the ORM is not exactly the same as in DB
         # (floating point transformations). We need to give it some extra margin to match self.
 
-    @denormalized(models.FloatField, null=False, default=0, skip={'updated', 'created', 'last_sync_time'})
-    @depend_on_related('Trip')
+    @denormalized(
+        models.FloatField,
+        null=False,
+        default=0,
+        skip={"updated", "created", "last_sync_time"},
+    )
+    @depend_on_related("Trip")
     def trip_points_total(self):
         """
         Total trip points. Ignores recreational trips.
         """
-        return Trip.objects.filter(user_attendance=self).aggregate(Sum('commute_mode__points'))['commute_mode__points__sum'] or 0
+        return (
+            Trip.objects.filter(user_attendance=self).aggregate(
+                Sum("commute_mode__points")
+            )["commute_mode__points__sum"]
+            or 0
+        )
 
     @property
     def points(self):
@@ -612,19 +717,21 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def points_display(self):
         from django.utils.translation import ugettext as _
+
         return str(round(self.points)) + " " + _("bodů")
 
-    def get_admin_url(self, method="change", protocol='https'):
+    def get_admin_url(self, method="change", protocol="https"):
         try:
             site = Site.objects.get_current()
         except ImproperlyConfigured:
-            site = Site(domain='configure-django-sites.com')
+            site = Site(domain="configure-django-sites.com")
         return "%s://%s.%s%s" % (
             protocol,
             self.campaign.slug,
             site.domain,
             reverse(
-                'admin:%s_%s_%s' % (self._meta.app_label, self._meta.model_name, method),
+                "admin:%s_%s_%s"
+                % (self._meta.app_label, self._meta.model_name, method),
                 args=[self.id],
             ),
         )
@@ -634,33 +741,36 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def helpdesk_iframe_url(self):
         if settings.HELPDESK_IFRAME_URL:
-            return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa
-                queue=settings.HELPDESK_QUEUE,
-                email=self.userprofile.user.email,
-                dpnk_user=self.get_admin_url(),
+            return (
+                settings.HELPDESK_IFRAME_URL
+                + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa
+                    queue=settings.HELPDESK_QUEUE,
+                    email=self.userprofile.user.email,
+                    dpnk_user=self.get_admin_url(),
+                )
             )
 
     def clean(self):
-        if self.team and self.approved_for_team != 'denied':
+        if self.team and self.approved_for_team != "denied":
             team_members_count = self.team.members().exclude(pk=self.pk).count() + 1
             if self.team.campaign.too_much_members(team_members_count):
-                raise ValidationError({'team': _("Tento tým již má plný počet členů")})
+                raise ValidationError({"team": _("Tento tým již má plný počet členů")})
 
         if self.team and self.team.campaign != self.campaign:
             message = _(
-                "Zvolená kampaň (%(campaign)s) musí být shodná s kampaní týmu (%(team)s)" % {
-                    'campaign': self.campaign,
-                    'team': self.team.campaign,
-                },
+                "Zvolená kampaň (%(campaign)s) musí být shodná s kampaní týmu (%(team)s)"
+                % {"campaign": self.campaign, "team": self.team.campaign,},
             )
-            raise ValidationError({'team': message, 'campaign': message})
+            raise ValidationError({"team": message, "campaign": message})
 
     def save(self, *args, **kwargs):
         if self.pk is None:
             previous_user_attendance = self.previous_user_attendance()
             if previous_user_attendance:
                 if previous_user_attendance.t_shirt_size:
-                    t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
+                    t_shirt_size = self.campaign.tshirtsize_set.filter(
+                        name=previous_user_attendance.t_shirt_size.name
+                    )
                     if t_shirt_size.count() == 1:
                         self.t_shirt_size = t_shirt_size.first()
 
@@ -670,10 +780,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
             logger.error(
                 "UserAttendance campaign doesn't match team campaign",
                 extra={
-                    'user_attendance': self,
-                    'new_team': self.team,
-                    'campaign': self.campaign,
-                    'team_campaign': self.team.campaign,
+                    "user_attendance": self,
+                    "new_team": self.team,
+                    "campaign": self.campaign,
+                    "team_campaign": self.team.campaign,
                 },
             )
         return super().save(*args, **kwargs)
@@ -681,17 +791,30 @@ class UserAttendance(StaleSyncMixin, models.Model):
     @classmethod
     def export_resource_classes(cls):
         from ..resources import UserAttendanceResource
+
         return {
-            'user_attendance': ('User Attendance', UserAttendanceResource),
+            "user_attendance": ("User Attendance", UserAttendanceResource),
         }
 
     def assign_vouchers(self):
         from . import Voucher, VoucherType
         from .. import tasks
+
         assigned_vouchers = 0
         for voucher_type in VoucherType.objects.all():
-            if Voucher.objects.filter(voucher_type1=voucher_type, user_attendance=self, campaign=self.campaign).count() == 0:
-                voucher = Voucher.objects.filter(voucher_type1=voucher_type, user_attendance__isnull=True, campaign=self.campaign).first()
+            if (
+                Voucher.objects.filter(
+                    voucher_type1=voucher_type,
+                    user_attendance=self,
+                    campaign=self.campaign,
+                ).count()
+                == 0
+            ):
+                voucher = Voucher.objects.filter(
+                    voucher_type1=voucher_type,
+                    user_attendance__isnull=True,
+                    campaign=self.campaign,
+                ).first()
                 if voucher is not None:
                     tasks.assign_voucher.delay(voucher.pk, self.pk)
                     assigned_vouchers += 1
@@ -717,28 +840,34 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def revoke_templated_notification(self, template):
         revoke_notification.send(
-            self,
-            recipient=self.userprofile.user,
-            action_object=template,
+            self, recipient=self.userprofile.user, action_object=template,
         )
 
     def notifications(self):
         user_content_type = ContentType.objects.get(app_label="auth", model="user")
-        user_attendance_content_type = ContentType.objects.get(app_label="dpnk", model="userattendance")
+        user_attendance_content_type = ContentType.objects.get(
+            app_label="dpnk", model="userattendance"
+        )
         notifications = self.userprofile.user.notifications.filter(
-            Q(actor_content_type=user_content_type.id, actor_object_id=self.userprofile.user.id) |
-            Q(actor_content_type=user_attendance_content_type.id, actor_object_id=self.id),
+            Q(
+                actor_content_type=user_content_type.id,
+                actor_object_id=self.userprofile.user.id,
+            )
+            | Q(
+                actor_content_type=user_attendance_content_type.id,
+                actor_object_id=self.id,
+            ),
         )
         return notifications
 
 
 @receiver(post_save, sender=UserAttendance)
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
-    if not kwargs.get('raw', False):
+    if not kwargs.get("raw", False):
         mailing.add_or_update_user(instance)
 
 
 @receiver(post_save, sender=UserAttendance)
 def assign_vouchers(sender, instance, created, **kwargs):
-    if instance.payment_status == 'done':
+    if instance.payment_status == "done":
         instance.assign_vouchers()

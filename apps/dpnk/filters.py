@@ -28,12 +28,12 @@ from . import models
 
 
 class CampaignFilter(SimpleListFilter):
-    title = _(u"Kampaň")
-    parameter_name = u'campaign'
-    field = 'campaign'
+    title = _("Kampaň")
+    parameter_name = "campaign"
+    field = "campaign"
 
     def lookups(self, request, model_admin):
-        if hasattr(request, 'subdomain') and request.subdomain:
+        if hasattr(request, "subdomain") and request.subdomain:
             try:
                 campaign = models.Campaign.objects.get(slug=request.subdomain)
             except models.Campaign.DoesNotExist:
@@ -44,30 +44,30 @@ class CampaignFilter(SimpleListFilter):
         if campaign:
             current_campaign = campaign
             campaigns = [(None, str(current_campaign))]
-            campaigns += [(c.slug, str(c)) for c in models.Campaign.objects.exclude(slug=request.subdomain)]
-            campaigns += [('all', _('All'))]
-            campaigns += [('none', _('None'))]
+            campaigns += [
+                (c.slug, str(c))
+                for c in models.Campaign.objects.exclude(slug=request.subdomain)
+            ]
+            campaigns += [("all", _("All"))]
+            campaigns += [("none", _("None"))]
         else:
-            campaigns = [('all', _('All'))]
-            campaigns += [('none', _('None'))]
+            campaigns = [("all", _("All"))]
+            campaigns += [("none", _("None"))]
             campaigns += [(c.slug, str(c)) for c in models.Campaign.objects.all()]
         return campaigns
 
     def choices(self, changelist):
         for lookup, title in self.lookup_choices:
             yield {
-                'selected': self.value() == lookup,
-                'query_string': changelist.get_query_string(
-                    {
-                        self.parameter_name: lookup,
-                    },
-                    [],
+                "selected": self.value() == lookup,
+                "query_string": changelist.get_query_string(
+                    {self.parameter_name: lookup,}, [],
                 ),
-                'display': title,
+                "display": title,
             }
 
     def queryset(self, request, queryset):
-        if self.value() == 'all':
+        if self.value() == "all":
             return queryset
         elif self.value():
             campaign_slug = self.value()
@@ -81,7 +81,7 @@ class CampaignFilter(SimpleListFilter):
 
         none_queryarg = {self.field: None}
 
-        if self.value() == 'none':
+        if self.value() == "none":
             return queryset.filter(**none_queryarg).distinct()
         return queryset.filter(Q(**campaign_queryarg) | Q(**none_queryarg)).distinct()
 
@@ -89,6 +89,7 @@ class CampaignFilter(SimpleListFilter):
 def campaign_filter_generator(campaign_field):
     class CFilter(CampaignFilter):
         field = campaign_field
+
     return CFilter
 
 
@@ -105,86 +106,88 @@ class CityCampaignFilter(CampaignFilter):
 class DuplicateFilter(SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
-            ('duplicate', _(u'Duplicitní')),
-            ('blank', _(u'Prázdný')),
+            ("duplicate", _("Duplicitní")),
+            ("blank", _("Prázdný")),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'duplicate':
-            duplicates = self.filter_model.objects.filter(
-                **{'%s__isnull' % self.filter_field: False},
-            ).exclude(
-                **{'%s__exact' % self.filter_field: self.blank_value},
-            ).values(
-                self.filter_field,
-            ).annotate(
-                Count('id'),
-            ).values(
-                self.filter_field,
-            ). order_by().filter(
-                id__count__gt=1,
-            ).values_list(
-                self.filter_field,
-                flat=True,
+        if self.value() == "duplicate":
+            duplicates = (
+                self.filter_model.objects.filter(
+                    **{"%s__isnull" % self.filter_field: False},
+                )
+                .exclude(**{"%s__exact" % self.filter_field: self.blank_value},)
+                .values(self.filter_field,)
+                .annotate(Count("id"),)
+                .values(self.filter_field,)
+                .order_by()
+                .filter(id__count__gt=1,)
+                .values_list(self.filter_field, flat=True,)
             )
+            return queryset.filter(**{"%s__in" % self.filter_field: duplicates},)
+        if self.value() == "blank":
             return queryset.filter(
-                **{'%s__in' % self.filter_field: duplicates},
-            )
-        if self.value() == 'blank':
-            return queryset.filter(
-                **{'%s__exact' % self.filter_field: self.blank_value},
+                **{"%s__exact" % self.filter_field: self.blank_value},
             )
         return queryset
 
 
 class EmailFilter(DuplicateFilter):
     title = _("E-mail")
-    parameter_name = 'email_state'
-    filter_field = 'email'
+    parameter_name = "email_state"
+    filter_field = "email"
     filter_model = User
-    blank_value = ''
+    blank_value = ""
 
 
 class ICOFilter(DuplicateFilter):
     title = _("IČO")
-    parameter_name = 'ico_state'
-    filter_field = 'ico'
+    parameter_name = "ico_state"
+    filter_field = "ico"
     filter_model = models.Company
     blank_value = None
 
 
 class HasReactionFilter(SimpleListFilter):
-    title = _(u"Obsahuje odpověď")
-    parameter_name = u'has_reaction'
+    title = _("Obsahuje odpověď")
+    parameter_name = "has_reaction"
 
     def lookups(self, request, model_admin):
         return (
-            ('yes', u'Ano'),
-            ('no', u'Ne'),
+            ("yes", "Ano"),
+            ("no", "Ne"),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.exclude((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
-        if self.value() == 'no':
-            return queryset.filter((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
+        if self.value() == "yes":
+            return queryset.exclude(
+                (Q(comment=None) | Q(comment=""))
+                & (Q(attachment=None) | Q(attachment=""))
+                & Q(points_given=None)
+            ).distinct()
+        if self.value() == "no":
+            return queryset.filter(
+                (Q(comment=None) | Q(comment=""))
+                & (Q(attachment=None) | Q(attachment=""))
+                & Q(points_given=None)
+            ).distinct()
         return queryset
 
 
 class PSCFilter(SimpleListFilter):
     title = _("PSČ")
-    parameter_name = 'psc'
+    parameter_name = "psc"
 
     def lookups(self, request, model_admin):
         return [
-            ('valid', _('Platná')),
-            ('invalid', _('Neplatná')),
+            ("valid", _("Platná")),
+            ("invalid", _("Neplatná")),
         ]
 
     def queryset(self, request, queryset):
-        if self.value() in ('valid', 'invalid'):
-            psc_list = PSC.objects.values('psc').distinct()
-            if self.value() == 'valid':
+        if self.value() in ("valid", "invalid"):
+            psc_list = PSC.objects.values("psc").distinct()
+            if self.value() == "valid":
                 return queryset.filter(address_psc__in=psc_list)
             else:
                 return queryset.exclude(address_psc__in=psc_list)
@@ -193,19 +196,21 @@ class PSCFilter(SimpleListFilter):
 
 class ActiveCityFilter(SimpleListFilter):
     title = _("Město aktivní")
-    parameter_name = 'city_active'
+    parameter_name = "city_active"
 
     def lookups(self, request, model_admin):
         return [
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
+            ("yes", _("Ano")),
+            ("no", _("Ne")),
         ]
 
     def queryset(self, request, queryset):
-        if hasattr(request, 'campaign'):
+        if hasattr(request, "campaign"):
             campaign = request.campaign
-            active_city_kwargs = {"city__cityincampaign__in": campaign.cityincampaign_set.all()}
-            if self.value() == 'yes':
+            active_city_kwargs = {
+                "city__cityincampaign__in": campaign.cityincampaign_set.all()
+            }
+            if self.value() == "yes":
                 return queryset.filter(**active_city_kwargs)
-            if self.value() == 'no':
+            if self.value() == "no":
                 return queryset.exclude(**active_city_kwargs)

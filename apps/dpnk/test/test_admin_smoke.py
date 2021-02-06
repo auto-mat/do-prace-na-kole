@@ -29,12 +29,21 @@ from dpnk.test.util import print_response  # noqa
 
 
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
-    exclude_apps = ['djcelery', 'coupons', 'avatar', 'photologue']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "test_results_data",
+        "transactions",
+        "batches",
+        "invoices",
+        "trips",
+    ]
+    exclude_apps = ["djcelery", "coupons", "avatar", "photologue"]
 
     def setUp(self):
         super().setUp()

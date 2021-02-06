@@ -20,14 +20,14 @@ def generate_pdf_part(csv_file, batch):
     session = requests.Session()
 
     login_data = {
-        'password': settings.GLS_PASSWORD,
-        'username': settings.GLS_USERNAME,
-        'lessersecurity': "on",
+        "password": settings.GLS_PASSWORD,
+        "username": settings.GLS_USERNAME,
+        "lessersecurity": "on",
     }
-    response0 = session.post(gls_url + '/login.php', data=login_data)
+    response0 = session.post(gls_url + "/login.php", data=login_data)
     # print_response(response0)
-    if "Database connection error" in response0.content.decode('utf-8'):
-        return response0.content, '.error.txt'
+    if "Database connection error" in response0.content.decode("utf-8"):
+        return response0.content, ".error.txt"
 
     # ----------remove uploaded file-------------------------
     data = {
@@ -44,7 +44,7 @@ def generate_pdf_part(csv_file, batch):
         "importfile_encoding": "UTF-8",
     }
 
-    response1a = session.post(gls_url + '/subindex.php', data=data)
+    response1a = session.post(gls_url + "/subindex.php", data=data)
     # print_response(response1a, filename="response1a.html")
 
     # ----------choose preset----------------------------
@@ -60,7 +60,7 @@ def generate_pdf_part(csv_file, batch):
         "assignment_id": "0",
     }
 
-    response1 = session.post(gls_url + '/subindex.php', data=data)
+    response1 = session.post(gls_url + "/subindex.php", data=data)
     # print_response(response1, filename="response1.html")
 
     # -----------upload new file---------------------
@@ -79,9 +79,9 @@ def generate_pdf_part(csv_file, batch):
         "importfile_encoding": "UTF-8",
     }
 
-    files = {'importfile': ('test_batch.csv', csv_file, 'text/csv')}
+    files = {"importfile": ("test_batch.csv", csv_file, "text/csv")}
 
-    response2 = session.post(gls_url + '/subindex.php', files=files, data=data)
+    response2 = session.post(gls_url + "/subindex.php", files=files, data=data)
     # print_response(response2, filename="response2.html")
 
     # -----------------------------------------------
@@ -134,7 +134,7 @@ def generate_pdf_part(csv_file, batch):
         "saveParcelImportTemplate": "",
     }
 
-    response3 = session.post(gls_url + '/subindex.php', data=data)
+    response3 = session.post(gls_url + "/subindex.php", data=data)
     # print_response(response3, filename="response3.html")
 
     # -----------download failed pages-------------------------
@@ -154,12 +154,17 @@ def generate_pdf_part(csv_file, batch):
         "targetpnum": "0",
     }
 
-    response4 = session.post(gls_url + '/subindex.php', data=data)
+    response4 = session.post(gls_url + "/subindex.php", data=data)
     # print_response(response4, filename="response4.html")
 
     try:
-        error_csv_filename = response4.content.decode('utf8').split('\n')[0].split('value="')[1].split('"')[0]
-        error_csv = session.get(gls_url + '/' + error_csv_filename)
+        error_csv_filename = (
+            response4.content.decode("utf8")
+            .split("\n")[0]
+            .split('value="')[1]
+            .split('"')[0]
+        )
+        error_csv = session.get(gls_url + "/" + error_csv_filename)
     except IndexError:
         error_csv = None
 
@@ -180,44 +185,50 @@ def generate_pdf_part(csv_file, batch):
         "targetpnum": "0",
     }
 
-    response5 = session.post(gls_url + '/subindex.php', data=data)
+    response5 = session.post(gls_url + "/subindex.php", data=data)
 
     if error_csv:
         # In case when there is error CSV, we want it to be the only output.
         # But we need to print PDF to clear the package queue.
-        return error_csv.content, '.error.csv'
+        return error_csv.content, ".error.csv"
 
     # print_response(response5, filename="response5.html")
     soup = BeautifulSoup(response5.text, features="lxml")
     try:
-        addr = gls_url + "/" + soup.find('body').find('iframe').attrs['src']
+        addr = gls_url + "/" + soup.find("body").find("iframe").attrs["src"]
     except AttributeError:
         logger.exception(
-            'Failed to communicate with GLS website',
+            "Failed to communicate with GLS website",
             extra={
-                'response0': response0.text,
-                'response1': response1.text,
-                'response1a': response1a.text,
-                'response2': response2.text,
-                'response3': response3.text,
-                'response4': response4.text,
-                'response5': response5.text,
+                "response0": response0.text,
+                "response1": response1.text,
+                "response1a": response1a.text,
+                "response2": response2.text,
+                "response3": response3.text,
+                "response4": response4.text,
+                "response5": response5.text,
             },
         )
     response = session.get(addr)
     # with open("batch.pdf", "wb") as f:
     #     f.write(response.content)
     print("Generating PDF from GLS completed")
-    return response.content, 'pdf'
+    return response.content, "pdf"
 
 
 def generate_pdf(csv_file, batch):
     subprocess.call(["rm", "tmp_gls", "-R"])
     subprocess.call(["mkdir", "tmp_gls"])
     from .. import tasks
+
     csv_filename = tasks.save_filefield(csv_file, "tmp_gls")
     subprocess.call(["scripts/batch_generation/split_csv.sh", csv_filename, "500"])
-    p = Popen(['bash', '-c', 'ls tmp_gls/delivery_batch_splitted_*'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    p = Popen(
+        ["bash", "-c", "ls tmp_gls/delivery_batch_splitted_*"],
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
+    )
     output, err = p.communicate()
     for csv_file_part in output.decode("utf-8").split("\n"):
         if csv_file_part:
@@ -225,7 +236,9 @@ def generate_pdf(csv_file, batch):
                 pdf_part, pdf_ext = generate_pdf_part(f, batch)
             with open(csv_file_part + ".pdf", "wb+") as f:
                 f.write(pdf_part)
-            if '.error.' in pdf_ext:  # We return errors after first occurrence
+            if ".error." in pdf_ext:  # We return errors after first occurrence
                 return csv_file_part + ".pdf", pdf_ext
-    subprocess.call(["bash", "-c", "pdftk tmp_gls/*.pdf cat output tmp_gls/gls_sheet.pdf"])
-    return "tmp_gls/gls_sheet.pdf", 'pdf'
+    subprocess.call(
+        ["bash", "-c", "pdftk tmp_gls/*.pdf cat output tmp_gls/gls_sheet.pdf"]
+    )
+    return "tmp_gls/gls_sheet.pdf", "pdf"

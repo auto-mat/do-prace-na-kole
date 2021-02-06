@@ -34,7 +34,9 @@ from .. import util
 from ..model_mixins import WithGalleryMixin
 
 
-ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
+ICO_ERROR_MESSAGE = _(
+    "IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva."
+)
 DIC_ERROR_MESSAGE = _(
     "DIČ není zadáno ve správném formátu. "
     "Zkontrolujte že číslo má 8 až 10 číslic a případně ho doplňte nulami zleva. "
@@ -49,48 +51,46 @@ class Company(WithGalleryMixin, models.Model):
     class Meta:
         verbose_name = _(u"Organizace")
         verbose_name_plural = _(u"Organizace")
-        ordering = ('name',)
+        ordering = ("name",)
 
     name = models.CharField(
-        unique=True,
-        verbose_name=_("Název společnosti"),
-        max_length=60,
-        null=False,
+        unique=True, verbose_name=_("Název společnosti"), max_length=60, null=False,
     )
     address = CompanyAddress()
     dic = StdNumField(
-        'cz.dic',
+        "cz.dic",
         verbose_name=_(u"DIČ"),
         max_length=15,
         default="",
-        validators=[RegexValidator(r'^[a-zA-Z]{2}[0-9]*$', _('DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu.'))],
-        error_messages={'stdnum_format': DIC_ERROR_MESSAGE},
+        validators=[
+            RegexValidator(
+                r"^[a-zA-Z]{2}[0-9]*$",
+                _("DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu."),
+            )
+        ],
+        error_messages={"stdnum_format": DIC_ERROR_MESSAGE},
         blank=True,
         null=True,
     )
-    active = models.BooleanField(
-        verbose_name=_(u"Aktivní"),
-        default=True,
-        null=False,
-    )
+    active = models.BooleanField(verbose_name=_(u"Aktivní"), default=True, null=False,)
     ico = StdNumField(
-        'cz.dic',
+        "cz.dic",
         default=None,
         verbose_name=_(u"IČO"),
-        validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
-        error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
+        validators=[RegexValidator(r"^[0-9]*$", _("IČO musí být číslo"))],
+        error_messages={"stdnum_format": ICO_ERROR_MESSAGE},
         blank=True,
         null=True,
     )
     gallery = models.ForeignKey(
-        'photologue.Gallery',
+        "photologue.Gallery",
         verbose_name=_("Galerie fotek"),
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
     icon = models.ForeignKey(
-        'photologue.Photo',
+        "photologue.Photo",
         verbose_name=_("Ikona"),
         null=True,
         blank=True,
@@ -98,7 +98,12 @@ class Company(WithGalleryMixin, models.Model):
     )
 
     def has_filled_contact_information(self):
-        address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
+        address_complete = (
+            self.address.street
+            and self.address.street_number
+            and self.address.psc
+            and self.address.city
+        )
         return bool(self.name and address_complete and self.ico)
 
     def __str__(self):
@@ -108,7 +113,11 @@ class Company(WithGalleryMixin, models.Model):
         return get_address_string(self.address)
 
     def admin_emails(self, campaign):
-        admins = self.company_admin.filter(campaign=campaign).select_related('userprofile__user').order_by('userprofile__user__email')
+        admins = (
+            self.company_admin.filter(campaign=campaign)
+            .select_related("userprofile__user")
+            .order_by("userprofile__user__email")
+        )
         return ", ".join([a.userprofile.user.email for a in admins])
 
     def admin_telephones(self, campaign):
@@ -116,33 +125,56 @@ class Company(WithGalleryMixin, models.Model):
         return ", ".join([a.userprofile.telephone for a in admins])
 
     def clean(self, *args, **kwargs):
-        if Company.objects.filter(name__unaccent__iexact=self.name).exclude(pk=self.pk).exists():
-            raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
-
-        allow_duplicate_ico = getattr(self, 'allow_duplicate_ico', False)
         if (
-                allow_duplicate_ico is not True and
-                self.ico and
-                not Company.objects.filter(pk=self.pk, ico=self.ico).exists() and  # Don't throw validation error if nothing changed
-                Company.objects.filter(ico=self.ico, active=True).exclude(pk=self.pk).exists()
+            Company.objects.filter(name__unaccent__iexact=self.name)
+            .exclude(pk=self.pk)
+            .exists()
         ):
-            raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})
+            raise ValidationError(
+                {
+                    "name": _(
+                        "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající."
+                    )
+                }
+            )
+
+        allow_duplicate_ico = getattr(self, "allow_duplicate_ico", False)
+        if (
+            allow_duplicate_ico is not True
+            and self.ico
+            and not Company.objects.filter(pk=self.pk, ico=self.ico).exists()
+            and Company.objects.filter(  # Don't throw validation error if nothing changed
+                ico=self.ico, active=True
+            )
+            .exclude(pk=self.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                {
+                    "ico": "Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu"
+                }
+            )
 
     def get_related_competitions(self, campaign):
         """ Get all competitions where this company is involved filtered by given campaign """
         from .competition import Competition
-        cities = self.subsidiaries.values('city')
+
+        cities = self.subsidiaries.values("city")
         competitions = Competition.objects.filter(company__isnull=True).filter(
-            Q(city__in=cities, campaign=campaign) |
-            Q(city__isnull=True, campaign=campaign),
+            Q(city__in=cities, campaign=campaign)
+            | Q(city__isnull=True, campaign=campaign),
         )
         return competitions
 
     @classmethod
     def export_resource_classes(cls):
         from .. import resources
+
         return {
-            'company_history': ('Company histories', resources.create_company_history_resource()),
+            "company_history": (
+                "Company histories",
+                resources.create_company_history_resource(),
+            ),
         }
 
     def company_in_campaign(self, campaign):
@@ -170,7 +202,9 @@ class CompanyInCampaign:
     def frequency(self):
         subsidiaries = self.subsidiaries()
         if subsidiaries:
-            return sum(subsidiary.frequency() for subsidiary in subsidiaries) / len(subsidiaries)
+            return sum(subsidiary.frequency() for subsidiary in subsidiaries) / len(
+                subsidiaries
+            )
         else:
             return 0
 

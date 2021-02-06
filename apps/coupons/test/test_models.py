@@ -25,7 +25,7 @@ from model_mommy import mommy
 class DiscountCouponTests(TestCase):
     def test_available(self):
         discount_coupon = mommy.make(
-            'coupons.DiscountCoupon',
+            "coupons.DiscountCoupon",
             coupon_type__campaign__slug="testing-campaign",
             user_attendance_number=None,
         )

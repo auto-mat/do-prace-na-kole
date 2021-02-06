@@ -43,7 +43,10 @@ target_dag = {
     "companies": (Companies, set()),
     "company_admins": (CompanyAdmins, {"users", "campaigns", "companies"}),
     "competition_results": (CompetitionResults, {"competitions", "teams"}),
-    "competitions": (Competitions, {"campaigns", "companies", "commute_modes", "cities", "phases"}),
+    "competitions": (
+        Competitions,
+        {"campaigns", "companies", "commute_modes", "cities", "phases"},
+    ),
     "groups": (Groups, {"permissions"}),
     "invoices": (Invoices, {"campaigns", "companies", "phases"}),
     "payments": (Payments, {"userattendances"}),
@@ -55,17 +58,20 @@ target_dag = {
     "teams": (Teams, {"campaigns", "subsidiaries"}),
     "trips": (Trips, {"userattendances", "commute_modes"}),
     "users": (Users, {"groups", "cities", "companies"}),
-    "userattendances": (UserAttendances, {"users", "teams", "tshirt_sizes", "campaigns", "phases"}),
-
-    "transactions_package_transactions": (transactions.PackageTransactions, {"userattendances"}),
-
+    "userattendances": (
+        UserAttendances,
+        {"users", "teams", "tshirt_sizes", "campaigns", "phases"},
+    ),
+    "transactions_package_transactions": (
+        transactions.PackageTransactions,
+        {"userattendances"},
+    ),
     # tshirt_delivery
     "deliverybatches": (DeliveryBatches, {"campaigns"}),
     "packagetransactions": (PackageTransactions, {"transactions_package_transactions"}),
     "subsidiaryboxes": (SubsidiaryBoxes, {"deliverybatches"}),
     "teampackages": (TeamPackages, {"subsidiaryboxes"}),
     "tshirt_sizes": (TshirtSizes, {"campaigns"}),
-
     "test_results_data": (TestResultsData, {"campaigns"}),
 }
 
@@ -76,6 +82,7 @@ class Fixtures:
 
     Assumes that the commute_mode.json fixture is loaded.
     """
+
     def __init__(self, targets):
         self.sets = {}
         while targets != set(self.sets.keys()):

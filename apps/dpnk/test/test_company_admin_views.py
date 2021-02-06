@@ -35,13 +35,13 @@ from .mommy_recipes import UserAttendanceRecipe, testing_campaign
 
 class CompanyAdminViewTests(ViewsLogon):
     def test_edit_subsidiary(self):
-        address = reverse('edit_subsidiary', kwargs={'pk': 1})
+        address = reverse("edit_subsidiary", kwargs={"pk": 1})
         response = self.client.get(address)
         self.assertContains(response, "Upravit adresu pobočky")
         self.assertContains(response, "11111")
 
     def test_edit_company(self):
-        address = reverse('edit_company')
+        address = reverse("edit_company")
         response = self.client.get(address)
         self.assertContains(response, "Adresa společnosti")
         self.assertContains(response, "11111")
@@ -56,17 +56,19 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
         self.company_admin = mommy.make(
             "CompanyAdmin",
             userprofile=self.user_attendance.userprofile,
-            company_admin_approved='approved',
+            company_admin_approved="approved",
             campaign=testing_campaign,
             administrated_company=self.user_attendance.team.subsidiary.company,
         )
         self.user_attendance.save()
-        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
+        )
 
     def test_not_allowed(self):
         self.company_admin.can_confirm_payments = False
         self.company_admin.save()
-        response = self.client.get(reverse('company_admin_pay_for_users'))
+        response = self.client.get(reverse("company_admin_pay_for_users"))
         self.assertContains(
             response,
             "<div class='alert alert-danger'>Potvrzování plateb nemáte povoleno</div>",
@@ -75,11 +77,8 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
         )
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
 class InvoiceTests(ClearCacheMixin, TestCase):
-
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
         self.user_attendance = UserAttendanceRecipe.make(
@@ -94,7 +93,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         self.company_admin = mommy.make(
             "CompanyAdmin",
             userprofile=self.user_attendance.userprofile,
-            company_admin_approved='approved',
+            company_admin_approved="approved",
             campaign=testing_campaign,
             administrated_company=self.user_attendance.team.subsidiary.company,
         )
@@ -106,11 +105,13 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             date_to="2020-1-1",
         )
         self.user_attendance.save()
-        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
+        )
 
     def test_get_blank(self):
         self.user_attendance.team.subsidiary.company.save()
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
             '<div class="alert alert-info">Nemáte žádné další soutěžící, pro které by bylo možné vytvořit fakturu</div>',
@@ -121,7 +122,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         """ Test, that if company doesn't have it's details filled in, the invoice couldn't be generated """
         self.user_attendance.team.subsidiary.company.ico = None
         self.user_attendance.team.subsidiary.company.save()
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
             "<div class='alert alert-danger'>"
@@ -136,7 +137,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         """ Test, that if company doesn't have it's details filled in, the invoice couldn't be generated """
         self.company_admin.can_confirm_payments = False
         self.company_admin.save()
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
             "<div class='alert alert-danger'>"
@@ -154,21 +155,21 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             exposure_date=datetime.date(2010, 10, 10),
             variable_symbol=2010111,
         )
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
-            '<tr>'
-            '<td>10. října 2010</td>'
-            '<td>'
+            "<tr>"
+            "<td>10. října 2010</td>"
+            "<td>"
             '<a href="/media/upload/%s">PDF soubor</a>'
-            '<br/>'
+            "<br/>"
             '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
-            '</td>'
-            '<td>0</td>'
-            '<td>2010111</td>'
-            '<td>0,0</td>'
-            '<td>Zaplacení nepotvrzeno</td>'
-            '</tr>' % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
+            "</td>"
+            "<td>0</td>"
+            "<td>2010111</td>"
+            "<td>0,0</td>"
+            "<td>Zaplacení nepotvrzeno</td>"
+            "</tr>" % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
             html=True,
         )
 
@@ -181,21 +182,21 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             paid_date=datetime.date(2010, 10, 10),
             variable_symbol=2010111,
         )
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
-            '<tr>'
-            '<td>10. října 2010</td>'
-            '<td>'
+            "<tr>"
+            "<td>10. října 2010</td>"
+            "<td>"
             '<a href="/media/upload/%s">PDF soubor</a>'
-            '<br/>'
+            "<br/>"
             '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
-            '</td>'
-            '<td>0</td>'
-            '<td>2010111</td>'
-            '<td>0,0</td>'
-            '<td>10. října 2010</td>'
-            '</tr>' % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
+            "</td>"
+            "<td>0</td>"
+            "<td>2010111</td>"
+            "<td>0,0</td>"
+            "<td>10. října 2010</td>"
+            "</tr>" % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
             html=True,
         )
 
@@ -211,16 +212,12 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             user_attendance__userprofile__user__last_name="User",
             amount=123,
         )
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(
-            response,
-            '<h2>Vystavit novou fakturu</h2>',
-            html=True,
+            response, "<h2>Vystavit novou fakturu</h2>", html=True,
         )
         self.assertContains(
-            response,
-            '<tr> <td>Foo User</td> <td>123 Kč</td> </tr>',
-            html=True,
+            response, "<tr> <td>Foo User</td> <td>123 Kč</td> </tr>", html=True,
         )
 
     def test_post(self):
@@ -236,13 +233,9 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             amount=123,
         )
         response = self.client.post(
-            reverse('invoices'),
-            {'create_invoice': True},
-            follow=True,
+            reverse("invoices"), {"create_invoice": True}, follow=True,
         )
-        self.assertRedirects(response, reverse('invoices'))
+        self.assertRedirects(response, reverse("invoices"))
         self.assertContains(
-            response,
-            '<td>Zaplacení nepotvrzeno</td>',
-            html=True,
+            response, "<td>Zaplacení nepotvrzeno</td>", html=True,
         )

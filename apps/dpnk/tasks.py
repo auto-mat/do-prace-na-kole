@@ -38,12 +38,22 @@ import smmapdfs.email
 import smmapdfs.tasks
 
 from . import email, mailing, util
-from .models import Campaign, Company, Competition, Invoice, Team, UserAttendance, Voucher, payments_to_invoice
+from .models import (
+    Campaign,
+    Company,
+    Competition,
+    Invoice,
+    Team,
+    UserAttendance,
+    Voucher,
+    payments_to_invoice,
+)
 
 
 @shared_task(bind=True)
 def recalculate_competitor_task(self, user_attendance_pk):
     from . import results
+
     user_attendance = UserAttendance.objects.get(pk=user_attendance_pk)
     if user_attendance.team is not None:
         util.rebuild_denorm_models([user_attendance.team])
@@ -52,7 +62,7 @@ def recalculate_competitor_task(self, user_attendance_pk):
 
 
 @shared_task(bind=True)
-def recalculate_competitions_results(self, pks=None, campaign_slug=''):
+def recalculate_competitions_results(self, pks=None, campaign_slug=""):
     if not pks:
         queryset = Competition.objects.filter(campaign__slug=campaign_slug)
     else:
@@ -72,24 +82,25 @@ def update_mailing(self, user_attendance_pks):
 @shared_task(bind=True)
 def touch_items(self, pks, object_app_label, object_model_name):
     for pk in pks:
-        content_type = contenttypes.models.ContentType.objects.get(app_label=object_app_label, model=object_model_name)
+        content_type = contenttypes.models.ContentType.objects.get(
+            app_label=object_app_label, model=object_model_name
+        )
         denorm.models.DirtyInstance.objects.create(
-            content_type=content_type,
-            object_id=pk,
+            content_type=content_type, object_id=pk,
         )
         denorm.flush()
     return len(pks)
 
 
 @shared_task(bind=True)
-def touch_user_attendances(self, campaign_slug=''):
+def touch_user_attendances(self, campaign_slug=""):
     queryset = UserAttendance.objects.filter(campaign__slug=campaign_slug)
     util.rebuild_denorm_models(queryset)
     return len(queryset)
 
 
 @shared_task(bind=True)
-def touch_teams(self, campaign_slug=''):
+def touch_teams(self, campaign_slug=""):
     queryset = Team.objects.filter(campaign__slug=campaign_slug)
     util.rebuild_denorm_models(queryset)
     return len(queryset)
@@ -100,7 +111,9 @@ def parse_statement(self, days_back=7):
     parse(days_back=days_back)
 
 
-def get_notification_queryset(model, days_between_notifications, pks=None, campaign_slug=''):
+def get_notification_queryset(
+    model, days_between_notifications, pks=None, campaign_slug=""
+):
     campaign = Campaign.objects.get(slug=campaign_slug)
     queryset = model.get_stale_objects(days_between_notifications * 24 * 60 * 60)
     if not pks:
@@ -110,23 +123,17 @@ def get_notification_queryset(model, days_between_notifications, pks=None, campa
 
 
 @shared_task(bind=True)
-def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
+def send_unfilled_rides_notification(self, pks=None, campaign_slug=""):
     campaign = Campaign.objects.get(slug=campaign_slug)
     days_unfilled = campaign.days_active - 2
     date = util.today()
     min_trip_date = date - timedelta(days=days_unfilled)
     queryset = get_notification_queryset(
-        UserAttendance,
-        days_unfilled,
-        pks=pks,
-        campaign_slug=campaign_slug,
+        UserAttendance, days_unfilled, pks=pks, campaign_slug=campaign_slug,
     )
     queryset = queryset.filter(
-        payment_status__in=('done', 'no_admission'),
-        approved_for_team='approved',
-    ).exclude(
-        user_trips__date__gte=min_trip_date,
-    )
+        payment_status__in=("done", "no_admission"), approved_for_team="approved",
+    ).exclude(user_trips__date__gte=min_trip_date,)
     for user_attendance in queryset:
         email.unfilled_rides_mail(user_attendance, days_unfilled)
     len_queryset = len(queryset)
@@ -135,12 +142,9 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
 
 
 @shared_task(bind=True)
-def send_unpaid_invoice_notification(self, pks=None, campaign_slug='', days_unpaid=7):
+def send_unpaid_invoice_notification(self, pks=None, campaign_slug="", days_unpaid=7):
     queryset = get_notification_queryset(
-        Invoice,
-        days_unpaid,
-        pks=pks,
-        campaign_slug=campaign_slug,
+        Invoice, days_unpaid, pks=pks, campaign_slug=campaign_slug,
     )
     for invoice in queryset:
         email.unpaid_invoice_mail(invoice)
@@ -150,7 +154,7 @@ def send_unpaid_invoice_notification(self, pks=None, campaign_slug='', days_unpa
 
 
 @shared_task(bind=True)
-def send_new_invoice_notification(self, pks=None, campaign_slug=''):
+def send_new_invoice_notification(self, pks=None, campaign_slug=""):
     campaign = Campaign.objects.get(slug=campaign_slug)
     queryset = Invoice.objects.filter(pk__in=pks, campaign=campaign)
     for invoice in queryset:
@@ -159,14 +163,13 @@ def send_new_invoice_notification(self, pks=None, campaign_slug=''):
 
 
 @shared_task(bind=True)
-def create_invoice_if_needed(self, pk=None, campaign_slug=''):
+def create_invoice_if_needed(self, pk=None, campaign_slug=""):
     company = Company.objects.get(pk=pk)
     campaign = Campaign.objects.get(slug=campaign_slug)
     payments = payments_to_invoice(company, campaign)
     if payments:
         Invoice.objects.create(
-            company=company,
-            campaign=campaign,
+            company=company, campaign=campaign,
         )
 
 
@@ -189,8 +192,7 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
         user_attendance,
         recipient=user_attendance.userprofile.user,
         verb=_("{name}: Byl vám přiřazen nový voucher s kódem {token}").format(
-            name=voucher.voucher_type1.name,
-            token=voucher.token
+            name=voucher.voucher_type1.name, token=voucher.token
         ),
         url=reverse("profil") + "#third-party-vouchers",
         icon=voucher.voucher_type1.teaser_img.url,
@@ -200,11 +202,9 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
 
     def continuation(sandwich):
         smmapdfs.email.send_pdfsandwich(sandwich, base_url)
+
     content_type = contenttypes.models.ContentType.objects.get_for_model(voucher)
     smmapdfs.tasks.make_pdfsandwich(
-        content_type.app_label,
-        content_type.model,
-        voucher.pk,
-        continuation,
+        content_type.app_label, content_type.model, voucher.pk, continuation,
     )
     translation.activate(current_language)

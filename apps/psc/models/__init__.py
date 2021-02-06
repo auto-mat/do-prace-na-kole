@@ -21,6 +21,4 @@
 """Import all models."""
 from .psc import PSC
 
-__all__ = (
-    PSC,
-)
+__all__ = (PSC,)

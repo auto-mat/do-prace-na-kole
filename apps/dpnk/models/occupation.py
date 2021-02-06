@@ -26,15 +26,9 @@ class Occupation(models.Model):
     """Povolání"""
 
     name = models.CharField(
-        verbose_name=_("Název povolání"),
-        max_length=40,
-        null=False,
+        verbose_name=_("Název povolání"), max_length=40, null=False,
     )
-    order = models.PositiveIntegerField(
-        default=0,
-        blank=False,
-        null=False,
-    )
+    order = models.PositiveIntegerField(default=0, blank=False, null=False,)
 
     class Meta:
         verbose_name = _("Povolání")

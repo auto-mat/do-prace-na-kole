@@ -38,11 +38,7 @@ class VoucherPDFField(PdfSandwichFieldABC):
 class VoucherPDF(PdfSandwichABC):
     field_model = VoucherPDFField
     obj = models.ForeignKey(
-        "Voucher",
-        null=False,
-        blank=False,
-        default="",
-        on_delete=models.CASCADE,
+        "Voucher", null=False, blank=False, default="", on_delete=models.CASCADE,
     )
 
     def get_email(self):
@@ -59,37 +55,20 @@ class VoucherPDF(PdfSandwichABC):
 
 class Voucher(models.Model):
     voucher_type1 = models.ForeignKey(
-        'VoucherType',
+        "VoucherType",
         verbose_name=_("Typ voucheru"),
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
-    token = models.TextField(
-        verbose_name=_(u"token"),
-        blank=False,
-        null=True,
-    )
-    amount = models.TextField(
-        verbose_name=_(u"hodnota"),
-        blank=True,
-        null=True,
-    )
-    good_till = models.DateField(
-        blank=True,
-        null=True,
-    )
+    token = models.TextField(verbose_name=_(u"token"), blank=False, null=True,)
+    amount = models.TextField(verbose_name=_(u"hodnota"), blank=True, null=True,)
+    good_till = models.DateField(blank=True, null=True,)
     user_attendance = models.ForeignKey(
-        'UserAttendance',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
+        "UserAttendance", null=True, blank=True, on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
-        'Campaign',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
+        "Campaign", null=True, blank=True, on_delete=models.CASCADE,
     )
 
     def get_sandwich_type(self):
@@ -103,9 +82,9 @@ class Voucher(models.Model):
 
     # DEPRECATED
     TYPES = [
-        ('rekola', _("ReKola")),
-        ('sportlife', _("SportLife")),
-        ('am-eshop', _("Automat benefiční obchod")),
+        ("rekola", _("ReKola")),
+        ("sportlife", _("SportLife")),
+        ("am-eshop", _("Automat benefiční obchod")),
     ]
     voucher_type = models.CharField(
         verbose_name=_(u"DEPRECATED"),
@@ -113,7 +92,7 @@ class Voucher(models.Model):
         max_length=10,
         null=False,
         blank=False,
-        default='rekola',
+        default="rekola",
     )
 
 
@@ -127,7 +106,7 @@ class VoucherType(models.Model):
         max_length=255,
         null=False,
         blank=False,
-        default='Rekola',
+        default="Rekola",
     )
 
     eshop_url = models.CharField(
@@ -135,20 +114,16 @@ class VoucherType(models.Model):
         max_length=255,
         null=False,
         blank=False,
-        default='https://obchod.auto-mat.cz',
+        default="https://obchod.auto-mat.cz",
     )
     teaser_img = models.ImageField(
         verbose_name=_("Teaser image"),
-        upload_to='3rd_party_voucher_teaser_images/image',
+        upload_to="3rd_party_voucher_teaser_images/image",
         null=True,
         blank=True,
     )
     sandwich_type = models.ForeignKey(
-        PdfSandwichType,
-        null=True,
-        blank=False,
-        default="",
-        on_delete=models.CASCADE,
+        PdfSandwichType, null=True, blank=False, default="", on_delete=models.CASCADE,
     )
 
     def __str__(self):

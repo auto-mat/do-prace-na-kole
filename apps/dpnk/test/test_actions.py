@@ -40,23 +40,21 @@ from .mommy.mommy import Fixtures
 
 class TestActionsMommy(TestCase):
     """ Tests that are independend of fixtures """
+
     def setUp(self):
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
         self.factory = RequestFactory()
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
         self.request.user = mommy.make(
-            "auth.User",
-            username="test",
-            is_staff=True,
-            is_superuser=True,
+            "auth.User", username="test", is_staff=True, is_superuser=True,
         )
-        setattr(self.request, 'session', 'session')
+        setattr(self.request, "session", "session")
         self.messages = FallbackStorage(self.request)
-        setattr(self.request, '_messages', self.messages)
+        setattr(self.request, "_messages", self.messages)
 
     def test_assign_vouchers(self):
-        mommy.make_recipe('dpnk.test.UserAttendanceRecipe')
+        mommy.make_recipe("dpnk.test.UserAttendanceRecipe")
         queryset = models.UserAttendance.objects.all()
         vouchers = mommy.make(
             "Voucher",
@@ -75,8 +73,7 @@ class TestActionsMommy(TestCase):
 
     def test_assign_vouchers_not_enough(self):
         mommy.make_recipe(
-            'dpnk.test.UserAttendanceRecipe',
-            _quantity=2,
+            "dpnk.test.UserAttendanceRecipe", _quantity=2,
         )
         queryset = models.UserAttendance.objects.all()
         actions.assign_vouchers(self.modeladmin, self.request, queryset)
@@ -91,38 +88,38 @@ class TestActionsMommy(TestCase):
         self.assertEqual(str(message), "Není dost volných voucherů")
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
 class TestActions(TestCase):
-    fixtures = ['sites', 'commute_mode']
+    fixtures = ["sites", "commute_mode"]
 
     def setUp(self):
-        self.objs = Fixtures({
-            "userattendances",
-            "campaigns",
-            "payments",
-            "phases",
-            "price_levels",
-            "teams",
-            "invoices",
-            "trips",
-            "company_admins",
-            "competitions",
-        })
+        self.objs = Fixtures(
+            {
+                "userattendances",
+                "campaigns",
+                "payments",
+                "phases",
+                "price_levels",
+                "teams",
+                "invoices",
+                "trips",
+                "company_admins",
+                "competitions",
+            }
+        )
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
         self.factory = RequestFactory()
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
         self.request.user = self.objs.users.user
-        setattr(self.request, 'session', 'session')
+        setattr(self.request, "session", "session")
         self.messages = FallbackStorage(self.request)
-        setattr(self.request, '_messages', self.messages)
-        call_command('denorm_init')
+        setattr(self.request, "_messages", self.messages)
+        call_command("denorm_init")
         util.rebuild_denorm_models([self.objs.teams.basic])
 
     def tearDown(self):
-        call_command('denorm_drop')
+        call_command("denorm_drop")
 
     def test_approve_am_payment(self):
         self.objs.payments.done_bill_ua2115.delete()
@@ -144,7 +141,9 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.update_mailing(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEqual(message, "Aktualizace mailing listu byla úspěšne zadána pro 8 uživatelů")
+        self.assertEqual(
+            message, "Aktualizace mailing listu byla úspěšne zadána pro 8 uživatelů"
+        )
 
     def test_show_distance(self):
         queryset = models.UserAttendance.objects.all()
@@ -153,36 +152,53 @@ class TestActions(TestCase):
         self.assertEqual(str(message), "Ujetá vzdálenost: 167.2 Km v 3 jízdách")
 
     def test_recalculate_results(self):
-        util.rebuild_denorm_models([self.objs.teams.last_year, self.objs.teams.other_subsidiary])
+        util.rebuild_denorm_models(
+            [self.objs.teams.last_year, self.objs.teams.other_subsidiary]
+        )
         queryset = models.UserAttendance.objects.all()
         actions.recalculate_results(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(str(message), "Výsledky přepočítány")
 
     def test_touch_items_user_attendance(self):
-        util.rebuild_denorm_models([self.objs.teams.last_year, self.objs.teams.other_subsidiary])
+        util.rebuild_denorm_models(
+            [self.objs.teams.last_year, self.objs.teams.other_subsidiary]
+        )
         queryset = models.UserAttendance.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEqual(str(message), "Obnova 8 denormalizovaných položek byla zadána ke zpracování")
+        self.assertEqual(
+            str(message), "Obnova 8 denormalizovaných položek byla zadána ke zpracování"
+        )
 
     def test_touch_items_team(self):
         queryset = models.Team.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEqual(str(message), "Obnova 4 denormalizovaných položek byla zadána ke zpracování")
+        self.assertEqual(
+            str(message), "Obnova 4 denormalizovaných položek byla zadána ke zpracování"
+        )
 
     def test_recalculate_competitions_results(self):
         queryset = models.Competition.objects.all()
-        actions.recalculate_competitions_results(self.modeladmin, self.request, queryset)
+        actions.recalculate_competitions_results(
+            self.modeladmin, self.request, queryset
+        )
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(str(message), "Zadáno přepočítání 11 výsledků")
 
     def test_remove_mailing_id(self):
-        self.assertEqual(self.objs.users.user_without_userattendance_userprofile.mailing_id, "")
+        self.assertEqual(
+            self.objs.users.user_without_userattendance_userprofile.mailing_id, ""
+        )
         queryset = models.UserProfile.objects.all()
         actions.remove_mailing_id(self.modeladmin, self.request, queryset)
-        self.assertEqual(models.UserProfile.objects.get(pk=self.objs.users.user_without_userattendance_userprofile.pk).mailing_id, None)
+        self.assertEqual(
+            models.UserProfile.objects.get(
+                pk=self.objs.users.user_without_userattendance_userprofile.pk
+            ).mailing_id,
+            None,
+        )
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEqual(message, "Mailing ID a hash byl úspěšne odebrán 8 profilům")
 
@@ -216,7 +232,7 @@ class TestActions(TestCase):
         )
         mommy.make(
             "Payment",
-            pay_type='fc',
+            pay_type="fc",
             status=Status.COMPANY_ACCEPTS,
             user_attendance=ua1,
         ).save()
@@ -224,4 +240,11 @@ class TestActions(TestCase):
         actions.create_invoices(self.modeladmin, self.request, queryset, celery=False)
         num_invoices = len(models.Invoice.objects.all())
         self.assertEqual(num_invoices, 2)
-        self.assertEqual(len(models.Invoice.objects.exclude(pk=self.objs.invoices.basic.pk)[0].payment_set.all()), 1)
+        self.assertEqual(
+            len(
+                models.Invoice.objects.exclude(pk=self.objs.invoices.basic.pk)[
+                    0
+                ].payment_set.all()
+            ),
+            1,
+        )

@@ -30,7 +30,6 @@ class TestMethods(TestCase):
         t_shirt_size = mommy.make("TShirtSize")
         user_attendance = UserAttendanceRecipe.make(t_shirt_size=t_shirt_size)
         package_transaction = mommy.make(
-            "PackageTransaction",
-            user_attendance=user_attendance,
+            "PackageTransaction", user_attendance=user_attendance,
         )
         self.assertEqual(package_transaction.t_shirt_size, t_shirt_size)

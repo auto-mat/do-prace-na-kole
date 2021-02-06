@@ -9,9 +9,9 @@ from .models import CharitativeOrganization, UserChoice
 class CharitativeOrganizationChooserForm(CampaignMixin, SubmitMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['charitative_organization'].empty_label = None
-        self.fields['charitative_organization'].label = ""
-        self.fields['charitative_organization'].choices = [
+        self.fields["charitative_organization"].empty_label = None
+        self.fields["charitative_organization"].label = ""
+        self.fields["charitative_organization"].choices = [
             (
                 c.id,
                 format_html(
@@ -30,14 +30,16 @@ class CharitativeOrganizationChooserForm(CampaignMixin, SubmitMixin, forms.Model
                     c.image.url if c.image else "",
                     mark_safe(c.description),
                 ),
-            ) for c in CharitativeOrganization.objects.filter(campaign=self.campaign)
+            )
+            for c in CharitativeOrganization.objects.filter(campaign=self.campaign)
         ]
 
     class Meta:
         model = UserChoice
         fields = (
-            'charitative_organization',
+            # black
+            "charitative_organization",
         )
         widgets = {
-            'charitative_organization': forms.RadioSelect,
+            "charitative_organization": forms.RadioSelect,
         }

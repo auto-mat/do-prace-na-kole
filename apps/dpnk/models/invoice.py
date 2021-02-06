@@ -48,63 +48,55 @@ from .. import invoice_gen, util
 @with_author
 class Invoice(StaleSyncMixin, AbstractOrder):
     """Faktura"""
+
     class Meta:
         verbose_name = _(u"Faktura")
         verbose_name_plural = _(u"Faktury")
         unique_together = (("sequence_number", "campaign"),)
-        ordering = ('sequence_number', 'campaign', )
+        ordering = (
+            "sequence_number",
+            "campaign",
+        )
 
     last_sync_string = _("Poslední odeslání upomínky")
 
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
-        default=datetime.datetime.now,
-        null=False,
+        verbose_name=_(u"Datum vytvoření"), default=datetime.datetime.now, null=False,
     )
     exposure_date = models.DateField(
-        verbose_name=_(u"Den vystavení daňového dokladu"),
-        null=True,
-        blank=True,
+        verbose_name=_(u"Den vystavení daňového dokladu"), null=True, blank=True,
     )
     taxable_date = models.DateField(
-        verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
-        null=True,
-        blank=True,
+        verbose_name=_(u"Den uskutečnění zdanitelného plnění"), null=True, blank=True,
     )
     payback_date = models.DateField(
-        verbose_name=_("Datum splatnosti"),
-        null=True,
-        blank=True,
+        verbose_name=_("Datum splatnosti"), null=True, blank=True,
     )
     paid_date = models.DateField(
-        verbose_name=_(u"Datum zaplacení"),
-        default=None,
-        null=True,
-        blank=True,
+        verbose_name=_(u"Datum zaplacení"), default=None, null=True, blank=True,
     )
     company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_("Moje organizace si přeje podpořit AutoMat a zaplatit benefiční startovné."),
+        verbose_name=_(
+            "Moje organizace si přeje podpořit AutoMat a zaplatit benefiční startovné."
+        ),
         default=False,
     )
     anonymize = models.BooleanField(
-        verbose_name=_("Anonimizovat položky na faktuře"),
-        default=False,
+        verbose_name=_("Anonimizovat položky na faktuře"), default=False,
     )
     total_amount = models.FloatField(
-        verbose_name=_(u"Celková částka"),
-        null=False,
-        default=0,
+        verbose_name=_(u"Celková částka"), null=False, default=0,
     )
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
-        upload_to=u'invoices',
+        upload_to=u"invoices",
         max_length=512,
         blank=True,
         null=True,
     )
     invoice_xml = models.FileField(
         verbose_name=_("XML faktury"),
-        upload_to='invoices',
+        upload_to="invoices",
         max_length=512,
         blank=True,
         null=True,
@@ -117,49 +109,36 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
-        'Campaign',
+        "Campaign",
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     sequence_number = models.PositiveIntegerField(
-        verbose_name=_(u"Pořadové číslo faktury"),
-        null=False,
+        verbose_name=_(u"Pořadové číslo faktury"), null=False,
     )
     order_number = models.BigIntegerField(
-        verbose_name=_(u"Číslo objednávky (nepovinné)"),
-        null=True,
-        blank=True,
+        verbose_name=_(u"Číslo objednávky (nepovinné)"), null=True, blank=True,
     )
     company_name = models.CharField(
         verbose_name=_("Název organizace"),
-        help_text=_("Název organizace. Pokud je prázdné, vyplní se všechny údaje podle nastavené organizace."),
+        help_text=_(
+            "Název organizace. Pokud je prázdné, vyplní se všechny údaje podle nastavené organizace."
+        ),
         max_length=60,
         null=True,
         blank=True,
     )
     company_address = InvoiceAddress()
     country = models.CharField(
-        verbose_name=_("Země"),
-        max_length=60,
-        null=False,
-        blank=True,
-        default="",
+        verbose_name=_("Země"), max_length=60, null=False, blank=True, default="",
     )
     telephone = models.CharField(
-        max_length=255,
-        blank=True,
-        null=False,
-        default="",
-        verbose_name=_("Telefon"),
+        max_length=255, blank=True, null=False, default="", verbose_name=_("Telefon"),
     )
     email = models.CharField(
-        max_length=255,
-        blank=True,
-        null=False,
-        default="",
-        verbose_name=_("E-mail"),
+        max_length=255, blank=True, null=False, default="", verbose_name=_("E-mail"),
     )
     client_note = models.TextField(
         max_length=255,
@@ -169,16 +148,9 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         verbose_name=_("Poznámka k adresátovi"),
     )
     company_ico = models.PositiveIntegerField(
-        default=None,
-        verbose_name=_("IČO organizace"),
-        null=True,
-        blank=True,
+        default=None, verbose_name=_("IČO organizace"), null=True, blank=True,
     )
-    note = models.TextField(
-        verbose_name=_(u"Interní poznámka"),
-        null=True,
-        blank=True,
-    )
+    note = models.TextField(verbose_name=_(u"Interní poznámka"), null=True, blank=True,)
     company_dic = models.CharField(
         verbose_name=_("DIČ organizace"),
         max_length=15,
@@ -211,8 +183,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
 
     def set_taxable_date(self):
         self.taxable_date = min(
-            util.today(),
-            self.campaign.phase("competition").date_to,
+            util.today(), self.campaign.phase("competition").date_to,
         )
 
     def set_variable_symbol(self):
@@ -235,6 +206,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
 
     def payments_count(self):
         return self.payment_set.count()
+
     payments_count.short_description = _("Počet plateb")
     payments_count.admin_order_field = "payments_count"
 
@@ -245,8 +217,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
             first = campaign.invoice_sequence_number_first
             last = campaign.invoice_sequence_number_last
             last_transaction = Invoice.objects.filter(
-                sequence_number__gte=first,
-                sequence_number__lte=last,
+                sequence_number__gte=first, sequence_number__lte=last,
             )
             last_transaction = last_transaction.order_by("sequence_number")
             last_transaction = last_transaction.last()
@@ -259,7 +230,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         super().save(*args, **kwargs)
 
     def payments_to_add(self):
-        if hasattr(self, 'campaign'):
+        if hasattr(self, "campaign"):
             return payments_to_invoice(self.company, self.campaign)
 
     @transaction.atomic
@@ -280,7 +251,11 @@ class Invoice(StaleSyncMixin, AbstractOrder):
             self.company_dic = self.company.dic
 
     def clean(self):
-        if not self.pk and hasattr(self, 'campaign') and not self.payments_to_add().exists():
+        if (
+            not self.pk
+            and hasattr(self, "campaign")
+            and not self.payments_to_add().exists()
+        ):
             raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
 
 
@@ -295,7 +270,7 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
 
 def payments_to_invoice(company, campaign):
     return Payment.objects.filter(
-        pay_type='fc',
+        pay_type="fc",
         status=Status.COMPANY_ACCEPTS,
         user_attendance__team__subsidiary__company=company,
         user_attendance__campaign=campaign,
@@ -330,11 +305,12 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
         filename = "dpnk-%s/%s" % (
             instance.campaign.pk,
             slugify(
-                "invoice_%s_%s_%s_%s" % (
+                "invoice_%s_%s_%s_%s"
+                % (
                     instance.sequence_number,
                     instance.company.name[0:40],
                     instance.exposure_date.strftime("%Y-%m-%d"),
-                    uuid.uuid4()
+                    uuid.uuid4(),
                 ),
             ),
         )
@@ -353,7 +329,10 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
 
     if created:
         from dpnk.tasks import send_new_invoice_notification
-        send_new_invoice_notification.delay(pks=[instance.pk], campaign_slug=instance.campaign.slug)
+
+        send_new_invoice_notification.delay(
+            pks=[instance.pk], campaign_slug=instance.campaign.slug
+        )
 
 
 @receiver(pre_delete, sender=Invoice)

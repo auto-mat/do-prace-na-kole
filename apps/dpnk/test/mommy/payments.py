@@ -70,14 +70,14 @@ class Payments:
             status=99,
             realized="2010-11-01",
         )
-        util.rebuild_denorm_models([
-            userattendances.null_userattendance,
-            userattendances.registered,
-            userattendances.userattendance2,
-            userattendances.userattendance,
-        ])
-        util.rebuild_denorm_models([
-            teams.basic,
-            teams.last_year,
-            teams.other_subsidiary,
-        ])
+        util.rebuild_denorm_models(
+            [
+                userattendances.null_userattendance,
+                userattendances.registered,
+                userattendances.userattendance2,
+                userattendances.userattendance,
+            ]
+        )
+        util.rebuild_denorm_models(
+            [teams.basic, teams.last_year, teams.other_subsidiary,]
+        )

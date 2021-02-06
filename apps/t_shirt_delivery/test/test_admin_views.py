@@ -27,25 +27,25 @@ from dpnk.test.util import print_response  # noqa
 from model_mommy import mommy
 
 
-@override_settings(
-    SSLIFY_ADMIN_DISABLE=True,
-)
+@override_settings(SSLIFY_ADMIN_DISABLE=True,)
 class DispatchViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
         user = mommy.make("auth.User", is_staff=True)
         campaign_type = mommy.make("CampaignType")
-        mommy.make("Campaign", slug='testing-campaign', campaign_type=campaign_type)
+        mommy.make("Campaign", slug="testing-campaign", campaign_type=campaign_type)
         self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_bad_format(self):
         """ Test, that bad input format shows error """
         post_data = {
-            'dispatch_id': 'a34',
-            'next': 'Next',
+            "dispatch_id": "a34",
+            "next": "Next",
         }
-        response = self.client.post(reverse('dispatch'), post_data)
+        response = self.client.post(reverse("dispatch"), post_data)
         self.assertContains(
             response,
             "<strong>Číslo balíku/krabice je v nesprávném formátu</strong>",
@@ -55,15 +55,13 @@ class DispatchViewTests(TestCase):
     def test_already_dispatched(self):
         """ Test, that warning shows if package is already dispatched """
         mommy.make(
-            "TeamPackage",
-            dispatched=True,
-            id=123,
+            "TeamPackage", dispatched=True, id=123,
         )
         post_data = {
-            'dispatch_id': 'T123',
-            'next': 'Next',
+            "dispatch_id": "T123",
+            "next": "Next",
         }
-        response = self.client.post(reverse('dispatch'), post_data, follow=True)
+        response = self.client.post(reverse("dispatch"), post_data, follow=True)
         self.assertContains(
             response,
             '<strong style="color:orange">Balíček/krabice byl v minulosti již zařazen k sestavení: Balíček bez týmu</strong>',
@@ -75,16 +73,13 @@ class DispatchViewTests(TestCase):
         Test, that warning shows if subsidiary package has undispatched team packages.
         """
         mommy.make(
-            "TeamPackage",
-            dispatched=False,
-            box__id=123,
-            id=123,
+            "TeamPackage", dispatched=False, box__id=123, id=123,
         )
         post_data = {
-            'dispatch_id': 'S123',
-            'next': 'Next',
+            "dispatch_id": "S123",
+            "next": "Next",
         }
-        response = self.client.post(reverse('dispatch'), post_data, follow=True)
+        response = self.client.post(reverse("dispatch"), post_data, follow=True)
         self.assertContains(
             response,
             "<strong style='color:red'>"
@@ -98,10 +93,10 @@ class DispatchViewTests(TestCase):
     def test_not_found(self):
         """ Test, that warning shows if package is not found """
         post_data = {
-            'dispatch_id': 'T123',
-            'next': 'Next',
+            "dispatch_id": "T123",
+            "next": "Next",
         }
-        response = self.client.post(reverse('dispatch'), post_data, follow=True)
+        response = self.client.post(reverse("dispatch"), post_data, follow=True)
         self.assertContains(
             response,
             '<strong style="color:red">Balíček/krabice T123 nebyl nalezen.</strong>',
@@ -110,15 +105,12 @@ class DispatchViewTests(TestCase):
 
     def test_dispatch(self):
         """ Test, that warning shows if package is already dispatched """
-        team_package = mommy.make(
-            "TeamPackage",
-            id=123,
-        )
+        team_package = mommy.make("TeamPackage", id=123,)
         post_data = {
-            'dispatch_id': 'T123',
-            'next': 'Next',
+            "dispatch_id": "T123",
+            "next": "Next",
         }
-        response = self.client.post(reverse('dispatch'), post_data, follow=True)
+        response = self.client.post(reverse("dispatch"), post_data, follow=True)
         self.assertContains(
             response,
             '<strong style="color:green">Balíček/krabice zařazen jako sestavený: Balíček bez týmu</strong>',

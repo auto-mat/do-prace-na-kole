@@ -9,6 +9,5 @@ class DeliveryBatches:
             campaign=campaigns.c2010,
         )
         self.basic2 = mommy.make(  # was pk=7
-            "t_shirt_delivery.deliverybatch",
-            campaign=campaigns.c2010,
+            "t_shirt_delivery.deliverybatch", campaign=campaigns.c2010,
         )

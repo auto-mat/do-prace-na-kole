@@ -28,7 +28,11 @@ try:
 except ImportError:
     pass
 
-from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
+from adminfilters.filters import (
+    AllValuesComboFilter,
+    RelatedFieldCheckBoxFilter,
+    RelatedFieldComboFilter,
+)
 
 from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
@@ -103,7 +107,8 @@ from .filters import (
 
 def admin_links(args_generator):
     return format_html_join(
-        mark_safe('<br/>'),
+        # black
+        mark_safe("<br/>"),
         '<a href="{}">{}</a>',
         args_generator,
     )
@@ -113,10 +118,21 @@ class PaymentInline(admin.TabularInline):
     model = models.Payment
     extra = 0
     form = transaction_forms.PaymentForm
-    readonly_fields = ['order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
-    raw_id_fields = ['invoice', 'user_attendance']
+    readonly_fields = [
+        "order_id",
+        "session_id",
+        "trans_id",
+        "error",
+        "author",
+        "updated_by",
+    ]
+    raw_id_fields = [
+        # black
+        "invoice",
+        "user_attendance",
+    ]
     formfield_overrides = {
-        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+        TextField: {"widget": Textarea(attrs={"rows": 4, "cols": 40})},
     }
 
 
@@ -127,10 +143,10 @@ class PaymentInlineUserAttendance(PaymentInline):
 class UserActionTransactionInline(admin.TabularInline):
     model = models.UserActionTransaction
     extra = 0
-    readonly_fields = ['user_attendance', 'author', 'updated_by']
+    readonly_fields = ["user_attendance", "author", "updated_by"]
     form = transaction_forms.UserActionTransactionForm
     formfield_overrides = {
-        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+        TextField: {"widget": Textarea(attrs={"rows": 4, "cols": 40})},
     }
 
 
@@ -138,150 +154,160 @@ class TeamInline(admin.TabularInline):
     model = models.Team
     form = models.team.TeamAdminForm
     extra = 0
-    readonly_fields = ['invitation_token', ]
+    readonly_fields = [
+        "invitation_token",
+    ]
 
 
 class SubsidiaryInline(NestedTabularInline):
     model = models.Subsidiary
     extra = 0
     raw_id_fields = (
-        'icon',
-        'gallery',
+        "icon",
+        "gallery",
     )
 
 
 @admin.register(models.City)
 class CityAdmin(LeafletGeoAdmin):
-    list_display = ('name', 'slug', 'cyklistesobe_slug', 'wp_slug', 'id', )
-    prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
-    list_filter = ('cityincampaign__campaign',)
+    list_display = (
+        "name",
+        "slug",
+        "cyklistesobe_slug",
+        "wp_slug",
+        "id",
+    )
+    prepopulated_fields = {"slug": ("name",), "cyklistesobe_slug": ("name",)}
+    list_filter = ("cityincampaign__campaign",)
 
 
 @admin.register(models.CityInCampaign)
 class CityInCampaignAdmin(RelatedFieldAdmin):
     list_display = (
-        'name',
-        'organizer',
-        'organizer_url',
+        "name",
+        "organizer",
+        "organizer_url",
     )
-    list_filter = (
-        CampaignFilter,
-    )
-    actions = (
-        make_pdfsandwich,
-    )
+    list_filter = (CampaignFilter,)
+    actions = (make_pdfsandwich,)
 
 
 @admin.register(models.CityInCampaignDiploma)
 class CityInCampaignDiplomaAdmin(PdfSandwichAdmin):
-    search_fields = (
-        'obj__city__name',
-    )
+    search_fields = ("obj__city__name",)
 
 
 @admin.register(models.CityInCampaignDiplomaField)
 class CityInCampaignDiplomaFieldAdmin(PdfSandwichFieldAdmin):
-    list_filter = (
-        'pdfsandwich_type__name',
-    )
+    list_filter = ("pdfsandwich_type__name",)
 
 
 class DontValidateCompnayFieldsMixin(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'dic' in self.fields:
-            self.fields['dic'].required = False
-        if 'ico' in self.fields:
-            self.fields['ico'].required = False
-        if 'address_city' in self.fields:
-            self.fields['address_city'].required = False
-        if 'address_psc' in self.fields:
-            self.fields['address_psc'].required = False
-        if 'address_street_number' in self.fields:
-            self.fields['address_street_number'].required = False
-        if 'address_street' in self.fields:
-            self.fields['address_street'].required = False
+        if "dic" in self.fields:
+            self.fields["dic"].required = False
+        if "ico" in self.fields:
+            self.fields["ico"].required = False
+        if "address_city" in self.fields:
+            self.fields["address_city"].required = False
+        if "address_psc" in self.fields:
+            self.fields["address_psc"].required = False
+        if "address_street_number" in self.fields:
+            self.fields["address_street_number"].required = False
+        if "address_street" in self.fields:
+            self.fields["address_street"].required = False
 
 
 class CompanyForm(DontValidateCompnayFieldsMixin, forms.ModelForm):
     allow_duplicate_ico = forms.BooleanField(
+        # black
         label=_("Umožnit uložení duplicitního IČO"),
         required=False,
     )
 
     def clean(self):
         cleaned_data = super().clean()
-        self.instance.allow_duplicate_ico = cleaned_data.get('allow_duplicate_ico', False)
+        self.instance.allow_duplicate_ico = cleaned_data.get(
+            "allow_duplicate_ico", False
+        )
         return cleaned_data
 
     class Meta:
         model = models.Company
         fields = "__all__"
         error_messages = {
-            'ico': {'stdnum_format': models.company.ICO_ERROR_MESSAGE},
-            'dic': {'stdnum_format': models.company.DIC_ERROR_MESSAGE},
+            "ico": {"stdnum_format": models.company.ICO_ERROR_MESSAGE},
+            "dic": {"stdnum_format": models.company.DIC_ERROR_MESSAGE},
         }
 
 
 try:
+
     class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
         def full_clean(self):
             super().full_clean()
-            if 'address_psc' in self._errors:
-                del self._errors['address_psc']
+            if "address_psc" in self._errors:
+                del self._errors["address_psc"]
+
+
 except NameError:
     pass
 
 
 class CompanyAdminInline(NestedTabularInline):
-    raw_id_fields = ('administrated_company', 'userprofile')
+    raw_id_fields = ("administrated_company", "userprofile")
     extra = 0
     model = models.CompanyAdmin
     formfield_overrides = {
-        TextField: {'widget': Textarea(attrs={'rows': 1, 'cols': 30})},
+        TextField: {"widget": Textarea(attrs={"rows": 1, "cols": 30})},
     }
 
 
 @admin.register(models.Company)
-class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportExportMixin, NestedModelAdmin):
+class CompanyAdmin(
+    city_admin_mixin_generator("subsidiaries__city__in"),
+    ImportExportMixin,
+    NestedModelAdmin,
+):
     list_display = (
-        'name',
-        'subsidiaries_text',
-        'ico',
-        'dic',
-        'address_street',
-        'address_street_number',
-        'address_recipient',
-        'address_city',
-        'address_psc',
-        'id',
-        'icon',
+        "name",
+        "subsidiaries_text",
+        "ico",
+        "dic",
+        "address_street",
+        "address_street_number",
+        "address_recipient",
+        "address_city",
+        "address_psc",
+        "id",
+        "icon",
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
     list_filter = [
         "subsidiaries__teams__campaign",
-        'subsidiaries__city',
-        'active',
+        "subsidiaries__city",
+        "active",
         ICOFilter,
     ]
     readonly_fields = [
-        'subsidiary_links',
-        'author',
-        'updated_by',
+        "subsidiary_links",
+        "author",
+        "updated_by",
     ]
     search_fields = (
-        'name',
-        'address_street',
-        'address_street_number',
-        'address_recipient',
-        'address_city',
-        'address_psc',
-        'ico',
-        'dic',
+        "name",
+        "address_street",
+        "address_street_number",
+        "address_recipient",
+        "address_city",
+        "address_psc",
+        "ico",
+        "dic",
     )
     raw_id_fields = (
-        'icon',
-        'gallery',
+        "icon",
+        "gallery",
     )
     list_max_show_all = 10000
     form = CompanyForm
@@ -297,103 +323,119 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
 
     def subsidiaries_text(self, obj):
         return " | ".join(
-            ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)])
-    subsidiaries_text.short_description = _('Pobočky')
+            ["%s" % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)]
+        )
+
+    subsidiaries_text.short_description = _("Pobočky")
 
     def subsidiary_links(self, obj):
         return admin_links(
             [
-                (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
+                (reverse("admin:dpnk_subsidiary_change", args=(u.pk,)), str(u))
                 for u in models.Subsidiary.objects.filter(company=obj)
             ]
         )
-    subsidiary_links.short_description = _('Pobočky')
+
+    subsidiary_links.short_description = _("Pobočky")
 
 
 @admin.register(models.Subsidiary)
-class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMixin, admin.ModelAdmin):
+class SubsidiaryAdmin(
+    AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMixin, admin.ModelAdmin
+):
     list_display = (
-        'id',
-        'company',
-        'address_recipient',
-        'address_street',
-        'address_street_number',
-        'address_city',
-        'city',
-        'address_psc',
-        'user_count',
-        'team_count',
-        'icon',
+        "id",
+        "company",
+        "address_recipient",
+        "address_street",
+        "address_street_number",
+        "address_city",
+        "city",
+        "address_psc",
+        "user_count",
+        "team_count",
+        "icon",
     )
-    list_editable = (
-        'address_psc',
-    )
-    inlines = [TeamInline, ]
+    list_editable = ("address_psc",)
+    inlines = [
+        TeamInline,
+    ]
     list_filter = (
-        campaign_filter_generator('teams__campaign'),
+        campaign_filter_generator("teams__campaign"),
         PSCFilter,
-        'city',
-        'active',
+        "city",
+        "active",
         ActiveCityFilter,
     )
     search_fields = (
-        'address_recipient',
-        'company__name',
-        'address_street',
-        'address_street_number',
-        'address_city',
-        'address_psc',
+        "address_recipient",
+        "company__name",
+        "address_street",
+        "address_street_number",
+        "address_city",
+        "address_psc",
     )
     advanced_filter_fields = (
-        'company__name',
-        'address_recipient',
-        'address_street',
-        'address_street_number',
-        'address_city',
-        'city',
-        'address_psc',
+        "company__name",
+        "address_recipient",
+        "address_street",
+        "address_street_number",
+        "address_city",
+        "city",
+        "address_psc",
     )
     raw_id_fields = (
-        'company',
-        'icon',
-        'gallery',
+        "company",
+        "icon",
+        "gallery",
     )
     list_max_show_all = 10000
     save_as = True
 
-    readonly_fields = ['team_links', ]
+    readonly_fields = [
+        "team_links",
+    ]
 
     @property
     def resource_class(self):
-        return resources.create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
+        return resources.create_subsidiary_resource(
+            models.Campaign.objects.values_list("slug", flat=True)
+        )
 
     def get_queryset(self, request):
         self.campaign = request.subdomain
         self.filter_campaign = {}
-        filter_campaign = request.GET.get('campaign', request.subdomain)
-        if filter_campaign != 'all':
-            self.filter_campaign['campaign__slug'] = filter_campaign
+        filter_campaign = request.GET.get("campaign", request.subdomain)
+        if filter_campaign != "all":
+            self.filter_campaign["campaign__slug"] = filter_campaign
         queryset = super().get_queryset(request)
-        queryset = queryset.annotate(team_count=Count('teams', distinct=True))
+        queryset = queryset.annotate(team_count=Count("teams", distinct=True))
         return queryset
 
     def team_count(self, obj):
         return obj.team_count
-    team_count.short_description = _('Počet týmů ve všech kampaních')
-    team_count.admin_order_field = 'team_count'
+
+    team_count.short_description = _("Počet týmů ve všech kampaních")
+    team_count.admin_order_field = "team_count"
 
     def user_count(self, obj):
         # TODO: Nejde řadit podle tohoto pole. Bylo by potřeba počet získat pomocí anotací, což je ale značně problematické.
-        return obj.teams.filter(**self.filter_campaign).distinct().aggregate(Sum('member_count'))['member_count__sum']
-    user_count.short_description = _('Počet soutěžících ve vyfiltrované kampani')
+        return (
+            obj.teams.filter(**self.filter_campaign)
+            .distinct()
+            .aggregate(Sum("member_count"))["member_count__sum"]
+        )
+
+    user_count.short_description = _("Počet soutěžících ve vyfiltrované kampani")
 
     def team_links(self, obj):
         return admin_links(
             [
-                (reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
+                (reverse("admin:dpnk_team_change", args=(u.pk,)), str(u))
                 for u in models.Team.objects.filter(subsidiary=obj)
             ],
         )
+
     team_links.short_description = _(u"Týmy")
 
 
@@ -404,87 +446,120 @@ class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
 
 
 @admin.register(models.Competition)
-class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, RelatedFieldAdmin):
+class CompetitionAdmin(
+    FormRequestMixin, CityAdminMixin, ImportExportMixin, RelatedFieldAdmin
+):
     list_display = (
-        'name',
-        'slug',
-        'priority',
-        'competition_type',
-        'competitor_type',
-        'is_public',
-        'public_answers',
-        'show_results',
-        'date_from',
-        'date_to',
-        'entry_after_beginning_days',
-        'city_list',
-        'sex',
-        'commute_modes_list',
-        'company__name',
-        'competition_results_link',
-        'questionnaire_results_link',
-        'questionnaire_link',
-        'draw_link',
-        'get_competitors_count',
-        'url',
-        'id')
-    filter_horizontal = (
-        'city',
+        "name",
+        "slug",
+        "priority",
+        "competition_type",
+        "competitor_type",
+        "is_public",
+        "public_answers",
+        "show_results",
+        "date_from",
+        "date_to",
+        "entry_after_beginning_days",
+        "city_list",
+        "sex",
+        "commute_modes_list",
+        "company__name",
+        "competition_results_link",
+        "questionnaire_results_link",
+        "questionnaire_link",
+        "draw_link",
+        "get_competitors_count",
+        "url",
+        "id",
     )
-    search_fields = ('name', 'company__name', 'slug')
+    filter_horizontal = ("city",)
+    search_fields = ("name", "company__name", "slug")
     list_filter = (
         CampaignFilter,
-        'city',
-        'is_public',
-        'public_answers',
-        'show_results',
-        'competitor_type',
-        'competition_type',
-        'commute_modes',
-        isnull_filter('company', _("Není vnitrofiremní soutěž?")),
-        'sex')
+        "city",
+        "is_public",
+        "public_answers",
+        "show_results",
+        "competitor_type",
+        "competition_type",
+        "commute_modes",
+        isnull_filter("company", _("Není vnitrofiremní soutěž?")),
+        "sex",
+    )
     save_as = True
     actions = [actions.recalculate_competitions_results]
-    inlines = [QuestionInline, ]
-    prepopulated_fields = {'slug': ('name',)}
+    inlines = [
+        QuestionInline,
+    ]
+    prepopulated_fields = {"slug": ("name",)}
     list_max_show_all = 10000
     form = models.CompetitionForm
 
     def get_readonly_fields(self, request, obj=None):
-        if request.user.has_perm('dpnk.can_edit_all_cities'):
-            return ['competition_results_link', 'questionnaire_results_link', 'draw_link']
+        if request.user.has_perm("dpnk.can_edit_all_cities"):
+            return [
+                "competition_results_link",
+                "questionnaire_results_link",
+                "draw_link",
+            ]
         return [
-            'competition_results_link',
-            'questionnaire_results_link',
-            'url',
-            'draw_link',
-            'date_to',
-            'date_from',
-            'company',
-            'public_answers',
-            'is_public',
-            'entry_after_beginning_days',
-            'campaign',
+            "competition_results_link",
+            "questionnaire_results_link",
+            "url",
+            "draw_link",
+            "date_to",
+            "date_from",
+            "company",
+            "public_answers",
+            "is_public",
+            "entry_after_beginning_days",
+            "campaign",
         ]
 
     def competition_results_link(self, obj):
         if obj.slug:
-            return format_html(u'<a href="{}">výsledky</a>', (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(
+                u'<a href="{}">výsledky</a>',
+                (reverse("competition_results", kwargs={"competition_slug": obj.slug})),
+            )
+
     competition_results_link.short_description = _(u"Výsledky soutěže")
 
     def questionnaire_results_link(self, obj):
-        if obj.competition_type == 'questionnaire' and obj.slug:
-            return format_html(u'<a href="{}">odpovědi</a>', (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
+        if obj.competition_type == "questionnaire" and obj.slug:
+            return format_html(
+                u'<a href="{}">odpovědi</a>',
+                (
+                    reverse(
+                        "admin_questionnaire_results",
+                        kwargs={"competition_slug": obj.slug},
+                    )
+                ),
+            )
+
     questionnaire_results_link.short_description = _(u"Odpovědi")
 
     def questionnaire_link(self, obj):
-        if obj.competition_type == 'questionnaire' and obj.slug:
-            return format_html(u'<a href="{}">dotazník</a>', (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
+        if obj.competition_type == "questionnaire" and obj.slug:
+            return format_html(
+                u'<a href="{}">dotazník</a>',
+                (reverse("questionnaire", kwargs={"questionnaire_slug": obj.slug})),
+            )
+
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
-        if obj.competition_type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
-            return format_html(u'<a href="{}">losovani</a>', (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
+        if (
+            obj.competition_type == "frequency"
+            and obj.competitor_type == "team"
+            and obj.slug
+        ):
+            return format_html(
+                u'<a href="{}">losovani</a>',
+                (reverse("admin_draw_results", kwargs={"competition_slug": obj.slug})),
+            )
+
     draw_link.short_description = _(u"Losování")
 
 
@@ -495,18 +570,22 @@ class UserAttendanceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 't_shirt_size' in self.fields:
-            if hasattr(self.instance, 'campaign'):
-                self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
+        if "t_shirt_size" in self.fields:
+            if hasattr(self.instance, "campaign"):
+                self.fields["t_shirt_size"].queryset = TShirtSize.objects.filter(
+                    campaign=self.instance.campaign
+                )
 
     def clean(self):
-        if 'team' in self.cleaned_data:  # if not in merge form
-            new_team = self.cleaned_data['team']
+        if "team" in self.cleaned_data:  # if not in merge form
+            new_team = self.cleaned_data["team"]
 
-            if self.instance.payment_status == 'done' and new_team is None:
+            if self.instance.payment_status == "done" and new_team is None:
                 self.add_error(
                     "team",
-                    _("Není možné odstranit tým učastníkovi kampaně, který již zaplatil"),
+                    _(
+                        "Není možné odstranit tým učastníkovi kampaně, který již zaplatil"
+                    ),
                 )
         return super().clean()
 
@@ -516,9 +595,9 @@ class UserAttendanceInline(LeafletGeoAdminMixin, NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     list_max_show_all = 10000
-    raw_id_fields = ('team', 'discount_coupon')
-    map_width = '200px'
-    map_height = '200px'
+    raw_id_fields = ("team", "discount_coupon")
+    map_width = "200px"
+    map_height = "200px"
 
 
 class UserProfileForm(forms.ModelForm):
@@ -528,85 +607,83 @@ class UserProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['telephone'].required = False
-        self.fields['sex'].required = False
+        self.fields["telephone"].required = False
+        self.fields["sex"].required = False
 
 
 class UserProfileAdminInline(NestedStackedInline):
     model = models.UserProfile
     form = UserProfileForm
     inlines = [UserAttendanceInline, CompanyAdminInline]
-    filter_horizontal = ('administrated_cities',)
+    filter_horizontal = ("administrated_cities",)
 
 
 @admin.register(models.UserProfile)
 class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
     form = UserProfileForm
     list_display = (
-        'user',
-        '__str__',
-        'sex',
-        'telephone',
-        'language',
-        'mailing_id',
-        'note',
-        'ecc_password',
-        'ecc_email',
-        'user_attendances_count',
-        'occupation',
-        'age_group',
+        "user",
+        "__str__",
+        "sex",
+        "telephone",
+        "language",
+        "mailing_id",
+        "note",
+        "ecc_password",
+        "ecc_email",
+        "user_attendances_count",
+        "occupation",
+        "age_group",
     )
     inlines = (CompanyAdminInline,)
     list_filter = (
-        campaign_filter_generator('userattendance_set__campaign'),
-        'language',
-        'sex',
-        'userattendance_set__team__subsidiary__city',
-        'userattendance_set__approved_for_team',
-        'occupation',
-        'age_group',
-        'telephone_opt_in',
-        'mailing_opt_in',
-        'default_rides_view',
+        campaign_filter_generator("userattendance_set__campaign"),
+        "language",
+        "sex",
+        "userattendance_set__team__subsidiary__city",
+        "userattendance_set__approved_for_team",
+        "occupation",
+        "age_group",
+        "telephone_opt_in",
+        "mailing_opt_in",
+        "default_rides_view",
     )
-    filter_horizontal = ('administrated_cities',)
+    filter_horizontal = ("administrated_cities",)
     search_fields = [
-        'nickname',
-        'user__first_name',
-        'user__last_name',
-        'user__username',
-        'user__email',
-        'ecc_password',
-        'ecc_email',
+        "nickname",
+        "user__first_name",
+        "user__last_name",
+        "user__username",
+        "user__email",
+        "ecc_password",
+        "ecc_email",
     ]
     readonly_fields = (
-        'ecc_password',
-        'ecc_email',
+        "ecc_password",
+        "ecc_email",
     )
-    raw_id_fields = (
-        'user',
-    )
+    raw_id_fields = ("user",)
     actions = (actions.remove_mailing_id,)
 
     @property
     def resource_class(self):
-        return resources.create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
+        return resources.create_userprofile_resource(
+            models.Campaign.objects.values_list("slug", flat=True)
+        )
 
     def lookup_allowed(self, key, value):
-        if key in ('userattendance_set__team__subsidiary__city__id__exact',):
+        if key in ("userattendance_set__team__subsidiary__city__id__exact",):
             return True
         return super().lookup_allowed(key, value)
 
     def get_queryset(self, request):
         return models.UserProfile.objects.annotate(
-            userattendance_count=Count('userattendance_set'),
-        ).select_related(
-            'occupation',
-            'user',
-        )
+            userattendance_count=Count("userattendance_set"),
+        ).select_related("occupation", "user",)
 
     def user_attendances_count(self, obj):
         return obj.userattendance_count
+
     user_attendances_count.admin_order_field = "userattendance_count"
 
 
@@ -619,15 +696,20 @@ class UserForm(UserChangeForm):
         exclude = []
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        username = self.cleaned_data.get('username')
-        if email and models.User.objects.filter(email__iexact=email).exclude(username=username).count():
-            raise forms.ValidationError(_('Tento e-mail je již v systému použit.'))
+        email = self.cleaned_data.get("email")
+        username = self.cleaned_data.get("username")
+        if (
+            email
+            and models.User.objects.filter(email__iexact=email)
+            .exclude(username=username)
+            .count()
+        ):
+            raise forms.ValidationError(_("Tento e-mail je již v systému použit."))
         return email
 
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        self.fields['email'].required = True
+        self.fields["email"].required = True
         return ret_val
 
 
@@ -636,35 +718,41 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
     inlines = (UserProfileAdminInline,)
     form = UserForm
     list_display = (
-        'username',
-        'email',
-        'first_name',
-        'last_name',
-        'userprofile__telephone',
-        'date_joined',
-        'is_active',
-        'last_login',
-        'userprofile_administrated_cities',
-        'id',
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "userprofile__telephone",
+        "date_joined",
+        "is_active",
+        "last_login",
+        "userprofile_administrated_cities",
+        "id",
     )
-    search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__company_admin__administrated_company__name', ]
+    search_fields = [
+        "first_name",
+        "last_name",
+        "username",
+        "email",
+        "userprofile__company_admin__administrated_company__name",
+    ]
     list_filter = [
-        'userprofile__userattendance_set__campaign',
-        'is_staff',
-        'is_superuser',
-        'is_active',
-        'groups',
-        'userprofile__company_admin__company_admin_approved',
-        isnull_filter('userprofile', _("Nemá uživatelský profil?")),
-        'userprofile__sex',
-        'userprofile__administrated_cities',
+        "userprofile__userattendance_set__campaign",
+        "is_staff",
+        "is_superuser",
+        "is_active",
+        "groups",
+        "userprofile__company_admin__company_admin_approved",
+        isnull_filter("userprofile", _("Nemá uživatelský profil?")),
+        "userprofile__sex",
+        "userprofile__administrated_cities",
         EmailFilter,
     ]
     list_max_show_all = 10000
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.select_related('userprofile')
+        return queryset.select_related("userprofile")
 
     def userprofile_administrated_cities(self, obj):
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
@@ -672,19 +760,19 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
 class TripAdminInline(admin.TabularInline):
     fields = (
-        'date',
-        'direction',
-        'commute_mode',
-        'source_application',
-        'from_application',
-        'source_id',
-        'distance',
-        'duration',
-        'description',
+        "date",
+        "direction",
+        "commute_mode",
+        "source_application",
+        "from_application",
+        "source_id",
+        "distance",
+        "duration",
+        "description",
     )
     raw_id_fields = (
-        'user_attendance',
-        'gallery',
+        "user_attendance",
+        "gallery",
     )
     extra = 0
     model = models.Trip
@@ -696,109 +784,112 @@ class UserAttendanceAdmin(
     AdminAdvancedFiltersMixin,
     AdminNotifyActionMixin,
     ImportExportMixin,
-    city_admin_mixin_generator('team__subsidiary__city__in'),
+    city_admin_mixin_generator("team__subsidiary__city__in"),
     RelatedFieldAdmin,
     admin.ModelAdmin,
 ):
     list_display_links = (
-        'id',
-        'name_for_trusted',
-        'userprofile__user__email',
+        "id",
+        "name_for_trusted",
+        "userprofile__user__email",
     )
     list_display = (
-        'id',
-        'name_for_trusted',
-        'userprofile__user__email',
-        'userprofile__telephone',
-        'distance',
-        'team__name',
-        'team__subsidiary',
-        'team__subsidiary__city',
-        'team__subsidiary__company',
-        'approved_for_team',
-        'campaign__name',
-        't_shirt_size__name',
-        'payment_status',
-        'representative_payment__pay_type',
-        'representative_payment__status',
-        'representative_payment__amount',
-        'representative_payment__realized',
-        'team__member_count',
-        'frequency',
-        'trip_length_total',
-        'get_rides_count_denorm',
-        'created',
-        'updated',
-        'last_sync_time',
+        "id",
+        "name_for_trusted",
+        "userprofile__user__email",
+        "userprofile__telephone",
+        "distance",
+        "team__name",
+        "team__subsidiary",
+        "team__subsidiary__city",
+        "team__subsidiary__company",
+        "approved_for_team",
+        "campaign__name",
+        "t_shirt_size__name",
+        "payment_status",
+        "representative_payment__pay_type",
+        "representative_payment__status",
+        "representative_payment__amount",
+        "representative_payment__realized",
+        "team__member_count",
+        "frequency",
+        "trip_length_total",
+        "get_rides_count_denorm",
+        "created",
+        "updated",
+        "last_sync_time",
     )
     list_filter = (
         CampaignFilter,
-        ('team__subsidiary__city', RelatedFieldCheckBoxFilter),
-        ('approved_for_team', AllValuesComboFilter),
-        't_shirt_size__name',
-        'userprofile__user__is_active',
-        'userprofile__mailing_opt_in',
-        'userprofile__telephone_opt_in',
-        'representative_payment__pay_type',
-        'representative_payment__status',
-        'representative_payment__amount',
-        'payment_status',
-        ('team__member_count', AllValuesComboFilter),
-        ('transactions__packagetransaction__team_package__box__delivery_batch', RelatedFieldComboFilter),
-        ('userprofile__sex', AllValuesComboFilter),
-        'discount_coupon__coupon_type__name',
-        'discount_coupon__discount',
-        isnull_filter('voucher', _("Nemá přiřazené vouchery?")),
-        isnull_filter('user_trips', _("Nemá žádné cesty?")),
-        isnull_filter('team', _("Uživatel nemá zvolený tým?")),
+        ("team__subsidiary__city", RelatedFieldCheckBoxFilter),
+        ("approved_for_team", AllValuesComboFilter),
+        "t_shirt_size__name",
+        "userprofile__user__is_active",
+        "userprofile__mailing_opt_in",
+        "userprofile__telephone_opt_in",
+        "representative_payment__pay_type",
+        "representative_payment__status",
+        "representative_payment__amount",
+        "payment_status",
+        ("team__member_count", AllValuesComboFilter),
+        (
+            "transactions__packagetransaction__team_package__box__delivery_batch",
+            RelatedFieldComboFilter,
+        ),
+        ("userprofile__sex", AllValuesComboFilter),
+        "discount_coupon__coupon_type__name",
+        "discount_coupon__discount",
+        isnull_filter("voucher", _("Nemá přiřazené vouchery?")),
+        isnull_filter("user_trips", _("Nemá žádné cesty?")),
+        isnull_filter("team", _("Uživatel nemá zvolený tým?")),
     )
     advanced_filter_fields = (
-        'campaign',
-        'team__subsidiary__city',
-        'approved_for_team',
-        't_shirt_size',
-        'userprofile__user__is_active',
-        'userprofile__mailing_opt_in',
-        'userprofile__telephone_opt_in',
-        'representative_payment__pay_type',
-        'representative_payment__status',
-        'representative_payment__amount',
-        ('representative_payment__realized', _('Datum realizace platby')),
-        'payment_status',
-        'team__member_count',
-        ('t_shirt_size__ship', _('Posílá se triko?')),
-        'transactions__packagetransaction__team_package__box__delivery_batch',
-        'team',
-        'userprofile__sex',
-        'discount_coupon__coupon_type__name',
-        'discount_coupon__discount',
-        'team__subsidiary__company__name',
+        "campaign",
+        "team__subsidiary__city",
+        "approved_for_team",
+        "t_shirt_size",
+        "userprofile__user__is_active",
+        "userprofile__mailing_opt_in",
+        "userprofile__telephone_opt_in",
+        "representative_payment__pay_type",
+        "representative_payment__status",
+        "representative_payment__amount",
+        ("representative_payment__realized", _("Datum realizace platby")),
+        "payment_status",
+        "team__member_count",
+        ("t_shirt_size__ship", _("Posílá se triko?")),
+        "transactions__packagetransaction__team_package__box__delivery_batch",
+        "team",
+        "userprofile__sex",
+        "discount_coupon__coupon_type__name",
+        "discount_coupon__discount",
+        "team__subsidiary__company__name",
     )
-    raw_id_fields = ('userprofile', 'team', 'discount_coupon')
+    raw_id_fields = ("userprofile", "team", "discount_coupon")
     search_fields = (
-        'userprofile__nickname',
-        'userprofile__user__first_name',
-        'userprofile__user__last_name',
-        'userprofile__user__username',
-        'userprofile__user__email',
-        'team__name',
-        'team__subsidiary__address_street',
-        'team__subsidiary__address_psc',
-        'team__subsidiary__address_recipient',
-        'team__subsidiary__address_city',
-        'team__subsidiary__company__name',
+        "userprofile__nickname",
+        "userprofile__user__first_name",
+        "userprofile__user__last_name",
+        "userprofile__user__username",
+        "userprofile__user__email",
+        "team__name",
+        "team__subsidiary__address_street",
+        "team__subsidiary__address_psc",
+        "team__subsidiary__address_recipient",
+        "team__subsidiary__address_city",
+        "team__subsidiary__company__name",
     )
     readonly_fields = (
-        'avatar_large',
-        'user_link',
-        'userprofile__user__email',
-        'created',
-        'updated',
-        'payment_status',
+        "avatar_large",
+        "user_link",
+        "userprofile__user__email",
+        "created",
+        "updated",
+        "payment_status",
     )
     exclude = (
-        'track',
-        'dont_want_insert_track',
+        "track",
+        "dont_want_insert_track",
     )
     actions = (
         actions.update_mailing,
@@ -812,7 +903,12 @@ class UserAttendanceAdmin(
         create_export_job_action,
     )
     form = UserAttendanceForm
-    inlines = [PaymentInlineUserAttendance, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
+    inlines = [
+        PaymentInlineUserAttendance,
+        PackageTransactionInline,
+        UserActionTransactionInline,
+        TripAdminInline,
+    ]
     list_max_show_all = 10000
     list_per_page = 100
     resource_class = resources.UserAttendanceResource
@@ -821,39 +917,49 @@ class UserAttendanceAdmin(
         return avatar(obj.userprofile.user, 150)
 
     def user_link(self, obj):
-        return format_html('<a href="{}">{}</a>', reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user)
-    user_link.short_description = _('Uživatel')
+        return format_html(
+            '<a href="{}">{}</a>',
+            reverse("admin:auth_user_change", args=(obj.userprofile.user.pk,)),
+            obj.userprofile.user,
+        )
+
+    user_link.short_description = _("Uživatel")
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related(
-            'team__subsidiary__city',
-            'team__subsidiary__company',
-            't_shirt_size__campaign',
-        ).defer(
-            'track',
-            'userprofile__user__password',
-        )
+            "team__subsidiary__city",
+            "team__subsidiary__company",
+            "t_shirt_size__campaign",
+        ).defer("track", "userprofile__user__password",)
 
 
 @admin.register(models.Team)
 class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
-        'name',
-        'subsidiary',
-        'subsidiary__city',
-        'subsidiary__company',
-        'member_count',
-        'paid_member_count',
-        'campaign',
-        'get_length',
-        'get_frequency',
-        'id',
+        "name",
+        "subsidiary",
+        "subsidiary__city",
+        "subsidiary__company",
+        "member_count",
+        "paid_member_count",
+        "campaign",
+        "get_length",
+        "get_frequency",
+        "id",
     )
-    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
-    list_filter = [CampaignFilter, 'subsidiary__city', 'member_count', 'paid_member_count']
+    search_fields = ["name", "subsidiary__address_street", "subsidiary__company__name"]
+    list_filter = [
+        CampaignFilter,
+        "subsidiary__city",
+        "member_count",
+        "paid_member_count",
+    ]
     list_max_show_all = 10000
-    raw_id_fields = ['subsidiary', 'icon', ]
+    raw_id_fields = [
+        "subsidiary",
+        "icon",
+    ]
     actions = (
         actions.touch_items,
         make_pdfsandwich,
@@ -861,13 +967,13 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     form = models.team.TeamAdminForm
 
     readonly_fields = [
-        'members',
-        'invitation_token',
-        'member_count',
-        'paid_member_count',
-        'author',
-        'updated_by',
-        'link_to_gallery',
+        "members",
+        "invitation_token",
+        "member_count",
+        "paid_member_count",
+        "author",
+        "updated_by",
+        "link_to_gallery",
     ]
 
     def link_to_gallery(self, obj):
@@ -877,21 +983,25 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     def members(self, obj):
         return admin_links(
             [
-                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), "%s - %s" % (u, u.approved_for_team))
+                (
+                    reverse("admin:dpnk_userattendance_change", args=(u.pk,)),
+                    "%s - %s" % (u, u.approved_for_team),
+                )
                 for u in obj.users.all()
             ],
         )
-    members.short_description = _('Členové')
+
+    members.short_description = _("Členové")
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.select_related('campaign', 'subsidiary__company')
+        return queryset.select_related("campaign", "subsidiary__company")
 
 
 class TransactionChildAdmin(PolymorphicChildModelAdmin):
     base_model = models.Transaction
-    raw_id_fields = ('user_attendance',)
-    readonly_fields = ('author', 'created', 'updated_by')
+    raw_id_fields = ("user_attendance",)
+    readonly_fields = ("author", "created", "updated_by")
 
 
 class PaymentChildAdmin(TransactionChildAdmin):
@@ -899,7 +1009,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
-    readonly_fields = ['created', 'author', 'updated_by', 't_shirt_size']
+    readonly_fields = ["created", "author", "updated_by", "t_shirt_size"]
     form = PackageTransactionForm
 
 
@@ -910,37 +1020,42 @@ class UserActionTransactionChildAdmin(TransactionChildAdmin):
 @admin.register(models.Payment)
 class PaymentAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
-        'id',
-        'user_attendance',
-        'created',
-        'realized',
-        'status',
-        'session_id',
-        'trans_id',
-        'amount',
-        'pay_type',
-        'error',
-        'order_id',
-        'author',
-        'invoice',
-        'user_attendance__team__subsidiary__company__name',
+        "id",
+        "user_attendance",
+        "created",
+        "realized",
+        "status",
+        "session_id",
+        "trans_id",
+        "amount",
+        "pay_type",
+        "error",
+        "order_id",
+        "author",
+        "invoice",
+        "user_attendance__team__subsidiary__company__name",
     )
     search_fields = (
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username',
-        'session_id',
-        'trans_id',
-        'order_id',
-        'user_attendance__team__subsidiary__company__name',
+        "user_attendance__userprofile__nickname",
+        "user_attendance__userprofile__user__first_name",
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__username",
+        "session_id",
+        "trans_id",
+        "order_id",
+        "user_attendance__team__subsidiary__company__name",
     )
-    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'error', 'pay_type', ]
+    list_filter = [
+        campaign_filter_generator("user_attendance__campaign"),
+        "status",
+        "error",
+        "pay_type",
+    ]
     raw_id_fields = (
-        'user_attendance',
-        'invoice',
+        "user_attendance",
+        "invoice",
     )
-    readonly_fields = ('author', 'created', 'updated_by')
+    readonly_fields = ("author", "created", "updated_by")
     list_max_show_all = 10000
     form = transaction_forms.PaymentForm
 
@@ -952,143 +1067,180 @@ class ChoiceInline(SortableInlineAdminMixin, admin.TabularInline):
 
 @admin.register(models.ChoiceType)
 class ChoiceTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'competition', 'universal')
+    list_display = ("name", "competition", "universal")
     inlines = [ChoiceInline]
-    list_filter = (campaign_filter_generator('competition__campaign'), 'competition', )
+    list_filter = (
+        campaign_filter_generator("competition__campaign"),
+        "competition",
+    )
     save_as = True
 
 
 class AnswerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'instance' in kwargs and kwargs['instance']:
-            self.fields['choices'].queryset = models.Choice.objects.filter(choice_type__question=kwargs['instance'].question)
+        if "instance" in kwargs and kwargs["instance"]:
+            self.fields["choices"].queryset = models.Choice.objects.filter(
+                choice_type__question=kwargs["instance"].question
+            )
         else:
-            self.fields['choices'].queryset = models.Choice.objects.filter(choice_type__question__competition__campaign__slug=self.request.subdomain)
+            self.fields["choices"].queryset = models.Choice.objects.filter(
+                choice_type__question__competition__campaign__slug=self.request.subdomain
+            )
 
 
 @admin.register(models.Answer)
 class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
-        'user_attendance',
-        'user_attendance__userprofile__user__email',
-        'points_given',
-        'question__competition',
-        'comment',
-        'str_choices_ids',
-        'str_choices',
-        'attachment_url',
-        'comment',
-        'question__text')
-    search_fields = (
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__email',
-        'question__text',
-        'question__name',
-        'question__competition__name',
-        'user_attendance__team__subsidiary__company__name')
-    list_filter = (
-        campaign_filter_generator('question__competition__campaign'),
-        HasReactionFilter,
-        'question__competition__city',
-        'question__competition',
+        "user_attendance",
+        "user_attendance__userprofile__user__email",
+        "points_given",
+        "question__competition",
+        "comment",
+        "str_choices_ids",
+        "str_choices",
+        "attachment_url",
+        "comment",
+        "question__text",
     )
-    filter_horizontal = ('choices',)
+    search_fields = (
+        "user_attendance__userprofile__nickname",
+        "user_attendance__userprofile__user__first_name",
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__email",
+        "question__text",
+        "question__name",
+        "question__competition__name",
+        "user_attendance__team__subsidiary__company__name",
+    )
+    list_filter = (
+        campaign_filter_generator("question__competition__campaign"),
+        HasReactionFilter,
+        "question__competition__city",
+        "question__competition",
+    )
+    filter_horizontal = ("choices",)
     list_max_show_all = 100000
-    raw_id_fields = ('user_attendance', 'question')
+    raw_id_fields = ("user_attendance", "question")
     save_as = True
     resource_class = resources.AnswerResource
     form = AnswerForm
 
     def attachment_url(self, obj):
         if obj.attachment:
-            return format_html(u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment)
+            return format_html(
+                u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment
+            )
 
-    actions = (
-        create_export_job_action,
-    )
+    actions = (create_export_job_action,)
 
 
 @admin.register(models.Question)
-class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, AdminViews, admin.ModelAdmin):
-    admin_views = (
-        (_('Spravovat otázky'), '/admin/questions'),
-    )
+class QuestionAdmin(
+    FormRequestMixin,
+    city_admin_mixin_generator("competition__city__in"),
+    ImportExportMixin,
+    AdminViews,
+    admin.ModelAdmin,
+):
+    admin_views = ((_("Spravovat otázky"), "/admin/questions"),)
 
     form = models.QuestionForm
-    list_display = ('__str__', 'text', 'question_type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
-    ordering = ('order', 'date',)
-    list_filter = (campaign_filter_generator('competition__campaign'), 'competition__city', 'competition',)
-    search_fields = ('text', 'competition__name')
+    list_display = (
+        "__str__",
+        "text",
+        "question_type",
+        "order",
+        "date",
+        "competition",
+        "choice_type",
+        "answers_link",
+        "id",
+    )
+    ordering = (
+        "order",
+        "date",
+    )
+    list_filter = (
+        campaign_filter_generator("competition__campaign"),
+        "competition__city",
+        "competition",
+    )
+    search_fields = ("text", "competition__name")
     save_as = True
 
-    readonly_fields = ['choices', 'answers_link', ]
+    readonly_fields = [
+        "choices",
+        "answers_link",
+    ]
 
     def choices(self, obj):
         return mark_safe(
-            "<br/>".join(
-                [choice.text for choice in obj.choice_type.choices.all()]) +
-            '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)),
+            "<br/>".join([choice.text for choice in obj.choice_type.choices.all()])
+            + '<br/><a href="%s">edit</a>'
+            % reverse("admin:dpnk_choicetype_change", args=(obj.choice_type.pk,)),
         )
 
     def answers_link(self, obj):
         if obj.pk:
-            return format_html('<a href="{}?question={}">{}</a>', reverse('admin_answers'), _('vyhodnocení odpovědí'), obj.pk)
+            return format_html(
+                '<a href="{}?question={}">{}</a>',
+                reverse("admin_answers"),
+                _("vyhodnocení odpovědí"),
+                obj.pk,
+            )
 
 
 class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
     model = models.GpxFile
     raw_id_fields = (
-        'user_attendance',
-        'trip',
+        "user_attendance",
+        "trip",
     )
     readonly_fields = (
-        'author',
-        'created',
-        'updated_by',
+        "author",
+        "created",
+        "updated_by",
     )
-    exclude = (
-        'ecc_last_upload',
-    )
+    exclude = ("ecc_last_upload",)
     extra = 0
 
 
 @admin.register(models.Trip)
 class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
-    queryset_city_param = 'user_attendance__team__subsidiary__city__in'
+    queryset_city_param = "user_attendance__team__subsidiary__city__in"
     list_display = (
-        'user_attendance__name_for_trusted',
-        'date',
-        'direction',
-        'commute_mode',
-        'source_application',
-        'source_id',
-        'distance',
-        'id')
+        "user_attendance__name_for_trusted",
+        "date",
+        "direction",
+        "commute_mode",
+        "source_application",
+        "source_id",
+        "distance",
+        "id",
+    )
     search_fields = (
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username',
-        'user_attendance__userprofile__user__email',
-        'user_attendance__team__subsidiary__company__name',
+        "user_attendance__userprofile__nickname",
+        "user_attendance__userprofile__user__first_name",
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__username",
+        "user_attendance__userprofile__user__email",
+        "user_attendance__team__subsidiary__company__name",
     )
     raw_id_fields = (
-        'user_attendance',
-        'gallery',
+        "user_attendance",
+        "gallery",
     )
-    #list_filter = (
-        #campaign_filter_generator('user_attendance__campaign'),
-        #'direction',
-        #'commute_mode',
-        #('date', DateRangeFilter),
-        #'user_attendance__team__subsidiary__city',
-        #'source_application',
-        #'user_attendance__payment_status',
-    #)
-    readonly_fields = ('created', 'author', 'updated_by')
+    # list_filter = (
+    #     campaign_filter_generator('user_attendance__campaign'),
+    #     'direction',
+    #     'commute_mode',
+    #     ('date', DateRangeFilter),
+    #     'user_attendance__team__subsidiary__city',
+    #     'source_application',
+    #     'user_attendance__payment_status',
+    # )
+    readonly_fields = ("created", "author", "updated_by")
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     resource_class = resources.TripResource
@@ -1098,58 +1250,63 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related(
-            'commute_mode',
-            'user_attendance__userprofile__user',
+            # black
+            "commute_mode",
+            "user_attendance__userprofile__user",
         ).only(
-            'commute_mode__name',
-            'commute_mode__name_cs',
-            'commute_mode__name_en',
-            'commute_mode__name_dsnkcs',
-            'date',
-            'direction',
-            'distance',
-            'source_application',
-            'source_id',
-            'user_attendance',
-            'user_attendance__team',
-            'user_attendance__userprofile__nickname',
-            'user_attendance__userprofile__user__email',
-            'user_attendance__userprofile__user__first_name',
-            'user_attendance__userprofile__user__last_name',
-            'user_attendance__userprofile__user__username',
+            "commute_mode__name",
+            "commute_mode__name_cs",
+            "commute_mode__name_en",
+            "commute_mode__name_dsnkcs",
+            "date",
+            "direction",
+            "distance",
+            "source_application",
+            "source_id",
+            "user_attendance",
+            "user_attendance__team",
+            "user_attendance__userprofile__nickname",
+            "user_attendance__userprofile__user__email",
+            "user_attendance__userprofile__user__first_name",
+            "user_attendance__userprofile__user__last_name",
+            "user_attendance__userprofile__user__username",
         )
 
 
 @admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
-        'id',
-        'user_attendance',
-        'team',
-        'company',
-        'result',
-        'result_divident',
-        'result_divisor',
-        'competition',
-        'created',
-        'updated',
+        "id",
+        "user_attendance",
+        "team",
+        "company",
+        "result",
+        "result_divident",
+        "result_divisor",
+        "competition",
+        "created",
+        "updated",
     )
-    list_filter = (campaign_filter_generator('competition__campaign'), 'competition',)
+    list_filter = (
+        campaign_filter_generator("competition__campaign"),
+        "competition",
+    )
     search_fields = (
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username',
-        'user_attendance__userprofile__user__email',
-        'team__name',
-        'competition__name')
-    raw_id_fields = ('user_attendance', 'team')
+        "user_attendance__userprofile__nickname",
+        "user_attendance__userprofile__user__first_name",
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__username",
+        "user_attendance__userprofile__user__email",
+        "team__name",
+        "competition__name",
+    )
+    raw_id_fields = ("user_attendance", "team")
     resource_class = resources.AdminCompetitionResultResource
 
 
 @admin.register(models.Occupation)
 class OccupationAdmin(ImportExportMixin, SortableAdminMixin, admin.ModelAdmin):
-    list_display = ('name', )
+    list_display = ("name",)
 
 
 class PhaseInline(admin.TabularInline):
@@ -1158,7 +1315,7 @@ class PhaseInline(admin.TabularInline):
 
 
 class PriceLevelInline(admin.TabularInline):
-    readonly_fields = ('created', 'author', 'updated_by')
+    readonly_fields = ("created", "author", "updated_by")
     model = price_level_models.PriceLevel
     extra = 0
 
@@ -1176,96 +1333,106 @@ class TShirtSizeInline(SortableInlineAdminMixin, TranslationTabularInline):
 @admin.register(models.CampaignType)
 class CampaignTypeAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'slug',
+        "name",
+        "slug",
     )
 
 
 @admin.register(models.Campaign)
 class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
-        'year',
-        'campaign_type',
-        'slug',
-        'slug_identifier',
-        'mailing_list_id',
-        'previous_campaign',
-        'minimum_rides_base',
-        'minimum_percentage',
-        'trip_plus_distance',
-        'mailing_list_enabled',
+        "year",
+        "campaign_type",
+        "slug",
+        "slug_identifier",
+        "mailing_list_id",
+        "previous_campaign",
+        "minimum_rides_base",
+        "minimum_percentage",
+        "trip_plus_distance",
+        "mailing_list_enabled",
     )
     fieldsets = (
-        ('Basic settings', {
-            'fields': (
-                'campaign_type',
-                'year',
-                'slug',
-                'slug_identifier',
-                'main_color',
-                'previous_campaign',
-                'sitetree_postfix',
-                'language_prefixes',
-            ),
-        }),
-        ('Communications', {
-            'fields': (
-                'email_footer',
-                'mailing_list_id',
-                'mailing_list_type',
-                'mailing_list_enabled',
-            ),
-        }),
-        ('Sign up and payment', {
-            'fields': (
-                'extra_agreement_text',
-                'benefitial_admission_fee',
-                'benefitial_admission_fee_company',
-                'free_entry_cases_html',
-                'invoice_sequence_number_first',
-                'invoice_sequence_number_last',
-                'club_membership_integration',
-            ),
-        }),
-        ('Trip entry', {
-            'fields': (
-                'days_active',
-                'tracks',
-                'recreational',
-                'show_application_links',
-                'minimum_rides_base',
-                'minimum_percentage',
-                'trip_plus_distance',
-            ),
-        }),
-        ('Teams', {
-            'fields': (
-                'max_team_members',
-            ),
-        }),
-        ('Diplomas', {
-            'fields': (
-                'sandwich_type',
-                'team_diploma_sandwich_type',
-                'city_in_campaign_diploma_sandwich_type',
-            ),
-        }),
-        ('Packages and t-shirts', {
-            'fields': (
-                'tracking_number_first',
-                'tracking_number_last',
-                'package_height',
-                'package_width',
-                'package_depth',
-                'package_max_count',
-                'package_weight',
-            ),
-        }),
-        ('External API', {
-            'fields': (
-                'wp_api_date_from',
-            ),
-        }),
+        (
+            "Basic settings",
+            {
+                "fields": (
+                    "campaign_type",
+                    "year",
+                    "slug",
+                    "slug_identifier",
+                    "main_color",
+                    "previous_campaign",
+                    "sitetree_postfix",
+                    "language_prefixes",
+                ),
+            },
+        ),
+        (
+            "Communications",
+            {
+                "fields": (
+                    "email_footer",
+                    "mailing_list_id",
+                    "mailing_list_type",
+                    "mailing_list_enabled",
+                ),
+            },
+        ),
+        (
+            "Sign up and payment",
+            {
+                "fields": (
+                    "extra_agreement_text",
+                    "benefitial_admission_fee",
+                    "benefitial_admission_fee_company",
+                    "free_entry_cases_html",
+                    "invoice_sequence_number_first",
+                    "invoice_sequence_number_last",
+                    "club_membership_integration",
+                ),
+            },
+        ),
+        (
+            "Trip entry",
+            {
+                "fields": (
+                    "days_active",
+                    "tracks",
+                    "recreational",
+                    "show_application_links",
+                    "minimum_rides_base",
+                    "minimum_percentage",
+                    "trip_plus_distance",
+                ),
+            },
+        ),
+        ("Teams", {"fields": ("max_team_members",),}),
+        (
+            "Diplomas",
+            {
+                "fields": (
+                    "sandwich_type",
+                    "team_diploma_sandwich_type",
+                    "city_in_campaign_diploma_sandwich_type",
+                ),
+            },
+        ),
+        (
+            "Packages and t-shirts",
+            {
+                "fields": (
+                    "tracking_number_first",
+                    "tracking_number_last",
+                    "package_height",
+                    "package_width",
+                    "package_depth",
+                    "package_max_count",
+                    "package_weight",
+                ),
+            },
+        ),
+        ("External API", {"fields": ("wp_api_date_from",),}),
     )
     inlines = [
         TShirtSizeInline,
@@ -1274,8 +1441,8 @@ class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
         PriceLevelInline,
     ]
     readonly_fields = (
-        'name',
-        'city_count',
+        "name",
+        "city_count",
     )
     save_as = True
 
@@ -1284,45 +1451,47 @@ class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
 
 
 @admin.register(models.CompanyAdmin)
-class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administrated_company__subsidiaries__city__in'), RelatedFieldAdmin):
+class CompanyAdminAdmin(
+    ImportExportMixin,
+    city_admin_mixin_generator("administrated_company__subsidiaries__city__in"),
+    RelatedFieldAdmin,
+):
     list_display = [
-        'userprofile__user',
-        'userprofile__user__email',
-        'userprofile',
-        'userprofile__user__first_name',
-        'userprofile__user__last_name',
-        'userprofile__telephone',
-        'company_admin_approved',
-        'administrated_company__name',
-        'can_confirm_payments',
-        'will_pay_opt_in',
-        'note',
-        'motivation_company_admin',
-        'campaign',
+        "userprofile__user",
+        "userprofile__user__email",
+        "userprofile",
+        "userprofile__user__first_name",
+        "userprofile__user__last_name",
+        "userprofile__telephone",
+        "company_admin_approved",
+        "administrated_company__name",
+        "can_confirm_payments",
+        "will_pay_opt_in",
+        "note",
+        "motivation_company_admin",
+        "campaign",
     ]
     list_filter = [
         CampaignFilter,
-        'company_admin_approved',
-        isnull_filter('userattendance', _("Nemá účast v kampani?")),
-        'administrated_company__subsidiaries__city',
+        "company_admin_approved",
+        isnull_filter("userattendance", _("Nemá účast v kampani?")),
+        "administrated_company__subsidiaries__city",
     ]
     search_fields = [
-        'administrated_company__name',
-        'userprofile__nickname',
-        'userprofile__user__first_name',
-        'userprofile__user__last_name',
-        'userprofile__user__username',
-        'userprofile__user__email',
+        "administrated_company__name",
+        "userprofile__nickname",
+        "userprofile__user__first_name",
+        "userprofile__user__last_name",
+        "userprofile__user__username",
+        "userprofile__user__email",
     ]
-    raw_id_fields = ['userprofile']
+    raw_id_fields = ["userprofile"]
     list_max_show_all = 100000
-    actions = (
-        actions.update_mailing_coordinator,
-    )
+    actions = (actions.update_mailing_coordinator,)
     resource_class = resources.CompanyAdminResource
 
     def lookup_allowed(self, key, value):
-        if key in ('administrated_company__subsidiaries__city__id__exact',):
+        if key in ("administrated_company__subsidiaries__city__id__exact",):
             return True
         return super().lookup_allowed(key, value)
 
@@ -1332,63 +1501,61 @@ class InvoiceForm(forms.ModelForm):
         model = models.Invoice
         fields = "__all__"
         widgets = {
-            'note': forms.Textarea(attrs={'rows': 2}),
+            "note": forms.Textarea(attrs={"rows": 2}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'sequence_number' in self.fields:
-            self.fields['sequence_number'].required = False
+        if "sequence_number" in self.fields:
+            self.fields["sequence_number"].required = False
 
 
 @admin.register(models.Invoice)
 class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     list_display = [
-        'company',
-        'exposure_date',
-        'payback_date',
-        'paid_date',
-        'variable_symbol',
-        'total_amount',
-        'payments_count',
-        'invoice_pdf_url',
-        'invoice_xml_url',
-        'campaign',
-        'sequence_number',
-        'order_number',
-        'company_ico',
-        'company_dic',
-        'company_pais_benefitial_fee',
-        'company_address_street',
-        'note',
-        'company_admin_telephones',
-        'company_admin_emails',
+        "company",
+        "exposure_date",
+        "payback_date",
+        "paid_date",
+        "variable_symbol",
+        "total_amount",
+        "payments_count",
+        "invoice_pdf_url",
+        "invoice_xml_url",
+        "campaign",
+        "sequence_number",
+        "order_number",
+        "company_ico",
+        "company_dic",
+        "company_pais_benefitial_fee",
+        "company_address_street",
+        "note",
+        "company_admin_telephones",
+        "company_admin_emails",
     ]
-    list_editable = (
-        'note',
-    )
+    list_editable = ("note",)
     readonly_fields = [
-        'created',
-        'author',
-        'updated_by',
-        'payments_count',
+        "created",
+        "author",
+        "updated_by",
+        "payments_count",
     ]
     raw_id_fields = [
-        'company',
+        "company",
     ]
     list_filter = [
         CampaignFilter,
-        isnull_filter('paid_date', _("Nezaplacené faktury")),
-        'company_pais_benefitial_fee',
-        isnull_filter('fio_payments'),
+        isnull_filter("paid_date", _("Nezaplacené faktury")),
+        "company_pais_benefitial_fee",
+        isnull_filter("fio_payments"),
     ]
     search_fields = [
-        'company__name',
-        'variable_symbol',
-        'company_ico',
-        'company_dic',
-        'sequence_number',
-        'total_amount',
+        "company__name",
+        "variable_symbol",
+        "company_ico",
+        "company_dic",
+        "sequence_number",
+        "total_amount",
     ]
     inlines = [PaymentInline]
     actions = [
@@ -1403,9 +1570,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.annotate(
-            payments_count=Count('payment_set'),
-        )
+        return queryset.annotate(payments_count=Count("payment_set"),)
 
     def get_changelist_form(self, request, **kwargs):
         return InvoiceForm
@@ -1422,50 +1587,52 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
 @admin.register(scribbler_models.Scribble)
 class ScribbleAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
-        'name',
-        'slug',
-        'url',
-        'content',
+        "id",
+        "name",
+        "slug",
+        "url",
+        "content",
     )
     search_fields = (
-        'name',
-        'slug',
-        'url',
+        "name",
+        "slug",
+        "url",
     )
     save_as = True
 
 
 @admin.register(models.Voucher)
 class VoucherAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('id', 'voucher_type1', 'token', 'user_attendance', 'campaign')
-    raw_id_fields = ('user_attendance',)
+    list_display = ("id", "voucher_type1", "token", "user_attendance", "campaign")
+    raw_id_fields = ("user_attendance",)
     search_fields = (
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username',
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__email',
+        "user_attendance__userprofile__user__first_name",
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__username",
+        "user_attendance__userprofile__nickname",
+        "user_attendance__userprofile__user__email",
     )
-    list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
-    actions = (
-        make_pdfsandwich,
-    )
+    list_filter = [
+        CampaignFilter,
+        "voucher_type",
+        isnull_filter("user_attendance", _("Nemá účast v kampani")),
+    ]
+    actions = (make_pdfsandwich,)
 
 
 @admin.register(models.VoucherType)
 class VoucherTypeAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'name', 'teaser_img')
+    list_display = ("id", "name", "teaser_img")
 
 
 @admin.register(models.VoucherPDF)
 class VoucherPDFAdmin(PdfSandwichAdmin):
     search_fields = (
-        'obj__user_attendance__userprofile__user__email',
-        'obj__user_attendance__userprofile__nickname',
-        'obj__user_attendance__userprofile__user__first_name',
-        'obj__user_attendance__userprofile__user__last_name',
-        'obj__user_attendance__userprofile__user__username',
+        "obj__user_attendance__userprofile__user__email",
+        "obj__user_attendance__userprofile__nickname",
+        "obj__user_attendance__userprofile__user__first_name",
+        "obj__user_attendance__userprofile__user__last_name",
+        "obj__user_attendance__userprofile__user__username",
     )
 
 
@@ -1476,38 +1643,41 @@ class VoucherPDFFieldAdmin(PdfSandwichFieldAdmin):
 
 @admin.register(models.LandingPageIcon)
 class LandingPageIconAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('role', 'file', 'min_frequency', 'max_frequency')
-    list_editable = ('min_frequency', 'max_frequency')
+    list_display = ("role", "file", "min_frequency", "max_frequency")
+    list_editable = ("min_frequency", "max_frequency")
 
 
 @admin.register(models.CommuteMode)
-class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):  # ImportExportMixin was removed, because it prevented ordering
+class CommuteModeAdmin(
+    SortableAdminMixin, TranslationAdmin
+):  # ImportExportMixin was removed, because it prevented ordering
     list_display = (
-        'name',
-        'slug',
-        'does_count',
-        'eco',
+        "name",
+        "slug",
+        "does_count",
+        "eco",
     )
 
 
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     def _session_data(self, obj):
-        return pprint.pformat(obj.get_decoded()).replace('\n', '<br>\n')
+        return pprint.pformat(obj.get_decoded()).replace("\n", "<br>\n")
+
     _session_data.allow_tags = True
-    list_display = ['session_key', '_session_data', 'expire_date']
-    readonly_fields = ['_session_data']
-    search_fields = ('session_key',)
-    date_hierarchy = 'expire_date'
+    list_display = ["session_key", "_session_data", "expire_date"]
+    readonly_fields = ["_session_data"]
+    search_fields = ("session_key",)
+    date_hierarchy = "expire_date"
 
 
-TokenAdmin.raw_id_fields = ('user',)
+TokenAdmin.raw_id_fields = ("user",)
 TokenAdmin.search_fields = (
-    'user__email',
-    'user__first_name',
-    'user__last_name',
-    'user__username',
-    'key',
+    "user__email",
+    "user__first_name",
+    "user__last_name",
+    "user__username",
+    "key",
 )
 
 
@@ -1523,23 +1693,19 @@ except NameError:
 @admin.register(models.Diploma)
 class DiplomaAdmin(PdfSandwichAdmin):
     search_fields = (
-        'obj__userprofile__user__first_name',
-        'obj__userprofile__user__last_name',
+        "obj__userprofile__user__first_name",
+        "obj__userprofile__user__last_name",
     )
 
 
 @admin.register(models.DiplomaField)
 class DiplomaFieldAdmin(PdfSandwichFieldAdmin):
-    list_filter = (
-        'pdfsandwich_type__name',
-    )
+    list_filter = ("pdfsandwich_type__name",)
 
 
 @admin.register(models.TeamDiploma)
 class TeamDiplomaAdmin(PdfSandwichAdmin):
-    search_fields = (
-        'obj__name',
-    )
+    search_fields = ("obj__name",)
 
 
 @admin.register(models.TeamDiplomaField)

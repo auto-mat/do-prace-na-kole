@@ -32,13 +32,11 @@ def _(string, locale=None):
     if locale is None:
         return string
     return gettext.translation(
-        'django',
-        os.path.join(os.path.dirname(__file__), 'locale'),
+        "django",
+        os.path.join(os.path.dirname(__file__), "locale"),
         languages=[locale],
         fallback=False,
-    ).gettext(
-        string,
-    )
+    ).gettext(string,)
 
 
 def approval_request_mail(user_attendance):
@@ -46,114 +44,97 @@ def approval_request_mail(user_attendance):
         if user_attendance == team_member:
             continue
         context = {
-            'team_member': team_member,
-            'new_user': user_attendance,
+            "team_member": team_member,
+            "new_user": user_attendance,
         }
         campaign_mail(
-            team_member,
-            _("Máte nového člena"),
-            'approval_request_%s.html',
-            context,
+            team_member, _("Máte nového člena"), "approval_request_%s.html", context,
         )
 
 
 def register_mail(user_attendance):
     campaign_mail(
-        user_attendance,
-        _("Potvrzení registrace"),
-        'registration_%s.html',
+        user_attendance, _("Potvrzení registrace"), "registration_%s.html",
     )
 
 
 def team_membership_approval_mail(user_attendance):
     campaign_mail(
-        user_attendance,
-        _("Jste členem týmu"),
-        'team_membership_approval_%s.html',
+        user_attendance, _("Jste členem týmu"), "team_membership_approval_%s.html",
     )
 
 
 def team_membership_denial_mail(user_attendance, denier, reason):
     context = {
-        'denier': denier,
-        'reason': reason,
+        "denier": denier,
+        "reason": reason,
     }
     campaign_mail(
         user_attendance,
         _("Nemůžete se přidat k týmu"),
-        'team_membership_denial_%s.html',
+        "team_membership_denial_%s.html",
         context,
     )
 
 
 def team_created_mail(user_attendance, team_name):
     context = {
-        'team_name': team_name,
+        "team_name": team_name,
     }
     campaign_mail(
-        user_attendance,
-        _("Máte nový tým"),
-        'team_created_%s.html',
-        context,
+        user_attendance, _("Máte nový tým"), "team_created_%s.html", context,
     )
 
 
 def invitation_mail(user_attendance, email, invited=None):
     context = {
-        'inviting': user_attendance,
-        'invited': invited,
+        "inviting": user_attendance,
+        "invited": invited,
     }
     campaign_mail(
-        user_attendance,
-        _("Pozvánka"),
-        'invitation_%s.html',
-        context,
-        email=email,
+        user_attendance, _("Pozvánka"), "invitation_%s.html", context, email=email,
     )
 
 
 def payment_confirmation_mail(user_attendance):
     campaign_mail(
-        user_attendance,
-        _("Startovné je uhrazeno"),
-        'payment_confirmation_%s.html',
+        user_attendance, _("Startovné je uhrazeno"), "payment_confirmation_%s.html",
     )
 
 
 def payment_confirmation_company_mail(user_attendance):
     context = {
-        'company': user_attendance.team.subsidiary.company if user_attendance.team else _(u"(není vybraná)", user_attendance.userprofile.language),
+        "company": user_attendance.team.subsidiary.company
+        if user_attendance.team
+        else _(u"(není vybraná)", user_attendance.userprofile.language),
     }
     campaign_mail(
         user_attendance,
         _("Jste ve hře"),
-        'payment_confirmation_company_%s.html',
+        "payment_confirmation_company_%s.html",
         context,
     )
 
 
 def company_admin_register_competitor_mail(user_attendance):
     context = {
-        'company': user_attendance.team.subsidiary.company,
+        "company": user_attendance.team.subsidiary.company,
     }
     campaign_mail(
         user_attendance,
         _("Potvrzení registrace firemního koordinátora"),
-        'company_admin_register_competitor_%s.html',
+        "company_admin_register_competitor_%s.html",
         context,
     )
 
 
 def company_admin_mail(company_admin, subject, template):
     context = {
-        'company_admin': company_admin,
-        'company': company_admin.administrated_company,
+        "company_admin": company_admin,
+        "company": company_admin.administrated_company,
     }
     campaign_mail(
-        company_admin,
-        subject,
-        template,
-        context,
+        company_admin, subject, template, context,
     )
 
 
@@ -161,23 +142,19 @@ def company_admin_register_no_competitor_mail(company_admin):
     company_admin_mail(
         company_admin,
         _("Potvrzení registrace firemního koordinátora"),
-        'company_admin_register_competitor_%s.html',
+        "company_admin_register_competitor_%s.html",
     )
 
 
 def company_admin_approval_mail(company_admin):
     company_admin_mail(
-        company_admin,
-        _("Jste firemní koordinátor"),
-        'company_admin_approval_%s.html',
+        company_admin, _("Jste firemní koordinátor"), "company_admin_approval_%s.html",
     )
 
 
 def company_admin_rejected_mail(company_admin):
     company_admin_mail(
-        company_admin,
-        _("Špatné zprávy"),
-        'company_admin_rejected_%s.html',
+        company_admin, _("Špatné zprávy"), "company_admin_rejected_%s.html",
     )
 
 
@@ -185,57 +162,52 @@ def unfilled_rides_mail(user_attendance, days_unfilled):
     campaign_mail(
         user_attendance,
         _("Poslední šance doplnit jízdy"),
-        'unfilled_rides_notification_%s.html',
-        {'days_unfilled': days_unfilled},
+        "unfilled_rides_notification_%s.html",
+        {"days_unfilled": days_unfilled},
     )
 
 
 def new_invoice_mail(invoice):
     invoice_mail(
-        invoice,
-        _("Nová faktura vystavena"),
-        'new_invoice_notification_%s.html',
+        invoice, _("Nová faktura vystavena"), "new_invoice_notification_%s.html",
     )
 
 
 def unpaid_invoice_mail(invoice):
     invoice_mail(
-        invoice,
-        _("Nezaplacená faktura"),
-        'unpaid_invoice_notification_%s.html',
+        invoice, _("Nezaplacená faktura"), "unpaid_invoice_notification_%s.html",
     )
 
 
 def invoice_mail(invoice, subject, template):
     extra_context = {
-        'invoice': invoice,
+        "invoice": invoice,
     }
     if not invoice.paid():
         for admin in invoice.company.company_admin.filter(campaign=invoice.campaign):
             campaign_mail(
-                admin.user_attendance(),
-                subject,
-                template,
-                extra_context,
+                admin.user_attendance(), subject, template, extra_context,
             )
 
 
-def campaign_mail(user_attendance, subject, template_path, extra_context={}, email=None):
+def campaign_mail(
+    user_attendance, subject, template_path, extra_context={}, email=None
+):
     userprofile = user_attendance.userprofile
     campaign = user_attendance.campaign
     if email is None:
         email = userprofile.user.email
     subject = "[" + str(campaign) + "] " + _(subject, userprofile.language)
     context = {
-        'user_attendance': user_attendance,
-        'campaign': campaign,
-        'absolute_uri': util.get_base_url(slug=campaign.slug),
-        'email': email,
-        'lang_code': userprofile.language,
-        'subject': subject,
+        "user_attendance": user_attendance,
+        "campaign": campaign,
+        "absolute_uri": util.get_base_url(slug=campaign.slug),
+        "email": email,
+        "lang_code": userprofile.language,
+        "subject": subject,
     }
     context.update(extra_context)
-    template = get_template('email/' + template_path % userprofile.language)
+    template = get_template("email/" + template_path % userprofile.language)
     message = template.render(context)
 
     # Uncoment this to check to generate email files in dpnk-test-messages

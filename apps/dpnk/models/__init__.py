@@ -45,12 +45,27 @@ from .landingpageicon import LandingPageIcon
 from .notification_template import DpnkNotificationTemplate
 from .occupation import Occupation
 from .phase import PHASE_TYPE_DICT, Phase
-from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
+from .questionnaire import (
+    Answer,
+    Choice,
+    ChoiceType,
+    Question,
+    QuestionForm,
+    questionnaire_filename,
+)
 from .subsidiary import Subsidiary
 from .team import Team, post_user_team_changed, pre_user_team_changed
 from .team_diploma import TeamDiploma, TeamDiplomaField
 from .transactions import (
-    COMPETITION_STATUSES, CommonTransaction, PACKAGE_STATUSES, PAYMENT_STATUSES, Payment, STATUS, Status, Transaction, UserActionTransaction,
+    COMPETITION_STATUSES,
+    CommonTransaction,
+    PACKAGE_STATUSES,
+    PAYMENT_STATUSES,
+    Payment,
+    STATUS,
+    Status,
+    Transaction,
+    UserActionTransaction,
 )
 from .trip import Trip
 from .user_attendance import UserAttendance
@@ -120,7 +135,7 @@ __all__ = (
 def update_mailing_user(sender, instance, created, **kwargs):
     try:
         for user_attendance in instance.userprofile.userattendance_set.all():
-            if not kwargs.get('raw', False) and user_attendance.campaign:
+            if not kwargs.get("raw", False) and user_attendance.campaign:
                 mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass

@@ -45,7 +45,7 @@ from .mommy_recipes import testing_campaign
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites']
+    fixtures = ["sites"]
 
     def setUp(self):
         self.objs = Fixtures({"userattendances"})
@@ -60,8 +60,12 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         )
 
     def test_payment_succesfull(self):
-        kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb"}
-        address = reverse('payment_successfull', kwargs=kwargs)
+        kwargs = {
+            "trans_id": self.trans_id,
+            "session_id": self.session_id,
+            "pay_type": "kb",
+        }
+        address = reverse("payment_successfull", kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
@@ -71,8 +75,13 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         self.assertEqual(payment.pay_type, "kb")
 
     def test_payment_unsuccesfull(self):
-        kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb", "error": 123}
-        address = reverse('payment_unsuccessfull', kwargs=kwargs)
+        kwargs = {
+            "trans_id": self.trans_id,
+            "session_id": self.session_id,
+            "pay_type": "kb",
+            "error": 123,
+        }
+        address = reverse("payment_unsuccessfull", kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
@@ -83,21 +92,29 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         self.assertEqual(payment.error, 123)
 
     def test_payment_redirect(self):
-        kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb", "error": 123}
-        address = reverse('payment_unsuccessfull', kwargs=kwargs)
+        kwargs = {
+            "trans_id": self.trans_id,
+            "session_id": self.session_id,
+            "pay_type": "kb",
+            "error": 123,
+        }
+        address = reverse("payment_unsuccessfull", kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.campaign = self.objs.campaigns.c2009
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
-        self.assertEqual(urlparse(response.url).path, '/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
+        self.assertEqual(
+            urlparse(response.url).path,
+            "/platba_neuspesna/2055/2075-1J1455206457/kb/123/",
+        )
         payment = models.Payment.objects.get(session_id=self.session_id)
         self.assertEqual(payment.pay_type, None)
         self.assertEqual(payment.error, None)
 
 
 class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ["sites", "campaign", "auth_user", "users", "transactions", "batches"]
 
     def setUp(self):
         super().setUp()
@@ -111,10 +128,10 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         models.UserAttendance.objects.get(pk=1115).save()
         denorm.flush()
         user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user.payment_status, 'no_admission')
+        self.assertEqual(user.payment_status, "no_admission")
         self.assertEqual(user.representative_payment, None)
-        self.assertEqual(user.payment_class(), 'success')
-        self.assertEqual(str(user.get_payment_status_display()), 'neplatí se')
+        self.assertEqual(user.payment_class(), "success")
+        self.assertEqual(str(user.get_payment_status_display()), "neplatí se")
 
     def test_payment_waiting(self):
         payment = models.Payment.objects.get(pk=4)
@@ -122,18 +139,18 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         payment.save()
         denorm.flush()
         user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user.payment_status, 'waiting')
+        self.assertEqual(user.payment_status, "waiting")
         self.assertEqual(user.representative_payment, payment)
-        self.assertEqual(user.payment_class(), 'warning')
-        self.assertEqual(str(user.get_payment_status_display()), 'nepotvrzeno')
+        self.assertEqual(user.payment_class(), "warning")
+        self.assertEqual(str(user.get_payment_status_display()), "nepotvrzeno")
 
     def test_payment_done(self):
         user = models.UserAttendance.objects.get(pk=1115)
         payment = models.Payment.objects.get(pk=4)
-        self.assertEqual(user.payment_status, 'done')
+        self.assertEqual(user.payment_status, "done")
         self.assertEqual(user.representative_payment, payment)
-        self.assertEqual(user.payment_class(), 'success')
-        self.assertEqual(str(user.get_payment_status_display()), 'zaplaceno')
+        self.assertEqual(user.payment_class(), "success")
+        self.assertEqual(str(user.get_payment_status_display()), "zaplaceno")
 
     def test_payment_unknown(self):
         payment = models.Payment.objects.get(pk=4)
@@ -141,72 +158,82 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         payment.save()
         denorm.flush()
         user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user.payment_status, 'unknown')
+        self.assertEqual(user.payment_status, "unknown")
         self.assertEqual(user.representative_payment, payment)
-        self.assertEqual(user.payment_class(), 'warning')
-        self.assertEqual(str(user.get_payment_status_display()), 'neznámý')
+        self.assertEqual(user.payment_class(), "warning")
+        self.assertEqual(str(user.get_payment_status_display()), "neznámý")
 
     def test_payment_unknown_none(self):
         models.Payment.objects.all().delete()
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[1, 3]))
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1016))
         user = models.UserAttendance.objects.get(pk=1016)
-        self.assertEqual(user.payment_status, 'none')
+        self.assertEqual(user.payment_status, "none")
         self.assertEqual(user.representative_payment, None)
-        self.assertEqual(user.payment_class(), 'error')
-        self.assertEqual(str(user.get_payment_status_display()), 'žádné platby')
+        self.assertEqual(user.payment_class(), "error")
+        self.assertEqual(str(user.get_payment_status_display()), "žádné platby")
 
 
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-    PAYU_KEY_1='123456789',
-    PAYU_KEY_2='98764321',
+    PAYU_KEY_1="123456789",
+    PAYU_KEY_2="98764321",
 )
 @freeze_time("2010-11-20 12:00")
 class PayuTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ["sites", "campaign", "auth_user", "users", "transactions", "batches"]
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
-    @patch('http.client.HTTPSConnection.request')
-    @patch('http.client.HTTPSConnection.getresponse')
+    @patch("http.client.HTTPSConnection.request")
+    @patch("http.client.HTTPSConnection.getresponse")
     def payment_status_view(
-        self, payu_response, payu_request, session_id='2075-1J1455206433',
-        amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f',
+        self,
+        payu_response,
+        payu_request,
+        session_id="2075-1J1455206433",
+        amount="15000",
+        trans_sig="ae6f4b9f8fbdbb506edf4eeb1cebcee0",
+        sig="1af62397cfb6e6de5295325801239e4f",
         post_sig="b6b29bb8437f9e2486fbe5555673372d",
     ):
-        payment_post_data = OrderedDict([
-            ('pos_id', '2075-1'),
-            ('session_id', session_id),
-            ('ts', '1'),
-        ])
-        payment_post_data['sig'] = sig
-        payment_return_value = OrderedDict([
-            ("trans_pos_id", "2075-1"),
-            ("trans_session_id", session_id),
-            ("trans_order_id", "321"),
-            ("trans_status", "99"),
-            ("trans_amount", amount),
-            ("trans_desc", "desc"),
-            ("trans_ts", "1"),
-        ])
-        payment_return_value['trans_sig'] = trans_sig
-        payment_return_value.update([
-            ("trans_pay_type", "kb"),
-            ("trans_recv", "2016-1-1"),
-        ])
-        payment_return_value_bytes = bytes("\n".join(["%s: %s" % (u, payment_return_value[u]) for u in payment_return_value]), "utf-8")
+        payment_post_data = OrderedDict(
+            [("pos_id", "2075-1"), ("session_id", session_id), ("ts", "1"),]
+        )
+        payment_post_data["sig"] = sig
+        payment_return_value = OrderedDict(
+            [
+                ("trans_pos_id", "2075-1"),
+                ("trans_session_id", session_id),
+                ("trans_order_id", "321"),
+                ("trans_status", "99"),
+                ("trans_amount", amount),
+                ("trans_desc", "desc"),
+                ("trans_ts", "1"),
+            ]
+        )
+        payment_return_value["trans_sig"] = trans_sig
+        payment_return_value.update(
+            [("trans_pay_type", "kb"), ("trans_recv", "2016-1-1"),]
+        )
+        payment_return_value_bytes = bytes(
+            "\n".join(
+                ["%s: %s" % (u, payment_return_value[u]) for u in payment_return_value]
+            ),
+            "utf-8",
+        )
         payu_response.return_value.read.return_value = payment_return_value_bytes
-        response = self.client.post(reverse('payment_status'), payment_post_data)
+        response = self.client.post(reverse("payment_status"), payment_post_data)
         payu_request.assert_called_with(
-            'POST',
-            '/paygw/UTF/Payment/get/txt/',
-            'pos_id=2075-1&session_id=%(session_id)s&ts=1290254400&sig=%(trans_sig)s' % {"trans_sig": post_sig, "session_id": session_id, },
+            "POST",
+            "/paygw/UTF/Payment/get/txt/",
+            "pos_id=2075-1&session_id=%(session_id)s&ts=1290254400&sig=%(trans_sig)s"
+            % {"trans_sig": post_sig, "session_id": session_id,},
             {
-                'Content-type': 'application/x-www-form-urlencoded',
-                'Accept': 'text/plain',
+                "Content-type": "application/x-www-form-urlencoded",
+                "Accept": "text/plain",
             },
         )
         return response
@@ -219,9 +246,11 @@ class PayuTests(ClearCacheMixin, TestCase):
         self.assertEqual(payment.amount, 150)
         self.assertEqual(payment.status, 99)
 
-    @patch('dpnk.views.registration_and_login.logger')
+    @patch("dpnk.views.registration_and_login.logger")
     def test_dpnk_payment_status_bad_amount(self, mock_logger):
-        response = self.payment_status_view(amount="15300", trans_sig='ae18ec7f141c252e692d470f4c1744c9')
+        response = self.payment_status_view(
+            amount="15300", trans_sig="ae18ec7f141c252e692d470f4c1744c9"
+        )
         self.assertContains(response, "Bad amount", status_code=400)
         payment = models.Payment.objects.get(pk=3)
         self.assertEqual(payment.pay_type, None)
@@ -230,39 +259,45 @@ class PayuTests(ClearCacheMixin, TestCase):
         mock_logger.error.assert_called_with(
             "Payment amount doesn't match",
             extra={
-                'request': ANY,
-                'pay_type': None,
-                'expected_amount': 150,
-                'payment_response': ANY,
-                'status': 0,
+                "request": ANY,
+                "pay_type": None,
+                "expected_amount": 150,
+                "payment_response": ANY,
+                "status": 0,
             },
         )
 
     def test_dpnk_payment_status_view_create_round(self):
         """ Test that payment amount is rounded to whole crowns """
         response = self.payment_status_view(
-            session_id='2075-1J1455206434', amount="15150",
-            sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='5a1fa473feba5dcd7c0d8bd21b1aecec',
-            post_sig='445db4f3e11bfa16f0221b0272820058',
+            session_id="2075-1J1455206434",
+            amount="15150",
+            sig="4f59d25cd3dadaf03bef947bb0d9e1b9",
+            trans_sig="5a1fa473feba5dcd7c0d8bd21b1aecec",
+            post_sig="445db4f3e11bfa16f0221b0272820058",
         )
         self.assertContains(response, "OK")
-        payment = models.Payment.objects.get(session_id='2075-1J1455206434')
+        payment = models.Payment.objects.get(session_id="2075-1J1455206434")
         self.assertEqual(payment.pay_type, "kb")
         self.assertEqual(payment.amount, 151)
 
     def test_dpnk_payment_status_view_create(self):
         response = self.payment_status_view(
-            session_id='2075-1J1455206434', amount="15100",
-            sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='c490e30293fe0a96d08b62107accafe8',
-            post_sig='445db4f3e11bfa16f0221b0272820058',
+            session_id="2075-1J1455206434",
+            amount="15100",
+            sig="4f59d25cd3dadaf03bef947bb0d9e1b9",
+            trans_sig="c490e30293fe0a96d08b62107accafe8",
+            post_sig="445db4f3e11bfa16f0221b0272820058",
         )
         self.assertContains(response, "OK")
-        payment = models.Payment.objects.get(session_id='2075-1J1455206434')
+        payment = models.Payment.objects.get(session_id="2075-1J1455206434")
         self.assertEqual(payment.pay_type, "kb")
         self.assertEqual(payment.amount, 151)
 
 
-def create_get_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
+def create_get_request(
+    factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"
+):
     request = factory.get(address, post_data)
     request.user = user_attendance.userprofile.user
     request.user_attendance = user_attendance
@@ -271,7 +306,9 @@ def create_get_request(factory, user_attendance, post_data={}, address="", subdo
     return request
 
 
-def create_post_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
+def create_post_request(
+    factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"
+):
     request = factory.post(address, post_data)
     request.user = user_attendance.userprofile.user
     request.user_attendance = user_attendance
@@ -281,11 +318,10 @@ def create_post_request(factory, user_attendance, post_data={}, address="", subd
 
 
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(ClearCacheMixin, TestCase):
-    fixtures = ['sites']
+    fixtures = ["sites"]
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -299,99 +335,131 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         )
         mommy.make(
             "Competition",
-            name='Pravidelnost společnosti',
-            slug='FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk,
+            name="Pravidelnost společnosti",
+            slug="FA-%s-pravidelnost-spolecnosti" % testing_campaign().pk,
             company=self.company,
             campaign=testing_campaign,
         )
 
     def test_dpnk_company_admin_create_competition(self):
         post_data = {
-            'name': 'testing company competition',
-            'competition_type': 'length',
-            'competitor_type': 'single_user',
-            'submit': 'Odeslat',
+            "name": "testing company competition",
+            "competition_type": "length",
+            "competitor_type": "single_user",
+            "submit": "Odeslat",
         }
         request = create_post_request(self.factory, self.user_attendance, post_data)
-        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
-        self.assertEqual(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(name='testing company competition')
-        self.assertEqual(competition.slug, 'FA-%s-testing-company-competition' % competition.campaign.pk)
+        response = company_admin_views.CompanyCompetitionView.as_view()(
+            request, success=True
+        )
+        self.assertEqual(response.url, reverse("company_admin_competitions"))
+        competition = models.Competition.objects.get(name="testing company competition")
+        self.assertEqual(
+            competition.slug,
+            "FA-%s-testing-company-competition" % competition.campaign.pk,
+        )
 
     def test_dpnk_company_admin_edit_competition(self):
         post_data = {
-            'name': 'testing company competition fixed',
-            'competition_type': 'length',
-            'competitor_type': 'single_user',
-            'submit': 'Odeslat',
+            "name": "testing company competition fixed",
+            "competition_type": "length",
+            "competitor_type": "single_user",
+            "submit": "Odeslat",
         }
         request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(
             request,
             success=True,
-            competition_slug='FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk,
+            competition_slug="FA-%s-pravidelnost-spolecnosti" % testing_campaign().pk,
         )
-        self.assertEqual(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(name='testing company competition fixed')
-        self.assertEqual(competition.slug, 'FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk)
+        self.assertEqual(response.url, reverse("company_admin_competitions"))
+        competition = models.Competition.objects.get(
+            name="testing company competition fixed"
+        )
+        self.assertEqual(
+            competition.slug, "FA-%s-pravidelnost-spolecnosti" % testing_campaign().pk
+        )
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
         post_data = {
-            'name': 'Pravidelnost společnosti',
-            'competition_type': 'length',
-            'competitor_type': 'single_user',
-            'submit': 'Odeslat',
+            "name": "Pravidelnost společnosti",
+            "competition_type": "length",
+            "competitor_type": "single_user",
+            "submit": "Odeslat",
         }
         request = create_post_request(self.factory, self.user_attendance, post_data)
-        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
-        self.assertContains(response, "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Název soutěže již existuje.</strong>", html=True)
+        response = company_admin_views.CompanyCompetitionView.as_view()(
+            request, success=True
+        )
+        self.assertContains(
+            response,
+            "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Název soutěže již existuje.</strong>",
+            html=True,
+        )
 
-    @override_settings(
-        MAX_COMPETITIONS_PER_COMPANY=0,
-    )
+    @override_settings(MAX_COMPETITIONS_PER_COMPANY=0,)
     def test_dpnk_company_admin_create_competition_max_competitions(self):
         request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
-        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
-        self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
+        response = company_admin_views.CompanyCompetitionView.as_view()(
+            request, success=True
+        )
+        self.assertContains(
+            response, "Překročen maximální počet soutěží pro organizaci."
+        )
 
     def test_dpnk_company_admin_create_competition_no_permission(self):
         mommy.make("Competition", slug="FQ-LB")
         request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
-        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")
+        response = company_admin_views.CompanyCompetitionView.as_view()(
+            request, success=True, competition_slug="FQ-LB"
+        )
         self.assertContains(response, "K editování této soutěže nemáte oprávnění.")
 
     def test_dpnk_company_admin_competitions_view(self):
         request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competitions"}
-        response = company_admin_views.CompanyCompetitionsShowView.as_view()(request, success=True)
+        response = company_admin_views.CompanyCompetitionsShowView.as_view()(
+            request, success=True
+        )
         self.assertContains(response, "Pravidelnost společnosti")
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
+    fixtures = ["sites", "campaign", "auth_user", "users", "transactions"]
 
     def setUp(self):
         super().setUp()
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015])
+        )
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
 
     def test_member_count_update(self):
         team = models.Team.objects.get(id=1)
         self.assertEqual(team.member_count, 3)
         campaign = models.Campaign.objects.get(pk=339)
-        user = models.User.objects.create(first_name="Third", last_name="User", username="third_user")
+        user = models.User.objects.create(
+            first_name="Third", last_name="User", username="third_user"
+        )
         userprofile = models.UserProfile.objects.create(user=user)
-        user_attendance = models.UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
-        models.Payment.objects.create(status=99, amount=1, user_attendance=user_attendance)
+        user_attendance = models.UserAttendance.objects.create(
+            team=team,
+            campaign=campaign,
+            userprofile=userprofile,
+            approved_for_team="approved",
+        )
+        models.Payment.objects.create(
+            status=99, amount=1, user_attendance=user_attendance
+        )
         denorm.flush()
         team = models.Team.objects.get(id=1)
         self.assertEqual(team.member_count, 4)
 
 
 class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ["sites", "campaign", "auth_user", "users", "transactions", "batches"]
 
     def setUp(self):
         super().setUp()
@@ -400,8 +468,10 @@ class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
     def test_payment_type_string(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.save()
-        call_command('denorm_flush')
-        self.assertEqual(user_attendance.payment_type_string(), "platba přes firemního koordinátora")
+        call_command("denorm_flush")
+        self.assertEqual(
+            user_attendance.payment_type_string(), "platba přes firemního koordinátora"
+        )
 
     def test_payment_type_string_none_type(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
@@ -410,44 +480,57 @@ class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ["sites", "campaign", "auth_user", "users", "transactions", "batches"]
 
     def test_name_with_members(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
-        call_command('denorm_flush')
-        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Registered User 1, Testing User 1)")
+        call_command("denorm_flush")
+        self.assertEqual(
+            user_attendance.team.name_with_members,
+            "Testing team 1 (Nick, Registered User 1, Testing User 1)",
+        )
         self.assertEqual(user_attendance.team.unapproved_member_count, 0)
         self.assertEqual(user_attendance.team.member_count, 3)
         user_attendance.userprofile.nickname = "Testing nick"
         user_attendance.userprofile.save()
-        call_command('denorm_flush')
+        call_command("denorm_flush")
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Registered User 1, Testing nick)")
+        self.assertEqual(
+            user_attendance.team.name_with_members,
+            "Testing team 1 (Nick, Registered User 1, Testing nick)",
+        )
         self.assertEqual(user_attendance.team.unapproved_member_count, 0)
         self.assertEqual(user_attendance.team.member_count, 3)
 
     def test_name_with_members_delete_userattendance(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
-        call_command('denorm_flush')
-        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Registered User 1, Testing User 1)")
+        call_command("denorm_flush")
+        self.assertEqual(
+            user_attendance.team.name_with_members,
+            "Testing team 1 (Nick, Registered User 1, Testing User 1)",
+        )
         self.assertEqual(user_attendance.team.unapproved_member_count, 0)
         self.assertEqual(user_attendance.team.member_count, 3)
         user_attendance.payments().delete()
         user_attendance.delete()
-        call_command('denorm_flush')
+        call_command("denorm_flush")
         team = models.Team.objects.get(pk=1)
-        self.assertEqual(team.name_with_members, "Testing team 1 (Nick, Registered User 1)")
+        self.assertEqual(
+            team.name_with_members, "Testing team 1 (Nick, Registered User 1)"
+        )
         self.assertEqual(team.unapproved_member_count, 0)
         self.assertEqual(team.member_count, 2)
 
     def test_related_company_admin(self):
         user_attendance = models.UserAttendance.objects.get(pk=1027)
-        company_admin = models.CompanyAdmin.objects.create(userprofile=user_attendance.userprofile, campaign_id=338)
+        company_admin = models.CompanyAdmin.objects.create(
+            userprofile=user_attendance.userprofile, campaign_id=338
+        )
         self.assertEqual(user_attendance.related_company_admin, None)
-        call_command('denorm_flush')
+        call_command("denorm_flush")
         user_attendance = models.UserAttendance.objects.get(pk=1027)
         self.assertEqual(user_attendance.related_company_admin, company_admin)
 
@@ -456,7 +539,8 @@ class RunChecksTestCase(ClearCacheMixin, TestCase):
     def test_checks(self):
         django.setup()
         from django.core import checks
+
         all_issues = checks.run_checks()
         errors = [str(e) for e in all_issues if e.level >= checks.ERROR]
         if errors:
-            self.fail('checks failed:\n' + '\n'.join(errors))  # pragma: no cover
+            self.fail("checks failed:\n" + "\n".join(errors))  # pragma: no cover

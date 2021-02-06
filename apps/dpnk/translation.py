@@ -29,36 +29,34 @@ import swapper
 @register(CommuteMode)
 class CommuteModeTranslationOptions(TranslationOptions):
     fields = (
-        'name',
-        'tooltip',
-        'add_command',
-        'choice_description',
-        'description',
+        "name",
+        "tooltip",
+        "add_command",
+        "choice_description",
+        "description",
     )
     empty_values = {
-        'name': None,
-        'tooltip': None,
-        'add_command': None,
-        'choice_description': None,
-        'description': None,
+        "name": None,
+        "tooltip": None,
+        "add_command": None,
+        "choice_description": None,
+        "description": None,
     }
 
 
 @register(Campaign)
 class CampaignTranslationOptions(TranslationOptions):
     fields = (
-        'name',
-        'email_footer',
-        'free_entry_cases_html',
-        'extra_agreement_text',
+        "name",
+        "email_footer",
+        "free_entry_cases_html",
+        "extra_agreement_text",
     )
 
 
 @register(CampaignType)
 class CampaignTypeTranslationOptions(TranslationOptions):
-    fields = (
-        'name',
-    )
+    fields = ("name",)
 
 
 NotificationTemplate = swapper.load_model("notifications", "NotificationTemplate")
@@ -67,6 +65,6 @@ NotificationTemplate = swapper.load_model("notifications", "NotificationTemplate
 @register(NotificationTemplate)
 class NotificationTemplateOptions(TranslationOptions):
     fields = (
-        'verb',
-        'url',
+        "verb",
+        "url",
     )

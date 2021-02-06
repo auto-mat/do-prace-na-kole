@@ -32,39 +32,20 @@ class PSC(models.Model):
         verbose_name_plural = _("Poštovní směrovací čísla")
 
     municipality_name = models.CharField(
-        verbose_name=_("Název obce"),
-        max_length=255,
-        null=True,
-        blank=True,
+        verbose_name=_("Název obce"), max_length=255, null=True, blank=True,
     )
     municipality_part_name = models.CharField(
-        verbose_name=_("Název části obce"),
-        max_length=255,
-        null=True,
-        blank=True,
+        verbose_name=_("Název části obce"), max_length=255, null=True, blank=True,
     )
     district_name = models.CharField(
-        verbose_name=_("Název okresu"),
-        max_length=255,
-        null=True,
-        blank=True,
+        verbose_name=_("Název okresu"), max_length=255, null=True, blank=True,
     )
     psc = models.IntegerField(
         verbose_name=_("PSČ"),
         help_text=_("Např.: „130 00“"),
-        validators=[
-            MaxValueValidator(99999),
-            MinValueValidator(10000),
-        ],
+        validators=[MaxValueValidator(99999), MinValueValidator(10000),],
     )
     post_name = models.CharField(
-        verbose_name=_("Název pošty"),
-        max_length=255,
-        null=True,
-        blank=True,
+        verbose_name=_("Název pošty"), max_length=255, null=True, blank=True,
     )
-    code = models.IntegerField(
-        verbose_name=_("Kód"),
-        null=True,
-        blank=True,
-    )
+    code = models.IntegerField(verbose_name=_("Kód"), null=True, blank=True,)

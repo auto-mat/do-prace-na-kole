@@ -26,11 +26,9 @@ from django.test.utils import override_settings
 from dpnk import util
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
 class UtilTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ["sites", "campaign", "auth_user", "users"]
 
     def test_working_day(self):
         self.assertTrue(util.working_day(datetime.date(2016, 6, 1)))
@@ -44,7 +42,7 @@ class UtilTests(TestCase):
 
 class TodayTests(TestCase):
     def test_today(self):
-        if hasattr(settings, 'FAKE_DATE'):
+        if hasattr(settings, "FAKE_DATE"):
             del settings.FAKE_DATE  # pragma: no cover
         self.assertEqual(util._today(), datetime.date.today())
 

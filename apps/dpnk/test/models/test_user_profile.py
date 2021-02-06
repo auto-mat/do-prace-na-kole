@@ -27,5 +27,7 @@ class TestUserProfile(TestCase):
         """
         Test that __str__ returns UserProfile string
         """
-        userprofile = mommy.make('UserProfile', user__first_name="Foo", user__last_name="Name")
+        userprofile = mommy.make(
+            "UserProfile", user__first_name="Foo", user__last_name="Name"
+        )
         self.assertEqual(str(userprofile), "Foo Name")

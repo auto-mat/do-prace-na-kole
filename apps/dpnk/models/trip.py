@@ -44,49 +44,53 @@ from ..model_mixins import WithGalleryMixin
 
 
 def normalize_gpx_filename(instance, filename):
-    return '-'.join([
-        'gpx_tracks/dpnk-%s/track' % instance.user_attendance.campaign.pk,
-        datetime.datetime.now().strftime("%Y-%m-%d"),
-        slugify(filename),
-    ])
+    return "-".join(
+        [
+            "gpx_tracks/dpnk-%s/track" % instance.user_attendance.campaign.pk,
+            datetime.datetime.now().strftime("%Y-%m-%d"),
+            slugify(filename),
+        ]
+    )
 
 
 def distance_all_modes(trips, campaign=None):
     if campaign:
         trips.filter(
-            user_attendance__payment_status__in=('done', 'no_admission'),
+            user_attendance__payment_status__in=("done", "no_admission"),
             user_attendance__campaign__slug=campaign.slug,
             date__gte=campaign.competition_phase().date_from,
             date__lte=campaign.competition_phase().date_to,
         )
-    return trips.filter(commute_mode__eco=True, commute_mode__does_count=True).aggregate(
+    return trips.filter(
+        commute_mode__eco=True, commute_mode__does_count=True
+    ).aggregate(
         distance__sum=Coalesce(Sum("distance"), 0.0),
         user_count=Coalesce(Count("user_attendance__id", distinct=True), 0),
         count__sum=Coalesce(Count("id"), 0),
         count_bicycle=Sum(
             Case(
-                When(commute_mode__slug='bicycle', then=1),
+                When(commute_mode__slug="bicycle", then=1),
                 output_field=IntegerField(),
                 default=0,
             ),
         ),
         distance_bicycle=Sum(
             Case(
-                When(commute_mode__slug='bicycle', then=F('distance')),
+                When(commute_mode__slug="bicycle", then=F("distance")),
                 output_field=FloatField(),
                 default=0,
             ),
         ),
         count_foot=Sum(
             Case(
-                When(commute_mode__slug='by_foot', then=1),
+                When(commute_mode__slug="by_foot", then=1),
                 output_field=IntegerField(),
                 default=0,
             ),
         ),
         distance_foot=Sum(
             Case(
-                When(commute_mode__slug='by_foot', then=F('distance')),
+                When(commute_mode__slug="by_foot", then=F("distance")),
                 output_field=FloatField(),
                 default=0,
             ),
@@ -97,10 +101,11 @@ def distance_all_modes(trips, campaign=None):
 @with_author
 class Trip(WithGalleryMixin, models.Model):
     """Jízdy"""
+
     DIRECTIONS = [
-        ('trip_to', _(u"Tam")),
-        ('trip_from', _(u"Zpět")),
-        ('recreational', _(u"Výlet")),
+        ("trip_to", _(u"Tam")),
+        ("trip_from", _(u"Zpět")),
+        ("recreational", _(u"Výlet")),
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
 
@@ -108,11 +113,12 @@ class Trip(WithGalleryMixin, models.Model):
         verbose_name = _("Jízda")
         verbose_name_plural = _("Jízdy")
         unique_together = (("user_attendance", "date", "direction"),)
-        ordering = ('date', '-direction')
+        ordering = ("date", "-direction")
+
     objects = BulkUpdateManager()
 
     user_attendance = models.ForeignKey(
-        'UserAttendance',
+        "UserAttendance",
         related_name="user_trips",
         null=True,
         blank=False,
@@ -128,12 +134,10 @@ class Trip(WithGalleryMixin, models.Model):
         blank=False,
     )
     date = models.DateField(
-        verbose_name=_(u"Datum cesty"),
-        default=datetime.date.today,
-        null=False,
+        verbose_name=_(u"Datum cesty"), default=datetime.date.today, null=False,
     )
     commute_mode = models.ForeignKey(
-        'CommuteMode',
+        "CommuteMode",
         verbose_name=_("Dopravní prostředek"),
         on_delete=models.CASCADE,
         default=1,
@@ -167,26 +171,16 @@ class Trip(WithGalleryMixin, models.Model):
         null=True,
         blank=True,
         default=None,
-        validators=[
-            MaxValueValidator(1000),
-            MinValueValidator(0),
-        ],
+        validators=[MaxValueValidator(1000), MinValueValidator(0),],
     )
     duration = models.PositiveIntegerField(
-        verbose_name=_("Doba v sekundách"),
-        null=True,
-        blank=True,
+        verbose_name=_("Doba v sekundách"), null=True, blank=True,
     )
     from_application = models.BooleanField(
-        verbose_name=_(u"Nahráno z aplikace"),
-        default=False,
-        null=False,
+        verbose_name=_(u"Nahráno z aplikace"), default=False, null=False,
     )
     source_application = models.CharField(
-        verbose_name=_("Zdrojová aplikace"),
-        max_length=255,
-        null=True,
-        blank=True,
+        verbose_name=_("Zdrojová aplikace"), max_length=255, null=True, blank=True,
     )
     source_id = models.CharField(
         verbose_name=_("Identifikátor v původní aplikaci"),
@@ -195,14 +189,10 @@ class Trip(WithGalleryMixin, models.Model):
         blank=True,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
-        auto_now_add=True,
-        null=True,
+        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
-        auto_now=True,
-        null=True,
+        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
     )
     gallery = models.ForeignKey(
         "photologue.Gallery",
@@ -212,18 +202,15 @@ class Trip(WithGalleryMixin, models.Model):
         on_delete=models.CASCADE,
     )
     description = models.TextField(
-        verbose_name=_(u"Popis cesty"),
-        default="",
-        null=False,
-        blank=True,
+        verbose_name=_(u"Popis cesty"), default="", null=False, blank=True,
     )
 
     def active(self):
         return self.user_attendance.campaign.day_active(self.date)
 
     def get_commute_mode_display(self):
-        if self.commute_mode.slug == 'no_work' and self.date > util.today():
-            return _('Dovolená')
+        if self.commute_mode.slug == "no_work" and self.date > util.today():
+            return _("Dovolená")
         return str(self.commute_mode)
 
     def get_direction_display(self):
@@ -244,8 +231,11 @@ class Trip(WithGalleryMixin, models.Model):
             return app_links[self.source_application]
 
     def get_trip_link(self):
-        if self.source_application == 'strava':
-            return "<a href='%sactivities/%s'>View on Strava</a>" % (self.get_application_link(), self.source_id)
+        if self.source_application == "strava":
+            return "<a href='%sactivities/%s'>View on Strava</a>" % (
+                self.get_application_link(),
+                self.source_id,
+            )
         return ""
 
 
@@ -259,7 +249,13 @@ def trip_pre_save(sender, instance, **kwargs):
         try:
             track_file = track_file.read().decode("utf-8")
         except UnicodeDecodeError:
-            raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
+            raise ValidationError(
+                {
+                    "gpx_file": _(
+                        "Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?"
+                    )
+                }
+            )
         instance.track = gpx_parse.parse_gpx(track_file)
     track = instance.track
     if not instance.distance and track:
@@ -270,4 +266,5 @@ def trip_pre_save(sender, instance, **kwargs):
 def trip_post_save(sender, instance, **kwargs):
     if instance.user_attendance and not hasattr(instance, "dont_recalculate"):
         from .. import results
+
         results.recalculate_result_competitor(instance.user_attendance)

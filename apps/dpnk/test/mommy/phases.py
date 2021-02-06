@@ -6,14 +6,10 @@ from model_mommy import mommy
 class Phases:
     def __init__(self, campaigns, **kwargs):
         self.invoices = mommy.make(  # was pk=4
-            "dpnk.phase",
-            campaign=campaigns.c2010,
-            phase_type="invoices",
+            "dpnk.phase", campaign=campaigns.c2010, phase_type="invoices",
         )
         self.payment = mommy.make(  # was pk=3
-            "dpnk.phase",
-            campaign=campaigns.c2010,
-            phase_type="payment",
+            "dpnk.phase", campaign=campaigns.c2010, phase_type="payment",
         )
         self.competition = mommy.make(  # was pk=2
             "dpnk.phase",
@@ -30,7 +26,7 @@ class Phases:
             phase_type="entry_enabled",
         )
         self.registration_2010 = mommy.make(
-            'dpnk.Phase',
+            "dpnk.Phase",
             campaign=campaigns.c2010,
             date_from=date(2010, 11, 1),
             date_to=date(2010, 11, 30),

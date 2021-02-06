@@ -1,5 +1,3 @@
-
-
 from django import forms
 from django.db import models
 from django.utils.html import escape, format_html
@@ -11,7 +9,9 @@ from redactor.widgets import RedactorEditor
 
 def get_charitative_results_column(user_profile):
     try:
-        charitative_organization = user_profile.charitative_choice.charitative_organization
+        charitative_organization = (
+            user_profile.charitative_choice.charitative_organization
+        )
     except AttributeError:
         charitative_organization = None
     if charitative_organization:
@@ -31,10 +31,30 @@ def get_charitative_results_column(user_profile):
 class CharitativeOrganization(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    campaign = models.ForeignKey('dpnk.Campaign', on_delete=models.CASCADE, null=False, blank=False)
-    image = models.ImageField(upload_to='charitative_organization/image', null=True, blank=True)
-    icon = models.ImageField(upload_to='charitative_organization/image', null=True, blank=True)
-    order = models.IntegerField(null=True, blank=True)
+    campaign = models.ForeignKey(
+        # black
+        "dpnk.Campaign",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+    image = models.ImageField(
+        # black
+        upload_to="charitative_organization/image",
+        null=True,
+        blank=True,
+    )
+    icon = models.ImageField(
+        # black
+        upload_to="charitative_organization/image",
+        null=True,
+        blank=True,
+    )
+    order = models.IntegerField(
+        # black
+        null=True,
+        blank=True,
+    )
 
     def get_ridden_distance(self):
         return distance_all_modes(
@@ -48,7 +68,10 @@ class CharitativeOrganization(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('order', 'name',)
+        ordering = (
+            "order",
+            "name",
+        )
 
 
 class CharitativeOrganizationForm(forms.ModelForm):
@@ -56,20 +79,21 @@ class CharitativeOrganizationForm(forms.ModelForm):
         model = CharitativeOrganization
         exclude = ()
         widgets = {
-            'description': RedactorEditor(),
+            "description": RedactorEditor(),
         }
 
 
 class UserChoice(models.Model):
     user_attendance = models.OneToOneField(
-        'dpnk.UserAttendance',
+        "dpnk.UserAttendance",
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name='charitative_choice',
+        related_name="charitative_choice",
     )
     charitative_organization = models.ForeignKey(
-        'CharitativeOrganization',
+        # black
+        "CharitativeOrganization",
         on_delete=models.CASCADE,
         null=True,
         blank=True,

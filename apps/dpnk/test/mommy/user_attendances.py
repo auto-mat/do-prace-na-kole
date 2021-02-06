@@ -8,7 +8,7 @@ from .suppress_autotime import suppress_autotime
 
 class UserAttendances:
     def __init__(self, users, teams, tshirt_sizes, campaigns, **kwargs):
-        with suppress_autotime(UserAttendance, ['created', 'updated']):
+        with suppress_autotime(UserAttendance, ["created", "updated"]):
             self.userattendance = mommy.make(  # was pk=1115
                 "dpnk.userattendance",
                 approved_for_team="approved",

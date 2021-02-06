@@ -28,16 +28,18 @@ class CommuteModeSelect(forms.RadioSelect):
         counter = 0
         for choice in self.choices:
             counter += 1
-            widget += '' \
-                '<div class="radio btn">' \
-                '   <input type="radio" {checked} name="{name}" id="id_{name}_{counter}" value="{choice}">' \
-                '   <label for="id_{name}_{counter}">{choice_name}</label>' \
-                '</div>'.format(
-                    checked='checked="checked"' if str(choice[0]) == str(value) else '',
+            widget += (
+                ""
+                '<div class="radio btn">'
+                '   <input type="radio" {checked} name="{name}" id="id_{name}_{counter}" value="{choice}">'
+                '   <label for="id_{name}_{counter}">{choice_name}</label>'
+                "</div>".format(
+                    checked='checked="checked"' if str(choice[0]) == str(value) else "",
                     counter=counter,
                     name=name,
                     choice=choice[0],
                     choice_name=choice[1],
                 )
-        widget += '</fieldset>'
+            )
+        widget += "</fieldset>"
         return widget

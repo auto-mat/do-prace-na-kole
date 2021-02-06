@@ -4,16 +4,16 @@ from .models import CharitativeOrganization
 
 
 class CharitativeOrganizationSerializer(serializers.ModelSerializer):
-    ridden_distance = serializers.ReadOnlyField(source='get_ridden_distance')
+    ridden_distance = serializers.ReadOnlyField(source="get_ridden_distance")
 
     class Meta:
         model = CharitativeOrganization
         fields = (
-            'name',
-            'description',
-            'ridden_distance',
-            'image',
-            'icon',
+            "name",
+            "description",
+            "ridden_distance",
+            "image",
+            "icon",
         )
 
 
@@ -23,4 +23,8 @@ class CharitativeOrganizationViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 organization_router = routers.DefaultRouter()
-organization_router.register(r'charitative_organization', CharitativeOrganizationViewSet, basename="charitative_organization")
+organization_router.register(
+    r"charitative_organization",
+    CharitativeOrganizationViewSet,
+    basename="charitative_organization",
+)

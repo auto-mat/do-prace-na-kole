@@ -2,25 +2,25 @@
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
 directions = {
-    'tam': 'trip_to',
-    'zpet': 'trip_from',
-    'zpět': 'trip_from',
-    'there': 'trip_to',
-    'to': 'trip_to',
-    'back': 'trip_from',
-    'from': 'trip_from',
+    "tam": "trip_to",
+    "zpet": "trip_from",
+    "zpět": "trip_from",
+    "there": "trip_to",
+    "to": "trip_to",
+    "back": "trip_from",
+    "from": "trip_from",
 }
 
 hashtag_to_by_lang = {
-    'cs': 'tam',
-    'dsnkcs': 'tam',
-    'en': 'to',
+    "cs": "tam",
+    "dsnkcs": "tam",
+    "en": "to",
 }
 
 hashtag_from_by_lang = {
-    'cs': 'zpět',
-    'dsnkcs': 'zpět',
-    'en': 'from',
+    "cs": "zpět",
+    "dsnkcs": "zpět",
+    "en": "from",
 }
 
 
@@ -33,15 +33,18 @@ def get_hashtag_from(campaign_slug, lang):
 
 
 def build_hashtag(campaign_slug, direction):
-    return '#' + campaign_slug + direction
+    return "#" + campaign_slug + direction
 
 
-class HashtagTable():
+class HashtagTable:
     def __init__(self, campaigns):
         self.hashtag_dict = {}
         for campaign in campaigns:
             for direction, dir_slug in directions.items():
-                self.hashtag_dict[build_hashtag(campaign.slug, direction)] = (campaign, dir_slug)
+                self.hashtag_dict[build_hashtag(campaign.slug, direction)] = (
+                    campaign,
+                    dir_slug,
+                )
 
     def get_campaign_and_direction(self, text):
         for hashtag, cdt in self.hashtag_dict.items():

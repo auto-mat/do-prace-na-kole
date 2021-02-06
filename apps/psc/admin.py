@@ -28,20 +28,20 @@ from . import models
 @admin.register(models.PSC)
 class PSCAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
-        'municipality_name',
-        'municipality_part_name',
-        'psc',
-        'post_name',
-        'code',
+        "municipality_name",
+        "municipality_part_name",
+        "psc",
+        "post_name",
+        "code",
     )
     search_fields = (
-        'municipality_name',
-        'municipality_part_name',
-        'psc',
-        'post_name',
-        'code',
+        "municipality_name",
+        "municipality_part_name",
+        "psc",
+        "post_name",
+        "code",
     )
     readonly_fields = (
-        'author',
-        'updated_by',
+        "author",
+        "updated_by",
     )

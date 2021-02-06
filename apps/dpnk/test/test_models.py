@@ -25,7 +25,15 @@ from dpnk import models
 
 
 class TestMethods(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'company_competition', 'batches']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "company_competition",
+        "batches",
+    ]
 
     def test_too_much_members(self):
         campaign = models.Campaign(max_team_members=None)
@@ -73,7 +81,9 @@ class TestMethods(TestCase):
         self.assertFalse(models.CompetitionResult.objects.exists())
         models.Answer.objects.create(question=question, user_attendance_id=1115)
         self.assertEqual(models.CompetitionResult.objects.get().result, 0.0)
-        self.assertEqual(models.CompetitionResult.objects.get().user_attendance_id, 1115)
+        self.assertEqual(
+            models.CompetitionResult.objects.get().user_attendance_id, 1115
+        )
 
     def test_answer_post_save_company(self):
         campaign = models.Campaign.objects.get(pk=339)
@@ -94,8 +104,7 @@ class TestMethods(TestCase):
     def test_answer_post_save_team(self):
         campaign = models.Campaign.objects.create()
         competition = models.Competition.objects.create(
-            competitor_type="team",
-            campaign=campaign,
+            competitor_type="team", campaign=campaign,
         )
         question = models.Question.objects.create(competition=competition)
         models.CompetitionResult.objects.filter().delete()

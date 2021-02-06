@@ -35,7 +35,9 @@ def create_batch(modeladmin, request, queryset):
     delivery_batch.add_packages(user_attendances=queryset)
     delivery_batch.add_packages_on_save = True
     delivery_batch.save()
-    modeladmin.message_user(request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count())
+    modeladmin.message_user(
+        request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count()
+    )
 
 
 create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
@@ -46,32 +48,38 @@ delivery_box_batch_download.short_description = _("Hromadně stáhnout PDF")
 
 def delivery_batch_generate_pdf(modeladmin, request, queryset):
     for batch in queryset.all():
-        if not batch.tnt_order or batch.tnt_order.name == '':
+        if not batch.tnt_order or batch.tnt_order.name == "":
             modeladmin.message_user(request, _("Chybí CSV soubor objednávky"))
             return
         if batch.t_shirt_count() <= 0:
-            modeladmin.message_user(request, _("V jedné z dávek chybí trika k odeslání"))
+            modeladmin.message_user(
+                request, _("V jedné z dávek chybí trika k odeslání")
+            )
             return
     ids = [batch.pk for batch in queryset.all()]
     tasks.delivery_batch_generate_pdf.delay(ids)
 
 
-delivery_batch_generate_pdf.short_description = _("1) Nahrát data do GLS a vytvořit PDF")
+delivery_batch_generate_pdf.short_description = _(
+    "1) Nahrát data do GLS a vytvořit PDF"
+)
 
 
 def delivery_batch_generate_pdf_for_opt(modeladmin, request, queryset):
     for batch in queryset.all():
-        if not batch.order_pdf or batch.order_pdf.name == '':
+        if not batch.order_pdf or batch.order_pdf.name == "":
             modeladmin.message_user(request, _("Chybí PDF z objednávky GLS"))
             return
-        if not batch.tnt_order or batch.tnt_order.name == '':
+        if not batch.tnt_order or batch.tnt_order.name == "":
             modeladmin.message_user(request, _("Chybí CSV soubor objednávky"))
             return
     ids = [batch.pk for batch in queryset.all()]
     tasks.delivery_batch_generate_pdf_for_opt.delay(ids)
 
 
-delivery_batch_generate_pdf_for_opt.short_description = _("2) Vytvořit kombinované PDF pro OPT")
+delivery_batch_generate_pdf_for_opt.short_description = _(
+    "2) Vytvořit kombinované PDF pro OPT"
+)
 
 
 def regenerate_all_box_pdfs(modeladmin, request, queryset):
@@ -83,7 +91,9 @@ def regenerate_all_box_pdfs(modeladmin, request, queryset):
     tasks.delivery_batch_generate_pdf_for_opt.delay(ids)
 
 
-regenerate_all_box_pdfs.short_description = _("Přegenerovat všechna PDF všech krabic u vybraných dávek")
+regenerate_all_box_pdfs.short_description = _(
+    "Přegenerovat všechna PDF všech krabic u vybraných dávek"
+)
 
 
 def recreate_delivery_csv(modeladmin, request, queryset):

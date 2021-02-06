@@ -47,16 +47,9 @@ class TestBatchCsv(TestCase):
             userprofile__nickname="Nick",
             userprofile__telephone=123456789,
         )
-        team = mommy.make(
-            "dpnk.Team",
-            campaign=campaign,
-            name="Testin team",
-        )
+        team = mommy.make("dpnk.Team", campaign=campaign, name="Testin team",)
 
-        self.delivery_batch = mommy.prepare(
-            "DeliveryBatch",
-            campaign=campaign,
-        )
+        self.delivery_batch = mommy.prepare("DeliveryBatch", campaign=campaign,)
         self.delivery_batch.add_packages_on_save = False
         self.delivery_batch.save()
         self.subsidiary_box = mommy.make(
@@ -77,9 +70,7 @@ class TestBatchCsv(TestCase):
             box=self.subsidiary_box,
             team=team,
             packagetransaction_set=mommy.make(
-                'PackageTransaction',
-                user_attendance=user_attendance,
-                _quantity=1,
+                "PackageTransaction", user_attendance=user_attendance, _quantity=1,
             ),
         )
 
@@ -93,17 +84,17 @@ class TestBatchCsv(TestCase):
         with open(temp_file.name) as temp_file:
             csv_string_lines = temp_file.read().split("\n")
             self.assertEquals(
-                'Číslo dokladu;Příjemce - Název;Příjemce - Stát;'
-                'Příjemce - Město;Příjemce - Ulice;Příjemce - PSČ;'
-                'Přijemce - kontaktní osoba;Příjemce - kontaktní email;'
-                'Přijemce - kontaktní telefon;Datum svozu;Reference;'
-                'EXW;Dobírka (COD);Hodnota dobírky;Variabilní symbol;'
-                'Hmotnost;Objem;Počet;Popis zboží;Druh obalu (zkratka);Typ zásilky',
+                "Číslo dokladu;Příjemce - Název;Příjemce - Stát;"
+                "Příjemce - Město;Příjemce - Ulice;Příjemce - PSČ;"
+                "Přijemce - kontaktní osoba;Příjemce - kontaktní email;"
+                "Přijemce - kontaktní telefon;Datum svozu;Reference;"
+                "EXW;Dobírka (COD);Hodnota dobírky;Variabilní symbol;"
+                "Hmotnost;Objem;Počet;Popis zboží;Druh obalu (zkratka);Typ zásilky",
                 csv_string_lines[0],
             )
             self.assertEquals(
-                ';Foo recipient (Foo company);CZ;Foo city;Foo street 123;12234;Testing User;'
-                'foo@email.cz;123456789;;;;;;1603824;0.5;0.125;1;č. krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;',
+                ";Foo recipient (Foo company);CZ;Foo city;Foo street 123;12234;Testing User;"
+                "foo@email.cz;123456789;;;;;;1603824;0.5;0.125;1;č. krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;",
                 csv_string_lines[1],
             )
         os.system("rm %s" % temp_file.name)
@@ -120,8 +111,8 @@ class TestBatchCsv(TestCase):
         with open(temp_file.name) as temp_file:
             csv_string_lines = temp_file.read().split("\n")
             self.assertEquals(
-                ';Foo recipient (Foo company);CZ;Foo city;Foo street 123;12234;Addressee name;'
-                'addressee@email.cz;987654321;;;;;;1603824;0.5;0.125;1;č. krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;',
+                ";Foo recipient (Foo company);CZ;Foo city;Foo street 123;12234;Addressee name;"
+                "addressee@email.cz;987654321;;;;;;1603824;0.5;0.125;1;č. krab. 1603824 Nezastihnete-li adresáta, volejte AutoMat: 212 240 666;;",
                 csv_string_lines[1],
             )
         os.system("rm %s" % temp_file.name)

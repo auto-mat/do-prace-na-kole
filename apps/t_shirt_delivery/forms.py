@@ -34,11 +34,13 @@ from .models import PackageTransaction, TShirtSize
 class ShirtUserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        self.fields['t_shirt_size'].required = True
-        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
-        self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
-        self.fields['t_shirt_size'].label = _("Vyberte velikost trika")
-        self.fields['t_shirt_size'].help_text = format_html(
+        self.fields["t_shirt_size"].required = True
+        self.fields["t_shirt_size"].queryset = TShirtSize.objects.filter(
+            campaign=self.instance.campaign, available=True
+        )
+        self.fields["t_shirt_size"].label_from_instance = lambda i: i.user_string()
+        self.fields["t_shirt_size"].label = _("Vyberte velikost trika")
+        self.fields["t_shirt_size"].help_text = format_html(
             _("Podívejte se na {}."),
             format_html(
                 "<a target='_blank' href='http://www.dopracenakole.cz/trika'>{}</a>",
@@ -49,36 +51,43 @@ class ShirtUserAttendanceForm(forms.ModelForm):
 
     class Meta:
         model = UserAttendance
-        fields = ('t_shirt_size', )
+        fields = ("t_shirt_size",)
 
 
 class TelephoneUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['telephone'].label = _("Vyplňte telefonní číslo")
-        self.fields['telephone'].help_text = None
-        self.fields['telephone_opt_in'].choices = [
-            (True, _("Chci vědět vše. Včetně novinek ohledně podpory cyklistů ve městech.")),
+        self.fields["telephone"].label = _("Vyplňte telefonní číslo")
+        self.fields["telephone"].help_text = None
+        self.fields["telephone_opt_in"].choices = [
+            (
+                True,
+                _(
+                    "Chci vědět vše. Včetně novinek ohledně podpory cyklistů ve městech."
+                ),
+            ),
             (False, _("Chci pouze dostat zprávu o stavu balíčku a registrace.")),
         ]
-        self.fields['telephone_opt_in'].label = ""
+        self.fields["telephone_opt_in"].label = ""
 
     class Meta:
         model = UserProfile
         fields = (
-            'telephone',
-            'telephone_opt_in',
+            "telephone",
+            "telephone_opt_in",
         )
         widgets = {
-            'telephone_opt_in': forms.RadioSelect(attrs={'required': True}),
+            "telephone_opt_in": forms.RadioSelect(attrs={"required": True}),
         }
 
 
 class TShirtUpdateForm(PrevNextMixin, MultiModelForm):
-    form_classes = OrderedDict([
-        ('userprofile', TelephoneUpdateForm),
-        ('userattendance', ShirtUserAttendanceForm),
-    ])
+    form_classes = OrderedDict(
+        [
+            ("userprofile", TelephoneUpdateForm),
+            ("userattendance", ShirtUserAttendanceForm),
+        ]
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -89,7 +98,7 @@ class TShirtUpdateForm(PrevNextMixin, MultiModelForm):
 class PackageTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=tuple(PACKAGE_STATUSES))
+        self.fields["status"] = forms.ChoiceField(choices=tuple(PACKAGE_STATUSES))
 
     class Meta:
         model = PackageTransaction

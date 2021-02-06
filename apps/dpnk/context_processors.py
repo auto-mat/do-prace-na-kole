@@ -22,10 +22,10 @@ from . import util
 
 
 def user_attendance(request):
-    user_attendance = getattr(request, 'user_attendance', None)
-    campaign = getattr(request, 'campaign', None)
+    user_attendance = getattr(request, "user_attendance", None)
+    campaign = getattr(request, "campaign", None)
     return {
-        'user_attendance': user_attendance,
-        'campaign': campaign,
-        'absolute_uri': util.get_base_url(slug=campaign.slug) if campaign else None,
+        "user_attendance": user_attendance,
+        "campaign": campaign,
+        "absolute_uri": util.get_base_url(slug=campaign.slug) if campaign else None,
     }

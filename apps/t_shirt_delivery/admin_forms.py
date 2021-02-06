@@ -25,21 +25,23 @@ from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 
 
-IDENTIFIER_REGEXP = r'^[TS][0-9]+$'
+IDENTIFIER_REGEXP = r"^[TS][0-9]+$"
 
 
 class DispatchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         super().__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', _('Balík/krabice s tímto číslem byl sestaven')))
-        self.fields['dispatch_id'].widget.attrs['autofocus'] = True
+        self.helper.add_input(
+            Submit("submit", _("Balík/krabice s tímto číslem byl sestaven"))
+        )
+        self.fields["dispatch_id"].widget.attrs["autofocus"] = True
 
     dispatch_id = forms.CharField(
         validators=[
             RegexValidator(
                 regex=IDENTIFIER_REGEXP,
-                message='Číslo balíku/krabice je v nesprávném formátu',
+                message="Číslo balíku/krabice je v nesprávném formátu",
             ),
         ],
     )

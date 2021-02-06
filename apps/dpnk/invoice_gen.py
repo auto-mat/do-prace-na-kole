@@ -31,7 +31,12 @@ def generate_invoice(invoice):
         invoice.company_name,
         division=invoice.company_address_recipient,
         country=invoice.country,
-        address=" ".join(filter(None, (invoice.company_address_street, invoice.company_address_street_number))),
+        address=" ".join(
+            filter(
+                None,
+                (invoice.company_address_street, invoice.company_address_street_number),
+            )
+        ),
         zip_code=str(invoice.company_address_psc or ""),
         city=invoice.company_address_city,
         ir=invoice.company_ico,
@@ -51,24 +56,26 @@ def generate_invoice(invoice):
         zip_code="110 00",
         city="Praha 1",
         bank_name="Fio banka",
-        bank_account='2601085491',
-        bank_code='2010',
+        bank_account="2601085491",
+        bank_code="2010",
         vat_id="CZ22670319",
         ir="22670319",
         phone="212 240 666",
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
         note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119. "
-             "AutoMat - společně s vámi tvoříme město, ve kterém chceme žít."
-             "\nhttps://www.auto-mat.cz",
+        "AutoMat - společně s vámi tvoříme město, ve kterém chceme žít."
+        "\nhttps://www.auto-mat.cz",
     )
 
     creator = Creator(
-        'Klára Dušáková',
-        stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
+        "Klára Dušáková", stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
     )
 
     invoice_gen = Invoice(client, provider, creator)
-    invoice_gen.title = u"Faktura %s/%03d" % (invoice.exposure_date.year, invoice.sequence_number)
+    invoice_gen.title = u"Faktura %s/%03d" % (
+        invoice.exposure_date.year,
+        invoice.sequence_number,
+    )
     invoice_gen.variable_symbol = invoice.variable_symbol
     invoice_gen.number = invoice.document_number()
     invoice_gen.date = invoice.exposure_date
@@ -80,12 +87,17 @@ def generate_invoice(invoice):
     invoice_gen.currency_locale = u"cs_CZ.UTF-8"
     invoice_gen.paytype = u"bankovním převodem"
 
-    for payment in invoice.payment_set.order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name"):
+    for payment in invoice.payment_set.order_by(
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__first_name",
+    ):
         if invoice.company_pais_benefitial_fee:
             amount = invoice.campaign.benefitial_admission_fee_company
         else:
             amount = payment.amount
-        description = "Platba za soutěžící/ho %s" % ("" if invoice.anonymize else payment.user_attendance.name_for_trusted())
+        description = "Platba za soutěžící/ho %s" % (
+            "" if invoice.anonymize else payment.user_attendance.name_for_trusted()
+        )
         invoice_gen.add_item(Item(1, amount, description=description, tax=21))
     return invoice_gen
 

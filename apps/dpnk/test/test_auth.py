@@ -35,38 +35,48 @@ from .mommy_recipes import campaign_type
 
 class TestPasswordForms(ViewsLogonMommy):
     def test_password_recovery(self):
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        mommy.make("User", email='test@test.cz', password=make_password('test_password'))
-        address = reverse('password_reset')
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
+        mommy.make(
+            "User", email="test@test.cz", password=make_password("test_password")
+        )
+        address = reverse("password_reset")
         post_data = {
-            'email': 'test@test.cz',
+            "email": "test@test.cz",
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('password_reset_done'))
+        self.assertRedirects(response, reverse("password_reset_done"))
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
-        self.assertTrue('http://testing-campaign.example.com/zapomenute_heslo/zmena/' in msg.body)
+        self.assertEqual(msg.recipients(), ["test@test.cz"])
+        self.assertEqual(msg.subject, "Zapomenuté heslo Do práce na kole")
+        self.assertTrue(
+            "http://testing-campaign.example.com/zapomenute_heslo/zmena/" in msg.body
+        )
 
     def test_password_recovery_no_password(self):
         """ Test, that sending password works also for users without password thorough Social auth """
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        mommy.make("User", email='test@test.cz', password='')
-        address = reverse('password_reset')
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
+        mommy.make("User", email="test@test.cz", password="")
+        address = reverse("password_reset")
         post_data = {
-            'email': 'test@test.cz',
+            "email": "test@test.cz",
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('password_reset_done'))
+        self.assertRedirects(response, reverse("password_reset_done"))
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
-        self.assertTrue('http://testing-campaign.example.com/zapomenute_heslo/zmena/' in msg.body)
+        self.assertEqual(msg.recipients(), ["test@test.cz"])
+        self.assertEqual(msg.subject, "Zapomenuté heslo Do práce na kole")
+        self.assertTrue(
+            "http://testing-campaign.example.com/zapomenute_heslo/zmena/" in msg.body
+        )
 
     def test_password_recovery_unknown_email(self):
-        address = reverse('password_reset')
+        address = reverse("password_reset")
         post_data = {
-            'email': 'unknown@test.cz',
+            "email": "unknown@test.cz",
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(
@@ -76,11 +86,13 @@ class TestPasswordForms(ViewsLogonMommy):
         )
 
     def test_password_reset_confirm(self):
-        user = mommy.make("User", email='test@test.cz')
+        user = mommy.make("User", email="test@test.cz")
         token_generator = PasswordResetTokenGenerator()
         token = token_generator.make_token(user)
         uidb64 = base64.b64encode(bytes(str(user.id), "utf-8")).decode("utf-8")
-        address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+        address = reverse(
+            "password_reset_confirm", kwargs={"uidb64": uidb64, "token": token}
+        )
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
@@ -96,30 +108,34 @@ class TestPasswordForms(ViewsLogonMommy):
 
     def test_password_reset_confirm_post(self):
         """ Test, that password must be at least 6 characters long """
-        user = mommy.make("User", email='test@test.cz')
+        user = mommy.make("User", email="test@test.cz")
         token_generator = PasswordResetTokenGenerator()
         token = token_generator.make_token(user)
         uidb64 = base64.b64encode(bytes(str(user.id), "utf-8")).decode("utf-8")
-        address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+        address = reverse(
+            "password_reset_confirm", kwargs={"uidb64": uidb64, "token": token}
+        )
         response1 = self.client.get(address)
-        response = self.client.post(response1.url, {"new_password1": "azxkr", "new_password2": "azxkr"})
+        response = self.client.post(
+            response1.url, {"new_password1": "azxkr", "new_password2": "azxkr"}
+        )
         self.assertContains(
             response,
-            '<strong>Heslo je příliš krátké. Musí mít délku aspoň 6 znaků.</strong>',
+            "<strong>Heslo je příliš krátké. Musí mít délku aspoň 6 znaků.</strong>",
             html=True,
         )
 
     def test_password_reset_confirm_bad_token(self):
-        address = reverse('password_reset_confirm', kwargs={'uidb64': 'bad', 'token': 'token'})
+        address = reverse(
+            "password_reset_confirm", kwargs={"uidb64": "bad", "token": "token"}
+        )
         response = self.client.get(address)
         self.assertContains(
-            response,
-            '<h4>Obnovení hesla nebylo úspěšné</h4>',
-            html=True,
+            response, "<h4>Obnovení hesla nebylo úspěšné</h4>", html=True,
         )
 
     def test_password_change(self):
-        response = self.client.get(reverse('password_change'))
+        response = self.client.get(reverse("password_change"))
         self.assertContains(
             response,
             '<input type="submit" name="submit" value="Odeslat" class="btn btn-primary" id="submit-id-submit">',
@@ -129,27 +145,27 @@ class TestPasswordForms(ViewsLogonMommy):
 
 class TestEmailBackend(TestCase):
     def setUp(self):
-        mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type)
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        mommy.make(
+            "dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type
+        )
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
 
     def test_login_by_email(self):
-        mommy.make("User", email='test@test.cz', password=make_password('test_password'))
-        response = self.client.post(
-            reverse('login'),
-            {
-                'username': 'test@test.cz',
-                'password': 'test_password',
-            },
+        mommy.make(
+            "User", email="test@test.cz", password=make_password("test_password")
         )
-        self.assertRedirects(response, '/', fetch_redirect_response=False)
+        response = self.client.post(
+            reverse("login"),
+            {"username": "test@test.cz", "password": "test_password",},
+        )
+        self.assertRedirects(response, "/", fetch_redirect_response=False)
 
     def test_login_by_email_nonexistent(self):
         response = self.client.post(
-            reverse('login'),
-            {
-                'username': 'test@test.cz',
-                'password': 'test_password',
-            },
+            reverse("login"),
+            {"username": "test@test.cz", "password": "test_password",},
         )
         self.assertContains(
             response,

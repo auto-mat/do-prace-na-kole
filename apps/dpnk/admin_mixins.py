@@ -21,19 +21,24 @@ from django.contrib import admin
 
 
 class CityAdminMixin(object):
-    queryset_city_param = 'city__in'
+    queryset_city_param = "city__in"
 
     def get_queryset(self, request):
         queryset = super(admin.ModelAdmin, self).get_queryset(request)
-        if request.user.has_perm('dpnk.can_edit_all_cities'):
+        if request.user.has_perm("dpnk.can_edit_all_cities"):
             return queryset
-        kwargs = {self.queryset_city_param: request.user.userprofile.administrated_cities.all()}
-        return queryset.filter(**kwargs).distinct()  # The distinct is necessarry here for city admins, that have more cities
+        kwargs = {
+            self.queryset_city_param: request.user.userprofile.administrated_cities.all()
+        }
+        return queryset.filter(
+            **kwargs
+        ).distinct()  # The distinct is necessarry here for city admins, that have more cities
 
 
 def city_admin_mixin_generator(queryset_city):
     class CAMixin(CityAdminMixin):
         queryset_city_param = queryset_city
+
     return CAMixin
 
 

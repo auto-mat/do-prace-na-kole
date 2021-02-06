@@ -32,44 +32,46 @@ from model_mommy import mommy
 import slumber
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2016, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2016, month=11, day=20),)
 class DpnkTagsTests(TestCase):
     def setUp(self):
         super().setUp()
         campaign_type = mommy.make("CampaignType")
-        self.campaign = mommy.make("Campaign", wp_api_date_from="2017-01-01", campaign_type=campaign_type)
+        self.campaign = mommy.make(
+            "Campaign", wp_api_date_from="2017-01-01", campaign_type=campaign_type
+        )
         self.city = mommy.make("City", name="City", slug="test_city")
         self.factory = RequestFactory()
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_no_news(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = ()
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign city %}")
-        context = Context({'campaign': self.campaign, 'city': self.city})
+        context = Context({"campaign": self.campaign, "city": self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             feed="content_to_backend",
             _number=5,
-            _connected_to='test_city',
+            _connected_to="test_city",
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _from='2017-01-01',
+            _from="2017-01-01",
         )
-        self.assertHTMLEqual(response, '')
+        self.assertHTMLEqual(response, "")
 
-    @patch('dpnk.templatetags.dpnk_tags.logger')
-    @patch('slumber.API')
+    @patch("dpnk.templatetags.dpnk_tags.logger")
+    @patch("slumber.API")
     def test_failed_wp_news(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign city %}</div>")
-        context = Context({'campaign': self.campaign, 'city': self.city})
+        template = Template(
+            "{% load dpnk_tags %}<div>{% wp_news campaign city %}</div>"
+        )
+        context = Context({"campaign": self.campaign, "city": self.city})
         response = template.render(context)
         mock_logger.exception.assert_called_with("Error fetching wp news")
         m.feed.get.assert_called_once_with(
@@ -79,47 +81,51 @@ class DpnkTagsTests(TestCase):
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _from='2017-01-01',
+            _from="2017-01-01",
         )
-        self.assertHTMLEqual(response, '<div></div>')
+        self.assertHTMLEqual(response, "<div></div>")
 
-    @patch('dpnk.templatetags.dpnk_tags.logger')
-    @patch('slumber.API')
+    @patch("dpnk.templatetags.dpnk_tags.logger")
+    @patch("slumber.API")
     def test_failed_wp_news_type_error(self, slumber_mock, mock_logger):
         m = MagicMock()
-        m.feed.get.return_value = {'Test1': 'Test'}
+        m.feed.get.return_value = {"Test1": "Test"}
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign city %}</div>")
-        context = Context({'campaign': self.campaign, 'city': self.city})
+        template = Template(
+            "{% load dpnk_tags %}<div>{% wp_news campaign city %}</div>"
+        )
+        context = Context({"campaign": self.campaign, "city": self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             feed="content_to_backend",
             _number=5,
-            _connected_to='test_city',
+            _connected_to="test_city",
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _from='2017-01-01',
+            _from="2017-01-01",
         )
-        mock_logger.exception.assert_called_with("Error encoding wp news format", extra={'wp_feed': {'Test1': 'Test'}})
-        self.assertHTMLEqual('<div/>', response)
+        mock_logger.exception.assert_called_with(
+            "Error encoding wp news format", extra={"wp_feed": {"Test1": "Test"}}
+        )
+        self.assertHTMLEqual("<div/>", response)
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_wp_news_no_slug(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = (
             {
-                'published': '2010-01-01',
-                'start_date': '2010-01-01',
-                'url': 'http://www.test.cz',
-                'title': 'Testing title',
-                'excerpt': 'Testing excerpt',
-                'image': 'http://www.test.cz',
+                "published": "2010-01-01",
+                "start_date": "2010-01-01",
+                "url": "http://www.test.cz",
+                "title": "Testing title",
+                "excerpt": "Testing excerpt",
+                "image": "http://www.test.cz",
             },
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign %}")
-        context = Context({'campaign': self.campaign})
+        context = Context({"campaign": self.campaign})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=5,
@@ -128,12 +134,12 @@ class DpnkTagsTests(TestCase):
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _from='2017-01-01',
+            _from="2017-01-01",
             _global_news=1,
         )
         self.assertHTMLEqual(
             response,
-            '''
+            """
             <h3>Novinky</h3>
             <div class="wp_news">
                <div class="item">
@@ -146,25 +152,25 @@ class DpnkTagsTests(TestCase):
                   Testing excerpt
                </div>
             </div>
-            ''',
+            """,
         )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_wp_news(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = (
             {
-                'published': '2010-01-01',
-                'start_date': '2010-01-01',
-                'url': 'http://www.test.cz',
-                'title': 'Testing title',
-                'excerpt': 'Testing excerpt',
-                'image': 'http://www.test.cz',
+                "published": "2010-01-01",
+                "start_date": "2010-01-01",
+                "url": "http://www.test.cz",
+                "title": "Testing title",
+                "excerpt": "Testing excerpt",
+                "image": "http://www.test.cz",
             },
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign city %}")
-        context = Context({'campaign': self.campaign, 'city': self.city})
+        context = Context({"campaign": self.campaign, "city": self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=5,
@@ -173,11 +179,11 @@ class DpnkTagsTests(TestCase):
             _connected_to="test_city",
             order="DESC",
             orderby="DATE",
-            _from='2017-01-01',
+            _from="2017-01-01",
         )
         self.assertHTMLEqual(
             response,
-            '''
+            """
             <h3>
             Novinky ve městě<a href="http://www.dopracenakole.cz/locations/test_city">City</a>
             </h3>
@@ -192,25 +198,25 @@ class DpnkTagsTests(TestCase):
                   Testing excerpt
                </div>
             </div>
-            ''',
+            """,
         )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_wp_actions(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = (
             {
-                'published': '2010-01-01',
-                'start_date': '2010-01-01',
-                'url': 'http://www.test.cz',
-                'title': 'Testing title',
-                'excerpt': 'Testing excerpt',
-                'image': 'http://www.test.cz',
+                "published": "2010-01-01",
+                "start_date": "2010-01-01",
+                "url": "http://www.test.cz",
+                "title": "Testing title",
+                "excerpt": "Testing excerpt",
+                "image": "http://www.test.cz",
             },
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_actions campaign city %}")
-        context = Context({'campaign': self.campaign, 'city': self.city})
+        context = Context({"campaign": self.campaign, "city": self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=5,
@@ -219,11 +225,11 @@ class DpnkTagsTests(TestCase):
             _post_type="locations",
             _post_parent="test_city",
             orderby="start_date",
-            _from='2017-01-01',
+            _from="2017-01-01",
         )
         self.assertHTMLEqual(
             response,
-            '''
+            """
             <h3>
             Akce ve městě<a href="http://www.dopracenakole.cz/locations/test_city">
             City
@@ -240,25 +246,25 @@ class DpnkTagsTests(TestCase):
                   Testing excerpt
                </div>
             </div>
-            ''',
+            """,
         )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_wp_prize(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = (
             {
-                'published': '2010-01-01',
-                'start_date': '2010-01-01',
-                'url': 'http://www.test.cz',
-                'title': 'Testing title',
-                'excerpt': 'Testing excerpt',
-                'image': 'http://www.test.cz',
+                "published": "2010-01-01",
+                "start_date": "2010-01-01",
+                "url": "http://www.test.cz",
+                "title": "Testing title",
+                "excerpt": "Testing excerpt",
+                "image": "http://www.test.cz",
             },
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_prize campaign city %}")
-        context = Context({'campaign': self.campaign, 'city': self.city})
+        context = Context({"campaign": self.campaign, "city": self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=8,
@@ -267,12 +273,12 @@ class DpnkTagsTests(TestCase):
             _post_type="locations",
             _post_parent="test_city",
             order="ASC",
-            orderby='menu_order',
-            _from='2017-01-01',
+            orderby="menu_order",
+            _from="2017-01-01",
         )
         self.assertHTMLEqual(
             response,
-            '''
+            """
             <h3>
             Ceny ve městě<a href="http://www.dopracenakole.cz/locations/test_city">City</a>
             </h3>
@@ -286,33 +292,35 @@ class DpnkTagsTests(TestCase):
                   <span class="bobble"><img src="http://www.test.cz" alt="Obrázek k podnětu"></span>
                </div>
             </div>
-            ''',
+            """,
         )
 
-    @patch('dpnk.templatetags.dpnk_tags.logger')
-    @patch('slumber.API')
+    @patch("dpnk.templatetags.dpnk_tags.logger")
+    @patch("slumber.API")
     def test_cyklistesobe_fail(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.issues.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% cyklistesobe 'test_slug' %}</div>")
+        template = Template(
+            "{% load dpnk_tags %}<div>{% cyklistesobe 'test_slug' %}</div>"
+        )
         context = Context()
         response = template.render(context)
         mock_logger.exception.assert_called_with("Error fetching cyklistesobe page")
-        self.assertHTMLEqual(response, '<div></div>')
+        self.assertHTMLEqual(response, "<div></div>")
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_cyklistesobe(self, slumber_mock):
         m = MagicMock()
         m.issues.get.return_value = {
-            'features': (
+            "features": (
                 {
-                    'properties': {
-                        'cyclescape_url': 'http://test-url.cz',
-                        'title': 'Test title',
-                        'vote_count': '5',
-                        'description': 'Description',
-                        'photo_thumb_url': '/image.png',
+                    "properties": {
+                        "cyclescape_url": "http://test-url.cz",
+                        "title": "Test title",
+                        "vote_count": "5",
+                        "description": "Description",
+                        "photo_thumb_url": "/image.png",
                     },
                 },
             ),
@@ -321,10 +329,12 @@ class DpnkTagsTests(TestCase):
         template = Template("{% load dpnk_tags %}{% cyklistesobe 'test_slug' %}")
         context = Context()
         response = template.render(context)
-        m.issues.get.assert_called_once_with(group="test_slug", order="created_at", page=0, per_page=5)
+        m.issues.get.assert_called_once_with(
+            group="test_slug", order="created_at", page=0, per_page=5
+        )
         self.assertHTMLEqual(
             response,
-            '''
+            """
             <div class="cyklistesobe">
                 <h4>
                   <a href="http://test-url.cz" target="_blank">
@@ -335,13 +345,13 @@ class DpnkTagsTests(TestCase):
                 <img src="https://www.cyklistesobe.cz/image.png" alt="Obrázek k podnětu">
                 Description
             </div>
-            ''',
+            """,
         )
 
 
 class UnquoteHtmlTests(TestCase):
     def test_direct(self):
-        self.assertEqual(dpnk_tags.unquote_html('&lt;&gt;'), '<>')
+        self.assertEqual(dpnk_tags.unquote_html("&lt;&gt;"), "<>")
 
 
 class ChangeLangTests(TestCase):
@@ -350,36 +360,36 @@ class ChangeLangTests(TestCase):
         self.factory = RequestFactory()
 
     def test_direct(self):
-        self.assertEqual(dpnk_tags.change_lang(Context(), lang='en'), '/en')
+        self.assertEqual(dpnk_tags.change_lang(Context(), lang="en"), "/en")
 
     def test_change_lang(self):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
         context = Context()
         response = template.render(context)
-        self.assertHTMLEqual(response, '/en')
+        self.assertHTMLEqual(response, "/en")
 
     def test_change_lang_request_fail(self):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
         request = self.factory.get(reverse("team_members"))
-        context = Context({'request': request})
+        context = Context({"request": request})
         response = template.render(context)
-        self.assertHTMLEqual(response, '/en/dalsi_clenove/')
+        self.assertHTMLEqual(response, "/en/dalsi_clenove/")
 
-    @patch('dpnk.templatetags.dpnk_tags.logger')
+    @patch("dpnk.templatetags.dpnk_tags.logger")
     def test_change_lang_request(self, mock_logger):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
         request = self.factory.get("test")
-        context = Context({'request': request})
+        context = Context({"request": request})
         response = template.render(context)
-        self.assertHTMLEqual(response, '/test')
+        self.assertHTMLEqual(response, "/test")
 
     def test_change_lang_request_no_reverse_match(self):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
-        address = reverse('admin:dpnk_competition_change', args=(6,))
+        address = reverse("admin:dpnk_competition_change", args=(6,))
         request = self.factory.get(address)
-        context = Context({'request': request})
+        context = Context({"request": request})
         response = template.render(context)
-        self.assertHTMLEqual(response, '/admin/dpnk/competition/6/change/')
+        self.assertHTMLEqual(response, "/admin/dpnk/competition/6/change/")
 
 
 class RoundNumberTests(TestCase):
@@ -394,22 +404,22 @@ class RoundNumberTests(TestCase):
         template = Template("{% load dpnk_tags %}{{ i|round_number }}")
         context = Context({"i": 2.123456})
         response = template.render(context)
-        self.assertHTMLEqual(response, '2,1')
+        self.assertHTMLEqual(response, "2,1")
 
     def test_without_three_places(self):
         template = Template("{% load dpnk_tags %}{{ i|round_number:3 }}")
         context = Context({"i": 2.123456})
         response = template.render(context)
-        self.assertHTMLEqual(response, '2,123')
+        self.assertHTMLEqual(response, "2,123")
 
     def test_none(self):
         template = Template("{% load dpnk_tags %}{{ i|round_number:3 }}")
         context = Context({"i": None})
         response = template.render(context)
-        self.assertHTMLEqual(response, 'None')
+        self.assertHTMLEqual(response, "None")
 
     def test_no_number(self):
         template = Template("{% load dpnk_tags %}{{ i|round_number:3 }}")
         context = Context({"i": "foo"})
         response = template.render(context)
-        self.assertHTMLEqual(response, 'foo')
+        self.assertHTMLEqual(response, "foo")

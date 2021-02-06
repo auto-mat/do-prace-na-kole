@@ -1,4 +1,3 @@
-
 from modeltranslation.admin import TranslationAdmin
 
 from sitetree.admin import TreeItemAdmin, override_item_admin

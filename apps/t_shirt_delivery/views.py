@@ -38,48 +38,54 @@ from .models import DeliveryBatchDeadline
 
 
 class TShirtDeliveryView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
-    template_name = 'registration/tshirt_delivery.html'
+    template_name = "registration/tshirt_delivery.html"
     title = _("Vaše triko je již na cestě")
     registration_phase = "zmenit_triko"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            batch_created = self.user_attendance.package_shipped().team_package.box.delivery_batch.created
-            context['batch_created'] = batch_created
-            batch_delivery = DeliveryBatchDeadline.objects.previous(batch_created, campaign=self.user_attendance.campaign).delivery_to
+            batch_created = (
+                self.user_attendance.package_shipped().team_package.box.delivery_batch.created
+            )
+            context["batch_created"] = batch_created
+            batch_delivery = DeliveryBatchDeadline.objects.previous(
+                batch_created, campaign=self.user_attendance.campaign
+            ).delivery_to
             if datetime.datetime.now() <= batch_delivery:
-                context['batch_delivery'] = batch_delivery.date()
+                context["batch_delivery"] = batch_delivery.date()
         except DeliveryBatchDeadline.DoesNotExist:
             pass
         return context
 
 
 class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'registration/change_tshirt.html'
+    template_name = "registration/change_tshirt.html"
     form_class = TShirtUpdateForm
     model = UserAttendance
     success_message = _("Uložili jsme si Vaší velikost")
-    next_url = 'typ_platby'
-    prev_url = 'zmenit_tym'
+    next_url = "typ_platby"
+    prev_url = "zmenit_tym"
     registration_phase = "zmenit_triko"
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.tshirt_complete():
-            return _('Změňte velikost soutěžního trička')
+            return _("Změňte velikost soutěžního trička")
         else:
-            return _('Vyberte velikost soutěžního trička')
+            return _("Vyberte velikost soutěžního trička")
 
     def get_object(self):
         return {
-            'userprofile': self.user_attendance.userprofile,
-            'userattendance': self.user_attendance,
+            "userprofile": self.user_attendance.userprofile,
+            "userattendance": self.user_attendance,
         }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            context['next_batch'] = DeliveryBatchDeadline.objects.forthcoming(campaign=self.user_attendance.campaign)
+            context["next_batch"] = DeliveryBatchDeadline.objects.forthcoming(
+                campaign=self.user_attendance.campaign
+            )
         except DeliveryBatchDeadline.DoesNotExist:
             pass
         return context
@@ -93,7 +99,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                         join_team=format_html(
                             "<a href='{}'>{}</a>",
                             reverse("zmenit_tym"),
-                            _('přidejte k týmu'),
+                            _("přidejte k týmu"),
                         ),
                     ),
                     self.template_name,
@@ -101,13 +107,15 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                     error_level="warning",
                 )
             if request.user_attendance.package_shipped():
-                raise NotImplementedError("This should never be reached - it should be already treated in view function")
+                raise NotImplementedError(
+                    "This should never be reached - it should be already treated in view function"
+                )
 
             if not request.user_attendance.campaign.has_any_tshirt:
                 if request.user_attendance.has_admission_fee():
-                    return redirect(reverse('typ_platby'))
+                    return redirect(reverse("typ_platby"))
                 else:
-                    return redirect(reverse('profil'))
+                    return redirect(reverse("profil"))
         return super().dispatch(request, *args, **kwargs)
 
 

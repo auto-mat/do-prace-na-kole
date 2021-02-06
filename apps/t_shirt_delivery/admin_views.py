@@ -31,7 +31,7 @@ from .models import SubsidiaryBox, TeamPackage
 
 class DispatchView(StaffuserRequiredMixin, FormView):
     raise_exception = True
-    success_url = reverse_lazy('dispatch')
+    success_url = reverse_lazy("dispatch")
     template_name = "dispatch.html"
     form_class = DispatchForm
 
@@ -39,45 +39,52 @@ class DispatchView(StaffuserRequiredMixin, FormView):
         context = self.get_context_data(form=form)
         try:
             dispatch_id = form.cleaned_data.get("dispatch_id")
-            package_class = {
-                'T': TeamPackage,
-                'S': SubsidiaryBox,
-            }[dispatch_id[0]]
+            package_class = {"T": TeamPackage, "S": SubsidiaryBox,}[dispatch_id[0]]
             package = package_class.objects.get(id=int(dispatch_id[1:]))
             if package.dispatched:
-                context['package_message'] = _("Balíček/krabice byl v minulosti již zařazen k sestavení: %s") % package
-                context['package_message_color'] = "orange"
+                context["package_message"] = (
+                    _("Balíček/krabice byl v minulosti již zařazen k sestavení: %s")
+                    % package
+                )
+                context["package_message_color"] = "orange"
             else:
-                if isinstance(package, SubsidiaryBox) and not package.all_packages_dispatched():
-                    context['package_message'] = format_html(
+                if (
+                    isinstance(package, SubsidiaryBox)
+                    and not package.all_packages_dispatched()
+                ):
+                    context["package_message"] = format_html(
                         _(
                             "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: "
                             "<a href='{}?box__id__exact={}&amp;dispatched__exact=0'>"
                             "zobrazit seznam nesestavených balíčků"
                             "</a>"
                         ),
-                        reverse('admin:t_shirt_delivery_teampackage_changelist'),
+                        reverse("admin:t_shirt_delivery_teampackage_changelist"),
                         package.pk,
                     )
-                    context['package_message_color'] = "red"
+                    context["package_message_color"] = "red"
                 else:
                     package.dispatched = True
                     package.save()
-                    context['package_message'] = _("Balíček/krabice zařazen jako sestavený: %s") % package
-                    context['package'] = package
-                    context['package_message_color'] = "green"
-                    context['form'] = DispatchForm()
+                    context["package_message"] = (
+                        _("Balíček/krabice zařazen jako sestavený: %s") % package
+                    )
+                    context["package"] = package
+                    context["package_message_color"] = "green"
+                    context["form"] = DispatchForm()
 
             if package_class == TeamPackage:
-                context['box'] = package.box
+                context["box"] = package.box
             elif package_class == SubsidiaryBox:
-                context['box'] = package
+                context["box"] = package
         except ObjectDoesNotExist:
-            context['package_message'] = _("Balíček/krabice %s nebyl nalezen." % dispatch_id)
-            context['package_message_color'] = "red"
+            context["package_message"] = _(
+                "Balíček/krabice %s nebyl nalezen." % dispatch_id
+            )
+            context["package_message_color"] = "red"
         return self.render_to_response(context)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data['title'] = _("Zařadit balíky k sestavení")
+        context_data["title"] = _("Zařadit balíky k sestavení")
         return context_data

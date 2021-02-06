@@ -32,30 +32,28 @@ class TeamPackage(TimeStampedModel, models.Model):
         verbose_name_plural = _("týmové balíčky")
 
     box = models.ForeignKey(
-        'SubsidiaryBox',
+        "SubsidiaryBox",
         verbose_name=_("Krabice"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     team = models.ForeignKey(
-        'dpnk.Team',
+        "dpnk.Team",
         verbose_name=_("Tým"),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Balíek vyřízen"),
-        blank=False,
-        null=False,
-        default=False,
+        verbose_name=_("Balíek vyřízen"), blank=False, null=False, default=False,
     )
 
     def identifier(self):
         if self.id:
             return "T%s" % self.id
-    identifier.admin_order_field = 'id'
+
+    identifier.admin_order_field = "id"
 
     def __str__(self):
         if self.team:

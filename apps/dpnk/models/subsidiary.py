@@ -44,10 +44,7 @@ class Subsidiary(WithGalleryMixin, models.Model):
 
     address = Address()
     company = ChainedForeignKey(
-        'Company',
-        related_name="subsidiaries",
-        null=False,
-        blank=False,
+        "Company", related_name="subsidiaries", null=False, blank=False,
     )
     city = models.ForeignKey(
         City,
@@ -57,15 +54,13 @@ class Subsidiary(WithGalleryMixin, models.Model):
         blank=False,
         on_delete=models.CASCADE,
     )
-    active = models.BooleanField(
-        verbose_name=_(u"Aktivní"),
-        default=True,
-        null=False,
-    )
+    active = models.BooleanField(verbose_name=_(u"Aktivní"), default=True, null=False,)
 
     box_addressee_name = models.CharField(
         verbose_name=_("Jméno adresáta krabice pro pobočku"),
-        help_text=_("Jmené osoby, která převezme krabici s tričky a zajistí jeich rozdělení na této pobočce. Nemusí se účastnit soutěže."),
+        help_text=_(
+            "Jmené osoby, která převezme krabici s tričky a zajistí jeich rozdělení na této pobočce. Nemusí se účastnit soutěže."
+        ),
         max_length=30,
         null=True,
         blank=True,
@@ -77,19 +72,17 @@ class Subsidiary(WithGalleryMixin, models.Model):
         blank=True,
     )
     box_addressee_email = models.EmailField(
-        verbose_name=_("Email adresáta krabice pro pobočku"),
-        null=True,
-        blank=True,
+        verbose_name=_("Email adresáta krabice pro pobočku"), null=True, blank=True,
     )
     gallery = models.ForeignKey(
-        'photologue.Gallery',
+        "photologue.Gallery",
         verbose_name=_("Galerie fotek"),
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
     icon = models.ForeignKey(
-        'photologue.Photo',
+        "photologue.Photo",
         verbose_name=_("Ikona"),
         null=True,
         blank=True,
@@ -108,7 +101,10 @@ class Subsidiary(WithGalleryMixin, models.Model):
     def get_recipient_string(self):
         """ makes recipient from address_recipient and company name """
         if self.address_recipient:
-            if self.address_recipient.lower().strip() == self.company.name.lower().strip():
+            if (
+                self.address_recipient.lower().strip()
+                == self.company.name.lower().strip()
+            ):
                 return self.address_recipient
             else:
                 return "%s (%s)" % (self.address_recipient, self.company.name)
@@ -117,13 +113,35 @@ class Subsidiary(WithGalleryMixin, models.Model):
 
     def clean(self):
         Address.clean(self.address, self, Subsidiary)
-        if self.box_addressee_name or self.box_addressee_email or self.box_addressee_telephone:
+        if (
+            self.box_addressee_name
+            or self.box_addressee_email
+            or self.box_addressee_telephone
+        ):
             if not self.box_addressee_name:
-                raise ValidationError({'box_addressee_name': _("Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho jméno")})
+                raise ValidationError(
+                    {
+                        "box_addressee_name": _(
+                            "Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho jméno"
+                        )
+                    }
+                )
             if not self.box_addressee_email:
-                raise ValidationError({'box_addressee_email': _("Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho e-mail")})
+                raise ValidationError(
+                    {
+                        "box_addressee_email": _(
+                            "Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho e-mail"
+                        )
+                    }
+                )
             if not self.box_addressee_telephone:
-                raise ValidationError({'box_addressee_telephone': _("Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho telefon")})
+                raise ValidationError(
+                    {
+                        "box_addressee_telephone": _(
+                            "Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho telefon"
+                        )
+                    }
+                )
 
 
 class SubsidiaryInCampaign:

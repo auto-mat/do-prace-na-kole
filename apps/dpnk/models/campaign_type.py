@@ -5,15 +5,10 @@ from django.utils.translation import ugettext_lazy as _
 
 class CampaignType(models.Model):
     name = models.CharField(
-        unique=True,
-        verbose_name=_("Jméno typu kampaně"),
-        max_length=60,
-        null=False,
+        unique=True, verbose_name=_("Jméno typu kampaně"), max_length=60, null=False,
     )
     slug = models.SlugField(
-        unique=True,
-        verbose_name="Identifikátor typu kampaně",
-        blank=True,
+        unique=True, verbose_name="Identifikátor typu kampaně", blank=True,
     )
     web = models.URLField(
         verbose_name=_("Web kampáně"),
@@ -34,8 +29,8 @@ class CampaignType(models.Model):
         default="",
     )
     LANGUAGE_PREFIXES = [
-        ('dpnk', _("Do práce na kole")),
-        ('dsnk', _("Do školy na kole")),
+        ("dpnk", _("Do práce na kole")),
+        ("dsnk", _("Do školy na kole")),
     ]
     language_prefixes = models.CharField(
         verbose_name=_("Jazyková sada"),
@@ -43,7 +38,7 @@ class CampaignType(models.Model):
         max_length=16,
         null=False,
         blank=False,
-        default='dpnk',
+        default="dpnk",
     )
     wp_api_url = models.URLField(
         default="http://www.dopracenakole.cz",
@@ -59,14 +54,18 @@ class CampaignType(models.Model):
         return self.name
 
     def get_language_prefix(self):
-        if self.language_prefixes == 'dpnk':
-            return ''
+        if self.language_prefixes == "dpnk":
+            return ""
         return self.language_prefixes
 
     def get_available_languages(self):
-        if self.language_prefixes == 'dpnk':
+        if self.language_prefixes == "dpnk":
             return ((k, v) for k, v in settings.LANGUAGES if len(k) == 2)
-        return ((k, v) for k, v in settings.LANGUAGES if k.startswith(self.get_language_prefix()))
+        return (
+            (k, v)
+            for k, v in settings.LANGUAGES
+            if k.startswith(self.get_language_prefix())
+        )
 
     def sitetree_maintree(self):
         if self.sitetree_postfix:

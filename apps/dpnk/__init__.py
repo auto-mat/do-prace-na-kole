@@ -1,1 +1,1 @@
-default_app_config = 'dpnk.apps.DPNKConfig'
+default_app_config = "dpnk.apps.DPNKConfig"

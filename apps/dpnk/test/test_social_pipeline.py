@@ -28,15 +28,15 @@ from model_mommy import mommy
 class TestSocialPipeline(TestCase):
     def test_create_userprofile(self):
         user = mommy.make("User")
-        response = {'gender': 'male'}
+        response = {"gender": "male"}
         create_userprofile(None, None, response, user, is_new=True)
-        self.assertEqual(user.userprofile.sex, 'male')
+        self.assertEqual(user.userprofile.sex, "male")
 
     def test_create_userprofile_null_sex(self):
         user = mommy.make("User")
         response = {}
         create_userprofile(None, None, response, user, is_new=True)
-        self.assertEqual(user.userprofile.sex, 'unknown')
+        self.assertEqual(user.userprofile.sex, "unknown")
 
     def test_create_userprofile_null_user(self):
         """ Test, that call with null user doesn't cause exception """
@@ -46,4 +46,4 @@ class TestSocialPipeline(TestCase):
         """ Test, that call with is_new=False doesn't create profile """
         user = mommy.make("User")
         create_userprofile(None, None, {}, user, is_new=False)
-        self.assertFalse(hasattr(user, 'userprofile'))
+        self.assertFalse(hasattr(user, "userprofile"))

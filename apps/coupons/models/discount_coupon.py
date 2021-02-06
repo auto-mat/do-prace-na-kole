@@ -36,22 +36,31 @@ import smmapdfs.model_abcs
 
 class CouponField(smmapdfs.model_abcs.PdfSandwichFieldABC):
     fields = {
-        'token': (lambda obj: str(obj)),
-        'good_till': (lambda obj: obj.coupon_type.valid_until.strftime("%d. %m. %Y") if obj.coupon_type.valid_until else None),
-        'campaign_year': (lambda obj: "%s." % obj.coupon_type.campaign.year),
-        'discount': (lambda obj: "%s%%" % obj.discount),
-        'name': (lambda obj: obj.recipient_name),
-        'num_uses': (lambda obj: ("%s×" % str(obj.user_attendance_number)) if obj.user_attendance_number and obj.user_attendance_number > 1 else ""),
+        "token": (lambda obj: str(obj)),
+        "good_till": (
+            lambda obj: obj.coupon_type.valid_until.strftime("%d. %m. %Y")
+            if obj.coupon_type.valid_until
+            else None
+        ),
+        "campaign_year": (lambda obj: "%s." % obj.coupon_type.campaign.year),
+        "discount": (lambda obj: "%s%%" % obj.discount),
+        "name": (lambda obj: obj.recipient_name),
+        "num_uses": (
+            lambda obj: ("%s×" % str(obj.user_attendance_number))
+            if obj.user_attendance_number and obj.user_attendance_number > 1
+            else ""
+        ),
     }
 
 
 class CouponSandwich(smmapdfs.model_abcs.PdfSandwichABC):
     field_model = CouponField
     obj = models.ForeignKey(
-        'DiscountCoupon',
+        # black
+        "DiscountCoupon",
         null=False,
         blank=False,
-        default='',
+        default="",
         on_delete=models.CASCADE,
     )
 
@@ -70,10 +79,11 @@ class DiscountCoupon(models.Model):
         verbose_name=_("typ voucheru"),
         null=False,
         blank=False,
-        default='',
+        default="",
         on_delete=models.CASCADE,
     )
     token = models.TextField(
+        # black
         verbose_name=_("token"),
         blank=False,
         null=False,
@@ -94,41 +104,48 @@ class DiscountCoupon(models.Model):
         default=1,
     )
     note = models.CharField(
+        # black
         verbose_name=_("poznámka"),
         max_length=50,
         blank=True,
         null=True,
     )
     receiver = models.CharField(
+        # black
         verbose_name=_("příjemce"),
         max_length=50,
         blank=True,
         null=True,
     )
     recipient_name = models.CharField(
+        # black
         verbose_name=_("jméno příjemce"),
         max_length=100,
         blank=True,
         null=True,
     )
     created = models.DateTimeField(
+        # black
         verbose_name=_(u"Datum vytvoření"),
         auto_now_add=True,
         null=True,
     )
     updated = models.DateTimeField(
+        # black
         verbose_name=_(u"Datum poslední změny"),
         auto_now=True,
         null=True,
     )
     sent = models.BooleanField(
+        # black
         verbose_name=_("DEPRECATED"),
         default=False,
         null=False,
     )
     coupon_pdf = models.FileField(
+        # black
         verbose_name=_(u"DEPRECATED"),
-        upload_to='coupons',
+        upload_to="coupons",
         blank=True,
         null=True,
     )
@@ -142,9 +159,9 @@ class DiscountCoupon(models.Model):
             except ValueError:
                 url = None
         if url:
-            return format_html("<a href='{}'>{}</a>", url, _('PDF file'))
+            return format_html("<a href='{}'>{}</a>", url, _("PDF file"))
         else:
-            return '-'
+            return "-"
 
     get_pdf.short_description = _("PDF")
 
@@ -161,6 +178,7 @@ class DiscountCoupon(models.Model):
         verbose_name = _("Slevový kupón")
         verbose_name_plural = _("Slevové kupóny")
         unique_together = (
+            # black
             ("token", "coupon_type"),
         )
         app_label = "coupons"
@@ -182,13 +200,18 @@ class DiscountCoupon(models.Model):
 
     def save(self, *args, **kwargs):
         if self.token is None or self.token == "":
-            self.token = User.objects.make_random_password(length=6, allowed_chars='ABCDEFGHJKLMNPQRSTUVWXYZ')
+            self.token = User.objects.make_random_password(
+                # black
+                length=6,
+                allowed_chars="ABCDEFGHJKLMNPQRSTUVWXYZ",
+            )
         super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=DiscountCoupon)
 def create_coupon_file(sender, instance, created, **kwargs):
     smmapdfs.tasks.make_pdfsandwich.delay(
+        # black
         instance._meta.app_label,
         instance._meta.object_name,
         instance.pk,

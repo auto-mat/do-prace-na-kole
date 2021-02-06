@@ -29,17 +29,19 @@ from model_mommy import mommy
 
 
 @override_settings(
+    # black
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
     fixtures = []
-    exclude_apps = ['djcelery', 'dpnk', 't_shirt_delivery', 'avatar', 'photologue']
+    exclude_apps = ["djcelery", "dpnk", "t_shirt_delivery", "avatar", "photologue"]
 
     def setUp(self):
         super().setUp()
         user = mommy.make(
-            'auth.User',
-            user__username='test',
+            # black
+            "auth.User",
+            user__username="test",
             user__is_superuser=True,
         )
         mommy.make(

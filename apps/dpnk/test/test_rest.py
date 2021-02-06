@@ -40,44 +40,63 @@ from .mommy_recipes import UserAttendanceRecipe
 
 @freeze_time("2016-01-14")
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RestTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "trips",
+    ]
 
     def setUp(self):
         super().setUp()
-        self.client = APIClient(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
-        self.client.force_login(User.objects.get(pk=1128), settings.AUTHENTICATION_BACKENDS[0])
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1128), settings.AUTHENTICATION_BACKENDS[0]
+        )
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_dpnk_rest_gpx_gz_no_login(self):
         post_data = {
-            'trip_date': '2010-11-01',
-            'sourceApplication': 'test_app',
-            'direction': 'trip_to',
+            "trip_date": "2010-11-01",
+            "sourceApplication": "test_app",
+            "direction": "trip_to",
         }
         self.client.logout()
-        response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
-        self.assertJSONEqual(response.content.decode(), {'detail': 'Nebyly zadány přihlašovací údaje.'})
+        response = self.client.post(
+            "/rest/gpx/", post_data, format="multipart", follow=True
+        )
+        self.assertJSONEqual(
+            response.content.decode(), {"detail": "Nebyly zadány přihlašovací údaje."}
+        )
         self.assertEqual(response.status_code, 401)
 
     def test_dpnk_rest_gpx_gz_parse_error(self):
-        with open('apps/dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/DSC00002.JPG", "rb") as gpxfile:
             post_data = {
-                'trip_date': '2010-11-15',
-                'direction': 'trip_to',
-                'sourceApplication': 'test_app',
-                'file': gpxfile,
+                "trip_date": "2010-11-15",
+                "direction": "trip_to",
+                "sourceApplication": "test_app",
+                "file": gpxfile,
             }
-            response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
-            self.assertJSONEqual(response.content.decode(), {"file": "Can't parse GPX file"})
+            response = self.client.post(
+                "/rest/gpx/", post_data, format="multipart", follow=True
+            )
+            self.assertJSONEqual(
+                response.content.decode(), {"file": "Can't parse GPX file"}
+            )
             self.assertEqual(response.status_code, 400)
 
     def test_gpx_get101(self):
-        address = reverse("gpxfile-detail", kwargs={'pk': 101})
+        address = reverse("gpxfile-detail", kwargs={"pk": 101})
         response = self.client.get(address)
         self.assertJSONEqual(
             response.content.decode(),
@@ -95,7 +114,7 @@ class RestTests(TestCase):
         )
 
     def test_gpx_get2(self):
-        address = reverse("gpxfile-detail", kwargs={'pk': 2})
+        address = reverse("gpxfile-detail", kwargs={"pk": 2})
         response = self.client.get(address)
         self.assertJSONEqual(
             response.content.decode(),
@@ -103,13 +122,14 @@ class RestTests(TestCase):
                 "id": 2,
                 "trip_date": "2010-11-14",
                 "direction": "trip_from",
-                "file": "http://testing-campaign.testserver%smodranska-rokle.gpx" % settings.MEDIA_URL,
+                "file": "http://testing-campaign.testserver%smodranska-rokle.gpx"
+                % settings.MEDIA_URL,
                 "commuteMode": "bicycle",
                 "durationSeconds": None,
                 "distanceMeters": 156900,
-                'track': {
-                    'coordinates': [[[0.0, 0.0], [-1.0, 1.0]]],
-                    'type': 'MultiLineString',
+                "track": {
+                    "coordinates": [[[0.0, 0.0], [-1.0, 1.0]]],
+                    "type": "MultiLineString",
                 },
                 "sourceApplication": None,
             },
@@ -117,12 +137,12 @@ class RestTests(TestCase):
 
     def test_gpx_post(self):
         address = reverse("gpxfile-list")
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
-                'trip_date': "2010-11-19",
-                'direction': 'trip_to',
-                'sourceApplication': 'test_app',
-                'file': gpxfile,
+                "trip_date": "2010-11-19",
+                "direction": "trip_to",
+                "sourceApplication": "test_app",
+                "file": gpxfile,
             }
             response = self.client.post(address, post_data)
             self.assertEqual(response.status_code, 201)
@@ -133,46 +153,50 @@ class RestTests(TestCase):
                     "id": trip.id,
                     "distanceMeters": 13320,
                     "durationSeconds": None,
-                    "sourceApplication": 'test_app',
+                    "sourceApplication": "test_app",
                     "trip_date": "2010-11-19",
                     "direction": "trip_to",
                     "commuteMode": "bicycle",
-                    "file": "http://testing-campaign.testserver%s%s" % (
-                        settings.MEDIA_URL,
-                        trip.gpx_file.name,
-                    ),
+                    "file": "http://testing-campaign.testserver%s%s"
+                    % (settings.MEDIA_URL, trip.gpx_file.name,),
                 },
             )
             self.assertEqual(trip.direction, "trip_to")
 
     def test_dpnk_rest_gpx_gz(self):
-        with open('apps/dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/modranska-rokle.gpx.gz", "rb") as gpxfile:
             post_data = {
-                'trip_date': '2010-11-17',
-                'direction': 'trip_to',
-                'sourceApplication': 'test_app',
-                'file': gpxfile,
+                "trip_date": "2010-11-17",
+                "direction": "trip_to",
+                "sourceApplication": "test_app",
+                "file": gpxfile,
             }
-            response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
+            response = self.client.post(
+                "/rest/gpx/", post_data, format="multipart", follow=True
+            )
         self.assertEqual(response.status_code, 201)
         trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=17))
-        self.assertEqual(trip.direction, 'trip_to')
+        self.assertEqual(trip.direction, "trip_to")
         self.assertEqual(trip.distance, 13.32)
 
     def test_gpx_unknown_campaign(self):
-        self.client = APIClient(HTTP_HOST="testing-campaign-unknown.testserver", HTTP_REFERER="test-referer")
-        self.client.force_login(User.objects.get(pk=1128), settings.AUTHENTICATION_BACKENDS[0])
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign-unknown.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1128), settings.AUTHENTICATION_BACKENDS[0]
+        )
         address = reverse("gpxfile-list")
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
-                'trip_date': "2010-11-19",
-                'direction': 'trip_to',
-                'file': gpxfile,
+                "trip_date": "2010-11-19",
+                "direction": "trip_to",
+                "file": gpxfile,
             }
             response = self.client.post(address, post_data)
             self.assertContains(
                 response,
-                '<title>Do Práce! ..stránka nenalezena - 404</title>',
+                "<title>Do Práce! ..stránka nenalezena - 404</title>",
                 html=True,
                 status_code=404,
             )
@@ -180,93 +204,93 @@ class RestTests(TestCase):
     def test_gpx_duplicate_gpx(self):
         """ Test, that if trip exists, it gets modified """
         trip = mommy.make(
-            'Trip',
+            "Trip",
             date=datetime.date(2010, 11, 19),
             direction="trip_to",
             user_attendance=UserAttendance.objects.get(pk=1115),
         )
         trip_id = trip.id
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
-                'trip_date': "2010-11-19",
-                'direction': 'trip_to',
-                'sourceApplication': 'test_app',
-                'file': gpxfile,
+                "trip_date": "2010-11-19",
+                "direction": "trip_to",
+                "sourceApplication": "test_app",
+                "file": gpxfile,
             }
             response = self.client.post(reverse("gpxfile-list"), post_data)
             trip = models.Trip.objects.get(date=datetime.date(2010, 11, 19))
             self.assertJSONEqual(
                 response.content.decode(),
                 {
-                    'commuteMode': 'bicycle',
-                    'direction': 'trip_to',
-                    'distanceMeters': 13320,
-                    'durationSeconds': None,
-                    "file": "http://testing-campaign.testserver%s%s" % (
-                        settings.MEDIA_URL,
-                        trip.gpx_file.name,
-                    ),
-                    'id': trip_id,
-                    'sourceApplication': 'test_app',
-                    'trip_date': '2010-11-19',
+                    "commuteMode": "bicycle",
+                    "direction": "trip_to",
+                    "distanceMeters": 13320,
+                    "durationSeconds": None,
+                    "file": "http://testing-campaign.testserver%s%s"
+                    % (settings.MEDIA_URL, trip.gpx_file.name,),
+                    "id": trip_id,
+                    "sourceApplication": "test_app",
+                    "trip_date": "2010-11-19",
                 },
             )
             self.assertEqual(response.status_code, 201)
 
     def test_gpx_put(self):
         trip = mommy.make(
-            'Trip',
+            "Trip",
             date=datetime.date(2010, 11, 19),
             direction="trip_to",
             user_attendance=UserAttendance.objects.get(pk=1115),
         )
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
                 "file": gpxfile,
-                'sourceApplication': 'test_app',
+                "sourceApplication": "test_app",
             }
-            address = reverse("gpxfile-detail", kwargs={'pk': trip.id})
+            address = reverse("gpxfile-detail", kwargs={"pk": trip.id})
             response = self.client.put(address, post_data)
         self.assertEqual(response.status_code, 200)
         trip.refresh_from_db()
         self.assertEqual(trip.distance, 13.32)
 
     def test_gpx_inactive(self):
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
-                'trip_date': "2010-11-10",
-                'direction': 'trip_to',
-                'sourceApplication': 'test_app',
-                'file': gpxfile,
+                "trip_date": "2010-11-10",
+                "direction": "trip_to",
+                "sourceApplication": "test_app",
+                "file": gpxfile,
             }
             response = self.client.post(reverse("gpxfile-list"), post_data)
             self.assertJSONEqual(
                 response.content.decode(),
-                {"date": ["Trip for this day cannot be created/updated. This day is not active for edition"]},
+                {
+                    "date": [
+                        "Trip for this day cannot be created/updated. This day is not active for edition"
+                    ]
+                },
             )
             self.assertEqual(response.status_code, 400)
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
 class TokenAuthenticationTests(TestCase):
-
     def setUp(self):
         self.user_attendance = UserAttendanceRecipe.make()
         self.client = APIClient(
             HTTP_HOST="testing-campaign.example.com",
             HTTP_REFERER="test-referer",
-            HTTP_AUTHORIZATION="Token %s" % self.user_attendance.userprofile.user.auth_token,
+            HTTP_AUTHORIZATION="Token %s"
+            % self.user_attendance.userprofile.user.auth_token,
         )
 
     def test_track_post(self):
         response = self.client.post(
             reverse("gpxfile-list"),
             {
-                'trip_date': "2010-11-20",
-                'direction': 'trip_to',
-                'sourceApplication': 'test_app',
+                "trip_date": "2010-11-20",
+                "direction": "trip_to",
+                "sourceApplication": "test_app",
                 "track": '{"type": "MultiLineString", "coordinates": [[[14.0, 50.0], [14.0, 51.0]]]}',
             },
         )
@@ -284,10 +308,11 @@ class TokenAuthenticationTests(TestCase):
                 "commuteMode": "bicycle",
                 "durationSeconds": None,
                 "distanceMeters": 111240,
-                "sourceApplication": 'test_app',
+                "sourceApplication": "test_app",
                 "sourceId": None,
             },
         )
+
 
 # @override_settings(
 #     SITE_ID=2,

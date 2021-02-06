@@ -4,7 +4,7 @@ from model_mommy import mommy
 class Campaigns:
     def __init__(self, campaign_types, **kwargs):
         self.c2009 = mommy.make(  # pk = 338 in old fixtures
-            'dpnk.Campaign',
+            "dpnk.Campaign",
             benefitial_admission_fee=350.0,
             benefitial_admission_fee_company=450.0,
             email_footer="",
@@ -28,7 +28,7 @@ class Campaigns:
         )
 
         self.c2010 = mommy.make(  # pk = 339 in old fixtures
-            'dpnk.Campaign',
+            "dpnk.Campaign",
             benefitial_admission_fee=350.0,
             benefitial_admission_fee_company=450.0,
             email_footer="",

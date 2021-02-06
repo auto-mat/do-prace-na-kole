@@ -38,8 +38,11 @@ class PhaseMixin(object):
             return request.campaign.phase_set.get(phase_type=self.must_be_in_phase)
         except ObjectDoesNotExist:
             raise exceptions.TemplatePermissionDenied(
-                _("Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze %s." % PHASE_TYPE_DICT[self.must_be_in_phase]),
-                template_name=getattr(self, 'template_name', None),
+                _(
+                    "Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze %s."
+                    % PHASE_TYPE_DICT[self.must_be_in_phase]
+                ),
+                template_name=getattr(self, "template_name", None),
             )
 
 
@@ -52,16 +55,20 @@ class MustBeInPhaseMixin(PhaseMixin):
 
         if phase.has_started():
             raise exceptions.TemplatePermissionDenied(
-                _("Pro jahody ke dvanácti měsíčkům na kole dojedete i mimo sezónu, ale na novou soutěž musíte ještě chvilku počkat."),
-                template_name=getattr(self, 'template_name', None),
+                _(
+                    "Pro jahody ke dvanácti měsíčkům na kole dojedete i mimo sezónu, ale na novou soutěž musíte ještě chvilku počkat."
+                ),
+                template_name=getattr(self, "template_name", None),
                 title=_("Ještě je příliš brzy"),
             )
         raise exceptions.TemplatePermissionDenied(
             mark_safe_lazy(
-                _("Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se zobrazí až %s")
+                _(
+                    "Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se zobrazí až %s"
+                )
                 % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT"),
             ),
-            template_name=getattr(self, 'template_name', None),
+            template_name=getattr(self, "template_name", None),
         )
 
 
@@ -73,9 +80,11 @@ class MustBeInRegistrationPhaseMixin(PhaseMixin):
 
         user_attendance = self.request.user_attendance
         if not user_attendance:
-            user_attendance = getattr(self, 'user_attendance', False)
+            user_attendance = getattr(self, "user_attendance", False)
 
-        if phase.is_actual() or (user_attendance and user_attendance.entered_competition()):
+        if phase.is_actual() or (
+            user_attendance and user_attendance.entered_competition()
+        ):
             return super().dispatch(request, *args, **kwargs)
 
         if user_attendance and not user_attendance.personal_data_opt_in:
@@ -88,23 +97,23 @@ class MustBeInRegistrationPhaseMixin(PhaseMixin):
                     aggree_terms=format_html(
                         "<a href='{}'>{}</a>",
                         reverse("upravit_profil"),
-                        _('ověřte svůj souhlas'),
+                        _("ověřte svůj souhlas"),
                     ),
                 ),
-                template_name=getattr(self, 'template_name', None),
+                template_name=getattr(self, "template_name", None),
             )
 
         if phase.has_started():
             raise exceptions.TemplatePermissionDenied(
                 _("Registrace již byla ukončena."),
-                template_name=getattr(self, 'template_name', None),
+                template_name=getattr(self, "template_name", None),
             )
         raise exceptions.TemplatePermissionDenied(
             mark_safe_lazy(
                 _("Registrace ještě nezačala.<br/>Registrovat se budete moct od %s")
                 % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT"),
             ),
-            template_name=getattr(self, 'template_name', None),
+            template_name=getattr(self, "template_name", None),
         )
 
 
@@ -120,8 +129,9 @@ class GroupRequiredResponseMixin(GroupRequiredMixin):
     def no_permissions_fail(self, request):
         if request.user.is_authenticated:
             raise exceptions.TemplatePermissionDenied(
-                _("Pro přístup k této stránce musíte být ve skupině %s") % self.group_required,
-                template_name=getattr(self, 'template_name', None),
+                _("Pro přístup k této stránce musíte být ve skupině %s")
+                % self.group_required,
+                template_name=getattr(self, "template_name", None),
             )
         return super().no_permissions_fail(request)
 
@@ -135,10 +145,10 @@ class MustHaveTeamMixin(object):
                     join_team=format_html(
                         "<a href='{}'>{}</a>",
                         reverse("zmenit_tym"),
-                        _('přidejte se k týmu'),
+                        _("přidejte se k týmu"),
                     ),
                 ),
-                template_name=getattr(self, 'template_name', None),
+                template_name=getattr(self, "template_name", None),
                 title=_("Kde jsou ostatní?"),
             )
 
@@ -148,13 +158,18 @@ class MustHaveTeamMixin(object):
 class MustBeApprovedForTeamMixin(MustHaveTeamMixin):
     def dispatch(self, request, *args, **kwargs):
         if (
-                request.user_attendance and
-                request.user_attendance.team and
-                not (request.user_attendance.team and request.user_attendance.is_team_approved())
+            request.user_attendance
+            and request.user_attendance.team
+            and not (
+                request.user_attendance.team
+                and request.user_attendance.is_team_approved()
+            )
         ):
             raise exceptions.TemplatePermissionDenied(
                 format_html_lazy(
-                    _("Tým {team} rebeluje proti Vašemu členství. Je načase {link}, kteří si Vás budou vážit."),
+                    _(
+                        "Tým {team} rebeluje proti Vašemu členství. Je načase {link}, kteří si Vás budou vážit."
+                    ),
                     link=format_html_lazy(
                         "<a href='{address}'>{link_title}</a>",
                         link_title=_("si najít opravdové parťáky"),
@@ -163,7 +178,7 @@ class MustBeApprovedForTeamMixin(MustHaveTeamMixin):
                     team=request.user_attendance.team.name,
                 ),
                 title=_("Slyšíme cinkání klíčů"),
-                template_name=getattr(self, 'template_name', None),
+                template_name=getattr(self, "template_name", None),
             )
         return super().dispatch(request, *args, **kwargs)
 
@@ -173,6 +188,7 @@ class MustBeCompanyAdminMixin(object):
     Tests if user is company admin.
     Also sets CompanyAdmin object to self.company_admin
     """
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user_attendance:
             return super().dispatch(request, *args, **kwargs)
@@ -193,7 +209,7 @@ class MustBeCompanyAdminMixin(object):
                     contact_email=request.user_attendance.campaign.campaign_type.contact_email,
                 ),
             ),
-            template_name=getattr(self, 'template_name', None),
+            template_name=getattr(self, "template_name", None),
         )
 
 
@@ -203,18 +219,25 @@ def registration_complete_gate(user_attendance):
     reason = user_attendance.entered_competition_reason()
     if reason is True:
         if user_attendance.has_unanswered_questionnaires:
-            questionnaire = user_attendance.unanswered_questionnaires().filter(mandatory=True)
+            questionnaire = user_attendance.unanswered_questionnaires().filter(
+                mandatory=True
+            )
             if questionnaire:
-                return redirect(reverse_lazy("questionnaire", kwargs={"questionnaire_slug": questionnaire.first().slug}))
+                return redirect(
+                    reverse_lazy(
+                        "questionnaire",
+                        kwargs={"questionnaire_slug": questionnaire.first().slug},
+                    )
+                )
         return None
     else:
         redirect_view = {
-            'tshirt_uncomplete': 'zmenit_triko',
-            'team_uncomplete': 'zmenit_tym',
-            'payment_uncomplete': 'typ_platby',
-            'profile_uncomplete': 'upravit_profil',
-            'team_waiting': 'registration_uncomplete',
-            'payment_waiting': 'registration_uncomplete',
+            "tshirt_uncomplete": "zmenit_triko",
+            "team_uncomplete": "zmenit_tym",
+            "payment_uncomplete": "typ_platby",
+            "profile_uncomplete": "upravit_profil",
+            "team_waiting": "registration_uncomplete",
+            "payment_waiting": "registration_uncomplete",
         }
         return redirect(reverse(redirect_view[reason]))
 

@@ -37,15 +37,19 @@ from .. import customer_sheets
 
 class SubsidiaryBoxManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().annotate(
-            dispatched_packages_count_annot=Sum(
-                Case(
-                    When(teampackage__dispatched=True, then=1),
-                    When(teampackage__dispatched=False, then=0),
-                    default=0,
-                    output_field=IntegerField(),
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                dispatched_packages_count_annot=Sum(
+                    Case(
+                        When(teampackage__dispatched=True, then=1),
+                        When(teampackage__dispatched=False, then=0),
+                        default=0,
+                        output_field=IntegerField(),
+                    ),
                 ),
-            ),
+            )
         )
 
 
@@ -55,10 +59,10 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     class Meta:
         verbose_name = _("Krabice pro pobočku")
         verbose_name_plural = _("Krabice pro pobočky")
-        ordering = ['id']
+        ordering = ["id"]
 
     delivery_batch = models.ForeignKey(
-        'DeliveryBatch',
+        "DeliveryBatch",
         verbose_name=_("Dávka objednávek"),
         null=False,
         blank=False,
@@ -66,13 +70,13 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     )
     customer_sheets = models.FileField(
         verbose_name=_(u"Zákaznické listy"),
-        upload_to=u'customer_sheets',
+        upload_to=u"customer_sheets",
         blank=True,
         null=True,
         max_length=512,
     )
     subsidiary = models.ForeignKey(
-        'dpnk.Subsidiary',
+        "dpnk.Subsidiary",
         verbose_name=_("Pobočka"),
         null=True,
         blank=False,
@@ -94,7 +98,8 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     def identifier(self):
         if self.id:
             return "S%s" % self.id
-    identifier.admin_order_field = 'id'
+
+    identifier.admin_order_field = "id"
 
     def __str__(self):
         return _("Krabice pro pobočku %s") % self.subsidiary
@@ -109,14 +114,20 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
             email = self.subsidiary.box_addressee_email
             telephone = self.subsidiary.box_addressee_telephone
         else:
-            user_attendance = UserAttendance.objects.filter(transactions__packagetransaction__team_package__box=self).first()
-            name = user_attendance.userprofile.user.get_full_name() if user_attendance else ""
+            user_attendance = UserAttendance.objects.filter(
+                transactions__packagetransaction__team_package__box=self
+            ).first()
+            name = (
+                user_attendance.userprofile.user.get_full_name()
+                if user_attendance
+                else ""
+            )
             email = user_attendance.userprofile.user.email if user_attendance else ""
             telephone = user_attendance.userprofile.telephone if user_attendance else ""
         return {
-            'name': name,
-            'email': email,
-            'telephone': telephone,
+            "name": name,
+            "email": email,
+            "telephone": telephone,
         }
 
     def get_t_shirt_count(self):
@@ -130,15 +141,18 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
 
     def get_volume(self):
         campaign = self.delivery_batch.campaign
-        t_shirt_volume = campaign.package_width * campaign.package_height * campaign.package_depth
+        t_shirt_volume = (
+            campaign.package_width * campaign.package_height * campaign.package_depth
+        )
         t_shirt_count = self.get_t_shirt_count()
         return t_shirt_volume * t_shirt_count
 
     def all_packages_dispatched(self):
-        if hasattr(self, 'dispatched_packages_count_annot'):
+        if hasattr(self, "dispatched_packages_count_annot"):
             return self.dispatched_packages_count_annot == self.packages_count()
         else:
             return not self.teampackage_set.filter(dispatched=False).exists()
+
     all_packages_dispatched.boolean = True
     all_packages_dispatched.short_description = _("Všechny balíčky vyřízeny")
 
@@ -146,12 +160,13 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         return self.teampackage_set.filter(dispatched=True)
 
     def dispatched_packages_count(self):
-        if hasattr(self, 'dispatched_packages_count_annot'):
+        if hasattr(self, "dispatched_packages_count_annot"):
             return self.dispatched_packages_count_annot
         else:
             return self.dispatched_packages().count()
+
     dispatched_packages_count.short_description = _("Počet vyřízených balíků")
-    dispatched_packages_count.admin_order_field = 'dispatched_packages_count_annot'
+    dispatched_packages_count.admin_order_field = "dispatched_packages_count_annot"
 
     def packages_count(self):
         return self.teampackage_set.count()
@@ -163,14 +178,15 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
                 self.carrier_identification,
                 self.carrier_identification,
             )
-    tracking_link.admin_order_field = 'carrier_identification'
+
+    tracking_link.admin_order_field = "carrier_identification"
 
     objects = SubsidiaryBoxManager()
 
 
 @receiver(post_save, sender=SubsidiaryBox)
 def create_customer_sheets(sender, instance, created, **kwargs):
-    if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
+    if not instance.customer_sheets and getattr(instance, "add_packages_on_save", True):
         create_customer_sheets_action(queryset=[instance])
 
 
@@ -178,7 +194,11 @@ def create_customer_sheets_action(modeladmin=None, request=None, queryset=None):
     for box in queryset:
         with NamedTemporaryFile() as temp:
             customer_sheets.make_customer_sheets_pdf(temp, box)
-            box.customer_sheets.save("customer_sheets_%s_%s.pdf" % (box.pk, box.created.strftime("%Y-%m-%d")), File(temp))
+            box.customer_sheets.save(
+                "customer_sheets_%s_%s.pdf"
+                % (box.pk, box.created.strftime("%Y-%m-%d")),
+                File(temp),
+            )
             box.save()
 
 

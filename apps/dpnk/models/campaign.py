@@ -46,22 +46,20 @@ class Campaign(Pricable, models.Model):
     class Meta:
         verbose_name = _(u"kampaň")
         verbose_name_plural = _(u"kampaně")
-        permissions = (
-            ("can_see_application_links", "Can see application links"),
-        )
-        ordering = ('-id', )
+        permissions = (("can_see_application_links", "Can see application links"),)
+        ordering = ("-id",)
         unique_together = [
-            ('mailing_list_type', 'mailing_list_id'),
-            ('campaign_type', 'year'),
+            ("mailing_list_type", "mailing_list_id"),
+            ("campaign_type", "year"),
         ]
 
     campaign_type = models.ForeignKey(
-        'CampaignType',
+        "CampaignType",
         verbose_name=_("Typ kampaně"),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='campaigns',
+        related_name="campaigns",
     )
     year = models.CharField(
         unique=False,
@@ -70,21 +68,16 @@ class Campaign(Pricable, models.Model):
         null=False,
         default=datetime.datetime.now().year,
     )
-    slug = models.SlugField(
-        unique=True,
-        verbose_name=u"Doména v URL",
-        blank=False,
-    )
+    slug = models.SlugField(unique=True, verbose_name=u"Doména v URL", blank=False,)
     slug_identifier = models.SlugField(
-        unique=True,
-        verbose_name="Identifikátor kampaně",
-        blank=True,
-        null=True,
+        unique=True, verbose_name="Identifikátor kampaně", blank=True, null=True,
     )
     previous_campaign = models.ForeignKey(
-        'Campaign',
+        "Campaign",
         verbose_name=_("Předchozí kampaň"),
-        help_text=_("Kampaň, ze které se přebírá velikost trička, nazev týmu atd... při vytváření nové účasti v kampani"),
+        help_text=_(
+            "Kampaň, ze které se přebírá velikost trička, nazev týmu atd... při vytváření nové účasti v kampani"
+        ),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -107,8 +100,8 @@ class Campaign(Pricable, models.Model):
         verbose_name=_(u"ID mailing listu"),
         choices=[
             (None, _("Disabled")),
-            ('campaign_monitor', _("Campaign monitor")),
-            ('ecomail', _("EcoMail")),
+            ("campaign_monitor", _("Campaign monitor")),
+            ("ecomail", _("EcoMail")),
         ],
         max_length=60,
         default=None,
@@ -116,9 +109,7 @@ class Campaign(Pricable, models.Model):
         null=True,
     )
     show_application_links = models.BooleanField(
-        verbose_name=_("Ukázat odkazy na aplikace"),
-        default=False,
-        null=False,
+        verbose_name=_("Ukázat odkazy na aplikace"), default=False, null=False,
     )
     mailing_list_enabled = models.NullBooleanField(
         verbose_name=_(u"Povolit mailing list"),
@@ -128,9 +119,7 @@ class Campaign(Pricable, models.Model):
         unique=True,  # Enabling mailing lists on more campaigns cause problems. This prevents it until it is fixed.
     )
     extra_agreement_text = models.TextField(
-        verbose_name=_("Další text pro uživatelské souhlas"),
-        blank=True,
-        default="",
+        verbose_name=_("Další text pro uživatelské souhlas"), blank=True, default="",
     )
     days_active = models.PositiveIntegerField(
         verbose_name=_("Počet minulých dní, které jdou zapisovat"),
@@ -140,7 +129,9 @@ class Campaign(Pricable, models.Model):
     )
     minimum_rides_base = models.PositiveIntegerField(
         verbose_name=_(u"Minimální základ počtu jízd"),
-        help_text=_(u"Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"),
+        help_text=_(
+            u"Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"
+        ),
         default=25,
         blank=False,
         null=False,
@@ -171,22 +162,13 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     package_height = models.PositiveIntegerField(
-        verbose_name=_(u"Výška balíku"),
-        default=1,
-        blank=True,
-        null=True,
+        verbose_name=_(u"Výška balíku"), default=1, blank=True, null=True,
     )
     package_width = models.PositiveIntegerField(
-        verbose_name=_(u"Šířka balíku"),
-        default=26,
-        blank=True,
-        null=True,
+        verbose_name=_(u"Šířka balíku"), default=26, blank=True, null=True,
     )
     package_depth = models.PositiveIntegerField(
-        verbose_name=_(u"Hloubka balíku"),
-        default=35,
-        blank=True,
-        null=True,
+        verbose_name=_(u"Hloubka balíku"), default=35, blank=True, null=True,
     )
     package_max_count = models.PositiveIntegerField(
         verbose_name=_("Maximální počet triček v krabici"),
@@ -199,10 +181,7 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
         default=0.25,
-        validators=[
-            MaxValueValidator(1000),
-            MinValueValidator(0),
-        ],
+        validators=[MaxValueValidator(1000), MinValueValidator(0),],
     )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
@@ -217,70 +196,54 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     benefitial_admission_fee = models.FloatField(
-        verbose_name=_(u"Benefiční startovné"),
-        null=False,
-        default=0,
+        verbose_name=_(u"Benefiční startovné"), null=False, default=0,
     )
     benefitial_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Benefiční startovné pro organizace"),
-        null=False,
-        default=0,
+        verbose_name=_(u"Benefiční startovné pro organizace"), null=False, default=0,
     )
     free_entry_cases_html = models.TextField(
-        verbose_name=_(u"Případy, kdy je startovné zdarma"),
-        null=True,
-        blank=True,
+        verbose_name=_(u"Případy, kdy je startovné zdarma"), null=True, blank=True,
     )
     club_membership_integration = models.BooleanField(
-        verbose_name=_("Povolit integraci s klubem přátel?"),
-        default=True,
+        verbose_name=_("Povolit integraci s klubem přátel?"), default=True,
     )
     track_required = models.BooleanField(
-        verbose_name=_("DEPRECATED"),
-        default=False,
-        null=False,
+        verbose_name=_("DEPRECATED"), default=False, null=False,
     )
     tracks = models.BooleanField(
-        verbose_name=_("Umožnit soutěžícím uložit trasu?"),
-        default=True,
+        verbose_name=_("Umožnit soutěžícím uložit trasu?"), default=True,
     )
     recreational = models.BooleanField(
-        verbose_name=_("Lze zadávat i výlety"),
-        default=False,
+        verbose_name=_("Lze zadávat i výlety"), default=False,
     )
     wp_api_date_from = models.DateField(
-        verbose_name=_("Datum, od kterého se zobrazují příspěvky z Wordpress API se články"),
+        verbose_name=_(
+            "Datum, od kterého se zobrazují příspěvky z Wordpress API se články"
+        ),
         null=True,
         blank=True,
     )
     max_team_members = models.PositiveIntegerField(
-        verbose_name=_("Počet lidí v týmu"),
-        default=5,
-        blank=True,
-        null=True,
+        verbose_name=_("Počet lidí v týmu"), default=5, blank=True, null=True,
     )
 
     sandwich_type = models.ForeignKey(
-        PdfSandwichType,
-        null=True,
-        blank=True,
-        default='',
-        on_delete=models.SET_NULL,
+        PdfSandwichType, null=True, blank=True, default="", on_delete=models.SET_NULL,
     )
     team_diploma_sandwich_type = models.ForeignKey(
         PdfSandwichType,
-        related_name='team_diploma_campaign',
+        related_name="team_diploma_campaign",
         null=True,
         blank=True,
-        default='',
+        default="",
         on_delete=models.SET_NULL,
     )
     city_in_campaign_diploma_sandwich_type = models.ForeignKey(
         PdfSandwichType,
-        related_name='city_in_campaign_diploma_campaign',
+        related_name="city_in_campaign_diploma_campaign",
         null=True,
         blank=True,
-        default='',
+        default="",
         on_delete=models.SET_NULL,
     )
 
@@ -288,8 +251,8 @@ class Campaign(Pricable, models.Model):
         if self.name:
             return self.name
         if self.campaign_type is None:
-            return 'No campaign type ' + str(self.year)
-        return self.campaign_type.name + ' ' + str(self.year)
+            return "No campaign type " + str(self.year)
+        return self.campaign_type.name + " " + str(self.year)
 
     def __str__(self):
         return self.display_name()
@@ -311,12 +274,12 @@ class Campaign(Pricable, models.Model):
     def day_active(self, day, day_today=None):
         """ Return if this day can be changed by user """
         try:
-            entry_phase = self.phase('entry_enabled')
+            entry_phase = self.phase("entry_enabled")
             if not entry_phase.is_actual():
                 return False
         except Phase.DoesNotExist:
             pass
-        competition_phase = self.phase('competition')
+        competition_phase = self.phase("competition")
         return self.day_recent(day, day_today) and competition_phase.day_in_phase(day)
 
     def day_recent(self, day, day_today=None):
@@ -325,9 +288,8 @@ class Campaign(Pricable, models.Model):
         """
         if day_today is None:
             day_today = util.today()
-        return (
-            (day <= day_today) and
-            (day > self._first_possibly_active_day(day_today=day_today))
+        return (day <= day_today) and (
+            day > self._first_possibly_active_day(day_today=day_today)
         )
 
     def _first_possibly_active_day(self, day_today=None):
@@ -339,47 +301,55 @@ class Campaign(Pricable, models.Model):
         """ Return if this day can be added as vacation """
         day_today = util.today()
         last_day = self.competition_phase().date_to
-        return (
-            (day <= last_day) and
-            (day > day_today)
-        )
+        return (day <= last_day) and (day > day_today)
 
     def possible_vacation_days(self):
         """ Return days, that can be added as vacation """
+
         @cached(60)
         def get_days(pk):
             competition_phase = self.competition_phase()
-            return [d for d in util.daterange(competition_phase.date_from, competition_phase.date_to) if self.vacation_day_active(d)]
+            return [
+                d
+                for d in util.daterange(
+                    competition_phase.date_from, competition_phase.date_to
+                )
+                if self.vacation_day_active(d)
+            ]
+
         return get_days(self.pk)
 
     def user_attendances_for_delivery(self):
         from t_shirt_delivery.models import PackageTransaction
-        return UserAttendance.objects.filter(
-            campaign=self,
-            payment_status__in=('done', 'no_admission'),
-            t_shirt_size__ship=True,
-        ).exclude(
-            transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses,
-        ).exclude(
-            team=None,
-        ).annotate(
-            payment_created=Max('transactions__payment__created'),
-        ).order_by(
-            'payment_created',
-        ).distinct()
+
+        return (
+            UserAttendance.objects.filter(
+                campaign=self,
+                payment_status__in=("done", "no_admission"),
+                t_shirt_size__ship=True,
+            )
+            .exclude(
+                transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses,
+            )
+            .exclude(team=None,)
+            .annotate(payment_created=Max("transactions__payment__created"),)
+            .order_by("payment_created",)
+            .distinct()
+        )
 
     def get_complementary_school_campaign(self):
         @cached(60)
         def get_campaign(pk):
             try:
-                return Campaign.objects.get(year=self.year, campaign_type__slug='skoly')
+                return Campaign.objects.get(year=self.year, campaign_type__slug="skoly")
             except Campaign.DoesNotExist:
                 return None
+
         return get_campaign(self.pk)
 
     def get_complementary_main_campaign(self):
         try:
-            return Campaign.objects.get(year=self.year, campaign_type__slug='dpnk')
+            return Campaign.objects.get(year=self.year, campaign_type__slug="dpnk")
         except Campaign.DoesNotExist:
             return None
 
@@ -388,12 +358,14 @@ class Campaign(Pricable, models.Model):
 
     def get_directions(self):
         if self.recreational:
-            return ('trip_to', 'trip_from', 'recreational')
+            return ("trip_to", "trip_from", "recreational")
         else:
-            return ('trip_to', 'trip_from')
+            return ("trip_to", "trip_from")
 
     @denormalized(models.BooleanField, default=True)
-    @depend_on_related('t_shirt_delivery.TShirtSize', type='backward', foreign_key='campaign')
+    @depend_on_related(
+        "t_shirt_delivery.TShirtSize", type="backward", foreign_key="campaign"
+    )
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 
@@ -402,12 +374,14 @@ class Campaign(Pricable, models.Model):
         Return phase of given type from this campaign.
         @phase_type Type of phase.
         """
+
         @cached(60)
         def get_phase(pk, phase_type):
             try:
                 return self.phase_set.get(phase_type=phase_type)
             except Phase.DoesNotExist:
                 return False
+
         result = get_phase(self.pk, phase_type)
         if not result:
             get_phase.invalidate(self.pk, phase_type)
@@ -415,7 +389,7 @@ class Campaign(Pricable, models.Model):
         return result
 
     def competition_phase(self):
-        return self.phase('competition')
+        return self.phase("competition")
 
     #############################################
     # DEPRECATED ################################
@@ -454,8 +428,8 @@ class Campaign(Pricable, models.Model):
     )
 
     LANGUAGE_PREFIXES = [
-        ('dpnk', _("Do práce na kole")),
-        ('dsnk', _("Do školy na kole")),
+        ("dpnk", _("Do práce na kole")),
+        ("dsnk", _("Do školy na kole")),
     ]
     language_prefixes = models.CharField(
         verbose_name=_("Deprecated: Jazyková sada"),
@@ -463,9 +437,8 @@ class Campaign(Pricable, models.Model):
         max_length=16,
         null=False,
         blank=False,
-        default='dpnk',
+        default="dpnk",
     )
     main_color = ColorField(
-        default='#1EA04F',
-        verbose_name="Deprecated: Hlavní barva kampaně",
+        default="#1EA04F", verbose_name="Deprecated: Hlavní barva kampaně",
     )

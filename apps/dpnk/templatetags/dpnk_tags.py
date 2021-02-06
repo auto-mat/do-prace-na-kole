@@ -39,23 +39,28 @@ HTTP_TIMEOUT = 5.000
 
 class TimeoutRequestsSession(requests.Session):
     def request(self, *args, **kwargs):
-        if kwargs.get('timeout') is None:
-            kwargs['timeout'] = HTTP_TIMEOUT
+        if kwargs.get("timeout") is None:
+            kwargs["timeout"] = HTTP_TIMEOUT
         return super(TimeoutRequestsSession, self).request(*args, **kwargs)
 
 
 @register.inclusion_tag("templatetags/cyklistesobe.html")
 def cyklistesobe(city_slug, order="created_at"):
-    api = slumber.API("http://www.cyklistesobe.cz/api/", session=TimeoutRequestsSession())
+    api = slumber.API(
+        "http://www.cyklistesobe.cz/api/", session=TimeoutRequestsSession()
+    )
     kwargs = {}
     if city_slug:
-        kwargs['group'] = city_slug
+        kwargs["group"] = city_slug
     try:
         cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
-    except (slumber.exceptions.SlumberBaseException, requests.exceptions.RequestException):
-        logger.exception(u'Error fetching cyklistesobe page')
+    except (
+        slumber.exceptions.SlumberBaseException,
+        requests.exceptions.RequestException,
+    ):
+        logger.exception("Error fetching cyklistesobe page")
         cyklistesobe = None
-    return {'cyklistesobe': cyklistesobe}
+    return {"cyklistesobe": cyklistesobe}
 
 
 @register.inclusion_tag("templatetags/wp_news.html")
@@ -69,7 +74,7 @@ def wp_news(campaign, city=None):
         _from=campaign.wp_api_date_from,
         header=_("Novinky"),
         city=city,
-        **({} if city else {'_global_news': 1}),
+        **({} if city else {"_global_news": 1}),
     )
 
 
@@ -82,7 +87,7 @@ def wp_actions(campaign, city=None):
         unfold="first",
         _page_subtype="event",
         _post_parent=city.slug if city else None,
-        orderby='start_date',
+        orderby="start_date",
         _from=campaign.wp_api_date_from,
         count=5,
         header=_("Akce"),
@@ -110,42 +115,45 @@ def wp_prize(campaign, city=None):
 
 
 def _wp_news(
-        campaign,
-        post_type="post",
-        post_type_string=_("novinka"),
-        unfold="first",
-        count=-1,
-        show_description=True,
-        orderby='published',
-        reverse=True,
-        header=None,
-        city=None,
-        **other_args,
+    campaign,
+    post_type="post",
+    post_type_string=_("novinka"),
+    unfold="first",
+    count=-1,
+    show_description=True,
+    orderby="published",
+    reverse=True,
+    header=None,
+    city=None,
+    **other_args,
 ):
     get_params = {}
-    get_params['feed'] = "content_to_backend"
-    get_params['_post_type'] = post_type
-    get_params['_number'] = count
-    get_params['orderby'] = orderby
+    get_params["feed"] = "content_to_backend"
+    get_params["_post_type"] = post_type
+    get_params["_number"] = count
+    get_params["orderby"] = orderby
     get_params.update(other_args)
     url = campaign.campaign_type.wp_api_url
     api = slumber.API(url, session=TimeoutRequestsSession())
     try:
         wp_feed = api.feed.get(**get_params)
-    except (slumber.exceptions.SlumberBaseException, requests.exceptions.RequestException):
-        logger.exception(u'Error fetching wp news')
+    except (
+        slumber.exceptions.SlumberBaseException,
+        requests.exceptions.RequestException,
+    ):
+        logger.exception("Error fetching wp news")
         return {}
     if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):
-        logger.exception('Error encoding wp news format', extra={'wp_feed': wp_feed})
+        logger.exception("Error encoding wp news format", extra={"wp_feed": wp_feed})
         return {}
     return {
-        'wp_feed': wp_feed,
-        'post_type_string': post_type_string,
-        'unfold': unfold,
-        'show_description': show_description,
-        'header': header,
-        'city': city,
-        'BASE_WP_URL': url,
+        "wp_feed": wp_feed,
+        "post_type_string": post_type_string,
+        "unfold": unfold,
+        "show_description": show_description,
+        "header": header,
+        "city": city,
+        "BASE_WP_URL": url,
     }
 
 
@@ -155,27 +163,27 @@ def change_lang(context, lang=None, *args, **kwargs):
     Get active page's url by a specified language
     Usage: {% change_lang 'en' %}
     """
-    if 'request' not in context:
+    if "request" not in context:
         return "/%s" % lang
 
-    path = context['request'].path
+    path = context["request"].path
     return translate_url(path, lang)
 
 
 @register.simple_tag(takes_context=True)
 def campaign_base_url(context, campaign):
-    if hasattr(campaign, 'get_base_url'):
-        return campaign.get_base_url(context['request'])
+    if hasattr(campaign, "get_base_url"):
+        return campaign.get_base_url(context["request"])
 
 
 @register.simple_tag(takes_context=False)
 def thousand_separator():
-    return get_format('THOUSAND_SEPARATOR', get_language())
+    return get_format("THOUSAND_SEPARATOR", get_language())
 
 
 @register.simple_tag(takes_context=False)
 def decimal_separator():
-    return get_format('DECIMAL_SEPARATOR', get_language())
+    return get_format("DECIMAL_SEPARATOR", get_language())
 
 
 @register.filter

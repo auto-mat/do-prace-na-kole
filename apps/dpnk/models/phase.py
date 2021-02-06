@@ -27,13 +27,13 @@ from django.utils.translation import ugettext_lazy as _
 from .. import util
 
 TYPE = [
-    ('registration', _("registrační")),
-    ('payment', _("placení startovného")),
-    ('competition', _("soutěžní")),
-    ('entry_enabled', _("zápis jízd umožněn")),
-    ('results', _("výsledková")),
-    ('admissions', _("přihlašovací do soutěží")),
-    ('invoices', _("vytváření faktur")),
+    ("registration", _("registrační")),
+    ("payment", _("placení startovného")),
+    ("competition", _("soutěžní")),
+    ("entry_enabled", _("zápis jízd umožněn")),
+    ("results", _("výsledková")),
+    ("admissions", _("přihlašovací do soutěží")),
+    ("invoices", _("vytváření faktur")),
 ]
 PHASE_TYPE_DICT = dict(TYPE)
 
@@ -47,7 +47,7 @@ class Phase(models.Model):
         unique_together = (("phase_type", "campaign"),)
 
     campaign = models.ForeignKey(
-        'Campaign',
+        "Campaign",
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
@@ -58,19 +58,13 @@ class Phase(models.Model):
         choices=TYPE,
         max_length=16,
         null=False,
-        default='registration',
+        default="registration",
     )
     date_from = models.DateField(
-        verbose_name=_(u"Datum začátku fáze"),
-        default=None,
-        null=True,
-        blank=True,
+        verbose_name=_(u"Datum začátku fáze"), default=None, null=True, blank=True,
     )
     date_to = models.DateField(
-        verbose_name=_(u"Datum konce fáze"),
-        default=None,
-        null=True,
-        blank=True,
+        verbose_name=_(u"Datum konce fáze"), default=None, null=True, blank=True,
     )
 
     @classmethod

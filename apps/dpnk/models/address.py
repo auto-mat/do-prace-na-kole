@@ -36,7 +36,7 @@ def get_address_string(address):
         filter(
             None,
             [
-                getattr(address, 'recipient', ''),
+                getattr(address, "recipient", ""),
                 ("%s %s" % (address.street, address.street_number)).strip(),
                 ("%s %s" % (util.format_psc(address.psc), address.city)).strip(),
             ],
@@ -45,24 +45,16 @@ def get_address_string(address):
 
 
 def address_generator(
-    null_blank=False,
-    recipient_name=_("Pracoviště"),
-    char_psc=False,
+    null_blank=False, recipient_name=_("Pracoviště"), char_psc=False,
 ):
     if char_psc:
         psc_field = models.CharField(
-            verbose_name=_(u"PSČ"),
-            max_length=50,
-            null=True,
-            blank=True,
+            verbose_name=_(u"PSČ"), max_length=50, null=True, blank=True,
         )
     else:
         psc_field = models.IntegerField(
             verbose_name=_(u"PSČ"),
-            validators=[
-                MaxValueValidator(99999),
-                MinValueValidator(10000),
-            ],
+            validators=[MaxValueValidator(99999), MinValueValidator(10000),],
             default=None,
             null=True,
             blank=null_blank,
@@ -85,7 +77,9 @@ def address_generator(
         )
         recipient = models.CharField(
             verbose_name=recipient_name,
-            help_text=_("Vyplňte pouze pokud Vaše interní předpisy vyžadují jméno toho, kdo je za vyřízení faktury zodpovědný."),
+            help_text=_(
+                "Vyplňte pouze pokud Vaše interní předpisy vyžadují jméno toho, kdo je za vyřízení faktury zodpovědný."
+            ),
             default="",
             max_length=50,
             null=True,
@@ -106,7 +100,11 @@ def address_generator(
         def clean(self, value, model):
             if self.psc and not PSC.objects.filter(psc=self.psc).exists():
                 raise ValidationError(
-                    {'address_psc': _('Toto PSČ neexistuje v databázi všech směrovacích čísel České Republiky. Prosím zadejte platné PSČ')},
+                    {
+                        "address_psc": _(
+                            "Toto PSČ neexistuje v databázi všech směrovacích čísel České Republiky. Prosím zadejte platné PSČ"
+                        )
+                    },
                 )
 
     return AddressField
@@ -115,12 +113,7 @@ def address_generator(
 Address = address_generator()
 AddressOptional = address_generator(True)
 addressee_string = _("Adresát na faktuře")
-CompanyAddress = address_generator(
-    False,
-    recipient_name=addressee_string,
-)
+CompanyAddress = address_generator(False, recipient_name=addressee_string,)
 InvoiceAddress = address_generator(
-    True,
-    recipient_name=addressee_string,
-    char_psc=True,
+    True, recipient_name=addressee_string, char_psc=True,
 )

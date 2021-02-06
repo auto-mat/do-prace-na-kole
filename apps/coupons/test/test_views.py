@@ -31,28 +31,36 @@ from model_mommy import mommy
 
 
 @override_settings(
+    # black
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class DiscountCouponViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type)
+        self.campaign = mommy.make(
+            # black
+            "dpnk.campaign",
+            slug="testing-campaign",
+            campaign_type=campaign_type,
+        )
         mommy.make(
+            # black
             "dpnk.Phase",
             phase_type="registration",
             campaign=self.campaign,
         )
         mommy.make(
+            # black
             "dpnk.Phase",
             phase_type="payment",
             campaign=self.campaign,
         )
         mommy.make(
-            'price_level.PriceLevel',
+            "price_level.PriceLevel",
             price=120,
             pricable=self.campaign,
             takes_effect_on=datetime.date(year=2010, month=1, day=1),
-            category='basic',
+            category="basic",
         )
         mommy.make(
             "dpnk.Phase",
@@ -62,26 +70,31 @@ class DiscountCouponViewTests(TestCase):
             date_to=datetime.date(year=2019, month=12, day=12),
         )
         userattendance = mommy.make(
-            'dpnk.UserAttendance',
+            "dpnk.UserAttendance",
             campaign=self.campaign,
             team__campaign=self.campaign,
             team__name="test team",
             t_shirt_size__name="XXXL",
-            userprofile__user__username='test',
+            userprofile__user__username="test",
         )
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
         self.client.force_login(
+            # black
             userattendance.userprofile.user,
             settings.AUTHENTICATION_BACKENDS[0],
         )
 
     def test_discount_coupon_view_nonexistent(self):
         post_data = {
-            'code': 'as-asdfsd',
-            'next': 'Next',
+            "code": "as-asdfsd",
+            "next": "Next",
         }
-        response = self.client.post(reverse('discount_coupon'), post_data)
-        self.assertContains(response, "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>", html=True)
+        response = self.client.post(reverse("discount_coupon"), post_data)
+        self.assertContains(
+            response,
+            "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>",
+            html=True,
+        )
 
     def test_discount_coupon_view_found(self):
         mommy.make(
@@ -93,14 +106,16 @@ class DiscountCouponViewTests(TestCase):
             pk=1,
         )
         post_data = {
-            'code': 'Aa-aaaAaa',
-            'next': 'Next',
+            "code": "Aa-aaaAaa",
+            "next": "Next",
         }
-        response = self.client.post(reverse('discount_coupon'), post_data)
+        response = self.client.post(reverse("discount_coupon"), post_data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('profil'))
-        response = self.client.post(reverse('discount_coupon'), post_data)
-        self.assertContains(response, "<li>Tento slevový kupón již byl použit</li>", html=True)
+        self.assertEqual(response.url, reverse("profil"))
+        response = self.client.post(reverse("discount_coupon"), post_data)
+        self.assertContains(
+            response, "<li>Tento slevový kupón již byl použit</li>", html=True
+        )
 
     def test_discount_coupon_view_found_discount(self):
         mommy.make(
@@ -113,12 +128,14 @@ class DiscountCouponViewTests(TestCase):
             pk=2,
         )
         post_data = {
-            'code': 'Aa-aaaAab',
-            'next': 'Next',
+            "code": "Aa-aaaAab",
+            "next": "Next",
         }
-        response = self.client.post(reverse('discount_coupon'), post_data, follow=True)
-        self.assertContains(response, '<span id="payment_amount">60 Kč</span>', html=True)
-        self.assertRedirects(response, reverse('typ_platby'))
+        response = self.client.post(reverse("discount_coupon"), post_data, follow=True)
+        self.assertContains(
+            response, '<span id="payment_amount">60 Kč</span>', html=True
+        )
+        self.assertRedirects(response, reverse("typ_platby"))
 
     def test_discount_coupon_view_expired(self):
         mommy.make(
@@ -131,8 +148,12 @@ class DiscountCouponViewTests(TestCase):
             pk=2,
         )
         post_data = {
-            'code': 'Aa-aaaAab',
-            'next': 'Next',
+            "code": "Aa-aaaAab",
+            "next": "Next",
         }
-        response = self.client.post(reverse('discount_coupon'), post_data, follow=True)
-        self.assertContains(response, "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>", html=True)
+        response = self.client.post(reverse("discount_coupon"), post_data, follow=True)
+        self.assertContains(
+            response,
+            "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>",
+            html=True,
+        )

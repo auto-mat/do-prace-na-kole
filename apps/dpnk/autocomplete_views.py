@@ -2,7 +2,7 @@ from dal import autocomplete
 
 from django.db.models import Q
 
-from .models import (Company, Subsidiary, Team)
+from .models import Company, Subsidiary, Team
 
 
 class CompanyAutocomplete(autocomplete.Select2QuerySetView):
@@ -14,10 +14,10 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(
-                Q(ico=self.q) |
-                Q(name__unaccent__icontains=self.q) |
-                Q(name__unaccent__trigram_similar=self.q) |
-                Q(address_street__unaccent__icontains=self.q),
+                Q(ico=self.q)
+                | Q(name__unaccent__icontains=self.q)
+                | Q(name__unaccent__trigram_similar=self.q)
+                | Q(address_street__unaccent__icontains=self.q),
             ).filter(active=True)
 
         return qs
@@ -30,7 +30,7 @@ class SubsidiaryAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = Subsidiary.objects.all()
 
-        company = self.forwarded.get('company', None)
+        company = self.forwarded.get("company", None)
 
         if company:
             qs = qs.filter(company=company)
@@ -53,7 +53,7 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = Team.objects.all()
 
-        subsidiary = self.forwarded.get('subsidiary', None)
+        subsidiary = self.forwarded.get("subsidiary", None)
 
         if subsidiary:
             qs = qs.filter(subsidiary=subsidiary, campaign=self.request.campaign)

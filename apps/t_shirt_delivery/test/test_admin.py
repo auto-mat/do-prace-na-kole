@@ -31,18 +31,15 @@ from dpnk.test.util import print_response  # noqa
 from model_mommy import mommy
 
 
-@override_settings(
-    SSLIFY_ADMIN_DISABLE=True,
-)
+@override_settings(SSLIFY_ADMIN_DISABLE=True,)
 class AdminTestBase(TestCase):
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
         self.user = mommy.make(
-            "auth.User",
-            is_superuser=True,
-            is_staff=True,
-            username="foo_username",
+            "auth.User", is_superuser=True, is_staff=True, username="foo_username",
         )
         self.client.force_login(self.user, settings.AUTHENTICATION_BACKENDS[0])
 
@@ -55,13 +52,13 @@ class DeliveryBatchAdminMasschangeTests(AdminTestBase):
             dispatched=True,
             id=1,
         )
-        address = reverse('admin:t_shirt_delivery_deliverybatch_changelist')
+        address = reverse("admin:t_shirt_delivery_deliverybatch_changelist")
         post_data = {
-            'action': 'mass_change_selected',
-            '_selected_action': '1',
+            "action": "mass_change_selected",
+            "_selected_action": "1",
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, 'Zákaznické listy:')
+        self.assertContains(response, "Zákaznické listy:")
 
 
 class PackageTransactionTests(AdminTestBase):
@@ -114,7 +111,7 @@ class PackageTransactionTests(AdminTestBase):
         """
         address = "/admin/t_shirt_delivery/packagetransaction/export/?o=3"
         post_data = {
-            'file_format': 0,
+            "file_format": 0,
         }
         response = self.client.post(address, post_data)
         self.assertContains(
@@ -142,7 +139,7 @@ class PackageTransactionTests(AdminTestBase):
         self.user_attendance.save()
         address = "/admin/t_shirt_delivery/packagetransaction/export/?o=3"
         post_data = {
-            'file_format': 0,
+            "file_format": 0,
         }
         response = self.client.post(address, post_data)
         self.assertContains(
@@ -180,7 +177,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         )
 
     def test_deliverybatch_admin_changelist(self):
-        address = reverse('admin:t_shirt_delivery_deliverybatch_changelist')
+        address = reverse("admin:t_shirt_delivery_deliverybatch_changelist")
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing campaign")
         self.assertContains(response, "field-customer_sheets__url")
@@ -189,16 +186,13 @@ class DeliveryBatchAdminTests(AdminTestBase):
         self.assertContains(response, "<span>Testing t-shirt size</span>", html=True)
 
     def test_deliverybatch_admin_change(self):
-        address = reverse(
-            'admin:t_shirt_delivery_deliverybatch_change',
-            args=(1,),
-        )
+        address = reverse("admin:t_shirt_delivery_deliverybatch_change", args=(1,),)
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing t-shirt size: 2")
         self.assertContains(response, "Testing campaign")
 
     def test_deliverybatch_admin_add(self):
-        address = reverse('admin:t_shirt_delivery_deliverybatch_add')
+        address = reverse("admin:t_shirt_delivery_deliverybatch_add")
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
@@ -225,7 +219,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             team__name="Foo team",
             campaign=self.campaign,
         )
-        address = reverse('admin:t_shirt_delivery_deliverybatch_add')
+        address = reverse("admin:t_shirt_delivery_deliverybatch_add")
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
@@ -261,7 +255,7 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         )
 
     def test_userattendancetobatchadmin_admin_changelist(self):
-        address = reverse('admin:t_shirt_delivery_userattendancetobatch_changelist')
+        address = reverse("admin:t_shirt_delivery_userattendancetobatch_changelist")
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Foo T-Shirt size")
         self.assertContains(
@@ -274,8 +268,7 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
 
     def test_userattendancetobatchadmin_admin_change(self):
         address = reverse(
-            'admin:t_shirt_delivery_userattendancetobatch_change',
-            args=(1,),
+            "admin:t_shirt_delivery_userattendancetobatch_change", args=(1,),
         )
         response = self.client.get(address, follow=True)
         self.assertContains(
@@ -285,8 +278,8 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         )
 
     def test_teampackage_admin_changelist(self):
-        mommy.make('TeamPackage', box__delivery_batch__campaign=testing_campaign)
-        address = reverse('admin:t_shirt_delivery_teampackage_changelist')
+        mommy.make("TeamPackage", box__delivery_batch__campaign=testing_campaign)
+        address = reverse("admin:t_shirt_delivery_teampackage_changelist")
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
@@ -295,8 +288,12 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         )
 
     def test_teampackage_admin_change(self):
-        team_package = mommy.make('TeamPackage', box__delivery_batch__campaign=testing_campaign, box__id=1)
-        address = reverse('admin:t_shirt_delivery_teampackage_change', args=(team_package.pk,))
+        team_package = mommy.make(
+            "TeamPackage", box__delivery_batch__campaign=testing_campaign, box__id=1
+        )
+        address = reverse(
+            "admin:t_shirt_delivery_teampackage_change", args=(team_package.pk,)
+        )
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
@@ -305,8 +302,12 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         )
 
     def test_subsidiarybox_admin_changelist(self):
-        mommy.make('SubsidiaryBox', delivery_batch__campaign=testing_campaign, carrier_identification=1234)
-        address = reverse('admin:t_shirt_delivery_subsidiarybox_changelist')
+        mommy.make(
+            "SubsidiaryBox",
+            delivery_batch__campaign=testing_campaign,
+            carrier_identification=1234,
+        )
+        address = reverse("admin:t_shirt_delivery_subsidiarybox_changelist")
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
@@ -315,6 +316,6 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         )
 
     def test_userattendancetobatchadmin_admin_add(self):
-        address = reverse('admin:t_shirt_delivery_userattendancetobatch_add')
+        address = reverse("admin:t_shirt_delivery_userattendancetobatch_add")
         response = self.client.get(address, follow=True)
         self.assertEquals(response.status_code, 403)

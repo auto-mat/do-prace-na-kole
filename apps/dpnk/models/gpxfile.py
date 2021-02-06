@@ -48,11 +48,13 @@ from .util import MAP_DESCRIPTION
 
 
 def normalize_gpx_filename(instance, filename):
-    return '-'.join([
-        'gpx_tracks/dpnk-%s/track' % instance.user_attendance.campaign.pk,
-        datetime.datetime.now().strftime("%Y-%m-%d"),
-        slugify(filename),
-    ])
+    return "-".join(
+        [
+            "gpx_tracks/dpnk-%s/track" % instance.user_attendance.campaign.pk,
+            datetime.datetime.now().strftime("%Y-%m-%d"),
+            slugify(filename),
+        ]
+    )
 
 
 @with_author
@@ -72,14 +74,12 @@ class GpxFile(models.Model):
         max_length=512,
     )
     DIRECTIONS = [
-        ('trip_to', _(u"Tam")),
-        ('trip_from', _(u"Zpět")),
+        ("trip_to", _(u"Tam")),
+        ("trip_from", _(u"Zpět")),
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
     trip_date = models.DateField(
-        verbose_name=_(u"Datum vykonání cesty"),
-        null=False,
-        blank=False,
+        verbose_name=_(u"Datum vykonání cesty"), null=False, blank=False,
     )
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),
@@ -88,12 +88,7 @@ class GpxFile(models.Model):
         null=False,
         blank=False,
     )
-    trip = models.OneToOneField(
-        Trip,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
+    trip = models.OneToOneField(Trip, null=True, blank=True, on_delete=models.CASCADE,)
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
         help_text=MAP_DESCRIPTION,
@@ -103,29 +98,19 @@ class GpxFile(models.Model):
         geography=True,
     )
     distance = models.PositiveIntegerField(
-        verbose_name=_("Vzdálenost v metrech"),
-        null=True,
-        blank=True,
+        verbose_name=_("Vzdálenost v metrech"), null=True, blank=True,
     )
     duration = models.PositiveIntegerField(
-        verbose_name=_("Doba v sekundách"),
-        null=True,
-        blank=True,
+        verbose_name=_("Doba v sekundách"), null=True, blank=True,
     )
     source_application = models.CharField(
-        verbose_name=_("Zdrojová aplikace"),
-        max_length=255,
-        null=True,
-        blank=True,
+        verbose_name=_("Zdrojová aplikace"), max_length=255, null=True, blank=True,
     )
     user_attendance = models.ForeignKey(
-        UserAttendance,
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
+        UserAttendance, null=False, blank=False, on_delete=models.CASCADE,
     )
     commute_mode = models.ForeignKey(
-        'CommuteMode',
+        "CommuteMode",
         verbose_name=_("Mód dopravy"),
         on_delete=models.CASCADE,
         default=1,
@@ -133,24 +118,16 @@ class GpxFile(models.Model):
         blank=False,
     )
     from_application = models.BooleanField(
-        verbose_name=_(u"Nahráno z aplikace"),
-        default=False,
-        null=False,
+        verbose_name=_(u"Nahráno z aplikace"), default=False, null=False,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
-        auto_now_add=True,
-        null=True,
+        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
-        auto_now=True,
-        null=True,
+        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
     )
     ecc_last_upload = models.DateTimeField(
-        verbose_name=_(u"Datum posledního nahrátí do ECC"),
-        null=True,
-        blank=True,
+        verbose_name=_(u"Datum posledního nahrátí do ECC"), null=True, blank=True,
     )
 
     class Meta:
@@ -160,10 +137,10 @@ class GpxFile(models.Model):
             ("user_attendance", "trip_date", "direction"),
             ("trip", "direction"),
         )
-        ordering = ('trip_date', 'direction')
+        ordering = ("trip_date", "direction")
 
     def length(self):
-        length = GpxFile.objects.annotate(length=Length('track')).get(pk=self.pk).length
+        length = GpxFile.objects.annotate(length=Length("track")).get(pk=self.pk).length
         if length:
             return round(length.km, 2)
 
@@ -176,20 +153,28 @@ class GpxFile(models.Model):
             try:
                 track_file = track_file.read().decode("utf-8")
             except UnicodeDecodeError:
-                raise ValidationError({'file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
+                raise ValidationError(
+                    {
+                        "file": _(
+                            "Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?"
+                        )
+                    }
+                )
             self.track_clean = gpx_parse.parse_gpx(track_file)
 
 
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
-    by_other_vehicle = CommuteMode.objects.get(slug='by_other_vehicle')
+    by_other_vehicle = CommuteMode.objects.get(slug="by_other_vehicle")
     if not instance.trip:
         trip, created = Trip.objects.get_or_create(
             user_attendance=instance.user_attendance,
             date=instance.trip_date,
             direction=instance.direction,
             defaults={
-                'commute_mode': instance.commute_mode if instance.user_attendance.campaign.day_active(instance.trip_date) else by_other_vehicle,
+                "commute_mode": instance.commute_mode
+                if instance.user_attendance.campaign.day_active(instance.trip_date)
+                else by_other_vehicle,
             },
         )
         instance.trip = trip

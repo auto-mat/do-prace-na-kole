@@ -1,7 +1,7 @@
 from model_mommy import mommy
 
 
-class Cities():
+class Cities:
     def __init__(self, **kwargs):
         self.city = mommy.make(  # was pk=1
             "dpnk.city",

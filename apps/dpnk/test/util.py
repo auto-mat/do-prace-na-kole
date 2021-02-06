@@ -33,11 +33,11 @@ def print_response(response, stdout=False, filename="response.html"):
 class DenormMixin(object):
     def setUp(self):
         super().setUp()
-        call_command('denorm_init')
+        call_command("denorm_init")
 
     def tearDown(self):
         super().tearDown()
-        call_command('denorm_drop')
+        call_command("denorm_drop")
 
 
 class ClearCacheMixin(object):

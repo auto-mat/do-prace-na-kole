@@ -30,21 +30,20 @@ from model_mommy import mommy
 class CompetitionResultListJsonTeamTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        self.factory = RequestFactory()
-        self.campaign = mommy.make(
-            'dpnk.Campaign',
-            slug="testing-campaign",
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
+        self.factory = RequestFactory()
+        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign",)
         team_length_competition = mommy.make(
-            'dpnk.Competition',
+            "dpnk.Competition",
             campaign=self.campaign,
-            competition_type='length',
-            competitor_type='team',
+            competition_type="length",
+            competitor_type="team",
             slug="competition",
         )
         mommy.make(
-            'dpnk.CompetitionResult',
+            "dpnk.CompetitionResult",
             result="1",
             result_divident="1.2",
             result_divisor="1.1",
@@ -56,7 +55,7 @@ class CompetitionResultListJsonTeamTests(TestCase):
             team__name="foo team",
         )
         mommy.make(
-            'dpnk.CompetitionResult',
+            "dpnk.CompetitionResult",
             result="0.5",
             result_divident="0.5",
             result_divisor="1.0",
@@ -70,9 +69,11 @@ class CompetitionResultListJsonTeamTests(TestCase):
 
     def test_team_length(self):
         """ Test if team length competition result JSON is returned """
-        request = self.factory.get('')
+        request = self.factory.get("")
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [
@@ -87,15 +88,15 @@ class CompetitionResultListJsonTeamTests(TestCase):
 
     def test_team_length_search(self):
         """ Test if searching by string works """
-        get_params = {'search[value]': 'oo cit'}
-        request = self.factory.get('', get_params)
+        get_params = {"search[value]": "oo cit"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
-            "data": [
-                ["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],
-            ],
+            "data": [["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],],
             "draw": 0,
             "result": "ok",
             "recordsFiltered": 1,
@@ -104,10 +105,12 @@ class CompetitionResultListJsonTeamTests(TestCase):
 
     def test_team_length_company_search(self):
         """ Test if searching by company name works """
-        get_params = {'columns[0][search][value]': 'company'}
-        request = self.factory.get('', get_params)
+        get_params = {"columns[0][search][value]": "company"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [
@@ -122,15 +125,15 @@ class CompetitionResultListJsonTeamTests(TestCase):
 
     def test_team_length_company_search_quotes(self):
         """ Test if searching by exact company name works """
-        get_params = {'columns[0][search][value]': '"bar company"'}
-        request = self.factory.get('', get_params)
+        get_params = {"columns[0][search][value]": '"bar company"'}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
-            "data": [
-                ["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],
-            ],
+            "data": [["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],],
             "draw": 0,
             "result": "ok",
             "recordsFiltered": 1,
@@ -141,12 +144,11 @@ class CompetitionResultListJsonTeamTests(TestCase):
 class CompetitionResultListJsonSingleTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        self.factory = RequestFactory()
-        self.campaign = mommy.make(
-            'dpnk.Campaign',
-            slug="testing-campaign",
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
+        self.factory = RequestFactory()
+        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign",)
         mommy.make(
             "dpnk.Phase",
             phase_type="competition",
@@ -155,14 +157,14 @@ class CompetitionResultListJsonSingleTests(TestCase):
             date_to=datetime.date(year=2019, month=12, day=12),
         )
         self.single_frequency_competition = mommy.make(
-            'dpnk.Competition',
+            "dpnk.Competition",
             campaign=self.campaign,
-            competition_type='frequency',
-            competitor_type='single_user',
+            competition_type="frequency",
+            competitor_type="single_user",
             slug="competition",
         )
         mommy.make(
-            'dpnk.CompetitionResult',
+            "dpnk.CompetitionResult",
             result="1",
             result_divident="3",
             result_divisor="1",
@@ -179,7 +181,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             id=3,
         )
         mommy.make(
-            'dpnk.CompetitionResult',
+            "dpnk.CompetitionResult",
             result="1",
             result_divident="2",
             result_divisor="1",
@@ -199,14 +201,38 @@ class CompetitionResultListJsonSingleTests(TestCase):
 
     def test_get(self):
         """ Test if single user frequency competition result JSON is returned """
-        request = self.factory.get('')
+        request = self.factory.get("")
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "3", "1", "foo user", "foo team", "foo company", "-", '', "foo city"],
-                ["1.&nbsp;-&nbsp;2.", "100,0", "2", "1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+                [
+                    "1.&nbsp;-&nbsp;2.",
+                    "100,0",
+                    "3",
+                    "1",
+                    "foo user",
+                    "foo team",
+                    "foo company",
+                    "-",
+                    "",
+                    "foo city",
+                ],
+                [
+                    "1.&nbsp;-&nbsp;2.",
+                    "100,0",
+                    "2",
+                    "1",
+                    "Jan Novák",
+                    "bar team",
+                    "bar company",
+                    "-",
+                    "Žena",
+                    "bar city",
+                ],
             ],
             "draw": 0,
             "result": "ok",
@@ -221,13 +247,13 @@ class CompetitionResultListJsonSingleTests(TestCase):
         This test ensures, that ranks are correctly counted for filtered items.
         """
         mommy.make(
-            'dpnk.CompetitionResult',
+            "dpnk.CompetitionResult",
             result="1",
             result_divident="2",
             result_divisor="1",
             competition=self.single_frequency_competition,
             user_attendance__userprofile__nickname="baz user",
-            user_attendance__userprofile__occupation__name='Foo ocupation',
+            user_attendance__userprofile__occupation__name="Foo ocupation",
             user_attendance__campaign=self.campaign,
             user_attendance__team__campaign=self.campaign,
             user_attendance__team__member_count=1,
@@ -237,16 +263,29 @@ class CompetitionResultListJsonSingleTests(TestCase):
             id=1,
         )
         get_params = {
-            'length': 1,
-            'search[value]': 'baz user',
+            "length": 1,
+            "search[value]": "baz user",
         }
-        request = self.factory.get('', get_params)
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 3,
             "data": [
-                ["1.&nbsp;-&nbsp;3.", "100,0", "2", "1", "baz user", "baz team", "baz company", "Foo ocupation", '', "baz city"],
+                [
+                    "1.&nbsp;-&nbsp;3.",
+                    "100,0",
+                    "2",
+                    "1",
+                    "baz user",
+                    "baz team",
+                    "baz company",
+                    "Foo ocupation",
+                    "",
+                    "baz city",
+                ],
             ],
             "draw": 0,
             "result": "ok",
@@ -256,14 +295,27 @@ class CompetitionResultListJsonSingleTests(TestCase):
 
     def test_search_user_nickname(self):
         """ Test if searching by user nickname field works """
-        get_params = {'search[value]': 'oo user'}
-        request = self.factory.get('', get_params)
+        get_params = {"search[value]": "oo user"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "3", "1", "foo user", "foo team", "foo company", "-", '', "foo city"],
+                [
+                    "1.&nbsp;-&nbsp;2.",
+                    "100,0",
+                    "3",
+                    "1",
+                    "foo user",
+                    "foo team",
+                    "foo company",
+                    "-",
+                    "",
+                    "foo city",
+                ],
             ],
             "draw": 0,
             "result": "ok",
@@ -273,14 +325,27 @@ class CompetitionResultListJsonSingleTests(TestCase):
 
     def test_search_user_name(self):
         """ Test if searching by user name field works """
-        get_params = {'search[value]': 'Novak Jan'}
-        request = self.factory.get('', get_params)
+        get_params = {"search[value]": "Novak Jan"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "2", "1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+                [
+                    "1.&nbsp;-&nbsp;2.",
+                    "100,0",
+                    "2",
+                    "1",
+                    "Jan Novák",
+                    "bar team",
+                    "bar company",
+                    "-",
+                    "Žena",
+                    "bar city",
+                ],
             ],
             "draw": 0,
             "result": "ok",
@@ -290,14 +355,27 @@ class CompetitionResultListJsonSingleTests(TestCase):
 
     def test_search_sex_female(self):
         """ Test if searching by female sex name field works """
-        get_params = {'search[value]': 'Žena'}
-        request = self.factory.get('', get_params)
+        get_params = {"search[value]": "Žena"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "2", "1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+                [
+                    "1.&nbsp;-&nbsp;2.",
+                    "100,0",
+                    "2",
+                    "1",
+                    "Jan Novák",
+                    "bar team",
+                    "bar company",
+                    "-",
+                    "Žena",
+                    "bar city",
+                ],
             ],
             "draw": 0,
             "result": "ok",
@@ -307,10 +385,12 @@ class CompetitionResultListJsonSingleTests(TestCase):
 
     def test_search_sex_male(self):
         """ Test if searching by male sex name field works """
-        get_params = {'search[value]': 'Muž'}
-        request = self.factory.get('', get_params)
+        get_params = {"search[value]": "Muž"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [],
@@ -325,10 +405,12 @@ class CompetitionResultListJsonSingleTests(TestCase):
         If the user has nickname, we can't find by his name,
         otherwise the name can reverse engeneered.
         """
-        get_params = {'search[value]': 'Rosa'}
-        request = self.factory.get('', get_params)
+        get_params = {"search[value]": "Rosa"}
+        request = self.factory.get("", get_params)
         request.subdomain = "testing-campaign"
-        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        response = CompetitionResultListJson.as_view()(
+            request, competition_slug="competition"
+        )
         expected_json = {
             "recordsTotal": 2,
             "data": [],

@@ -24,7 +24,11 @@ from PyPDF2 import PdfFileReader
 
 from django.test import TestCase, override_settings
 
-from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe, testing_campaign
+from dpnk.test.mommy_recipes import (
+    CampaignRecipe,
+    UserAttendanceRecipe,
+    testing_campaign,
+)
 
 from model_mommy import mommy
 from model_mommy.recipe import seq
@@ -38,20 +42,21 @@ class TestDeliveryBatch(TestCase):
         Test that __str__ returns DeliveryBatch string
         """
         delivery_batch = mommy.make(
-            'DeliveryBatch',
+            "DeliveryBatch",
             id=11,
-            created=datetime.datetime(year=2016, month=1, day=1, hour=1, minute=1, second=1),
+            created=datetime.datetime(
+                year=2016, month=1, day=1, hour=1, minute=1, second=1
+            ),
         )
         self.assertEqual(
-            str(delivery_batch),
-            "id 11 vytvořená 2016-01-01 01:01:01",
+            str(delivery_batch), "id 11 vytvořená 2016-01-01 01:01:01",
         )
 
     def test_box_count_zero(self):
         """
         Test box_count() with zero boxes
         """
-        delivery_batch = mommy.make('DeliveryBatch')
+        delivery_batch = mommy.make("DeliveryBatch")
         self.assertEqual(delivery_batch.box_count(), 0)
 
     def test_box_count_non_zero(self):
@@ -60,25 +65,22 @@ class TestDeliveryBatch(TestCase):
         """
         campaign = CampaignRecipe.make(name="Testin campaign")
         delivery_batch = mommy.make(
-            'DeliveryBatch',
-            subsidiarybox_set=mommy.prepare(
-                "SubsidiaryBox",
-                _quantity=2,
-            ),
+            "DeliveryBatch",
+            subsidiarybox_set=mommy.prepare("SubsidiaryBox", _quantity=2,),
             campaign=campaign,
         )
         self.assertEqual(delivery_batch.box_count(), 2)
 
-    @override_settings(MEDIA_ROOT='/tmp/django_test')
+    @override_settings(MEDIA_ROOT="/tmp/django_test")
     def test_batch_csv_sheets(self):
         """
         Test that batch CSV is created
         """
-        os.system("rm -f /tmp/django_test/csv_delivery/delivery_batch_123_2010-11-20.csv")
+        os.system(
+            "rm -f /tmp/django_test/csv_delivery/delivery_batch_123_2010-11-20.csv"
+        )
         delivery_batch = mommy.make(
-            'DeliveryBatch',
-            created=datetime.date(year=2010, month=11, day=20),
-            id=123,
+            "DeliveryBatch", created=datetime.date(year=2010, month=11, day=20), id=123,
         )
         self.assertEqual(
             delivery_batch.tnt_order.name,
@@ -102,33 +104,36 @@ class TestDeliveryBatch(TestCase):
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
             userprofile__user__last_name=seq("Name "),
-            approved_for_team='approved',
+            approved_for_team="approved",
             team__subsidiary=subsidiary,
-            team__name=seq('Team '),
+            team__name=seq("Team "),
             discount_coupon__discount=100,
             discount_coupon__coupon_type__name="Discount",
             _quantity=2,
         )
         delivery_batch = mommy.make(
-            'DeliveryBatch',
-            campaign=user_attendance[0].campaign,
+            "DeliveryBatch", campaign=user_attendance[0].campaign,
         )
         self.assertQuerysetEqual(
             delivery_batch.subsidiarybox_set.all(),
-            ('<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',),
+            (
+                "<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>",
+            ),
         )
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.first().teampackage_set.all().order_by('pk'),
+            delivery_batch.subsidiarybox_set.first()
+            .teampackage_set.all()
+            .order_by("pk"),
             [
-                '<TeamPackage: Balíček pro tým Team 1>',
-                '<TeamPackage: Balíček pro tým Team 2>',
+                "<TeamPackage: Balíček pro tým Team 1>",
+                "<TeamPackage: Balíček pro tým Team 2>",
             ],
         )
         self.assertQuerysetEqual(
-            PackageTransaction.objects.all().order_by('pk'),
+            PackageTransaction.objects.all().order_by("pk"),
             [
-                '<PackageTransaction: Package transaction for user Foo Name 1>',
-                '<PackageTransaction: Package transaction for user Foo Name 2>',
+                "<PackageTransaction: Package transaction for user Foo Name 1>",
+                "<PackageTransaction: Package transaction for user Foo Name 2>",
             ],
         )
         # Test that PackageTransaction object is created
@@ -160,9 +165,9 @@ class TestDeliveryBatch(TestCase):
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
             userprofile__user__last_name=seq("Name "),
-            approved_for_team='approved',
+            approved_for_team="approved",
             team__subsidiary=subsidiary,
-            team__name=seq('Team '),
+            team__name=seq("Team "),
             discount_coupon__discount=100,
             discount_coupon__coupon_type__name="Discount",
             _quantity=2,
@@ -170,15 +175,14 @@ class TestDeliveryBatch(TestCase):
         user_attendance[0].campaign.package_max_count = 1
         user_attendance[0].campaign.save()
         delivery_batch = mommy.make(
-            'DeliveryBatch',
-            campaign=user_attendance[0].campaign,
+            "DeliveryBatch", campaign=user_attendance[0].campaign,
         )
         subsidiary_boxes = delivery_batch.subsidiarybox_set
         self.assertQuerysetEqual(
-            subsidiary_boxes.all().order_by('pk'),
+            subsidiary_boxes.all().order_by("pk"),
             (
-                '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
-                '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
+                "<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>",
+                "<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>",
             ),
         )
         pdf = PdfFileReader(subsidiary_boxes.all()[0].customer_sheets)
@@ -190,16 +194,14 @@ class TestDeliveryBatch(TestCase):
         self.assertTrue("Foo Name 2" in pdf_string)
 
         self.assertQuerysetEqual(
-            subsidiary_boxes.first().teampackage_set.all().order_by('pk'),
-            [
-                '<TeamPackage: Balíček pro tým Team 1>',
-            ],
+            subsidiary_boxes.first().teampackage_set.all().order_by("pk"),
+            ["<TeamPackage: Balíček pro tým Team 1>",],
         )
         self.assertQuerysetEqual(
-            PackageTransaction.objects.all().order_by('pk'),
+            PackageTransaction.objects.all().order_by("pk"),
             [
-                '<PackageTransaction: Package transaction for user Foo Name 1>',
-                '<PackageTransaction: Package transaction for user Foo Name 2>',
+                "<PackageTransaction: Package transaction for user Foo Name 1>",
+                "<PackageTransaction: Package transaction for user Foo Name 2>",
             ],
         )
 
@@ -220,15 +222,12 @@ class TestDeliveryBatch(TestCase):
             address_recipient="Foo recipient",
         )
         team = mommy.make(
-            "Team",
-            subsidiary=subsidiary,
-            name="Foo Team",
-            campaign=testing_campaign,
+            "Team", subsidiary=subsidiary, name="Foo Team", campaign=testing_campaign,
         )
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
             userprofile__user__last_name=seq("Name "),
-            approved_for_team='undecided',
+            approved_for_team="undecided",
             team=team,
             discount_coupon__discount=100,
             discount_coupon__coupon_type__name="Discount",
@@ -237,38 +236,35 @@ class TestDeliveryBatch(TestCase):
         user_attendance[0].campaign.package_max_count = 1
         user_attendance[0].campaign.save()
         delivery_batch = mommy.make(
-            'DeliveryBatch',
-            campaign=user_attendance[0].campaign,
+            "DeliveryBatch", campaign=user_attendance[0].campaign,
         )
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.all().order_by('pk'),
+            delivery_batch.subsidiarybox_set.all().order_by("pk"),
             (
-                '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
+                "<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>",
             ),
         )
         team_packages = delivery_batch.subsidiarybox_set.first().teampackage_set.all()
         self.assertQuerysetEqual(
-            team_packages.order_by('pk'),
+            team_packages.order_by("pk"),
             [
-                '<TeamPackage: Balíček pro tým Foo Team>',
-                '<TeamPackage: Balíček pro tým Foo Team>',
+                "<TeamPackage: Balíček pro tým Foo Team>",
+                "<TeamPackage: Balíček pro tým Foo Team>",
             ],
         )
         self.assertQuerysetEqual(
-            team_packages[0].packagetransaction_set.all().order_by('pk'),
+            team_packages[0].packagetransaction_set.all().order_by("pk"),
             [
-                '<PackageTransaction: Package transaction for user Foo Name 1>',
-                '<PackageTransaction: Package transaction for user Foo Name 2>',
-                '<PackageTransaction: Package transaction for user Foo Name 3>',
-                '<PackageTransaction: Package transaction for user Foo Name 4>',
-                '<PackageTransaction: Package transaction for user Foo Name 5>',
+                "<PackageTransaction: Package transaction for user Foo Name 1>",
+                "<PackageTransaction: Package transaction for user Foo Name 2>",
+                "<PackageTransaction: Package transaction for user Foo Name 3>",
+                "<PackageTransaction: Package transaction for user Foo Name 4>",
+                "<PackageTransaction: Package transaction for user Foo Name 5>",
             ],
         )
         self.assertQuerysetEqual(
-            team_packages[1].packagetransaction_set.all().order_by('pk'),
-            [
-                '<PackageTransaction: Package transaction for user Foo Name 6>',
-            ],
+            team_packages[1].packagetransaction_set.all().order_by("pk"),
+            ["<PackageTransaction: Package transaction for user Foo Name 6>",],
         )
 
     def test_create_packages_not_member(self):
@@ -280,7 +276,7 @@ class TestDeliveryBatch(TestCase):
         the approval for tema should not matter
         """
         mommy.make(
-            'PriceLevel',
+            "PriceLevel",
             pricable=testing_campaign,
             price=100,
             takes_effect_on=datetime.date(year=2010, month=2, day=1),
@@ -291,25 +287,24 @@ class TestDeliveryBatch(TestCase):
             campaign=testing_campaign,
         )
         user_attendance.save()
-        self.assertTrue(user_attendance.payment_status, 'none')
+        self.assertTrue(user_attendance.payment_status, "none")
         added_user_attendance = UserAttendanceRecipe.make(
-            approved_for_team='undecided',
+            approved_for_team="undecided",
             transactions=[mommy.make("Payment", status=99)],
             userprofile__user__first_name="Bar",
             campaign=testing_campaign,
         )
         added_user_attendance.save()
-        self.assertTrue(added_user_attendance.payment_status, 'done')
+        self.assertTrue(added_user_attendance.payment_status, "done")
         UserAttendanceRecipe.make(
             t_shirt_size__ship=False,
-            approved_for_team='approved',
+            approved_for_team="approved",
             transactions=[mommy.make("Payment", status=99)],
             userprofile__user__first_name="Baz",
             campaign=testing_campaign,
         )
         mommy.make(
-            'DeliveryBatch',
-            campaign=user_attendance.campaign,
+            "DeliveryBatch", campaign=user_attendance.campaign,
         )
         self.assertEqual(
             PackageTransaction.objects.get().user_attendance,  # Only one package transaction is created

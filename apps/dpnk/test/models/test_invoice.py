@@ -32,14 +32,10 @@ from ..mommy_recipes import PhaseRecipe, testing_campaign
 class TestDates(TestCase):
     def setUp(self):
         self.competition_phase = mommy.make(
-            "Phase",
-            phase_type="competition",
-            date_to="2010-05-31",
+            "Phase", phase_type="competition", date_to="2010-05-31",
         )
 
-    @override_settings(
-        FAKE_DATE=datetime.date(2010, 5, 20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(2010, 5, 20),)
     def test_dates_before_end(self):
         """
         Test that dates are set correctly before end competition date
@@ -55,9 +51,7 @@ class TestDates(TestCase):
         self.assertEqual(str(invoice.exposure_date), "2010-05-20")
         self.assertEqual(str(invoice.variable_symbol), "2010666")
 
-    @override_settings(
-        FAKE_DATE=datetime.date(2010, 6, 1),
-    )
+    @override_settings(FAKE_DATE=datetime.date(2010, 6, 1),)
     def test_dates_after_end(self):
         """
         Test that dates are set correctly after end competition date
@@ -71,9 +65,7 @@ class TestDates(TestCase):
         self.assertEqual(str(invoice.payback_date), "2010-06-15")
         self.assertEqual(str(invoice.exposure_date), "2010-06-01")
 
-    @override_settings(
-        FAKE_DATE=datetime.date(2010, 6, 20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(2010, 6, 20),)
     def test_dates_long_after_end(self):
         """
         Test that dates are set correctly more than 14 days after end competition date
@@ -87,9 +79,7 @@ class TestDates(TestCase):
         self.assertEqual(str(invoice.payback_date), "2010-07-04")
         self.assertEqual(str(invoice.exposure_date), "2010-06-14")
 
-    @override_settings(
-        FAKE_DATE=datetime.date(2010, 6, 20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(2010, 6, 20),)
     def test_dates_doesnt_change(self):
         """
         Test that dates doesnt change when they are already set
@@ -138,8 +128,8 @@ class TestSave(TransactionTestCase):
         payment.refresh_from_db()
         self.assertEqual(payment.status, 1005)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Jste ve hře')
+        self.assertEqual(msg.recipients(), ["test@email.cz"])
+        self.assertEqual(str(msg.subject), "[Testing campaign 2019] Jste ve hře")
         ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
 
     def test_invoice_raises_sequence_number_overrun(self):
@@ -168,9 +158,6 @@ class TestSave(TransactionTestCase):
         self.assertEqual(invoice[1].sequence_number, 2)
         with self.assertRaisesRegexp(Exception, "Došla číselná řada faktury"):
             mommy.make(
-                "Invoice",
-                campaign=campaign,
-                company=company,
-                sequence_number=None,
+                "Invoice", campaign=campaign, company=company, sequence_number=None,
             )
         ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs

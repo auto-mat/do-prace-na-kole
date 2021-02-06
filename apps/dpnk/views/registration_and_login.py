@@ -28,7 +28,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
 
-from registration.backends.default.views import RegistrationView as SimpleRegistrationView
+from registration.backends.default.views import (
+    RegistrationView as SimpleRegistrationView,
+)
 
 from unidecode import unidecode
 
@@ -74,48 +76,50 @@ from ..views_permission_mixins import (
 logger = logging.getLogger(__name__)
 
 
-class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
+class DPNKLoginView(
+    CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView
+):
     title = ""
 
     def get_initial(self):
-        initial_email = self.kwargs.get('initial_email')
+        initial_email = self.kwargs.get("initial_email")
         if initial_email:
-            return {'username': self.kwargs['initial_email']}
+            return {"username": self.kwargs["initial_email"]}
         else:
             return {}
 
 
 class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     form_class = ChangeTeamForm
-    template_name = 'registration/change_team.html'
-    next_url = 'zmenit_triko'
-    prev_url = 'upravit_profil'
+    template_name = "registration/change_team.html"
+    next_url = "zmenit_triko"
+    prev_url = "upravit_profil"
     registration_phase = "zmenit_tym"
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.team:
             if self.user_attendance.campaign.competitors_choose_team():
-                return _('Vyberte jiný tým')
+                return _("Vyberte jiný tým")
             else:
-                return _('Vyberte jinou společnost')
+                return _("Vyberte jinou společnost")
         else:
             if self.user_attendance.campaign.competitors_choose_team():
-                return _('Přidejte se k týmu')
+                return _("Přidejte se k týmu")
             else:
-                return _('Vyhledejte svoji společnost')
+                return _("Vyhledejte svoji společnost")
 
     def get_initial(self):
         if self.user_attendance.team:
             return {
-                'subsidiary': self.user_attendance.team.subsidiary,
-                'company': self.user_attendance.team.subsidiary.company,
+                "subsidiary": self.user_attendance.team.subsidiary,
+                "company": self.user_attendance.team.subsidiary.company,
             }
         else:
             previous_user_attendance = self.user_attendance.previous_user_attendance()
             if previous_user_attendance and previous_user_attendance.team:
                 return {
-                    'subsidiary': previous_user_attendance.team.subsidiary,
-                    'company': previous_user_attendance.team.subsidiary.company,
+                    "subsidiary": previous_user_attendance.team.subsidiary,
+                    "company": previous_user_attendance.team.subsidiary.company,
                 }
 
     def get_object(self):
@@ -123,13 +127,15 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance and (
-                request.user_attendance.approved_for_team == 'approved' and
-                request.user_attendance.team and
-                request.user_attendance.team.member_count == 1 and
-                request.user_attendance.team.unapproved_member_count > 0
+            request.user_attendance.approved_for_team == "approved"
+            and request.user_attendance.team
+            and request.user_attendance.team.member_count == 1
+            and request.user_attendance.team.unapproved_member_count > 0
         ):
             raise exceptions.TemplatePermissionDenied(
-                _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."),
+                _(
+                    "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."
+                ),
                 self.template_name,
             )
         return super().dispatch(request, *args, **kwargs)
@@ -142,17 +148,21 @@ class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateVi
     def get_success_result(self):
         team_created_mail(self.user_attendance, self.object.name)
         return {
-            'status': 'ok',
-            'name': self.object.name,
-            'id': self.object.id,
+            "status": "ok",
+            "name": self.object.name,
+            "id": self.object.id,
         }
 
     def get_initial(self):
         previous_user_attendance = self.user_attendance.previous_user_attendance()
         return {
-            'subsidiary': models.Subsidiary.objects.get(pk=self.kwargs['subsidiary_id']),
-            'campaign': self.user_attendance.campaign,
-            'name': previous_user_attendance.team.name if previous_user_attendance and previous_user_attendance.team else None,
+            "subsidiary": models.Subsidiary.objects.get(
+                pk=self.kwargs["subsidiary_id"]
+            ),
+            "campaign": self.user_attendance.campaign,
+            "name": previous_user_attendance.team.name
+            if previous_user_attendance and previous_user_attendance.team
+            else None,
         }
 
 
@@ -162,86 +172,106 @@ class RegisterCompanyView(LoginRequiredMixin, AjaxCreateView):
 
     def get_success_result(self):
         return {
-            'status': 'ok',
-            'name': self.object.name,
-            'id': self.object.id,
+            "status": "ok",
+            "name": self.object.name,
+            "id": self.object.id,
         }
 
 
-class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView):
+class RegisterSubsidiaryView(
+    CampaignFormKwargsMixin, UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView
+):
     form_class = forms.RegisterSubsidiaryForm
     model = models.Subsidiary
 
     def get_initial(self):
-        return {'company': models.Company.objects.get(pk=self.kwargs['company_id'])}
+        return {"company": models.Company.objects.get(pk=self.kwargs["company_id"])}
 
     def get_success_result(self):
         return {
-            'status': 'ok',
-            'name': self.object.name(),
-            'id': self.object.id,
+            "status": "ok",
+            "name": self.object.name(),
+            "id": self.object.id,
         }
 
 
-class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
-    template_name = 'base_login_registration.html'
+class RegistrationAccessView(
+    CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView
+):
+    template_name = "base_login_registration.html"
     form_class = RegistrationAccessFormDPNK
     title = ""
 
     def form_valid(self, form):
-        email = form.cleaned_data['email']
+        email = form.cleaned_data["email"]
         if models.User.objects.filter(Q(email=email) | Q(username=email)).exists():
-            return redirect(reverse('login', kwargs={'initial_email': email}))
+            return redirect(reverse("login", kwargs={"initial_email": email}))
         else:
-            return redirect(reverse('registrace', kwargs={'initial_email': email}))
+            return redirect(reverse("registrace", kwargs={"initial_email": email}))
 
 
-class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrationPhaseMixin, ProfileRedirectMixin, SimpleRegistrationView):
-    template_name = 'base_login_registration.html'
+class RegistrationView(
+    CampaignParameterMixin,
+    TitleViewMixin,
+    MustBeInRegistrationPhaseMixin,
+    ProfileRedirectMixin,
+    SimpleRegistrationView,
+):
+    template_name = "base_login_registration.html"
     form_class = RegistrationFormDPNK
     model = UserProfile
     title = ""
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['invitation_token'] = self.kwargs.get('token', None)
-        kwargs['campaign'] = self.campaign
-        kwargs['request'] = self.request
+        kwargs["invitation_token"] = self.kwargs.get("token", None)
+        kwargs["campaign"] = self.campaign
+        kwargs["request"] = self.request
         return kwargs
 
     def get_initial(self):
-        return {'email': self.kwargs.get('initial_email', '')}
+        return {"email": self.kwargs.get("initial_email", "")}
 
 
-class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, LoginRequiredMixin, SuccessMessageMixin, FormView):
-    template_name = 'registration/team_invitation.html'
+class ConfirmTeamInvitationView(
+    CampaignParameterMixin,
+    RegistrationViewMixin,
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    FormView,
+):
+    template_name = "registration/team_invitation.html"
     form_class = forms.ConfirmTeamInvitationForm
-    success_url = reverse_lazy('zmenit_tym')
-    registration_phase = 'zmenit_tym'
+    success_url = reverse_lazy("zmenit_tym")
+    registration_phase = "zmenit_tym"
     title = _("Pozvánka do týmu")
     success_message = _("A jste v jiném týmu!")
 
     def get_initial(self):
         return {
-            'team': self.new_team,
-            'campaign': self.campaign,
+            "team": self.new_team,
+            "campaign": self.campaign,
         }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['old_team'] = self.user_attendance.team
-        context['new_team'] = self.new_team
+        context["old_team"] = self.user_attendance.team
+        context["new_team"] = self.new_team
 
         if self.new_team.is_full():
             return {
-                'fullpage_error_message': _('Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.'),
-                'title': _("Tým je plný"),
+                "fullpage_error_message": _(
+                    "Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým."
+                ),
+                "title": _("Tým je plný"),
             }
 
         if self.user_attendance.campaign != self.new_team.campaign:
             return {
-                'fullpage_error_message': _("Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku)."),
-                'title': _("Chyba přihlášení"),
+                "fullpage_error_message": _(
+                    "Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku)."
+                ),
+                "title": _("Chyba přihlášení"),
             }
         return context
 
@@ -254,36 +284,44 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         return super().form_valid(form)
 
     def dispatch(self, request, *args, **kwargs):
-        if Team.objects.filter(invitation_token=kwargs['token']).count() != 1:
+        if Team.objects.filter(invitation_token=kwargs["token"]).count() != 1:
             raise exceptions.TemplatePermissionDenied(
-                _("Tým nenalezen"),
-                self.template_name,
+                _("Tým nenalezen"), self.template_name,
             )
 
-        initial_email = kwargs['initial_email']
+        initial_email = kwargs["initial_email"]
         if request.user.is_authenticated and request.user.email != initial_email:
             logout(request)
             messages.add_message(
                 self.request,
                 messages.WARNING,
-                _("Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se jako uživatel %s." % initial_email),
+                _(
+                    "Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se jako uživatel %s."
+                    % initial_email
+                ),
             )
-            return redirect("%s?next=%s" % (reverse("login", kwargs={"initial_email": initial_email}), request.get_full_path()))
-        invitation_token = self.kwargs['token']
+            return redirect(
+                "%s?next=%s"
+                % (
+                    reverse("login", kwargs={"initial_email": initial_email}),
+                    request.get_full_path(),
+                )
+            )
+        invitation_token = self.kwargs["token"]
         self.new_team = Team.objects.get(invitation_token=invitation_token)
         return super().dispatch(request, *args, **kwargs)
 
 
 class PaymentTypeView(
-        UserAttendanceFormKwargsMixin,
-        RegistrationViewMixin,
-        MustBeInPaymentPhaseMixin,
-        MustHaveTeamMixin,
-        LoginRequiredMixin,
-        CampaignParameterMixin,
-        FormView,
+    UserAttendanceFormKwargsMixin,
+    RegistrationViewMixin,
+    MustBeInPaymentPhaseMixin,
+    MustHaveTeamMixin,
+    LoginRequiredMixin,
+    CampaignParameterMixin,
+    FormView,
 ):
-    template_name = 'registration/payment_type.html'
+    template_name = "registration/payment_type.html"
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
@@ -292,7 +330,7 @@ class PaymentTypeView(
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
             if request.user_attendance.has_paid():
-                if request.user_attendance.payment_status == 'done':
+                if request.user_attendance.payment_status == "done":
                     message = _("Vaši platbu jsme úspěšně přijali.")
                 else:
                     message = _("Startovné se neplatí.")
@@ -302,19 +340,24 @@ class PaymentTypeView(
                     title=_("Děkujeme!"),
                     error_level="success",
                 )
-            if request.user_attendance.campaign.has_any_tshirt and not request.user_attendance.t_shirt_size:
+            if (
+                request.user_attendance.campaign.has_any_tshirt
+                and not request.user_attendance.t_shirt_size
+            ):
                 raise exceptions.TemplatePermissionDenied(
                     format_html(
-                        _("Zatím není co platit. Nejdříve se {join_team} a {choose_shirt}."),
+                        _(
+                            "Zatím není co platit. Nejdříve se {join_team} a {choose_shirt}."
+                        ),
                         join_team=format_html(
                             "<a href='{}'>{}</a>",
                             reverse("zmenit_tym"),
-                            _('přidejte k týmu'),
+                            _("přidejte k týmu"),
                         ),
                         choose_shirt=format_html(
                             "<a href='{}'>{}</a>",
                             reverse("zmenit_triko"),
-                            _('vyberte tričko'),
+                            _("vyberte tričko"),
                         ),
                     ),
                     self.template_name,
@@ -326,13 +369,13 @@ class PaymentTypeView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = self.user_attendance.userprofile
-        context['user_attendance'] = self.user_attendance
-        context['firstname'] = profile.user.first_name  # firstname
-        context['surname'] = profile.user.last_name  # surname
-        context['email'] = profile.user.email  # email
-        context['amount'] = self.user_attendance.admission_fee()
-        context['beneficiary_amount'] = self.user_attendance.beneficiary_admission_fee()
-        context['prev_url'] = self.prev_url
+        context["user_attendance"] = self.user_attendance
+        context["firstname"] = profile.user.first_name  # firstname
+        context["surname"] = profile.user.last_name  # surname
+        context["email"] = profile.user.email  # email
+        context["amount"] = self.user_attendance.admission_fee()
+        context["beneficiary_amount"] = self.user_attendance.beneficiary_admission_fee()
+        context["prev_url"] = self.prev_url
         return context
 
     def get_form(self, form_class=PaymentTypeForm):
@@ -341,44 +384,53 @@ class PaymentTypeView(
         return form
 
     def form_valid(self, form):
-        payment_type = form.cleaned_data['payment_type']
+        payment_type = form.cleaned_data["payment_type"]
 
-        if payment_type == 'company':
+        if payment_type == "company":
             company_admin_email_string = mark_safe(
                 ", ".join(
                     [
                         format_html(
                             "<a href='mailto:{email}'>{email}</a>",
                             email=a.userprofile.user.email,
-                        ) for a in self.user_attendance.get_asociated_company_admin()
+                        )
+                        for a in self.user_attendance.get_asociated_company_admin()
                     ]
                 ),
             )
-        elif payment_type == 'coupon':
-            return redirect(reverse('discount_coupon'))
+        elif payment_type == "coupon":
+            return redirect(reverse("discount_coupon"))
         else:
             company_admin_email_string = ""
         payment_choices = {
-            'member_wannabe': {'type': 'amw', 'message': _("Vaše členství v klubu přátel ještě bude muset být schváleno."), 'amount': 0},
-            'company': {
-                'type': 'fc',
-                'message': format_html(
+            "member_wannabe": {
+                "type": "amw",
+                "message": _(
+                    "Vaše členství v klubu přátel ještě bude muset být schváleno."
+                ),
+                "amount": 0,
+            },
+            "company": {
+                "type": "fc",
+                "message": format_html(
                     _(
                         "Platbu ještě musí schválit koordinátor Vaší organizace {email}. "
                     ),
                     email=company_admin_email_string,
                 ),
-                'amount': self.user_attendance.company_admission_fee(),
+                "amount": self.user_attendance.company_admission_fee(),
             },
         }
 
-        if payment_type in ('pay', 'pay_beneficiary'):
+        if payment_type in ("pay", "pay_beneficiary"):
             logger.error(
                 "Wrong payment type",
-                extra={'request': self.request, 'payment_type': payment_type},
+                extra={"request": self.request, "payment_type": payment_type},
             )
             return HttpResponse(
-                _("Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."),
+                _(
+                    "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."
+                ),
                 status=500,
             )
         else:
@@ -386,27 +438,40 @@ class PaymentTypeView(
             if payment_choice:
                 Payment(
                     user_attendance=self.user_attendance,
-                    amount=payment_choice['amount'],
-                    pay_type=payment_choice['type'],
+                    amount=payment_choice["amount"],
+                    pay_type=payment_choice["type"],
                     status=models.Status.NEW,
                 ).save()
-                messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
-                logger.info('Inserting payment', extra={'payment_type': payment_type, 'username': self.user_attendance.userprofile.user.username})
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    payment_choice["message"],
+                    fail_silently=True,
+                )
+                logger.info(
+                    "Inserting payment",
+                    extra={
+                        "payment_type": payment_type,
+                        "username": self.user_attendance.userprofile.user.username,
+                    },
+                )
 
         return super().form_valid(form)
 
 
-class PaymentView(UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin, TemplateView):
+class PaymentView(
+    UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin, TemplateView
+):
     beneficiary = False
-    template_name = 'registration/payment.html'
+    template_name = "registration/payment.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if self.user_attendance.payment_status == 'no_admission':
-            return redirect(reverse('profil'))
+        if self.user_attendance.payment_status == "no_admission":
+            return redirect(reverse("profil"))
         uid = self.request.user.id
-        order_id = '%s-1' % uid
+        order_id = "%s-1" % uid
         session_id = "%sJ%d" % (order_id, int(time.time()))
         # Save new payment record
         if self.beneficiary:
@@ -423,7 +488,8 @@ class PaymentView(UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin
         )
         p.save()
         logger.info(
-            u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (
+            u"Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s"
+            % (
                 uid,
                 order_id,
                 session_id,
@@ -443,30 +509,33 @@ class PaymentView(UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin
         timestamp = str(int(time.time()))
         language_code = self.user_attendance.userprofile.language
 
-        context['firstname'] = firstname
-        context['surname'] = lastname
-        context['email'] = email
-        context['amount'] = amount
-        context['amount_hal'] = amount_hal
-        context['description'] = description
-        context['order_id'] = order_id
-        context['client_ip'] = client_ip
-        context['language_code'] = language_code
-        context['session_id'] = session_id
-        context['ts'] = timestamp
-        context['sig'] = make_sig((
-            settings.PAYU_POS_ID,
-            session_id,
-            settings.PAYU_POS_AUTH_KEY,
-            str(amount_hal),
-            description,
-            order_id,
-            firstname,
-            lastname,
-            email,
-            language_code,
-            client_ip,
-            timestamp))
+        context["firstname"] = firstname
+        context["surname"] = lastname
+        context["email"] = email
+        context["amount"] = amount
+        context["amount_hal"] = amount_hal
+        context["description"] = description
+        context["order_id"] = order_id
+        context["client_ip"] = client_ip
+        context["language_code"] = language_code
+        context["session_id"] = session_id
+        context["ts"] = timestamp
+        context["sig"] = make_sig(
+            (
+                settings.PAYU_POS_ID,
+                session_id,
+                settings.PAYU_POS_AUTH_KEY,
+                str(amount_hal),
+                description,
+                order_id,
+                firstname,
+                lastname,
+                email,
+                language_code,
+                client_ip,
+                timestamp,
+            )
+        )
         return context
 
 
@@ -475,22 +544,26 @@ class BeneficiaryPaymentView(PaymentView):
 
 
 class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
-    registration_phase = 'typ_platby'
-    template_name = 'registration/payment_result.html'
+    registration_phase = "typ_platby"
+    template_name = "registration/payment_result.html"
 
     def dispatch(self, request, *args, **kwargs):
-        payment = Payment.objects.get(session_id=kwargs['session_id'])
-        if hasattr(self.request, 'campaign') and payment.user_attendance:
+        payment = Payment.objects.get(session_id=kwargs["session_id"])
+        if hasattr(self.request, "campaign") and payment.user_attendance:
             if payment.user_attendance.campaign != self.request.campaign:
-                return redirect(util.get_redirect(request, slug=payment.user_attendance.campaign.slug))
+                return redirect(
+                    util.get_redirect(
+                        request, slug=payment.user_attendance.campaign.slug
+                    )
+                )
         return super().dispatch(request, *args, **kwargs)
 
     @transaction.atomic
     def get_context_data(self, success, trans_id, session_id, pay_type, error=None):
         context_data = super().get_context_data()
         logger.info(
-            u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' %
-            (
+            u"Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)"
+            % (
                 success,
                 trans_id,
                 session_id,
@@ -516,31 +589,33 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
                 payment.error = error
             payment.save()
 
-        context_data['pay_type'] = pay_type
-        context_data['success'] = success
+        context_data["pay_type"] = pay_type
+        context_data["success"] = success
 
         if success:
-            context_data['title'] = _("Platba úspěšná")
-            context_data['payment_message'] = _(
+            context_data["title"] = _("Platba úspěšná")
+            context_data["payment_message"] = _(
                 "Vaše platba byla úspěšně zadána. "
                 "Až platbu obdržíme, dáme Vám vědět na e-mail. "
                 "Tím bude Vaše registrace úspěšně dokončena.",
             )
         else:
-            context_data['title'] = _("Platba neúspěšná")
+            context_data["title"] = _("Platba neúspěšná")
             logger.warning(
-                'Payment unsuccessful',
+                "Payment unsuccessful",
                 extra={
-                    'success': success,
-                    'pay_type': pay_type,
-                    'trans_id': trans_id,
-                    'session_id': session_id,
-                    'user': self.user_attendance.userprofile.user,
-                    'request': self.request,
+                    "success": success,
+                    "pay_type": pay_type,
+                    "trans_id": trans_id,
+                    "session_id": session_id,
+                    "user": self.user_attendance.userprofile.user,
+                    "request": self.request,
                 },
             )
-            context_data['payment_message'] = _("Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
-        context_data['registration_phase'] = self.registration_phase
+            context_data["payment_message"] = _(
+                "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu."
+            )
+        context_data["registration_phase"] = self.registration_phase
         return context_data
 
 
@@ -562,11 +637,14 @@ def check_sig(sig, values):
 @csrf_exempt
 def payment_status(request):
     # Read notification parameters
-    pos_id = request.POST['pos_id']
-    session_id = request.POST['session_id']
-    ts = request.POST['ts']
-    sig = request.POST['sig']
-    logger.info('Payment status - pos_id: %s, session_id: %s, ts: %s, sig: %s' % (pos_id, session_id, ts, sig))
+    pos_id = request.POST["pos_id"]
+    session_id = request.POST["session_id"]
+    ts = request.POST["ts"]
+    sig = request.POST["sig"]
+    logger.info(
+        "Payment status - pos_id: %s, session_id: %s, ts: %s, sig: %s"
+        % (pos_id, session_id, ts, sig)
+    )
     check_sig(sig, (pos_id, session_id, ts))
     # Determine the status of transaction based on the notification
     c = HTTPSConnection("secure.payu.com")
@@ -574,72 +652,76 @@ def payment_status(request):
     c.request(
         "POST",
         "/paygw/UTF/Payment/get/txt/",
-        urlencode((
-            ('pos_id', pos_id),
-            ('session_id', session_id),
-            ('ts', timestamp),
-            ('sig', make_sig((pos_id, session_id, timestamp)))
-        )),
-        {
-            "Content-type": "application/x-www-form-urlencoded",
-            "Accept": "text/plain",
-        },
+        urlencode(
+            (
+                ("pos_id", pos_id),
+                ("session_id", session_id),
+                ("ts", timestamp),
+                ("sig", make_sig((pos_id, session_id, timestamp))),
+            )
+        ),
+        {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain",},
     )
     raw_response = codecs.decode(c.getresponse().read(), "utf-8")
     r = {}
-    for i in [i.split(':', 1) for i in raw_response.split('\n') if i.strip() != '']:
+    for i in [i.split(":", 1) for i in raw_response.split("\n") if i.strip() != ""]:
         r[i[0]] = i[1].strip()
     check_sig(
-        r['trans_sig'],
+        r["trans_sig"],
         (
-            r['trans_pos_id'],
-            r['trans_session_id'],
-            r['trans_order_id'],
-            r['trans_status'],
-            r['trans_amount'],
-            r['trans_desc'],
-            r['trans_ts'],
+            r["trans_pos_id"],
+            r["trans_session_id"],
+            r["trans_order_id"],
+            r["trans_status"],
+            r["trans_amount"],
+            r["trans_desc"],
+            r["trans_ts"],
         ),
     )
-    amount = math.floor(int(r['trans_amount']) / 100)
+    amount = math.floor(int(r["trans_amount"]) / 100)
     # Update the corresponding payment
     # TODO: use update_or_create in Django 1.7
     p, created = Payment.objects.select_for_update().get_or_create(
-        session_id=r['trans_session_id'],
+        session_id=r["trans_session_id"],
         defaults={
-            'order_id': r['trans_order_id'],
-            'amount': amount,
-            'description': r['trans_desc'],
+            "order_id": r["trans_order_id"],
+            "amount": amount,
+            "description": r["trans_desc"],
         },
     )
 
     if p.amount != amount:
         logger.error(
-            'Payment amount doesn\'t match',
+            "Payment amount doesn't match",
             extra={
-                'pay_type': p.pay_type,
-                'status': p.status,
-                'payment_response': r,
-                'expected_amount': p.amount,
-                'request': request,
+                "pay_type": p.pay_type,
+                "status": p.status,
+                "payment_response": r,
+                "expected_amount": p.amount,
+                "request": request,
             },
         )
         return HttpResponse("Bad amount", status=400)
-    p.pay_type = r['trans_pay_type']
-    p.status = r['trans_status']
-    if r['trans_recv'] != '':
-        p.realized = r['trans_recv']
+    p.pay_type = r["trans_pay_type"]
+    p.status = r["trans_status"]
+    if r["trans_recv"] != "":
+        p.realized = r["trans_recv"]
     p.save()
 
-    logger.info('Payment status: pay_type: %s, status: %s, payment response: %s' % (p.pay_type, p.status, r))
+    logger.info(
+        "Payment status: pay_type: %s, status: %s, payment response: %s"
+        % (p.pay_type, p.status, r)
+    )
 
     # Return positive error code as per PayU protocol
     return HttpResponse("OK")
 
 
-class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
-    template_name = 'base_generic_registration_form.html'
-    title = _('Nastal čas seřídit kolo a vyřešit drobné papírování…')
+class RegistrationUncompleteForm(
+    TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView
+):
+    template_name = "base_generic_registration_form.html"
+    title = _("Nastal čas seřídit kolo a vyřešit drobné papírování…")
     opening_message = util.mark_safe_lazy(
         _(
             "<p>"
@@ -649,12 +731,12 @@ class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, Logi
             "<img src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'/>",
         ),
     )
-    registration_phase = 'registration_uncomplete'
+    registration_phase = "registration_uncomplete"
 
     def get(self, request, *args, **kwargs):
         reason = self.user_attendance.entered_competition_reason()
         if reason is True:
-            return redirect(reverse('profil'))
+            return redirect(reverse("profil"))
         else:
             return super().get(request, *args, **kwargs)
 
@@ -665,8 +747,13 @@ class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = "zmenit_tym"
 
 
-class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationPersonalViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'registration/profile_update.html'
+class RegistrationProfileView(
+    CampaignFormKwargsMixin,
+    RegistrationPersonalViewMixin,
+    LoginRequiredMixin,
+    UpdateView,
+):
+    template_name = "registration/profile_update.html"
     form_class = RegistrationProfileUpdateForm
     model = UserProfile
     success_message = _("Vaše osobní údaje jsme pečlivě uložili.")
@@ -678,11 +765,11 @@ class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationPersonalViewM
         kwargs = super().get_form_kwargs()
         kwargs.update(
             instance={
-                'user': self.user_attendance.userprofile.user,
-                'usermail': self.user_attendance.userprofile.user,
-                'userprofiledontshowname': self.user_attendance.userprofile,
-                'userprofile': self.user_attendance.userprofile,
-                'userattendance': self.user_attendance,
+                "user": self.user_attendance.userprofile.user,
+                "usermail": self.user_attendance.userprofile.user,
+                "userprofiledontshowname": self.user_attendance.userprofile,
+                "userprofile": self.user_attendance.userprofile,
+                "userattendance": self.user_attendance,
             },
         )
         return kwargs
@@ -692,11 +779,13 @@ class UpdateProfileView(RegistrationProfileView):
     form_class = ProfileUpdateForm
     success_url = "edit_profile_detailed"
     title = _("Můj profil")
-    template_name = 'registration/profile_update_detailed.html'
+    template_name = "registration/profile_update_detailed.html"
 
 
-class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
-    template_name = 'registration/request_team_approval.html'
+class TeamApprovalRequest(
+    TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView
+):
+    template_name = "registration/request_team_approval.html"
     title = _("Žádost o ověření členství byla odeslána")
     registration_phase = "zmenit_tym"
 
@@ -706,31 +795,41 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
         return super().dispatch(request, *args, **kwargs)
 
 
-class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
-    template_name = 'base_generic_registration_form.html'
+class InviteView(
+    UserAttendanceViewMixin,
+    MustBeInRegistrationPhaseMixin,
+    TitleViewMixin,
+    MustBeApprovedForTeamMixin,
+    LoginRequiredMixin,
+    FormView,
+):
+    template_name = "base_generic_registration_form.html"
     form_class = InviteForm
-    title = _('Pozvěte další kolegy do svého týmu')
+    title = _("Pozvěte další kolegy do svého týmu")
     registration_phase = "zmenit_tym"
-    next_url = reverse_lazy('zmenit_triko')
+    next_url = reverse_lazy("zmenit_triko")
 
     def get_success_url(self):
         if self.user_attendance.entered_competition():
-            return reverse_lazy('team_members')
+            return reverse_lazy("team_members")
         else:
-            return reverse_lazy('zmenit_triko')
+            return reverse_lazy("zmenit_triko")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data['registration_phase'] = self.registration_phase
-        context_data['introduction_message'] = _(
-            "Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až %s členů."
-        ) % self.user_attendance.campaign.max_team_members
+        context_data["registration_phase"] = self.registration_phase
+        context_data["introduction_message"] = (
+            _(
+                "Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až %s členů."
+            )
+            % self.user_attendance.campaign.max_team_members
+        )
         return context_data
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user_attendance'] = self.user_attendance
-        kwargs['success_url'] = self.get_success_url()
+        kwargs["user_attendance"] = self.user_attendance
+        kwargs["success_url"] = self.get_success_url()
         return kwargs
 
     def form_valid(self, form):
@@ -739,30 +838,48 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
                 try:
                     invited_user = models.User.objects.get(is_active=True, email=email)
 
-                    invited_user_attendance, created = UserAttendance.objects.get_or_create(
+                    (
+                        invited_user_attendance,
+                        created,
+                    ) = UserAttendance.objects.get_or_create(
                         userprofile=invited_user.userprofile,
                         campaign=self.user_attendance.campaign,
                     )
 
                     if invited_user_attendance.team == self.user_attendance.team:
-                        approve_for_team(self.request, invited_user_attendance, "", True, False)
+                        approve_for_team(
+                            self.request, invited_user_attendance, "", True, False
+                        )
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
-                            _("Uživatel %(user)s byl přijat do Vašeho týmu.") % {"user": invited_user_attendance, "email": email},
+                            _("Uživatel %(user)s byl přijat do Vašeho týmu.")
+                            % {"user": invited_user_attendance, "email": email},
                             fail_silently=True,
                         )
                     else:
-                        invitation_mail(self.user_attendance, invited_user_attendance.userprofile.user.email, invited_user_attendance)
+                        invitation_mail(
+                            self.user_attendance,
+                            invited_user_attendance.userprofile.user.email,
+                            invited_user_attendance,
+                        )
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
-                            _("Odeslána pozvánka uživateli %(user)s na e-mail %(email)s") % {"user": invited_user_attendance, "email": email},
+                            _(
+                                "Odeslána pozvánka uživateli %(user)s na e-mail %(email)s"
+                            )
+                            % {"user": invited_user_attendance, "email": email},
                             fail_silently=True,
                         )
                 except models.User.DoesNotExist:
                     invitation_mail(self.user_attendance, email)
-                    messages.add_message(self.request, messages.SUCCESS, _("Odeslána pozvánka na e-mail %s") % email, fail_silently=True)
+                    messages.add_message(
+                        self.request,
+                        messages.SUCCESS,
+                        _("Odeslána pozvánka na e-mail %s") % email,
+                        fail_silently=True,
+                    )
 
         return super().form_valid(form)
 
@@ -776,6 +893,7 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
 class OpenApplicationWithRestTokenView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         from rest_framework.authtoken.models import Token
+
         try:
             app_id = int(kwargs["app_id"])
         except ValueError:
@@ -783,8 +901,9 @@ class OpenApplicationWithRestTokenView(LoginRequiredMixin, View):
         rough_url = settings.DPNK_MOBILE_APP_URLS[app_id]
         token, _ = Token.objects.get_or_create(user=self.request.user)
         campaign_slug_identifier = self.request.campaign.slug_identifier
-        HttpResponseRedirect.allowed_schemes.append('dpnk')
-        return HttpResponseRedirect(rough_url.format(
-            auth_token=token.key,
-            campaign_slug_identifier=campaign_slug_identifier,
-        ))
+        HttpResponseRedirect.allowed_schemes.append("dpnk")
+        return HttpResponseRedirect(
+            rough_url.format(
+                auth_token=token.key, campaign_slug_identifier=campaign_slug_identifier,
+            )
+        )

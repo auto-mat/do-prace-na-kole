@@ -39,7 +39,7 @@ from .mommy_recipes import testing_campaign
 
 class FakeViewClass(object):
     def dispatch(request, *args, **kwargs):
-        return 'superdispatch'
+        return "superdispatch"
 
 
 class MustBeInPhase(MustBeInPhaseMixin, FakeViewClass):
@@ -56,7 +56,7 @@ class MustBeInPhaseMixinTest(TestCase):
     def test_is_in_phase(self):
         self.request.campaign = testing_campaign()
         mixin = MustBeInPhase()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
     @freeze_time("2009-01-01")
     def test_is_phase_hasnt_started(self):
@@ -81,7 +81,10 @@ class MustBeInPhaseMixinTest(TestCase):
     def test_isnt_in_phase(self):
         self.request.campaign = mommy.make("Campaign")
         mixin = MustBeInPhase()
-        with self.assertRaisesRegex(PermissionDenied, "Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze soutěžní."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze soutěžní.",
+        ):
             mixin.dispatch(self.request)
 
 
@@ -98,49 +101,78 @@ class MustBeCompanyAdminMixinTest(TestCase):
     def test_no_user_attendance(self):
         self.request.user_attendance = None
         mixin = MustBeCompanyAdmin()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
     def test_is_admin_approved(self):
         self.request.user_attendance = mommy.make(
             "UserAttendance",
-            userprofile__company_admin=[mommy.make("CompanyAdmin", company_admin_approved='approved', campaign=testing_campaign())],
+            userprofile__company_admin=[
+                mommy.make(
+                    "CompanyAdmin",
+                    company_admin_approved="approved",
+                    campaign=testing_campaign(),
+                )
+            ],
             campaign=testing_campaign,
         )
         self.request.user_attendance.save()
         mixin = MustBeCompanyAdmin()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
     def test_is_admin_undecided(self):
         self.request.user_attendance = mommy.make(
             "UserAttendance",
-            userprofile__company_admin=[mommy.make("CompanyAdmin", company_admin_approved='undecided', campaign=testing_campaign)],
+            userprofile__company_admin=[
+                mommy.make(
+                    "CompanyAdmin",
+                    company_admin_approved="undecided",
+                    campaign=testing_campaign,
+                )
+            ],
             campaign=testing_campaign,
         )
         self.request.user_attendance.save()
         mixin = MustBeCompanyAdmin()
-        with self.assertRaisesRegex(PermissionDenied, "Tato stránka je určená pouze ověřeným firemním koordinátorům."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Tato stránka je určená pouze ověřeným firemním koordinátorům.",
+        ):
             mixin.dispatch(self.request)
 
     def test_is_admin_denied(self):
         self.request.user_attendance = mommy.make(
             "UserAttendance",
-            userprofile__company_admin=[mommy.make("CompanyAdmin", company_admin_approved='denied', campaign=testing_campaign)],
+            userprofile__company_admin=[
+                mommy.make(
+                    "CompanyAdmin",
+                    company_admin_approved="denied",
+                    campaign=testing_campaign,
+                )
+            ],
             campaign=testing_campaign,
         )
         self.request.user_attendance.save()
         mixin = MustBeCompanyAdmin()
-        with self.assertRaisesRegex(PermissionDenied, "Tato stránka je určená pouze ověřeným firemním koordinátorům."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Tato stránka je určená pouze ověřeným firemním koordinátorům.",
+        ):
             mixin.dispatch(self.request)
 
     def test_isnt_admin(self):
-        self.request.user_attendance = mommy.make("UserAttendance", campaign=testing_campaign())
+        self.request.user_attendance = mommy.make(
+            "UserAttendance", campaign=testing_campaign()
+        )
         mixin = MustBeCompanyAdmin()
-        with self.assertRaisesRegex(PermissionDenied, "Tato stránka je určená pouze ověřeným firemním koordinátorům."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Tato stránka je určená pouze ověřeným firemním koordinátorům.",
+        ):
             mixin.dispatch(self.request)
 
 
 class GroupRequiredResponse(GroupRequiredResponseMixin, FakeViewClass):
-    group_required = 'cykloservis'
+    group_required = "cykloservis"
 
 
 class GroupRequiredResponseMixinTest(TestCase):
@@ -159,14 +191,19 @@ class GroupRequiredResponseMixinTest(TestCase):
     def test_no_group(self):
         self.request.user = mommy.make("User")
         mixin = GroupRequiredResponse()
-        with self.assertRaisesRegex(PermissionDenied, "Pro přístup k této stránce musíte být ve skupině cykloservis"):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Pro přístup k této stránce musíte být ve skupině cykloservis",
+        ):
             mixin.dispatch(self.request)
 
     def test_in_group(self):
         self.request = self.factory.get(reverse("team_members"))
-        self.request.user = mommy.make("User", groups=[mommy.make("auth.Group", name='cykloservis')])
+        self.request.user = mommy.make(
+            "User", groups=[mommy.make("auth.Group", name="cykloservis")]
+        )
         mixin = GroupRequiredResponse()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
 
 class MustHaveTeam(MustHaveTeamMixin, FakeViewClass):
@@ -180,12 +217,12 @@ class MustHaveTeamMixinTest(TestCase):
         self.request = self.factory.get("/")
 
     def test_team_none(self):
-        self.request.user_attendance = mommy.make(
-            "UserAttendance",
-            team=None,
-        )
+        self.request.user_attendance = mommy.make("UserAttendance", team=None,)
         mixin = MustHaveTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Pokud jeli napřed tak je dohoňte a <a href='/tym/'>přidejte se k týmu</a>."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Pokud jeli napřed tak je dohoňte a <a href='/tym/'>přidejte se k týmu</a>.",
+        ):
             mixin.dispatch(self.request)
 
     def test_team_exists(self):
@@ -195,12 +232,12 @@ class MustHaveTeamMixinTest(TestCase):
             campaign=testing_campaign,
         )
         mixin = MustHaveTeam()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
     def test_no_user_attendance(self):
         self.request.user_attendance = None
         mixin = MustHaveTeam()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
 
 class MustBeApprovedForTeam(MustBeApprovedForTeamMixin, FakeViewClass):
@@ -214,12 +251,12 @@ class MustBeApprovedForTeamMixinTest(TestCase):
         self.request = self.factory.get("/")
 
     def test_team_none(self):
-        self.request.user_attendance = mommy.make(
-            "UserAttendance",
-            team=None,
-        )
+        self.request.user_attendance = mommy.make("UserAttendance", team=None,)
         mixin = MustBeApprovedForTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Pokud jeli napřed tak je dohoňte a <a href='/tym/'>přidejte se k týmu</a>."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Pokud jeli napřed tak je dohoňte a <a href='/tym/'>přidejte se k týmu</a>.",
+        ):
             mixin.dispatch(self.request)
 
     def test_team_approved(self):
@@ -227,10 +264,10 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             "UserAttendance",
             team__campaign=testing_campaign,
             campaign=testing_campaign,
-            approved_for_team='approved',
+            approved_for_team="approved",
         )
         mixin = MustBeApprovedForTeam()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")
 
     def test_team_undecided(self):
         self.request.user_attendance = mommy.make(
@@ -238,10 +275,12 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             team__campaign=testing_campaign,
             team__name="Foo team",
             campaign=testing_campaign,
-            approved_for_team='undecided',
+            approved_for_team="undecided",
         )
         mixin = MustBeApprovedForTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Tým Foo team rebeluje proti Vašemu členství."):
+        with self.assertRaisesRegex(
+            PermissionDenied, "Tým Foo team rebeluje proti Vašemu členství."
+        ):
             mixin.dispatch(self.request)
 
     def test_team_denied(self):
@@ -250,13 +289,15 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             team__campaign=testing_campaign,
             team__name="Foo team",
             campaign=testing_campaign,
-            approved_for_team='denied',
+            approved_for_team="denied",
         )
         mixin = MustBeApprovedForTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Tým Foo team rebeluje proti Vašemu členství."):
+        with self.assertRaisesRegex(
+            PermissionDenied, "Tým Foo team rebeluje proti Vašemu členství."
+        ):
             mixin.dispatch(self.request)
 
     def test_no_user_attendance(self):
         self.request.user_attendance = None
         mixin = MustHaveTeam()
-        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), "superdispatch")

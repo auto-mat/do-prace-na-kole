@@ -19,26 +19,16 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class LandingPageIcon(models.Model):
-    file = models.FileField(
-        verbose_name=_(u"Landing page image"),
-        max_length=512,
-    )
+    file = models.FileField(verbose_name=_(u"Landing page image"), max_length=512,)
     ROLES = [
-        ('main', _(u"Hlavní obráz")),
+        ("main", _(u"Hlavní obráz")),
     ]
     role = models.CharField(
-        verbose_name=_(u"Role pro obráz"),
-        max_length=64,
-        choices=ROLES,
-        blank=False,
+        verbose_name=_(u"Role pro obráz"), max_length=64, choices=ROLES, blank=False,
     )
     min_frequency = models.FloatField(
-        verbose_name=_("Min pravidelnost"),
-        blank=True,
-        null=True,
+        verbose_name=_("Min pravidelnost"), blank=True, null=True,
     )
     max_frequency = models.FloatField(
-        verbose_name=_("Max pravidelnost"),
-        blank=True,
-        null=True,
+        verbose_name=_("Max pravidelnost"), blank=True, null=True,
     )

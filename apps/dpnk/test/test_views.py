@@ -53,134 +53,192 @@ from .mommy_recipes import (
 
 
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
     """ Tests in which the user is logged in """
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
+
+    fixtures = ["sites", "campaign", "auth_user", "users", "transactions", "batches"]
 
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1015, 1115, 2115, 1016]))
+        self.client.force_login(
+            models.User.objects.get(username="test"),
+            settings.AUTHENTICATION_BACKENDS[0],
+        )
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.filter(pk__in=[1015, 1115, 2115, 1016])
+        )
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         campaign = self.user_attendance.campaign
         campaign.year = 1
-        campaign.campaign_type = models.CampaignType.objects.get(name="Testing campaign")
+        campaign.campaign_type = models.CampaignType.objects.get(
+            name="Testing campaign"
+        )
         campaign.save()
 
 
-@override_settings(
-    PAYU_POS_ID="123321",
-)
+@override_settings(PAYU_POS_ID="123321",)
 class CompetitionsViewTests(ViewsLogon):
     def test_competition_rules(self):
-        address = reverse('competition-rules-city', kwargs={'city_slug': "testing-city"})
+        address = reverse(
+            "competition-rules-city", kwargs={"city_slug": "testing-city"}
+        )
         response = self.client.get(address)
-        self.assertContains(response, "Testing campaign 1 - Pravidla soutěží - Testing city")
+        self.assertContains(
+            response, "Testing campaign 1 - Pravidla soutěží - Testing city"
+        )
         self.assertContains(response, "Competition vykonnostr rules")
-        self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
-        self.assertContains(response, "soutěž na vzdálenost týmů  ve městě Testing city pro muže")
+        self.assertContains(
+            response, "soutěž na vzdálenost jednotlivců  ve městě Testing city"
+        )
+        self.assertContains(
+            response, "soutěž na vzdálenost týmů  ve městě Testing city pro muže"
+        )
 
     def test_competition_results(self):
-        address = reverse('competition-results-city', kwargs={'city_slug': "testing-city"})
+        address = reverse(
+            "competition-results-city", kwargs={"city_slug": "testing-city"}
+        )
         response = self.client.get(address)
-        self.assertContains(response, "Testing campaign 1 - Výsledky soutěží - Testing city")
-        self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
+        self.assertContains(
+            response, "Testing campaign 1 - Výsledky soutěží - Testing city"
+        )
+        self.assertContains(
+            response, "soutěž na vzdálenost jednotlivců  ve městě Testing city"
+        )
 
     def test_payment(self):
-        address = reverse('payment')
+        address = reverse("payment")
         response = self.client.get(address)
-        self.assertContains(response, '<input type="hidden" name="amount" value="12000">', html=True)
-        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">', html=True)
-        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">', html=True)
-        self.assertContains(response, '<input type="hidden" name="client_ip" value="0.0.0.0">', html=True)
+        self.assertContains(
+            response, '<input type="hidden" name="amount" value="12000">', html=True
+        )
+        self.assertContains(
+            response, '<input type="hidden" name="pos_id" value="123321">', html=True
+        )
+        self.assertContains(
+            response, '<input type="hidden" name="order_id" value="1128-1">', html=True
+        )
+        self.assertContains(
+            response,
+            '<input type="hidden" name="client_ip" value="0.0.0.0">',
+            html=True,
+        )
 
     def test_payment_http_x_forwarded_for(self):
         """ Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR """
-        address = reverse('payment')
+        address = reverse("payment")
         response = self.client.get(address, HTTP_X_FORWARDED_FOR="123.123.123.123")
-        self.assertContains(response, '<input type="hidden" name="client_ip" value="123.123.123.123">', html=True)
+        self.assertContains(
+            response,
+            '<input type="hidden" name="client_ip" value="123.123.123.123">',
+            html=True,
+        )
 
     def test_payment_http_x_forwarded_for_proxy(self):
         """ Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR and the client is behid proxy """
-        address = reverse('payment')
-        response = self.client.get(address, HTTP_X_FORWARDED_FOR="unknown, 123.123.123.123")
-        self.assertContains(response, '<input type="hidden" name="client_ip" value="123.123.123.123">', html=True)
+        address = reverse("payment")
+        response = self.client.get(
+            address, HTTP_X_FORWARDED_FOR="unknown, 123.123.123.123"
+        )
+        self.assertContains(
+            response,
+            '<input type="hidden" name="client_ip" value="123.123.123.123">',
+            html=True,
+        )
 
     def test_team_members(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.get(pk=1115).team.all_members())
-        address = reverse('team_members')
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.get(pk=1115).team.all_members()
+        )
+        address = reverse("team_members")
         response = self.client.get(address)
-        self.assertContains(response, 'Odsouhlasený')
-        self.assertContains(response, 'test-registered@test.cz')
+        self.assertContains(response, "Odsouhlasený")
+        self.assertContains(response, "test-registered@test.cz")
 
     def test_other_team_members(self):
-        address = reverse('other_team_members_results')
+        address = reverse("other_team_members_results")
         response = self.client.get(address)
         self.assertContains(
             response,
             '<td colspan="5">Registrace nebyla dokončena, nepočítá se do výsledků.</td>',
             html=True,
         )
-        self.assertContains(response, '30')
+        self.assertContains(response, "30")
 
     def test_edit_team(self):
-        address = reverse('edit_team')
+        address = reverse("edit_team")
         response = self.client.get(address)
-        self.assertContains(response, 'Upravit údaje týmu')
-        self.assertContains(response, 'Testing team 1')
+        self.assertContains(response, "Upravit údaje týmu")
+        self.assertContains(response, "Testing team 1")
 
     def test_upload_team_photo(self):
-        address = reverse('upload_team_photo')
-        with open('apps/dpnk/test_files/DSC00002.JPG', 'rb') as fd:
+        address = reverse("upload_team_photo")
+        with open("apps/dpnk/test_files/DSC00002.JPG", "rb") as fd:
             post_data = {
-                'image': fd,
+                "image": fd,
             }
             response = self.client.post(address, post_data)
         self.assertEqual(response.status_code, 200)
 
     def test_company_profile(self):
-        address = reverse('company')
+        address = reverse("company")
         response = self.client.get(address)
-        self.assertContains(response, 'Testing team 1')
-        self.assertContains(response, 'Team in different subsidiary')
-        self.assertNotContains(response, 'Testing team last campaign', html=True)
+        self.assertContains(response, "Testing team 1")
+        self.assertContains(response, "Team in different subsidiary")
+        self.assertNotContains(response, "Testing team last campaign", html=True)
 
     def test_daily_chart(self):
         address = reverse(views.daily_chart)
         response = self.client.get(address)
-        self.assertContains(response, '<img src=\'http://chart.apis.google.com/chart?chxl=0:|1:|2010-11-20|')
+        self.assertContains(
+            response,
+            "<img src='http://chart.apis.google.com/chart?chxl=0:|1:|2010-11-20|",
+        )
 
     def test_update_team(self):
-        address = reverse('zmenit_tym')
+        address = reverse("zmenit_tym")
         response = self.client.get(address)
-        self.assertContains(response, 'Napište svému firemnímu koordinátorovi na e-mail ')
-        self.assertContains(response, 'test_wa@email.cz')
-        self.assertContains(response, 'test@email.cz')
-        self.assertContains(response, 'test@test.cz')
-        self.assertContains(response, 'Testing team 1 (Nick, Registered User 1, Testing User 1)')
+        self.assertContains(
+            response, "Napište svému firemnímu koordinátorovi na e-mail "
+        )
+        self.assertContains(response, "test_wa@email.cz")
+        self.assertContains(response, "test@email.cz")
+        self.assertContains(response, "test@test.cz")
+        self.assertContains(
+            response, "Testing team 1 (Nick, Registered User 1, Testing User 1)"
+        )
 
     def test_team_approval_request(self):
-        address = reverse('zaslat_zadost_clenstvi')
+        address = reverse("zaslat_zadost_clenstvi")
         response = self.client.get(address)
-        self.assertContains(response, '<h2 class="page_title">Žádost o ověření členství byla odeslána</h2>', html=True)
+        self.assertContains(
+            response,
+            '<h2 class="page_title">Žádost o ověření členství byla odeslána</h2>',
+            html=True,
+        )
         self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test2@test.cz'])
+        self.assertEqual(msg.recipients(), ["test2@test.cz"])
         msg = mail.outbox[1]
-        self.assertEqual(msg.recipients(), ['test-registered@test.cz'])
+        self.assertEqual(msg.recipients(), ["test-registered@test.cz"])
 
     def test_payment_beneficiary(self):
-        address = reverse('payment_beneficiary')
+        address = reverse("payment_beneficiary")
         response = self.client.get(address)
-        self.assertContains(response, '<input type="hidden" name="amount" value="35000">', html=True)
-        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">', html=True)
-        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">', html=True)
+        self.assertContains(
+            response, '<input type="hidden" name="amount" value="35000">', html=True
+        )
+        self.assertContains(
+            response, '<input type="hidden" name="pos_id" value="123321">', html=True
+        )
+        self.assertContains(
+            response, '<input type="hidden" name="order_id" value="1128-1">', html=True
+        )
 
     """
     def test_bike_repair(self):
@@ -240,35 +298,33 @@ class CompetitionsViewTests(ViewsLogon):
         },
     )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_login(self, slumber_api):
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = self.feed_value
-        address = reverse('login')
+        address = reverse("login")
         response = self.client.get(address)
-        self.assertRedirects(response, reverse('profil'), status_code=302)
+        self.assertRedirects(response, reverse("profil"), status_code=302)
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_registration_access(self, slumber_api):
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = self.feed_value
-        address = reverse('registration_access')
+        address = reverse("registration_access")
         response = self.client.get(address)
-        self.assertRedirects(response, reverse('profil'), status_code=302)
+        self.assertRedirects(response, reverse("profil"), status_code=302)
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
 class PaymentTypeViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
         self.campaign = testing_campaign
         t_shirt_size = mommy.make(
-            "TShirtSize",
-            campaign=self.campaign,
-            name="Foo t-shirt-size",
+            "TShirtSize", campaign=self.campaign, name="Foo t-shirt-size",
         )
         self.price_level = mommy.make(
             "price_level.PriceLevel",
@@ -291,16 +347,16 @@ class PaymentTypeViewTests(TestCase):
             team__campaign=self.campaign,
         )
         self.user_attendance.campaign.save()
-        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
+        )
 
     def test_dpnk_payment_type_with_discount_coupon(self):
         self.user_attendance.discount_coupon = mommy.make(
-            "DiscountCoupon",
-            discount=100,
-            coupon_type__name="Foo coupon type",
+            "DiscountCoupon", discount=100, coupon_type__name="Foo coupon type",
         )
         self.user_attendance.save()
-        response = self.client.get(reverse('typ_platby'))
+        response = self.client.get(reverse("typ_platby"))
         self.assertContains(
             response,
             '<div class="alert alert-success">Vaši platbu jsme úspěšně přijali.</div>',
@@ -311,7 +367,7 @@ class PaymentTypeViewTests(TestCase):
     def test_dpnk_payment_type_no_admission_fee(self):
         self.price_level.delete()
         self.user_attendance.save()
-        response = self.client.get(reverse('typ_platby'))
+        response = self.client.get(reverse("typ_platby"))
         self.assertContains(
             response,
             '<div class="alert alert-success">Startovné se neplatí.</div>',
@@ -324,36 +380,36 @@ class PaymentTypeViewTests(TestCase):
             "CompanyAdmin",
             administrated_company=self.user_attendance.team.subsidiary.company,
             userprofile__user__email="foo@email.com",
-            company_admin_approved='approved',
+            company_admin_approved="approved",
             campaign=self.campaign,
         )
         post_data = {
-            'payment_type': 'company',
-            'next': 'Next',
+            "payment_type": "company",
+            "next": "Next",
         }
-        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        response = self.client.post(reverse("typ_platby"), post_data, follow=True)
         self.assertRedirects(response, reverse("upravit_profil"))
         self.assertContains(
             response,
             '<div class="alert alert-warning">'
-            'Platbu ještě musí schválit koordinátor Vaší organizace '
+            "Platbu ještě musí schválit koordinátor Vaší organizace "
             '<a href="mailto:foo@email.com">foo@email.com</a>.',
             html=True,
         )
-        self.assertEqual(models.Payment.objects.get().pay_type, 'fc')
+        self.assertEqual(models.Payment.objects.get().pay_type, "fc")
 
     def test_dpnk_payment_type_no_t_shirt(self):
         post_data = {
-            'payment_type': 'company',
-            'next': 'Next',
+            "payment_type": "company",
+            "next": "Next",
         }
         self.user_attendance.t_shirt_size = None
         self.user_attendance.save()
         self.assertTrue(self.user_attendance.campaign.has_any_tshirt)
-        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        response = self.client.post(reverse("typ_platby"), post_data, follow=True)
         self.assertContains(
             response,
-            "<div class=\"alert alert-warning\">Zatím není co platit. "
+            '<div class="alert alert-warning">Zatím není co platit. '
             "Nejdříve se <a href='/tym/'>přidejte k týmu</a> a <a href='/zmenit_triko/'>vyberte tričko</a>.</div>",
             status_code=403,
             html=True,
@@ -361,10 +417,10 @@ class PaymentTypeViewTests(TestCase):
 
     def test_dpnk_payment_type_without_company_admin(self):
         post_data = {
-            'payment_type': 'company',
-            'next': 'Next',
+            "payment_type": "company",
+            "next": "Next",
         }
-        response = self.client.post(reverse('typ_platby'), post_data)
+        response = self.client.post(reverse("typ_platby"), post_data)
         self.assertContains(
             response,
             "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance.",
@@ -372,30 +428,34 @@ class PaymentTypeViewTests(TestCase):
 
     def test_dpnk_payment_type_discount_coupon(self):
         post_data = {
-            'payment_type': 'coupon',
-            'next': 'Next',
+            "payment_type": "coupon",
+            "next": "Next",
         }
-        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        response = self.client.post(reverse("typ_platby"), post_data, follow=True)
         self.assertRedirects(response, reverse("discount_coupon"))
-        self.assertContains(response, '<h2 class="page_title">Uplatnit slevový voucher</h2>', html=True)
+        self.assertContains(
+            response, '<h2 class="page_title">Uplatnit slevový voucher</h2>', html=True
+        )
 
-    @patch('dpnk.views.registration_and_login.logger')
+    @patch("dpnk.views.registration_and_login.logger")
     def test_dpnk_payment_type_pay_admin(self, mock_logger):
         post_data = {
-            'payment_type': 'pay',
-            'next': 'Next',
+            "payment_type": "pay",
+            "next": "Next",
         }
-        response = self.client.post(reverse('typ_platby'), post_data)
+        response = self.client.post(reverse("typ_platby"), post_data)
         self.assertContains(
             response,
             "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript.",
             status_code=500,
         )
-        mock_logger.error.assert_called_with("Wrong payment type", extra={'request': ANY, 'payment_type': 'pay'})
+        mock_logger.error.assert_called_with(
+            "Wrong payment type", extra={"request": ANY, "payment_type": "pay"}
+        )
 
 
 class DistanceTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'trips', 'commute_mode']
+    fixtures = ["sites", "campaign", "auth_user", "users", "trips", "commute_mode"]
 
     def test_distance(self):
         trips = models.Trip.objects.all()
@@ -403,38 +463,51 @@ class DistanceTests(TestCase):
         self.assertEqual(
             distance,
             {
-                'distance__sum': 167.2,
-                'distance_bicycle': 162.2,
-                'distance_foot': 5.0,
-                'count__sum': 3,
-                'count_bicycle': 2,
-                'count_foot': 1,
-                'user_count': 1,
+                "distance__sum": 167.2,
+                "distance_bicycle": 162.2,
+                "distance_foot": 5.0,
+                "count__sum": 3,
+                "count_bicycle": 2,
+                "count_foot": 1,
+                "user_count": 1,
             },
         )
 
 
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "company_competition",
+        "test_results_data",
+        "trips",
+    ]
 
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
-    @patch('dpnk.views.results_and_competitions.logger')
+    @patch("dpnk.views.results_and_competitions.logger")
     def test_dpnk_competition_results_unknown(self, mock_logger):
-        address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
+        address = reverse(
+            "competition_results", kwargs={"competition_slug": "unexistent_competition"}
+        )
         response = self.client.get(address)
         self.assertEqual(response.status_code, 404)
 
     def test_dpnk_competition_results_vykonnost_tymu(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         models.Competition.objects.get(slug="vykonnost-tymu").recalculate_results()
-        address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-tymu'})
+        address = reverse(
+            "competition_results", kwargs={"competition_slug": "vykonnost-tymu"}
+        )
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
         print_response(response)
@@ -448,13 +521,13 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
-        address = reverse('competition_results', kwargs={'competition_slug': 'quest'})
+        address = reverse("competition_results", kwargs={"competition_slug": "quest"})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Dotazník:")
         self.assertContains(response, "Výsledky této soutěže se nezobrazují")
 
     def test_dpnk_competition_results_TF(self):
-        address = reverse('competition_results', kwargs={'competition_slug': 'TF'})
+        address = reverse("competition_results", kwargs={"competition_slug": "TF"})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Team frequency:")
 
@@ -468,22 +541,22 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         city1 = mommy.make("City", name="Foo city")
         city2 = mommy.make("City", name="Bar city")
         PriceLevelRecipe.make()
-        campaign = models.Campaign.objects.get(slug='testing-campaign')
+        campaign = models.Campaign.objects.get(slug="testing-campaign")
         mommy.make(
-            "CityInCampaign",
-            city=city1,
-            campaign=campaign,
+            "CityInCampaign", city=city1, campaign=campaign,
         )
         mommy.make(
-            "CityInCampaign",
-            city=city2,
-            campaign=campaign,
+            "CityInCampaign", city=city2, campaign=campaign,
         )
         user_attendances = [
             UserAttendancePaidRecipe.make(team=None),
             UserAttendancePaidRecipe.make(
                 team__subsidiary__city=city1,
-                user_trips=[mommy.make("Trip", direction="trip_to", distance=2, commute_mode_id=2)],
+                user_trips=[
+                    mommy.make(
+                        "Trip", direction="trip_to", distance=2, commute_mode_id=2
+                    )
+                ],
             ),
             UserAttendancePaidRecipe.make(
                 team__subsidiary__city=city1,
@@ -491,12 +564,16 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             ),
             UserAttendancePaidRecipe.make(
                 team__subsidiary__city=city2,
-                user_trips=[mommy.make("Trip", direction="trip_to", distance=5, commute_mode_id=2)],
+                user_trips=[
+                    mommy.make(
+                        "Trip", direction="trip_to", distance=5, commute_mode_id=2
+                    )
+                ],
             ),
         ]
         for ua in user_attendances:
             ua.save()
-        response = self.client.get(reverse('competitor_counts'))
+        response = self.client.get(reverse("competitor_counts"))
         self.assertContains(
             response,
             "<tr>"
@@ -552,7 +629,15 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
     SSLIFY_ADMIN_DISABLE=True,
 )
 class ViewsTests(DenormMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "company_competition",
+    ]
 
     def setUp(self):
         super().setUp()
@@ -560,17 +645,20 @@ class ViewsTests(DenormMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
     def test_login_view(self):
-        address = reverse('login')
+        address = reverse("login")
         response = self.client.get(address)
         self.assertContains(response, "E-mail")
 
-        address = reverse('login', kwargs={'initial_email': "test@test.cz"})
+        address = reverse("login", kwargs={"initial_email": "test@test.cz"})
         response = self.client.get(address)
         self.assertContains(response, "E-mail")
         self.assertContains(response, "test@test.cz")
 
     def test_admin_views_competition(self):
-        self.client.force_login(models.User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            models.User.objects.get(username="admin"),
+            settings.AUTHENTICATION_BACKENDS[0],
+        )
         response = self.client.get(reverse("admin:dpnk_competition_add"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
@@ -580,107 +668,129 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertContains(response, 'id="id_competitor_type"')
 
     def test_dpnk_views_no_login(self):
-        address = reverse('registrace')
+        address = reverse("registrace")
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
 
     def test_dpnk_company_admin_registration(self):
-        address = reverse('register_admin')
+        address = reverse("register_admin")
         post_data = {
-            'email': 'testadmin@test.cz',
-            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
-            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
-            'motivation_company_admin': 'some motivation',
-            'telephone': 123456789,
-            'first_name': 'Company',
-            'last_name': 'Admin',
-            'administrated_company': 2,
-            'campaign': 339,
-            'will_pay_opt_in': True,
-            'personal_data_opt_in': True,
+            "email": "testadmin@test.cz",
+            "password1": "this.is.an.uncommon.password#$%^asdfpassword11",
+            "password2": "this.is.an.uncommon.password#$%^asdfpassword11",
+            "motivation_company_admin": "some motivation",
+            "telephone": 123456789,
+            "first_name": "Company",
+            "last_name": "Admin",
+            "administrated_company": 2,
+            "campaign": 339,
+            "will_pay_opt_in": True,
+            "personal_data_opt_in": True,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('company_structure'))
-        user = models.User.objects.get(email='testadmin@test.cz')
+        self.assertRedirects(response, reverse("company_structure"))
+        user = models.User.objects.get(email="testadmin@test.cz")
         self.assertEqual(user.get_full_name(), "Company Admin")
-        self.assertEqual(models.UserProfile.objects.get(user=user).telephone, '123456789')
-        self.assertEqual(models.CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
+        self.assertEqual(
+            models.UserProfile.objects.get(user=user).telephone, "123456789"
+        )
+        self.assertEqual(
+            models.CompanyAdmin.objects.get(
+                userprofile=user.userprofile
+            ).administrated_company.pk,
+            2,
+        )
         self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Jste firemní koordinátor')
+        self.assertEqual(msg.recipients(), ["testadmin@test.cz"])
+        self.assertEqual(
+            str(msg.subject), "[Testing campaign 2019] Jste firemní koordinátor"
+        )
         msg = mail.outbox[1]
-        self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Potvrzení registrace firemního koordinátora')
+        self.assertEqual(msg.recipients(), ["testadmin@test.cz"])
+        self.assertEqual(
+            str(msg.subject),
+            "[Testing campaign 2019] Potvrzení registrace firemního koordinátora",
+        )
 
     def test_dpnk_company_admin_registration_existing(self):
-        user = models.User.objects.get(username='test1')
+        user = models.User.objects.get(username="test1")
         models.CompanyAdmin.objects.create(
             administrated_company_id=2,
             userprofile=user.userprofile,
             campaign_id=339,
-            company_admin_approved='approved',
+            company_admin_approved="approved",
         )
-        address = reverse('register_admin')
+        address = reverse("register_admin")
         post_data = {
-            'administrated_company': 2,
-            'campaign': 339,
+            "administrated_company": 2,
+            "campaign": 339,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Tato organizace již má svého firemního koordinátora.")
+        self.assertContains(
+            response, "Tato organizace již má svého firemního koordinátora."
+        )
 
     def test_dpnk_registration(self):
-        address = reverse('registrace')
+        address = reverse("registrace")
         post_data = {
-            'email': 'test1@test.cz',
-            'password1': 'this.is.an.uncommon.password#$%^asdf',
-            'password2': 'this.is.an.uncommon.password#$%^asdf',
+            "email": "test1@test.cz",
+            "password1": "this.is.an.uncommon.password#$%^asdf",
+            "password2": "this.is.an.uncommon.password#$%^asdf",
         }
         response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('registration_complete'))
-        user = models.User.objects.get(email='test1@test.cz')
+        self.assertRedirects(response, reverse("registration_complete"))
+        user = models.User.objects.get(email="test1@test.cz")
         self.assertNotEqual(user, None)
         self.assertNotEqual(models.UserProfile.objects.get(user=user), None)
-        self.assertNotEqual(models.UserAttendance.objects.get(userprofile__user=user), None)
+        self.assertNotEqual(
+            models.UserAttendance.objects.get(userprofile__user=user), None
+        )
 
     def test_dpnk_registration_access(self):
-        address = reverse('registration_access')
+        address = reverse("registration_access")
         response = self.client.get(address)
         self.assertContains(response, "Zadejte svůj e-mail")
         post_data = {
-            'email': 'test@test.cz',
+            "email": "test@test.cz",
         }
         response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('login', kwargs={"initial_email": "test@test.cz"}))
+        self.assertRedirects(
+            response, reverse("login", kwargs={"initial_email": "test@test.cz"})
+        )
 
     def test_dpnk_registration_access_email_unknown(self):
-        address = reverse('registration_access')
+        address = reverse("registration_access")
         post_data = {
-            'email': 'test1@test.cz',
+            "email": "test1@test.cz",
         }
         response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('registrace', kwargs={"initial_email": "test1@test.cz"}))
+        self.assertRedirects(
+            response, reverse("registrace", kwargs={"initial_email": "test1@test.cz"})
+        )
 
     def test_dpnk_registration_email_used(self):
-        address = reverse('registrace')
+        address = reverse("registrace")
         post_data = {
-            'email': 'test@test.cz',
-            'password1': 'password11',
-            'password2': 'password11',
+            "email": "test@test.cz",
+            "password1": "password11",
+            "password2": "password11",
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, "Tato e-mailová adresa")
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_dpnk_userattendance_creation(self, slumber_api):
         slumber_api.feed.get = {}
-        self.client.force_login(models.User.objects.get(username='user_without_attendance'), settings.AUTHENTICATION_BACKENDS[0])
-        address = reverse('profil')
+        self.client.force_login(
+            models.User.objects.get(username="user_without_attendance"),
+            settings.AUTHENTICATION_BACKENDS[0],
+        )
+        address = reverse("profil")
         response = self.client.get(address)
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse("upravit_profil"))
         user_attendance = models.UserAttendance.objects.get(
-            userprofile__user__username='user_without_attendance',
-            campaign__pk=339,
+            userprofile__user__username="user_without_attendance", campaign__pk=339,
         )
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
 
@@ -689,10 +799,12 @@ class RegistrationPhaseTests(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
-        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type)
+        self.campaign = mommy.make(
+            "dpnk.campaign", slug="testing-campaign", campaign_type=campaign_type
+        )
 
     def test_dpnk_registration_no_phase(self):
-        response = self.client.get(reverse('registrace'))
+        response = self.client.get(reverse("registrace"))
         self.assertContains(
             response,
             '<div class="alert alert-danger">Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze registrační.</div>',
@@ -700,9 +812,7 @@ class RegistrationPhaseTests(TestCase):
             status_code=403,
         )
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2020, month=10, day=1),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2020, month=10, day=1),)
     def test_dpnk_registration_after_phase(self):
         mommy.make(
             "dpnk.Phase",
@@ -711,7 +821,7 @@ class RegistrationPhaseTests(TestCase):
             date_to="2011-02-01",
             campaign=self.campaign,
         )
-        response = self.client.get(reverse('registrace'))
+        response = self.client.get(reverse("registrace"))
         self.assertContains(
             response,
             '<div class="alert alert-danger">Registrace již byla ukončena.</div>',
@@ -719,9 +829,7 @@ class RegistrationPhaseTests(TestCase):
             status_code=403,
         )
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=10, day=1),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2010, month=10, day=1),)
     def test_dpnk_registration_before_phase(self):
         mommy.make(
             "dpnk.Phase",
@@ -730,7 +838,7 @@ class RegistrationPhaseTests(TestCase):
             date_to="2011-02-01",
             campaign=self.campaign,
         )
-        response = self.client.get(reverse('registrace'))
+        response = self.client.get(reverse("registrace"))
         self.assertContains(
             response,
             '<div class="alert alert-danger">Registrace ještě nezačala.<br/>Registrovat se budete moct od 01.01.2011</div>',
@@ -739,9 +847,7 @@ class RegistrationPhaseTests(TestCase):
         )
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
+@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
 class RegistrationViewTests(TestCase):
     def setUp(self):
         super().setUp()
@@ -749,24 +855,21 @@ class RegistrationViewTests(TestCase):
 
     def test_dpnk_registration_token(self):
         mommy.make(
-            "Team",
-            invitation_token="token123213",
-            campaign=testing_campaign,
-            id=1,
+            "Team", invitation_token="token123213", campaign=testing_campaign, id=1,
         )
         kwargs = {
             "token": "token123213",
-            'initial_email': 'test1@test.cz',
+            "initial_email": "test1@test.cz",
         }
-        address = reverse('registrace', kwargs=kwargs)
+        address = reverse("registrace", kwargs=kwargs)
         post_data = {
-            'email': 'test1@test.cz',
-            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
-            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            "email": "test1@test.cz",
+            "password1": "this.is.an.uncommon.password#$%^asdfpassword11",
+            "password2": "this.is.an.uncommon.password#$%^asdfpassword11",
         }
         response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('registration_complete'))
-        user = models.User.objects.get(email='test1@test.cz')
+        self.assertRedirects(response, reverse("registration_complete"))
+        user = models.User.objects.get(email="test1@test.cz")
         self.assertNotEqual(user, None)
         self.assertNotEqual(models.UserProfile.objects.get(user=user), None)
         ua = models.UserAttendance.objects.get(userprofile__user=user)
@@ -782,17 +885,17 @@ class RegistrationViewTests(TestCase):
         )
         kwargs = {
             "token": "token123213",
-            'initial_email': 'test1@test.cz',
+            "initial_email": "test1@test.cz",
         }
-        address = reverse('registrace', kwargs=kwargs)
+        address = reverse("registrace", kwargs=kwargs)
         post_data = {
-            'email': 'test1@test.cz',
-            'password1': 'this.is.an.uncommon.password#$%^asdfpassword11',
-            'password2': 'this.is.an.uncommon.password#$%^asdfpassword11',
+            "email": "test1@test.cz",
+            "password1": "this.is.an.uncommon.password#$%^asdfpassword11",
+            "password2": "this.is.an.uncommon.password#$%^asdfpassword11",
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('registration_complete'))
-        user = models.User.objects.get(email='test1@test.cz')
+        self.assertRedirects(response, reverse("registration_complete"))
+        user = models.User.objects.get(email="test1@test.cz")
         user.is_active = True
         user.save()
         self.assertContains(
@@ -805,11 +908,10 @@ class RegistrationViewTests(TestCase):
 
 
 @override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RequestFactoryViewTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ["sites", "campaign", "auth_user", "users"]
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -820,9 +922,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         campaign_type = mommy.make(
-            "CampaignType",
-            slug="test_campaign_type",
-            web="dopracenakole.cz",
+            "CampaignType", slug="test_campaign_type", web="dopracenakole.cz",
         )
         self.campaign = self.user_attendance.campaign
         self.campaign.campaign_type = campaign_type
@@ -830,79 +930,86 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
     def test_questionnaire_view_unauthenticated(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs)
+        kwargs = {"questionnaire_slug": "quest"}
+        address = reverse("questionnaire", kwargs=kwargs)
         response = self.client.get(address)
-        self.assertRedirects(response, '/login?next=/otazka/quest/')
+        self.assertRedirects(response, "/login?next=/otazka/quest/")
 
     def test_questionnaire_view(self):
-        kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs)
+        kwargs = {"questionnaire_slug": "quest"}
+        address = reverse("questionnaire", kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         request.resolver_match = {"url_name": "questionnaire"}
         response = views.QuestionnaireView.as_view()(request, **kwargs)
-        self.assertContains(response, 'yes')
-        self.assertContains(response, 'Question text')
-        self.assertContains(response, '<p>Given comment</p>')
+        self.assertContains(response, "yes")
+        self.assertContains(response, "Question text")
+        self.assertContains(response, "<p>Given comment</p>")
 
         post_data = {
             "question-2-choices": 1,
             "question-3-comment": 12,
             "question-4-comment": "http://www.asdf.cz",
-            'submit': 'Odeslat',
-
+            "submit": "Odeslat",
         }
         request = self.factory.post(address, post_data)
-        setattr(request, 'session', 'session')
+        setattr(request, "session", "session")
         self.messages = FallbackStorage(request)
-        setattr(request, '_messages', self.messages)
+        setattr(request, "_messages", self.messages)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertEqual(response.url, reverse("profil"))
 
-    @patch('dpnk.views.results_and_competitions.logger')
+    @patch("dpnk.views.results_and_competitions.logger")
     def test_questionnaire_view_unknown(self, mock_logger):
-        kwargs = {'questionnaire_slug': 'quest1'}
-        address = reverse('questionnaire', kwargs=kwargs)
+        kwargs = {"questionnaire_slug": "quest1"}
+        address = reverse("questionnaire", kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         request.resolver_match = {"url_name": "questionnaire"}
         response = views.QuestionnaireView.as_view()(request, **kwargs)
-        mock_logger.exception.assert_called_with('Unknown questionaire', extra={'request': ANY, 'slug': 'quest1'})
-        self.assertContains(response, 'Tento dotazník v systému nemáme.', status_code=401)
+        mock_logger.exception.assert_called_with(
+            "Unknown questionaire", extra={"request": ANY, "slug": "quest1"}
+        )
+        self.assertContains(
+            response, "Tento dotazník v systému nemáme.", status_code=401
+        )
 
     def test_questionnaire_view_uncomplete(self):
-        kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs)
+        kwargs = {"questionnaire_slug": "quest"}
+        address = reverse("questionnaire", kwargs=kwargs)
 
         post_data = {
             "question-2-choices": 1,
             "question-3-comment": 12,
             "question-4-comment": "",
-            'submit': 'Odeslat',
-
+            "submit": "Odeslat",
         }
         request = self.factory.post(address, post_data)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
-        self.assertContains(response, "Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.")
-        self.assertContains(response, '<a href="%sDSC00002.JPG">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
+        self.assertContains(
+            response,
+            "Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.",
+        )
+        self.assertContains(
+            response,
+            '<a href="%sDSC00002.JPG">DSC00002.JPG</a>' % settings.MEDIA_URL,
+            html=True,
+        )
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2016, month=11, day=20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2016, month=11, day=20),)
     def test_questionnaire_view_late(self):
-        kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs)
+        kwargs = {"questionnaire_slug": "quest"}
+        address = reverse("questionnaire", kwargs=kwargs)
 
         post_data = {}
         request = self.factory.post(address, post_data)
@@ -921,32 +1028,30 @@ class ViewsLogonMommy(TestCase):
         super().setUp()
         self.user_attendance = self.get_user_attendance()
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
-        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
+        )
 
 
-@override_settings(
-    FAKE_DATE=datetime.date(2010, 11, 20),
-)
+@override_settings(FAKE_DATE=datetime.date(2010, 11, 20),)
 class TestRidesView(ViewsLogonMommy):
     def get_user_attendance(self):
         testing_campaign = campaign_get_or_create(
-            slug="testing-campaign",
-            name='Testing campaign',
-            minimum_rides_base=10000,
+            slug="testing-campaign", name="Testing campaign", minimum_rides_base=10000,
         )
         user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
-            userprofile__sex='male',
-            userprofile__user__first_name='Foo',
-            userprofile__user__last_name='User',
-            userprofile__user__email='foo@bar.cz',
-            userprofile__telephone='12345',
+            userprofile__sex="male",
+            userprofile__user__first_name="Foo",
+            userprofile__user__last_name="User",
+            userprofile__user__email="foo@bar.cz",
+            userprofile__telephone="12345",
             personal_data_opt_in=True,
             team__name="Foo team",
-            approved_for_team='approved',
+            approved_for_team="approved",
         )
         mommy.make(
-            'CityInCampaign',
+            "CityInCampaign",
             campaign=testing_campaign,
             city=user_attendance.team.subsidiary.city,
         )
@@ -956,28 +1061,27 @@ class TestRidesView(ViewsLogonMommy):
 class TestRegisterCompanyView(ViewsLogonMommy):
     def test_get(self):
         response = self.client.get(
-            reverse('register_company'),
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            reverse("register_company"), HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
             response,
             '<label for="id_name" class=" requiredField">'
-            'Název společnosti'
+            "Název společnosti"
             '<span class="asteriskField">*</span>'
-            '</label>',
+            "</label>",
             html=True,
         )
 
     def test_create(self):
         post_data = {
-            'ico': '12345679',
-            'name': 'Foo name',
+            "ico": "12345679",
+            "name": "Foo name",
         }
         response = self.client.post(
-            reverse('register_company'),
+            reverse("register_company"),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         company = models.Company.objects.get(name="Foo name")
         self.assertJSONEqual(
@@ -987,20 +1091,18 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 
     def test_duplicate_ico(self):
         """ Test, that duplicate IČO error is reported to the user """
-        mommy.make('Company', ico='12345679')
+        mommy.make("Company", ico="12345679")
         post_data = {
-            'ico': '12345679',
+            "ico": "12345679",
         }
         response = self.client.post(
-            reverse('register_company'),
+            reverse("register_company"),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response,
-            "<strong>Toto pole je vyžadováno.</strong>",
-            html=True,
+            response, "<strong>Toto pole je vyžadováno.</strong>", html=True,
         )
         self.assertContains(
             response,
@@ -1010,20 +1112,18 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 
     def test_invalid_ico(self):
         """ Test, that duplicate IČO error is reported to the user """
-        mommy.make('Company', ico='1234')
+        mommy.make("Company", ico="1234")
         post_data = {
-            'ico': '1234',
+            "ico": "1234",
         }
         response = self.client.post(
-            reverse('register_company'),
+            reverse("register_company"),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response,
-            "<strong>Toto pole je vyžadováno.</strong>",
-            html=True,
+            response, "<strong>Toto pole je vyžadováno.</strong>", html=True,
         )
         self.assertContains(
             response,
@@ -1034,10 +1134,10 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 
 class TestRegisterSubsidiaryView(ViewsLogonMommy):
     def test_create(self):
-        city = mommy.make('City')
-        mommy.make('CityInCampaign', city=city, campaign=self.user_attendance.campaign)
-        mommy.make('PSC', psc=12345)
-        company = mommy.make('Company')
+        city = mommy.make("City")
+        mommy.make("CityInCampaign", city=city, campaign=self.user_attendance.campaign)
+        mommy.make("PSC", psc=12345)
+        company = mommy.make("Company")
         post_data = {
             "company": company.id,
             "city": city.id,
@@ -1048,10 +1148,10 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
             "address_city": "Foo city",
         }
         response = self.client.post(
-            reverse('register_subsidiary', args=(company.id,)),
+            reverse("register_subsidiary", args=(company.id,)),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         subsidiary = models.Subsidiary.objects.get(company=company)
         self.assertEqual(subsidiary.address.street_number, "123")
@@ -1060,43 +1160,39 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
             response.content.decode(),
             {
                 "status": "ok",
-                'name': 'Foo recipient, Foo street 123, 123 45 Foo city',
+                "name": "Foo recipient, Foo street 123, 123 45 Foo city",
                 "id": subsidiary.id,
             },
         )
 
     def test_psc_failing(self):
-        company = mommy.make('Company')
+        company = mommy.make("Company")
         post_data = {
             "address_psc": "123",
         }
         response = self.client.post(
-            reverse('register_subsidiary', args=(company.id,)),
+            reverse("register_subsidiary", args=(company.id,)),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response,
-            "<strong>PSČ musí být pěticiferné číslo</strong>",
-            html=True,
+            response, "<strong>PSČ musí být pěticiferné číslo</strong>", html=True,
         )
 
     def test_psc_failing_no_integer(self):
-        company = mommy.make('Company')
+        company = mommy.make("Company")
         post_data = {
             "address_psc": "FOO",
         }
         response = self.client.post(
-            reverse('register_subsidiary', args=(company.id,)),
+            reverse("register_subsidiary", args=(company.id,)),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response,
-            "<strong>PSČ musí být pěticiferné číslo</strong>",
-            html=True,
+            response, "<strong>PSČ musí být pěticiferné číslo</strong>", html=True,
         )
 
 
@@ -1106,12 +1202,10 @@ class TestDiplomasView(ViewsLogonMommy):
 
     def shared_checks(self, response):
         self.assertNotContains(
-            response,
-            "None",
+            response, "None",
         )
         self.assertContains(
-            response,
-            "Testing campaign",
+            response, "Testing campaign",
         )
 
     def test_basic(self):
@@ -1123,31 +1217,31 @@ class TestDiplomasView(ViewsLogonMommy):
         )
         self.user_attendance.team = self.team
         self.user_attendance.save()
-        response = self.client.get(reverse('diplomas'))
+        response = self.client.get(reverse("diplomas"))
         self.shared_checks(response)
         self.assertContains(response, "Foo team")
 
     def test_no_team(self):
-        response = self.client.get(reverse('diplomas'))
+        response = self.client.get(reverse("diplomas"))
         self.shared_checks(response)
 
 
 class TestRegisterTeamView(ViewsLogonMommy):
     def setUp(self):
-        self.subsidiary = mommy.make('Subsidiary')
+        self.subsidiary = mommy.make("Subsidiary")
         super().setUp()
 
     def test_create(self):
         post_data = {
-            'name': 'Foo name',
-            'subsidiary': self.subsidiary.id,
-            'campaign': self.user_attendance.campaign.id,
+            "name": "Foo name",
+            "subsidiary": self.subsidiary.id,
+            "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(
-            reverse('register_team', args=(self.subsidiary.id,)),
+            reverse("register_team", args=(self.subsidiary.id,)),
             post_data,
             follow=True,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         team = models.Team.objects.get(name="Foo name")
         self.assertJSONEqual(
@@ -1156,7 +1250,7 @@ class TestRegisterTeamView(ViewsLogonMommy):
         )
 
     def test_get(self):
-        response = self.client.get(reverse('register_team', args=(self.subsidiary.id,)))
+        response = self.client.get(reverse("register_team", args=(self.subsidiary.id,)))
         self.assertContains(
             response,
             '<input type="text" name="name" maxlength="50" class="textinput textInput form-control" required id="id_name" />',
@@ -1164,16 +1258,16 @@ class TestRegisterTeamView(ViewsLogonMommy):
         )
 
     def test_get_previous_team(self):
-        self.user_attendance.campaign.previous_campaign = mommy.make('Campaign')
+        self.user_attendance.campaign.previous_campaign = mommy.make("Campaign")
         self.user_attendance.campaign.save()
         mommy.make(
-            'UserAttendance',
+            "UserAttendance",
             campaign=self.user_attendance.campaign.previous_campaign,
             userprofile=self.user_attendance.userprofile,
-            team__name='Previous foo team',
+            team__name="Previous foo team",
             team__campaign=self.user_attendance.campaign.previous_campaign,
         )
-        response = self.client.get(reverse('register_team', args=(self.subsidiary.id,)))
+        response = self.client.get(reverse("register_team", args=(self.subsidiary.id,)))
         self.assertContains(
             response,
             '<input type="text" name="name" value="Previous foo team" maxlength="50" '
@@ -1182,14 +1276,14 @@ class TestRegisterTeamView(ViewsLogonMommy):
         )
 
     def test_get_previous_no_team(self):
-        self.user_attendance.campaign.previous_campaign = mommy.make('Campaign')
+        self.user_attendance.campaign.previous_campaign = mommy.make("Campaign")
         self.user_attendance.campaign.save()
         mommy.make(
-            'UserAttendance',
+            "UserAttendance",
             campaign=self.user_attendance.campaign.previous_campaign,
             userprofile=self.user_attendance.userprofile,
         )
-        response = self.client.get(reverse('register_team', args=(self.subsidiary.id,)))
+        response = self.client.get(reverse("register_team", args=(self.subsidiary.id,)))
         self.assertContains(
             response,
             '<input type="text" name="name" maxlength="50" class="textinput textInput form-control" required id="id_name" />',
@@ -1199,14 +1293,14 @@ class TestRegisterTeamView(ViewsLogonMommy):
 
 class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_view(self):
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
 
     def test_dpnk_team_view_no_payment(self):
         models.Payment.objects.all().delete()
         denorm.flush()
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
         models.Payment.objects.all().delete()
@@ -1218,8 +1312,16 @@ class ViewsTestsLogon(ViewsLogon):
             response.content.decode(),
             {
                 "data": [
-                    {"value": "Testing company", "label": "Testing company (IČO: 11111)", "id": 1},
-                    {"value": "Testing company without admin", "label": "Testing company without admin (IČO: 11111)", "id": 2},
+                    {
+                        "value": "Testing company",
+                        "label": "Testing company (IČO: 11111)",
+                        "id": 1,
+                    },
+                    {
+                        "value": "Testing company without admin",
+                        "label": "Testing company without admin (IČO: 11111)",
+                        "id": 2,
+                    },
                 ],
                 "meta": {
                     "more": "Zobrazit další výsledky",
@@ -1235,7 +1337,9 @@ class ViewsTestsLogon(ViewsLogon):
         self.user_attendance.team = None
         self.user_attendance.save()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+        address = reverse(
+            "change_team_invitation", kwargs={"token": token, "initial_email": email}
+        )
         response = self.client.get(address)
         self.assertContains(
             response,
@@ -1253,7 +1357,9 @@ class ViewsTestsLogon(ViewsLogon):
         team.save()
         denorm.flush()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+        address = reverse(
+            "change_team_invitation", kwargs={"token": token, "initial_email": email}
+        )
         response = self.client.get(address)
         self.assertContains(
             response,
@@ -1265,22 +1371,29 @@ class ViewsTestsLogon(ViewsLogon):
         models.Payment.objects.all().delete()
         denorm.flush()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('change_team_invitation', kwargs={'token': "token123214", 'initial_email': email})
+        address = reverse(
+            "change_team_invitation",
+            kwargs={"token": "token123214", "initial_email": email},
+        )
         response = self.client.get(address)
         self.assertContains(
             response,
             '<div class="alert alert-danger">'
-            'Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).'
-            '</div>',
+            "Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku)."
+            "</div>",
             html=True,
         )
 
     def test_dpnk_team_invitation(self):
         token = self.user_attendance.team.invitation_token
         email = self.user_attendance.userprofile.user.email
-        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+        address = reverse(
+            "change_team_invitation", kwargs={"token": token, "initial_email": email}
+        )
         response = self.client.get(address)
-        self.assertContains(response, '<h2 class="page_title">Pozvánka do týmu</h2>', html=True)
+        self.assertContains(
+            response, '<h2 class="page_title">Pozvánka do týmu</h2>', html=True
+        )
 
         post_data = {
             "question": "on",
@@ -1289,16 +1402,22 @@ class ViewsTestsLogon(ViewsLogon):
             "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, '<h2 class="page_title">Vyberte jiný tým</h2>', html=True)
+        self.assertContains(
+            response, '<h2 class="page_title">Vyberte jiný tým</h2>', html=True
+        )
 
     def test_dpnk_team_invitation_post_no_last_team(self):
         token = self.user_attendance.team.invitation_token
         self.user_attendance.team = None
         self.user_attendance.save()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+        address = reverse(
+            "change_team_invitation", kwargs={"token": token, "initial_email": email}
+        )
         response = self.client.get(address)
-        self.assertContains(response, '<h2 class="page_title">Pozvánka do týmu</h2>', html=True)
+        self.assertContains(
+            response, '<h2 class="page_title">Pozvánka do týmu</h2>', html=True
+        )
 
         post_data = {
             "question": "on",
@@ -1315,7 +1434,9 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_invitation_confirmation_unchecked(self):
         token = self.user_attendance.team.invitation_token
         email = self.user_attendance.userprofile.user.email
-        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+        address = reverse(
+            "change_team_invitation", kwargs={"token": token, "initial_email": email}
+        )
 
         post_data = {
             "submit": "Odeslat",
@@ -1331,25 +1452,42 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_invitation_bad_email(self):
         token = self.user_attendance.team.invitation_token
         response = self.client.get(
-            reverse('change_team_invitation', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}),
+            reverse(
+                "change_team_invitation",
+                kwargs={"token": token, "initial_email": "invitation_test@email.com"},
+            ),
             follow=True,
         )
-        self.assertRedirects(response, "/login/invitation_test@email.com/?next=/tym/token123213/invitation_test@email.com/")
+        self.assertRedirects(
+            response,
+            "/login/invitation_test@email.com/?next=/tym/token123213/invitation_test@email.com/",
+        )
         self.assertContains(response, "invitation_test@email.com")
 
     def test_dpnk_team_invitation_unknown_team(self):
-        response = self.client.get(reverse('change_team_invitation', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
+        response = self.client.get(
+            reverse(
+                "change_team_invitation",
+                kwargs={"token": "asdf", "initial_email": "invitation_test@email.com"},
+            )
+        )
         self.assertContains(response, "Tým nenalezen", status_code=403)
 
     def test_dpnk_team_invitation_logout(self):
         self.client.logout()
         token = self.user_attendance.team.invitation_token
-        response = self.client.get(reverse('change_team_invitation', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}))
-        self.assertRedirects(response, "%s?next=/tym/%s/invitation_test%%40email.com/" % (reverse('login'), token))
+        response = self.client.get(
+            reverse(
+                "change_team_invitation",
+                kwargs={"token": token, "initial_email": "invitation_test@email.com"},
+            )
+        )
+        self.assertRedirects(
+            response,
+            "%s?next=/tym/%s/invitation_test%%40email.com/" % (reverse("login"), token),
+        )
 
-    @override_settings(
-        DEBUG=True,
-    )
+    @override_settings(DEBUG=True,)
     def test_dpnk_team_view_choose_empty_team(self):
         util.rebuild_denorm_models(models.Team.objects.all())
         PackageTransaction.objects.all().delete()
@@ -1357,100 +1495,106 @@ class ViewsTestsLogon(ViewsLogon):
         self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         post_data = {
-            'company': '1',
-            'subsidiary': '1',
-            'team': '4',
-            'prev': 'Prev',
+            "company": "1",
+            "subsidiary": "1",
+            "team": "4",
+            "prev": "Prev",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
         self.assertRedirects(response, reverse("upravit_profil"))
         self.assertEqual(len(mail.outbox), 0)
-        self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
+        self.assertEqual(
+            models.UserAttendance.objects.get(pk=1115).approved_for_team, "approved"
+        )
 
     def test_dpnk_update_profile_view(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
         post_data = {
-            'user-email': 'testing@email.cz',
-            'user-first_name': 'Testing',
-            'user-last_name': 'Name',
-            'userprofile-language': 'cs',
-            'userprofile-mailing_opt_in': 'True',
-            'userprofile-nickname': 'My super nick',
-            'userattendance-personal_data_opt_in': 'True',
-            'userprofile-sex': 'male',
-            'userprofile-telephone': '111222333',
-            'next': 'Další',
+            "user-email": "testing@email.cz",
+            "user-first_name": "Testing",
+            "user-last_name": "Name",
+            "userprofile-language": "cs",
+            "userprofile-mailing_opt_in": "True",
+            "userprofile-nickname": "My super nick",
+            "userattendance-personal_data_opt_in": "True",
+            "userprofile-sex": "male",
+            "userprofile-telephone": "111222333",
+            "next": "Další",
         }
-        address = reverse('upravit_profil')
+        address = reverse("upravit_profil")
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_tym"))
         self.assertContains(response, "My super nick")
 
     def test_dpnk_update_profile_view_no_sex(self):
         post_data = {
-            'userprofile-sex': 'unknown',
-            'next': 'Další',
+            "userprofile-sex": "unknown",
+            "next": "Další",
         }
-        address = reverse('upravit_profil')
+        address = reverse("upravit_profil")
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Pohlaví")
 
     def test_dpnk_update_profile_view_email_exists(self):
         post_data = {
-            'user-email': 'test2@test.cz',
-            'next': 'Další',
+            "user-email": "test2@test.cz",
+            "next": "Další",
         }
-        address = reverse('upravit_profil')
+        address = reverse("upravit_profil")
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Tento e-mail již je v našem systému zanesen.")
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def company_payment(self, slumber_api, amount, amount_tax, beneficiary=False):
         models.Payment.objects.get(id=17).delete()
         denorm.flush()
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
-        response = self.client.get(reverse('company_admin_pay_for_users'))
+        slumber_instance.feed.get.return_value = [
+            {"content": "Emission calculator description text"}
+        ]
+        response = self.client.get(reverse("company_admin_pay_for_users"))
         self.assertContains(
             response,
-            '<tr>'
-            '<td>'
+            "<tr>"
+            "<td>"
             '<input class="tableselectmultiple selectable-checkbox form-check-input" '
             'id="id_paying_for_0" name="paying_for" type="checkbox" value="2115"/>'
-            '</td>'
-            '<td>%s</td>'
-            '<td>Registered</td>'
-            '<td>User 1</td>'
-            '<td></td>'
-            '<td>test-registered@test.cz</td>'
-            '<td>Testing city</td>'
-            '<td>2015-11-12 18:18:40.223000</td>'
-            '</tr>' % (str(amount).replace(".", ",")),
+            "</td>"
+            "<td>%s</td>"
+            "<td>Registered</td>"
+            "<td>User 1</td>"
+            "<td></td>"
+            "<td>test-registered@test.cz</td>"
+            "<td>Testing city</td>"
+            "<td>2015-11-12 18:18:40.223000</td>"
+            "</tr>" % (str(amount).replace(".", ",")),
             html=True,
         )
         post_data = {
-            'paying_for': '2115',
-            'submit': 'Odeslat',
+            "paying_for": "2115",
+            "submit": "Odeslat",
         }
-        response = self.client.post(reverse('company_admin_pay_for_users'), post_data, follow=True)
-        self.assertRedirects(response, reverse('company_admin_pay_for_users'))
+        response = self.client.post(
+            reverse("company_admin_pay_for_users"), post_data, follow=True
+        )
+        self.assertRedirects(response, reverse("company_admin_pay_for_users"))
         p = models.UserAttendance.objects.get(id=2115).representative_payment
         self.assertEqual(p.status, models.Status.COMPANY_ACCEPTS)
 
-        response = self.client.get(reverse('invoices'))
+        response = self.client.get(reverse("invoices"))
         self.assertContains(response, "<td>Registered User 1</td>", html=True)
         self.assertContains(response, "<td>%i Kč</td>" % amount, html=True)
 
         post_data = {
-            'create_invoice': 'on',
-            'submit': 'Odeslat',
-            'order_number': 1323575433,
+            "create_invoice": "on",
+            "submit": "Odeslat",
+            "order_number": 1323575433,
         }
         if beneficiary:
-            post_data['company_pais_benefitial_fee'] = "on"
-        response = self.client.post(reverse('invoices'), post_data, follow=True)
+            post_data["company_pais_benefitial_fee"] = "on"
+        response = self.client.post(reverse("invoices"), post_data, follow=True)
         self.assertContains(response, "<td>Zaplacení nepotvrzeno</td>", html=True)
-        self.assertRedirects(response, reverse('invoices'))
+        self.assertRedirects(response, reverse("invoices"))
         p = models.UserAttendance.objects.get(id=2115).representative_payment
         self.assertEqual(p.status, 1006)
         self.assertEqual(p.invoice.total_amount, amount_tax)
@@ -1476,9 +1620,7 @@ class ViewsTestsLogon(ViewsLogon):
     def test_company_payment(self):
         self.company_payment(amount=130.0, amount_tax=157)
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2011, month=4, day=1),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2011, month=4, day=1),)
     def test_company_payment_late(self):
         self.company_payment(amount=230.0, amount_tax=278)
 
@@ -1487,90 +1629,100 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_team_approval(self):
         ua = models.UserAttendance.objects.get(pk=1015)
-        ua.approved_for_team = 'undecided'
+        ua.approved_for_team = "undecided"
         ua.save()
         post_data = {
-            'approve': 'approve-1015',
-            'reason-1015': '',
+            "approve": "approve-1015",
+            "reason-1015": "",
         }
-        response = self.client.post(reverse('team_members'), post_data)
-        self.assertContains(response, 'Členství uživatele Nick v týmu Testing team 1 bylo odsouhlaseno.')
+        response = self.client.post(reverse("team_members"), post_data)
+        self.assertContains(
+            response, "Členství uživatele Nick v týmu Testing team 1 bylo odsouhlaseno."
+        )
 
     def test_dpnk_team_denial(self):
         ua = models.UserAttendance.objects.get(pk=1015)
-        ua.approved_for_team = 'undecided'
+        ua.approved_for_team = "undecided"
         ua.save()
         post_data = {
-            'approve': 'deny-1015',
-            'reason-1015': 'reason',
+            "approve": "deny-1015",
+            "reason-1015": "reason",
         }
-        response = self.client.post(reverse('team_members'), post_data)
-        self.assertContains(response, 'Členství uživatele Nick ve Vašem týmu bylo zamítnuto')
+        response = self.client.post(reverse("team_members"), post_data)
+        self.assertContains(
+            response, "Členství uživatele Nick ve Vašem týmu bylo zamítnuto"
+        )
 
     def test_dpnk_team_denial_no_message(self):
         ua = models.UserAttendance.objects.get(pk=1015)
-        ua.approved_for_team = 'undecided'
+        ua.approved_for_team = "undecided"
         ua.save()
         post_data = {
-            'approve': 'deny-1015',
+            "approve": "deny-1015",
         }
-        response = self.client.post(reverse('team_members'), post_data)
-        self.assertContains(response, 'Při zamítnutí člena týmu musíte vyplnit zprávu.')
+        response = self.client.post(reverse("team_members"), post_data)
+        self.assertContains(response, "Při zamítnutí člena týmu musíte vyplnit zprávu.")
 
     def test_dpnk_team_denial_no_message_team_full(self):
         ua = models.UserAttendance.objects.get(pk=1015)
-        ua.approved_for_team = 'undecided'
+        ua.approved_for_team = "undecided"
         ua.save()
         campaign = models.Campaign.objects.get(pk=339)
         campaign.max_team_members = 2
         campaign.save()
         post_data = {
-            'approve': 'approve-1015',
+            "approve": "approve-1015",
         }
-        response = self.client.post(reverse('team_members'), post_data)
-        self.assertContains(response, 'Tým je již plný, další člen již nemůže být potvrzen.')
+        response = self.client.post(reverse("team_members"), post_data)
+        self.assertContains(
+            response, "Tým je již plný, další člen již nemůže být potvrzen."
+        )
 
     def test_dpnk_team_invitation_current_user(self):
         post_data = {
-            'email1': 'test@email.cz',
-            'submit': 'odeslat',
+            "email1": "test@email.cz",
+            "submit": "odeslat",
         }
-        response = self.client.post(reverse('pozvanky'), post_data, follow=True)
-        self.assertContains(response, 'Odeslána pozvánka uživateli Null User na e-mail test@email.cz')
+        response = self.client.post(reverse("pozvanky"), post_data, follow=True)
+        self.assertContains(
+            response, "Odeslána pozvánka uživateli Null User na e-mail test@email.cz"
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign 1] Pozvánka')
+        self.assertEqual(msg.recipients(), ["test@email.cz"])
+        self.assertEqual(str(msg.subject), "[Testing campaign 1] Pozvánka")
 
     def test_dpnk_team_invitation_same_team(self):
         post_data = {
-            'email1': 'test2@test.cz',
-            'submit': 'odeslat',
+            "email1": "test2@test.cz",
+            "submit": "odeslat",
         }
-        response = self.client.post(reverse('pozvanky'), post_data, follow=True)
-        self.assertContains(response, 'Uživatel Nick byl přijat do Vašeho týmu.')
+        response = self.client.post(reverse("pozvanky"), post_data, follow=True)
+        self.assertContains(response, "Uživatel Nick byl přijat do Vašeho týmu.")
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test2@test.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign 1] Jste členem týmu')
+        self.assertEqual(msg.recipients(), ["test2@test.cz"])
+        self.assertEqual(str(msg.subject), "[Testing campaign 1] Jste členem týmu")
 
     def test_dpnk_team_invitation_unknown(self):
         post_data = {
-            'email1': 'test-unknown@email.cz',
-            'submit': 'odeslat',
+            "email1": "test-unknown@email.cz",
+            "submit": "odeslat",
         }
-        response = self.client.post(reverse('pozvanky'), post_data, follow=True)
-        self.assertContains(response, 'Odeslána pozvánka na e-mail test-unknown@email.cz')
+        response = self.client.post(reverse("pozvanky"), post_data, follow=True)
+        self.assertContains(
+            response, "Odeslána pozvánka na e-mail test-unknown@email.cz"
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
+        self.assertEqual(msg.recipients(), ["test-unknown@email.cz"])
         self.assertEqual(str(msg.subject), "[Testing campaign 1] Pozvánka")
 
     def test_dpnk_team_no_team(self):
         """ Test, that invitation shows warning if the team is not set """
         self.user_attendance.team = None
         self.user_attendance.save()
-        response = self.client.get(reverse('pozvanky'))
+        response = self.client.get(reverse("pozvanky"))
         self.assertContains(
             response,
             '<div class="alert alert-danger">Pokud jeli napřed tak je dohoňte a <a href="/tym/">přidejte se k týmu</a>.</div>',
@@ -1580,7 +1732,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_team_get(self):
         """ Test number of team members for invitation """
-        response = self.client.get(reverse('pozvanky'))
+        response = self.client.get(reverse("pozvanky"))
         self.assertContains(
             response,
             "<p>Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až 5 členů.</p>",
@@ -1589,27 +1741,29 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_company_admin_application(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
-        response = self.client.get(reverse('company_admin_application'))
+        response = self.client.get(reverse("company_admin_application"))
         post_data = {
-            'motivation_company_admin': 'Testing position',
-            'will_pay_opt_in': True,
-            'personal_data_opt_in': True,
-            'submit': 'Odeslat',
+            "motivation_company_admin": "Testing position",
+            "will_pay_opt_in": True,
+            "personal_data_opt_in": True,
+            "submit": "Odeslat",
         }
-        response = self.client.post(reverse('company_admin_application'), post_data)
-        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        company_admin = models.CompanyAdmin.objects.get(userprofile__user__username='test')
-        self.assertEqual(company_admin.motivation_company_admin, 'Testing position')
+        response = self.client.post(reverse("company_admin_application"), post_data)
+        self.assertRedirects(response, reverse("profil"), fetch_redirect_response=False)
+        company_admin = models.CompanyAdmin.objects.get(
+            userprofile__user__username="test"
+        )
+        self.assertEqual(company_admin.motivation_company_admin, "Testing position")
 
     def test_dpnk_company_admin_application_existing_admin(self):
-        user = models.User.objects.get(username='test1')
+        user = models.User.objects.get(username="test1")
         models.CompanyAdmin.objects.create(
             administrated_company=self.user_attendance.team.subsidiary.company,
             userprofile=user.userprofile,
             campaign=self.user_attendance.campaign,
-            company_admin_approved='approved',
+            company_admin_approved="approved",
         )
-        response = self.client.get(reverse('company_admin_application'))
+        response = self.client.get(reverse("company_admin_application"))
         self.assertContains(
             response,
             '<div class="alert alert-danger">Vaše organizce již svého koordinátora má: Null User, Null User, Testing User.</div>',
@@ -1618,14 +1772,14 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_company_admin_application_create(self):
         models.CompanyAdmin.objects.all().delete()
-        response = self.client.get(reverse('company_admin_application'))
+        response = self.client.get(reverse("company_admin_application"))
 
         self.assertContains(
             response,
             '<label for="id_motivation_company_admin" class=" requiredField">'
-            'S kým máme tu čest?'
+            "S kým máme tu čest?"
             '<span class="asteriskField">*</span>'
-            '</label>',
+            "</label>",
             html=True,
         )
 
@@ -1641,7 +1795,9 @@ class ChangeTeamViewTests(TestCase):
     """
 
     def setUp(self):
-        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
+        )
         self.campaign = testing_campaign()
         self.team = mommy.make(
             "Team",
@@ -1649,30 +1805,40 @@ class ChangeTeamViewTests(TestCase):
             campaign=self.campaign,
             subsidiary__city__name="Foo city",
         )
-        mommy.make('CityInCampaign', city=self.team.subsidiary.city, campaign=self.campaign)
-        self.user_attendance = UserAttendanceRecipe.make(campaign=self.campaign, team=self.team)
-        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        mommy.make(
+            "CityInCampaign", city=self.team.subsidiary.city, campaign=self.campaign
+        )
+        self.user_attendance = UserAttendanceRecipe.make(
+            campaign=self.campaign, team=self.team
+        )
+        self.client.force_login(
+            self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
+        )
 
     def test_dpnk_team_change_me_undecided(self):
         """ If I my team membership is undecided, I have to be able to leave the team """
-        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
-        UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
+        UserAttendanceRecipe.make(
+            approved_for_team="approved", campaign=self.campaign, team=self.team
+        )
         self.team.save()
         self.assertEqual(self.team.member_count, 1)
         self.assertEqual(self.team.unapproved_member_count, 1)
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_undecided(self):
         """ If I am the only approved team member of a team where all others are undicided, I can't leave the team """
-        self.user_attendance.approved_for_team = 'approved'
+        self.user_attendance.approved_for_team = "approved"
         self.user_attendance.save()
-        UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
+        UserAttendanceRecipe.make(
+            approved_for_team="undecided", campaign=self.campaign, team=self.team
+        )
         self.team.save()
         self.assertEqual(self.team.member_count, 1)
         self.assertEqual(self.team.unapproved_member_count, 1)
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertContains(
             response,
             "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. "
@@ -1682,26 +1848,26 @@ class ChangeTeamViewTests(TestCase):
 
     def test_dpnk_team_change_alone_undecided(self):
         """ If I am in the team alone, I can leave the team if I am undecided """
-        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         self.team.save()
         self.assertEqual(self.team.member_count, 0)
         self.assertEqual(self.team.unapproved_member_count, 1)
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_change_alone_approved(self):
         """ If I am in the team alone, I can leave the team if I am approved """
-        self.user_attendance.approved_for_team = 'approved'
+        self.user_attendance.approved_for_team = "approved"
         self.user_attendance.save()
         self.team.save()
         self.assertEqual(self.team.member_count, 1)
         self.assertEqual(self.team.unapproved_member_count, 0)
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertEqual(response.status_code, 200)
 
     def test_get(self):
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertContains(
             response,
             '<option value="%s" selected>Foo name</option>' % self.team.id,
@@ -1712,7 +1878,7 @@ class ChangeTeamViewTests(TestCase):
         """ Test that user chooses only subsidiary when in campaign with 1 team member """
         self.campaign.max_team_members = 1
         self.campaign.save()
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertNotContains(
             response,
             '<option value="%s" selected>Foo name</option>' % self.team.id,
@@ -1720,18 +1886,17 @@ class ChangeTeamViewTests(TestCase):
         )
         self.assertNotContains(
             response,
-            '<option value="%s" selected=""> - Foo city</option>' % self.team.subsidiary.id,
+            '<option value="%s" selected=""> - Foo city</option>'
+            % self.team.subsidiary.id,
             html=True,
         )
 
     def test_get_blank(self):
         self.user_attendance.team = None
         self.user_attendance.save()
-        response = self.client.get(reverse('zmenit_tym'))
+        response = self.client.get(reverse("zmenit_tym"))
         self.assertContains(  # Test blank select
-            response,
-            self.blank_team_html,
-            html=True,
+            response, self.blank_team_html, html=True,
         )
 
     def test_get_previous(self):
@@ -1747,12 +1912,13 @@ class ChangeTeamViewTests(TestCase):
         )
         self.user_attendance.team = None
         self.user_attendance.save()
-        address = reverse('zmenit_tym')
+        address = reverse("zmenit_tym")
         response = self.client.get(address)
 
         self.assertContains(
             response,
-            '<option value="%s" selected>Foo company lasts</option>' % prev_ua.team.subsidiary.company.id,
+            '<option value="%s" selected>Foo company lasts</option>'
+            % prev_ua.team.subsidiary.company.id,
             html=True,
         )
 
@@ -1769,13 +1935,11 @@ class ChangeTeamViewTests(TestCase):
         )
         self.user_attendance.team = None
         self.user_attendance.save()
-        address = reverse('zmenit_tym')
+        address = reverse("zmenit_tym")
         response = self.client.get(address)
 
         self.assertContains(  # No team is preselected
-            response,
-            self.blank_team_html,
-            html=True,
+            response, self.blank_team_html, html=True,
         )
 
     def test_get_previous_different_company(self):
@@ -1798,28 +1962,26 @@ class ChangeTeamViewTests(TestCase):
         )
         self.user_attendance.team = None
         self.user_attendance.save()
-        address = reverse('zmenit_tym')
+        address = reverse("zmenit_tym")
         response = self.client.get(address)
 
         self.assertContains(  # No team is preselected
-            response,
-            self.blank_team_html,
-            html=True,
+            response, self.blank_team_html, html=True,
         )
 
     def test_change(self):
-        city = mommy.make('City')
-        mommy.make('CityInCampaign', city=city, campaign=self.campaign)
-        new_team = mommy.make('Team', campaign=self.campaign, subsidiary__city=city)
+        city = mommy.make("City")
+        mommy.make("CityInCampaign", city=city, campaign=self.campaign)
+        new_team = mommy.make("Team", campaign=self.campaign, subsidiary__city=city)
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
             "company": new_team.subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
 
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse("upravit_profil"))
         self.user_attendance.refresh_from_db()
         self.assertEqual(self.user_attendance.team, new_team)
         self.assertEqual(self.user_attendance.approved_for_team, "approved")
@@ -1828,15 +1990,17 @@ class ChangeTeamViewTests(TestCase):
         """ Test that user chooses only subsidiary when in campaign with 1 team member """
         self.campaign.max_team_members = 1
         self.campaign.save()
-        new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
+        new_subsidiary = mommy.make(
+            "Subsidiary", address_street="Foo street", city=self.team.subsidiary.city
+        )
         post_data = {
             "subsidiary": new_subsidiary.id,
             "company": new_subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
 
-        self.assertRedirects(response, reverse('zmenit_triko'))
+        self.assertRedirects(response, reverse("zmenit_triko"))
         self.team.refresh_from_db()
         self.assertEqual(self.team, self.team)
         self.assertEqual(self.team.subsidiary, new_subsidiary)
@@ -1847,90 +2011,106 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.save()
         self.campaign.max_team_members = 1
         self.campaign.save()
-        new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
+        new_subsidiary = mommy.make(
+            "Subsidiary", address_street="Foo street", city=self.team.subsidiary.city
+        )
         post_data = {
             "subsidiary": new_subsidiary.id,
             "company": new_subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
 
-        self.assertRedirects(response, reverse('zmenit_triko'))
+        self.assertRedirects(response, reverse("zmenit_triko"))
         self.user_attendance.refresh_from_db()
         self.assertNotEqual(self.team, self.user_attendance.team)  # User is in new team
         self.assertEqual(self.user_attendance.team.subsidiary, new_subsidiary)
 
     def test_change_team_has_users(self):
-        city = mommy.make('City')
-        mommy.make('CityInCampaign', city=city, campaign=self.campaign)
+        city = mommy.make("City")
+        mommy.make("CityInCampaign", city=city, campaign=self.campaign)
         new_team = mommy.make(
-            'Team',
+            "Team",
             campaign=self.campaign,
             subsidiary__city=city,
-            users=[UserAttendancePaidRecipe.make(userprofile__user__email="test@email.cz")],
+            users=[
+                UserAttendancePaidRecipe.make(userprofile__user__email="test@email.cz")
+            ],
         )
         new_team.save()
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
             "company": new_team.subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
         mail.outbox = []
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
 
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse("upravit_profil"))
         self.assertEqual(self.user_attendance.approved_for_team, "undecided")
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@email.cz'])
-        self.assertEqual(str(msg.subject), '[Testing campaign 2019] Máte nového člena')
+        self.assertEqual(msg.recipients(), ["test@email.cz"])
+        self.assertEqual(str(msg.subject), "[Testing campaign 2019] Máte nového člena")
 
-    @patch('dpnk.forms.logger')
+    @patch("dpnk.forms.logger")
     def test_team_out_of_campaign(self, mock_logger):
-        city = mommy.make('City')
+        city = mommy.make("City")
         other_campaign = mommy.make("Campaign")
-        mommy.make('CityInCampaign', city=city, campaign=other_campaign)
-        new_team = mommy.make('Team', campaign=other_campaign, subsidiary__city=city)
+        mommy.make("CityInCampaign", city=city, campaign=other_campaign)
+        new_team = mommy.make("Team", campaign=other_campaign, subsidiary__city=city)
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
             "company": new_team.subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data)
+        response = self.client.post(reverse("zmenit_tym"), post_data)
         assert mock_logger.error.mock_calls == [
-            call("Team not in campaign", extra={'team': new_team.id, 'subdomain': 'testing-campaign'}),
-            call("Subsidiary in city that doesn't belong to this campaign", extra={'subsidiary': new_team.subsidiary}),
+            call(
+                "Team not in campaign",
+                extra={"team": new_team.id, "subdomain": "testing-campaign"},
+            ),
+            call(
+                "Subsidiary in city that doesn't belong to this campaign",
+                extra={"subsidiary": new_team.subsidiary},
+            ),
         ]
         self.assertContains(response, "Zvolený tým není dostupný v aktuální kampani")
 
-    @patch('dpnk.forms.logger')
+    @patch("dpnk.forms.logger")
     def test_choose_nonexistent_city(self, mock_logger):
-        city = mommy.make('City')
+        city = mommy.make("City")
         other_campaign = mommy.make("Campaign")
-        mommy.make('CityInCampaign', city=city, campaign=other_campaign)
-        new_team = mommy.make('Team', campaign=self.campaign, subsidiary__city=city)
+        mommy.make("CityInCampaign", city=city, campaign=other_campaign)
+        new_team = mommy.make("Team", campaign=self.campaign, subsidiary__city=city)
         post_data = {
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
             "company": new_team.subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        mock_logger.error.assert_called_with("Subsidiary in city that doesn't belong to this campaign", extra={'subsidiary': ANY})
-        self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
+        mock_logger.error.assert_called_with(
+            "Subsidiary in city that doesn't belong to this campaign",
+            extra={"subsidiary": ANY},
+        )
+        self.assertContains(
+            response,
+            "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.",
+        )
 
     def test_no_team_set(self):
-        company = mommy.make('Company')
+        company = mommy.make("Company")
         post_data = {
-            'company': company.id,
-            'subsidiary': '',
-            'team': '',
-            'next': 'Další',
+            "company": company.id,
+            "subsidiary": "",
+            "team": "",
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data)
-        self.assertContains(response, 'error_1_id_team')
+        response = self.client.post(reverse("zmenit_tym"), post_data)
+        self.assertContains(response, "error_1_id_team")
         invalid_select = """
         <select name="subsidiary" class="modelselect2 form-control is-invalid"
         required id="id_subsidiary" data-autocomplete-light-language="cs"
@@ -1940,19 +2120,17 @@ class ChangeTeamViewTests(TestCase):
         </select>
         """
         self.assertContains(
-            response,
-            invalid_select,
-            html=True,
+            response, invalid_select, html=True,
         )
 
-    @patch('dpnk.models.team.logger')
+    @patch("dpnk.models.team.logger")
     def test_choose_full_team(self, mock_logger):
         self.campaign.max_team_members = 2
         self.campaign.save()
-        city = mommy.make('City')
-        mommy.make('CityInCampaign', city=city, campaign=self.campaign)
+        city = mommy.make("City")
+        mommy.make("CityInCampaign", city=city, campaign=self.campaign)
         new_team = mommy.make(
-            'Team',
+            "Team",
             subsidiary__city=city,
             campaign=self.campaign,
             users=UserAttendancePaidRecipe.make(_quantity=3),
@@ -1962,10 +2140,12 @@ class ChangeTeamViewTests(TestCase):
             "team": new_team.id,
             "subsidiary": new_team.subsidiary.id,
             "company": new_team.subsidiary.company.id,
-            'next': 'Další',
+            "next": "Další",
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        mock_logger.error.assert_called_with("Too many members in team", extra={'team': ANY})
+        response = self.client.post(reverse("zmenit_tym"), post_data, follow=True)
+        mock_logger.error.assert_called_with(
+            "Too many members in team", extra={"team": ANY}
+        )
         self.assertContains(response, "Tento tým již má plný počet členů")
 
 
@@ -1978,36 +2158,42 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.personal_data_opt_in = False
         self.user_attendance.save()
         denorm.flush()
-        self.client.get(reverse('registration_uncomplete'))
-        response = self.client.get(reverse('notifications:live_all_notification_list'))
-        self.assertEqual(response.json()['all_list'][0]['verb'], "Jsi sám v týmu. Pozvěte další členové.")
+        self.client.get(reverse("registration_uncomplete"))
+        response = self.client.get(reverse("notifications:live_all_notification_list"))
+        self.assertEqual(
+            response.json()["all_list"][0]["verb"],
+            "Jsi sám v týmu. Pozvěte další členové.",
+        )
 
     def test_dpnk_registration_unapproved_users(self):
         for team_member in self.user_attendance.team.all_members():
             if team_member != self.user_attendance:
-                team_member.approved_for_team = 'undecided'
+                team_member.approved_for_team = "undecided"
                 team_member.save()
         self.user_attendance.personal_data_opt_in = False
         self.user_attendance.save()
         self.user_attendance.team.save()
         denorm.flush()
-        response = self.client.get(reverse('registration_uncomplete'))
-        response = self.client.get(reverse('notifications:live_all_notification_list'))
-        self.assertEqual(response.json()['all_list'][0]['verb'], "Ve Vašem týmu jsou neschválení členové, prosíme, posuďte jejich členství.")
+        response = self.client.get(reverse("registration_uncomplete"))
+        response = self.client.get(reverse("notifications:live_all_notification_list"))
+        self.assertEqual(
+            response.json()["all_list"][0]["verb"],
+            "Ve Vašem týmu jsou neschválení členové, prosíme, posuďte jejich členství.",
+        )
 
     def test_dpnk_registration_unapproved(self):
-        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         denorm.flush()
-        response = self.client.get(reverse('registration_uncomplete'))
+        response = self.client.get(reverse("registration_uncomplete"))
         self.assertNotContains(response, "Ve Vašem týmu jsou neschválení členové")
         self.assertContains(response, "Vaši kolegové v týmu Testing team 1")
 
     def test_dpnk_registration_denied(self):
-        self.user_attendance.approved_for_team = 'denied'
+        self.user_attendance.approved_for_team = "denied"
         self.user_attendance.save()
         denorm.flush()
-        response = self.client.get(reverse('registration_uncomplete'))
+        response = self.client.get(reverse("registration_uncomplete"))
         self.assertContains(response, "Vaše členství v týmu bylo bohužel zamítnuto")
 
     def test_dpnk_registration_no_payment(self):
@@ -2015,27 +2201,28 @@ class RegistrationMixinTests(ViewsLogon):
             payment.status = models.Status.NEW
             payment.save()
         denorm.flush()
-        response = self.client.get(reverse('registration_uncomplete'))
-        self.assertContains(response, "Vaše platba (platba přes firemního koordinátora) je stále v řízení.")
+        response = self.client.get(reverse("registration_uncomplete"))
+        self.assertContains(
+            response,
+            "Vaše platba (platba přes firemního koordinátora) je stále v řízení.",
+        )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_dpnk_registration_questionnaire(self, slumber_api):
         m = MagicMock()
         m.feed.get.return_value = []
         slumber_api.return_value = m
-        response = self.client.get(reverse('notifications:live_all_notification_list'))
+        response = self.client.get(reverse("notifications:live_all_notification_list"))
         self.assertNotContains(
-            response,
-            "Dotazn\\u00edk spole\\u010dnost\\u00ed",
+            response, "Dotazn\\u00edk spole\\u010dnost\\u00ed",
         )
-        response = self.client.get(reverse('rides'))
-        response = self.client.get(reverse('notifications:live_all_notification_list'))
+        response = self.client.get(reverse("rides"))
+        response = self.client.get(reverse("notifications:live_all_notification_list"))
         self.assertContains(
-            response,
-            "Dotazn\\u00edk spole\\u010dnost\\u00ed",
+            response, "Dotazn\\u00edk spole\\u010dnost\\u00ed",
         )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_dpnk_registration_vouchers(self, slumber_api):
         m = MagicMock()
         m.feed.get.return_value = [
@@ -2047,87 +2234,132 @@ class RegistrationMixinTests(ViewsLogon):
             },
         ]
         slumber_api.return_value = m
-        models.Voucher.objects.create(user_attendance=self.user_attendance, token="1234")
-        response = self.client.get(reverse('rides'))
+        models.Voucher.objects.create(
+            user_attendance=self.user_attendance, token="1234"
+        )
+        response = self.client.get(reverse("rides"))
         self.assertContains(response, "<h3>Vouchery</h3>", html=True)
-        self.assertContains(response, "<tr> <td> ReKola </td> <td> 1234 </td> </tr>", html=True)
+        self.assertContains(
+            response, "<tr> <td> ReKola </td> <td> 1234 </td> </tr>", html=True
+        )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_dpnk_registration_company_admin_undecided(self, slumber_api):
         m = MagicMock()
         m.feed.get.return_value = []
         slumber_api.return_value = m
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
-        ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
-        ca.company_admin_approved = 'undecided'
+        ca = models.CompanyAdmin.objects.get(
+            userprofile=self.user_attendance.userprofile, campaign_id=339
+        )
+        ca.company_admin_approved = "undecided"
         ca.save()
-        response = self.client.get(reverse('rides'))
+        response = self.client.get(reverse("rides"))
         denorm.flush()
-        self.assertContains(response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení.")
+        self.assertContains(
+            response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení."
+        )
 
-    @patch('slumber.API')
+    @patch("slumber.API")
     def test_dpnk_registration_company_admin_decided(self, slumber_api):
         m = MagicMock()
         m.feed.get.return_value = []
         slumber_api.return_value = m
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
-        ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
-        ca.company_admin_approved = 'denied'
+        ca = models.CompanyAdmin.objects.get(
+            userprofile=self.user_attendance.userprofile, campaign_id=339
+        )
+        ca.company_admin_approved = "denied"
         ca.save()
-        response = self.client.get(reverse('rides'))
-        self.assertContains(response, "Vaše žádost o funkci koordinátora organizace byla zamítnuta.")
+        response = self.client.get(reverse("rides"))
+        self.assertContains(
+            response, "Vaše žádost o funkci koordinátora organizace byla zamítnuta."
+        )
 
 
 class TripViewTests(ViewsLogon):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "trips",
+        "commute_mode",
+    ]
 
     def test_trip_view(self):
         trip = mommy.make(
             models.Trip,
             user_attendance=self.user_attendance,
             date=datetime.date(year=2010, month=11, day=20),
-            direction='trip_from',
+            direction="trip_from",
             commute_mode_id=1,
         )
 
-        address = reverse('trip', kwargs={"date": trip.date, "direction": trip.direction})
+        address = reverse(
+            "trip", kwargs={"date": trip.date, "direction": trip.direction}
+        )
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
 
     def test_trip_create(self):
-        address = reverse('trip', kwargs={"date": datetime.date(year=2010, month=11, day=20), "direction": 'trip_from'})
+        address = reverse(
+            "trip",
+            kwargs={
+                "date": datetime.date(year=2010, month=11, day=20),
+                "direction": "trip_from",
+            },
+        )
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
 
     def test_trip_invalid_date(self):
-        address = reverse('trip', kwargs={"date": "foo", 'direction': 'trip_to'})
+        address = reverse("trip", kwargs={"date": "foo", "direction": "trip_to"})
         response = self.client.get(address)
         self.assertEqual(response.status_code, 403)
 
     def test_trip_inactive_date(self):
-        address = reverse('trip', kwargs={"date": datetime.date(year=2000, month=11, day=20), 'direction': 'trip_to'})
+        address = reverse(
+            "trip",
+            kwargs={
+                "date": datetime.date(year=2000, month=11, day=20),
+                "direction": "trip_to",
+            },
+        )
         response = self.client.get(address)
         self.assertEqual(response.status_code, 404)
 
     def test_trip_invalid_direction(self):
-        address = reverse('trip', kwargs={"date": datetime.date(year=2010, month=11, day=20), 'direction': 'foo'})
+        address = reverse(
+            "trip",
+            kwargs={
+                "date": datetime.date(year=2010, month=11, day=20),
+                "direction": "foo",
+            },
+        )
         response = self.client.get(address)
         self.assertEqual(response.status_code, 403)
 
     def test_dpnk_views_trip_no_track_city(self):
         """ Test, that the location is changed accordingly to the user's city. """
-        self.user_attendance.team.subsidiary.city = mommy.make("City", location="POINT(14.42 50.08)")
+        self.user_attendance.team.subsidiary.city = mommy.make(
+            "City", location="POINT(14.42 50.08)"
+        )
         self.user_attendance.team.subsidiary.save()
 
         trip = mommy.make(
             models.Trip,
             user_attendance=self.user_attendance,
             date=datetime.date(year=2010, month=11, day=20),
-            direction='trip_from',
+            direction="trip_from",
             commute_mode_id=1,
         )
 
-        address = reverse('trip', kwargs={"date": trip.date, "direction": trip.direction})
+        address = reverse(
+            "trip", kwargs={"date": trip.date, "direction": trip.direction}
+        )
         response = self.client.get(address)
         self.assertContains(response, '"center": [50.08, 14.42]')
 
@@ -2143,18 +2375,48 @@ class TripViewTests(ViewsLogon):
         self.assertContains(response, "<div><b>Platba</b>: zaplaceno</div>", html=True)
 
     def test_emission_calculator(self):
-        address = reverse('emission_calculator')
+        address = reverse("emission_calculator")
         response = self.client.get(address)
-        self.assertContains(response, '<h2 class="page_title">Emisní kalkulačka</h2>', html=True)
-        self.assertContains(response, "<tr><td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>CO</td><td>117 280,4&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>N<sub>2</sub>O</td><td>4 047,5&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>CH<sub>4</sub></td><td>1 246,6&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>Pevné částice</td><td>5 666,5&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>Olovo</td><td>1,8&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, '<h3>Popis emisní kalkulačky</h3>', html=True)
+        self.assertContains(
+            response, '<h2 class="page_title">Emisní kalkulačka</h2>', html=True
+        )
+        self.assertContains(
+            response,
+            "<tr><td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td></tr>",
+            html=True,
+        )
+        self.assertContains(
+            response, "<tr><td>CO</td><td>117 280,4&nbsp;mg</td></tr>", html=True
+        )
+        self.assertContains(
+            response,
+            "<tr><td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td></tr>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<tr><td>N<sub>2</sub>O</td><td>4 047,5&nbsp;mg</td></tr>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<tr><td>CH<sub>4</sub></td><td>1 246,6&nbsp;mg</td></tr>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<tr><td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td></tr>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<tr><td>Pevné částice</td><td>5 666,5&nbsp;mg</td></tr>",
+            html=True,
+        )
+        self.assertContains(
+            response, "<tr><td>Olovo</td><td>1,8&nbsp;mg</td></tr>", html=True
+        )
+        self.assertContains(response, "<h3>Popis emisní kalkulačky</h3>", html=True)
 
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)
@@ -2163,32 +2425,141 @@ class TripViewTests(ViewsLogon):
         self.assertJSONEqual(
             response.content.decode(),
             {
-                "2010-11-01": {"distance": 5.0, "distance_bicycle": 0, "distance_foot": 5.0, "emissions_co2": 645.0},
-                "2010-11-02": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-03": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-04": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-05": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-06": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-07": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-08": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-09": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-10": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-11": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-12": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-13": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-14": {"distance": 156.9, "distance_bicycle": 156.9, "distance_foot": 0, "emissions_co2": 20240.1},
-                "2010-11-15": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-16": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-17": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-18": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-19": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-                "2010-11-20": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-01": {
+                    "distance": 5.0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 5.0,
+                    "emissions_co2": 645.0,
+                },
+                "2010-11-02": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-03": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-04": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-05": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-06": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-07": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-08": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-09": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-10": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-11": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-12": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-13": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-14": {
+                    "distance": 156.9,
+                    "distance_bicycle": 156.9,
+                    "distance_foot": 0,
+                    "emissions_co2": 20240.1,
+                },
+                "2010-11-15": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-16": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-17": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-18": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-19": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
+                "2010-11-20": {
+                    "distance": 0,
+                    "distance_bicycle": 0,
+                    "distance_foot": 0,
+                    "emissions_co2": 0,
+                },
             },
         )
 
 
 class StatisticsTests(ViewsLogon):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "trips",
+        "commute_mode",
+    ]
 
     def test_statistics(self):
         address = reverse(views.statistics)
@@ -2216,20 +2587,29 @@ class StatisticsTests(ViewsLogon):
 
 
 class RidesDetailsTests(ViewsLogon):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "trips",
+    ]
 
     def test_dpnk_rides_details(self):
-        response = self.client.get(reverse('rides_details'))
-        self.assertContains(response, '/trip/2010-11-14/trip_from')
-        self.assertContains(response, '5,0')
-        self.assertContains(response, 'Chůze/běh')
-        self.assertContains(response, 'Podrobný přehled jízd')
-        self.assertContains(response, '1. listopadu 2010')
+        response = self.client.get(reverse("rides_details"))
+        self.assertContains(response, "/trip/2010-11-14/trip_from")
+        self.assertContains(response, "5,0")
+        self.assertContains(response, "Chůze/běh")
+        self.assertContains(response, "Podrobný přehled jízd")
+        self.assertContains(response, "1. listopadu 2010")
 
 
 @ddt
 class TestNotLoggedIn(TestCase):
     """ Test, that views in which user must be logged on redirects to login page. """
+
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
         self.campaign = testing_campaign()
@@ -2261,7 +2641,7 @@ class TestNotLoggedIn(TestCase):
     )
     def test_not_logged_in(self, view):
         response = self.client.get(reverse(view))
-        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+        self.assertRedirects(response, "/login?next=%s" % reverse(view))
 
     def test_invoices(self):
         mommy.make(
@@ -2270,15 +2650,12 @@ class TestNotLoggedIn(TestCase):
             phase_type="invoices",
             date_from="2010-1-1",
         )
-        view = 'invoices'
+        view = "invoices"
         response = self.client.get(reverse(view))
-        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+        self.assertRedirects(response, "/login?next=%s" % reverse(view))
 
     @data(
-        "company_admin_pay_for_users",
-        "payment",
-        "payment_beneficiary",
-        "typ_platby",
+        "company_admin_pay_for_users", "payment", "payment_beneficiary", "typ_platby",
     )
     def test_not_logged_in_payment_phase(self, view):
         mommy.make(
@@ -2288,7 +2665,7 @@ class TestNotLoggedIn(TestCase):
             date_from="2010-1-1",
         )
         response = self.client.get(reverse(view))
-        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+        self.assertRedirects(response, "/login?next=%s" % reverse(view))
 
 
 @override_settings(
@@ -2297,66 +2674,98 @@ class TestNotLoggedIn(TestCase):
     MEDIA_ROOT="apps/dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "trips",
+        "commute_mode",
+    ]
 
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            models.User.objects.get(username="test"),
+            settings.AUTHENTICATION_BACKENDS[0],
+        )
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015])
+        )
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
     def test_dpnk_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
-        address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
+        address = reverse(
+            "questionnaire_answers_all", kwargs={"competition_slug": "quest"}
+        )
         response = self.client.get(address)
-        self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL, html=True)
-        self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL, html=True)
-        self.assertContains(response, 'Answer without attachment')
-        self.assertContains(response, 'Bez přílohy')
+        self.assertContains(
+            response,
+            '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>'
+            % settings.MEDIA_URL,
+            html=True,
+        )
+        self.assertContains(
+            response,
+            '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">'
+            % settings.MEDIA_URL,
+            html=True,
+        )
+        self.assertContains(response, "Answer without attachment")
+        self.assertContains(response, "Bez přílohy")
 
     def test_dpnk_views_create_trip(self):
         date = datetime.date(year=2010, month=11, day=2)
         direction = "trip_to"
-        address = reverse('trip', kwargs={"date": str(date), "direction": direction})
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        address = reverse("trip", kwargs={"date": str(date), "direction": direction})
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
-                'gpx_file': gpxfile,
-                'direction': direction,
-                'date': date,
-                'commute_mode': 1,
-                'user_attendance': self.user_attendance.pk,
-                'origin': reverse('calendar'),
-                'submit': 'Odeslat',
+                "gpx_file": gpxfile,
+                "direction": direction,
+                "date": date,
+                "commute_mode": 1,
+                "user_attendance": self.user_attendance.pk,
+                "origin": reverse("calendar"),
+                "submit": "Odeslat",
             }
             response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse("calendar"))
-        trip = models.Trip.objects.get(date=date, direction=direction, user_attendance=self.user_attendance)
+        trip = models.Trip.objects.get(
+            date=date, direction=direction, user_attendance=self.user_attendance
+        )
         self.assertEqual(trip.distance, 13.32)
 
     def test_dpnk_views_create_trip_error(self):
-        address = reverse('trip', kwargs={"date": "foo bad date", "direction": "trip_from"})
+        address = reverse(
+            "trip", kwargs={"date": "foo bad date", "direction": "trip_from"}
+        )
         response = self.client.get(address)
         self.assertEqual(response.status_code, 403)
 
     def test_dpnk_views_create_trip_inactive_day(self):
         date = datetime.date(year=2010, month=12, day=1)
         direction = "trip_from"
-        address = reverse('trip', kwargs={"date": date, "direction": direction})
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        address = reverse("trip", kwargs={"date": date, "direction": direction})
+        with open("apps/dpnk/test_files/modranska-rokle.gpx", "rb") as gpxfile:
             post_data = {
-                'gpx_file': gpxfile,
-                'direction': direction,
-                'date': date,
-                'user_attendance': self.user_attendance.pk,
-                'submit': 'Odeslat',
+                "gpx_file": gpxfile,
+                "direction": direction,
+                "date": date,
+                "user_attendance": self.user_attendance.pk,
+                "submit": "Odeslat",
             }
             response = self.client.post(address, post_data)
             self.assertEqual(response.status_code, 405)
-        exists = models.Trip.objects.filter(date=date, direction=direction, user_attendance=self.user_attendance).exists()
+        exists = models.Trip.objects.filter(
+            date=date, direction=direction, user_attendance=self.user_attendance
+        ).exists()
         self.assertEqual(exists, False)
 
     def test_dpnk_competitions_page(self):
@@ -2366,14 +2775,14 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
-        response = self.client.get(reverse('competitions'))
+        response = self.client.get(reverse("competitions"))
         self.assertContains(
             response,
             '<span class="type-string">Vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company '
-            'pro cesty s prostředky Kolo, Pěšky</span>',
+            "pro cesty s prostředky Kolo, Pěšky</span>",
             html=True,
         )
-        self.assertContains(response, '<p>1. místo z 1 organizací</p>', html=True)
+        self.assertContains(response, "<p>1. místo z 1 organizací</p>", html=True)
 
     def test_dpnk_length_competitions_page(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
@@ -2382,7 +2791,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
-        response = self.client.get(reverse('length_competitions'))
+        response = self.client.get(reverse("length_competitions"))
         self.assertContains(
             response,
             '<span class="type-string">Soutěž na vzdálenost jednotlivců ve městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>',
@@ -2390,36 +2799,40 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         )
 
     def test_dpnk_competitions_page_change(self):
-        response = self.client.get(reverse('competitions'))
-        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-0">Výsledky</a>', html=True)
+        response = self.client.get(reverse("competitions"))
+        self.assertContains(
+            response, '<a href="/vysledky_souteze/FQ-LB/#row-0">Výsledky</a>', html=True
+        )
 
     def test_dpnk_length_competitions_page_change(self):
-        response = self.client.get(reverse('length_competitions'))
-        self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
+        response = self.client.get(reverse("length_competitions"))
+        self.assertContains(response, "<h4>Výkonnost společností</h4>", html=True)
         self.assertContains(
             response,
             '<span class="type-string">Soutěž na vzdálenost jednotlivců  '
-            've městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>',
+            "ve městě Testing city pro muže pro cesty s prostředky Kolo, Pěšky</span>",
             html=True,
         )
 
     def test_dpnk_questionnaire_competitions_page_change(self):
-        response = self.client.get(reverse('questionnaire_competitions'))
-        self.assertContains(response, '<h4>Dotazník</h4>', html=True)
-        self.assertContains(response, '<a href="/otazka/quest/">Vyplnit odpovědi</a>', html=True)
-        self.assertContains(response, '<span class="type-string">Dotazník týmů  ve městě Testing city</span>', html=True)
+        response = self.client.get(reverse("questionnaire_competitions"))
+        self.assertContains(response, "<h4>Dotazník</h4>", html=True)
+        self.assertContains(
+            response, '<a href="/otazka/quest/">Vyplnit odpovědi</a>', html=True
+        )
+        self.assertContains(
+            response,
+            '<span class="type-string">Dotazník týmů  ve městě Testing city</span>',
+            html=True,
+        )
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2009, month=11, day=20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2009, month=11, day=20),)
     def test_dpnk_competitions_page_before(self):
-        response = self.client.get(reverse('length_competitions'))
-        self.assertContains(response, 'Výkonnost ve městě')
-        self.assertContains(response, 'Tato soutěž ještě nezačala')
+        response = self.client.get(reverse("length_competitions"))
+        self.assertContains(response, "Výkonnost ve městě")
+        self.assertContains(response, "Tato soutěž ještě nezačala")
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2016, month=11, day=20),
-    )
+    @override_settings(FAKE_DATE=datetime.date(year=2016, month=11, day=20),)
     def test_dpnk_competitions_page_finished(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         util.rebuild_denorm_models(models.Team.objects.all())
@@ -2427,27 +2840,29 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
         competition.get().recalculate_results()
-        response = self.client.get(reverse('questionnaire_competitions'))
-        self.assertContains(response, '<span class="type-string">Dotazník jednotlivců</span>', html=True)
+        response = self.client.get(reverse("questionnaire_competitions"))
+        self.assertContains(
+            response, '<span class="type-string">Dotazník jednotlivců</span>', html=True
+        )
         self.assertContains(response, "<p>16,2b.</p>", html=True)
-        response = self.client.get(reverse('competitions'))
+        response = self.client.get(reverse("competitions"))
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)
         self.assertContains(response, "<p>2,9&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>2 z 69 jízd</p>", html=True)
         self.assertContains(response, "<p>1. místo z 2 jednotlivců</p>", html=True)
-        response = self.client.get(reverse('length_competitions'))
+        response = self.client.get(reverse("length_competitions"))
         self.assertContains(response, "<p>161,9&nbsp;km</p>", html=True)
 
     def test_switch_language(self):
-        self.assertEquals(self.user_attendance.userprofile.language, 'cs')
-        response = self.client.get(reverse('switch_lang') + "?redirect=/&lang=en")
+        self.assertEquals(self.user_attendance.userprofile.language, "cs")
+        response = self.client.get(reverse("switch_lang") + "?redirect=/&lang=en")
         self.assertRedirects(response, "/")
         self.user_attendance.userprofile.refresh_from_db()
-        self.assertEquals(self.user_attendance.userprofile.language, 'en')
-        response = self.client.get(reverse('switch_lang') + "?redirect=/&lang=garbage")
+        self.assertEquals(self.user_attendance.userprofile.language, "en")
+        response = self.client.get(reverse("switch_lang") + "?redirect=/&lang=garbage")
         self.assertRedirects(response, "/")
         self.user_attendance.userprofile.refresh_from_db()
-        self.assertEquals(self.user_attendance.userprofile.language, 'en')
+        self.assertEquals(self.user_attendance.userprofile.language, "en")
 
 
 @override_settings(
@@ -2457,32 +2872,49 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 )
 @ddt
 class ViewsTestsUnregistered(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = [
+        "sites",
+        "campaign",
+        "auth_user",
+        "users",
+        "transactions",
+        "batches",
+        "trips",
+    ]
 
     def setUp(self):
         super().setUp()
         models.Payment.objects.all().delete()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            models.User.objects.get(username="test"),
+            settings.AUTHENTICATION_BACKENDS[0],
+        )
 
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[1, 3]))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
+        util.rebuild_denorm_models(
+            models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015])
+        )
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertNotEqual(self.user_attendance.entered_competition_reason(), True)
 
     @data(
-        ('profil', {}),
-        ('rides_details', {}),
-        ('calendar', {}),
+        ("profil", {}),
+        ("rides_details", {}),
+        ("calendar", {}),
         # New trip
-        ('trip', {"date": "2010-11-2", "direction": "trip_to"}),
+        ("trip", {"date": "2010-11-2", "direction": "trip_to"}),
         # Existing trip
-        ('trip', {"date": "2010-11-2", "direction": "trip_from"}),
+        ("trip", {"date": "2010-11-2", "direction": "trip_from"}),
         # Old existing trip
-        ('trip', {"date": "2009-11-1", "direction": "trip_to"}),
+        ("trip", {"date": "2009-11-1", "direction": "trip_to"}),
     )
     def test_registration_redirects(self, view):
         name, kwargs = view
         address = reverse(name, kwargs=kwargs)
         response = self.client.get(address)
-        self.assertRedirects(response, reverse("typ_platby"), msg_prefix="%s did not redirect to 'typ_platby'" % address)
+        self.assertRedirects(
+            response,
+            reverse("typ_platby"),
+            msg_prefix="%s did not redirect to 'typ_platby'" % address,
+        )

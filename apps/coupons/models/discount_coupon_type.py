@@ -33,19 +33,21 @@ def validate_prefix(prefix):
 
 class DiscountCouponType(models.Model):
     name = models.CharField(
+        # black
         verbose_name=_("jméno typu voucheru"),
         max_length=20,
         blank=False,
         null=False,
     )
     campaign = models.ForeignKey(
-        'dpnk.Campaign',
+        "dpnk.Campaign",
         verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     valid_until = models.DateField(
+        # black
         verbose_name=_("Platný do"),
         default=None,
         null=True,
@@ -54,9 +56,9 @@ class DiscountCouponType(models.Model):
     prefix = models.CharField(
         validators=[
             RegexValidator(
-                regex='^[A-Z]*$',
-                message=_('Prefix musí sestávat pouze z velkých písmen'),
-                code='invalid_prefix',
+                regex="^[A-Z]*$",
+                message=_("Prefix musí sestávat pouze z velkých písmen"),
+                code="invalid_prefix",
             ),
             validate_prefix,
         ],
@@ -67,10 +69,11 @@ class DiscountCouponType(models.Model):
         unique=True,
     )
     sandwich_type = models.ForeignKey(
+        # black
         PdfSandwichType,
         null=True,
         blank=False,
-        default='',
+        default="",
         on_delete=models.CASCADE,
     )
 

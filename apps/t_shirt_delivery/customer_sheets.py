@@ -45,10 +45,10 @@ forth_column = 12
 def make_customer_sheets_pdf(outfile, subsidiary_box):
     canvas = Canvas(outfile, pagesize=(page_width * cm, page_height * cm))
 
-    folder = '/usr/share/fonts/truetype/ttf-dejavu'
+    folder = "/usr/share/fonts/truetype/ttf-dejavu"
     reportlab.rl_config.TTFSearchPath.append(folder)
-    pdfmetrics.registerFont(TTFont('DejaVu', 'DejaVuSans.ttf'))
-    pdfmetrics.registerFont(TTFont('DejaVuB', 'DejaVuSans-Bold.ttf'))
+    pdfmetrics.registerFont(TTFont("DejaVu", "DejaVuSans.ttf"))
+    pdfmetrics.registerFont(TTFont("DejaVuB", "DejaVuSans-Bold.ttf"))
 
     make_sheet(subsidiary_box, canvas)
     canvas.save()
@@ -112,24 +112,34 @@ def make_sheet(subsidiary_box, canvas):
 
 
 def make_team_sheet(team_package, canvas, package_counter):
-    barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm)
+    barcode = code128.Code128(
+        team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm
+    )
     barcode.drawOn(canvas, 8.57 * cm, (page_height - 2.5) * cm)
-    canvas.setFont('DejaVu', 8)
+    canvas.setFont("DejaVu", 8)
     canvas.drawString(9.2 * cm, (page_height - 0.42) * cm, "ID týmového balíku:")
-    canvas.setFont('DejaVuB', 15)
+    canvas.setFont("DejaVuB", 15)
     canvas.drawString(9.2 * cm, (page_height - 3.0) * cm, team_package.identifier())
 
-    canvas.setFont('DejaVuB', 11)
-    canvas.drawString(4.0 * cm, (page_height - 0.9) * cm, "Balíček pro tým %s" % package_counter)
-    canvas.setFont('DejaVuB', 12)
+    canvas.setFont("DejaVuB", 11)
+    canvas.drawString(
+        4.0 * cm, (page_height - 0.9) * cm, "Balíček pro tým %s" % package_counter
+    )
+    canvas.setFont("DejaVuB", 12)
     canvas.drawString(4.0 * cm, (page_height - 1.5) * cm, "Do krab. č.:")
-    canvas.setFont('DejaVuB', 16)
+    canvas.setFont("DejaVuB", 16)
     canvas.drawString(6.85 * cm, (page_height - 1.5) * cm, "%s" % team_package.box.id)
-    canvas.setFont('DejaVu', 8)
+    canvas.setFont("DejaVu", 8)
     canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "Tým: ")
-    canvas.drawString(second_column * cm, (page_height - 2.65) * cm, team_package.team.name or "")
+    canvas.drawString(
+        second_column * cm, (page_height - 2.65) * cm, team_package.team.name or ""
+    )
     canvas.drawString(first_column * cm, (page_height - 3.0) * cm, "Spol.:")
-    canvas.drawString(second_column * cm, (page_height - 3.0) * cm, "%s" % team_package.team.subsidiary.company)
+    canvas.drawString(
+        second_column * cm,
+        (page_height - 3.0) * cm,
+        "%s" % team_package.team.subsidiary.company,
+    )
 
     im = Image(logo_file, 3.98 * cm, 1.5 * cm)
     im.drawOn(canvas, first_column * cm - 0.4 * cm, (page_height - 1.8) * cm)
@@ -138,28 +148,58 @@ def make_team_sheet(team_package, canvas, package_counter):
     canvas.line(0, offset * cm, 100 * cm, offset * cm)
     for package_transaction in team_package.packagetransaction_set.all():
         user_attendance = package_transaction.user_attendance
-        canvas.setFont('DejaVu', 8)
-        canvas.drawString(first_column * cm, (offset - 1 * text_line_height) * cm, "Email:")
-        canvas.drawString(second_column * cm, (offset - 1 * text_line_height) * cm, "%s" % user_attendance.userprofile.user.email)
+        canvas.setFont("DejaVu", 8)
+        canvas.drawString(
+            first_column * cm, (offset - 1 * text_line_height) * cm, "Email:"
+        )
+        canvas.drawString(
+            second_column * cm,
+            (offset - 1 * text_line_height) * cm,
+            "%s" % user_attendance.userprofile.user.email,
+        )
 
-        canvas.drawString(first_column * cm, (offset - 2 * text_line_height) * cm, "Jméno:")
-        canvas.drawString(second_column * cm, (offset - 2 * text_line_height) * cm, "%s" % user_attendance.userprofile.user.get_full_name())
+        canvas.drawString(
+            first_column * cm, (offset - 2 * text_line_height) * cm, "Jméno:"
+        )
+        canvas.drawString(
+            second_column * cm,
+            (offset - 2 * text_line_height) * cm,
+            "%s" % user_attendance.userprofile.user.get_full_name(),
+        )
 
-        canvas.drawString(first_column * cm, (offset - 3 * text_line_height) * cm, "Telefon:")
-        canvas.drawString(second_column * cm, (offset - 3 * text_line_height) * cm, "%s" % user_attendance.userprofile.telephone)
+        canvas.drawString(
+            first_column * cm, (offset - 3 * text_line_height) * cm, "Telefon:"
+        )
+        canvas.drawString(
+            second_column * cm,
+            (offset - 3 * text_line_height) * cm,
+            "%s" % user_attendance.userprofile.telephone,
+        )
 
         if package_transaction.t_shirt_size:
-            canvas.setFont('DejaVuB', 10)
-            canvas.drawString(third_column * cm, (offset - 1 * text_line_height - 0.1) * cm, package_transaction.t_shirt_size.__str__())
+            canvas.setFont("DejaVuB", 10)
+            canvas.drawString(
+                third_column * cm,
+                (offset - 1 * text_line_height - 0.1) * cm,
+                package_transaction.t_shirt_size.__str__(),
+            )
 
-            canvas.setFont('DejaVuB', 14)
-            canvas.drawString(forth_column * cm, (offset - 1 * text_line_height - 0.2) * cm, package_transaction.t_shirt_size.code)
+            canvas.setFont("DejaVuB", 14)
+            canvas.drawString(
+                forth_column * cm,
+                (offset - 1 * text_line_height - 0.2) * cm,
+                package_transaction.t_shirt_size.code,
+            )
 
-
-#            if package_transaction.t_shirt_size.t_shirt_preview:
-#                svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
-#                svg_tshirt.scale(1.1 * cm / svg_tshirt.height, 1.1 * cm / svg_tshirt.width)
-#                svg_tshirt.drawOn(canvas, 13 * cm, (offset - 3 * text_line_height - 0.05) * cm)
-        canvas.line(0, (offset - 3 * text_line_height - 0.2) * cm, 100 * cm, (offset - 3 * text_line_height - 0.2) * cm)
+        #            if package_transaction.t_shirt_size.t_shirt_preview:
+        #                svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
+        #                svg_tshirt.scale(1.1 * cm / svg_tshirt.height, 1.1 * cm / svg_tshirt.width)
+        #                svg_tshirt.drawOn(canvas, 13 * cm, (offset - 3 * text_line_height - 0.05) * cm)
+        canvas.line(
+            0,
+            (offset - 3 * text_line_height - 0.2) * cm,
+            100 * cm,
+            (offset - 3 * text_line_height - 0.2) * cm,
+        )
 
         offset -= 3 * text_line_height + 0.1
