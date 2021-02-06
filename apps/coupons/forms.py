@@ -38,26 +38,32 @@ class DiscountCouponForm(PrevNextMixin, forms.Form):
         max_length=10,
         required=True,
         validators=[
-            RegexValidator(r'^[a-zA-Z]+-[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]+$', _('Nesprávný formát voucheru')),
+            RegexValidator(
+                r"^[a-zA-Z]+-[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]+$",
+                _("Nesprávný formát voucheru"),
+            ),
             MinLengthValidator(9),
         ],
     )
 
     def clean(self):
         cleaned_data = super().clean()
-        if 'code' in cleaned_data:
-            prefix, base_code = cleaned_data['code'].upper().split("-")
+        if "code" in cleaned_data:
+            prefix, base_code = cleaned_data["code"].upper().split("-")
             try:
                 discount_coupon = models.DiscountCoupon.objects.exclude(
                     coupon_type__valid_until__isnull=False,
                     coupon_type__valid_until__lt=today(),
                 ).get(
+                    # black
                     coupon_type__prefix=prefix,
                     token=base_code,
                 )
                 if not discount_coupon.available():
                     raise ValidationError(_("Tento slevový kupón již byl použit"))
-                cleaned_data['discount_coupon'] = discount_coupon
+                cleaned_data["discount_coupon"] = discount_coupon
             except models.DiscountCoupon.DoesNotExist:
-                raise ValidationError(_("Tento slevový kupón neexistuje, nebo již byl použit"))
+                raise ValidationError(
+                    _("Tento slevový kupón neexistuje, nebo již byl použit")
+                )
         return cleaned_data
