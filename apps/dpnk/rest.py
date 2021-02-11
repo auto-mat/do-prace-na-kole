@@ -172,14 +172,14 @@ class TripSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            instance, _ = Trip.objects.update_or_create(
+            Trip.objects.filter(
                 user_attendance=self.user_attendance,
                 date=validated_data["date"],
                 direction=validated_data["direction"],
-                defaults=validated_data,
-            )
-            instance.from_application = True
-            instance.save()
+            ).delete()
+            validated_data["user_attendance"] = self.user_attendance
+            validated_data["from_application"] = True
+            instance = Trip.objects.create(**validated_data)
         except ValidationError:
             raise GPXParsingFail
         return instance
@@ -227,6 +227,19 @@ class TripUpdateSerializer(TripSerializer):
             "sourceApplication",
             "sourceId",
         )
+    def create(self, validated_data):
+        try:
+            instance, _ = Trip.objects.update_or_create(
+                user_attendance=self.user_attendance,
+                date=validated_data['date'],
+                direction=validated_data['direction'],
+                defaults=validated_data,
+            )
+            instance.from_application = True
+            instance.save()
+        except ValidationError:
+            raise GPXParsingFail
+        return instance
 
 
 class TripSet(UserAttendanceMixin, viewsets.ModelViewSet):
