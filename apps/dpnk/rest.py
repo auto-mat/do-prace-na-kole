@@ -343,6 +343,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
     frequency = CompanyInCampaignField(lambda cic, req: cic.frequency(),)
     emissions = CompanyInCampaignField(lambda cic, req: cic.emissions(),)
     distance = CompanyInCampaignField(lambda cic, req: cic.distance(),)
+    working_rides_base_count = CompanyInCampaignField(lambda cic, req: cic.working_rides_base_count(),)
 
     class Meta:
         model = Company
@@ -358,6 +359,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             "icon_url",
             "gallery",
             "gallery_slug",
+            "working_rides_base_count",
         )
 
 
