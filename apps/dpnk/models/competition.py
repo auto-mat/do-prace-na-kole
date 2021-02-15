@@ -491,21 +491,25 @@ class Competition(models.Model):
             sex_string = ""
 
         if self.competition_type != "questionnaire" and self.commute_modes.exists():
-            commute_modes_string = " pro cesty s prostředky %s" % ", ".join(
+            commute_modes_string = "pro cesty s prostředky %s" % ", ".join(
                 self.commute_modes.values_list("name", flat=True)
             )
         else:
             commute_modes_string = ""
 
-        return format_lazy(
-            "{} {} {} {} {} {}{}",
-            company_string_before,
-            CTYPES_STRINGS[self.competition_type],
-            CCOMPETITORTYPES_STRINGS[self.competitor_type],
-            company_string_after,
-            city_string,
-            sex_string,
-            commute_modes_string,
+        return " ".join(
+            [
+                str(prop)
+                for prop in [
+                    company_string_before,
+                    CTYPES_STRINGS[self.competition_type],
+                    CCOMPETITORTYPES_STRINGS[self.competitor_type],
+                    company_string_after,
+                    city_string,
+                    sex_string,
+                    commute_modes_string,
+                ]
+            ]
         )
 
     def __str__(self):

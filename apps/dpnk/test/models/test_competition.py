@@ -251,6 +251,7 @@ class TestHasEntryNotOpened(TestCase):
 
 
 class TestTypeString(TestCase):
+    fixtures = ["commute_mode"]
     def setUp(self):
         self.city = mommy.make("dpnk.City", name="Testing city")
 
@@ -259,7 +260,7 @@ class TestTypeString(TestCase):
             "dpnk.Competition", competitor_type="team", competition_type="frequency",
         )
         self.assertEqual(
-            str(competition.type_string()), " soutěž na pravidelnost týmů   "
+            str(competition.type_string()), "soutěž na pravidelnost týmů"
         )
 
     def test_single_questionnaire(self):
@@ -318,7 +319,7 @@ class TestTypeString(TestCase):
         )
         self.assertEqual(
             str(competition.type_string()),
-            " soutěž na pravidelnost týmů    pro cesty s prostředky Kolo, Chůze/běh",
+            " soutěž na pravidelnost týmů    pro cesty s prostředky Kolo, Pěšky",
         )
 
     def test_company_length_city(self):
