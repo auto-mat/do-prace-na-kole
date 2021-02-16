@@ -147,7 +147,7 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
     SSLIFY_ADMIN_DISABLE=True,
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ["sites"]
+    fixtures = ["sites", "commute_mode"]
 
     def setUp(self):
         self.objs = Fixtures(
