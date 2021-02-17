@@ -52,8 +52,14 @@ class NullUserAttendanceListFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("False", _("Přiřazen"),),
-            ("True", _("Nepřiřazen"),),
+            (
+                "False",
+                _("Přiřazen"),
+            ),
+            (
+                "True",
+                _("Nepřiřazen"),
+            ),
         )
 
     def queryset(self, request, queryset):

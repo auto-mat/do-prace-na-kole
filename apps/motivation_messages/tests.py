@@ -10,7 +10,8 @@ from .models import MotivationMessage
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class MessagesTest(TestCase):
     def setUp(self):
@@ -22,8 +23,8 @@ class MessagesTest(TestCase):
         )
         self.user_attendance = MagicMock()
         self.user_attendance.get_frequency_percentage.return_value = 65
-        self.user_attendance.campaign.competition_phase.return_value.date_from = datetime.date(
-            2010, 11, 18
+        self.user_attendance.campaign.competition_phase.return_value.date_from = (
+            datetime.date(2010, 11, 18)
         )
         self.user_attendance.campaign.campaign_type = self.campaign_type1
         self.user_attendance.get_frequency_rank_in_team.return_value = 2

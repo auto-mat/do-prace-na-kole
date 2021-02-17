@@ -79,5 +79,9 @@ class Payments:
             ]
         )
         util.rebuild_denorm_models(
-            [teams.basic, teams.last_year, teams.other_subsidiary,]
+            [
+                teams.basic,
+                teams.last_year,
+                teams.other_subsidiary,
+            ]
         )

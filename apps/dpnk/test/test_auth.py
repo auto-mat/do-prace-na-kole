@@ -131,7 +131,9 @@ class TestPasswordForms(ViewsLogonMommy):
         )
         response = self.client.get(address)
         self.assertContains(
-            response, "<h4>Obnovení hesla nebylo úspěšné</h4>", html=True,
+            response,
+            "<h4>Obnovení hesla nebylo úspěšné</h4>",
+            html=True,
         )
 
     def test_password_change(self):
@@ -158,14 +160,20 @@ class TestEmailBackend(TestCase):
         )
         response = self.client.post(
             reverse("login"),
-            {"username": "test@test.cz", "password": "test_password",},
+            {
+                "username": "test@test.cz",
+                "password": "test_password",
+            },
         )
         self.assertRedirects(response, "/", fetch_redirect_response=False)
 
     def test_login_by_email_nonexistent(self):
         response = self.client.post(
             reverse("login"),
-            {"username": "test@test.cz", "password": "test_password",},
+            {
+                "username": "test@test.cz",
+                "password": "test_password",
+            },
         )
         self.assertContains(
             response,

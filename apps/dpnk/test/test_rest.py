@@ -40,7 +40,8 @@ from .mommy_recipes import UserAttendanceRecipe
 
 @freeze_time("2016-01-14")
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RestTests(TestCase):
     fixtures = [
@@ -158,7 +159,10 @@ class RestTests(TestCase):
                     "direction": "trip_to",
                     "commuteMode": "bicycle",
                     "file": "http://testing-campaign.testserver%s%s"
-                    % (settings.MEDIA_URL, trip.gpx_file.name,),
+                    % (
+                        settings.MEDIA_URL,
+                        trip.gpx_file.name,
+                    ),
                 },
             )
             self.assertEqual(trip.direction, "trip_to")
@@ -227,7 +231,10 @@ class RestTests(TestCase):
                     "distanceMeters": 13320,
                     "durationSeconds": None,
                     "file": "http://testing-campaign.testserver%s%s"
-                    % (settings.MEDIA_URL, trip.gpx_file.name,),
+                    % (
+                        settings.MEDIA_URL,
+                        trip.gpx_file.name,
+                    ),
                     "id": trip_id,
                     "sourceApplication": "test_app",
                     "trip_date": "2010-11-19",
@@ -273,7 +280,9 @@ class RestTests(TestCase):
             self.assertEqual(response.status_code, 400)
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class TokenAuthenticationTests(TestCase):
     def setUp(self):
         self.user_attendance = UserAttendanceRecipe.make()

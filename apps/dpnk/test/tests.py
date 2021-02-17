@@ -200,7 +200,11 @@ class PayuTests(ClearCacheMixin, TestCase):
         post_sig="b6b29bb8437f9e2486fbe5555673372d",
     ):
         payment_post_data = OrderedDict(
-            [("pos_id", "2075-1"), ("session_id", session_id), ("ts", "1"),]
+            [
+                ("pos_id", "2075-1"),
+                ("session_id", session_id),
+                ("ts", "1"),
+            ]
         )
         payment_post_data["sig"] = sig
         payment_return_value = OrderedDict(
@@ -216,7 +220,10 @@ class PayuTests(ClearCacheMixin, TestCase):
         )
         payment_return_value["trans_sig"] = trans_sig
         payment_return_value.update(
-            [("trans_pay_type", "kb"), ("trans_recv", "2016-1-1"),]
+            [
+                ("trans_pay_type", "kb"),
+                ("trans_recv", "2016-1-1"),
+            ]
         )
         payment_return_value_bytes = bytes(
             "\n".join(
@@ -230,7 +237,10 @@ class PayuTests(ClearCacheMixin, TestCase):
             "POST",
             "/paygw/UTF/Payment/get/txt/",
             "pos_id=2075-1&session_id=%(session_id)s&ts=1290254400&sig=%(trans_sig)s"
-            % {"trans_sig": post_sig, "session_id": session_id,},
+            % {
+                "trans_sig": post_sig,
+                "session_id": session_id,
+            },
             {
                 "Content-type": "application/x-www-form-urlencoded",
                 "Accept": "text/plain",
@@ -318,7 +328,8 @@ def create_post_request(
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(ClearCacheMixin, TestCase):
     fixtures = ["sites"]
@@ -397,7 +408,9 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
             html=True,
         )
 
-    @override_settings(MAX_COMPETITIONS_PER_COMPANY=0,)
+    @override_settings(
+        MAX_COMPETITIONS_PER_COMPANY=0,
+    )
     def test_dpnk_company_admin_create_competition_max_competitions(self):
         request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}

@@ -27,7 +27,9 @@ from dpnk.test.util import print_response  # noqa
 from model_mommy import mommy
 
 
-@override_settings(SSLIFY_ADMIN_DISABLE=True,)
+@override_settings(
+    SSLIFY_ADMIN_DISABLE=True,
+)
 class DispatchViewTests(TestCase):
     def setUp(self):
         super().setUp()
@@ -55,7 +57,9 @@ class DispatchViewTests(TestCase):
     def test_already_dispatched(self):
         """ Test, that warning shows if package is already dispatched """
         mommy.make(
-            "TeamPackage", dispatched=True, id=123,
+            "TeamPackage",
+            dispatched=True,
+            id=123,
         )
         post_data = {
             "dispatch_id": "T123",
@@ -73,7 +77,10 @@ class DispatchViewTests(TestCase):
         Test, that warning shows if subsidiary package has undispatched team packages.
         """
         mommy.make(
-            "TeamPackage", dispatched=False, box__id=123, id=123,
+            "TeamPackage",
+            dispatched=False,
+            box__id=123,
+            id=123,
         )
         post_data = {
             "dispatch_id": "S123",
@@ -105,7 +112,10 @@ class DispatchViewTests(TestCase):
 
     def test_dispatch(self):
         """ Test, that warning shows if package is already dispatched """
-        team_package = mommy.make("TeamPackage", id=123,)
+        team_package = mommy.make(
+            "TeamPackage",
+            id=123,
+        )
         post_data = {
             "dispatch_id": "T123",
             "next": "Next",

@@ -54,10 +54,15 @@ class TestFrequencyPercentage(TestCase):
         self.assertEqual(frequency, 0)
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2017, month=1, day=2),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2017, month=1, day=2),
+)
 class TestEnteredCompetitionReason(TestCase):
     def setUp(self):
-        tshirt_size = mommy.make("t_shirt_delivery.TShirtSize", name="XXXL",)
+        tshirt_size = mommy.make(
+            "t_shirt_delivery.TShirtSize",
+            name="XXXL",
+        )
         self.campaign = tshirt_size.campaign
         self.campaign.has_any_tshirt = True
         self.user_attendance = mommy.make(
@@ -140,7 +145,9 @@ class TestEnteredCompetitionReason(TestCase):
         self.assertEqual(reason, True)
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2017, month=1, day=2),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2017, month=1, day=2),
+)
 class TestAdmissionFee(TestCase):
     def setUp(self):
         phase = mommy.make(
@@ -189,14 +196,18 @@ class TestAdmissionFee(TestCase):
     def test_company_admission_fee(self):
         self.assertEqual(self.user_attendance.company_admission_fee(), 200)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2017, month=2, day=1),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2017, month=2, day=1),
+    )
     def test_company_admission_fee_second(self):
         self.assertEqual(self.user_attendance.company_admission_fee(), 250)
 
     def test_admission_fee(self):
         self.assertEqual(self.user_attendance.admission_fee(), 100)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2017, month=2, day=1),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2017, month=2, day=1),
+    )
     def test_admission_fee_second(self):
         self.assertEqual(self.user_attendance.admission_fee(), 150)
 
@@ -214,7 +225,9 @@ class TestGetDistance(TestCase):
 
     def test_no_track(self):
         user_attendance = mommy.make(
-            "dpnk.UserAttendance", campaign=self.campaign, distance=123,
+            "dpnk.UserAttendance",
+            campaign=self.campaign,
+            distance=123,
         )
         self.assertEqual(user_attendance.get_distance(), 123)
 
@@ -269,7 +282,10 @@ class TestIsLibero(TransactionTestCase):
 
 class TestClean(TestCase):
     def setUp(self):
-        self.campaign_type = mommy.make("CampaignType", name="Foo campaign",)
+        self.campaign_type = mommy.make(
+            "CampaignType",
+            name="Foo campaign",
+        )
         self.campaign = mommy.make(
             "dpnk.campaign",
             max_team_members=1,
@@ -279,7 +295,9 @@ class TestClean(TestCase):
 
     def test_clean_team_none(self):
         user_attendance = mommy.make(
-            "dpnk.UserAttendance", campaign=self.campaign, team=None,
+            "dpnk.UserAttendance",
+            campaign=self.campaign,
+            team=None,
         )
         user_attendance.clean()
 
@@ -313,11 +331,17 @@ class TestClean(TestCase):
 
     def test_campaign_mismatch(self):
         campaign_type1 = mommy.make(
-            "CampaignType", name="Bar campaign", slug="bar_campaign",
+            "CampaignType",
+            name="Bar campaign",
+            slug="bar_campaign",
         )
         user_attendance = mommy.make(
             "dpnk.UserAttendance",
-            campaign=mommy.make("Campaign", campaign_type=campaign_type1, year=2019,),
+            campaign=mommy.make(
+                "Campaign",
+                campaign_type=campaign_type1,
+                year=2019,
+            ),
             team=mommy.make("Team", campaign=self.campaign),
         )
         with self.assertRaisesRegex(
@@ -330,7 +354,9 @@ class TestClean(TestCase):
     def test_campaign_mismatch_logger(self, mock_logger):
         team = mommy.make("Team", campaign=self.campaign)
         user_attendance = mommy.make(
-            "dpnk.UserAttendance", campaign=self.campaign, team=team,
+            "dpnk.UserAttendance",
+            campaign=self.campaign,
+            team=team,
         )
         user_attendance.team = mommy.make("Team", campaign__name="Bar campaign")
         user_attendance.save()

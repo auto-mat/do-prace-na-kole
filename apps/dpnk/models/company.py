@@ -54,7 +54,10 @@ class Company(WithGalleryMixin, models.Model):
         ordering = ("name",)
 
     name = models.CharField(
-        unique=True, verbose_name=_("Název společnosti"), max_length=60, null=False,
+        unique=True,
+        verbose_name=_("Název společnosti"),
+        max_length=60,
+        null=False,
     )
     address = CompanyAddress()
     dic = StdNumField(
@@ -72,7 +75,11 @@ class Company(WithGalleryMixin, models.Model):
         blank=True,
         null=True,
     )
-    active = models.BooleanField(verbose_name=_(u"Aktivní"), default=True, null=False,)
+    active = models.BooleanField(
+        verbose_name=_(u"Aktivní"),
+        default=True,
+        null=False,
+    )
     ico = StdNumField(
         "cz.dic",
         default=None,
@@ -200,7 +207,9 @@ class CompanyInCampaign:
         return sum(subsidiary.eco_trip_count() for subsidiary in self.subsidiaries())
 
     def working_rides_base_count(self):
-        return sum(subsidiary.working_rides_base_count() for subsidiary in self.subsidiaries())
+        return sum(
+            subsidiary.working_rides_base_count() for subsidiary in self.subsidiaries()
+        )
 
     def frequency(self):
         subsidiaries = self.subsidiaries()

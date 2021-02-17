@@ -33,7 +33,9 @@ from .mommy_recipes import UserAttendanceRecipe, testing_campaign
 from ..models.transactions import Status as PaymentStatus
 
 
-@override_settings(FAKE_DATE=datetime.date(2017, 5, 8),)
+@override_settings(
+    FAKE_DATE=datetime.date(2017, 5, 8),
+)
 @freeze_time("2017-05-08")
 class TestSendUnfilledRidesNotification(TestCase):
     def setUp(self):
@@ -54,7 +56,10 @@ class TestSendUnfilledRidesNotification(TestCase):
             userprofile__user__email="test@test.cz",
             user_trips=[
                 mommy.make(
-                    "Trip", date="2017-05-02", commute_mode_id=1, direction="trip_to",
+                    "Trip",
+                    date="2017-05-02",
+                    commute_mode_id=1,
+                    direction="trip_to",
                 ),
             ],
             transactions=[
@@ -88,7 +93,10 @@ class TestSendUnfilledRidesNotification(TestCase):
             approved_for_team="approved",
             user_trips=[
                 mommy.make(
-                    "Trip", date="2017-05-03", commute_mode_id=1, direction="trip_to",
+                    "Trip",
+                    date="2017-05-03",
+                    commute_mode_id=1,
+                    direction="trip_to",
                 ),
             ],
             transactions=[
@@ -115,7 +123,10 @@ class TestSendUnfilledRidesNotification(TestCase):
             approved_for_team="approved",
             user_trips=[
                 mommy.make(
-                    "Trip", date="2017-05-02", commute_mode_id=1, direction="trip_to",
+                    "Trip",
+                    date="2017-05-02",
+                    commute_mode_id=1,
+                    direction="trip_to",
                 ),
             ],
         )
@@ -136,7 +147,10 @@ class TestSendUnfilledRidesNotification(TestCase):
             last_sync_time="2017-05-03 12:00:00",
             user_trips=[
                 mommy.make(
-                    "Trip", date="2017-05-02", commute_mode_id=1, direction="trip_to",
+                    "Trip",
+                    date="2017-05-02",
+                    commute_mode_id=1,
+                    direction="trip_to",
                 ),
             ],
             transactions=[
@@ -172,7 +186,10 @@ class TestSendUnfilledRidesNotification(TestCase):
             userprofile__user__email="test@test.cz",
             user_trips=[
                 mommy.make(
-                    "Trip", date="2017-05-02", commute_mode_id=1, direction="trip_to",
+                    "Trip",
+                    date="2017-05-02",
+                    commute_mode_id=1,
+                    direction="trip_to",
                 ),
             ],
             transactions=[
@@ -186,12 +203,15 @@ class TestSendUnfilledRidesNotification(TestCase):
         )
         self.user_attendance.save()
         mail_count = tasks.send_unfilled_rides_notification(
-            pks=[self.user_attendance.id], campaign_slug="testing-campaign",
+            pks=[self.user_attendance.id],
+            campaign_slug="testing-campaign",
         )
         self.assertEqual(mail_count, 1)
 
 
-@override_settings(FAKE_DATE=datetime.date(2017, 5, 16),)
+@override_settings(
+    FAKE_DATE=datetime.date(2017, 5, 16),
+)
 @freeze_time("2017-05-16")
 class TestSendUnpaidInvoiceNotification(TestCase):
     def setUp(self):
@@ -210,7 +230,9 @@ class TestSendUnpaidInvoiceNotification(TestCase):
             userprofile__user__email="test@test.cz",
             transactions=[
                 mommy.make(
-                    "Payment", status=PaymentStatus.COMPANY_ACCEPTS, amount=100,
+                    "Payment",
+                    status=PaymentStatus.COMPANY_ACCEPTS,
+                    amount=100,
                 ),
             ],
         )

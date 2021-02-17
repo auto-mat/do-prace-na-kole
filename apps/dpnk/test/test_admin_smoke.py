@@ -29,7 +29,8 @@ from dpnk.test.util import print_response  # noqa
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     fixtures = [

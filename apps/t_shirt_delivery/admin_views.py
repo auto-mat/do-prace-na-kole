@@ -39,7 +39,10 @@ class DispatchView(StaffuserRequiredMixin, FormView):
         context = self.get_context_data(form=form)
         try:
             dispatch_id = form.cleaned_data.get("dispatch_id")
-            package_class = {"T": TeamPackage, "S": SubsidiaryBox,}[dispatch_id[0]]
+            package_class = {
+                "T": TeamPackage,
+                "S": SubsidiaryBox,
+            }[dispatch_id[0]]
             package = package_class.objects.get(id=int(dispatch_id[1:]))
             if package.dispatched:
                 context["package_message"] = (

@@ -25,8 +25,17 @@ from dpnk import widgets
 class CommuteModeRendererTests(TestCase):
     def test_render(self):
         """ Test render method """
-        renderer = widgets.CommuteModeSelect({}, [(1, "Item 1"), (2, "Item 2"),],)
-        rendered_html = renderer.render("test_name", 1,)
+        renderer = widgets.CommuteModeSelect(
+            {},
+            [
+                (1, "Item 1"),
+                (2, "Item 2"),
+            ],
+        )
+        rendered_html = renderer.render(
+            "test_name",
+            1,
+        )
         self.assertHTMLEqual(
             rendered_html,
             '<fieldset class="controls btn-group" role="group">'
@@ -43,8 +52,14 @@ class CommuteModeRendererTests(TestCase):
 
     def test_render_str(self):
         """ Test render method if the value is string and item int """
-        renderer = widgets.CommuteModeSelect({}, [(1, "Item 1")],)
-        rendered_html = renderer.render("test name", "1",)
+        renderer = widgets.CommuteModeSelect(
+            {},
+            [(1, "Item 1")],
+        )
+        rendered_html = renderer.render(
+            "test name",
+            "1",
+        )
         self.assertHTMLEqual(
             rendered_html,
             '<fieldset class="controls btn-group" role="group">'

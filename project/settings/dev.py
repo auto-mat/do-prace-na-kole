@@ -55,7 +55,10 @@ DATABASES = {
 }
 
 CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".format(
-    user=db_user, password=db_password, host=db_host, db_name=db_name,
+    user=db_user,
+    password=db_password,
+    host=db_host,
+    db_name=db_name,
 )
 
 INSTALLED_APPS += (

@@ -39,7 +39,10 @@ def get_or_create_userattendance(request, campaign_slug):
                 "userprofile__user",
                 "representative_payment",
                 "related_company_admin",
-            ).get(userprofile__user=request.user, campaign__slug=campaign_slug,)
+            ).get(
+                userprofile__user=request.user,
+                campaign__slug=campaign_slug,
+            )
         except UserAttendance.DoesNotExist:
             if hasattr(request.user, "userprofile") and request.campaign:
                 return UserAttendance.objects.create(

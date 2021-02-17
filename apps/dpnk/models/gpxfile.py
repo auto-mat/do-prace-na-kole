@@ -79,7 +79,9 @@ class GpxFile(models.Model):
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
     trip_date = models.DateField(
-        verbose_name=_(u"Datum vykonání cesty"), null=False, blank=False,
+        verbose_name=_(u"Datum vykonání cesty"),
+        null=False,
+        blank=False,
     )
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),
@@ -88,7 +90,12 @@ class GpxFile(models.Model):
         null=False,
         blank=False,
     )
-    trip = models.OneToOneField(Trip, null=True, blank=True, on_delete=models.CASCADE,)
+    trip = models.OneToOneField(
+        Trip,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
         help_text=MAP_DESCRIPTION,
@@ -98,16 +105,26 @@ class GpxFile(models.Model):
         geography=True,
     )
     distance = models.PositiveIntegerField(
-        verbose_name=_("Vzdálenost v metrech"), null=True, blank=True,
+        verbose_name=_("Vzdálenost v metrech"),
+        null=True,
+        blank=True,
     )
     duration = models.PositiveIntegerField(
-        verbose_name=_("Doba v sekundách"), null=True, blank=True,
+        verbose_name=_("Doba v sekundách"),
+        null=True,
+        blank=True,
     )
     source_application = models.CharField(
-        verbose_name=_("Zdrojová aplikace"), max_length=255, null=True, blank=True,
+        verbose_name=_("Zdrojová aplikace"),
+        max_length=255,
+        null=True,
+        blank=True,
     )
     user_attendance = models.ForeignKey(
-        UserAttendance, null=False, blank=False, on_delete=models.CASCADE,
+        UserAttendance,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
     )
     commute_mode = models.ForeignKey(
         "CommuteMode",
@@ -118,16 +135,24 @@ class GpxFile(models.Model):
         blank=False,
     )
     from_application = models.BooleanField(
-        verbose_name=_(u"Nahráno z aplikace"), default=False, null=False,
+        verbose_name=_(u"Nahráno z aplikace"),
+        default=False,
+        null=False,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
     ecc_last_upload = models.DateTimeField(
-        verbose_name=_(u"Datum posledního nahrátí do ECC"), null=True, blank=True,
+        verbose_name=_(u"Datum posledního nahrátí do ECC"),
+        null=True,
+        blank=True,
     )
 
     class Meta:

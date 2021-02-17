@@ -38,7 +38,11 @@ class VoucherPDFField(PdfSandwichFieldABC):
 class VoucherPDF(PdfSandwichABC):
     field_model = VoucherPDFField
     obj = models.ForeignKey(
-        "Voucher", null=False, blank=False, default="", on_delete=models.CASCADE,
+        "Voucher",
+        null=False,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
     )
 
     def get_email(self):
@@ -61,14 +65,31 @@ class Voucher(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
-    token = models.TextField(verbose_name=_(u"token"), blank=False, null=True,)
-    amount = models.TextField(verbose_name=_(u"hodnota"), blank=True, null=True,)
-    good_till = models.DateField(blank=True, null=True,)
+    token = models.TextField(
+        verbose_name=_(u"token"),
+        blank=False,
+        null=True,
+    )
+    amount = models.TextField(
+        verbose_name=_(u"hodnota"),
+        blank=True,
+        null=True,
+    )
+    good_till = models.DateField(
+        blank=True,
+        null=True,
+    )
     user_attendance = models.ForeignKey(
-        "UserAttendance", null=True, blank=True, on_delete=models.CASCADE,
+        "UserAttendance",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
-        "Campaign", null=True, blank=True, on_delete=models.CASCADE,
+        "Campaign",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
 
     def get_sandwich_type(self):
@@ -123,7 +144,11 @@ class VoucherType(models.Model):
         blank=True,
     )
     sandwich_type = models.ForeignKey(
-        PdfSandwichType, null=True, blank=False, default="", on_delete=models.CASCADE,
+        PdfSandwichType,
+        null=True,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):

@@ -225,7 +225,10 @@ class MustHaveTeamMixinTest(TestCase):
         self.request = self.factory.get("/")
 
     def test_team_none(self):
-        self.request.user_attendance = mommy.make("UserAttendance", team=None,)
+        self.request.user_attendance = mommy.make(
+            "UserAttendance",
+            team=None,
+        )
         mixin = MustHaveTeam()
         with self.assertRaisesRegex(
             PermissionDenied,
@@ -259,7 +262,10 @@ class MustBeApprovedForTeamMixinTest(TestCase):
         self.request = self.factory.get("/")
 
     def test_team_none(self):
-        self.request.user_attendance = mommy.make("UserAttendance", team=None,)
+        self.request.user_attendance = mommy.make(
+            "UserAttendance",
+            team=None,
+        )
         mixin = MustBeApprovedForTeam()
         with self.assertRaisesRegex(
             PermissionDenied,

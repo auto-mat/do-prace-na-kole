@@ -68,7 +68,10 @@ class Competition(models.Model):
         ordering = ("-campaign", "-priority", "name")
 
     name = models.CharField(
-        unique=False, verbose_name=_("Název soutěže"), max_length=160, null=False,
+        unique=False,
+        verbose_name=_("Název soutěže"),
+        max_length=160,
+        null=False,
     )
     campaign = models.ForeignKey(
         Campaign,
@@ -78,7 +81,10 @@ class Competition(models.Model):
         on_delete=models.CASCADE,
     )
     slug = models.SlugField(
-        unique=True, default="", verbose_name=u"Doména v URL", blank=False,
+        unique=True,
+        default="",
+        verbose_name=u"Doména v URL",
+        blank=False,
     )
     url = models.URLField(
         default="",
@@ -171,7 +177,9 @@ class Competition(models.Model):
         null=False,
     )
     public_answers = models.BooleanField(
-        verbose_name=_(u"Zveřejňovat soutěžní odpovědi"), default=False, null=False,
+        verbose_name=_(u"Zveřejňovat soutěžní odpovědi"),
+        default=False,
+        null=False,
     )
     is_public = models.BooleanField(
         verbose_name=_(u"Soutěž je veřejná"),
@@ -198,10 +206,16 @@ class Competition(models.Model):
         null=False,
     )
     rules = models.TextField(
-        verbose_name=_(u"Pravidla soutěže"), default=None, blank=True, null=True,
+        verbose_name=_(u"Pravidla soutěže"),
+        default=None,
+        blank=True,
+        null=True,
     )
     results_text = models.TextField(
-        verbose_name=_(u"Text u výsledek"), default=None, blank=True, null=True,
+        verbose_name=_(u"Text u výsledek"),
+        default=None,
+        blank=True,
+        null=True,
     )
     mandatory = models.BooleanField(
         verbose_name=_("Povinný dotazník"),
@@ -217,7 +231,8 @@ class Competition(models.Model):
         null=False,
     )
     recreational = models.BooleanField(
-        verbose_name=_("Započítávají se i rekreační jízdy?"), default=False,
+        verbose_name=_("Započítávají se i rekreační jízdy?"),
+        default=False,
     )
     show_charitative_choices = models.BooleanField(
         verbose_name=_("Ukázat volbu charitativní organizace ve výsledích"),
@@ -258,10 +273,13 @@ class Competition(models.Model):
             )
         elif self.competitor_type == "team":
             results = results.select_related(
-                "team__subsidiary__company", "team__subsidiary__city",
+                "team__subsidiary__company",
+                "team__subsidiary__city",
             )
         elif self.competitor_type == "company":
-            results = results.select_related("company",)
+            results = results.select_related(
+                "company",
+            )
         return results
 
     def annotate_results_rank(self, results):
@@ -270,7 +288,8 @@ class Competition(models.Model):
         The result cannot be filtered, so use get_result_id_rank_list function to get the rank list.
         """
         results = results.annotate(
-            lower_rank=Rank("result"), upper_rank=UpperRank("result"),
+            lower_rank=Rank("result"),
+            upper_rank=UpperRank("result"),
         )
         return results
 
@@ -480,8 +499,12 @@ class Competition(models.Model):
         cities = self.city.all()
         if cities:
             city_string = ungettext_lazy(
-                "ve městě %(cities)s", "ve městech %(cities)s", len(cities),
-            ) % {"cities": ", ".join([city.name for city in cities]),}
+                "ve městě %(cities)s",
+                "ve městech %(cities)s",
+                len(cities),
+            ) % {
+                "cities": ", ".join([city.name for city in cities]),
+            }
         else:
             city_string = ""
 
@@ -509,8 +532,9 @@ class Competition(models.Model):
                     sex_string,
                     commute_modes_string,
                 ]
+                if str(prop)
             ]
-        )
+        ).strip()
 
     def __str__(self):
         return "%s" % self.name

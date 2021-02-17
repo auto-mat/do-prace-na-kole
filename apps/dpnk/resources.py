@@ -23,7 +23,8 @@ class CompanyResource(resources.ModelResource):
 
 def get_paid_user_attendances_for_company(company, campaign, extra_filter=None):
     queryset = models.UserAttendance.objects.filter(
-        campaign=campaign, team__subsidiary__company=company,
+        campaign=campaign,
+        team__subsidiary__company=company,
     )
     if extra_filter:
         queryset = extra_filter(queryset)
@@ -32,7 +33,9 @@ def get_paid_user_attendances_for_company(company, campaign, extra_filter=None):
 
 def total_paid_participants_factory(campaign):
     def tpp(_, company):
-        return str(len(get_paid_user_attendances_for_company(company, campaign)),)
+        return str(
+            len(get_paid_user_attendances_for_company(company, campaign)),
+        )
 
     return tpp
 
@@ -73,7 +76,12 @@ def create_company_history_resource():
     class CompanyHistoryResource(resources.ModelResource):
         class Meta:
             model = models.Company
-            fields = ["id", "name", "ico", "dic",] + list(extra_fields.keys())
+            fields = [
+                "id",
+                "name",
+                "ico",
+                "dic",
+            ] + list(extra_fields.keys())
             export_order = fields
 
         for field in extra_fields.keys():

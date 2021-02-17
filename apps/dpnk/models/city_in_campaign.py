@@ -53,7 +53,10 @@ class CityInCampaign(models.Model):
         on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
-        "Campaign", null=False, blank=False, on_delete=models.CASCADE,
+        "Campaign",
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
     )
     allow_adding_rides = models.BooleanField(
         verbose_name=_(u"povolit zapisování jízd"),
@@ -62,10 +65,14 @@ class CityInCampaign(models.Model):
         default=True,
     )
     organizer = models.TextField(
-        verbose_name=_(u"Jméno pořadatele"), default="", blank=True,
+        verbose_name=_(u"Jméno pořadatele"),
+        default="",
+        blank=True,
     )
     organizer_url = models.URLField(
-        verbose_name=_(u"URL pořadatele"), default="", blank=True,
+        verbose_name=_(u"URL pořadatele"),
+        default="",
+        blank=True,
     )
 
     @property

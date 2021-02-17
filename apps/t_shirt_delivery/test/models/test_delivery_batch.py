@@ -49,7 +49,8 @@ class TestDeliveryBatch(TestCase):
             ),
         )
         self.assertEqual(
-            str(delivery_batch), "id 11 vytvořená 2016-01-01 01:01:01",
+            str(delivery_batch),
+            "id 11 vytvořená 2016-01-01 01:01:01",
         )
 
     def test_box_count_zero(self):
@@ -66,7 +67,10 @@ class TestDeliveryBatch(TestCase):
         campaign = CampaignRecipe.make(name="Testin campaign")
         delivery_batch = mommy.make(
             "DeliveryBatch",
-            subsidiarybox_set=mommy.prepare("SubsidiaryBox", _quantity=2,),
+            subsidiarybox_set=mommy.prepare(
+                "SubsidiaryBox",
+                _quantity=2,
+            ),
             campaign=campaign,
         )
         self.assertEqual(delivery_batch.box_count(), 2)
@@ -80,7 +84,9 @@ class TestDeliveryBatch(TestCase):
             "rm -f /tmp/django_test/csv_delivery/delivery_batch_123_2010-11-20.csv"
         )
         delivery_batch = mommy.make(
-            "DeliveryBatch", created=datetime.date(year=2010, month=11, day=20), id=123,
+            "DeliveryBatch",
+            created=datetime.date(year=2010, month=11, day=20),
+            id=123,
         )
         self.assertEqual(
             delivery_batch.tnt_order.name,
@@ -112,7 +118,8 @@ class TestDeliveryBatch(TestCase):
             _quantity=2,
         )
         delivery_batch = mommy.make(
-            "DeliveryBatch", campaign=user_attendance[0].campaign,
+            "DeliveryBatch",
+            campaign=user_attendance[0].campaign,
         )
         self.assertQuerysetEqual(
             delivery_batch.subsidiarybox_set.all(),
@@ -175,7 +182,8 @@ class TestDeliveryBatch(TestCase):
         user_attendance[0].campaign.package_max_count = 1
         user_attendance[0].campaign.save()
         delivery_batch = mommy.make(
-            "DeliveryBatch", campaign=user_attendance[0].campaign,
+            "DeliveryBatch",
+            campaign=user_attendance[0].campaign,
         )
         subsidiary_boxes = delivery_batch.subsidiarybox_set
         self.assertQuerysetEqual(
@@ -195,7 +203,9 @@ class TestDeliveryBatch(TestCase):
 
         self.assertQuerysetEqual(
             subsidiary_boxes.first().teampackage_set.all().order_by("pk"),
-            ["<TeamPackage: Balíček pro tým Team 1>",],
+            [
+                "<TeamPackage: Balíček pro tým Team 1>",
+            ],
         )
         self.assertQuerysetEqual(
             PackageTransaction.objects.all().order_by("pk"),
@@ -222,7 +232,10 @@ class TestDeliveryBatch(TestCase):
             address_recipient="Foo recipient",
         )
         team = mommy.make(
-            "Team", subsidiary=subsidiary, name="Foo Team", campaign=testing_campaign,
+            "Team",
+            subsidiary=subsidiary,
+            name="Foo Team",
+            campaign=testing_campaign,
         )
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
@@ -236,7 +249,8 @@ class TestDeliveryBatch(TestCase):
         user_attendance[0].campaign.package_max_count = 1
         user_attendance[0].campaign.save()
         delivery_batch = mommy.make(
-            "DeliveryBatch", campaign=user_attendance[0].campaign,
+            "DeliveryBatch",
+            campaign=user_attendance[0].campaign,
         )
         self.assertQuerysetEqual(
             delivery_batch.subsidiarybox_set.all().order_by("pk"),
@@ -264,7 +278,9 @@ class TestDeliveryBatch(TestCase):
         )
         self.assertQuerysetEqual(
             team_packages[1].packagetransaction_set.all().order_by("pk"),
-            ["<PackageTransaction: Package transaction for user Foo Name 6>",],
+            [
+                "<PackageTransaction: Package transaction for user Foo Name 6>",
+            ],
         )
 
     def test_create_packages_not_member(self):
@@ -304,7 +320,8 @@ class TestDeliveryBatch(TestCase):
             campaign=testing_campaign,
         )
         mommy.make(
-            "DeliveryBatch", campaign=user_attendance.campaign,
+            "DeliveryBatch",
+            campaign=user_attendance.campaign,
         )
         self.assertEqual(
             PackageTransaction.objects.get().user_attendance,  # Only one package transaction is created

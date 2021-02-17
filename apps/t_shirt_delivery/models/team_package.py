@@ -46,7 +46,10 @@ class TeamPackage(TimeStampedModel, models.Model):
         on_delete=models.SET_NULL,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Balíek vyřízen"), blank=False, null=False, default=False,
+        verbose_name=_("Balíek vyřízen"),
+        blank=False,
+        null=False,
+        default=False,
     )
 
     def identifier(self):

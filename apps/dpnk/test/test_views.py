@@ -53,7 +53,8 @@ from .mommy_recipes import (
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
     """ Tests in which the user is logged in """
@@ -80,7 +81,9 @@ class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
         campaign.save()
 
 
-@override_settings(PAYU_POS_ID="123321",)
+@override_settings(
+    PAYU_POS_ID="123321",
+)
 class CompetitionsViewTests(ViewsLogon):
     def test_competition_rules(self):
         address = reverse(
@@ -315,7 +318,9 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertRedirects(response, reverse("profil"), status_code=302)
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class PaymentTypeViewTests(TestCase):
     def setUp(self):
         super().setUp()
@@ -324,7 +329,9 @@ class PaymentTypeViewTests(TestCase):
         )
         self.campaign = testing_campaign
         t_shirt_size = mommy.make(
-            "TShirtSize", campaign=self.campaign, name="Foo t-shirt-size",
+            "TShirtSize",
+            campaign=self.campaign,
+            name="Foo t-shirt-size",
         )
         self.price_level = mommy.make(
             "price_level.PriceLevel",
@@ -353,7 +360,9 @@ class PaymentTypeViewTests(TestCase):
 
     def test_dpnk_payment_type_with_discount_coupon(self):
         self.user_attendance.discount_coupon = mommy.make(
-            "DiscountCoupon", discount=100, coupon_type__name="Foo coupon type",
+            "DiscountCoupon",
+            discount=100,
+            coupon_type__name="Foo coupon type",
         )
         self.user_attendance.save()
         response = self.client.get(reverse("typ_platby"))
@@ -475,7 +484,8 @@ class DistanceTests(TestCase):
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     fixtures = [
@@ -543,10 +553,14 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
         PriceLevelRecipe.make()
         campaign = models.Campaign.objects.get(slug="testing-campaign")
         mommy.make(
-            "CityInCampaign", city=city1, campaign=campaign,
+            "CityInCampaign",
+            city=city1,
+            campaign=campaign,
         )
         mommy.make(
-            "CityInCampaign", city=city2, campaign=campaign,
+            "CityInCampaign",
+            city=city2,
+            campaign=campaign,
         )
         user_attendances = [
             UserAttendancePaidRecipe.make(team=None),
@@ -790,7 +804,8 @@ class ViewsTests(DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertRedirects(response, reverse("upravit_profil"))
         user_attendance = models.UserAttendance.objects.get(
-            userprofile__user__username="user_without_attendance", campaign__pk=339,
+            userprofile__user__username="user_without_attendance",
+            campaign__pk=339,
         )
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
 
@@ -812,7 +827,9 @@ class RegistrationPhaseTests(TestCase):
             status_code=403,
         )
 
-    @override_settings(FAKE_DATE=datetime.date(year=2020, month=10, day=1),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2020, month=10, day=1),
+    )
     def test_dpnk_registration_after_phase(self):
         mommy.make(
             "dpnk.Phase",
@@ -829,7 +846,9 @@ class RegistrationPhaseTests(TestCase):
             status_code=403,
         )
 
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=10, day=1),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=10, day=1),
+    )
     def test_dpnk_registration_before_phase(self):
         mommy.make(
             "dpnk.Phase",
@@ -847,7 +866,9 @@ class RegistrationPhaseTests(TestCase):
         )
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class RegistrationViewTests(TestCase):
     def setUp(self):
         super().setUp()
@@ -855,7 +876,10 @@ class RegistrationViewTests(TestCase):
 
     def test_dpnk_registration_token(self):
         mommy.make(
-            "Team", invitation_token="token123213", campaign=testing_campaign, id=1,
+            "Team",
+            invitation_token="token123213",
+            campaign=testing_campaign,
+            id=1,
         )
         kwargs = {
             "token": "token123213",
@@ -908,7 +932,8 @@ class RegistrationViewTests(TestCase):
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RequestFactoryViewTests(ClearCacheMixin, TestCase):
     fixtures = ["sites", "campaign", "auth_user", "users"]
@@ -922,7 +947,9 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         campaign_type = mommy.make(
-            "CampaignType", slug="test_campaign_type", web="dopracenakole.cz",
+            "CampaignType",
+            slug="test_campaign_type",
+            web="dopracenakole.cz",
         )
         self.campaign = self.user_attendance.campaign
         self.campaign.campaign_type = campaign_type
@@ -1006,7 +1033,9 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
             html=True,
         )
 
-    @override_settings(FAKE_DATE=datetime.date(year=2016, month=11, day=20),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2016, month=11, day=20),
+    )
     def test_questionnaire_view_late(self):
         kwargs = {"questionnaire_slug": "quest"}
         address = reverse("questionnaire", kwargs=kwargs)
@@ -1033,11 +1062,15 @@ class ViewsLogonMommy(TestCase):
         )
 
 
-@override_settings(FAKE_DATE=datetime.date(2010, 11, 20),)
+@override_settings(
+    FAKE_DATE=datetime.date(2010, 11, 20),
+)
 class TestRidesView(ViewsLogonMommy):
     def get_user_attendance(self):
         testing_campaign = campaign_get_or_create(
-            slug="testing-campaign", name="Testing campaign", minimum_rides_base=10000,
+            slug="testing-campaign",
+            name="Testing campaign",
+            minimum_rides_base=10000,
         )
         user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
@@ -1061,7 +1094,8 @@ class TestRidesView(ViewsLogonMommy):
 class TestRegisterCompanyView(ViewsLogonMommy):
     def test_get(self):
         response = self.client.get(
-            reverse("register_company"), HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+            reverse("register_company"),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
             response,
@@ -1102,7 +1136,9 @@ class TestRegisterCompanyView(ViewsLogonMommy):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response, "<strong>Toto pole je vyžadováno.</strong>", html=True,
+            response,
+            "<strong>Toto pole je vyžadováno.</strong>",
+            html=True,
         )
         self.assertContains(
             response,
@@ -1123,7 +1159,9 @@ class TestRegisterCompanyView(ViewsLogonMommy):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response, "<strong>Toto pole je vyžadováno.</strong>", html=True,
+            response,
+            "<strong>Toto pole je vyžadováno.</strong>",
+            html=True,
         )
         self.assertContains(
             response,
@@ -1177,7 +1215,9 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response, "<strong>PSČ musí být pěticiferné číslo</strong>", html=True,
+            response,
+            "<strong>PSČ musí být pěticiferné číslo</strong>",
+            html=True,
         )
 
     def test_psc_failing_no_integer(self):
@@ -1192,7 +1232,9 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertContains(
-            response, "<strong>PSČ musí být pěticiferné číslo</strong>", html=True,
+            response,
+            "<strong>PSČ musí být pěticiferné číslo</strong>",
+            html=True,
         )
 
 
@@ -1202,10 +1244,12 @@ class TestDiplomasView(ViewsLogonMommy):
 
     def shared_checks(self, response):
         self.assertNotContains(
-            response, "None",
+            response,
+            "None",
         )
         self.assertContains(
-            response, "Testing campaign",
+            response,
+            "Testing campaign",
         )
 
     def test_basic(self):
@@ -1487,7 +1531,9 @@ class ViewsTestsLogon(ViewsLogon):
             "%s?next=/tym/%s/invitation_test%%40email.com/" % (reverse("login"), token),
         )
 
-    @override_settings(DEBUG=True,)
+    @override_settings(
+        DEBUG=True,
+    )
     def test_dpnk_team_view_choose_empty_team(self):
         util.rebuild_denorm_models(models.Team.objects.all())
         PackageTransaction.objects.all().delete()
@@ -1620,7 +1666,9 @@ class ViewsTestsLogon(ViewsLogon):
     def test_company_payment(self):
         self.company_payment(amount=130.0, amount_tax=157)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2011, month=4, day=1),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2011, month=4, day=1),
+    )
     def test_company_payment_late(self):
         self.company_payment(amount=230.0, amount_tax=278)
 
@@ -1896,7 +1944,9 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.save()
         response = self.client.get(reverse("zmenit_tym"))
         self.assertContains(  # Test blank select
-            response, self.blank_team_html, html=True,
+            response,
+            self.blank_team_html,
+            html=True,
         )
 
     def test_get_previous(self):
@@ -1939,7 +1989,9 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(address)
 
         self.assertContains(  # No team is preselected
-            response, self.blank_team_html, html=True,
+            response,
+            self.blank_team_html,
+            html=True,
         )
 
     def test_get_previous_different_company(self):
@@ -1966,7 +2018,9 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(address)
 
         self.assertContains(  # No team is preselected
-            response, self.blank_team_html, html=True,
+            response,
+            self.blank_team_html,
+            html=True,
         )
 
     def test_change(self):
@@ -2120,7 +2174,9 @@ class ChangeTeamViewTests(TestCase):
         </select>
         """
         self.assertContains(
-            response, invalid_select, html=True,
+            response,
+            invalid_select,
+            html=True,
         )
 
     @patch("dpnk.models.team.logger")
@@ -2214,12 +2270,14 @@ class RegistrationMixinTests(ViewsLogon):
         slumber_api.return_value = m
         response = self.client.get(reverse("notifications:live_all_notification_list"))
         self.assertNotContains(
-            response, "Dotazn\\u00edk spole\\u010dnost\\u00ed",
+            response,
+            "Dotazn\\u00edk spole\\u010dnost\\u00ed",
         )
         response = self.client.get(reverse("rides"))
         response = self.client.get(reverse("notifications:live_all_notification_list"))
         self.assertContains(
-            response, "Dotazn\\u00edk spole\\u010dnost\\u00ed",
+            response,
+            "Dotazn\\u00edk spole\\u010dnost\\u00ed",
         )
 
     @patch("slumber.API")
@@ -2609,7 +2667,8 @@ class RidesDetailsTests(ViewsLogon):
 @ddt
 class TestNotLoggedIn(TestCase):
     """ Test, that views in which user must be logged on redirects to login page. """
-    fixtures=["sites"]
+
+    fixtures = ["sites"]
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
@@ -2642,7 +2701,7 @@ class TestNotLoggedIn(TestCase):
     )
     def test_not_logged_in(self, view):
         response = self.client.get(reverse(view))
-        if view != 'profil':
+        if view != "profil":
             self.assertRedirects(response, "/login?next=%s" % reverse(view))
         else:
             self.assertRedirects(response, "/login")
@@ -2659,7 +2718,10 @@ class TestNotLoggedIn(TestCase):
         self.assertRedirects(response, "/login?next=%s" % reverse(view))
 
     @data(
-        "company_admin_pay_for_users", "payment", "payment_beneficiary", "typ_platby",
+        "company_admin_pay_for_users",
+        "payment",
+        "payment_beneficiary",
+        "typ_platby",
     )
     def test_not_logged_in_payment_phase(self, view):
         mommy.make(
@@ -2830,13 +2892,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             html=True,
         )
 
-    @override_settings(FAKE_DATE=datetime.date(year=2009, month=11, day=20),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2009, month=11, day=20),
+    )
     def test_dpnk_competitions_page_before(self):
         response = self.client.get(reverse("length_competitions"))
         self.assertContains(response, "Výkonnost ve městě")
         self.assertContains(response, "Tato soutěž ještě nezačala")
 
-    @override_settings(FAKE_DATE=datetime.date(year=2016, month=11, day=20),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2016, month=11, day=20),
+    )
     def test_dpnk_competitions_page_finished(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         util.rebuild_denorm_models(models.Team.objects.all())

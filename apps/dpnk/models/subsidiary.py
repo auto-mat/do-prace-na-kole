@@ -44,7 +44,10 @@ class Subsidiary(WithGalleryMixin, models.Model):
 
     address = Address()
     company = ChainedForeignKey(
-        "Company", related_name="subsidiaries", null=False, blank=False,
+        "Company",
+        related_name="subsidiaries",
+        null=False,
+        blank=False,
     )
     city = models.ForeignKey(
         City,
@@ -54,7 +57,11 @@ class Subsidiary(WithGalleryMixin, models.Model):
         blank=False,
         on_delete=models.CASCADE,
     )
-    active = models.BooleanField(verbose_name=_(u"Aktivní"), default=True, null=False,)
+    active = models.BooleanField(
+        verbose_name=_(u"Aktivní"),
+        default=True,
+        null=False,
+    )
 
     box_addressee_name = models.CharField(
         verbose_name=_("Jméno adresáta krabice pro pobočku"),
@@ -72,7 +79,9 @@ class Subsidiary(WithGalleryMixin, models.Model):
         blank=True,
     )
     box_addressee_email = models.EmailField(
-        verbose_name=_("Email adresáta krabice pro pobočku"), null=True, blank=True,
+        verbose_name=_("Email adresáta krabice pro pobočku"),
+        null=True,
+        blank=True,
     )
     gallery = models.ForeignKey(
         "photologue.Gallery",

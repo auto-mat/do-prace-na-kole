@@ -42,13 +42,20 @@ class ChoiceType(models.Model):
         unique_together = (("competition", "name"),)
 
     competition = models.ForeignKey(
-        Competition, null=False, blank=False, on_delete=models.CASCADE,
+        Competition,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
     )
     name = models.CharField(
-        verbose_name=_(u"Jméno"), unique=True, max_length=40, null=True,
+        verbose_name=_(u"Jméno"),
+        unique=True,
+        max_length=40,
+        null=True,
     )
     universal = models.BooleanField(
-        verbose_name=_(u"Typ volby je použitelný pro víc otázek"), default=False,
+        verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
+        default=False,
     )
 
     def __str__(self):
@@ -97,10 +104,21 @@ class Question(models.Model):
     )
 
     name = models.CharField(
-        verbose_name=_(u"Jméno"), max_length=60, null=True, blank=True,
+        verbose_name=_(u"Jméno"),
+        max_length=60,
+        null=True,
+        blank=True,
     )
-    text = models.TextField(verbose_name=_(u"Otázka"), null=True, blank=True,)
-    date = models.DateField(verbose_name=_(u"Den"), null=True, blank=True,)
+    text = models.TextField(
+        verbose_name=_(u"Otázka"),
+        null=True,
+        blank=True,
+    )
+    date = models.DateField(
+        verbose_name=_(u"Den"),
+        null=True,
+        blank=True,
+    )
     question_type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=QTYPES,
@@ -117,9 +135,15 @@ class Question(models.Model):
         null=True,
     )
     with_attachment = models.BooleanField(
-        verbose_name=_(u"Povolit přílohu"), default=False, null=False,
+        verbose_name=_(u"Povolit přílohu"),
+        default=False,
+        null=False,
     )
-    order = models.IntegerField(verbose_name=_(u"Pořadí"), null=True, blank=True,)
+    order = models.IntegerField(
+        verbose_name=_(u"Pořadí"),
+        null=True,
+        blank=True,
+    )
     competition = models.ForeignKey(
         Competition,
         verbose_name=_(u"Soutěž"),
@@ -136,7 +160,9 @@ class Question(models.Model):
         on_delete=models.CASCADE,
     )
     required = models.BooleanField(
-        verbose_name=_(u"Povinná otázka"), default=True, null=False,
+        verbose_name=_(u"Povinná otázka"),
+        default=True,
+        null=False,
     )
 
     def __str__(self):
@@ -166,12 +192,22 @@ class Choice(models.Model):
         on_delete=models.CASCADE,
     )
     text = models.CharField(
-        verbose_name=_(u"Nabídka"), max_length=250, db_index=True, null=False,
+        verbose_name=_(u"Nabídka"),
+        max_length=250,
+        db_index=True,
+        null=False,
     )
     points = models.IntegerField(
-        verbose_name=_(u"Body"), null=True, blank=True, default=None,
+        verbose_name=_(u"Body"),
+        null=True,
+        blank=True,
+        default=None,
     )
-    order = models.PositiveIntegerField(default=0, blank=False, null=False,)
+    order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+    )
 
     def __str__(self):
         return "%s" % self.text
@@ -195,19 +231,40 @@ class Answer(models.Model):
         unique_together = (("user_attendance", "question"),)
 
     user_attendance = models.ForeignKey(
-        UserAttendance, null=True, blank=True, on_delete=models.CASCADE,
+        UserAttendance,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
-    question = models.ForeignKey(Question, null=False, on_delete=models.CASCADE,)
-    choices = models.ManyToManyField(Choice, blank=True,)
+    question = models.ForeignKey(
+        Question,
+        null=False,
+        on_delete=models.CASCADE,
+    )
+    choices = models.ManyToManyField(
+        Choice,
+        blank=True,
+    )
     comment = models.TextField(
-        verbose_name=_(u"Komentář"), max_length=600, null=True, blank=True,
+        verbose_name=_(u"Komentář"),
+        max_length=600,
+        null=True,
+        blank=True,
     )
-    points_given = models.FloatField(null=True, blank=True, default=None,)
+    points_given = models.FloatField(
+        null=True,
+        blank=True,
+        default=None,
+    )
     comment_given = models.TextField(
-        verbose_name=_("Hodnotitelský komentář"), null=True, blank=True,
+        verbose_name=_("Hodnotitelský komentář"),
+        null=True,
+        blank=True,
     )
     attachment = models.FileField(
-        upload_to=questionnaire_filename, max_length=600, blank=True,
+        upload_to=questionnaire_filename,
+        max_length=600,
+        blank=True,
     )
 
     def has_any_answer(self):

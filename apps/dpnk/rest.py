@@ -144,10 +144,14 @@ class TripSerializer(serializers.ModelSerializer):
         help_text="Any string identifiing the id in the source application",
     )
     trip_date = serializers.DateField(
-        required=False, source="date", help_text='Date of the trip e.g. "1970-01-23"',
+        required=False,
+        source="date",
+        help_text='Date of the trip e.g. "1970-01-23"',
     )
     file = serializers.FileField(
-        required=False, source="gpx_file", help_text="GPX file with the track",
+        required=False,
+        source="gpx_file",
+        help_text="GPX file with the track",
     )
     description = serializers.CharField(
         required=False, help_text="Description of the trip as input by user"
@@ -227,12 +231,13 @@ class TripUpdateSerializer(TripSerializer):
             "sourceApplication",
             "sourceId",
         )
+
     def create(self, validated_data):
         try:
             instance, _ = Trip.objects.update_or_create(
                 user_attendance=self.user_attendance,
-                date=validated_data['date'],
-                direction=validated_data['direction'],
+                date=validated_data["date"],
+                direction=validated_data["direction"],
                 defaults=validated_data,
             )
             instance.from_application = True
@@ -257,7 +262,9 @@ class TripSet(UserAttendanceMixin, viewsets.ModelViewSet):
     """
 
     def get_queryset(self):
-        return Trip.objects.filter(user_attendance=self.ua(),)
+        return Trip.objects.filter(
+            user_attendance=self.ua(),
+        )
 
     def get_serializer_class(self):
         if self.request.method == "PUT":
@@ -279,11 +286,15 @@ class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
     """
 
     def get_queryset(self):
-        qs = Trip.objects.filter(user_attendance=self.ua(),)
+        qs = Trip.objects.filter(
+            user_attendance=self.ua(),
+        )
         start_date = self.request.query_params.get("start", None)
         end_date = self.request.query_params.get("end", None)
         if start_date and end_date:
-            qs = qs.filter(date__range=[start_date, end_date],)
+            qs = qs.filter(
+                date__range=[start_date, end_date],
+            )
         return qs
 
     def get_serializer_class(self):
@@ -339,11 +350,21 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             for sub in company.subsidiaries.all()
         ]
     )
-    eco_trip_count = CompanyInCampaignField(lambda cic, req: cic.eco_trip_count(),)
-    frequency = CompanyInCampaignField(lambda cic, req: cic.frequency(),)
-    emissions = CompanyInCampaignField(lambda cic, req: cic.emissions(),)
-    distance = CompanyInCampaignField(lambda cic, req: cic.distance(),)
-    working_rides_base_count = CompanyInCampaignField(lambda cic, req: cic.working_rides_base_count(),)
+    eco_trip_count = CompanyInCampaignField(
+        lambda cic, req: cic.eco_trip_count(),
+    )
+    frequency = CompanyInCampaignField(
+        lambda cic, req: cic.frequency(),
+    )
+    emissions = CompanyInCampaignField(
+        lambda cic, req: cic.emissions(),
+    )
+    distance = CompanyInCampaignField(
+        lambda cic, req: cic.distance(),
+    )
+    working_rides_base_count = CompanyInCampaignField(
+        lambda cic, req: cic.working_rides_base_count(),
+    )
 
     class Meta:
         model = Company
@@ -388,13 +409,21 @@ class SubsidiaryInCampaignField(RequestSpecificField):
 
 
 class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
-    frequency = SubsidiaryInCampaignField(lambda sic, req: sic.frequency(),)
-    distance = SubsidiaryInCampaignField(lambda sic, req: sic.distance(),)
-    eco_trip_count = SubsidiaryInCampaignField(lambda sic, req: sic.eco_trip_count(),)
+    frequency = SubsidiaryInCampaignField(
+        lambda sic, req: sic.frequency(),
+    )
+    distance = SubsidiaryInCampaignField(
+        lambda sic, req: sic.distance(),
+    )
+    eco_trip_count = SubsidiaryInCampaignField(
+        lambda sic, req: sic.eco_trip_count(),
+    )
     working_rides_base_count = SubsidiaryInCampaignField(
         lambda sic, req: sic.working_rides_base_count(),
     )
-    emissions = SubsidiaryInCampaignField(lambda sic, req: sic.emissions(),)
+    emissions = SubsidiaryInCampaignField(
+        lambda sic, req: sic.emissions(),
+    )
     rest_url = RequestSpecificField(
         lambda sub, req: serializers.HyperlinkedRelatedField(
             read_only=True, view_name="subsidiary-detail"
@@ -465,7 +494,8 @@ class MySubsidiarySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
 
 class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
     distance = serializers.FloatField(
-        source="trip_length_total", help_text="Distance ecologically traveled in Km",
+        source="trip_length_total",
+        help_text="Distance ecologically traveled in Km",
     )
     rest_url = RequestSpecificField(
         lambda ua, req: serializers.HyperlinkedRelatedField(
@@ -473,10 +503,12 @@ class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         ).get_url(ua, "userattendance-detail", req, None)
     )
     emissions = serializers.JSONField(
-        source="get_emissions", help_text="Emission reduction estimate",
+        source="get_emissions",
+        help_text="Emission reduction estimate",
     )
     working_rides_base_count = serializers.IntegerField(
-        source="get_working_rides_base_count", help_text="Max number of possible trips",
+        source="get_working_rides_base_count",
+        help_text="Max number of possible trips",
     )
 
     class Meta:
@@ -509,8 +541,14 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
     )
     gallery = RequestSpecificField(
         lambda ua, req: serializers.HyperlinkedRelatedField(
-            read_only=True, view_name="gallery-detail",
-        ).get_url(ua.userprofile.get_gallery(), "gallery-detail", req, None,),
+            read_only=True,
+            view_name="gallery-detail",
+        ).get_url(
+            ua.userprofile.get_gallery(),
+            "gallery-detail",
+            req,
+            None,
+        ),
     )
     unread_notification_count = RequestSpecificField(
         lambda ua, req: ua.notifications().filter(unread=True).count()
@@ -552,9 +590,9 @@ class AllUserAttendanceSet(viewsets.ReadOnlyModelViewSet):
 class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         denorm.flush()
-        return UserAttendance.objects.filter(id=self.ua().id,).select_related(
-            "userprofile__user"
-        )
+        return UserAttendance.objects.filter(
+            id=self.ua().id,
+        ).select_related("userprofile__user")
 
     serializer_class = UserAttendanceSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -572,7 +610,9 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
     )
     emissions = serializers.JSONField(
-        source="get_emissions", help_text="Emission reduction estimate", read_only=True,
+        source="get_emissions",
+        help_text="Emission reduction estimate",
+        read_only=True,
     )
     eco_trip_count = serializers.IntegerField(
         source="get_eco_trip_count",
@@ -580,7 +620,8 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
     )
     working_rides_base_count = serializers.IntegerField(
-        source="get_working_trips_count", read_only=True,
+        source="get_working_trips_count",
+        read_only=True,
     )
     rest_url = RequestSpecificField(
         lambda team, req: serializers.HyperlinkedRelatedField(
@@ -604,7 +645,10 @@ class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TeamSerializer(MinimalTeamSerializer):
-    members = MinimalUserAttendanceSerializer(many=True, read_only=True,)
+    members = MinimalUserAttendanceSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = Team
@@ -641,7 +685,9 @@ class TeamSerializer(MinimalTeamSerializer):
 
 class TeamSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return Team.objects.filter(campaign__slug=self.request.subdomain,)
+        return Team.objects.filter(
+            campaign__slug=self.request.subdomain,
+        )
 
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -703,7 +749,12 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
             .select_related("team")
             .order_by("-result")
             .annotate(
-                place=Window(expression=DenseRank(), order_by=[F("result").desc(),],),
+                place=Window(
+                    expression=DenseRank(),
+                    order_by=[
+                        F("result").desc(),
+                    ],
+                ),
             )
         )
 
@@ -782,11 +833,13 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     subsidiaries = RequestSpecificField(
         lambda city, req: [
             serializers.HyperlinkedRelatedField(  # noqa
-                read_only=True, view_name="subsidiary-detail",
+                read_only=True,
+                view_name="subsidiary-detail",
             ).get_url(subsidiary, "subsidiary-detail", req, None)
             for subsidiary in Subsidiary.objects.filter(  # noqa  # noqa
                 id__in=Team.objects.filter(
-                    subsidiary__city=city, campaign=req.campaign,
+                    subsidiary__city=city,
+                    campaign=req.campaign,
                 ).values_list("subsidiary", flat=True),
             )
         ]
@@ -799,7 +852,9 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             )
         ]
     )
-    wp_url = serializers.CharField(source="get_wp_url",)
+    wp_url = serializers.CharField(
+        source="get_wp_url",
+    )
 
     class Meta:
         model = City
@@ -836,7 +891,8 @@ class CitySet(viewsets.ReadOnlyModelViewSet):
 class MyCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         city_ids = CityInCampaign.objects.filter(
-            campaign__slug=self.request.subdomain, city=self.ua().team.subsidiary.city,
+            campaign__slug=self.request.subdomain,
+            city=self.ua().team.subsidiary.city,
         ).values_list("city", flat=True)
         return City.objects.filter(id__in=city_ids)
 

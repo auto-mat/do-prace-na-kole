@@ -45,16 +45,24 @@ def get_address_string(address):
 
 
 def address_generator(
-    null_blank=False, recipient_name=_("Pracoviště"), char_psc=False,
+    null_blank=False,
+    recipient_name=_("Pracoviště"),
+    char_psc=False,
 ):
     if char_psc:
         psc_field = models.CharField(
-            verbose_name=_(u"PSČ"), max_length=50, null=True, blank=True,
+            verbose_name=_(u"PSČ"),
+            max_length=50,
+            null=True,
+            blank=True,
         )
     else:
         psc_field = models.IntegerField(
             verbose_name=_(u"PSČ"),
-            validators=[MaxValueValidator(99999), MinValueValidator(10000),],
+            validators=[
+                MaxValueValidator(99999),
+                MinValueValidator(10000),
+            ],
             default=None,
             null=True,
             blank=null_blank,
@@ -113,7 +121,12 @@ def address_generator(
 Address = address_generator()
 AddressOptional = address_generator(True)
 addressee_string = _("Adresát na faktuře")
-CompanyAddress = address_generator(False, recipient_name=addressee_string,)
+CompanyAddress = address_generator(
+    False,
+    recipient_name=addressee_string,
+)
 InvoiceAddress = address_generator(
-    True, recipient_name=addressee_string, char_psc=True,
+    True,
+    recipient_name=addressee_string,
+    char_psc=True,
 )

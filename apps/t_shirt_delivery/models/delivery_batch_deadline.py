@@ -21,7 +21,9 @@ class DeliveryBatchDeadline(models.Model):
     """Deadline dávky objednávek"""
 
     created = models.DateTimeField(
-        verbose_name=_("Datum vytvoření"), default=datetime.datetime.now, null=False,
+        verbose_name=_("Datum vytvoření"),
+        default=datetime.datetime.now,
+        null=False,
     )
 
     campaign = models.ForeignKey(
@@ -32,11 +34,17 @@ class DeliveryBatchDeadline(models.Model):
         on_delete=models.CASCADE,
     )
 
-    deadline = models.DateTimeField(null=False,)
+    deadline = models.DateTimeField(
+        null=False,
+    )
 
-    delivery_from = models.DateTimeField(null=True,)
+    delivery_from = models.DateTimeField(
+        null=True,
+    )
 
-    delivery_to = models.DateTimeField(null=True,)
+    delivery_to = models.DateTimeField(
+        null=True,
+    )
     objects = models.Manager.from_queryset(DeadlineQuerySet)()
 
     class Meta:

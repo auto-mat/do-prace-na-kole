@@ -18,5 +18,9 @@ class CityInCampaignDiplomaField(PdfSandwichFieldABC):
 class CityInCampaignDiploma(PdfSandwichABC):
     field_model = CityInCampaignDiplomaField
     obj = models.ForeignKey(
-        "CityInCampaign", null=False, blank=False, default="", on_delete=models.CASCADE,
+        "CityInCampaign",
+        null=False,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
     )

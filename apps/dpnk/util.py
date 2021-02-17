@@ -136,7 +136,8 @@ def rebuild_denorm_models(models):
             model.__class__
         )
         denorm.models.DirtyInstance.objects.create(
-            content_type=content_type, object_id=model.pk,
+            content_type=content_type,
+            object_id=model.pk,
         )
         denorm.flush()
 

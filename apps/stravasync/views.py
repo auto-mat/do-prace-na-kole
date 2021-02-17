@@ -87,7 +87,9 @@ class StravaAuth(RegistrationCompleteMixin, generic.View):
             client_secret=settings.STRAVA_CLIENT_SECRET,
             code=code,
         )
-        acct, _ = models.StravaAccount.objects.get_or_create(user_id=request.user.id,)
+        acct, _ = models.StravaAccount.objects.get_or_create(
+            user_id=request.user.id,
+        )
         acct.strava_username = sclient.get_athlete().username or ""
         acct.first_name = sclient.get_athlete().firstname or ""
         acct.last_name = sclient.get_athlete().lastname or ""

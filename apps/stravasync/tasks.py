@@ -106,8 +106,10 @@ def sync(strava_account_id, manual_sync=True):
             try:
                 sync_activity(activity, hashtag_table, strava_account, sclient, stats)
             except Exception as e:
-                strava_account.errors += "Error syncing activity {activity} \n{e}\n\n".format(
-                    activity=activity.name, e=str(e)
+                strava_account.errors += (
+                    "Error syncing activity {activity} \n{e}\n\n".format(
+                        activity=activity.name, e=str(e)
+                    )
                 )
     except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault):
         destroy_account_and_notify(strava_account, sclient)
@@ -145,7 +147,10 @@ def get_activity_as_rest_trip(activity):
     if track is not None:
         try:
             geojsons = [
-                {"type": "MultiLineString", "coordinates": [geom.coords],}
+                {
+                    "type": "MultiLineString",
+                    "coordinates": [geom.coords],
+                }
                 for geom in track
             ]
             geojson = geojsons[0]

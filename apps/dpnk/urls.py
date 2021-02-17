@@ -32,7 +32,11 @@ from .autocomplete_views import (
 from .views import answers, questionnaire_answers, questionnaire_results, questions
 
 urlpatterns = [
-    url(r"^tym/$", views.ChangeTeamView.as_view(), name="zmenit_tym",),
+    url(
+        r"^tym/$",
+        views.ChangeTeamView.as_view(),
+        name="zmenit_tym",
+    ),
     url(
         r"^company-autocomplete/$",
         CompanyAutocomplete.as_view(),
@@ -43,7 +47,11 @@ urlpatterns = [
         SubsidiaryAutocomplete.as_view(),
         name="subsidiary_autocomplete",
     ),
-    url(r"^team-autocomplete/$", TeamAutocomplete.as_view(), name="team_autocomplete",),
+    url(
+        r"^team-autocomplete/$",
+        TeamAutocomplete.as_view(),
+        name="team_autocomplete",
+    ),
     url(
         r"^registrovat_spolecnost/$",
         views.RegisterCompanyView.as_view(),
@@ -59,7 +67,11 @@ urlpatterns = [
         views.RegisterTeamView.as_view(),
         name="register_team",
     ),
-    url(r"^upravit_tym/$", views.UpdateTeam.as_view(), name="edit_team",),
+    url(
+        r"^upravit_tym/$",
+        views.UpdateTeam.as_view(),
+        name="edit_team",
+    ),
     url(
         r"^upload_team_photo/$",
         views.UploadTeamPhoto.as_view(),
@@ -104,16 +116,36 @@ urlpatterns = [
         views.TeamApprovalRequest.as_view(),
         name="zaslat_zadost_clenstvi",
     ),
-    url(r"^jizdy$", views.RidesView.as_view(), name="rides",),
-    url(r"^jizdy-podrobne/$", views.RidesDetailsView.as_view(), name="rides_details",),
-    url(r"^kalendar/$", views.CalendarView.as_view(), name="calendar",),
-    url(r"^mapa/$", views.MapView.as_view(), name="map",),
+    url(
+        r"^jizdy$",
+        views.RidesView.as_view(),
+        name="rides",
+    ),
+    url(
+        r"^jizdy-podrobne/$",
+        views.RidesDetailsView.as_view(),
+        name="rides_details",
+    ),
+    url(
+        r"^kalendar/$",
+        views.CalendarView.as_view(),
+        name="calendar",
+    ),
+    url(
+        r"^mapa/$",
+        views.MapView.as_view(),
+        name="map",
+    ),
     url(
         r"^nekompletni$",
         views.RegistrationUncompleteForm.as_view(),
         name="registration_uncomplete",
     ),
-    url(r"^dalsi_clenove/$", views.TeamMembers.as_view(), name="team_members",),
+    url(
+        r"^dalsi_clenove/$",
+        views.TeamMembers.as_view(),
+        name="team_members",
+    ),
     url(
         r"^dalsi_clenove_vysledky/$",
         views.OtherTeamMembers.as_view(
@@ -121,8 +153,16 @@ urlpatterns = [
         ),
         name="other_team_members_results",
     ),
-    url(r"^spolecnost/$", views.Company.as_view(), name="company",),
-    url(r"^pravidelnost/$", views.FrequencyView.as_view(), name="team_frequency",),
+    url(
+        r"^spolecnost/$",
+        views.Company.as_view(),
+        name="company",
+    ),
+    url(
+        r"^pravidelnost/$",
+        views.FrequencyView.as_view(),
+        name="team_frequency",
+    ),
     url(
         r"^souteze_vykonnostni/$",
         views.LengthCompetitionsView.as_view(),
@@ -193,18 +233,42 @@ urlpatterns = [
         views.UpdateProfileView.as_view(),
         name="edit_profile_detailed",
     ),
-    url(r"^typ_platby/$", views.PaymentTypeView.as_view(), name="typ_platby",),
-    url(r"^platba/$", views.PaymentView.as_view(), name="payment",),
+    url(
+        r"^typ_platby/$",
+        views.PaymentTypeView.as_view(),
+        name="typ_platby",
+    ),
+    url(
+        r"^platba/$",
+        views.PaymentView.as_view(),
+        name="payment",
+    ),
     url(
         r"^platba-beneficni/$",
         views.BeneficiaryPaymentView.as_view(),
         name="payment_beneficiary",
     ),
-    url(r"^diplomas/$", views.DiplomasView.as_view(), name="diplomas",),
-    url(r"^statistika/$", views.statistics,),
-    url(r"^denni-graf/$", views.daily_chart,),
-    url(r"^denni-vzdalenost/$", views.daily_distance_extra_json,),
-    url(r"^denni-vzdalenost-extra/$", views.daily_distance_extra_json,),
+    url(
+        r"^diplomas/$",
+        views.DiplomasView.as_view(),
+        name="diplomas",
+    ),
+    url(
+        r"^statistika/$",
+        views.statistics,
+    ),
+    url(
+        r"^denni-graf/$",
+        views.daily_chart,
+    ),
+    url(
+        r"^denni-vzdalenost/$",
+        views.daily_distance_extra_json,
+    ),
+    url(
+        r"^denni-vzdalenost-extra/$",
+        views.daily_distance_extra_json,
+    ),
     url(
         r"^pocty-soutezicich/$",
         views.CompetitorCountView.as_view(),
@@ -215,8 +279,16 @@ urlpatterns = [
     #     views.BikeRepairView.as_view(),
     #     name="bike_repair",
     # ),
-    url(r"^package/$", views.PackageView.as_view(), name="package",),
-    url(r"^aplikace/$", views.ApplicationView.as_view(), name="application",),
+    url(
+        r"^package/$",
+        views.PackageView.as_view(),
+        name="package",
+    ),
+    url(
+        r"^aplikace/$",
+        views.ApplicationView.as_view(),
+        name="application",
+    ),
     url(
         r"^open-app-with-rest-token/(?P<app_id>[0-9]+)/$",
         views.OpenApplicationWithRestTokenView.as_view(),
@@ -224,7 +296,9 @@ urlpatterns = [
     ),
     url(
         r"^address/$",
-        views.UserAttendanceView.as_view(template_name="registration/address.html",),
+        views.UserAttendanceView.as_view(
+            template_name="registration/address.html",
+        ),
     ),
     url(
         r"^trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$",
@@ -257,13 +331,25 @@ urlpatterns = [
     url(
         r"^help/$",
         views.UserAttendanceView.as_view(
-            template_name="registration/help.html", title=_("Nápověda"),
+            template_name="registration/help.html",
+            title=_("Nápověda"),
         ),
         name="help",
     ),
-    url(r"^$", views.LandingView.as_view(), name="profil",),
-    url(r"^status/$", views.status,),
-    url(r"^switch_lang/$", views.SwitchLang.as_view(), name="switch_lang",),
+    url(
+        r"^$",
+        views.LandingView.as_view(),
+        name="profil",
+    ),
+    url(
+        r"^status/$",
+        views.status,
+    ),
+    url(
+        r"^switch_lang/$",
+        views.SwitchLang.as_view(),
+        name="switch_lang",
+    ),
     url(
         r"^switch_rides_view/$",
         views.SwitchRidesView.as_view(),
@@ -310,7 +396,11 @@ urlpatterns = [
         company_admin_views.CompanyCompetitionsShowView.as_view(),
         name="company_admin_competitions",
     ),
-    url(r"^faktury/$", company_admin_views.InvoicesView.as_view(), name="invoices",),
+    url(
+        r"^faktury/$",
+        company_admin_views.InvoicesView.as_view(),
+        name="invoices",
+    ),
     url(
         r"^zaplatit_za_uzivatele/$",
         company_admin_views.SelectUsersPayView.as_view(),
@@ -342,8 +432,16 @@ urlpatterns = [
         ),
         name="login",
     ),
-    url(r"^logout/$", django_views.LogoutView.as_view(), name="logout",),
-    url(r"^platba_status$", views.payment_status, name="payment_status",),
+    url(
+        r"^logout/$",
+        django_views.LogoutView.as_view(),
+        name="logout",
+    ),
+    url(
+        r"^platba_status$",
+        views.payment_status,
+        name="payment_status",
+    ),
     url(
         r"^platba_uspesna/(?P<trans_id>[0-9]+)/(?P<session_id>[0-9A-Za-z\-]+)/(?P<pay_type>[0-9A-Za-z]+)/$$",
         views.PaymentResult.as_view(),
@@ -376,16 +474,32 @@ urlpatterns = [
         django_views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
-    url(r"^zmena_hesla/$", auth.PasswordChangeView.as_view(), name="password_change",),
+    url(
+        r"^zmena_hesla/$",
+        auth.PasswordChangeView.as_view(),
+        name="password_change",
+    ),
     url(
         r"^zmena_hesla_hotovo/$",
         django_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
-    url(r"^test_errors/$", views.test_errors, name="test_errors",),
+    url(
+        r"^test_errors/$",
+        views.test_errors,
+        name="test_errors",
+    ),
     # admin urls
-    url(r"^admin/answers/$", answers, name="admin_answers",),
-    url(r"^admin/questions/$", questions, name="admin_questions",),
+    url(
+        r"^admin/answers/$",
+        answers,
+        name="admin_answers",
+    ),
+    url(
+        r"^admin/questions/$",
+        questions,
+        name="admin_questions",
+    ),
     url(
         r"^admin/dotaznik_odpovedi/(?P<competition_slug>[^&/]+)$",
         questionnaire_answers,

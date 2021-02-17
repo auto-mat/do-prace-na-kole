@@ -59,10 +59,12 @@ class MailingTests(DenormMixin, TestCase):
         )
 
         UserAttendancePaidRecipe.make(
-            team=self.user_attendance.team, approved_for_team="approved",
+            team=self.user_attendance.team,
+            approved_for_team="approved",
         )
         UserAttendancePaidRecipe.make(
-            team=self.user_attendance.team, approved_for_team="approved",
+            team=self.user_attendance.team,
+            approved_for_team="approved",
         )
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         util.rebuild_denorm_models(models.Team.objects.all())

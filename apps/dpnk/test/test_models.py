@@ -104,7 +104,8 @@ class TestMethods(TestCase):
     def test_answer_post_save_team(self):
         campaign = models.Campaign.objects.create()
         competition = models.Competition.objects.create(
-            competitor_type="team", campaign=campaign,
+            competitor_type="team",
+            campaign=campaign,
         )
         question = models.Question.objects.create(competition=competition)
         models.CompetitionResult.objects.filter().delete()

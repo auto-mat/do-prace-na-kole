@@ -6,8 +6,24 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r"^$", views.AboutStrava.as_view(), name="about_strava",),
-    url(r"^auth/$", views.StravaAuth.as_view(), name="strava_auth",),
-    url(r"^connect/$", views.StravaConnect.as_view(), name="strava_connect",),
-    url(r"^de-auth/$", views.StravaDisconnect.as_view(), name="strava_deauth",),
+    url(
+        r"^$",
+        views.AboutStrava.as_view(),
+        name="about_strava",
+    ),
+    url(
+        r"^auth/$",
+        views.StravaAuth.as_view(),
+        name="strava_auth",
+    ),
+    url(
+        r"^connect/$",
+        views.StravaConnect.as_view(),
+        name="strava_connect",
+    ),
+    url(
+        r"^de-auth/$",
+        views.StravaDisconnect.as_view(),
+        name="strava_deauth",
+    ),
 ]

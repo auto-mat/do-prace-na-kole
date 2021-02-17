@@ -7,7 +7,9 @@ class WithGalleryMixin:
             return self.gallery
         title_slug = "%s-%s-photos" % (self._meta.object_name.lower(), self.pk)
         self.gallery, _ = photologue.models.Gallery.objects.get_or_create(
-            title=title_slug, slug=title_slug, is_public=False,
+            title=title_slug,
+            slug=title_slug,
+            is_public=False,
         )
         self.save()
         return self.gallery

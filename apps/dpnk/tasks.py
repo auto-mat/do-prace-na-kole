@@ -86,7 +86,8 @@ def touch_items(self, pks, object_app_label, object_model_name):
             app_label=object_app_label, model=object_model_name
         )
         denorm.models.DirtyInstance.objects.create(
-            content_type=content_type, object_id=pk,
+            content_type=content_type,
+            object_id=pk,
         )
         denorm.flush()
     return len(pks)
@@ -129,11 +130,17 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=""):
     date = util.today()
     min_trip_date = date - timedelta(days=days_unfilled)
     queryset = get_notification_queryset(
-        UserAttendance, days_unfilled, pks=pks, campaign_slug=campaign_slug,
+        UserAttendance,
+        days_unfilled,
+        pks=pks,
+        campaign_slug=campaign_slug,
     )
     queryset = queryset.filter(
-        payment_status__in=("done", "no_admission"), approved_for_team="approved",
-    ).exclude(user_trips__date__gte=min_trip_date,)
+        payment_status__in=("done", "no_admission"),
+        approved_for_team="approved",
+    ).exclude(
+        user_trips__date__gte=min_trip_date,
+    )
     for user_attendance in queryset:
         email.unfilled_rides_mail(user_attendance, days_unfilled)
     len_queryset = len(queryset)
@@ -144,7 +151,10 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=""):
 @shared_task(bind=True)
 def send_unpaid_invoice_notification(self, pks=None, campaign_slug="", days_unpaid=7):
     queryset = get_notification_queryset(
-        Invoice, days_unpaid, pks=pks, campaign_slug=campaign_slug,
+        Invoice,
+        days_unpaid,
+        pks=pks,
+        campaign_slug=campaign_slug,
     )
     for invoice in queryset:
         email.unpaid_invoice_mail(invoice)
@@ -169,7 +179,8 @@ def create_invoice_if_needed(self, pk=None, campaign_slug=""):
     payments = payments_to_invoice(company, campaign)
     if payments:
         Invoice.objects.create(
-            company=company, campaign=campaign,
+            company=company,
+            campaign=campaign,
         )
 
 
@@ -205,6 +216,9 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
 
     content_type = contenttypes.models.ContentType.objects.get_for_model(voucher)
     smmapdfs.tasks.make_pdfsandwich(
-        content_type.app_label, content_type.model, voucher.pk, continuation,
+        content_type.app_label,
+        content_type.model,
+        voucher.pk,
+        continuation,
     )
     translation.activate(current_language)

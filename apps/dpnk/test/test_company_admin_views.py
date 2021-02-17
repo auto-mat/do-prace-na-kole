@@ -77,7 +77,9 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
         )
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class InvoiceTests(ClearCacheMixin, TestCase):
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
@@ -214,10 +216,14 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         )
         response = self.client.get(reverse("invoices"))
         self.assertContains(
-            response, "<h2>Vystavit novou fakturu</h2>", html=True,
+            response,
+            "<h2>Vystavit novou fakturu</h2>",
+            html=True,
         )
         self.assertContains(
-            response, "<tr> <td>Foo User</td> <td>123 Kč</td> </tr>", html=True,
+            response,
+            "<tr> <td>Foo User</td> <td>123 Kč</td> </tr>",
+            html=True,
         )
 
     def test_post(self):
@@ -233,9 +239,13 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             amount=123,
         )
         response = self.client.post(
-            reverse("invoices"), {"create_invoice": True}, follow=True,
+            reverse("invoices"),
+            {"create_invoice": True},
+            follow=True,
         )
         self.assertRedirects(response, reverse("invoices"))
         self.assertContains(
-            response, "<td>Zaplacení nepotvrzeno</td>", html=True,
+            response,
+            "<td>Zaplacení nepotvrzeno</td>",
+            html=True,
         )

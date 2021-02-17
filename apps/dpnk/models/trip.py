@@ -134,7 +134,9 @@ class Trip(WithGalleryMixin, models.Model):
         blank=False,
     )
     date = models.DateField(
-        verbose_name=_(u"Datum cesty"), default=datetime.date.today, null=False,
+        verbose_name=_(u"Datum cesty"),
+        default=datetime.date.today,
+        null=False,
     )
     commute_mode = models.ForeignKey(
         "CommuteMode",
@@ -171,16 +173,26 @@ class Trip(WithGalleryMixin, models.Model):
         null=True,
         blank=True,
         default=None,
-        validators=[MaxValueValidator(1000), MinValueValidator(0),],
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0),
+        ],
     )
     duration = models.PositiveIntegerField(
-        verbose_name=_("Doba v sekundách"), null=True, blank=True,
+        verbose_name=_("Doba v sekundách"),
+        null=True,
+        blank=True,
     )
     from_application = models.BooleanField(
-        verbose_name=_(u"Nahráno z aplikace"), default=False, null=False,
+        verbose_name=_(u"Nahráno z aplikace"),
+        default=False,
+        null=False,
     )
     source_application = models.CharField(
-        verbose_name=_("Zdrojová aplikace"), max_length=255, null=True, blank=True,
+        verbose_name=_("Zdrojová aplikace"),
+        max_length=255,
+        null=True,
+        blank=True,
     )
     source_id = models.CharField(
         verbose_name=_("Identifikátor v původní aplikaci"),
@@ -189,10 +201,14 @@ class Trip(WithGalleryMixin, models.Model):
         blank=True,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
     gallery = models.ForeignKey(
         "photologue.Gallery",
@@ -202,7 +218,10 @@ class Trip(WithGalleryMixin, models.Model):
         on_delete=models.CASCADE,
     )
     description = models.TextField(
-        verbose_name=_(u"Popis cesty"), default="", null=False, blank=True,
+        verbose_name=_(u"Popis cesty"),
+        default="",
+        null=False,
+        blank=True,
     )
 
     def active(self):

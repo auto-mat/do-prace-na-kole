@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class UserAttendanceView(
-        TitleViewMixin, LoginRequiredMixin, UserAttendanceViewMixin, TemplateView
+    TitleViewMixin, LoginRequiredMixin, UserAttendanceViewMixin, TemplateView
 ):
     pass
 

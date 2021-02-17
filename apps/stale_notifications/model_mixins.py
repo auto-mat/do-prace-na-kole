@@ -9,7 +9,10 @@ class StaleSyncMixin(models.Model):
     last_sync_string = _("Poslední synchronizace")
 
     last_sync_time = models.DateTimeField(
-        last_sync_string, null=True, default=None, blank=True,
+        last_sync_string,
+        null=True,
+        default=None,
+        blank=True,
     )
 
     class Meta:

@@ -58,7 +58,10 @@ class TestSubsidiaryBox(TestCase):
         os.system(
             "rm -f /tmp/django_test/customer_sheets/customer_sheets_123_2010-11-20.pdf"
         )
-        subsidiary_box = mommy.make("SubsidiaryBox", id=123,)
+        subsidiary_box = mommy.make(
+            "SubsidiaryBox",
+            id=123,
+        )
         self.assertEqual(
             subsidiary_box.customer_sheets.name,
             "customer_sheets/customer_sheets_123_2010-11-20.pdf",
@@ -84,7 +87,9 @@ class TestSubsidiaryBox(TestCase):
                 "TeamPackage",
                 packagetransaction_set=mommy.make(
                     "PackageTransaction",
-                    user_attendance=UserAttendanceRecipe.make(campaign=campaign,),
+                    user_attendance=UserAttendanceRecipe.make(
+                        campaign=campaign,
+                    ),
                     _quantity=2,
                 ),
                 _quantity=1,
@@ -120,7 +125,11 @@ class TestSubsidiaryBox(TestCase):
         )
         self.assertEqual(
             subsidiary_box.get_representative_addressee(),
-            {"name": "Foo name", "telephone": "123456789", "email": "foo@email.cz",},
+            {
+                "name": "Foo name",
+                "telephone": "123456789",
+                "email": "foo@email.cz",
+            },
         )
 
     def test_get_representative_user_attendance_subsidiary_addressee(self):
@@ -134,49 +143,78 @@ class TestSubsidiaryBox(TestCase):
         )
         self.assertEqual(
             subsidiary_box.get_representative_addressee(),
-            {"name": "Foo name", "telephone": "123456789", "email": "foo@email.cz",},
+            {
+                "name": "Foo name",
+                "telephone": "123456789",
+                "email": "foo@email.cz",
+            },
         )
 
     def test_get_representative_user_attendance_no_package_transaction(self):
         campaign = CampaignRecipe.make(year=2018)
         subsidiary_box = mommy.make(
             "SubsidiaryBox",
-            teampackage_set=[mommy.make("TeamPackage",),],
+            teampackage_set=[
+                mommy.make(
+                    "TeamPackage",
+                ),
+            ],
             delivery_batch__campaign=campaign,
         )
         self.assertEqual(
             subsidiary_box.get_representative_addressee(),
-            {"name": "", "telephone": "", "email": "",},
+            {
+                "name": "",
+                "telephone": "",
+                "email": "",
+            },
         )
 
     def test_get_representative_user_attendance_no_teampackage(self):
         campaign = CampaignRecipe.make(year=2018)
-        subsidiary_box = mommy.make("SubsidiaryBox", delivery_batch__campaign=campaign,)
+        subsidiary_box = mommy.make(
+            "SubsidiaryBox",
+            delivery_batch__campaign=campaign,
+        )
         self.assertEqual(
             subsidiary_box.get_representative_addressee(),
-            {"name": "", "telephone": "", "email": "",},
+            {
+                "name": "",
+                "telephone": "",
+                "email": "",
+            },
         )
 
     def test_identifier(self):
         """
         Test identifier()
         """
-        subsidiary_box = mommy.make("SubsidiaryBox", id=1,)
+        subsidiary_box = mommy.make(
+            "SubsidiaryBox",
+            id=1,
+        )
         self.assertEqual(
-            subsidiary_box.identifier(), "S1",
+            subsidiary_box.identifier(),
+            "S1",
         )
 
     def test_identifier_new(self):
         """
         Test identifier() on new package
         """
-        subsidiary_box = mommy.prepare("SubsidiaryBox",)
+        subsidiary_box = mommy.prepare(
+            "SubsidiaryBox",
+        )
         self.assertEqual(
-            subsidiary_box.identifier(), None,
+            subsidiary_box.identifier(),
+            None,
         )
 
     def test_all_packages_dispatched(self):
-        team_package = mommy.make("TeamPackage", dispatched=True,)
+        team_package = mommy.make(
+            "TeamPackage",
+            dispatched=True,
+        )
         subsidiary_box = team_package.box
         self.assertEquals(subsidiary_box.packages_count(), 1)
         self.assertEquals(subsidiary_box.dispatched_packages_count(), 1)
@@ -191,20 +229,28 @@ class TestSubsidiaryBox(TestCase):
         self.assertTrue(subsidiary_box.all_packages_dispatched())
 
     def test_all_packages_dispatched_no_package(self):
-        subsidiary_box = mommy.prepare("SubsidiaryBox",)
+        subsidiary_box = mommy.prepare(
+            "SubsidiaryBox",
+        )
         self.assertEquals(subsidiary_box.packages_count(), 0)
         self.assertEquals(subsidiary_box.dispatched_packages_count(), 0)
         self.assertTrue(subsidiary_box.all_packages_dispatched())
 
     def test_all_packages_dispatched_false(self):
-        team_package = mommy.make("TeamPackage", dispatched=False,)
+        team_package = mommy.make(
+            "TeamPackage",
+            dispatched=False,
+        )
         subsidiary_box = team_package.box
         self.assertEquals(subsidiary_box.packages_count(), 1)
         self.assertEquals(subsidiary_box.dispatched_packages_count(), 0)
         self.assertFalse(subsidiary_box.all_packages_dispatched())
 
     def test_tracking_link(self):
-        subsidiary_box = mommy.make("SubsidiaryBox", carrier_identification=12345,)
+        subsidiary_box = mommy.make(
+            "SubsidiaryBox",
+            carrier_identification=12345,
+        )
         self.assertEquals(
             subsidiary_box.tracking_link(),
             "<a target='_blank' href='https://gls-group.eu/CZ/cs/sledovani-zasilek?match=12345'>12345</a>",

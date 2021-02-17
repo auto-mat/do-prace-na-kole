@@ -61,7 +61,10 @@ class CampaignFilter(SimpleListFilter):
             yield {
                 "selected": self.value() == lookup,
                 "query_string": changelist.get_query_string(
-                    {self.parameter_name: lookup,}, [],
+                    {
+                        self.parameter_name: lookup,
+                    },
+                    [],
                 ),
                 "display": title,
             }
@@ -116,15 +119,30 @@ class DuplicateFilter(SimpleListFilter):
                 self.filter_model.objects.filter(
                     **{"%s__isnull" % self.filter_field: False},
                 )
-                .exclude(**{"%s__exact" % self.filter_field: self.blank_value},)
-                .values(self.filter_field,)
-                .annotate(Count("id"),)
-                .values(self.filter_field,)
+                .exclude(
+                    **{"%s__exact" % self.filter_field: self.blank_value},
+                )
+                .values(
+                    self.filter_field,
+                )
+                .annotate(
+                    Count("id"),
+                )
+                .values(
+                    self.filter_field,
+                )
                 .order_by()
-                .filter(id__count__gt=1,)
-                .values_list(self.filter_field, flat=True,)
+                .filter(
+                    id__count__gt=1,
+                )
+                .values_list(
+                    self.filter_field,
+                    flat=True,
+                )
             )
-            return queryset.filter(**{"%s__in" % self.filter_field: duplicates},)
+            return queryset.filter(
+                **{"%s__in" % self.filter_field: duplicates},
+            )
         if self.value() == "blank":
             return queryset.filter(
                 **{"%s__exact" % self.filter_field: self.blank_value},

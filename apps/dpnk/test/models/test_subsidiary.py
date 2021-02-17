@@ -35,7 +35,8 @@ class TestSubsidiaryMethods(TestCase):
             city__name="Foo city",
         )
         self.assertEqual(
-            str(subsidiary), "Foo street - Foo city",
+            str(subsidiary),
+            "Foo street - Foo city",
         )
 
     def test_str_full(self):
@@ -52,16 +53,21 @@ class TestSubsidiaryMethods(TestCase):
             city__name="Foo city",
         )
         self.assertEqual(
-            str(subsidiary), "Foo recipient, Foo street 12, 123 45 Bar city - Foo city",
+            str(subsidiary),
+            "Foo recipient, Foo street 12, 123 45 Bar city - Foo city",
         )
 
     def test_name(self):
         """
         Test that name works properly
         """
-        subsidiary = mommy.make("Subsidiary", address_street="Foo street",)
+        subsidiary = mommy.make(
+            "Subsidiary",
+            address_street="Foo street",
+        )
         self.assertEqual(
-            subsidiary.name(), "Foo street",
+            subsidiary.name(),
+            "Foo street",
         )
 
     def test_get_recipient_string_equals(self):
@@ -74,7 +80,8 @@ class TestSubsidiaryMethods(TestCase):
             company__name="FOo recipient ",
         )
         self.assertEqual(
-            subsidiary.get_recipient_string(), " foo RECIpient",
+            subsidiary.get_recipient_string(),
+            " foo RECIpient",
         )
 
     def test_get_recipient_string_not_equals(self):
@@ -87,7 +94,8 @@ class TestSubsidiaryMethods(TestCase):
             company__name="Foo company",
         )
         self.assertEqual(
-            subsidiary.get_recipient_string(), "Foo recipient (Foo company)",
+            subsidiary.get_recipient_string(),
+            "Foo recipient (Foo company)",
         )
 
     def test_get_recipient_string_recipient_blank(self):
@@ -95,16 +103,22 @@ class TestSubsidiaryMethods(TestCase):
         Test that get_recipient_string function works properly when address_recipient is blank
         """
         subsidiary = mommy.make(
-            "Subsidiary", address_recipient="", company__name="Foo company",
+            "Subsidiary",
+            address_recipient="",
+            company__name="Foo company",
         )
         self.assertEqual(
-            subsidiary.get_recipient_string(), "Foo company",
+            subsidiary.get_recipient_string(),
+            "Foo company",
         )
 
     def test_invalid_psc(self):
         """
         Test that clean with invalid PSČ throws ValidationError
         """
-        subsidiary = mommy.make("Subsidiary", address_psc=12345,)
+        subsidiary = mommy.make(
+            "Subsidiary",
+            address_psc=12345,
+        )
         with self.assertRaises(ValidationError):
             subsidiary.clean()

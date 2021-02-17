@@ -16,5 +16,9 @@ class TeamDiplomaField(PdfSandwichFieldABC):
 class TeamDiploma(PdfSandwichABC):
     field_model = TeamDiplomaField
     obj = models.ForeignKey(
-        "Team", null=False, blank=False, default="", on_delete=models.CASCADE,
+        "Team",
+        null=False,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
     )

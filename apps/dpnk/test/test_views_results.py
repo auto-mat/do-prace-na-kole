@@ -34,7 +34,10 @@ class CompetitionResultListJsonTeamTests(TestCase):
             HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
         self.factory = RequestFactory()
-        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign",)
+        self.campaign = mommy.make(
+            "dpnk.Campaign",
+            slug="testing-campaign",
+        )
         team_length_competition = mommy.make(
             "dpnk.Competition",
             campaign=self.campaign,
@@ -96,7 +99,9 @@ class CompetitionResultListJsonTeamTests(TestCase):
         )
         expected_json = {
             "recordsTotal": 2,
-            "data": [["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],],
+            "data": [
+                ["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],
+            ],
             "draw": 0,
             "result": "ok",
             "recordsFiltered": 1,
@@ -133,7 +138,9 @@ class CompetitionResultListJsonTeamTests(TestCase):
         )
         expected_json = {
             "recordsTotal": 2,
-            "data": [["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],],
+            "data": [
+                ["1.", "1,0", "1,2", "0", "foo team", "bar company", "foo city"],
+            ],
             "draw": 0,
             "result": "ok",
             "recordsFiltered": 1,
@@ -148,7 +155,10 @@ class CompetitionResultListJsonSingleTests(TestCase):
             HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
         self.factory = RequestFactory()
-        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign",)
+        self.campaign = mommy.make(
+            "dpnk.Campaign",
+            slug="testing-campaign",
+        )
         mommy.make(
             "dpnk.Phase",
             phase_type="competition",

@@ -79,22 +79,38 @@ class CompetitionResult(models.Model):
         db_index=True,
     )
     result_divident = models.FloatField(
-        verbose_name=_("Dělenec"), null=True, blank=True, default=None,
+        verbose_name=_("Dělenec"),
+        null=True,
+        blank=True,
+        default=None,
     )
     result_divisor = models.FloatField(
-        verbose_name=_("Dělitel"), null=True, blank=True, default=None,
+        verbose_name=_("Dělitel"),
+        null=True,
+        blank=True,
+        default=None,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
     frequency = models.FloatField(
-        verbose_name=_("Pravidelnost"), null=True, blank=True, default=0,
+        verbose_name=_("Pravidelnost"),
+        null=True,
+        blank=True,
+        default=0,
     )
     distance = models.FloatField(
-        verbose_name=_("Vzdalenost"), null=True, blank=True, default=0,
+        verbose_name=_("Vzdalenost"),
+        null=True,
+        blank=True,
+        default=0,
     )
 
     def get_sequence_range(self):
@@ -104,12 +120,14 @@ class CompetitionResult(models.Model):
         """
         lower_range = (
             CompetitionResult.objects.filter(
-                competition=self.competition, result__gt=self.result,
+                competition=self.competition,
+                result__gt=self.result,
             ).count()
             + 1
         )
         upper_range = CompetitionResult.objects.filter(
-            competition=self.competition, result__gte=self.result,
+            competition=self.competition,
+            result__gte=self.result,
         ).count()
         return lower_range, upper_range
 

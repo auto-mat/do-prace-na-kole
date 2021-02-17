@@ -89,4 +89,10 @@ class MotivationMessageAdmin(ImportExportMixin, admin.ModelAdmin):
         return mark_safe(obj.message)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("campaign_types",)
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related(
+                "campaign_types",
+            )
+        )

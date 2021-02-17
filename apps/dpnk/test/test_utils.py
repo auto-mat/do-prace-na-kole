@@ -26,7 +26,9 @@ from django.test.utils import override_settings
 from dpnk import util
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class UtilTests(TestCase):
     fixtures = ["sites", "campaign", "auth_user", "users"]
 

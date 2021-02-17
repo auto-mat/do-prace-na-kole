@@ -27,7 +27,8 @@ from dpnk import apps
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AppsTests(TestCase):
     fixtures = ["sites", "campaign", "auth_user", "users"]

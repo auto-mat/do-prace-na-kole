@@ -78,15 +78,23 @@ class CompanyAdmin(models.Model):
     )
 
     campaign = models.ForeignKey(
-        "Campaign", null=False, blank=False, on_delete=models.CASCADE,
+        "Campaign",
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
     )
 
     note = models.TextField(
-        verbose_name=_(u"Interní poznámka"), max_length=500, null=True, blank=True,
+        verbose_name=_(u"Interní poznámka"),
+        max_length=500,
+        null=True,
+        blank=True,
     )
 
     can_confirm_payments = models.BooleanField(
-        verbose_name=_(u"Může potvrzovat platby"), default=True, null=False,
+        verbose_name=_(u"Může potvrzovat platby"),
+        default=True,
+        null=False,
     )
     will_pay_opt_in = models.BooleanField(
         verbose_name=_(u"Uživatel potvrdil, že bude plati za zaměstnance."),

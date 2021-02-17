@@ -31,7 +31,9 @@ from dpnk.test.util import print_response  # noqa
 from model_mommy import mommy
 
 
-@override_settings(SSLIFY_ADMIN_DISABLE=True,)
+@override_settings(
+    SSLIFY_ADMIN_DISABLE=True,
+)
 class AdminTestBase(TestCase):
     def setUp(self):
         super().setUp()
@@ -39,7 +41,10 @@ class AdminTestBase(TestCase):
             HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
         self.user = mommy.make(
-            "auth.User", is_superuser=True, is_staff=True, username="foo_username",
+            "auth.User",
+            is_superuser=True,
+            is_staff=True,
+            username="foo_username",
         )
         self.client.force_login(self.user, settings.AUTHENTICATION_BACKENDS[0])
 
@@ -186,7 +191,10 @@ class DeliveryBatchAdminTests(AdminTestBase):
         self.assertContains(response, "<span>Testing t-shirt size</span>", html=True)
 
     def test_deliverybatch_admin_change(self):
-        address = reverse("admin:t_shirt_delivery_deliverybatch_change", args=(1,),)
+        address = reverse(
+            "admin:t_shirt_delivery_deliverybatch_change",
+            args=(1,),
+        )
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing t-shirt size: 2")
         self.assertContains(response, "Testing campaign")
@@ -268,7 +276,8 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
 
     def test_userattendancetobatchadmin_admin_change(self):
         address = reverse(
-            "admin:t_shirt_delivery_userattendancetobatch_change", args=(1,),
+            "admin:t_shirt_delivery_userattendancetobatch_change",
+            args=(1,),
         )
         response = self.client.get(address, follow=True)
         self.assertContains(

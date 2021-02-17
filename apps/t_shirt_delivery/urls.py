@@ -31,5 +31,9 @@ urlpatterns = [
         {"success_url": "typ_platby"},
         name="zmenit_triko",
     ),
-    url(r"^admin/dispatch/$", admin_views.DispatchView.as_view(), name="dispatch",),
+    url(
+        r"^admin/dispatch/$",
+        admin_views.DispatchView.as_view(),
+        name="dispatch",
+    ),
 ]

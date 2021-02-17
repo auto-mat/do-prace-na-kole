@@ -41,7 +41,11 @@ class DiplomaField(PdfSandwichFieldABC):
 class Diploma(PdfSandwichABC):
     field_model = DiplomaField
     obj = models.ForeignKey(
-        "UserAttendance", null=False, blank=False, default="", on_delete=models.CASCADE,
+        "UserAttendance",
+        null=False,
+        blank=False,
+        default="",
+        on_delete=models.CASCADE,
     )
 
     def get_email(self):

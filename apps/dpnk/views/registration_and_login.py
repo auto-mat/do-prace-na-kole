@@ -286,7 +286,8 @@ class ConfirmTeamInvitationView(
     def dispatch(self, request, *args, **kwargs):
         if Team.objects.filter(invitation_token=kwargs["token"]).count() != 1:
             raise exceptions.TemplatePermissionDenied(
-                _("Tým nenalezen"), self.template_name,
+                _("Tým nenalezen"),
+                self.template_name,
             )
 
         initial_email = kwargs["initial_email"]
@@ -660,7 +661,10 @@ def payment_status(request):
                 ("sig", make_sig((pos_id, session_id, timestamp))),
             )
         ),
-        {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain",},
+        {
+            "Content-type": "application/x-www-form-urlencoded",
+            "Accept": "text/plain",
+        },
     )
     raw_response = codecs.decode(c.getresponse().read(), "utf-8")
     r = {}
@@ -904,6 +908,7 @@ class OpenApplicationWithRestTokenView(LoginRequiredMixin, View):
         HttpResponseRedirect.allowed_schemes.append("dpnk")
         return HttpResponseRedirect(
             rough_url.format(
-                auth_token=token.key, campaign_slug_identifier=campaign_slug_identifier,
+                auth_token=token.key,
+                campaign_slug_identifier=campaign_slug_identifier,
             )
         )

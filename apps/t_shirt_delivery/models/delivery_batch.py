@@ -46,7 +46,9 @@ class DeliveryBatch(models.Model):
     """Dávka objednávek"""
 
     created = models.DateTimeField(
-        verbose_name=_("Datum vytvoření"), default=datetime.datetime.now, null=False,
+        verbose_name=_("Datum vytvoření"),
+        default=datetime.datetime.now,
+        null=False,
     )
     campaign = models.ForeignKey(
         "dpnk.Campaign",
@@ -84,13 +86,21 @@ class DeliveryBatch(models.Model):
         max_length=512,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Vyřízeno"), blank=False, null=False, default=False,
+        verbose_name=_("Vyřízeno"),
+        blank=False,
+        null=False,
+        default=False,
     )
     note = models.CharField(
-        verbose_name=_("Krátká poznámka"), max_length=255, null=True, blank=True,
+        verbose_name=_("Krátká poznámka"),
+        max_length=255,
+        null=True,
+        blank=True,
     )
     pickup_date = models.DateField(
-        verbose_name=_("Datum vyzvednutí"), default=datetime.datetime.now, null=False,
+        verbose_name=_("Datum vyzvednutí"),
+        default=datetime.datetime.now,
+        null=False,
     )
 
     class Meta:
@@ -145,9 +155,9 @@ class DeliveryBatch(models.Model):
         ordered_t_shirt_counts = collections.OrderedDict(
             [
                 (size.name, 0)
-                for size in TShirtSize.objects.filter(campaign=campaign,).order_by(
-                    "name"
-                )
+                for size in TShirtSize.objects.filter(
+                    campaign=campaign,
+                ).order_by("name")
             ]
         )
         for count in t_shirt_counts:
@@ -179,7 +189,8 @@ class DeliveryBatch(models.Model):
                         subsidiary_box.add_packages_on_save = True
                         subsidiary_box.save()
                     subsidiary_box = SubsidiaryBox(
-                        delivery_batch=self, subsidiary=subsidiary,
+                        delivery_batch=self,
+                        subsidiary=subsidiary,
                     )
                     subsidiary_box.add_packages_on_save = False
                     subsidiary_box.save()
@@ -195,7 +206,8 @@ class DeliveryBatch(models.Model):
                             or t_shirt_count_in_package >= 5
                         ):
                             team_package = TeamPackage.objects.create(
-                                box=subsidiary_box, team=team,
+                                box=subsidiary_box,
+                                team=team,
                             )
                             t_shirt_count_in_package = 0
                         t_shirt_count_in_package += 1

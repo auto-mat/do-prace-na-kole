@@ -488,10 +488,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-        "OPTIONS": {"min_length": 6,},
+        "OPTIONS": {
+            "min_length": 6,
+        },
     },
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 LOGGING = {
@@ -501,10 +507,18 @@ LOGGING = {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
         },
-        "simple": {"format": "%(levelname)s %(message)s",},
-        "plain": {"format": "%(asctime)s %(message)s",},
+        "simple": {
+            "format": "%(levelname)s %(message)s",
+        },
+        "plain": {
+            "format": "%(asctime)s %(message)s",
+        },
     },
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse",},},
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+    },
     "handlers": {
         "sentry": {
             "level": "WARNING",
@@ -531,7 +545,10 @@ LOGGING = {
             "include_html": True,
         },
     },
-    "root": {"level": "WARNING", "handlers": ["sentry", "logfile", "console"],},
+    "root": {
+        "level": "WARNING",
+        "handlers": ["sentry", "logfile", "console"],
+    },
     "loggers": {
         "django": {
             "handlers": ["console", "logfile", "mail_admins", "sentry"],

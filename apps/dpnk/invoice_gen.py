@@ -68,7 +68,8 @@ def generate_invoice(invoice):
     )
 
     creator = Creator(
-        "Klára Dušáková", stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
+        "Klára Dušáková",
+        stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
     )
 
     invoice_gen = Invoice(client, provider, creator)

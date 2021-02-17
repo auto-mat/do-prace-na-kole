@@ -106,7 +106,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
         geography=True,
     )
     dont_want_insert_track = models.BooleanField(
-        verbose_name=_(u"DEPRECATED"), default=False, null=False,
+        verbose_name=_(u"DEPRECATED"),
+        default=False,
+        null=False,
     )
     team = models.ForeignKey(
         "Team",
@@ -139,10 +141,14 @@ class UserAttendance(StaleSyncMixin, models.Model):
         on_delete=models.SET_NULL,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"), auto_now_add=True, null=True,
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"), auto_now=True, null=True,
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
     personal_data_opt_in = models.BooleanField(
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
@@ -644,7 +650,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if not self.team:
             return None
         return self.team.subsidiary.company.company_admin.filter(
-            campaign=self.campaign, company_admin_approved="approved",
+            campaign=self.campaign,
+            company_admin_approved="approved",
         )
 
     def get_asociated_company_admin_with_payments(self):
@@ -686,7 +693,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def get_frequency_rank_in_team(self):
         return (
             self.team.members()
-            .order_by(F("frequency").desc(nulls_last=True), "get_rides_count_denorm",)
+            .order_by(
+                F("frequency").desc(nulls_last=True),
+                "get_rides_count_denorm",
+            )
             .filter(frequency__gte=self.frequency - 0.000000001)
             .count()
         )
@@ -741,13 +751,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def helpdesk_iframe_url(self):
         if settings.HELPDESK_IFRAME_URL:
-            return (
-                settings.HELPDESK_IFRAME_URL
-                + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa
-                    queue=settings.HELPDESK_QUEUE,
-                    email=self.userprofile.user.email,
-                    dpnk_user=self.get_admin_url(),
-                )
+            return settings.HELPDESK_IFRAME_URL + "?queue={queue};_readonly_fields_=queue,custom_dpnk-user;submitter_email={email};custom_dpnk-user={dpnk_user};_hide_fields_=queue,custom_dpnk-user".format(  # noqa
+                queue=settings.HELPDESK_QUEUE,
+                email=self.userprofile.user.email,
+                dpnk_user=self.get_admin_url(),
             )
 
     def clean(self):
@@ -759,7 +766,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if self.team and self.team.campaign != self.campaign:
             message = _(
                 "Zvolená kampaň (%(campaign)s) musí být shodná s kampaní týmu (%(team)s)"
-                % {"campaign": self.campaign, "team": self.team.campaign,},
+                % {
+                    "campaign": self.campaign,
+                    "team": self.team.campaign,
+                },
             )
             raise ValidationError({"team": message, "campaign": message})
 
@@ -840,7 +850,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def revoke_templated_notification(self, template):
         revoke_notification.send(
-            self, recipient=self.userprofile.user, action_object=template,
+            self,
+            recipient=self.userprofile.user,
+            action_object=template,
         )
 
     def notifications(self):

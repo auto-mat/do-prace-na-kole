@@ -82,7 +82,9 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
                 userprofile__user__is_active=True,
                 representative_payment__pay_type="fc",
             )
-            .exclude(payment_status="done",)
+            .exclude(
+                payment_status="done",
+            )
             .select_related(
                 "userprofile__user",
                 "campaign",
@@ -193,7 +195,9 @@ class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
         ),
         required=True,
     )
-    personal_data_opt_in = forms.BooleanField(required=True,)
+    personal_data_opt_in = forms.BooleanField(
+        required=True,
+    )
 
     class Meta:
         model = CompanyAdmin
@@ -226,9 +230,20 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
         required=True,
         help_text=_("Začnete psát název organizace a vyberte si z nabídky."),
     )
-    telephone = forms.CharField(label="Telefon", max_length=30,)
-    first_name = forms.CharField(label=_(u"Jméno"), max_length=30, required=True,)
-    last_name = forms.CharField(label=_(u"Příjmení"), max_length=30, required=True,)
+    telephone = forms.CharField(
+        label="Telefon",
+        max_length=30,
+    )
+    first_name = forms.CharField(
+        label=_(u"Jméno"),
+        max_length=30,
+        required=True,
+    )
+    last_name = forms.CharField(
+        label=_(u"Příjmení"),
+        max_length=30,
+        required=True,
+    )
     campaign = forms.ModelChoiceField(
         widget=forms.widgets.HiddenInput(),
         queryset=Campaign.objects.all(),
@@ -320,7 +335,8 @@ class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
         ret_val = super().__init__(*args, **kwargs)
         amount = kwargs["initial"]["campaign"].benefitial_admission_fee_company
         self.fields["company_pais_benefitial_fee"].help_text = format_html(
-            _("Benefiční startovné je {amount} Kč za osobu bez DPH."), amount=amount,
+            _("Benefiční startovné je {amount} Kč za osobu bez DPH."),
+            amount=amount,
         )
         return ret_val
 

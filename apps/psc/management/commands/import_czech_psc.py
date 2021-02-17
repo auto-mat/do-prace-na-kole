@@ -17,7 +17,8 @@ class Command(BaseCommand):
             "https://raw.githubusercontent.com/sedrickcz/psc-cr/master/psc.csv"
         ).content
         dictReader = csv.DictReader(
-            io.StringIO(psc_table.decode("utf-8")), delimiter=",",
+            io.StringIO(psc_table.decode("utf-8")),
+            delimiter=",",
         )
 
         for row in dictReader:

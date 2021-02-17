@@ -96,7 +96,9 @@ sitetrees = (
     tree(
         "admin_menu",
         "Administrace",
-        items=[item("Administrace", "admin:index", title_en="Admininstration"),],
+        items=[
+            item("Administrace", "admin:index", title_en="Admininstration"),
+        ],
     ),
     tree(
         "about_us",

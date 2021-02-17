@@ -47,9 +47,16 @@ class TestBatchCsv(TestCase):
             userprofile__nickname="Nick",
             userprofile__telephone=123456789,
         )
-        team = mommy.make("dpnk.Team", campaign=campaign, name="Testin team",)
+        team = mommy.make(
+            "dpnk.Team",
+            campaign=campaign,
+            name="Testin team",
+        )
 
-        self.delivery_batch = mommy.prepare("DeliveryBatch", campaign=campaign,)
+        self.delivery_batch = mommy.prepare(
+            "DeliveryBatch",
+            campaign=campaign,
+        )
         self.delivery_batch.add_packages_on_save = False
         self.delivery_batch.save()
         self.subsidiary_box = mommy.make(
@@ -70,7 +77,9 @@ class TestBatchCsv(TestCase):
             box=self.subsidiary_box,
             team=team,
             packagetransaction_set=mommy.make(
-                "PackageTransaction", user_attendance=user_attendance, _quantity=1,
+                "PackageTransaction",
+                user_attendance=user_attendance,
+                _quantity=1,
             ),
         )
 

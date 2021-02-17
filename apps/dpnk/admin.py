@@ -678,7 +678,10 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
     def get_queryset(self, request):
         return models.UserProfile.objects.annotate(
             userattendance_count=Count("userattendance_set"),
-        ).select_related("occupation", "user",)
+        ).select_related(
+            "occupation",
+            "user",
+        )
 
     def user_attendances_count(self, obj):
         return obj.userattendance_count
@@ -930,7 +933,10 @@ class UserAttendanceAdmin(
             "team__subsidiary__city",
             "team__subsidiary__company",
             "t_shirt_size__campaign",
-        ).defer("track", "userprofile__user__password",)
+        ).defer(
+            "track",
+            "userprofile__user__password",
+        )
 
 
 @admin.register(models.Team)
@@ -1406,7 +1412,12 @@ class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
                 ),
             },
         ),
-        ("Teams", {"fields": ("max_team_members",),}),
+        (
+            "Teams",
+            {
+                "fields": ("max_team_members",),
+            },
+        ),
         (
             "Diplomas",
             {
@@ -1431,7 +1442,12 @@ class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
                 ),
             },
         ),
-        ("External API", {"fields": ("wp_api_date_from",),}),
+        (
+            "External API",
+            {
+                "fields": ("wp_api_date_from",),
+            },
+        ),
     )
     inlines = [
         TShirtSizeInline,
@@ -1569,7 +1585,9 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.annotate(payments_count=Count("payment_set"),)
+        return queryset.annotate(
+            payments_count=Count("payment_set"),
+        )
 
     def get_changelist_form(self, request, **kwargs):
         return InvoiceForm

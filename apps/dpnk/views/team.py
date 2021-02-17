@@ -69,7 +69,8 @@ class UpdateTeam(
 
 
 class UploadTeamPhoto(
-    UserAttendanceViewMixin, View,
+    UserAttendanceViewMixin,
+    View,
 ):
     def post(self, *args, **kwargs):
         slug = "team_%s_photo_%s" % (

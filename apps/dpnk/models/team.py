@@ -52,7 +52,10 @@ class Team(WithGalleryMixin, models.Model):
         unique_together = (("name", "campaign"),)
 
     name = models.CharField(
-        verbose_name=_(u"Název týmu"), max_length=50, null=True, unique=False,
+        verbose_name=_(u"Název týmu"),
+        max_length=50,
+        null=True,
+        unique=False,
     )
     subsidiary = models.ForeignKey(
         Subsidiary,
@@ -168,12 +171,15 @@ class Team(WithGalleryMixin, models.Model):
     def members(self):
         """ Return approved members of this team. """
         return self.users.filter(
-            approved_for_team="approved", userprofile__user__is_active=True,
+            approved_for_team="approved",
+            userprofile__user__is_active=True,
         ).order_by("id")
 
     def paid_members(self):
         """ Return approved members of this team. """
-        return self.members().filter(payment_status__in=("done", "no_admission"),)
+        return self.members().filter(
+            payment_status__in=("done", "no_admission"),
+        )
 
     @denormalized(models.IntegerField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})

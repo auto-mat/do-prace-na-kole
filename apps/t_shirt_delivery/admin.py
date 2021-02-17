@@ -295,7 +295,9 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin, NestedModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related(
-            "team__subsidiary__city", "box__subsidiary__city", "box__delivery_batch",
+            "team__subsidiary__city",
+            "box__subsidiary__city",
+            "box__delivery_batch",
         )
 
     def get_search_results(self, request, queryset, search_term):

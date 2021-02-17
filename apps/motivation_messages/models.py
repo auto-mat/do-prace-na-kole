@@ -15,16 +15,31 @@ class MotivationMessage(models.Model):
         verbose_name = _("Motivační hláška")
         verbose_name_plural = _("Motivační hlášky")
 
-    campaign_types = models.ManyToManyField("dpnk.CampaignType", null=True, blank=True,)
-    message = models.TextField(verbose_name=_("Hláška"), null=False, blank=False,)
+    campaign_types = models.ManyToManyField(
+        "dpnk.CampaignType",
+        null=True,
+        blank=True,
+    )
+    message = models.TextField(
+        verbose_name=_("Hláška"),
+        null=False,
+        blank=False,
+    )
     note = models.CharField(
-        verbose_name=_("Poznámka"), max_length=255, null=True, blank=True,
+        verbose_name=_("Poznámka"),
+        max_length=255,
+        null=True,
+        blank=True,
     )
     frequency_min = models.PositiveIntegerField(
-        verbose_name=_("Min pravidelnost"), null=True, blank=True,
+        verbose_name=_("Min pravidelnost"),
+        null=True,
+        blank=True,
     )
     frequency_max = models.PositiveIntegerField(
-        verbose_name=_("Max pravidelnost"), null=True, blank=True,
+        verbose_name=_("Max pravidelnost"),
+        null=True,
+        blank=True,
     )
     day_from = models.IntegerField(
         verbose_name=_("Ode dne"),
@@ -43,20 +58,39 @@ class MotivationMessage(models.Model):
         blank=True,
     )
     team_rank_from = models.PositiveIntegerField(
-        verbose_name=_("Od pořadí v týmu"), null=True, blank=True,
+        verbose_name=_("Od pořadí v týmu"),
+        null=True,
+        blank=True,
     )
     team_rank_to = models.PositiveIntegerField(
-        verbose_name=_("Do pořadí v týmu"), null=True, blank=True,
+        verbose_name=_("Do pořadí v týmu"),
+        null=True,
+        blank=True,
     )
     team_backwards_rank_from = models.PositiveIntegerField(
-        verbose_name=_("Od pořadí v týmu od konce"), null=True, blank=True,
+        verbose_name=_("Od pořadí v týmu od konce"),
+        null=True,
+        blank=True,
     )
     team_backwards_rank_to = models.PositiveIntegerField(
-        verbose_name=_("Do pořadí v týmu od konce"), null=True, blank=True,
+        verbose_name=_("Do pořadí v týmu od konce"),
+        null=True,
+        blank=True,
     )
-    date_from = models.DateField(verbose_name=_("Datum od"), null=True, blank=True,)
-    date_to = models.DateField(verbose_name=_("Datum do"), null=True, blank=True,)
-    enabled = models.BooleanField(verbose_name=_("Povoleno"), default=True,)
+    date_from = models.DateField(
+        verbose_name=_("Datum od"),
+        null=True,
+        blank=True,
+    )
+    date_to = models.DateField(
+        verbose_name=_("Datum do"),
+        null=True,
+        blank=True,
+    )
+    enabled = models.BooleanField(
+        verbose_name=_("Povoleno"),
+        default=True,
+    )
     priority = models.IntegerField(
         verbose_name=_("Priorita"),
         help_text=_(

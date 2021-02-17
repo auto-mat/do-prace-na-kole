@@ -108,7 +108,11 @@ class Transaction(PolymorphicModel):
     """Transakce"""
 
     status = models.PositiveIntegerField(
-        verbose_name=_(u"Status"), default=0, choices=STATUS, null=False, blank=False,
+        verbose_name=_(u"Status"),
+        default=0,
+        choices=STATUS,
+        null=False,
+        blank=False,
     )
     user_attendance = models.ForeignKey(
         "UserAttendance",
@@ -119,13 +123,20 @@ class Transaction(PolymorphicModel):
         on_delete=models.CASCADE,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Vytvoření"), default=datetime.datetime.now, null=False,
+        verbose_name=_(u"Vytvoření"),
+        default=datetime.datetime.now,
+        null=False,
     )
     description = models.TextField(
-        verbose_name=_(u"Popis"), null=True, blank=True, default="",
+        verbose_name=_(u"Popis"),
+        null=True,
+        blank=True,
+        default="",
     )
     realized = models.DateTimeField(
-        verbose_name=_(u"Realizace"), null=True, blank=True,
+        verbose_name=_(u"Realizace"),
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -222,7 +233,11 @@ class Payment(Transaction):
         verbose_name_plural = _(u"Platební transakce")
 
     order_id = models.CharField(
-        verbose_name="Order ID", max_length=50, null=True, blank=True, default="",
+        verbose_name="Order ID",
+        max_length=50,
+        null=True,
+        blank=True,
+        default="",
     )
     session_id = models.CharField(
         verbose_name="Session ID",
@@ -233,9 +248,15 @@ class Payment(Transaction):
         default=None,
     )
     trans_id = models.CharField(
-        verbose_name="Transaction ID", max_length=50, null=True, blank=True,
+        verbose_name="Transaction ID",
+        max_length=50,
+        null=True,
+        blank=True,
     )
-    amount = models.PositiveIntegerField(verbose_name=_(u"Částka"), null=False,)
+    amount = models.PositiveIntegerField(
+        verbose_name=_(u"Částka"),
+        null=False,
+    )
     pay_type = models.CharField(
         verbose_name=_(u"Typ platby"),
         choices=PAY_TYPES,
@@ -244,7 +265,9 @@ class Payment(Transaction):
         blank=True,
     )
     error = models.PositiveIntegerField(
-        verbose_name=_(u"Chyba"), null=True, blank=True,
+        verbose_name=_(u"Chyba"),
+        null=True,
+        blank=True,
     )
     invoice = models.ForeignKey(
         "Invoice",

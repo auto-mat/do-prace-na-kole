@@ -50,11 +50,15 @@ def language_url_infix(language):
         return "/en"
 
 
-@override_settings(SITE_ID=123,)
+@override_settings(
+    SITE_ID=123,
+)
 class TestEmails(TestCase):
     def setUp(self):
         Site.objects.create(domain="dopracenakole.cz", id=123)
-        campaign_type = CampaignType.objects.create(name="Testing campaign",)
+        campaign_type = CampaignType.objects.create(
+            name="Testing campaign",
+        )
         self.campaign = Campaign.objects.create(
             slug="dpnk",
             year=1,

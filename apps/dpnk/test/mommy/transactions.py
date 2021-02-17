@@ -11,7 +11,8 @@ class PackageTransactions:
             status=99,
             created="2015-12-11T17:18:40.223",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="t_shirt_delivery", model="packagetransaction",
+                app_label="t_shirt_delivery",
+                model="packagetransaction",
             ),
         )
         self.package_assembled_ua1115 = mommy.make(  # was pk=6
@@ -20,7 +21,8 @@ class PackageTransactions:
             status=20003,
             created="2015-11-12T18:18:40.223",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="t_shirt_delivery", model="packagetransaction",
+                app_label="t_shirt_delivery",
+                model="packagetransaction",
             ),
         )
         self.packaged_assembled_ua3 = mommy.make(  # was pk=7
@@ -29,7 +31,8 @@ class PackageTransactions:
             status=20003,
             created="2015-11-12T18:18:40.223",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="t_shirt_delivery", model="packagetransaction",
+                app_label="t_shirt_delivery",
+                model="packagetransaction",
             ),
         )
 
@@ -42,7 +45,8 @@ class PaymentTransactions:
             status=1,
             created="2015-1-01",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )
 
@@ -52,7 +56,8 @@ class PaymentTransactions:
             status=1,
             created="2014-12-01",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )
 
@@ -60,7 +65,8 @@ class PaymentTransactions:
             "dpnk.transaction",
             user_attendance=userattendances.userattendance,
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )
 
@@ -70,7 +76,8 @@ class PaymentTransactions:
             status=99,
             realized="2010-11-01",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )
 
@@ -80,7 +87,8 @@ class PaymentTransactions:
             status=99,
             realized="2010-11-01",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )
 
@@ -90,7 +98,8 @@ class PaymentTransactions:
             status=99,
             realized="2010-11-01",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )
 
@@ -100,6 +109,7 @@ class PaymentTransactions:
             status=99,
             realized="2010-11-01",
             polymorphic_ctype=ContentType.objects.get(
-                app_label="dpnk", model="payment",
+                app_label="dpnk",
+                model="payment",
             ),
         )

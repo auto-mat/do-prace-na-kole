@@ -41,7 +41,8 @@ class MockActivity:
 
 
 @override_settings(
-    FAKE_DATE=datetime.date(year=2010, month=11, day=5), STRAVA_FINE_POLYLINES=False,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=5),
+    STRAVA_FINE_POLYLINES=False,
 )
 class TestStravaAuth(ViewsLogon):
     @patch("stravalib.Client")

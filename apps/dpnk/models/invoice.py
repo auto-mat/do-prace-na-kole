@@ -61,19 +61,30 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     last_sync_string = _("Poslední odeslání upomínky")
 
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"), default=datetime.datetime.now, null=False,
+        verbose_name=_(u"Datum vytvoření"),
+        default=datetime.datetime.now,
+        null=False,
     )
     exposure_date = models.DateField(
-        verbose_name=_(u"Den vystavení daňového dokladu"), null=True, blank=True,
+        verbose_name=_(u"Den vystavení daňového dokladu"),
+        null=True,
+        blank=True,
     )
     taxable_date = models.DateField(
-        verbose_name=_(u"Den uskutečnění zdanitelného plnění"), null=True, blank=True,
+        verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
+        null=True,
+        blank=True,
     )
     payback_date = models.DateField(
-        verbose_name=_("Datum splatnosti"), null=True, blank=True,
+        verbose_name=_("Datum splatnosti"),
+        null=True,
+        blank=True,
     )
     paid_date = models.DateField(
-        verbose_name=_(u"Datum zaplacení"), default=None, null=True, blank=True,
+        verbose_name=_(u"Datum zaplacení"),
+        default=None,
+        null=True,
+        blank=True,
     )
     company_pais_benefitial_fee = models.BooleanField(
         verbose_name=_(
@@ -82,10 +93,13 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         default=False,
     )
     anonymize = models.BooleanField(
-        verbose_name=_("Anonimizovat položky na faktuře"), default=False,
+        verbose_name=_("Anonimizovat položky na faktuře"),
+        default=False,
     )
     total_amount = models.FloatField(
-        verbose_name=_(u"Celková částka"), null=False, default=0,
+        verbose_name=_(u"Celková částka"),
+        null=False,
+        default=0,
     )
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
@@ -116,10 +130,13 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         on_delete=models.CASCADE,
     )
     sequence_number = models.PositiveIntegerField(
-        verbose_name=_(u"Pořadové číslo faktury"), null=False,
+        verbose_name=_(u"Pořadové číslo faktury"),
+        null=False,
     )
     order_number = models.BigIntegerField(
-        verbose_name=_(u"Číslo objednávky (nepovinné)"), null=True, blank=True,
+        verbose_name=_(u"Číslo objednávky (nepovinné)"),
+        null=True,
+        blank=True,
     )
     company_name = models.CharField(
         verbose_name=_("Název organizace"),
@@ -132,13 +149,25 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     )
     company_address = InvoiceAddress()
     country = models.CharField(
-        verbose_name=_("Země"), max_length=60, null=False, blank=True, default="",
+        verbose_name=_("Země"),
+        max_length=60,
+        null=False,
+        blank=True,
+        default="",
     )
     telephone = models.CharField(
-        max_length=255, blank=True, null=False, default="", verbose_name=_("Telefon"),
+        max_length=255,
+        blank=True,
+        null=False,
+        default="",
+        verbose_name=_("Telefon"),
     )
     email = models.CharField(
-        max_length=255, blank=True, null=False, default="", verbose_name=_("E-mail"),
+        max_length=255,
+        blank=True,
+        null=False,
+        default="",
+        verbose_name=_("E-mail"),
     )
     client_note = models.TextField(
         max_length=255,
@@ -148,9 +177,16 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         verbose_name=_("Poznámka k adresátovi"),
     )
     company_ico = models.PositiveIntegerField(
-        default=None, verbose_name=_("IČO organizace"), null=True, blank=True,
+        default=None,
+        verbose_name=_("IČO organizace"),
+        null=True,
+        blank=True,
     )
-    note = models.TextField(verbose_name=_(u"Interní poznámka"), null=True, blank=True,)
+    note = models.TextField(
+        verbose_name=_(u"Interní poznámka"),
+        null=True,
+        blank=True,
+    )
     company_dic = models.CharField(
         verbose_name=_("DIČ organizace"),
         max_length=15,
@@ -183,7 +219,8 @@ class Invoice(StaleSyncMixin, AbstractOrder):
 
     def set_taxable_date(self):
         self.taxable_date = min(
-            util.today(), self.campaign.phase("competition").date_to,
+            util.today(),
+            self.campaign.phase("competition").date_to,
         )
 
     def set_variable_symbol(self):
@@ -217,7 +254,8 @@ class Invoice(StaleSyncMixin, AbstractOrder):
             first = campaign.invoice_sequence_number_first
             last = campaign.invoice_sequence_number_last
             last_transaction = Invoice.objects.filter(
-                sequence_number__gte=first, sequence_number__lte=last,
+                sequence_number__gte=first,
+                sequence_number__lte=last,
             )
             last_transaction = last_transaction.order_by("sequence_number")
             last_transaction = last_transaction.last()

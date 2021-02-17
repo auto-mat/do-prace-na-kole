@@ -190,7 +190,9 @@ class AddressForm(CampaignMixin, forms.ModelForm):
     required_css_class = "required"
     error_css_class = "error"
 
-    address_psc = forms.CharField(label=_("PSČ"),)
+    address_psc = forms.CharField(
+        label=_("PSČ"),
+    )
 
     def clean_address_psc(self):
         address_psc = self.cleaned_data["address_psc"]
@@ -312,7 +314,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     subsidiary = forms.ModelChoiceField(
         queryset=models.Subsidiary.objects.all(),
         widget=autocomplete.ModelSelect2(
-            url="subsidiary_autocomplete", forward=["company"],
+            url="subsidiary_autocomplete",
+            forward=["company"],
         ),
         label=_("Adresa společnosti nebo pobočky"),
     )
@@ -320,7 +323,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     team = forms.ModelChoiceField(
         queryset=models.Team.objects.all(),
         widget=autocomplete.ModelSelect2(
-            url="team_autocomplete", forward=["subsidiary"],
+            url="team_autocomplete",
+            forward=["subsidiary"],
         ),
         label=_("Tým"),
     )
@@ -499,7 +503,9 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "registration-access-form"
         self.helper.layout = Layout(
-            "email", Submit("submit", _("Pokračovat")), social_html(False),
+            "email",
+            Submit("submit", _("Pokračovat")),
+            social_html(False),
         )
 
 
@@ -576,7 +582,9 @@ class RegistrationFormDPNK(RegistrationBaseForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
-            *self._meta.fields, Submit("submit", _("Registrovat")), social_html(False),
+            *self._meta.fields,
+            Submit("submit", _("Registrovat")),
+            social_html(False),
         )
         return ret_val
 
@@ -597,7 +605,9 @@ class RegistrationFormDPNK(RegistrationBaseForm):
         except models.Team.DoesNotExist:
             team = None
         user_attendance = models.UserAttendance.objects.create(
-            userprofile=userprofile, campaign=self.campaign, team=team,
+            userprofile=userprofile,
+            campaign=self.campaign,
+            team=team,
         )
         if team:
             views.approve_for_team(self.request, user_attendance, "", True, False)
@@ -622,7 +632,8 @@ class InviteForm(SubmitMixin, forms.Form):
         for i in range(1, min(self.free_capacity + 1, 11)):
             field_name = "email%s" % i
             self.fields[field_name] = forms.EmailField(
-                label=_("E-mail kolegy"), required=False,
+                label=_("E-mail kolegy"),
+                required=False,
             )
             fields.append(field_name)
         self.helper = FormHelper()
@@ -673,7 +684,10 @@ class PhotoForm(forms.ModelForm):
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     no_dirty = True
     next_text = _("Zaplatit")
-    payment_type = forms.ChoiceField(label="", widget=forms.RadioSelect(),)
+    payment_type = forms.ChoiceField(
+        label="",
+        widget=forms.RadioSelect(),
+    )
 
     def clean_payment_type(self):
         payment_type = self.cleaned_data["payment_type"]
@@ -818,7 +832,9 @@ class AnswerForm(forms.ModelForm):
 
 class ConfirmTeamInvitationForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
     initial_fields = ("team", "campaign")
-    question = forms.BooleanField(label=_("Chci být zařazen do nového týmu"),)
+    question = forms.BooleanField(
+        label=_("Chci být zařazen do nového týmu"),
+    )
 
     class Meta:
         model = models.UserAttendance
@@ -831,7 +847,11 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         help_text=_("Uživatelské jméno, které Vám sdělí zákazník"),
         max_length=100,
     )
-    description = forms.CharField(label=_("Poznámka"), max_length=500, required=False,)
+    description = forms.CharField(
+        label=_("Poznámka"),
+        max_length=500,
+        required=False,
+    )
 
     def clean_user_attendance(self):
         campaign = self.initial["campaign"]
@@ -1114,8 +1134,14 @@ class ProfileUpdateForm(SubmitMixin, MultiModelForm):
 
 class TripForm(InitialFieldsMixin, forms.ModelForm):
     initial_fields = ("direction", "date")
-    distance = CommaFloatField(label=_("Vzdálenost (km)"), required=False,)
-    duration = CommaFloatField(label=_("Doba (min)"), required=False,)
+    distance = CommaFloatField(
+        label=_("Vzdálenost (km)"),
+        required=False,
+    )
+    duration = CommaFloatField(
+        label=_("Doba (min)"),
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.get("initial", {})

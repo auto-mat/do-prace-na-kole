@@ -43,7 +43,9 @@ class ViewsTestsLogon(TestCase):
             HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
         self.t_shirt_size = mommy.make(
-            "TShirtSize", campaign=testing_campaign, name="Foo t-shirt size",
+            "TShirtSize",
+            campaign=testing_campaign,
+            name="Foo t-shirt size",
         )
         mommy.make(
             "price_level.PriceLevel",
@@ -51,7 +53,9 @@ class ViewsTestsLogon(TestCase):
             pricable=testing_campaign,
         )
         mommy.make(
-            "Phase", phase_type="payment", campaign=testing_campaign,
+            "Phase",
+            phase_type="payment",
+            campaign=testing_campaign,
         )
         self.user_attendance = UserAttendanceRecipe.make(
             approved_for_team="approved",

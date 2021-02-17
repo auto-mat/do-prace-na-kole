@@ -101,7 +101,10 @@ class RidesBaseTests(TestCase):
 
 class GetCompetitorsWithoutAdmissionTests(TestCase):
     def setUp(self):
-        self.campaign = mommy.make("dpnk.Campaign", name="Foo campaign",)
+        self.campaign = mommy.make(
+            "dpnk.Campaign",
+            name="Foo campaign",
+        )
 
     def test_single_user_frequency(self):
         """ Test if _filter_query_single_user function returns correct filter_query dict. """
@@ -136,7 +139,8 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
         filter_query = results._filter_query_single_user(competition)
         self.assertQuerysetEqual(
-            filter_query["team__subsidiary__city__in"], ["<City: City 1>"],
+            filter_query["team__subsidiary__city__in"],
+            ["<City: City 1>"],
         )
 
     def test_team_frequency(self):
@@ -167,7 +171,8 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
         filter_query = results._filter_query_team(competition)
         self.assertQuerysetEqual(
-            filter_query["subsidiary__city__in"], ["<City: City 1>"],
+            filter_query["subsidiary__city__in"],
+            ["<City: City 1>"],
         )
 
     def test_company_frequency(self):
@@ -197,13 +202,17 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
         filter_query = results._filter_query_company(competition)
         self.assertQuerysetEqual(
-            filter_query["subsidiaries__city__in"], ["<City: City 1>"],
+            filter_query["subsidiaries__city__in"],
+            ["<City: City 1>"],
         )
 
 
 class GetCompetitorsTests(TestCase):
     def setUp(self):
-        self.campaign = mommy.make("dpnk.Campaign", name="Foo campaign",)
+        self.campaign = mommy.make(
+            "dpnk.Campaign",
+            name="Foo campaign",
+        )
         mommy.make(
             "dpnk.Phase",
             phase_type="competition",
@@ -213,7 +222,11 @@ class GetCompetitorsTests(TestCase):
         )
 
     def test_get_competitors(self):
-        team = mommy.make("dpnk.Team", name="Foo team", campaign=self.campaign,)
+        team = mommy.make(
+            "dpnk.Team",
+            name="Foo team",
+            campaign=self.campaign,
+        )
         for name in ["Foo user", "Bar user"]:
             mommy.make(
                 "dpnk.UserAttendance",
@@ -224,7 +237,9 @@ class GetCompetitorsTests(TestCase):
             )
         team.save()
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="team", campaign=self.campaign,
+            "dpnk.Competition",
+            competitor_type="team",
+            campaign=self.campaign,
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ["<Team: Foo team (Bar user, Foo user)>"])
@@ -238,13 +253,19 @@ class GetCompetitorsTests(TestCase):
             approved_for_team="approved",
         )
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="single_user", campaign=self.campaign,
+            "dpnk.Competition",
+            competitor_type="single_user",
+            campaign=self.campaign,
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ["<UserAttendance: Foo user>"])
 
     def test_get_competitors_with_admission_team(self):
-        team = mommy.make("dpnk.Team", name="Foo team", campaign=self.campaign,)
+        team = mommy.make(
+            "dpnk.Team",
+            name="Foo team",
+            campaign=self.campaign,
+        )
         for name in ["Foo user", "Bar user"]:
             mommy.make(
                 "dpnk.UserAttendance",
@@ -255,23 +276,32 @@ class GetCompetitorsTests(TestCase):
             )
         team.save()
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="team", campaign=self.campaign,
+            "dpnk.Competition",
+            competitor_type="team",
+            campaign=self.campaign,
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ["<Team: Foo team (Bar user, Foo user)>"])
 
     def test_get_competitors_with_admission_company(self):
         mommy.make(
-            "dpnk.Company", name="Foo company",
+            "dpnk.Company",
+            name="Foo company",
         )
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="company", campaign=self.campaign,
+            "dpnk.Competition",
+            competitor_type="company",
+            campaign=self.campaign,
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ["<Company: Foo company>"])
 
     def test_get_competitors_liberos(self):
-        team = mommy.make("dpnk.Team", name="Foo team", campaign=self.campaign,)
+        team = mommy.make(
+            "dpnk.Team",
+            name="Foo team",
+            campaign=self.campaign,
+        )
         mommy.make(
             "dpnk.UserAttendance",
             userprofile__nickname="Foo user",
@@ -281,13 +311,17 @@ class GetCompetitorsTests(TestCase):
         )
         team.save()
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="liberos", campaign=self.campaign,
+            "dpnk.Competition",
+            competitor_type="liberos",
+            campaign=self.campaign,
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ["<UserAttendance: Foo user>"])
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2017, month=5, day=5),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2017, month=5, day=5),
+)
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     def setUp(self, recreational=False):
         super().setUp()
@@ -435,7 +469,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class RecreationalResultsTests(ResultsTests):
-    fixtures=["commute_mode"]
+    fixtures = ["commute_mode"]
 
     def setUp(self):
         super().setUp(recreational=True)

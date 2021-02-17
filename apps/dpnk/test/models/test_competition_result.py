@@ -26,7 +26,9 @@ from ..mommy_recipes import CampaignRecipe
 
 class TestCompetitionResult(TestCase):
     def setUp(self):
-        self.campaign = mommy.make("dpnk.Campaign",)
+        self.campaign = mommy.make(
+            "dpnk.Campaign",
+        )
         self.campaign = CampaignRecipe.make()
 
     def test_str_team(self):
@@ -81,7 +83,10 @@ class TestCompetitionResult(TestCase):
         """
         Test that __str__ returns CompetitionResult correct string if competition is for companies
         """
-        company = mommy.make("dpnk.Company", name="Foo company",)
+        company = mommy.make(
+            "dpnk.Company",
+            name="Foo company",
+        )
         competition_result = mommy.make(
             "dpnk.CompetitionResult",
             competition__competitor_type="company",
@@ -106,7 +111,9 @@ class TestCompetitionResult(TestCase):
         Test that get_result function works correctly
         """
         competition_result = mommy.make(
-            "dpnk.CompetitionResult", competition__campaign=self.campaign, result=0.345,
+            "dpnk.CompetitionResult",
+            competition__campaign=self.campaign,
+            result=0.345,
         )
         self.assertEqual(competition_result.get_result(), 0.3)
 
@@ -115,7 +122,9 @@ class TestCompetitionResult(TestCase):
         Test that get_result_percentage function works correctly
         """
         competition_result = mommy.make(
-            "dpnk.CompetitionResult", competition__campaign=self.campaign, result=0.345,
+            "dpnk.CompetitionResult",
+            competition__campaign=self.campaign,
+            result=0.345,
         )
         self.assertEqual(competition_result.get_result_percentage(), 34.5)
 
@@ -124,7 +133,8 @@ class TestCompetitionResult(TestCase):
         Test that get_result_percentage function works correctly if result is none.
         """
         competition_result = mommy.make(
-            "dpnk.CompetitionResult", competition__campaign=self.campaign,
+            "dpnk.CompetitionResult",
+            competition__campaign=self.campaign,
         )
         self.assertEqual(competition_result.get_result_percentage(), 0)
 
@@ -198,7 +208,10 @@ class TestCompetitionResult(TestCase):
         """
         Test that get_company function works correctly for company competition
         """
-        company = mommy.make("dpnk.Company", name="Foo company",)
+        company = mommy.make(
+            "dpnk.Company",
+            name="Foo company",
+        )
         competition_result = mommy.make(
             "dpnk.CompetitionResult",
             competition__campaign=self.campaign,
@@ -211,7 +224,10 @@ class TestCompetitionResult(TestCase):
         """
         Test that get_subsidiary function works correctly
         """
-        company = mommy.make("dpnk.Company", name="Foo company",)
+        company = mommy.make(
+            "dpnk.Company",
+            name="Foo company",
+        )
         competition_result = mommy.make(
             "dpnk.CompetitionResult",
             competition__campaign=self.campaign,
@@ -228,12 +244,19 @@ class TestCompetitionResult(TestCase):
         """
         Test that get_sequence_range function works correctly
         """
-        competition = mommy.make("dpnk.Competition", campaign=self.campaign,)
+        competition = mommy.make(
+            "dpnk.Competition",
+            campaign=self.campaign,
+        )
         mommy.make(
-            "dpnk.CompetitionResult", competition=competition, result=1,
+            "dpnk.CompetitionResult",
+            competition=competition,
+            result=1,
         )
         competition_result = mommy.make(
-            "dpnk.CompetitionResult", competition=competition, result=1,
+            "dpnk.CompetitionResult",
+            competition=competition,
+            result=1,
         )
         self.assertEqual(competition_result.get_sequence_range(), (1, 2))
 
@@ -243,7 +266,9 @@ class TestCompetitionResult(TestCase):
         Case when both ranges are same.
         """
         competition_result = mommy.make(
-            "dpnk.CompetitionResult", competition__campaign=self.campaign, result=1,
+            "dpnk.CompetitionResult",
+            competition__campaign=self.campaign,
+            result=1,
         )
         self.assertEqual(competition_result.get_sequence_range(), (1, 1))
 
@@ -287,7 +312,10 @@ class TestCompetitionResult(TestCase):
         """
         Test that user_attendances function works correctly for company competition.
         """
-        company = mommy.make("dpnk.Company", name="Foo company",)
+        company = mommy.make(
+            "dpnk.Company",
+            name="Foo company",
+        )
         competition_result = mommy.make(
             "dpnk.CompetitionResult",
             competition__competitor_type="company",

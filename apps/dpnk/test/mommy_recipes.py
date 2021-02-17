@@ -25,15 +25,27 @@ from dpnk.models import Campaign, CampaignType, UserAttendance
 from model_mommy.recipe import Recipe, related
 
 PhaseRecipe = Recipe(
-    "dpnk.Phase", phase_type="competition", date_from="2010-1-1", date_to="2020-1-1",
+    "dpnk.Phase",
+    phase_type="competition",
+    date_from="2010-1-1",
+    date_to="2020-1-1",
 )
 EntryPhaseRecipe = Recipe(
-    "dpnk.Phase", phase_type="entry_enabled", date_from="2010-1-1", date_to="2020-1-1",
+    "dpnk.Phase",
+    phase_type="entry_enabled",
+    date_from="2010-1-1",
+    date_to="2020-1-1",
 )
 RegistrationPhaseRecipe = Recipe(
-    "dpnk.Phase", phase_type="registration", date_from=None, date_to=None,
+    "dpnk.Phase",
+    phase_type="registration",
+    date_from=None,
+    date_to=None,
 )
-CampaignTypeRecipe = Recipe("dpnk.CampaignType", name="Testing campaign",)
+CampaignTypeRecipe = Recipe(
+    "dpnk.CampaignType",
+    name="Testing campaign",
+)
 
 
 def campaign_type_get_or_create(**kwargs):
@@ -68,7 +80,10 @@ def campaign_get_or_create(**kwargs):
     return get_campaign
 
 
-testing_campaign = campaign_get_or_create(slug="testing-campaign", year=2019,)
+testing_campaign = campaign_get_or_create(
+    slug="testing-campaign",
+    year=2019,
+)
 
 UserAttendanceRecipe = Recipe(
     UserAttendance,
@@ -86,7 +101,9 @@ PriceLevelRecipe = Recipe(
 )
 
 PaymentRecipe = Recipe(
-    "dpnk.Payment", status=99, realized=datetime.date(year=2017, month=2, day=1),
+    "dpnk.Payment",
+    status=99,
+    realized=datetime.date(year=2017, month=2, day=1),
 )
 
 

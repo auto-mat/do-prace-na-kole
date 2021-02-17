@@ -42,7 +42,10 @@ from .views_mixins import (
 class WithCompetitionMixin(UserAttendanceParameterMixin):
     def get_object(self):
         competition_slug = self.kwargs.get("competition_slug")
-        return get_object_or_404(models.Competition, slug=competition_slug,)
+        return get_object_or_404(
+            models.Competition,
+            slug=competition_slug,
+        )
 
 
 class CompetitionResultsView(WithCompetitionMixin, TitleViewMixin, TemplateView):
@@ -77,7 +80,9 @@ class ExportCompetitionResults(WithCompetitionMixin, ExportViewMixin, View):
     def dispatch(self, request, *args, extension="csv", organization=None, **kwargs):
         super().dispatch(request, *args, **kwargs)
         competition = self.get_object()
-        queryset = models.CompetitionResult.objects.filter(competition=competition,)
+        queryset = models.CompetitionResult.objects.filter(
+            competition=competition,
+        )
         if organization:
             organization = models.Company.objects.get(pk=organization)
             queryset = queryset.filter(

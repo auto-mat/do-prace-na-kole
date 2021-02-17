@@ -32,10 +32,15 @@ class City(models.Model):
         ordering = ("name",)
 
     name = models.CharField(
-        verbose_name=_(u"Jméno"), unique=True, max_length=40, null=False,
+        verbose_name=_(u"Jméno"),
+        unique=True,
+        max_length=40,
+        null=False,
     )
     slug = models.SlugField(
-        unique=True, verbose_name=_("Subdoména v URL"), blank=False,
+        unique=True,
+        verbose_name=_("Subdoména v URL"),
+        blank=False,
     )
     wp_slug = models.SlugField(
         unique=True,
@@ -50,7 +55,10 @@ class City(models.Model):
         null=True,
     )
     location = models.PointField(
-        verbose_name=_(u"poloha města"), srid=4326, null=True, blank=False,
+        verbose_name=_(u"poloha města"),
+        srid=4326,
+        null=True,
+        blank=False,
     )
 
     def __str__(self):

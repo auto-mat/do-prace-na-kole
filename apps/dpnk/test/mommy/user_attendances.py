@@ -81,16 +81,18 @@ class UserAttendances:
                 updated="2015-11-12T18:18:40.223",
                 userprofile=users.unapproved_user_userprofile,
             )
-            self.todo_useraddendance_for_user_without_userattendance = mommy.make(  # was pk=1027
-                "dpnk.userattendance",
-                approved_for_team="approved",
-                campaign=campaigns.c2009,
-                created="2015-11-12T18:18:40.223",
-                get_rides_count_denorm=0,
-                t_shirt_size=tshirt_sizes.basic,
-                team=None,
-                updated="2015-11-12T18:18:40.223",
-                userprofile=users.user_without_userattendance_userprofile,
+            self.todo_useraddendance_for_user_without_userattendance = (
+                mommy.make(  # was pk=1027
+                    "dpnk.userattendance",
+                    approved_for_team="approved",
+                    campaign=campaigns.c2009,
+                    created="2015-11-12T18:18:40.223",
+                    get_rides_count_denorm=0,
+                    t_shirt_size=tshirt_sizes.basic,
+                    team=None,
+                    updated="2015-11-12T18:18:40.223",
+                    userprofile=users.user_without_userattendance_userprofile,
+                )
             )
             self.registered = mommy.make(  # was pk=2115
                 "dpnk.userattendance",

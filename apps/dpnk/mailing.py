@@ -152,7 +152,8 @@ class EcoMailing:
 
     def delete(self, mailing_id, email):
         resp = self.api.lists(self.list_id).unsubscribe._request(
-            "DELETE", data={"email": email},
+            "DELETE",
+            data={"email": email},
         )
         if not 200 <= resp.status_code <= 299:
             raise Exception("Not unsubscribed")

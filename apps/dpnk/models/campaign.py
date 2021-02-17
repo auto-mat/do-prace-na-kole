@@ -68,9 +68,16 @@ class Campaign(Pricable, models.Model):
         null=False,
         default=datetime.datetime.now().year,
     )
-    slug = models.SlugField(unique=True, verbose_name=u"Doména v URL", blank=False,)
+    slug = models.SlugField(
+        unique=True,
+        verbose_name=u"Doména v URL",
+        blank=False,
+    )
     slug_identifier = models.SlugField(
-        unique=True, verbose_name="Identifikátor kampaně", blank=True, null=True,
+        unique=True,
+        verbose_name="Identifikátor kampaně",
+        blank=True,
+        null=True,
     )
     previous_campaign = models.ForeignKey(
         "Campaign",
@@ -109,7 +116,9 @@ class Campaign(Pricable, models.Model):
         null=True,
     )
     show_application_links = models.BooleanField(
-        verbose_name=_("Ukázat odkazy na aplikace"), default=False, null=False,
+        verbose_name=_("Ukázat odkazy na aplikace"),
+        default=False,
+        null=False,
     )
     mailing_list_enabled = models.NullBooleanField(
         verbose_name=_(u"Povolit mailing list"),
@@ -119,7 +128,9 @@ class Campaign(Pricable, models.Model):
         unique=True,  # Enabling mailing lists on more campaigns cause problems. This prevents it until it is fixed.
     )
     extra_agreement_text = models.TextField(
-        verbose_name=_("Další text pro uživatelské souhlas"), blank=True, default="",
+        verbose_name=_("Další text pro uživatelské souhlas"),
+        blank=True,
+        default="",
     )
     days_active = models.PositiveIntegerField(
         verbose_name=_("Počet minulých dní, které jdou zapisovat"),
@@ -162,13 +173,22 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     package_height = models.PositiveIntegerField(
-        verbose_name=_(u"Výška balíku"), default=1, blank=True, null=True,
+        verbose_name=_(u"Výška balíku"),
+        default=1,
+        blank=True,
+        null=True,
     )
     package_width = models.PositiveIntegerField(
-        verbose_name=_(u"Šířka balíku"), default=26, blank=True, null=True,
+        verbose_name=_(u"Šířka balíku"),
+        default=26,
+        blank=True,
+        null=True,
     )
     package_depth = models.PositiveIntegerField(
-        verbose_name=_(u"Hloubka balíku"), default=35, blank=True, null=True,
+        verbose_name=_(u"Hloubka balíku"),
+        default=35,
+        blank=True,
+        null=True,
     )
     package_max_count = models.PositiveIntegerField(
         verbose_name=_("Maximální počet triček v krabici"),
@@ -181,7 +201,10 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
         default=0.25,
-        validators=[MaxValueValidator(1000), MinValueValidator(0),],
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0),
+        ],
     )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
@@ -196,25 +219,36 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     benefitial_admission_fee = models.FloatField(
-        verbose_name=_(u"Benefiční startovné"), null=False, default=0,
+        verbose_name=_(u"Benefiční startovné"),
+        null=False,
+        default=0,
     )
     benefitial_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Benefiční startovné pro organizace"), null=False, default=0,
+        verbose_name=_(u"Benefiční startovné pro organizace"),
+        null=False,
+        default=0,
     )
     free_entry_cases_html = models.TextField(
-        verbose_name=_(u"Případy, kdy je startovné zdarma"), null=True, blank=True,
+        verbose_name=_(u"Případy, kdy je startovné zdarma"),
+        null=True,
+        blank=True,
     )
     club_membership_integration = models.BooleanField(
-        verbose_name=_("Povolit integraci s klubem přátel?"), default=True,
+        verbose_name=_("Povolit integraci s klubem přátel?"),
+        default=True,
     )
     track_required = models.BooleanField(
-        verbose_name=_("DEPRECATED"), default=False, null=False,
+        verbose_name=_("DEPRECATED"),
+        default=False,
+        null=False,
     )
     tracks = models.BooleanField(
-        verbose_name=_("Umožnit soutěžícím uložit trasu?"), default=True,
+        verbose_name=_("Umožnit soutěžícím uložit trasu?"),
+        default=True,
     )
     recreational = models.BooleanField(
-        verbose_name=_("Lze zadávat i výlety"), default=False,
+        verbose_name=_("Lze zadávat i výlety"),
+        default=False,
     )
     wp_api_date_from = models.DateField(
         verbose_name=_(
@@ -224,11 +258,18 @@ class Campaign(Pricable, models.Model):
         blank=True,
     )
     max_team_members = models.PositiveIntegerField(
-        verbose_name=_("Počet lidí v týmu"), default=5, blank=True, null=True,
+        verbose_name=_("Počet lidí v týmu"),
+        default=5,
+        blank=True,
+        null=True,
     )
 
     sandwich_type = models.ForeignKey(
-        PdfSandwichType, null=True, blank=True, default="", on_delete=models.SET_NULL,
+        PdfSandwichType,
+        null=True,
+        blank=True,
+        default="",
+        on_delete=models.SET_NULL,
     )
     team_diploma_sandwich_type = models.ForeignKey(
         PdfSandwichType,
@@ -331,9 +372,15 @@ class Campaign(Pricable, models.Model):
             .exclude(
                 transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses,
             )
-            .exclude(team=None,)
-            .annotate(payment_created=Max("transactions__payment__created"),)
-            .order_by("payment_created",)
+            .exclude(
+                team=None,
+            )
+            .annotate(
+                payment_created=Max("transactions__payment__created"),
+            )
+            .order_by(
+                "payment_created",
+            )
             .distinct()
         )
 
@@ -440,5 +487,6 @@ class Campaign(Pricable, models.Model):
         default="dpnk",
     )
     main_color = ColorField(
-        default="#1EA04F", verbose_name="Deprecated: Hlavní barva kampaně",
+        default="#1EA04F",
+        verbose_name="Deprecated: Hlavní barva kampaně",
     )

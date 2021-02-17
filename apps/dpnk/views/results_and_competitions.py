@@ -56,8 +56,8 @@ class DiplomasView(
     registration_phase = "profile_view"
 
     def get_context_data(self, *args, **kwargs):
-        user_attendances = self.user_attendance.userprofile.userattendance_set.all().order_by(
-            "-id"
+        user_attendances = (
+            self.user_attendance.userprofile.userattendance_set.all().order_by("-id")
         )
         teams = []
         for ua in self.user_attendance.userprofile.userattendance_set.all():
@@ -346,13 +346,17 @@ def questions(request):
     return render(
         request,
         "admin/questions.html",
-        {"title": _("Otázky v dotaznících"), "questions": questions,},
+        {
+            "title": _("Otázky v dotaznících"),
+            "questions": questions,
+        },
     )
 
 
 @staff_member_required
 def questionnaire_results(
-    request, competition_slug=None,
+    request,
+    competition_slug=None,
 ):
     competition = Competition.objects.get(slug=competition_slug)
     if (
@@ -381,7 +385,8 @@ def questionnaire_results(
 
 @staff_member_required
 def questionnaire_answers(
-    request, competition_slug=None,
+    request,
+    competition_slug=None,
 ):
     competition = Competition.objects.get(slug=competition_slug)
     if (
@@ -535,7 +540,8 @@ def trips(trips):
 
 @cache_page(60 * 60)
 def statistics(
-    request, template="registration/statistics.html",
+    request,
+    template="registration/statistics.html",
 ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
@@ -554,7 +560,9 @@ def statistics(
     variables["pocet-cest-kolo"] = distances["count_bicycle"]
     variables["pocet-cest-dnes"] = distances_today["count__sum"]
     variables["pocet-zaplacenych"] = (
-        UserAttendance.objects.filter(Q(campaign=campaign) & Q(payment_status="done"),)
+        UserAttendance.objects.filter(
+            Q(campaign=campaign) & Q(payment_status="done"),
+        )
         .exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES))
         .distinct()
         .count()
@@ -563,7 +571,9 @@ def statistics(
         UserAttendance.objects.filter(campaign=campaign).distinct().count()
     )
     variables["pocet-soutezicich"] = (
-        UserAttendance.objects.filter(Q(campaign=campaign) & Q(payment_status="done"),)
+        UserAttendance.objects.filter(
+            Q(campaign=campaign) & Q(payment_status="done"),
+        )
         .distinct()
         .count()
     )
@@ -582,7 +592,8 @@ def statistics(
 
 @cache_page(60 * 60)
 def daily_chart(
-    request, template="registration/daily-chart.html",
+    request,
+    template="registration/daily-chart.html",
 ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
@@ -602,7 +613,9 @@ def daily_chart(
 
 
 @cache_page(60 * 60)
-def daily_distance_extra_json(request,):
+def daily_distance_extra_json(
+    request,
+):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = collections.OrderedDict()

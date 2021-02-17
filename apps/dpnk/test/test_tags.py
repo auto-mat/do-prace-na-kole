@@ -32,7 +32,9 @@ from model_mommy import mommy
 import slumber
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2016, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2016, month=11, day=20),
+)
 class DpnkTagsTests(TestCase):
     def setUp(self):
         super().setUp()

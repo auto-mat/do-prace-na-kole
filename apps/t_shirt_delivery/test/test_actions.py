@@ -40,11 +40,14 @@ class TestActions(TestCase):
 
     def test_create_batch(self):
         """ Test, that create_batch action makes DeliveryBatch with it's boxes """
-        UserAttendanceRecipe.make(_quantity=2,)
+        UserAttendanceRecipe.make(
+            _quantity=2,
+        )
         queryset = UserAttendance.objects.all()
         actions.create_batch(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(message, "Vytvořena nová dávka obsahující 2 položek")
         self.assertEqual(
-            models.DeliveryBatch.objects.count(), 1,
+            models.DeliveryBatch.objects.count(),
+            1,
         )

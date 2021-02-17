@@ -36,7 +36,9 @@ from model_mommy import mommy
 from .mommy.mommy import Fixtures
 
 
-@override_settings(SSLIFY_ADMIN_DISABLE=True,)
+@override_settings(
+    SSLIFY_ADMIN_DISABLE=True,
+)
 class BadSubdomainTests(DenormMixin, TestCase):
     def setUp(self):
         super().setUp()
@@ -440,7 +442,9 @@ class AdminTests(TestCase):
         address = reverse("admin:dpnk_subsidiary_changelist")
         response = self.client.get(address, follow=True)
         self.assertContains(
-            response, '<td class="field-address_street">Ulice</td>', html=True,
+            response,
+            '<td class="field-address_street">Ulice</td>',
+            html=True,
         )
 
     def test_competition_admin(self):
@@ -547,10 +551,12 @@ class AdminTests(TestCase):
         address = reverse("admin_draw_results", kwargs={"competition_slug": "FQ-LB"})
         response = self.client.get(address)
         self.assertContains(
-            response, "Testing team 1 z organizace Testing company",
+            response,
+            "Testing team 1 z organizace Testing company",
         )
         self.assertContains(
-            response, "pravidelnost jízd 80&nbsp;%",
+            response,
+            "pravidelnost jízd 80&nbsp;%",
         )
         self.assertContains(
             response,
@@ -637,7 +643,8 @@ class AdminTests(TestCase):
 
 
 @override_settings(
-    SITE_ID=2, FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class LocalAdminTests(TestCase):
     fixtures = [

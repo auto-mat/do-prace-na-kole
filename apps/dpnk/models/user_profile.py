@@ -97,7 +97,8 @@ class UserProfile(WithGalleryMixin, models.Model):
         help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
     telephone_opt_in = models.NullBooleanField(
-        verbose_name=_("Povolení telefonovat"), default=None,
+        verbose_name=_("Povolení telefonovat"),
+        default=None,
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
@@ -144,9 +145,15 @@ class UserProfile(WithGalleryMixin, models.Model):
         blank=True,
         default=None,
     )
-    note = models.TextField(verbose_name=_(u"Interní poznámka"), null=True, blank=True,)
+    note = models.TextField(
+        verbose_name=_(u"Interní poznámka"),
+        null=True,
+        blank=True,
+    )
     administrated_cities = models.ManyToManyField(
-        "City", related_name="city_admins", blank=True,
+        "City",
+        related_name="city_admins",
+        blank=True,
     )
     mailing_opt_in = models.NullBooleanField(
         verbose_name=_("Soutěžní e-maily"),

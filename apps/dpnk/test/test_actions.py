@@ -47,7 +47,10 @@ class TestActionsMommy(TestCase):
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
         self.request.user = mommy.make(
-            "auth.User", username="test", is_staff=True, is_superuser=True,
+            "auth.User",
+            username="test",
+            is_staff=True,
+            is_superuser=True,
         )
         setattr(self.request, "session", "session")
         self.messages = FallbackStorage(self.request)
@@ -73,7 +76,8 @@ class TestActionsMommy(TestCase):
 
     def test_assign_vouchers_not_enough(self):
         mommy.make_recipe(
-            "dpnk.test.UserAttendanceRecipe", _quantity=2,
+            "dpnk.test.UserAttendanceRecipe",
+            _quantity=2,
         )
         queryset = models.UserAttendance.objects.all()
         actions.assign_vouchers(self.modeladmin, self.request, queryset)
@@ -88,7 +92,9 @@ class TestActionsMommy(TestCase):
         self.assertEqual(str(message), "Nejsou žádné vouchery k přiřazení")
 
 
-@override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class TestActions(TestCase):
     fixtures = ["sites", "commute_mode"]
 

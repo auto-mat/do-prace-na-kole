@@ -199,7 +199,8 @@ class SelectUsersPayView(
         if request.user_attendance:
             if not self.company_admin.can_confirm_payments:
                 raise exceptions.TemplatePermissionDenied(
-                    _("Potvrzování plateb nemáte povoleno"), self.template_name,
+                    _("Potvrzování plateb nemáte povoleno"),
+                    self.template_name,
                 )
             if not self.company_admin.administrated_company.ico:
                 raise exceptions.TemplatePermissionDenied(
@@ -286,10 +287,11 @@ class CompanyAdminView(
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(
-            campaign=self.user_attendance.campaign, company_admin_approved="approved"
-        ).exclude(
-            pk=self.company_admin.pk
+        old_company_admin = (
+            self.user_attendance.team.subsidiary.company.company_admin.filter(
+                campaign=self.user_attendance.campaign,
+                company_admin_approved="approved",
+            ).exclude(pk=self.company_admin.pk)
         )
         if old_company_admin.exists():
             return {
@@ -477,6 +479,7 @@ class InvoicesView(
                 )
             if not self.company_admin.can_confirm_payments:
                 raise exceptions.TemplatePermissionDenied(
-                    _("Vystavování faktur nemáte povoleno"), self.template_name,
+                    _("Vystavování faktur nemáte povoleno"),
+                    self.template_name,
                 )
         return ret_val

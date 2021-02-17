@@ -28,7 +28,9 @@ DEFAULT_FROM_EMAIL = "Do práce na kole <kontakt@test.cz>"
 SERVER_EMAIL = "Do práce na kole <kontakt@tests.cz>"
 
 CACHES = {
-    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",},
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    },
 }
 
 DATABASES = {
@@ -39,7 +41,9 @@ DATABASES = {
         "PASSWORD": os.environ.get("DPNK_DB_PASSWORD", ""),
         "HOST": os.environ.get("DPNK_DB_HOST", "localhost"),
         "PORT": os.environ.get("DPNK_DB_PORT", ""),
-        "TEST": {"NAME": os.environ.get("DB", "circle_test"),},
+        "TEST": {
+            "NAME": os.environ.get("DB", "circle_test"),
+        },
     },
 }
 

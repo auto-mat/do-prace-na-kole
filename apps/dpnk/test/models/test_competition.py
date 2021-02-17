@@ -87,7 +87,9 @@ class TestGetColumns(TestCase):
         Test that get_columns works properly for team competition
         """
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="team", competition_type="frequency",
+            "dpnk.Competition",
+            competitor_type="team",
+            competition_type="frequency",
         )
         columns = competition.get_columns()
         expected_columns = [
@@ -141,7 +143,9 @@ class TestGetColumns(TestCase):
         Test that get_columns works properly for frequency competition
         """
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="company", competition_type="length",
+            "dpnk.Competition",
+            competitor_type="company",
+            competition_type="length",
         )
         columns = competition.get_columns()
         expected_columns = [
@@ -160,7 +164,9 @@ class TestGetColumns(TestCase):
         Test that get_columns works properly for team length competition
         """
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="team", competition_type="length",
+            "dpnk.Competition",
+            competitor_type="team",
+            competition_type="length",
         )
         columns = competition.get_columns()
         expected_columns = [
@@ -192,14 +198,20 @@ class TestGetCompanyQuerystring(TestCase):
         """
         Test that get_company_querystring works properly for company competition
         """
-        competition = mommy.make("dpnk.Competition", competitor_type="company",)
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="company",
+        )
         self.assertEqual(competition.get_company_querystring(), "company")
 
     def test_team(self):
         """
         Test that get_company_querystring works properly for team competition
         """
-        competition = mommy.make("dpnk.Competition", competitor_type="team",)
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="team",
+        )
         self.assertEqual(
             competition.get_company_querystring(), "team__subsidiary__company"
         )
@@ -208,7 +220,10 @@ class TestGetCompanyQuerystring(TestCase):
         """
         Test that get_company_querystring works properly for single_user competition
         """
-        competition = mommy.make("dpnk.Competition", competitor_type="single_user",)
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="single_user",
+        )
         self.assertEqual(
             competition.get_company_querystring(),
             "user_attendance__team__subsidiary__company",
@@ -216,7 +231,9 @@ class TestGetCompanyQuerystring(TestCase):
 
 
 class TestHasEntryNotOpened(TestCase):
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=19),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=19),
+    )
     def test_true(self):
         """
         Test that has_entry_not_opened function returns true
@@ -229,7 +246,9 @@ class TestHasEntryNotOpened(TestCase):
         )
         self.assertEqual(competition.has_entry_not_opened(), True)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=18),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=18),
+    )
     def test_false(self):
         """
         Test that has_entry_not_opened function returns false
@@ -246,22 +265,26 @@ class TestHasEntryNotOpened(TestCase):
         """
         Test that has_entry_not_opened function doesn't fail if date is not set
         """
-        competition = mommy.make("dpnk.Competition", entry_after_beginning_days=0,)
+        competition = mommy.make(
+            "dpnk.Competition",
+            entry_after_beginning_days=0,
+        )
         self.assertEqual(competition.has_entry_not_opened(), False)
 
 
 class TestTypeString(TestCase):
     fixtures = ["commute_mode"]
+
     def setUp(self):
         self.city = mommy.make("dpnk.City", name="Testing city")
 
     def test_team_frequency(self):
         competition = mommy.make(
-            "dpnk.Competition", competitor_type="team", competition_type="frequency",
+            "dpnk.Competition",
+            competitor_type="team",
+            competition_type="frequency",
         )
-        self.assertEqual(
-            str(competition.type_string()), "soutěž na pravidelnost týmů"
-        )
+        self.assertEqual(str(competition.type_string()), "soutěž na pravidelnost týmů")
 
     def test_single_questionnaire(self):
         competition = mommy.make(
@@ -269,7 +292,7 @@ class TestTypeString(TestCase):
             competitor_type="single_user",
             competition_type="questionnaire",
         )
-        self.assertEqual(str(competition.type_string()), " dotazník jednotlivců   ")
+        self.assertEqual(str(competition.type_string()), "dotazník jednotlivců")
 
     def test_single_length_city_sex(self):
         competition = mommy.make(
@@ -281,7 +304,7 @@ class TestTypeString(TestCase):
         )
         self.assertEqual(
             str(competition.type_string()),
-            " soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže",
+            "soutěž na vzdálenost jednotlivců ve městě Testing city pro muže",
         )
 
     def test_single_length_city(self):
@@ -293,7 +316,7 @@ class TestTypeString(TestCase):
         )
         self.assertEqual(
             str(competition.type_string()),
-            " soutěž na vzdálenost jednotlivců  ve městě Testing city ",
+            "soutěž na vzdálenost jednotlivců ve městě Testing city",
         )
 
     def test_team_frequency_company(self):
@@ -305,7 +328,7 @@ class TestTypeString(TestCase):
         )
         self.assertEqual(
             str(competition.type_string()),
-            "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company  ",
+            "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company",
         )
 
     def test_team_frequency_commute_modes(self):
@@ -331,7 +354,7 @@ class TestTypeString(TestCase):
         )
         self.assertEqual(
             str(competition.type_string()),
-            " soutěž na vzdálenost organizací  ve městě Testing city ",
+            "soutěž na vzdálenost organizací ve městě Testing city",
         )
 
     def test_team_length_city_sex(self):
@@ -344,7 +367,7 @@ class TestTypeString(TestCase):
         )
         self.assertEqual(
             str(competition.type_string()),
-            " soutěž na vzdálenost týmů  ve městě Testing city pro muže",
+            "soutěž na vzdálenost týmů  ve městě Testing city pro muže",
         )
 
 
@@ -402,17 +425,23 @@ class TestHasStarted(TestCase):
         competition = mommy.make("dpnk.Competition")
         self.assertEqual(competition.has_started(), True)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=21),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=21),
+    )
     def test_no_true(self):
         competition = mommy.make(
-            "dpnk.Competition", date_from=datetime.date(year=2010, month=11, day=21),
+            "dpnk.Competition",
+            date_from=datetime.date(year=2010, month=11, day=21),
         )
         self.assertEqual(competition.has_started(), True)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=20),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
     def test_no_false(self):
         competition = mommy.make(
-            "dpnk.Competition", date_from=datetime.date(year=2010, month=11, day=21),
+            "dpnk.Competition",
+            date_from=datetime.date(year=2010, month=11, day=21),
         )
         self.assertEqual(competition.has_started(), False)
 
@@ -422,16 +451,22 @@ class TestHasFinished(TestCase):
         competition = mommy.make("dpnk.Competition")
         self.assertEqual(competition.has_finished(), False)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=22),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=22),
+    )
     def test_no_true(self):
         competition = mommy.make(
-            "dpnk.Competition", date_to=datetime.date(year=2010, month=11, day=21),
+            "dpnk.Competition",
+            date_to=datetime.date(year=2010, month=11, day=21),
         )
         self.assertEqual(competition.has_finished(), True)
 
-    @override_settings(FAKE_DATE=datetime.date(year=2010, month=11, day=21),)
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=21),
+    )
     def test_no_false(self):
         competition = mommy.make(
-            "dpnk.Competition", date_to=datetime.date(year=2010, month=11, day=21),
+            "dpnk.Competition",
+            date_to=datetime.date(year=2010, month=11, day=21),
         )
         self.assertEqual(competition.has_finished(), False)

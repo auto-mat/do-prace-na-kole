@@ -61,10 +61,16 @@ class Phase(models.Model):
         default="registration",
     )
     date_from = models.DateField(
-        verbose_name=_(u"Datum začátku fáze"), default=None, null=True, blank=True,
+        verbose_name=_(u"Datum začátku fáze"),
+        default=None,
+        null=True,
+        blank=True,
     )
     date_to = models.DateField(
-        verbose_name=_(u"Datum konce fáze"), default=None, null=True, blank=True,
+        verbose_name=_(u"Datum konce fáze"),
+        default=None,
+        null=True,
+        blank=True,
     )
 
     @classmethod

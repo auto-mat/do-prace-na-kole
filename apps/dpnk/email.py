@@ -36,7 +36,9 @@ def _(string, locale=None):
         os.path.join(os.path.dirname(__file__), "locale"),
         languages=[locale],
         fallback=False,
-    ).gettext(string,)
+    ).gettext(
+        string,
+    )
 
 
 def approval_request_mail(user_attendance):
@@ -48,19 +50,26 @@ def approval_request_mail(user_attendance):
             "new_user": user_attendance,
         }
         campaign_mail(
-            team_member, _("Máte nového člena"), "approval_request_%s.html", context,
+            team_member,
+            _("Máte nového člena"),
+            "approval_request_%s.html",
+            context,
         )
 
 
 def register_mail(user_attendance):
     campaign_mail(
-        user_attendance, _("Potvrzení registrace"), "registration_%s.html",
+        user_attendance,
+        _("Potvrzení registrace"),
+        "registration_%s.html",
     )
 
 
 def team_membership_approval_mail(user_attendance):
     campaign_mail(
-        user_attendance, _("Jste členem týmu"), "team_membership_approval_%s.html",
+        user_attendance,
+        _("Jste členem týmu"),
+        "team_membership_approval_%s.html",
     )
 
 
@@ -82,7 +91,10 @@ def team_created_mail(user_attendance, team_name):
         "team_name": team_name,
     }
     campaign_mail(
-        user_attendance, _("Máte nový tým"), "team_created_%s.html", context,
+        user_attendance,
+        _("Máte nový tým"),
+        "team_created_%s.html",
+        context,
     )
 
 
@@ -92,13 +104,19 @@ def invitation_mail(user_attendance, email, invited=None):
         "invited": invited,
     }
     campaign_mail(
-        user_attendance, _("Pozvánka"), "invitation_%s.html", context, email=email,
+        user_attendance,
+        _("Pozvánka"),
+        "invitation_%s.html",
+        context,
+        email=email,
     )
 
 
 def payment_confirmation_mail(user_attendance):
     campaign_mail(
-        user_attendance, _("Startovné je uhrazeno"), "payment_confirmation_%s.html",
+        user_attendance,
+        _("Startovné je uhrazeno"),
+        "payment_confirmation_%s.html",
     )
 
 
@@ -134,7 +152,10 @@ def company_admin_mail(company_admin, subject, template):
         "company": company_admin.administrated_company,
     }
     campaign_mail(
-        company_admin, subject, template, context,
+        company_admin,
+        subject,
+        template,
+        context,
     )
 
 
@@ -148,13 +169,17 @@ def company_admin_register_no_competitor_mail(company_admin):
 
 def company_admin_approval_mail(company_admin):
     company_admin_mail(
-        company_admin, _("Jste firemní koordinátor"), "company_admin_approval_%s.html",
+        company_admin,
+        _("Jste firemní koordinátor"),
+        "company_admin_approval_%s.html",
     )
 
 
 def company_admin_rejected_mail(company_admin):
     company_admin_mail(
-        company_admin, _("Špatné zprávy"), "company_admin_rejected_%s.html",
+        company_admin,
+        _("Špatné zprávy"),
+        "company_admin_rejected_%s.html",
     )
 
 
@@ -169,13 +194,17 @@ def unfilled_rides_mail(user_attendance, days_unfilled):
 
 def new_invoice_mail(invoice):
     invoice_mail(
-        invoice, _("Nová faktura vystavena"), "new_invoice_notification_%s.html",
+        invoice,
+        _("Nová faktura vystavena"),
+        "new_invoice_notification_%s.html",
     )
 
 
 def unpaid_invoice_mail(invoice):
     invoice_mail(
-        invoice, _("Nezaplacená faktura"), "unpaid_invoice_notification_%s.html",
+        invoice,
+        _("Nezaplacená faktura"),
+        "unpaid_invoice_notification_%s.html",
     )
 
 
@@ -186,7 +215,10 @@ def invoice_mail(invoice, subject, template):
     if not invoice.paid():
         for admin in invoice.company.company_admin.filter(campaign=invoice.campaign):
             campaign_mail(
-                admin.user_attendance(), subject, template, extra_context,
+                admin.user_attendance(),
+                subject,
+                template,
+                extra_context,
             )
 
 

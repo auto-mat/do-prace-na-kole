@@ -159,8 +159,12 @@ def get_competitions(user_attendance):
 def get_unanswered_questionnaires(user_attendance):
     competitions = (
         get_competitions(user_attendance)
-        .filter(competition_type="questionnaire",)
-        .exclude(question__answer__user_attendance=user_attendance,)
+        .filter(
+            competition_type="questionnaire",
+        )
+        .exclude(
+            question__answer__user_attendance=user_attendance,
+        )
     )
     return competitions
 
@@ -219,7 +223,10 @@ def get_trips(user_attendances, competition, day=None, recreational=False):
             recreational = True
     if not recreational:
         trip_query = trip_query.filter(direction__in=("trip_to", "trip_from"))
-    return trip_query.filter(user_attendance__in=user_attendances, date__in=days,)
+    return trip_query.filter(
+        user_attendance__in=user_attendances,
+        date__in=days,
+    )
 
 
 def get_rides_count(user_attendance, competition, day=None, recreational=False):
@@ -360,7 +367,8 @@ def points_questionnaire(user_attendances, competition):
     )
     points_given = (
         Answer.objects.filter(
-            user_attendance__in=user_attendances, question__competition=competition,
+            user_attendance__in=user_attendances,
+            question__competition=competition,
         ).aggregate(Sum("points_given"))["points_given__sum"]
         or 0
     )
