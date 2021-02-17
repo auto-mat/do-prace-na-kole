@@ -242,7 +242,7 @@ def registration_complete_gate(user_attendance):
         return redirect(reverse(redirect_view[reason]))
 
 
-class RegistrationCompleteMixin(LoginRequiredMixin):
+class RegistrationCompleteMixin:
     def dispatch(self, request, *args, **kwargs):
         incomplete = registration_complete_gate(request.user_attendance)
         if incomplete is not None:

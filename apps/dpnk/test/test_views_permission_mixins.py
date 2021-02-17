@@ -35,6 +35,7 @@ from freezegun import freeze_time
 from model_mommy import mommy
 
 from .mommy_recipes import testing_campaign
+from .mommy.mommy import Fixtures
 
 
 class FakeViewClass(object):
@@ -95,6 +96,13 @@ class MustBeCompanyAdmin(MustBeCompanyAdminMixin, FakeViewClass):
 class MustBeCompanyAdminMixinTest(TestCase):
     def setUp(self):
         super().setUp()
+        self.objs = Fixtures(
+            {
+                "campaigns",
+                "phases",
+                "competitions",
+            }
+        )
         self.factory = RequestFactory()
         self.request = self.factory.get("/")
 

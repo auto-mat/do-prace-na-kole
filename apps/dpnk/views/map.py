@@ -1,4 +1,5 @@
 # Django imports
+from braces.views import LoginRequiredMixin
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _  # noqa
 from django.views.generic.base import TemplateView
@@ -7,7 +8,7 @@ from django.views.generic.base import TemplateView
 from ..views_permission_mixins import RegistrationCompleteMixin
 
 
-class MapView(RegistrationCompleteMixin, TemplateView):
+class MapView(LoginRequiredMixin, RegistrationCompleteMixin, TemplateView):
     template_name = "registration/map.html"
 
     def get_context_data(self, *args, **kwargs):

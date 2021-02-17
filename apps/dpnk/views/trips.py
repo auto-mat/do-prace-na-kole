@@ -85,6 +85,7 @@ class RidesFormSet(BaseModelFormSet):
 
 
 class RidesView(
+        LoginRequiredMixin,
     RegistrationCompleteMixin,
     TitleViewMixin,
     RegistrationMessagesMixin,
@@ -213,7 +214,7 @@ class RidesView(
 
 
 class RidesDetailsView(
-    RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView
+        LoginRequiredMixin, RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView
 ):
     title = _("Podrobný přehled jízd")
     template_name = "registration/rides_details.html"
@@ -258,7 +259,7 @@ class RidesDetailsView(
 
 
 class CalendarView(
-    RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView
+        LoginRequiredMixin, RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView
 ):
     title = _("Zapište svou jízdu do kalendáře")
     template_name = "registration/calendar.html"

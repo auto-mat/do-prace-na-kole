@@ -2609,6 +2609,7 @@ class RidesDetailsTests(ViewsLogon):
 @ddt
 class TestNotLoggedIn(TestCase):
     """ Test, that views in which user must be logged on redirects to login page. """
+    fixtures=["sites"]
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
@@ -2641,7 +2642,10 @@ class TestNotLoggedIn(TestCase):
     )
     def test_not_logged_in(self, view):
         response = self.client.get(reverse(view))
-        self.assertRedirects(response, "/login?next=%s" % reverse(view))
+        if view != 'profil':
+            self.assertRedirects(response, "/login?next=%s" % reverse(view))
+        else:
+            self.assertRedirects(response, "/login")
 
     def test_invoices(self):
         mommy.make(

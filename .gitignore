@@ -38,6 +38,7 @@ apps/dpnk/test_files/t_shirt_preview/
 docker.env
 graph.png
 graph.pdf
+.noseids
 src/
 graph
 project/media/

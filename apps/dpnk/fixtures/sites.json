@@ -1,8 +1,8 @@
 [
     {
         "fields": {
-            "domain": "localhost:8000",
-            "name": "localhost:8000"
+            "domain": "example.com",
+            "name": "example.com"
         },
         "model": "sites.site",
         "pk": 1

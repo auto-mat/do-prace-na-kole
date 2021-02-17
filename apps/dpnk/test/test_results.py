@@ -435,6 +435,8 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class RecreationalResultsTests(ResultsTests):
+    fixtures=["commute_mode"]
+
     def setUp(self):
         super().setUp(recreational=True)
         mommy.make(
