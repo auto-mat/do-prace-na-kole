@@ -27,7 +27,7 @@ django-admin-sortable2 = "*"
 reportlab = "*"
 django-dbbackup = "*"
 polyline = "*"
-InvoiceGenerator = "*"
+InvoiceGenerator = {editable = true,ref = "master",git = "https://github.com/auto-mat/InvoiceGenerator.git"}
 django-related-admin = "*"
 newrelic = "*"
 django-crispy-forms = "*"
