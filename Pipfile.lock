@@ -1154,7 +1154,7 @@
         "invoicegenerator": {
             "editable": true,
             "git": "https://github.com/auto-mat/InvoiceGenerator.git",
-            "ref": "685017db0bd2737d040cdb41598afe3e68935eab"
+            "ref": "6948ae05ec65c219c777a998afa1cfc4e7d34797"
         },
         "itypes": {
             "hashes": [
