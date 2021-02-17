@@ -94,7 +94,9 @@ class Fixtures:
                     try:
                         self.sets[target_name] = target[0](**self.sets)
                     except Exception as e:
-                        raise Exception(target_name + " " + str(e)).with_traceback(e.__traceback__)
+                        raise Exception(target_name + " " + str(e)).with_traceback(
+                            e.__traceback__
+                        )
                 else:
                     for new_target in target[1]:
                         if new_target not in targets:
