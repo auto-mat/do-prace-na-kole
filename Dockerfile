@@ -32,4 +32,4 @@ run apt-get update && apt-get install -y \
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
 
-run pip3 install pipenv
+run pip3 install poetry
