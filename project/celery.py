@@ -22,4 +22,7 @@ app.conf.task_routes = (
 
 app.config_from_object("django.conf:settings")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-app.conf.task_always_eager = settings.CELERY_TASK_ALWAYS_EAGER
+try:
+    app.conf.task_always_eager = settings.CELERY_TASK_ALWAYS_EAGER
+except AttributeError:
+    pass
