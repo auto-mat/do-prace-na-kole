@@ -368,7 +368,6 @@ TEMPLATE_VISIBLE_SETTINGS = (
     "PAYU_POS_ID",
     "PAYU_KEY_1",
     "HEADER_COLOR",
-    "AKLUB_URL",
     "DEBUG",
 )
 

@@ -7,66 +7,65 @@ services:
   entrypoint: /bin/bash
   ports:
     - "8021:8000"
+  environment:
+    - DISPLAY=$DISPLAY
+    - SSH_AUTH_SOCK=/tmp/ssh_auth_sock
   links:
    - postgres
    - redis
   tty: true
   stdin_open: true
   working_dir: /app-v/
-  user: test
+  user: root
   volumes:
    - ./:/app-v/
-   - ./pipenv:/home/test
+   - ./pyenv:/home/test
+   - /tmp/.X11-unix:/tmp/.X11-unix
+   - ~/.Xauthority:/root/.Xauthority
   env_file: docker.env
  livereload:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: pipenv run python manage.py livereload --host 0.0.0.0
+  entrypoint: poetry run python manage.py livereload --host 0.0.0.0
   ports:
    - "35729:35729"
   links:
    - postgres
    - redis
-  tty: true
-  stdin_open: true
   working_dir: /app-v/
   user: test
   volumes:
    - ./:/app-v/
-   - ./pipenv:/home/test
+   - ./pyenv:/home/test
   env_file: docker.env
  celery:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: pipenv run celery worker -A project.celery -ldebug
+  entrypoint: poetry run celery worker -A project.celery -ldebug
   links:
    - postgres
    - redis
-  tty: true
-  stdin_open: true
   working_dir: /app-v/
   user: test
   volumes:
    - ./:/app-v/
-   - ./pipenv:/home/test
+   - ./pyenv:/home/test
   env_file: docker.env
  celery-beat:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: pipenv run celery beat -A project.celery -ldebug
+  entrypoint: poetry run celery beat -A project.celery -ldebug
   links:
    - postgres
    - redis
-  tty: true
-  stdin_open: true
   working_dir: /app-v/
   user: test
   volumes:
    - ./:/app-v/
-   - ./pipenv:/home/test
+   - ./pyenv:/home/test
   env_file: docker.env
  redis:
   image: redis

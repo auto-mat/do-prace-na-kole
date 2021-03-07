@@ -1,9 +1,9 @@
 #!/bin/bash
-if python manage.py showmigrations | grep '\[ \]\|^[a-z]' | grep '[  ]' -B 1; then
-   python manage.py migrate --noinput                # Apply database migrations
-   python manage.py update_translation_fields
-   python manage.py denorm_drop
-   python manage.py denorm_init
+if poetry run python manage.py showmigrations | grep '\[ \]\|^[a-z]' | grep '[  ]' -B 1; then
+   poetry run python manage.py migrate --noinput                # Apply database migrations
+   poetry run python manage.py update_translation_fields
+   poetry run python manage.py denorm_drop
+   poetry run python manage.py denorm_init
 fi
 
 # Prepare log files and start outputting logs to stdout
@@ -13,7 +13,7 @@ service memcached restart
 
 # Start Gunicorn processes
 echo Starting Gunicorn.
-exec gunicorn wsgi:application \
+exec poetry run gunicorn wsgi:application \
 	 --name dpnk \
 	 --bind 0.0.0.0:${GUNICORN_PORT:-"8000"} \
 	 --workers ${GUNICORN_NUM_WORKERS:-"6"} \
