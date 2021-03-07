@@ -9,6 +9,11 @@ run poetry install --no-dev
 
 copy . .
 
+run npm install
+run npm install --only=dev
+run npm run build || true
+run django-admin compilemessages
+
 run DPNK_SECRET_KEY="fake_key" DPNK_DEBUG_TOOLBAR=True DPNK_SILK=True poetry run python manage.py collectstatic --noinput
 
 EXPOSE 8000

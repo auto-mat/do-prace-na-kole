@@ -7,13 +7,6 @@ jobs:
 
     steps:
       - checkout
-      - run: curl -sL https://deb.nodesource.com/setup_10.x | bash -
-      - run: apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
-      - run: npm install
-      - run: npm install --only=dev
-      - run: npm run build || true
-      - run: pip install 'Django==2.2.6' "coveralls==1.5.1" django_coverage_plugin
-      - run: django-admin compilemessages
       - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM} $(git rev-parse --short HEAD)" > apps/dpnk/static/version.txt
       - setup_remote_docker:
           reusable: true
@@ -44,6 +37,9 @@ jobs:
               fi
             fi
       - run:
+         name: Build Docker image
+         command: docker build -t dopracenakole-test -f TestDockerfile .
+      - run:
          name: Start PostGIS container
          command: |
             docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis:9.6
@@ -66,10 +62,7 @@ jobs:
                --link dpnk-rabbit:rabbit \
                --link dpnk-postgres:postgres \
                --name dpnk-test \
-               dopracenakole
-      - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
-      - run: cp /tmp/reports/ . -R
-      - run: cp /tmp/reports/.coverage .
+               dopracenakole-test
 
       - store_artifacts:
           path: /tmp/reports
