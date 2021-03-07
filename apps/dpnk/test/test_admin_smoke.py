@@ -35,9 +35,8 @@ from dpnk.test.util import print_response  # noqa
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     fixtures = [
         "sites",
-        "campaign",
         "auth_user",
-        "users",
+        "users_and_campaign",
         "test_results_data",
         "transactions",
         "batches",

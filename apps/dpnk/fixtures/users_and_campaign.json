@@ -1,0 +1,1029 @@
+[
+  {
+    "fields": {
+      "benefitial_admission_fee": 350,
+      "benefitial_admission_fee_company": 450,
+      "email_footer": "",
+      "free_entry_cases_html": "",
+      "invoice_sequence_number_first": 1,
+      "invoice_sequence_number_last": 999999999,
+      "mailing_list_enabled": null,
+      "mailing_list_id": "12345abcde",
+      "minimum_percentage": 66,
+      "minimum_rides_base": 25,
+      "year": 2018,
+      "package_depth": 35,
+      "package_height": 1,
+      "package_weight": 0.25,
+      "package_width": 26,
+      "previous_campaign": null,
+      "slug": "testing-campaign-ly",
+      "tracking_number_first": 0,
+      "tracking_number_last": 999999999,
+      "campaign_type": 5338,
+      "track_required": true,
+      "trip_plus_distance": 5
+    },
+    "model": "dpnk.campaign",
+    "pk": 338
+  },
+  {
+    "fields": {
+      "name": "Testing campaign"
+    },
+    "model": "dpnk.campaigntype",
+    "pk": 5338
+  },
+  {
+    "fields": {
+      "benefitial_admission_fee": 350,
+      "benefitial_admission_fee_company": 450,
+      "email_footer": "",
+      "free_entry_cases_html": "",
+      "invoice_sequence_number_first": 1,
+      "invoice_sequence_number_last": 999999999,
+      "mailing_list_enabled": null,
+      "mailing_list_id": "12345abcde",
+      "minimum_percentage": 66,
+      "year": 2019,
+      "minimum_rides_base": 25,
+      "package_depth": 35,
+      "package_height": 1,
+      "package_weight": 0.25,
+      "package_width": 26,
+      "previous_campaign": 338,
+      "campaign_type": 5338,
+      "slug": "testing-campaign",
+      "tracking_number_first": 1111111,
+      "tracking_number_last": 999999999,
+      "track_required": true,
+      "trip_plus_distance": 5
+    },
+    "model": "dpnk.campaign",
+    "pk": 339
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "date_from": "2010-11-01",
+      "date_to": "2010-11-30",
+      "phase_type": "registration"
+    },
+    "model": "dpnk.phase",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [],
+      "company": null,
+      "competitor_type": "team",
+      "date_from": "2010-11-01",
+      "date_to": "2010-11-15",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Pravidelnost týmů",
+      "public_answers": false,
+      "rules": null,
+      "sex": null,
+      "slug": "FQ-LB",
+      "competition_type": "frequency",
+      "minimum_rides_base": 23,
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [],
+      "company": 1,
+      "competitor_type": "single_user",
+      "date_from": "2010-11-01",
+      "date_to": "2010-11-15",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Pravidelnost jednotlivců",
+      "public_answers": false,
+      "rules": null,
+      "sex": null,
+      "slug": "pravidelnost-jednotlivcu",
+      "competition_type": "frequency",
+      "minimum_rides_base": 23,
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 12
+  },
+  {
+    "fields": {
+      "question_type": "text",
+      "comment_type": null,
+      "with_attachment": false,
+      "text": "Team question text",
+      "name": "Team question",
+      "required": false,
+      "competition": 13
+    },
+    "model": "dpnk.question",
+    "pk": 6
+  },
+  {
+    "fields": {
+      "question_type": "text",
+      "comment_type": null,
+      "with_attachment": false,
+      "text": "Question text",
+      "name": "Question 5 name",
+      "required": false,
+      "competition": 4
+    },
+    "model": "dpnk.question",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "question_type": "text",
+      "comment_type": "link",
+      "with_attachment": true,
+      "name": "Question 4 name",
+      "competition": 4
+    },
+    "model": "dpnk.question",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "question_type": "text",
+      "comment_type": "one-liner",
+      "with_attachment": true,
+      "competition": 4
+    },
+    "model": "dpnk.question",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "question_type": "choice",
+      "required": false,
+      "with_attachment": false,
+      "competition": 4
+    },
+    "model": "dpnk.question",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "question_type": "choice",
+      "choice_type": 1,
+      "with_attachment": true,
+      "competition": 4
+    },
+    "model": "dpnk.question",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "text": "yes",
+      "points": 10,
+      "choice_type": 1
+    },
+    "model": "dpnk.choice",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "text": "no",
+      "points": 3,
+      "choice_type": 1
+    },
+    "model": "dpnk.choice",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "name": "yes/no",
+      "competition": 4
+    },
+    "model": "dpnk.choicetype",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [],
+      "company": null,
+      "competitor_type": "single_user",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-02",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Dotazník",
+      "public_answers": true,
+      "rules": null,
+      "sex": null,
+      "slug": "quest",
+      "competition_type": "questionnaire",
+      "url": "http://www.dopracenakole.net/url/"
+    },
+    "model": "dpnk.competition",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [
+        1
+      ],
+      "company": null,
+      "competitor_type": "team",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-02",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Dotazník týmů",
+      "public_answers": true,
+      "rules": null,
+      "sex": null,
+      "slug": "team-questionnaire",
+      "competition_type": "questionnaire",
+      "url": "http://www.dopracenakole.net/url/"
+    },
+    "model": "dpnk.competition",
+    "pk": 13
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [
+        1
+      ],
+      "company": null,
+      "competitor_type": "single_user",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-30",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Výkonnost",
+      "public_answers": false,
+      "rules": null,
+      "sex": "male",
+      "slug": "vykonnost",
+      "competition_type": "length",
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [
+        1
+      ],
+      "company": null,
+      "competitor_type": "team",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-30",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Výkonnost týmů",
+      "public_answers": false,
+      "rules": null,
+      "sex": "male",
+      "slug": "vykonnost-tymu",
+      "competition_type": "length",
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 9
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [
+        1
+      ],
+      "company": null,
+      "competitor_type": "single_user",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-30",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Výkonnost ve městě",
+      "public_answers": false,
+      "rules": "Competition vykonnostr rules",
+      "sex": null,
+      "slug": "vykonnost-mesto",
+      "competition_type": "length",
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 6
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [
+        1
+      ],
+      "company": null,
+      "competitor_type": "company",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-30",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Výkonnost společností",
+      "public_answers": false,
+      "rules": "Competition rules",
+      "sex": null,
+      "slug": "vykonnost-spolecnosti",
+      "competition_type": "length",
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 8
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [
+        1
+      ],
+      "company": 1,
+      "competitor_type": "company",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-30",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Pravidelnost společností",
+      "public_answers": false,
+      "rules": "Competition rules",
+      "sex": null,
+      "slug": "pravidelnost-spolecnosti",
+      "competition_type": "frequency",
+      "url": "http://www.dopracenakole.net/url/",
+      "commute_modes": [
+        1,
+        2
+      ]
+    },
+    "model": "dpnk.competition",
+    "pk": 10
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "city": [],
+      "company": null,
+      "competitor_type": "company",
+      "date_from": "2010-11-01",
+      "date_to": "2010-12-30",
+      "entry_after_beginning_days": 7,
+      "is_public": true,
+      "name": "Dotazník společností",
+      "public_answers": false,
+      "rules": "Competition rules",
+      "sex": null,
+      "slug": "dotaznik-spolecnosti",
+      "competition_type": "questionnaire",
+      "url": "http://www.dopracenakole.net/url/"
+    },
+    "model": "dpnk.competition",
+    "pk": 11
+  },
+  {
+    "fields": {
+      "pricable": 339,
+      "takes_effect_on": "2000-1-01",
+      "price": 120,
+      "category": "basic"
+    },
+    "model": "price_level.PriceLevel",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "pricable": 339,
+      "takes_effect_on": "2000-1-01",
+      "price": 130,
+      "category": "company"
+    },
+    "model": "price_level.PriceLevel",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "pricable": 339,
+      "takes_effect_on": "2011-1-01",
+      "price": 210,
+      "category": "basic"
+    },
+    "model": "price_level.PriceLevel",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "pricable": 339,
+      "takes_effect_on": "2011-1-01",
+      "price": 230,
+      "category": "company"
+    },
+    "model": "price_level.PriceLevel",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "phase_type": "invoices"
+    },
+    "model": "dpnk.phase",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "phase_type": "payment"
+    },
+    "model": "dpnk.phase",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "date_from": "2010-11-01",
+      "date_to": "2010-11-30",
+      "phase_type": "competition"
+    },
+    "model": "dpnk.phase",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "campaign": 338,
+      "date_from": "2009-12-01",
+      "date_to": "2009-12-30",
+      "phase_type": "competition"
+    },
+    "model": "dpnk.phase",
+    "pk": 6
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "date_from": "2010-11-01",
+      "date_to": "2010-11-30",
+      "phase_type": "entry_enabled"
+    },
+    "model": "dpnk.phase",
+    "pk": 7
+  },
+  {
+    "fields": {
+      "campaign": 338,
+      "date_from": "2009-12-01",
+      "date_to": "2009-12-30",
+      "phase_type": "entry_enabled"
+    },
+    "model": "dpnk.phase",
+    "pk": 8
+  },
+  {
+    "fields": {
+      "slug": "testing-city",
+      "cyklistesobe_slug": "testing-city",
+      "name": "Testing city"
+    },
+    "model": "dpnk.city",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "slug": "other-city",
+      "cyklistesobe_slug": "other-city",
+      "name": "Other city"
+    },
+    "model": "dpnk.city",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "city": 1,
+      "campaign": 339
+    },
+    "model": "dpnk.cityincampaign",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "name": "Testing company",
+      "ico": "11111",
+      "dic": "CZ1234567890",
+      "address_psc": "11111",
+      "address_street_number": "1",
+      "address_street": "Ulice",
+      "address_city": "Praha"
+    },
+    "model": "dpnk.company",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "name": "Testing company without admin",
+      "ico": "11111",
+      "address_psc": "11111",
+      "address_street_number": "1",
+      "address_street": "Ulice",
+      "address_city": "Praha"
+    },
+    "model": "dpnk.company",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "address_psc": "11111",
+      "address_street_number": "1",
+      "address_street": "Ulice",
+      "address_city": "Praha",
+      "company": 1,
+      "city": 1
+    },
+    "model": "dpnk.subsidiary",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "address_psc": "22222",
+      "address_street_number": "2",
+      "address_street": "Ulice",
+      "address_city": "Brno",
+      "company": 1,
+      "city": 2
+    },
+    "model": "dpnk.subsidiary",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "subsidiary": 1,
+      "invitation_token": "token123213",
+      "name": "Testing team 1"
+    },
+    "model": "dpnk.team",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "subsidiary": 1,
+      "invitation_token": "token123216",
+      "name": "Empty team"
+    },
+    "model": "dpnk.team",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "subsidiary": 2,
+      "invitation_token": "token123215",
+      "name": "Team in different subsidiary"
+    },
+    "model": "dpnk.team",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "campaign": 338,
+      "subsidiary": 2,
+      "invitation_token": "token123214",
+      "name": "Testing team last campaign"
+    },
+    "model": "dpnk.team",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "name": "Testing t-shirt size"
+    },
+    "model": "t_shirt_delivery.tshirtsize",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "campaign": 339,
+      "price": 100,
+      "name": "Testing t-shirt size with price"
+    },
+    "model": "t_shirt_delivery.tshirtsize",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "userprofile": 1026,
+      "can_confirm_payments": true,
+      "campaign": 339,
+      "administrated_company": 1,
+      "company_admin_approved": "approved"
+    },
+    "model": "dpnk.companyadmin",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "userprofile": 1016,
+      "can_confirm_payments": true,
+      "campaign": 339,
+      "administrated_company": 1,
+      "company_admin_approved": "approved"
+    },
+    "model": "dpnk.companyadmin",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "userprofile": 1117,
+      "can_confirm_payments": true,
+      "campaign": 339,
+      "administrated_company": 1,
+      "company_admin_approved": "approved"
+    },
+    "model": "dpnk.companyadmin",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "approved_for_team": "approved",
+      "campaign": 339,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": 1,
+      "team": 1,
+      "track": "MULTILINESTRING((0 0,-1 1))",
+      "updated": "2015-11-12T18:18:40.223",
+      "payment_status": "done",
+      "personal_data_opt_in": true,
+      "userprofile": 1117
+    },
+    "model": "dpnk.userattendance",
+    "pk": 1115
+  },
+  {
+    "fields": {
+      "approved_for_team": "approved",
+      "campaign": 338,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": 1,
+      "team": 2,
+      "track": "MULTILINESTRING((0 0,-1 1))",
+      "updated": "2015-11-12T18:18:40.223",
+      "personal_data_opt_in": true,
+      "userprofile": 1117
+    },
+    "model": "dpnk.userattendance",
+    "pk": 1116
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": "",
+      "note": "",
+      "sex": "male",
+      "telephone": "",
+      "mailing_opt_in": true,
+      "ecc_password": "secret",
+      "ecc_email": "email1128@dopracenakole.cz",
+      "user": 1128
+    },
+    "model": "dpnk.userprofile",
+    "pk": 1117
+  },
+  {
+    "fields": {
+      "user_attendance": 1115,
+      "question": 3,
+      "attachment": "DSC00002.JPG",
+      "points_given": 3.2,
+      "comment": "Testing comment"
+    },
+    "model": "dpnk.answer",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "user_attendance": 1115,
+      "choices": [
+        1
+      ],
+      "comment": "Answer without attachment",
+      "attachment": null,
+      "question": 2
+    },
+    "model": "dpnk.answer",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "user_attendance": 1115,
+      "attachment": "modranska-rokle.gpx",
+      "comment_given": "Given comment",
+      "choices": [
+        2
+      ],
+      "question": 4
+    },
+    "model": "dpnk.answer",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "user_attendance": 1116,
+      "question": 2
+    },
+    "model": "dpnk.answer",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "approved_for_team": "approved",
+      "campaign": 339,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": null,
+      "team": 1,
+      "track": "MULTILINESTRING((0 0,-1 1))",
+      "updated": "2015-11-12T18:18:40.223",
+      "payment_status": "done",
+      "personal_data_opt_in": true,
+      "userprofile": 1017
+    },
+    "model": "dpnk.userattendance",
+    "pk": 1015
+  },
+  {
+    "fields": {
+      "user_attendance": 1015,
+      "choices": [
+        2
+      ],
+      "question": 2,
+      "attachment": "DSC00002.JPG"
+    },
+    "model": "dpnk.answer",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": "Nick",
+      "note": "",
+      "sex": "male",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email1031@dopracenakole.cz",
+      "user": 1031
+    },
+    "model": "dpnk.userprofile",
+    "pk": 1017
+  },
+  {
+    "fields": {
+      "approved_for_team": "approved",
+      "campaign": 339,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": null,
+      "team": 3,
+      "track": null,
+      "updated": "2015-11-12T18:18:40.223",
+      "userprofile": 1016
+    },
+    "model": "dpnk.userattendance",
+    "pk": 1016
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": null,
+      "note": null,
+      "sex": "unknown",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email1030@dopracenakole.cz",
+      "user": 1030
+    },
+    "model": "dpnk.userprofile",
+    "pk": 1016
+  },
+  {
+    "fields": {
+      "approved_for_team": "undecided",
+      "campaign": 339,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": null,
+      "team": null,
+      "track": null,
+      "updated": "2015-11-12T18:18:40.223",
+      "userprofile": 3
+    },
+    "model": "dpnk.userattendance",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "en",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": null,
+      "note": null,
+      "sex": "female",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email3@dopracenakole.cz",
+      "user": 3
+    },
+    "model": "dpnk.userprofile",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "approved_for_team": "undecided",
+      "campaign": 339,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": null,
+      "team": 3,
+      "track": null,
+      "updated": "2015-11-12T18:18:40.223",
+      "userprofile": 5
+    },
+    "model": "dpnk.userattendance",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": null,
+      "note": null,
+      "sex": "male",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email5@dopracenakole.cz",
+      "user": 5
+    },
+    "model": "dpnk.userprofile",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "approved_for_team": "approved",
+      "campaign": 338,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": 1,
+      "team": null,
+      "track": "MULTILINESTRING((0 0,-1 1))",
+      "updated": "2015-11-12T18:18:40.223",
+      "userprofile": 1026
+    },
+    "model": "dpnk.userattendance",
+    "pk": 1027
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": null,
+      "note": null,
+      "sex": "unknown",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email1041@dopracenakole.cz",
+      "user": 1041
+    },
+    "model": "dpnk.userprofile",
+    "pk": 1026
+  },
+  {
+    "fields": {
+      "approved_for_team": "approved",
+      "campaign": 339,
+      "created": "2015-11-12T18:18:40.223",
+      "distance": null,
+      "dont_want_insert_track": false,
+      "get_rides_count_denorm": 0,
+      "t_shirt_size": 1,
+      "team": 1,
+      "track": "MULTILINESTRING((0 0,-1 1))",
+      "updated": "2015-11-12T18:18:40.223",
+      "payment_status": "done",
+      "personal_data_opt_in": true,
+      "userprofile": 2117
+    },
+    "model": "dpnk.userattendance",
+    "pk": 2115
+  },
+  {
+    "fields": {
+      "administrated_cities": [
+        1
+      ],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": "",
+      "note": "",
+      "sex": "male",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email2@dopracenakole.cz",
+      "user": 2
+    },
+    "model": "dpnk.userprofile",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "administrated_cities": [],
+      "language": "cs",
+      "mailing_hash": null,
+      "mailing_id": "",
+      "nickname": "",
+      "note": "",
+      "sex": "male",
+      "telephone": "",
+      "ecc_password": "secret",
+      "ecc_email": "email2117@dopracenakole.cz",
+      "user": 2128
+    },
+    "model": "dpnk.userprofile",
+    "pk": 2117
+  },
+  {
+    "fields": {
+      "team": 1,
+      "result": 100,
+      "competition": 3
+    },
+    "model": "dpnk.competitionresult",
+    "pk": 0
+  }
+]
