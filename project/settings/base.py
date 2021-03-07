@@ -368,8 +368,11 @@ TEMPLATE_VISIBLE_SETTINGS = (
     "PAYU_POS_ID",
     "PAYU_KEY_1",
     "HEADER_COLOR",
+    "AKLUB_URL",
     "DEBUG",
 )
+
+AKLUB_URL = os.environ.get("DPNK_AKLUB_URL", "https://klub.auto-mat.cz")
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
