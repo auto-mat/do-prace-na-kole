@@ -28,12 +28,16 @@ run apt-get update && apt-get install -y \
    tcl8.6-dev \
    tk8.6-dev \
    zlib1g-dev \
-   wget
+   nodejs \
+   libgettextpo-dev \
+   curl
+
+run curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
 
 run pip3 install poetry
-run wget https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/poetry.lock
-run wget https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/pyproject.toml
+run curl https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/poetry.lock > poetry.lock
+run curl https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/pyproject.toml > pyproject.toml
 run poetry install --no-dev
