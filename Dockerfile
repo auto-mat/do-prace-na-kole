@@ -27,9 +27,13 @@ run apt-get update && apt-get install -y \
    python-tk \
    tcl8.6-dev \
    tk8.6-dev \
-   zlib1g-dev
+   zlib1g-dev \
+   wget
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
 
 run pip3 install poetry
+run wget https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/poetry.lock
+run wget https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/pyproject.toml
+run poetry install --no-dev
