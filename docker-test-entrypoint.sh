@@ -2,7 +2,7 @@
 
 # Start Gunicorn processes
 echo Starting tests
-poetry install --dev --system
+poetry install
 black --check --exclude migrations apps
 black --check project
 flake8
