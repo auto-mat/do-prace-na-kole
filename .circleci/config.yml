@@ -37,7 +37,7 @@ jobs:
               fi
             fi
       - run:
-         name: Build Docker image
+         name: Build test Docker image
          command: docker build -t dopracenakole-test -f TestDockerfile .
       - run:
          name: Start PostGIS container
