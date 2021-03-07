@@ -212,7 +212,10 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
     base_url = util.get_base_url(slug=user_attendance.campaign.slug)
 
     def continuation(sandwich):
-        smmapdfs.email.send_pdfsandwich(sandwich, base_url)
+        try:
+            smmapdfs.email.send_pdfsandwich(sandwich, base_url)
+        except smmapdfs.models.pdfsandwich_email.PdfSandwichEmail.DoesNotExist:
+            pass
 
     content_type = contenttypes.models.ContentType.objects.get_for_model(voucher)
     smmapdfs.tasks.make_pdfsandwich(

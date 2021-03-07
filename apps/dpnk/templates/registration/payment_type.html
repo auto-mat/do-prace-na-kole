@@ -46,13 +46,6 @@ $(function(){
    switch_description();
    $("#div_id_payment_type").append($("#description_switcher"));
 
-   $.get("{{AKLUB_URL}}/{{ current_language_code }}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.userprofile.telephone}}", function(data) {
-      $("#aklub-form-container").append(data);
-      $("#aklub-form").ajaxForm({replaceTarget: false, target: "#aklub-form", success: function(){
-         window.scrollTo(0, 0);
-      }});
-   });
-
    $(".pay_description form").submit(function(){
 
       if(selected_value() == 'pay_beneficiary') {
@@ -90,10 +83,6 @@ $(function(){
    <div class="description_switcher_div description coupon_description" style="display:none">
       <h3>{% trans "Platba startovného pomocí voucheru" %}</h3>
       {% trans "Uplatněte slevu z startovného." %}
-   </div>
-   <div class="description_switcher_div description member_wannabe_description" style="display:none">
-      <h3>{% trans "Vstupte do Klubu přátel" %}</h3>
-      <div id="aklub-form-container"></div>
    </div>
 </div>
 <span class="description_switcher_div description pay_description">

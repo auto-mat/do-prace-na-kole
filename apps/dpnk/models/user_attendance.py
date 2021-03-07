@@ -810,7 +810,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         from . import Voucher, VoucherType
         from .. import tasks
 
-        assigned_vouchers = []
+        assigned_vouchers = set()
         for voucher_type in VoucherType.objects.all():
             if (
                 Voucher.objects.filter(
@@ -881,5 +881,5 @@ def update_mailing_user_attendance(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=UserAttendance)
 def assign_vouchers(sender, instance, created, **kwargs):
-    if instance.payment_status == "done":
+    if instance.payment_status == "done" or instance.payment_status == "no_admission":
         instance.assign_vouchers()

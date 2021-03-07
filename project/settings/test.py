@@ -89,11 +89,15 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 
 LOGGING["handlers"]["logfile"]["filename"] = "test-dpnk.log"
 
-CELERY_ALWAYS_EAGER = True
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
 CRISPY_FAIL_SILENTLY = False
 
 SECURE_SSL_REDIRECT = False
+
+
+MEDIA_ROOT = normpath(PROJECT_ROOT, "apps/dpnk/test_files/media")
 
 # import local test_settings
 try:

@@ -34,6 +34,8 @@ third-party
 apps/dpnk/test_files/customer_sheets/
 apps/dpnk/test_files/invoices/
 apps/dpnk/test_files/t_shirt_preview/
+apps/dpnk/test_files/media/pdfsandwichs/
+apps/dpnk/test_files/media/photologue/
 /media/
 docker.env
 graph.png
@@ -49,6 +51,7 @@ profiles/
 celerybeat-schedule
 celerybeat.pid
 pipenv/
+pyenv/
 .#*
 test-dpnk.log
 scripts/ansible-playbooks/get_containers.retry

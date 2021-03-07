@@ -59,9 +59,19 @@ class TestActionsMommy(TestCase):
     def test_assign_vouchers(self):
         mommy.make_recipe("dpnk.test.UserAttendanceRecipe")
         queryset = models.UserAttendance.objects.all()
+        sandwich_type = mommy.make(
+            "smmapdfs.PdfSandwichType",
+            template_pdf="example.pdf",
+        )
+        voucher_type = mommy.make(
+            "VoucherType",
+            name="rekola",
+            teaser_img="/image.png",
+            sandwich_type=sandwich_type,
+        )
         vouchers = mommy.make(
             "Voucher",
-            voucher_type="rekola",
+            voucher_type1=voucher_type,
             token="vouchertoken",
             campaign=queryset[0].campaign,
             _quantity=2,
@@ -72,7 +82,7 @@ class TestActionsMommy(TestCase):
         voucher.refresh_from_db()
         self.assertNotEqual(voucher.user_attendance.pk, None)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEqual(str(message), "Úspěšně přiřazeno 1 voucherů")
+        self.assertEqual(str(message), "Přiřazeno vouchery k 1 uživatelům: rekola: 1")
 
     def test_assign_vouchers_not_enough(self):
         mommy.make_recipe(
