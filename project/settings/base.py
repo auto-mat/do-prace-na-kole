@@ -611,6 +611,7 @@ SECURE_SSL_REDIRECT = os.environ.get("DPNK_SECURE_SSL_REDIRECT", "t").lower() in
     "true",
 )
 SESSION_COOKIE_SECURE = os.environ.get("DPNK_SESSION_COOKIE_SECURE", True)
+SESSION_COOKIE_SAMESITE = None
 SECURE_REDIRECT_EXEMPT = [r"version\.txt"]
 X_FRAME_OPTIONS = "DENY"
 
