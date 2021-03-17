@@ -42,6 +42,8 @@ lauch_docker = [
 ]
 
 run_django_command = [
+     "poetry",
+     "run",
      "python3",
      "manage.py",
 ]
