@@ -278,7 +278,7 @@ class CompanyAdminView(
     LoginRequiredMixin,
     UpdateView,
 ):
-    template_name = "base_generic_registration_form.html"
+    template_name = "base_generic_form.html"
     form_class = CompanyAdminForm
     model = CompanyAdmin
     success_url = "profil"

@@ -8,14 +8,15 @@
 <html xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
 <head>
 	<title>{% if campaign %}{{ campaign.display_name }}{% endif %}{% block title %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
-	<link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}"> 
-	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32"> 
-	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16"> 
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}">
+	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32">
+	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16">
 	<link rel="manifest" href="{% static "img/favicon/manifest.json" %}">
-  <link rel="mask-icon" href="{% static "img/favicon/safari-pinned-tab.svg" %}" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}> 
+  <link rel="mask-icon" href="{% static "img/favicon/safari-pinned-tab.svg" %}" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}>
+	<link href="{% static 'css/progress_tracker.css' %}" rel="stylesheet" media="screen">
    <meta name="theme-color" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}>
 	{% block default_head %}
-	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<script src="{% static "jquery/dist/jquery.min.js"%}"></script>

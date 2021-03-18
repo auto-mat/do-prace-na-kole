@@ -174,7 +174,7 @@ class TitleViewMixin(object):
 class RegistrationPersonalViewMixin(
     RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin
 ):
-    template_name = "base_generic_registration_form.html"
+    template_name = "base_generic_form.html"
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
