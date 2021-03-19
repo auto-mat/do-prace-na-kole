@@ -18,6 +18,7 @@ class AloneInTeam(RegistrationPhaseNotification):
     def populate(self, template):
         template.verb = "Jsi sám v týmu. Pozvěte další členové."
         template.verb_en = "You are the only person in your team."
+        template.url = reverse_lazy("pozvanky")
 
     def check_condition(self, recipient):
         if (
