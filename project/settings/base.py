@@ -165,7 +165,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "dpnk.middleware.SesameAuthenticationMiddleware",
-    "denorm.middleware.DenormMiddleware",
+    "dpnk.middleware.CeleryDenormMiddleware",
     "author.middlewares.AuthorDefaultBackendMiddleware",
     "dpnk.middleware.UserAttendanceMiddleware",
     "dpnk.votes.SecretBallotUserMiddleware",

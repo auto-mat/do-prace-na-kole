@@ -27,6 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 from sesame.middleware import AuthenticationMiddleware
 
 from .models import Campaign, UserAttendance
+from .tasks import flush_denorm
 
 
 def get_or_create_userattendance(request, campaign_slug):
@@ -119,3 +120,16 @@ class SesameAuthenticationMiddleware(AuthenticationMiddleware):
         if request.GET.get("sesame-no-redirect"):
             return True
         return super().is_safari(request)
+
+
+class CeleryDenormMiddleware(MiddlewareMixin, object):
+    """
+    https://github.com/django-denorm/django-denorm/blob/develop/denorm/middleware.py
+    but in celery
+    """
+    def process_response(self, request, response):
+        try:
+            flush_denorm.delay()
+        except DatabaseError as e:
+            logger.error(e)
+        return response

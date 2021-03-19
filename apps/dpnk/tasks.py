@@ -225,3 +225,8 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
         continuation,
     )
     translation.activate(current_language)
+
+
+@shared_task
+def flush_denorm():
+    denorm.flush
