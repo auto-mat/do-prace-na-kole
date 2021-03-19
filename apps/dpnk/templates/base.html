@@ -1,6 +1,5 @@
 {% load i18n %}
 {% load static %}
-{% load scribbler_tags %}
 {% load gtm_tags %}
 {% load raven %}
 <!DOCTYPE html>
@@ -62,7 +61,6 @@
          {{ fullpage_error_message }}
       </div>
    {% else %}
-      {% scribble 'before_content' %}{% endscribble %}
          {% block content %}
             {% if opening_message %}
             {{ opening_message }}
@@ -70,7 +68,6 @@
          {% endblock %}
          {% block extracontent %}
          {% endblock %}
-      {% scribble 'after_content' %}{% endscribble %}
    {% endif %}
 {% endblock %}
 {% endblock %}

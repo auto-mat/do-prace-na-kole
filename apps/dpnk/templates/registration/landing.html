@@ -1,7 +1,6 @@
 {% extends "base_generic_form.html" %}
 {% load i18n %}
 {% load l10n %}
-{% load scribbler_tags %}
 {% load cache %}
 
 {% block caption %}
@@ -77,8 +76,6 @@
       {% trans "Vouchery" %}
   </h3>
   </a>
-  {% scribble 'before_vouchers' %}
-  {% endscribble %}
   <div class="row">
       {% for voucher in user_attendance.voucher_set.all %}
       <div class="col-12 col-sm-6 col-md-4 card" >
@@ -93,7 +90,6 @@
       {% endfor %}
   </div>
           <div>
-              {% scribble 'after_vouchers' %}{% endscribble %}
           </div>
   </div>
   {% endif %}
