@@ -1,14 +1,11 @@
 {% extends "base_generic_form.html" %}
-{% load scribbler_tags %}
 
 {% block form %}
-   {% scribble 'donation_chooser' %}
    <p>
    Vyberte charitativní organizaci kterou podpoříte svými cestami
    </p>
    <a href="https://www.dopracenakole.cz/o-vyzve/podrobna-pravidla#vykonnost" target="blank">
       Více informací o projektech, které svými kilometry můžete podpořit
    </a>
-   {% endscribble %}
    {{ block.super }}
 {% endblock %}

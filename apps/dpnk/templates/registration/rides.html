@@ -4,7 +4,6 @@
 {% load humanize %}
 {% load bootstrap4 %}
 {% load cache %}
-{% load scribbler_tags %}
 {% load static %}
 
 {% cache 3600 "commute_mode_tooltips" %}
@@ -77,11 +76,9 @@
 </tr>
 <tr class="info">
    <th>
-      {% scribble 'rides_info_table_end' %}
       {% load i18n %}
       {% trans "Podrobné výsledky naleznete na stránce" %}
       <a href="{% url "competitions" %}">{% trans "výsledků jednotlivých soutěží" %}</a>.
-      {% endscribble %}
    </th>
 </tr>
 {% include "./rides_view_switcher.html" with page="table" %}

@@ -37,7 +37,6 @@ urlpatterns = [
     url(r"^redactor/", include("redactor.urls")),
     url(r"^nested_admin/", include("nested_admin.urls")),
     url(r"^rest/", include(router.urls)),
-    url(r"^scribbler/", include("scribbler.urls")),
     url(r"^likes/", include("likes.urls")),
     url(r"^avatar/", include("avatar.urls")),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),

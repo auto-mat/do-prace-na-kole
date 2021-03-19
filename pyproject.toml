@@ -111,7 +111,6 @@ SQLAlchemy = "*"
 django_celery_beat = "*"
 django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", rev = "mergeup"}
 PyPDF2 = "*"
-"django-scribbler-django2.0" = "*"
 django-bootstrap4 = "==0.0.8" 
 html2text = "*"
 tornado = "<6"

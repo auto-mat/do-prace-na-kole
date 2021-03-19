@@ -80,8 +80,6 @@ from related_admin import RelatedFieldAdmin
 
 from rest_framework.authtoken.admin import TokenAdmin
 
-from scribbler import models as scribbler_models
-
 from smmapdfs.actions import make_pdfsandwich
 from smmapdfs.admin_abcs import PdfSandwichAdmin, PdfSandwichFieldAdmin
 
@@ -1599,23 +1597,6 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     def invoice_xml_url(self, obj):
         if obj.invoice_xml:
             return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
-
-
-@admin.register(scribbler_models.Scribble)
-class ScribbleAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name",
-        "slug",
-        "url",
-        "content",
-    )
-    search_fields = (
-        "name",
-        "slug",
-        "url",
-    )
-    save_as = True
 
 
 @admin.register(models.Voucher)

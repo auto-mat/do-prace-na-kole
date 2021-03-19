@@ -1,7 +1,6 @@
 {% extends "base_generic_form.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
-{% load scribbler_tags %}
 
 {% block content %}
 {% include "messages_include.html" %}
@@ -27,7 +26,6 @@
 
 <h3>{% trans "Benefiční startovné" %}</h3>
 <p>
-   {% scribble 'before_invoice' %}
    {% load i18n %}
    {% blocktrans %}
    Do práce na kole pořádá již od roku 2010 nezisková organizace <a title="Auto-Mat" href="http://www.auto-mat.cz/" target="_blank">AutoMat</a>, která se již více než 10 let snaží o zlepšení kvality života v našich městech.
@@ -38,7 +36,6 @@
    <br/>
    <strong>Pokud si přejete podpořit AutoMat benefičním startovným, zvolte možnost níže.</strong>
    {% endblocktrans %}
-   {% endscribble %}
 </p>
 <p>
 </p>

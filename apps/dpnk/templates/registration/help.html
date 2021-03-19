@@ -1,11 +1,9 @@
 {% extends "base_generic.html" %}
-{% load scribbler_tags %}
 {% block extrahead %}
 {% include "registration/leaflet_include.html" %}
 {% endblock %}
 
 {% block content %}
-{% scribble 'help_page' %}
 {% load i18n %}
 <div class="section" id="edit-tracks">
   <h1>{% trans "Editace tras" %}</h1>
@@ -41,5 +39,4 @@
   Chcete mluvit s živým člověkem? <a target='_blank' href="https://www.dopracenakole.cz/kontakt">volejte na helpdesk</a>.
   {% endblocktrans %}
 </div>
-{% endscribble %}
 {% endblock %}
