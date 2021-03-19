@@ -894,18 +894,26 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = "application"
 
 
-class OpenApplicationWithRestTokenView(LoginRequiredMixin, View):
-    def get(self, *args, **kwargs):
-        from rest_framework.authtoken.models import Token
-
+class OpenApplicationWithRestTokenView(View):
+    def get(self, request, *args, **kwargs):
         try:
             app_id = int(kwargs["app_id"])
         except ValueError:
             return "./"
         rough_url = settings.DPNK_MOBILE_APP_URLS[app_id]
-        token, _ = Token.objects.get_or_create(user=self.request.user)
         campaign_slug_identifier = self.request.campaign.slug_identifier
         HttpResponseRedirect.allowed_schemes.append("dpnk")
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(
+                rough_url.format(
+                    auth_token="null",
+                    campaign_slug_identifier=campaign_slug_identifier,
+                )
+            )
+
+        from rest_framework.authtoken.models import Token
+
+        token, _ = Token.objects.get_or_create(user=self.request.user)
         return HttpResponseRedirect(
             rough_url.format(
                 auth_token=token.key,
