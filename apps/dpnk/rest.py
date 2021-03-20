@@ -46,6 +46,7 @@ from .models import (
     Company,
     Competition,
     CompetitionResult,
+    LandingPageIcon,
     Phase,
     Subsidiary,
     Team,
@@ -510,6 +511,11 @@ class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         source="get_working_rides_base_count",
         help_text="Max number of possible trips",
     )
+    is_me = RequestSpecificField(
+        lambda ua, req: True
+        if ua.userprofile.user.pk == req.user.pk
+        else False,
+    )
 
     class Meta:
         model = UserAttendance
@@ -523,6 +529,7 @@ class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
             "eco_trip_count",
             "working_rides_base_count",
             "emissions",
+            "is_me",
         )
 
 
@@ -1115,6 +1122,25 @@ class StravaAccountSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class LandingPageIconSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = LandingPageIcon
+        fields = (
+            "file",
+            "role",
+            "min_frequency",
+            "max_frequency",
+        )
+
+
+class LandingPageIconSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return LandingPageIcon.objects.all()
+
+    serializer_class = LandingPageIconSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1142,3 +1168,4 @@ router.register(
 router.register(r"photo", PhotoSet, basename="photo")
 router.register(r"gallery", GallerySet, basename="gallery")
 router.register(r"strava_account", StravaAccountSet, basename="strava_account")
+router.register(r"landing_page_icon", LandingPageIconSet, basename="landing_page_icon")
