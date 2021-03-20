@@ -36,6 +36,7 @@ apps/dpnk/test_files/invoices/
 apps/dpnk/test_files/t_shirt_preview/
 apps/dpnk/test_files/media/pdfsandwichs/
 apps/dpnk/test_files/media/photologue/
+.pytest_cache
 /media/
 docker.env
 graph.png
