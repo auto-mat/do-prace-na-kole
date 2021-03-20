@@ -27,7 +27,6 @@ import {
     load_dropozones,
     select_old_trip,
 } from './calendar/routesAndMaps';
-import {RestTrips} from "./dpnk/rest";
 import {
     interactive_entry_enabled,
     initial_events,
@@ -35,6 +34,8 @@ import {
     Globals,
     load_globals,
 } from "./calendar/globals";
+
+import {RestTrips} from "./dpnk/trip";
 
 let strings = load_strings();
 

@@ -8,3 +8,9 @@ export default interface Trip {
     id?: number;
     sourceApplication?: string;
 }
+
+export interface RestTrips {
+    results: Trip[];
+    next: string | null;
+    previous: string | null;
+}

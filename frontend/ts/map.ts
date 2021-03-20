@@ -1,6 +1,7 @@
 import LocalizedStrings from 'localized-strings';
 import "leaflet.awesome-markers";
-import {RestTrips, RestCityInCampaign}  from "./dpnk/rest"
+import {RestCityInCampaign}  from "./dpnk/cityInCampaign"
+import {RestTrips}  from "./dpnk/trip"
 
 import {
     load_track,

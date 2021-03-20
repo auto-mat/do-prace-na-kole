@@ -8,3 +8,7 @@ export default interface CityInCampaign {
     city__name: string;
     competitor_count: number;
 }
+
+export interface RestCityInCampaign {
+    results: CityInCampaign[];
+}
