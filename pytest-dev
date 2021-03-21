@@ -1,0 +1,2 @@
+#!/bin/bash
+pytest apps/ --pdb --reuse-db --last-failed
