@@ -1043,13 +1043,13 @@ class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
                 (
                     True,
                     _(
-                        "Ano, chci dostávat soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže."
+                        "Ano, zajímají mě akce na triko, slevové kódy i výhry a také dění v oblasti udržitelné mobility."
                     ),
                 ),
-                (False, _("Ne, mám zájem pouze o informační e-maily.")),
+                (False, _("Ne, kromě upozornění nestojím o žádné informace (a nevadí mi, že přijdu o spoustu výhod).")),
             ]
             self.fields["mailing_opt_in"].label = _(
-                "Přejete si dostávat náš newsletter?"
+                "Přejete si od nás dostávat zprávy?"
             )
             self.fields["mailing_opt_in"].help_text = None
         return ret_val
@@ -1081,7 +1081,7 @@ class UserProfileUpdateForm(RegistrationUserProfileUpdateForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields["mailing_opt_in"].label = _(
-            "Chci dostávat e-mailem soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže."
+            "Zajímají mě akce na triko, slevové kódy i výhry a také dění v oblasti udržitelné mobility."
         )
         self.fields["mailing_opt_in"].required = False
         return ret_val
