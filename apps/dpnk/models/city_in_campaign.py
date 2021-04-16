@@ -96,8 +96,12 @@ class CityInCampaign(models.Model):
     def distances(self):
         @cached(60)
         def actually_get_distances(pk):
+            competition_phase = self.campaign.competition_phase()
             return distance_all_modes(
-                Trip.objects.filter(user_attendance__in=self.competitors())
+                Trip.objects.filter(
+                    user_attendance__in=self.competitors(),
+                    date__range=[competition_phase.date_from, competition_phase.date_to],
+                ),
             )
 
         return actually_get_distances(self.pk)

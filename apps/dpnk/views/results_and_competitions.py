@@ -655,8 +655,10 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         context_data["total"] = UserAttendance.objects.filter(
             payment_status__in=("done", "no_admission"), campaign__slug=campaign_slug
         )
+        competition_phase = self.request.campaign.competition_phase()
         context_data["total_distances"] = distance_all_modes(
             models.Trip.objects.filter(
+                date__range=[competition_phase.date_from, competition_phase.date_to],
                 user_attendance__payment_status__in=("done", "no_admission"),
                 user_attendance__campaign__slug=campaign_slug,
             ),
