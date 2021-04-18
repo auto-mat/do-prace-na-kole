@@ -28,6 +28,7 @@ from django.conf import settings
 
 import tablib
 
+from dpnk.models import Campaign, UserAttendance
 from .models import DeliveryBatch, SubsidiaryBox
 
 
@@ -66,6 +67,18 @@ def save_filefield(filefield, directory):
         f.write(filefield.read())
         filefield.close()
     return filename
+
+
+@shared_task(bind=True)
+def create_batch(self, campaign_slug, ids):
+    delivery_batch = DeliveryBatch()
+    delivery_batch.campaign = Campaign.objects.get(slug=campaign_slug)
+    delivery_batch.add_packages_on_save = False
+    delivery_batch.save()
+    uas = UserAttendance.objects.filter(pk__in=ids)
+    delivery_batch.add_packages(user_attendances=uas)
+    delivery_batch.add_packages_on_save = True
+    delivery_batch.save()
 
 
 @shared_task(bind=True)

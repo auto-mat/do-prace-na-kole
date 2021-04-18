@@ -28,15 +28,10 @@ from t_shirt_delivery.models import DeliveryBatch
 
 def create_batch(modeladmin, request, queryset):
     campaign = Campaign.objects.get(slug=request.subdomain)
-    delivery_batch = DeliveryBatch()
-    delivery_batch.campaign = campaign
-    delivery_batch.add_packages_on_save = False
-    delivery_batch.save()
-    delivery_batch.add_packages(user_attendances=queryset)
-    delivery_batch.add_packages_on_save = True
-    delivery_batch.save()
+    ids = [ua.pk for ua in queryset.all()]
+    tasks.create_batch.delay(campaign_slug=request.subdomain, ids=ids)
     modeladmin.message_user(
-        request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count()
+        request, _(u"Požadavek na tvorbu dávku %s položek byl poslan do celery") % queryset.count()
     )
 
 
