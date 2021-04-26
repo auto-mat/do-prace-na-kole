@@ -1,17 +1,18 @@
 from model_mommy import mommy
 import pytest
 
-from  dpnk.models import Campaign, CampaignType
+from dpnk.models import Campaign, CampaignType
 
 
 @pytest.fixture(autouse=True)
 def setup_mommy():
     mommy.generators.add(
-        "smart_selects.db_fields.ChainedForeignKey", "model_mommy.random_gen.gen_related"
+        "smart_selects.db_fields.ChainedForeignKey",
+        "model_mommy.random_gen.gen_related",
     )
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def campaign_type(db):
     o = CampaignType.objects.create(
         name="CT1",
@@ -21,7 +22,7 @@ def campaign_type(db):
     o.delete()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def campaign(campaign_type):
     o = Campaign.objects.create(
         campaign_type=campaign_type,

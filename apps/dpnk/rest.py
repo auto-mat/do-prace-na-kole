@@ -512,9 +512,7 @@ class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
         help_text="Max number of possible trips",
     )
     is_me = RequestSpecificField(
-        lambda ua, req: True
-        if ua.userprofile.user.pk == req.user.pk
-        else False,
+        lambda ua, req: True if ua.userprofile.user.pk == req.user.pk else False,
     )
 
     class Meta:

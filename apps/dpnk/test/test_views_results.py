@@ -6,5 +6,3 @@ from dpnk.test.util import print_response  # noqa
 from dpnk.views_results import CompetitionResultListJson
 
 from model_mommy import mommy
-
-

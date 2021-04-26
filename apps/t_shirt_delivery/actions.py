@@ -31,7 +31,9 @@ def create_batch(modeladmin, request, queryset):
     ids = [ua.pk for ua in queryset.all()]
     tasks.create_batch.delay(campaign_slug=request.subdomain, ids=ids)
     modeladmin.message_user(
-        request, _(u"Požadavek na tvorbu dávku %s položek byl poslan do celery") % queryset.count()
+        request,
+        _(u"Požadavek na tvorbu dávku %s položek byl poslan do celery")
+        % queryset.count(),
     )
 
 

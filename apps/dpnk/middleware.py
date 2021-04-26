@@ -127,6 +127,7 @@ class CeleryDenormMiddleware(MiddlewareMixin, object):
     https://github.com/django-denorm/django-denorm/blob/develop/denorm/middleware.py
     but in celery
     """
+
     def process_response(self, request, response):
         try:
             flush_denorm.delay()

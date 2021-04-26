@@ -1,6 +1,7 @@
 from dpnk import widgets
 from bs4 import BeautifulSoup
 
+
 def test_render():
     """ Test render method """
     renderer = widgets.CommuteModeSelect(
@@ -24,6 +25,7 @@ def test_render():
     assert d2.input.attrs["id"] == "id_test_name_2"
     assert d2.input.attrs["value"] == "2"
     assert d2.label.string == "Item 2"
+
 
 def test_render_str():
     """ Test render method if the value is string and item int """

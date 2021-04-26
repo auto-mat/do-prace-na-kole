@@ -100,7 +100,10 @@ class CityInCampaign(models.Model):
             return distance_all_modes(
                 Trip.objects.filter(
                     user_attendance__in=self.competitors(),
-                    date__range=[competition_phase.date_from, competition_phase.date_to],
+                    date__range=[
+                        competition_phase.date_from,
+                        competition_phase.date_to,
+                    ],
                 ),
             )
 

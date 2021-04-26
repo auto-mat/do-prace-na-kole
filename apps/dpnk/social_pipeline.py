@@ -35,6 +35,7 @@ def create_userprofile(strategy, details, response, user=None, *args, **kwargs):
 
 # https://stackoverflow.com/questions/13018147/authalreadyassociated-exception-in-django-social-auth
 
+
 def social_user(backend, uid, user=None, *args, **kwargs):
     provider = backend.name
     social = backend.strategy.storage.user.get_social_auth(provider, uid)
@@ -43,7 +44,9 @@ def social_user(backend, uid, user=None, *args, **kwargs):
             logout(backend.strategy.request)
         elif not user:
             user = social.user
-    return {'social': social,
-            'user': user,
-            'is_new': user is None,
-            'new_association': False}
+    return {
+        "social": social,
+        "user": user,
+        "is_new": user is None,
+        "new_association": False,
+    }

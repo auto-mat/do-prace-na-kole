@@ -11,9 +11,7 @@ from dpnk.views_results import CompetitionResultListJson
 
 @pytest.fixture()
 def client():
-    return Client(
-        HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
-    )
+    return Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
 
 
 @pytest.fixture()
@@ -40,8 +38,8 @@ def competition_phase(campaign):
         "dpnk.Phase",
         campaign=campaign,
         phase_type="competition",
-        date_from=datetime.date(2021,2,1),
-        date_to=datetime.date(2021,12,31)
+        date_from=datetime.date(2021, 2, 1),
+        date_to=datetime.date(2021, 12, 31),
     )
     o.save()
     yield o
@@ -92,12 +90,12 @@ def results(result1, result2):
 @pytest.fixture()
 def single_frequency_competition(campaign, competition_phase):
     o = mommy.make(
-            "dpnk.Competition",
-            campaign=campaign,
-            competition_type="frequency",
-            competitor_type="single_user",
-            slug="competition",
-        )
+        "dpnk.Competition",
+        campaign=campaign,
+        competition_type="frequency",
+        competitor_type="single_user",
+        slug="competition",
+    )
     yield o
     o.delete()
 
@@ -330,6 +328,7 @@ def test_paging_filter(factory, freq_results, campaign, single_frequency_competi
     }
     assert json.loads(response.content) == expected_json
 
+
 def test_search_user_nickname(factory, freq_results):
     """ Test if searching by user nickname field works """
     get_params = {"search[value]": "oo user"}
@@ -359,6 +358,7 @@ def test_search_user_nickname(factory, freq_results):
         "recordsFiltered": 1,
     }
     assert json.loads(response.content) == expected_json
+
 
 def test_search_user_name(factory, freq_results):
     """ Test if searching by user name field works """
@@ -390,6 +390,7 @@ def test_search_user_name(factory, freq_results):
     }
     assert json.loads(response.content) == expected_json
 
+
 def test_search_sex_female(factory, freq_results):
     """ Test if searching by female sex name field works """
     get_params = {"search[value]": "Žena"}
@@ -420,6 +421,7 @@ def test_search_sex_female(factory, freq_results):
     }
     assert json.loads(response.content) == expected_json
 
+
 def test_search_sex_male(factory, freq_results):
     """ Test if searching by male sex name field works """
     get_params = {"search[value]": "Muž"}
@@ -436,6 +438,7 @@ def test_search_sex_male(factory, freq_results):
         "recordsFiltered": 0,
     }
     assert json.loads(response.content) == expected_json
+
 
 def test_search_user_name_not_found(factory, freq_results):
     """
