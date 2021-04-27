@@ -516,13 +516,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return True
 
     def entered_competition(self):
-        return (
+        return True if (
             self.tshirt_complete()
             and self.is_team_approved()
             and self.has_paid()
             and self.userprofile.profile_complete()
             and self.personal_data_opt_in
-        )
+        ) else False
 
     def team_member_count(self):
         if self.team:
