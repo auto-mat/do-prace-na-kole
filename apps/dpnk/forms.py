@@ -159,26 +159,25 @@ def social_html(login=True):
     apple_action_word = _("Pokračovat přes") if login else _("Zaregistrovat se přes")
     return HTML(
         format_html_lazy(
-            ''
+            ""
             "<p>"
             '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
-            "<i class=\"fab fa-facebook\"></i>&nbsp;"
+            '<i class="fab fa-facebook"></i>&nbsp;'
             "{} Facebook"
             "</a>"
             "</p>"
             "<p>"
             '<a class="btn google" href="{{% url "social:begin" "google-oauth2" %}}">'
-            "<i class=\"fab fa-google\"></i>&nbsp;"
+            '<i class="fab fa-google"></i>&nbsp;'
             "{} Google"
             "</a>"
             "</p>"
             "<p>"
             '<a class="btn apple" href="{{% url "social:begin" "apple-id" %}}">'
-            "<i class=\"fab fa-apple\"></i>&nbsp;"
+            '<i class="fab fa-apple"></i>&nbsp;'
             "{} Apple"
             "</a>"
-            "</p>"
-            ,
+            "</p>",
             action_word,
             action_word,
             apple_action_word,
