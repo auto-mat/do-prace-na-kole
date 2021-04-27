@@ -156,31 +156,32 @@ class CampaignMixin(object):
 
 def social_html(login=True):
     action_word = _("Přihlásit přes") if login else _("Registrovat přes")
+    apple_action_word = _("Pokračovat přes") if login else _("Zaregistrovat se přes")
     return HTML(
         format_html_lazy(
-            '<label class="socialLabel">{}</label>'
-            '<div class="cols">'
+            ''
             "<p>"
-            '<a class="btn" href="{{% url "social:begin" "facebook" %}}">'
+            '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
             "<i class=\"fab fa-facebook\"></i>&nbsp;"
-            "Facebook"
+            "{} Facebook"
             "</a>"
             "</p>"
             "<p>"
-            '<a class="btn" href="{{% url "social:begin" "google-oauth2" %}}">'
+            '<a class="btn google" href="{{% url "social:begin" "google-oauth2" %}}">'
             "<i class=\"fab fa-google\"></i>&nbsp;"
-            "Google"
+            "{} Google"
             "</a>"
             "</p>"
             "<p>"
-            '<a class="btn" href="{{% url "social:begin" "apple-id" %}}">'
+            '<a class="btn apple" href="{{% url "social:begin" "apple-id" %}}">'
             "<i class=\"fab fa-apple\"></i>&nbsp;"
-            "Pokračovat přes Apple"
+            "{} Apple"
             "</a>"
             "</p>"
-            "</div>"
             ,
             action_word,
+            action_word,
+            apple_action_word,
         ),
     )
 

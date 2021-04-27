@@ -776,25 +776,18 @@ table.competition_results_table, .tableheading{
       }
   }
   &.google, &.facebook, &.apple{
-    display:inline-block;
-    background-color:@fourth;
-    color:#fff;
+    color:#000 !important;
     text-decoration:none;
-    width: ~"calc(50% - .7rem)";
-    display: inline-block;
-    vertical-align: text-top;
+    border-radius: 3px;
     .anim2;
     &:hover{
       .anim;
       color:#000;
       background-color:darken(@fourth, 5%);
     }
-  }
-  &.google{
-    margin-right: 1rem;
-  }
-  &.facebook{
-    margin-left: 1%;
+    &.facebook{
+        margin-top: 2em;
+    }
   }
 }
 .holder{
