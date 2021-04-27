@@ -165,7 +165,7 @@ def social_html(login=True):
             "Facebook"
             "</a>"
             '<a class="btn apple" href="{{% url "social:begin" "apple-id" %}}">'
-            "AppleId"
+            "Pokračovat přes Apple"
             "</a>",
             action_word,
         ),
