@@ -118,8 +118,8 @@ restart is requried.
 class MobileAppIntegration(MiddlewareMixin):
     def process_request(self, request):
         if request.GET.get("source"):
-            request.session['source'] = request.GET.get("source")
-        request.source = request.session.get('source')
+            request.session["source"] = request.GET.get("source")
+        request.source = request.session.get("source")
 
 
 class SesameAuthenticationMiddleware(AuthenticationMiddleware):

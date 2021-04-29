@@ -32,6 +32,7 @@ class UserAttendanceView(
 class LandingView(RegistrationCompleteMixin, UserAttendanceView):
     template_name = "registration/landing.html"
     title = _("Vítejte v dalším ročníku soutěže!")
+
     def dispatch(self, request, *args, **kwargs):
         if self.request.session.get("source") in ("ios-app", "android-app"):
             return redirect(reverse("open-application-with-rest-token", args=["2"]))

@@ -120,9 +120,15 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
         return self.testing_passthrough(request, *args, **kwargs)
 
     def testing_passthrough(self, request, *args, **kwargs):
-        if request.session.get("source") in settings.TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES:
-            request.user_attendance.t_shirt_size = request.user_attendance.campaign.tshirtsize_set.first()
+        if (
+            request.session.get("source")
+            in settings.TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES
+        ):
+            request.user_attendance.t_shirt_size = (
+                request.user_attendance.campaign.tshirtsize_set.first()
+            )
             import dpnk.models
+
             Payment(
                 user_attendance=request.user_attendance,
                 amount=0,

@@ -159,7 +159,7 @@ def social_html(login=True):
     apple_action_word = _("Pokračovat přes") if login else _("Zaregistrovat se přes")
     return HTML(
         format_html_lazy(
-            "<div class=\"social-login-buttons\">"
+            '<div class="social-login-buttons">'
             "<p>"
             '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
             '<i class="fab fa-facebook"></i>&nbsp;'
