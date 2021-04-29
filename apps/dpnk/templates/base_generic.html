@@ -74,7 +74,7 @@
 			                                 </a>
 			                              </li>
 			                              {% if user_attendance.campaign.has_any_tshirt %}
-			                                 <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled">
+			                                 <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled tshirt-menu-item">
 			                                    <a href="{% url 'zmenit_triko' %}" style="display: list-item;">
 	                                             {% if user_attendance.tshirt_complete %}
 	                                                {% trans "Změnit triko" %}
@@ -89,6 +89,7 @@
 			                                    {% if not user_attendance.tshirt_complete %}disabled{% endif %}
 			                                    {% if registration_phase == 'typ_platby' %}active{% endif %}
 			                                    {% if not user_attendance.payment_complete %}un{% endif %}fulfilled
+                                          payment-menu-item
 			                                    ">
 			                                    <a href="{% url 'typ_platby' %}"  style="display: list-item;"> {% trans "Platba" %}</a>
 			                                 </li>

@@ -22,6 +22,7 @@ import datetime
 
 from braces.views import LoginRequiredMixin
 
+from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
@@ -30,7 +31,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 
 from dpnk import exceptions
-from dpnk.models import UserAttendance
+from dpnk.models import UserAttendance, Payment
 from dpnk.views import RegistrationViewMixin
 
 from .forms import TShirtUpdateForm
@@ -116,6 +117,20 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                     return redirect(reverse("typ_platby"))
                 else:
                     return redirect(reverse("profil"))
+        return self.testing_passthrough(request, *args, **kwargs)
+
+    def testing_passthrough(self, request, *args, **kwargs):
+        if request.session.get("source") in settings.TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES:
+            request.user_attendance.t_shirt_size = request.user_attendance.campaign.tshirtsize_set.first()
+            import dpnk.models
+            Payment(
+                user_attendance=request.user_attendance,
+                amount=0,
+                pay_type="fe",
+                status=dpnk.models.Status.DONE,
+            ).save()
+            request.user_attendance.save()
+            return redirect(reverse("profil"))
         return super().dispatch(request, *args, **kwargs)
 
 

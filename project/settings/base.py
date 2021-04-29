@@ -789,3 +789,5 @@ DPNK_MOBILE_APP_URLS = os.environ.get(
 ).split(
     " "
 )  # noqa
+
+TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES = ["ios-app"]
