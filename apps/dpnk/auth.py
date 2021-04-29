@@ -74,7 +74,7 @@ def clean_email(email):
         return email
     else:
         try:
-            register = (reverse("registrace", args=(email,)),)
+            register = reverse("registrace", args=(email,))
         except NoReverseMatch:
             error_text = _("Neplatný email")
         else:
