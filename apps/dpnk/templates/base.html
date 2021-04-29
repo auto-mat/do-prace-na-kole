@@ -45,7 +45,7 @@
 		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
     <link href="{% static "@fortawesome/fontawesome-free/css/fontawesome.min.css"%}" rel="stylesheet">
     <style>
-     {% if request.source == "ios-app" %}
+     {% if request.source in TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES %}
      .social-login-buttons, .tshirt-menu-item, .payment-menu-item {
          display: none;
      }
