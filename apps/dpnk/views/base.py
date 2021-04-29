@@ -7,6 +7,7 @@ from braces.views import LoginRequiredMixin
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView, View
 
@@ -31,6 +32,10 @@ class UserAttendanceView(
 class LandingView(RegistrationCompleteMixin, UserAttendanceView):
     template_name = "registration/landing.html"
     title = _("Vítejte v dalším ročníku soutěže!")
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.session.get("source") in ("ios-app", "android-app"):
+            return redirect(reverse("open-application-with-rest-token", args=["2"]))
+        return super().dispatch(request, *args, **kwargs)
 
 
 def status(request):
