@@ -44,12 +44,20 @@
 		<link href="{% static "jquery-ui-dist/jquery-ui.theme.min.css"%}" rel="stylesheet" media="screen">
 		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
     <link href="{% static "@fortawesome/fontawesome-free/css/fontawesome.min.css"%}" rel="stylesheet">
+    <style>
+     {% if request.source == "ios-app" %}
+     .social-login-buttons{
+         display: none;
+     }
+     {% endif %}
+    </style>
 	{% endblock %}
 
 	{% block extrahead %}
 	{% endblock %}
 </head>
 <body class="django_administrace {% if campaign %}vsechno_je_to_kampan{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %} {% if user.is_authenticated %}authetificated{% else %}notAuthetificated{% endif %} {% block body-class %}{% endblock %}">
+    {{request.source}}
 {% gtm %}
 {% block body %}
 {% block error %}
