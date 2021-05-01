@@ -123,7 +123,7 @@ def sync(strava_account_id, manual_sync=True):
     except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault):
         destroy_account_and_notify(strava_account, sclient)
         return stats
-    #except Exception:
+    # except Exception:
     #    tb = traceback.format_exc()
     #    strava_account.errors += tb
     #    logger.error(tb)
