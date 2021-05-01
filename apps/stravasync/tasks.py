@@ -190,6 +190,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         )
     except hashtags.NoValidHashtagException:
         stats["activities"].append(activity.name + " no hashtag")
+        return
     stats["synced_trips"] += 1
     stats["activities"].append(activity.name)
     user_attendance = strava_account.user.userprofile.userattendance_set.get(
