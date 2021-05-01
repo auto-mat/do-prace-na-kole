@@ -107,12 +107,19 @@ def sync(strava_account_id, manual_sync=True):
                 sync_activity(activity, hashtag_table, strava_account, sclient, stats)
             except Exception as e:
                 from raven.contrib.django.raven_compat.models import client
+
                 client.captureException()
                 strava_account.errors += (
                     "Error syncing activity {activity} \n{e}\n\n".format(
                         activity=activity.name, e=str(e)
                     )
                 )
+                try:
+                    stats["activities"].append(
+                        "{name}: {err}".format(name=activity.name, err=str(e))
+                    )
+                except Exception:
+                    pass
     except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault):
         destroy_account_and_notify(strava_account, sclient)
         return stats
