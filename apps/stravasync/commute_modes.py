@@ -24,4 +24,4 @@ def get_commute_mode_slug(strava_mode):
 
 
 def get_commute_mode(strava_mode):
-    return CommuteMode.objects.get(get_commute_mode_slug(strava_mode))
+    return CommuteMode.objects.get(slug=get_commute_mode_slug(strava_mode))

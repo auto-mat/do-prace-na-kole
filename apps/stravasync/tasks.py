@@ -123,10 +123,10 @@ def sync(strava_account_id, manual_sync=True):
     except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault):
         destroy_account_and_notify(strava_account, sclient)
         return stats
-    except Exception:
-        tb = traceback.format_exc()
-        strava_account.errors += tb
-        logger.error(tb)
+    #except Exception:
+    #    tb = traceback.format_exc()
+    #    strava_account.errors += tb
+    #    logger.error(tb)
     strava_account.save()
     return stats
 
@@ -183,14 +183,15 @@ def get_activity_as_rest_trip(activity):
 
 def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # noqa
     stats["synced_activities"] += 1
-    stats["activities"].append(activity.name)
+    activity = sclient.get_activity(activity.id)
     try:
         campaign, direction = hashtag_table.get_campaign_and_direction_for_activity(
             activity
         )
     except hashtags.NoValidHashtagException:
-        return
+        stats["activities"].append(activity.name + " no hashtag")
     stats["synced_trips"] += 1
+    stats["activities"].append(activity.name)
     user_attendance = strava_account.user.userprofile.userattendance_set.get(
         campaign=campaign
     )
@@ -199,12 +200,16 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         return
     trip = user_attendance.user_trips.filter(direction=direction, date=date)
     if (not trip.exists()) or (not trip.get().source_id):
-        if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
-            activity = sclient.get_activity(activity.id)
+        # if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
+        #    activity = sclient.get_activity(activity.id)
         try:
             commute_mode = get_commute_mode(activity.type).id
         except KeyError as e:
-            raise Exception("Unknown activity type " + str(e))
+            stats["activities"].append(
+                "{name}: Unknown activity type {err}".format(
+                    name=activity.name, err=str(e)
+                )
+            )
         form_data = {
             "date": date,
             "direction": direction,
