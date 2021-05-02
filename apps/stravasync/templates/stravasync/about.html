@@ -8,6 +8,11 @@
 {% if account %}
     {% trans "Jste propojeni s účtem " %}{{account.first_name}} {{account.last_name}}{% if account.username %} ({{account.username}}) {% endif %}.
     <br/>
+    <script>
+     var timer = setTimeout(function() {
+         window.location='{{app_redirect}}'
+     }, 1000);
+    </script>
     <br/>
     {% if sync_outcome %}
         {% blocktrans with new_trips=sync_outcome.new_trips synced_trips=sync_outcome.synced_trips %}
