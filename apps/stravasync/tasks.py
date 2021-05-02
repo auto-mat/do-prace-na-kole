@@ -202,7 +202,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
     trip = user_attendance.user_trips.filter(direction=direction, date=date)
     if (not trip.exists()) or (not trip.get().source_id):
         if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
-           activity = sclient.get_activity(activity.id)
+            activity = sclient.get_activity(activity.id)
         try:
             commute_mode = get_commute_mode(activity.type).id
         except KeyError as e:
