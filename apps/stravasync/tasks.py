@@ -183,7 +183,7 @@ def get_activity_as_rest_trip(activity):
 
 def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # noqa
     stats["synced_activities"] += 1
-    activity = sclient.get_activity(activity.id)
+    # activity = sclient.get_activity(activity.id)
     try:
         campaign, direction = hashtag_table.get_campaign_and_direction_for_activity(
             activity
@@ -201,8 +201,8 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         return
     trip = user_attendance.user_trips.filter(direction=direction, date=date)
     if (not trip.exists()) or (not trip.get().source_id):
-        # if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
-        #    activity = sclient.get_activity(activity.id)
+        if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
+           activity = sclient.get_activity(activity.id)
         try:
             commute_mode = get_commute_mode(activity.type).id
         except KeyError as e:
