@@ -927,7 +927,11 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
 class FormWithTrackMixin:
     def clean_parse_and_calculate_track(self):
-        if "gpx_file" in self.changed_data and self.cleaned_data["gpx_file"]:
+        if (
+            "gpx_file" in self.changed_data
+            and "gpx_file" in self.cleaned_data
+            and self.cleaned_data["gpx_file"]
+        ):
             if self.cleaned_data["gpx_file"].name.endswith(".gz"):
                 track_file = gzip.open(self.cleaned_data["gpx_file"])
             else:
@@ -1193,7 +1197,11 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
                 and cleaned_data["distance"] < cm.minimum_distance
             ):
                 raise forms.ValidationError(
-                    ngettext("Cesta musí mít minimálně %(km)d kilometru")
+                    ngettext(
+                        "Cesta musí mít minimálně %(km)d kilometru",
+                        "Cesta musí mít minimálně %(km)d kilometrů",
+                        cm.minimum_distance / 1000,
+                    )
                     % {"km": cm.minimum_distance / 1000}
                 )
             try:
