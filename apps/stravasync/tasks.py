@@ -211,6 +211,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
                     name=activity.name, err=str(e)
                 )
             )
+            return
         form_data = {
             "date": date,
             "direction": direction,
