@@ -260,7 +260,7 @@ TEMPLATES = [
                 (
                     "django.template.loaders.cached.Loader",
                     [
-                        "dbtemplates.loader.Loader",
+                        #"dbtemplates.loader.Loader",
                         "django.template.loaders.filesystem.Loader",
                         "django.template.loaders.app_directories.Loader",
                     ],
@@ -355,13 +355,13 @@ INSTALLED_APPS = [
     # 'cachalot',
     "sortedm2m",
     # 'dj_anonymizer',
-    "dbtemplates",
+    #"dbtemplates",
     "reversion",
     "inline_static",
     "notifications",
 ]
 
-DBTEMPLATES_USE_REVERSION = True
+#DBTEMPLATES_USE_REVERSION = True
 
 ECC_PROVIDER_CODE = "DK"
 ECC_URL_BASE = "http://srv.cycling365.eu/services"
