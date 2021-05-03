@@ -1092,7 +1092,9 @@ class GallerySerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class GallerySet(UserAttendanceMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class GallerySet(
+    UserAttendanceMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
     def get_queryset(self):
         return photologue.models.Gallery.objects.all()
 
