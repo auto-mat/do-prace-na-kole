@@ -116,7 +116,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 if request.user_attendance.has_admission_fee():
                     return redirect(reverse("typ_platby"))
                 else:
-                    return redirect(reverse("profil"))
+                    return redirect(reverse("registraiton_complete"))
         return self.testing_passthrough(request, *args, **kwargs)
 
     def testing_passthrough(self, request, *args, **kwargs):

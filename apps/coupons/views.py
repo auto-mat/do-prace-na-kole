@@ -51,7 +51,7 @@ class DiscountCouponView(
 
     def get_success_url(self):
         if self.discount_coupon.discount == 100:
-            return reverse_lazy("profil")
+            return reverse_lazy("registraiton_complete")
         else:
             return self.success_url
 

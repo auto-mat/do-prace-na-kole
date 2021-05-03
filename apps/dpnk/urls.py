@@ -117,6 +117,11 @@ urlpatterns = [
         name="zaslat_zadost_clenstvi",
     ),
     url(
+        r"^registration_complete/$",
+        views.RegistrationCompleteView.as_view(),
+        name="registraiton_complete",
+    ),
+    url(
         r"^jizdy$",
         views.RidesView.as_view(),
         name="rides",
