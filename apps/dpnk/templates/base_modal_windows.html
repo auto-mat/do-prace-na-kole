@@ -12,7 +12,7 @@ window.helpdesk_iframe_url = '';
 </script>
 <script src="{% static 'js/dist/modals.js' %}" type="text/javascript"></script>
 
-{% register_notify_callbacks callbacks='window.dpnk_fill_notification_list,fill_notification_badge' api_name='list_all' refresh_period=60 %}
+{% register_notify_callbacks callbacks='window.dpnk_fill_notification_list,fill_notification_badge' api_name='list_all' refresh_period=6000 %}
 <script>
     window.notify_menu_class = notify_menu_class;
 </script>
