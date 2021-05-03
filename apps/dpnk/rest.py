@@ -583,7 +583,7 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
         )
 
 
-class AllUserAttendanceSet(viewsets.ReadOnlyModelViewSet):
+class AllUserAttendanceSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         denorm.flush()
         return UserAttendance.objects.all().select_related("userprofile__user")
