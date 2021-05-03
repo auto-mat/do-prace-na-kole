@@ -385,7 +385,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class CompanySet(viewsets.ReadOnlyModelViewSet):
+class CompanySet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         return Company.objects.filter(
             subsidiaries__teams__campaign__slug=self.request.subdomain, active=True
@@ -688,7 +688,7 @@ class TeamSerializer(MinimalTeamSerializer):
         )
 
 
-class TeamSet(viewsets.ReadOnlyModelViewSet):
+class TeamSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         return Team.objects.filter(
             campaign__slug=self.request.subdomain,
@@ -1092,7 +1092,7 @@ class GallerySerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class GallerySet(UserAttendanceMixin, viewsets.ModelViewSet):
+class GallerySet(UserAttendanceMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         return photologue.models.Gallery.objects.all()
 
