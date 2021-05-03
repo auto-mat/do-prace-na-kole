@@ -182,7 +182,7 @@ class DeliveryBatch(models.Model):
             for team in subsidiary.teams.filter(users__in=user_attendances).distinct():
                 if (
                     t_shirt_count_in_box is None
-                    or t_shirt_count_in_box + team.members().count()
+                    or t_shirt_count_in_box + team.members.count()
                     > self.campaign.package_max_count
                 ):
                     if subsidiary_box is not None:

@@ -417,11 +417,22 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def trip_length_total_including_recreational_rounded(self):
         return round(self.total_trip_length_including_recreational, 2)
 
-    def get_working_rides_base_count(self):
+    @denormalized(
+        models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
+    )
+    @depend_on_related("Trip")
+    def working_rides_base_count(self):
         """ Return number of rides, that should be acomplished to this date """
         from .. import results
 
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
+
+    def get_working_rides_base_count(self):
+        """ Return number of rides, that should be acomplished to this date """
+        if self.working_rides_base_count is not None:
+            return self.working_rides_base_count
+        else:
+            return 0
 
     def get_remaining_rides_count(self):
         """ Return number of rides, that are remaining to the end of competition """
@@ -572,9 +583,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.get_trips(days)
 
     def eco_trip_count(self):
-        from .. import results
-
-        return results.get_rides_count(self, self.campaign.phase("competition"))
+        return self.get_rides_count_denorm
 
     def avatar_url(self):
         import avatar.models
@@ -696,7 +705,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def get_frequency_rank_in_team(self):
         return (
-            self.team.members()
+            self.team.members
             .order_by(
                 F("frequency").desc(nulls_last=True),
                 "get_rides_count_denorm",
@@ -763,7 +772,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def clean(self):
         if self.team and self.approved_for_team != "denied":
-            team_members_count = self.team.members().exclude(pk=self.pk).count() + 1
+            team_members_count = self.team.members.exclude(pk=self.pk).count() + 1
             if self.team.campaign.too_much_members(team_members_count):
                 raise ValidationError({"team": _("Tento tým již má plný počet členů")})
 

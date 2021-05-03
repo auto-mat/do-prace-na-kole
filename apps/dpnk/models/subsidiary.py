@@ -22,6 +22,7 @@ from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+from memoize import mproperty
 from smart_selects.db_fields import ChainedForeignKey
 
 from .address import Address, get_address_string
@@ -158,27 +159,47 @@ class SubsidiaryInCampaign:
         self.subsidiary = subsidiary
         self.campaign = campaign
 
+    @mproperty
     def teams(self):
         return self.subsidiary.teams.filter(campaign=self.campaign)
 
+    @mproperty
     def eco_trip_count(self):
-        return sum(team.get_eco_trip_count() for team in self.teams())
+        return sum(team.get_eco_trip_count() for team in self.teams)
 
+    @mproperty
     def working_rides_base_count(self):
-        return sum(team.get_working_trips_count() for team in self.teams())
+        return sum(team.get_working_trips_count() for team in self.teams)
 
-    def frequency(self):
-        teams = self.teams()
+    @mproperty
+    def frequency_(self):
+        teams = self.teams
         if teams:
-            return sum(team.get_frequency() for team in teams) / len(teams)
+            f = 0
+            ua_count = 0
+            for team in teams:
+                tf, tc = team.get_frequency_()
+                f += tf
+                ua_count += tc
+            if ua_count == 0:
+                return 0, 0
+            return f/ua_count, ua_count
         else:
-            return 0
+            return 0, 0
 
+    @mproperty
+    def frequency(self):
+        return self.frequency_[0]
+
+
+    @mproperty
     def distance(self):
-        return sum(team.get_length() for team in self.teams())
+        return sum(team.get_length() for team in self.teams)
 
+    @mproperty
     def emissions(self):
-        return util.get_emissions(self.distance())
+        return util.get_emissions(self.distance)
 
+    @mproperty
     def __str__(self):
         return str(self.subsidiary)

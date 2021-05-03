@@ -75,7 +75,7 @@ class FrequencyView(OtherTeamMembers):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data["approved_team_members"] = self.user_attendance.team.members()
+        context_data["approved_team_members"] = self.user_attendance.team.members
         return context_data
 
 

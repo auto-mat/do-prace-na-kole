@@ -450,7 +450,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEqual(result, (3, 48, 3 / 48.0))
 
         result = results.get_team_frequency(
-            self.user_attendance.team.members(), competition
+            self.user_attendance.team.members, competition
         )
         self.assertEqual(result, (3, 96, 3 / 96.0))
 

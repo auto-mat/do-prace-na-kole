@@ -42,7 +42,7 @@ def _(string, locale=None):
 
 
 def approval_request_mail(user_attendance):
-    for team_member in user_attendance.team.members():
+    for team_member in user_attendance.team.members:
         if user_attendance == team_member:
             continue
         context = {

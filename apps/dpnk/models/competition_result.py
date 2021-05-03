@@ -237,7 +237,7 @@ class CompetitionResult(models.Model):
         ):
             return [self.user_attendance]
         elif competition.competitor_type == "team":
-            return self.team.members()
+            return self.team.members
         elif competition.competitor_type == "company":
             return UserAttendance.objects.filter(team__subsidiary__company=self.company)
 

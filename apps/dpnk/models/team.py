@@ -25,12 +25,16 @@ import string
 
 from author.decorators import with_author
 
+from cache_utils.decorators import cached
+
 from denorm import denormalized, depend_on_related
 
 from django import forms
 from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator
 from django.utils.translation import ugettext_lazy as _
+
+from memoize import mproperty
 
 from .phase import Phase
 from .subsidiary import Subsidiary, SubsidiaryInCampaign
@@ -116,7 +120,7 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def member_count(self):
-        member_count = self.members().count()
+        member_count = self.members.count()
         if self.campaign.too_much_members(member_count):
             logger.error("Too many members in team", extra={"team": self})
         return member_count
@@ -168,6 +172,7 @@ class Team(WithGalleryMixin, models.Model):
             approved_for_team="denied",
         )
 
+    @mproperty
     def members(self):
         """ Return approved members of this team. """
         return self.users.filter(
@@ -177,7 +182,7 @@ class Team(WithGalleryMixin, models.Model):
 
     def paid_members(self):
         """ Return approved members of this team. """
-        return self.members().filter(
+        return self.members.filter(
             payment_status__in=("done", "no_admission"),
         )
 
@@ -185,24 +190,17 @@ class Team(WithGalleryMixin, models.Model):
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def get_rides_count_denorm(self):
         rides_count = 0
-        for member in self.members():
+        for member in self.members:
             rides_count += member.get_rides_count()
         return rides_count
 
     def get_working_trips_count(self):
-        trip_count = 0
-        for member in self.members():
-            from .. import results
-
-            trip_count += results.get_working_trips_count(
-                member, self.campaign.phase("competition")
-            )
-        return trip_count
+        return sum([member.get_working_rides_base_count() for member in self.members])
 
     def get_remaining_rides_count(self):
         """ Return number of rides, that are remaining to the end of competition """
         return (
-            self.members().count() * self.members().first().get_remaining_rides_count()
+            self.members.count() * self.members.first().get_remaining_rides_count()
         )
 
     def get_remaining_max_theoretical_frequency_percentage(self):
@@ -226,24 +224,26 @@ class Team(WithGalleryMixin, models.Model):
             / (minimal_percentage - 1)
         )
 
+
     def get_frequency_result_(self):
         from .. import results
 
         return results.get_team_frequency(
-            self.members(), self.campaign.phase("competition")
+            self.members, self.campaign.phase("competition")
         )
 
+    def get_frequency_(self):
+        members = self.members
+        count = len(members)
+        if count == 0:
+            return 0, 0
+        return sum([mem.frequency for mem in members]) / count, count
+
     def get_frequency(self):
-        try:
-            return self.get_frequency_result_()[2]
-        except Phase.DoesNotExist:
-            return 0
+        return self.get_frequency_()[0]
 
     def get_eco_trip_count(self):
-        try:
-            return self.get_frequency_result_()[0]
-        except Phase.DoesNotExist:
-            return 0
+        return sum([member.eco_trip_count() for member in self.members])
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_length())
@@ -257,14 +257,12 @@ class Team(WithGalleryMixin, models.Model):
         return (self.frequency or 0) * 100
 
     def get_length(self):
-        from .. import results
-
-        return results.get_team_length(self, self.campaign.phase("competition"))
+        return sum([member.trip_length_total for member in self.members])
 
     @denormalized(models.TextField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def name_with_members(self):
-        members = self.members()
+        members = self.members
         if members:
             names = [u.userprofile.name() for u in members]
             names.sort()

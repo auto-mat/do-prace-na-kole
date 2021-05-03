@@ -29,6 +29,7 @@ from donation_chooser.rest import organization_router
 
 from drf_extra_fields.geo_fields import PointField
 
+from memoize import mproperty
 from notifications.models import Notification
 
 import photologue
@@ -340,8 +341,12 @@ class CompetitionSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
 
 class CompanyInCampaignField(RequestSpecificField):
     def to_representation(self, value):
-        comp_in_campaign = CompanyInCampaign(value, self.context["request"].campaign)
-        return self.method(comp_in_campaign, self.context["request"])
+        try:
+            cic = value.__company_in_campaign
+        except AttributeError:
+            value.__company_in_campaign = CompanyInCampaign(value, self.context["request"].campaign)
+            cic = value.__company_in_campaign
+        return self.method(cic, self.context["request"])
 
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
@@ -352,19 +357,19 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
         ]
     )
     eco_trip_count = CompanyInCampaignField(
-        lambda cic, req: cic.eco_trip_count(),
+        lambda cic, req: cic.eco_trip_count,
     )
     frequency = CompanyInCampaignField(
-        lambda cic, req: cic.frequency(),
+        lambda cic, req: cic.frequency,
     )
     emissions = CompanyInCampaignField(
-        lambda cic, req: cic.emissions(),
+        lambda cic, req: cic.emissions,
     )
     distance = CompanyInCampaignField(
-        lambda cic, req: cic.distance(),
+        lambda cic, req: cic.distance,
     )
     working_rides_base_count = CompanyInCampaignField(
-        lambda cic, req: cic.working_rides_base_count(),
+        lambda cic, req: cic.working_rides_base_count,
     )
 
     class Meta:
@@ -405,25 +410,29 @@ class MyCompanySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
 
 class SubsidiaryInCampaignField(RequestSpecificField):
     def to_representation(self, value):
-        sub_in_campaign = SubsidiaryInCampaign(value, self.context["request"].campaign)
-        return self.method(sub_in_campaign, self.context["request"])
+        try:
+            sic = value.__subsidiary_in_campaign
+        except AttributeError:
+            value.__subsidiary_in_campaign = SubsidiaryInCampaign(value, self.context["request"].campaign)
+            sic = value.__subsidiary_in_campaign
+        return self.method(sic, self.context["request"])
 
 
 class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
     frequency = SubsidiaryInCampaignField(
-        lambda sic, req: sic.frequency(),
+        lambda sic, req: sic.frequency,
     )
     distance = SubsidiaryInCampaignField(
-        lambda sic, req: sic.distance(),
+        lambda sic, req: sic.distance,
     )
     eco_trip_count = SubsidiaryInCampaignField(
-        lambda sic, req: sic.eco_trip_count(),
+        lambda sic, req: sic.eco_trip_count,
     )
     working_rides_base_count = SubsidiaryInCampaignField(
-        lambda sic, req: sic.working_rides_base_count(),
+        lambda sic, req: sic.working_rides_base_count,
     )
     emissions = SubsidiaryInCampaignField(
-        lambda sic, req: sic.emissions(),
+        lambda sic, req: sic.emissions,
     )
     rest_url = RequestSpecificField(
         lambda sub, req: serializers.HyperlinkedRelatedField(
@@ -451,7 +460,7 @@ class SubsidiarySerializer(MinimalSubsidiarySerializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req: [
             MinimalTeamSerializer(team, context={"request": req}).data
-            for team in sic.teams()
+            for team in sic.teams
         ]
     )
 

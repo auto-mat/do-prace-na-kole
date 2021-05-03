@@ -26,7 +26,7 @@ from .models import Competition, CompetitionResult
 def all_members_paid(team):
     """Has all members of team paid?"""
 
-    for userattendance in team.members():
+    for userattendance in team.members:
         if (
             userattendance.userprofile.user.is_active
             and userattendance.payment_status != "done"
@@ -65,7 +65,7 @@ def draw_weighed(results):
 
     result_members = []
     for result in results:
-        for team_member in result.team.members():
+        for team_member in result.team.members:
             result_members.append(result)
     result_members = sorted(result_members, key=lambda x: random.random())
 

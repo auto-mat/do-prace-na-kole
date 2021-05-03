@@ -133,6 +133,7 @@ django-silk = "*"
 pre-commit = "*"
 django-report-builder = "*"
 dj-rest-auth = "*"
+memoize = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

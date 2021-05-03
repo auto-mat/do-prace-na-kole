@@ -26,6 +26,8 @@ from django.core.validators import RegexValidator
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+from memoize import mproperty
+
 from stdnumfield.models import StdNumField
 
 from .address import CompanyAddress, get_address_string
@@ -193,35 +195,41 @@ class CompanyInCampaign:
         self.company = company
         self.campaign = campaign
 
-    @property
+    @mproperty
     def name(self):
         return self.company.name
 
+    @mproperty
     def subsidiaries(self):
         subsidiaries = []
         for subsidiary in self.company.subsidiaries.all():
             subsidiaries.append(SubsidiaryInCampaign(subsidiary, self.campaign))
         return subsidiaries
 
+    @mproperty
     def eco_trip_count(self):
-        return sum(subsidiary.eco_trip_count() for subsidiary in self.subsidiaries())
+        return sum(subsidiary.eco_trip_count for subsidiary in self.subsidiaries)
 
+    @mproperty
     def working_rides_base_count(self):
         return sum(
-            subsidiary.working_rides_base_count() for subsidiary in self.subsidiaries()
+            subsidiary.working_rides_base_count for subsidiary in self.subsidiaries
         )
 
+    @mproperty
     def frequency(self):
-        subsidiaries = self.subsidiaries()
+        subsidiaries = self.subsidiaries
         if subsidiaries:
-            return sum(subsidiary.frequency() for subsidiary in subsidiaries) / len(
+            return sum(subsidiary.frequency for subsidiary in subsidiaries) / len(
                 subsidiaries
             )
         else:
             return 0
 
+    @mproperty
     def distance(self):
-        return sum(subsidiary.distance() for subsidiary in self.subsidiaries())
+        return sum(subsidiary.distance for subsidiary in self.subsidiaries)
 
+    @mproperty
     def emissions(self):
-        return util.get_emissions(self.distance())
+        return util.get_emissions(self.distance)

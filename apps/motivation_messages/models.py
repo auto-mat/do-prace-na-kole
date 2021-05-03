@@ -139,7 +139,7 @@ class MotivationMessage(models.Model):
         )
 
         team_backwards_rank = (
-            user_attendance.team.members().count()
+            user_attendance.team.members.count()
             - user_attendance.get_frequency_rank_in_team()
             + 1
         )
