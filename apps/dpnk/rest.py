@@ -344,7 +344,9 @@ class CompanyInCampaignField(RequestSpecificField):
         try:
             cic = value.__company_in_campaign
         except AttributeError:
-            value.__company_in_campaign = CompanyInCampaign(value, self.context["request"].campaign)
+            value.__company_in_campaign = CompanyInCampaign(
+                value, self.context["request"].campaign
+            )
             cic = value.__company_in_campaign
         return self.method(cic, self.context["request"])
 
@@ -413,7 +415,9 @@ class SubsidiaryInCampaignField(RequestSpecificField):
         try:
             sic = value.__subsidiary_in_campaign
         except AttributeError:
-            value.__subsidiary_in_campaign = SubsidiaryInCampaign(value, self.context["request"].campaign)
+            value.__subsidiary_in_campaign = SubsidiaryInCampaign(
+                value, self.context["request"].campaign
+            )
             sic = value.__subsidiary_in_campaign
         return self.method(sic, self.context["request"])
 

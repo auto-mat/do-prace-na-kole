@@ -418,7 +418,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return round(self.total_trip_length_including_recreational, 2)
 
     @denormalized(
-        models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
+        models.IntegerField, null=False, skip={"updated", "created", "last_sync_time"}
     )
     @depend_on_related("Trip")
     def working_rides_base_count(self):
@@ -705,8 +705,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def get_frequency_rank_in_team(self):
         return (
-            self.team.members
-            .order_by(
+            self.team.members.order_by(
                 F("frequency").desc(nulls_last=True),
                 "get_rides_count_denorm",
             )

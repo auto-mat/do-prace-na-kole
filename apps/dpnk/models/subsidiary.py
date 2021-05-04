@@ -183,14 +183,13 @@ class SubsidiaryInCampaign:
                 ua_count += tc
             if ua_count == 0:
                 return 0, 0
-            return f/ua_count, ua_count
+            return f / ua_count, ua_count
         else:
             return 0, 0
 
     @mproperty
     def frequency(self):
         return self.frequency_[0]
-
 
     @mproperty
     def distance(self):
