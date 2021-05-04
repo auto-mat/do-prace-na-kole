@@ -1197,12 +1197,9 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
                 and cleaned_data["distance"] < cm.minimum_distance
             ):
                 raise forms.ValidationError(
-                    ngettext(
-                        "Cesta musí mít minimálně %(km)d kilometru",
-                        "Cesta musí mít minimálně %(km)d kilometrů",
-                        cm.minimum_distance,
-                    )
-                    % {"km": cm.minimum_distance}
+                    _(
+                        "Cesta musí mít minimálně {km} kilometrů",
+                    ).format(km=cm.minimum_distance)
                 )
             try:
                 if cleaned_data["duration"]:
