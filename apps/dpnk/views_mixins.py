@@ -91,7 +91,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         request,
                         format_html(
                             _(
-                                "<b>Podpořte týmového ducha.</b><br/>"
+                                "<p><b>Podpořte týmového ducha.</b><p/>"
                                 "Vaši kolegové v týmu {team} ještě nepotvrdili Vaše členství. "
                                 "<a href='{address}'>Je na čase je trochu popostrčit</a>."
                             ),
@@ -115,7 +115,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                     request,
                     format_html(
                         _(
-                            "<b>Pořádek dělá přátele.</b><br/>"
+                            "<p><b>Pořádek dělá přátele.</b><p/>"
                             "Vaše platba ({payment_type}) je stále v řízení. "
                             "Počkejte prosím, až ji váš firemní koordinátor schválí."
                             'Nebo si <a href="{url}">vyberte jiný způsob platby</a>.'
