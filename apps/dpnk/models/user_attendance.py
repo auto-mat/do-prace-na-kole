@@ -418,7 +418,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return round(self.total_trip_length_including_recreational, 2)
 
     @denormalized(
-        models.IntegerField, null=False, skip={"updated", "created", "last_sync_time"}
+        models.IntegerField, null=True, skip={"updated", "created", "last_sync_time"}
     )
     @depend_on_related("Trip")
     def working_rides_base_count(self):
