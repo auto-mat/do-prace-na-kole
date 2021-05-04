@@ -117,7 +117,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         _(
                             "<b>Pořádek dělá přátele.</b><br/>"
                             "Vaše platba ({payment_type}) je stále v řízení. "
-                            "Počkejte prosím na její schválení. "
+                            "Počkejte prosím, až ji váš firemní koordinátor schválí."
                             'Nebo si <a href="{url}">vyberte jiný způsob platby</a>.'
                         ),
                         payment_type=self.user_attendance.payment_type_string(),

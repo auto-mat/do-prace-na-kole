@@ -352,7 +352,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     @denormalized(
         models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
     )
-    @depend_on_related("Trip")
+    @depend_on_related("Trip", foreign_key="user_attendance")
     def frequency(self):
         return self.get_frequency()
 
@@ -383,7 +383,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     @denormalized(
         models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
     )
-    @depend_on_related("Trip")
+    @depend_on_related("Trip", foreign_key="user_attendance")
     def trip_length_total(self):
         """
         Total trip length NOT including recreational trips.
@@ -403,7 +403,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     @denormalized(
         models.FloatField, null=True, skip={"updated", "created", "last_sync_time"}
     )
-    @depend_on_related("Trip")
+    @depend_on_related("Trip", foreign_key="user_attendance")
     def total_trip_length_including_recreational(self):
         from .. import results
 
@@ -420,7 +420,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     @denormalized(
         models.IntegerField, null=True, skip={"updated", "created", "last_sync_time"}
     )
-    @depend_on_related("Trip")
+    @depend_on_related("Trip", foreign_key="user_attendance")
     def working_rides_base_count(self):
         """ Return number of rides, that should be acomplished to this date """
         from .. import results
@@ -721,7 +721,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         default=0,
         skip={"updated", "created", "last_sync_time"},
     )
-    @depend_on_related("Trip")
+    @depend_on_related("Trip", foreign_key="user_attendance")
     def trip_points_total(self):
         """
         Total trip points. Ignores recreational trips.
