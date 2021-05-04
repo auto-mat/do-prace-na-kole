@@ -1200,9 +1200,9 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
                     ngettext(
                         "Cesta musí mít minimálně %(km)d kilometru",
                         "Cesta musí mít minimálně %(km)d kilometrů",
-                        cm.minimum_distance / 1000,
+                        cm.minimum_distance,
                     )
-                    % {"km": cm.minimum_distance / 1000}
+                    % {"km": cm.minimum_distance}
                 )
             try:
                 if cleaned_data["duration"]:
