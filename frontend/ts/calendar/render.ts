@@ -2,6 +2,7 @@ import {load_strings} from "./Localization";
 let strings = load_strings();
 import {EventInput} from '@fullcalendar/core/structs/event';
 import {format_date} from "./util";
+import 'ts-polyfill/lib/es2015-core';
 import {
     day_types,
     commute_modes,
