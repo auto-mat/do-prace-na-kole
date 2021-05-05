@@ -200,5 +200,8 @@ class SubsidiaryInCampaign:
         return util.get_emissions(self.distance)
 
     @mproperty
-    def __str__(self):
+    def __str__prop__(self):
         return str(self.subsidiary)
+
+    def __str__(self):
+        return self.__str__prop__
