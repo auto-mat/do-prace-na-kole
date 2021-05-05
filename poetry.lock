@@ -918,7 +918,7 @@ six = "*"
 type = "git"
 url = "https://github.com/auto-mat/django-denorm.git"
 reference = "develop"
-resolved_reference = "ae174174ae7e3589fb457c5ab73f5564243cd68a"
+resolved_reference = "67078c2ac9edcc981d95675e03aca646085de9cb"
 
 [[package]]
 name = "django-dynamic-fixture"
