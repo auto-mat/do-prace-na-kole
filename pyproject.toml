@@ -50,7 +50,7 @@ django-gpxpy = "*"
 django-cachalot = {git = "https://github.com/federicobond/django-cachalot.git", rev = "django-2.2"}
 django-bulk-update = "*"
 django-cors-headers = "*"
-django-denorm = "*"
+django-denorm = {git = "https://github.com/auto-mat/django-denorm.git", rev = "develop"}
 django-extra-views = "*"
 raven = "*"
 celery = "<=4.4.5"
