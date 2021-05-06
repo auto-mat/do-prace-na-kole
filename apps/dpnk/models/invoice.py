@@ -45,6 +45,10 @@ from .transactions import Payment, Status
 from .. import invoice_gen, util
 
 
+def get_invoice_dir(instance, filename):
+    return "dpnk-{}/{}".format(instance.campaign.pk, filename)
+
+
 @with_author
 class Invoice(StaleSyncMixin, AbstractOrder):
     """Faktura"""
@@ -103,14 +107,14 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     )
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
-        upload_to=u"invoices",
+        upload_to=get_invoice_dir,
         max_length=512,
         blank=True,
         null=True,
     )
     invoice_xml = models.FileField(
         verbose_name=_("XML faktury"),
-        upload_to="invoices",
+        upload_to=get_invoice_dir,
         max_length=512,
         blank=True,
         null=True,
@@ -340,16 +344,13 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf or not instance.invoice_xml:
         invoice_data = invoice_gen.generate_invoice(instance)
         instance.total_amount = invoice_data.price_tax
-        filename = "dpnk-%s/%s" % (
-            instance.campaign.pk,
-            slugify(
-                "invoice_%s_%s_%s_%s"
-                % (
-                    instance.sequence_number,
-                    instance.company.name[0:40],
-                    instance.exposure_date.strftime("%Y-%m-%d"),
-                    uuid.uuid4(),
-                ),
+        filename = slugify(
+            "invoice_%s_%s_%s_%s"
+            % (
+                instance.sequence_number,
+                instance.company.name[0:40],
+                instance.exposure_date.strftime("%Y-%m-%d"),
+                uuid.uuid4(),
             ),
         )
 
