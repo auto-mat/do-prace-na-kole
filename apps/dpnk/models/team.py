@@ -100,6 +100,9 @@ class Team(WithGalleryMixin, models.Model):
         on_delete=models.SET_NULL,
     )
 
+    def icon_url(self):
+        return self.lead_photo().image.url
+
     def lead_photo(self):
         try:
             return self.get_gallery().photos.order_by("-date_added")[0]
