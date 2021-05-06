@@ -101,7 +101,10 @@ class Team(WithGalleryMixin, models.Model):
     )
 
     def icon_url(self):
-        return self.lead_photo().image.url
+        try:
+            return self.lead_photo().image.url
+        except AttributeError:
+            return None
 
     def lead_photo(self):
         try:
