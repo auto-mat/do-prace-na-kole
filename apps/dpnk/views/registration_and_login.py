@@ -470,7 +470,7 @@ class PaymentView(
         context = super().get_context_data(**kwargs)
 
         if self.user_attendance.payment_status == "no_admission":
-            return redirect(reverse("registration_complete"))
+            return redirect(reverse("dpnk_registration_complete"))
         uid = self.request.user.id
         order_id = "%s-1" % uid
         session_id = "%sJ%d" % (order_id, int(time.time()))
@@ -723,7 +723,7 @@ def payment_status(request):
 
 class RegistrationCompleteView(TitleViewMixin, TemplateView):
     title = _("Registrace dokončena!")
-    template_name = "registration/registration_complete.html"
+    template_name = "registration/dpnk_registration_complete.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -752,7 +752,7 @@ class RegistrationUncompleteForm(
     def get(self, request, *args, **kwargs):
         reason = self.user_attendance.entered_competition_reason()
         if reason is True:
-            return redirect(reverse("registration_complete"))
+            return redirect(reverse("dpnk_registration_complete"))
         else:
             return super().get(request, *args, **kwargs)
 

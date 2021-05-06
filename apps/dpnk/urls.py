@@ -119,7 +119,7 @@ urlpatterns = [
     url(
         r"^registration_complete/$",
         views.RegistrationCompleteView.as_view(),
-        name="registraiton_complete",
+        name="dpnk_registraiton_complete",
     ),
     url(
         r"^jizdy$",
