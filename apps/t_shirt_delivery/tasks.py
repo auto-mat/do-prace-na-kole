@@ -105,6 +105,6 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
                 batch.pk,
                 datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
             )
-            batch.combined_opt_pdf.save(filename, f)
+            batch.combined_opt_pdf.save(os.path.basename(filename), f)
             batch.save()
         subprocess.call(["rm", "tmp_pdf/", "-r"])
