@@ -72,7 +72,9 @@ class AboutStrava(RegistrationCompleteMixin, TemplateView):
             }
             context["warn_user_sync_count"] = settings.STRAVA_MAX_USER_SYNC_COUNT / 2
             context["max_user_sync_count"] = settings.STRAVA_MAX_USER_SYNC_COUNT
-            context["app_redirect"] = reverse('open-application-with-rest-token', args=("2"))
+            context["app_redirect"] = reverse(
+                "open-application-with-rest-token", args=("2")
+            )
         except models.StravaAccount.DoesNotExist:
             context["account"] = {}
             context["authorize_href"] = reverse("strava_connect")

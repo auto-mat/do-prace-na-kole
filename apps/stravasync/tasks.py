@@ -127,6 +127,8 @@ def sync(strava_account_id, manual_sync=True):
     #    tb = traceback.format_exc()
     #    strava_account.errors += tb
     #    logger.error(tb)
+    if stats["new_trips"] > 0:
+        strava_account.user_sync_count = 0
     strava_account.save()
     return stats
 
