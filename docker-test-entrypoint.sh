@@ -7,4 +7,4 @@ poetry run black --check --exclude migrations apps
 poetry run black --check project
 echo Running tests
 poetry run pytest apps
-poetry run ./runtests.sh
+#poetry run ./runtests.sh
