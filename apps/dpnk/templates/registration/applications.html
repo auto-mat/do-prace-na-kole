@@ -8,34 +8,47 @@
 {% endblock caption %}
 
 {% block form %}
+Využijte možnost stáhnout si novou mobilní aplikaci Do práce na kole. Vše důležité o aplikaci <a href="https://www.dopracenakole.cz/o-vyzve/jak-zapisovat-jizdy">najdete na našich stránkách</a>.
+  <div class="container">
+      <div class="row">
+          <div class="card"  style="width: 18rem;">
+      <h5 class="card-title">Aplikace DPNK od Ackee</h5>
+      <img alt="DPNK" src="https://www.dopracenakole.cz/wp-content/uploads/dpnk_logo-hires-blck.png"/>
+
+      <a href='https://play.google.com/store/apps/details?id=cz.dopracenakole&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img class="card-img-top" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'   style="width: 250px; padding-left: 10px;"/></a>
+
+      <a href="https://apps.apple.com/us/app/do-pr%C3%A1ce-na-kole/id1564442780?itsct=apps_box_badge&amp;itscg=30200" width=""><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/cs-cz?size=250x83&amp;releaseDate=1619827200&h=c189180b8223bf3fe6787f01952a2bad" alt="Download on the App Store" style="width: 237px; padding-left: 23px" <img class="card-img-top" ></a>
+  </div>
+  {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
+  <div class="card" style="width: 18rem;">
+      <div class="card-body">
+          <h5 class="card-title">UrbanCyclers</h5>
+          <a href="{% url 'open-application-with-rest-token' 1 %}" class="btn btn-secondary stretched-link">Propojit se UrbanCyclers</a>
+      </div>
+  </div>
+  <div class="card" style="width: 18rem;">
+      <div class="card-body">
+          <h5 class="card-title">Na kole Prahou</h5>
+          <div  style="padding-bottom: 10px;">
+          <a href="{% url 'open-application-with-rest-token' 0 %}" class="btn btn-secondary stretched-link">Propojit se Na kole Prahou</a>
+          </div>
+          <a href="{% url 'open-application-with-rest-token' 3 %}" class="btn btn-secondary stretched-link">Propojit se Na kole Prahou (iOS)</a>
+      </div>
+  </div>
+  {% endif %}
+  <div class="card" style="width: 18rem;">
+      <div class="card-body">
+          <h5 class="card-title">Strava</h5>
+          <div  style="padding-bottom: 10px;">
+              <a href="{% url "about_strava" %}" class="btn btn-secondary stretched-link">Propojit se Stravou</a>
+          </div>
+      </div>
+  </div>
+  </div>
+  </div>
    {% if perms.dpnk.can_see_application_links and not campaign.show_application_links %}
       <div class="alert alert-danger">
-         {% trans "Odkazy zobrazené jen pro testovací účely. Umožnit přistup k odkazům přes nastavení kampaně:" %} {% trans "Ukázat odkazy na aplikace" %}
+         {% trans "Odkazy do UrbanCyclers a Na kole Prahou zobrazené jen pro testovací účely. Umožnit přistup k odkazům přes nastavení kampaně:" %} {% trans "Ukázat odkazy na aplikace" %}
       </div>
    {% endif %}
-      <ul>
-   {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
-          <li>
-              <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source={{ campaign.slug_identifier }}&amv=202&isi=1213867271&ibi=com.umotional.bikeapp&at={{ campaign.slug_identifier }}">
-                  {% trans "Propojit s" %} UrbanCyclers
-              </a>
-          </li>
-          <li>
-              <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&utm_source={{ campaign.slug_identifier }}&amv=202&isi=1213867293&ibi=com.umotional.ucpraha&at={{ campaign.slug_identifier }}">
-                  {% trans "Propojit s" %} Na kole Prahou
-              </a>
-          </li>
-          <li>
-              <a target="_blank" href="{% url 'open-application-with-rest-token' 3 %}">
-                  {% trans "Propojit s" %} Na kole Prahou (iOS)
-              </a>
-          </li>
-   {% endif %}
-
-          <li>
-              <a href={% url "about_strava" %}>
-                  {% trans "Propojit se Stravou" %}
-              </a>
-          </li>
-      </ul>
 {% endblock %}
