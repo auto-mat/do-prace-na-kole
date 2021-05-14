@@ -7,26 +7,44 @@
    {{ block.super }}
 {% endblock caption %}
 
+
 {% block form %}
+<style>
+ .card{
+     margin: 10px;
+     width: 18rem;
+ }
+ .card-text{
+     text-align: center;
+     padding-top: 12px;
+ }
+</style>
+
 Využijte možnost stáhnout si novou mobilní aplikaci Do práce na kole. Vše důležité o aplikaci <a href="https://www.dopracenakole.cz/o-vyzve/jak-zapisovat-jizdy">najdete na našich stránkách</a>.
   <div class="container">
       <div class="row">
-          <div class="card"  style="width: 18rem;">
-      <h5 class="card-title">Aplikace DPNK od Ackee</h5>
-      <img alt="DPNK" src="https://www.dopracenakole.cz/wp-content/uploads/dpnk_logo-hires-blck.png"/>
+          <div class="card">
+      <img class="card-img-top" alt="DPNK" src="https://www.dopracenakole.cz/wp-content/uploads/dpnk_logo-hires-blck.png"/>
 
+      <div clas="card-body">
+          <h5 class="card-title">Aplikace DPNK od Ackee</h5>
       <a href='https://play.google.com/store/apps/details?id=cz.dopracenakole&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img class="card-img-top" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'   style="width: 250px; padding-left: 10px;"/></a>
 
       <a href="https://apps.apple.com/us/app/do-pr%C3%A1ce-na-kole/id1564442780?itsct=apps_box_badge&amp;itscg=30200" width=""><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/cs-cz?size=250x83&amp;releaseDate=1619827200&h=c189180b8223bf3fe6787f01952a2bad" alt="Download on the App Store" style="width: 237px; padding-left: 23px" <img class="card-img-top" ></a>
+          <p class="card-text">
+      Jíž máte aplikace instalovano?
+          </p>
+      <a href="{% url 'open-application-with-rest-token' 2 %}" class="btn btn-secondary stretched-link" style="margin: 15px; margin-left: 30px;">Pokračovat do aplikace</a>
+      </div>
   </div>
   {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
-  <div class="card" style="width: 18rem;">
+  <div class="card">
       <div class="card-body">
           <h5 class="card-title">UrbanCyclers</h5>
           <a href="{% url 'open-application-with-rest-token' 1 %}" class="btn btn-secondary stretched-link">Propojit se UrbanCyclers</a>
       </div>
   </div>
-  <div class="card" style="width: 18rem;">
+  <div class="card">
       <div class="card-body">
           <h5 class="card-title">Na kole Prahou</h5>
           <div  style="padding-bottom: 10px;">
@@ -36,7 +54,7 @@ Využijte možnost stáhnout si novou mobilní aplikaci Do práce na kole. Vše 
       </div>
   </div>
   {% endif %}
-  <div class="card" style="width: 18rem;">
+  <div class="card">
       <div class="card-body">
           <h5 class="card-title">Strava</h5>
           <div  style="padding-bottom: 10px;">
