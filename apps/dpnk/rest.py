@@ -357,7 +357,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             MinimalSubsidiarySerializer(sub, context={"request": req}).data
             for sub in company.subsidiaries.filter(
                 teams__campaign__slug=req.subdomain, active=True
-            )
+            ).distinct()
         ]
     )
     eco_trip_count = CompanyInCampaignField(
