@@ -1218,17 +1218,6 @@ reference = "list_all"
 resolved_reference = "c8112963271769e4c3c35d6ba4db45d597a962d2"
 
 [[package]]
-name = "django-npm"
-version = "1.0.0"
-description = "A django staticfiles finder that uses npm"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.extras]
-test = ["pytest"]
-
-[[package]]
 name = "django-nvd3"
 version = "0.9.7"
 description = "Django NVD3 - Chart Library for d3.js"
@@ -3325,7 +3314,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "939861c587e94aa69696c510ab09a9c80aed7954583d58bb8a5310f015f21865"
+content-hash = "aa55d28c68b4288b4272c783d2131d81754f805e03d5b35889d418994c399929"
 
 [metadata.files]
 amqp = [
@@ -3776,9 +3765,6 @@ django-nose = [
     {file = "django_nose-1.4.7-py2.py3-none-any.whl", hash = "sha256:304adc447ee35b889b733d7106004f98aa401d8387ddcada5d4f2239d86790a9"},
 ]
 django-notifications-hq = []
-django-npm = [
-    {file = "django-npm-1.0.0.tar.gz", hash = "sha256:2e6bba65e728fa18b9db3c8dc0d4490b70cb7f43bacf60eb3654d7dcb6424272"},
-]
 django-nvd3 = [
     {file = "django-nvd3-0.9.7.tar.gz", hash = "sha256:1ec0ba4c74fe84f4ce65d1246a4a471ddd51d7a2ed8f69c60d70229d41a06c63"},
 ]

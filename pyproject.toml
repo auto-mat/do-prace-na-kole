@@ -124,7 +124,6 @@ django-reversion = "*"
 django-admin-charts = "*"
 django-inline-static = "*"
 django-notifications-hq = {git = "https://github.com/auto-mat/django-notifications.git", rev = "list_all"}
-django-npm = "*"
 django-extra-fields = "*"
 django-debug-toolbar = "*"
 django-debug-toolbar-template-timings = "*"

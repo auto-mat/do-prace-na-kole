@@ -148,7 +148,6 @@ if AWS_ACCESS_KEY_ID:
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "npm.finders.NpmFinder",
 )
 
 
