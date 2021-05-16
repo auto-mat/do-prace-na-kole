@@ -14,7 +14,7 @@
     <script src="{% static 'leaflet-gpx/gpx.js' %}"></script>
     <link href="{% static "leaflet.awesome-markers/dist/leaflet.awesome-markers.css" %}" type="text/css" rel="stylesheet">
     <script src="{% static 'leaflet.awesome-markers/dist/leaflet.awesome-markers.min.js' %}"></script>
-    <script src="{% static 'js/dist/map.js' %}"></script>
+    <script src="{{campaign.campaign_type.frontend_url}}js/map.js.gz"></script>
     {{ block.super }}
 {% endblock %}
 {% block caption %}

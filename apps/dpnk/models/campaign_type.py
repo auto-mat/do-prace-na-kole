@@ -51,6 +51,10 @@ class CampaignType(models.Model):
         null=True,
         blank=True,
     )
+    frontend_url = models.URLField(
+        default="https://dpnk-frontend.s3-eu-west-1.amazonaws.com/2021.10/",
+        verbose_name=_("Adresa pro statické frontendové soubory"),
+    )
     tagline = models.TextField(
         default="Na kole, pěšky či poklusem. Celostátní výzva v lednu %s",
     )

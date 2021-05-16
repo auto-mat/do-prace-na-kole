@@ -12,7 +12,7 @@
 	<link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16">
 	<link rel="manifest" href="{% static "img/favicon/manifest.json" %}">
   <link rel="mask-icon" href="{% static "img/favicon/safari-pinned-tab.svg" %}" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}>
-	<link href="{% static 'css/progress_tracker.css' %}" rel="stylesheet" media="screen">
+	<link href="{{campaign.campaign_type.frontend_url}}css/progress_tracker.css" rel="stylesheet" media="screen">
    <meta name="theme-color" {% if campaign %}color="{{ campaign.main_color }}"{% endif %}>
 	{% block default_head %}
 	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -42,7 +42,7 @@
 		<link href="{% static "bootstrap/bootstrap.min.css"%}" rel="stylesheet" media="screen">
 		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700,700i&#038;display=swap&#038;subset=latin-ext' type='text/css' media='all'>
 		<link href="{% static "jquery-ui-dist/jquery-ui.theme.min.css"%}" rel="stylesheet" media="screen">
-		<link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
+		<link href="{{campaign.campaign_type.frontend_url}}css/style.css" type="text/css" rel="stylesheet" media="screen">
     <link href="{% static "@fortawesome/fontawesome-free/css/fontawesome.min.css"%}" rel="stylesheet">
     <style>
      {% if request.source in TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES %}

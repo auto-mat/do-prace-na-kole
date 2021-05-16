@@ -5,7 +5,7 @@
 
 
 {% block extrahead %}
-    <script src="{% static 'js/dist/calendar.js' %}"> </script>
+<script src="{{campaign.campaign_type.frontend_url}}js/calendar.js"> </script>
     <link rel='stylesheet' href='{% static "leaflet/dist/leaflet.css"%}'>
     <link rel='stylesheet' href='{% static "leaflet-draw/dist/leaflet.draw.css"%}'>
     {{ block.super }}
