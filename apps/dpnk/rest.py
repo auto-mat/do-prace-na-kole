@@ -961,15 +961,28 @@ class CampaignTypeSerializer(serializers.HyperlinkedModelSerializer):
             "name_cs",
             "web",
             "campaigns",
+            "frontend_url",
         )
 
 
-class CampaignTypeSet(viewsets.ReadOnlyModelViewSet):
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+
+#https://gist.github.com/andreagrandi/14e07afd293fafaea770f69cf66cac14
+class IsAdminOrReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS and request.user.is_authenticated:
+            return True
+        else:
+            return request.user.is_staff
+        return False
+
+
+class CampaignTypeSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return CampaignType.objects.all()
 
     serializer_class = CampaignTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class PhaseSerializer(serializers.HyperlinkedModelSerializer):
