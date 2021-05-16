@@ -33,7 +33,7 @@
 		<script src="https://cdn.ravenjs.com/3.24.0/raven.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" integrity="sha512-RXf+QSDCUQs5uwRKaDoXt55jygZZm2V++WUZduaU/Ui/9EGp3f/2KZVahFZBKGH0s774sd3HmrhUy+SgOFQLVQ==" crossorigin="anonymous"></script>
-    <script src="{% static 'js/dist/form_functions.js' %}"> </script>
+    <script src="{{campaign.campaign_type.frontend_url}}js/form_functions.js"> </script>
 		<script>
 		Raven.config("{% sentry_public_dsn 'https' %}").install();
 		{% if user.is_authenticated %}
