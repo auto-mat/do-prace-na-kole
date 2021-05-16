@@ -967,7 +967,7 @@ class CampaignTypeSerializer(serializers.HyperlinkedModelSerializer):
 
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-#https://gist.github.com/andreagrandi/14e07afd293fafaea770f69cf66cac14
+# https://gist.github.com/andreagrandi/14e07afd293fafaea770f69cf66cac14
 class IsAdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS and request.user.is_authenticated:
