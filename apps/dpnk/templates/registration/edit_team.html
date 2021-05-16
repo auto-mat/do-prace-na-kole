@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block extrahead %}
-<link href="{% static "dropzone/dist/dropzone.css" %}" type="text/css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
 {% endblock %}
 
 {% block content %}
@@ -18,7 +18,7 @@
                 <input type="submit" value="{% trans 'Odeslat' %}"/>
             </div>
         </form>
-        <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js" integrity="sha512-VQQXLthlZQO00P+uEu4mJ4G4OAgqTtKG1hri56kQY1DtdLeIqhKUp9W/lllDDu3uN3SnUNawpW7lBda8+dSi7w==" crossorigin="anonymous"></script>
         <script>
          dz = $('#team_photo_upload').dropzone({
              dictDefaultMessage: "{% trans "Fotky nahrajete přetažením, nebo kliknutím" %}",
