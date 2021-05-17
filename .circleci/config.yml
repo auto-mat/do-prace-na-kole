@@ -7,7 +7,8 @@ jobs:
 
     steps:
       - checkout
-      - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM} $(git rev-parse --short HEAD)" > apps/dpnk/static/version.txt
+      - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM}" > apps/dpnk/static/version.txt
+      - run: echo "$(git rev-parse HEAD)" > apps/dpnk/static/git-commit.txt
       - setup_remote_docker:
           reusable: true
       - run:
