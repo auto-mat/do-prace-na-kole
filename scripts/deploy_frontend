@@ -1,0 +1,55 @@
+#!/usr/bin/python3
+import yaml
+import sys
+import subprocess
+import argparse
+import os
+import requests
+
+access_file = "~/.config/dpnk/access.yaml"
+access_file_path = os.path.expanduser(access_file)
+
+try:
+  with open(access_file_path) as fd:
+   ac = yaml.load(fd.read())
+except FileNotFoundError:
+  sys.exit("""
+Expected to find an access file at {} in the format:
+
+local:
+  url: http://test.lvh.me:8021/
+  token: <token>
+test:
+  url: https://test2019.dopracenakole.cz/
+  token: <token>
+prod:
+  url: https://dpnk.dopracenakole.cz/
+  token: <token>
+
+Where the main keys can be anything and the urls can be any url.
+
+Tokens can be gotten acording to the docs here:
+https://github.com/auto-mat/do-prace-na-kole/blob/devel/docs/API.md#authentification
+""".format(access_file))
+
+
+parser = argparse.ArgumentParser(description='Set frontend URL')
+parser.add_argument('server', metavar='server', type=str,
+                    help='Server as specified in {}. Current options are: {}'.format(access_file, ", ".join(ac.keys())))
+parser.add_argument('--url', dest='url', type=str,
+                    help='')
+parser.add_argument('--campaign-id', dest='id', type=int,
+                    help='Id of campaign to configure')
+
+args = parser.parse_args()
+
+server = ac[args.server]
+head = {"Authorization":"Token {}".format(server["token"])}
+url = '{url}rest/campaign_type/{id}/'.format(url=server["url"], id=args.id)
+payload = {'frontend_url' : args.url }
+
+print(url)
+
+response = requests.patch(url, payload, headers=head)
+print(response.text)
+#import pdb;pdb.set_trace()
