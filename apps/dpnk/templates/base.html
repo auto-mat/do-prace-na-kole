@@ -35,6 +35,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" integrity="sha512-RXf+QSDCUQs5uwRKaDoXt55jygZZm2V++WUZduaU/Ui/9EGp3f/2KZVahFZBKGH0s774sd3HmrhUy+SgOFQLVQ==" crossorigin="anonymous"></script>
     <script src="{{campaign.campaign_type.frontend_url}}js/form_functions.js"> </script>
 		<script>
+     window.frontend_url = "{{campaign.campaign_type.frontend_url}}";
 		Raven.config("{% sentry_public_dsn 'https' %}").install();
 		{% if user.is_authenticated %}
 			Raven.setUserContext({
@@ -44,6 +45,7 @@
 		{% endif %}
 		</script>
 
+    <script src="{{campaign.campaign_type.frontend_url}}js/views.js"> </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" integrity="sha512-ZKX+BvQihRJPA8CROKBhDNvoc2aDMOdAlcm7TUQY+35XYtrd3yh95QOOhsPDQY9QnKE0Wqag9y38OIgEvb88cA==" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
 		<link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700,700i&#038;display=swap&#038;subset=latin-ext' type='text/css' media='all'>
