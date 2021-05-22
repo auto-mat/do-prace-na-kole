@@ -96,7 +96,7 @@
                 {% for cm in commute_modes %}
                     {% if cm.distance_important %}
                         <div id="track_holder_{{cm.slug}}" style="display:none;">
-                            <form class="dropzone gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
+                            <form class="gpx-uploader" id="gpx_upload_{{cm.slug}}" action="none" method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="fallback">
                                     <input name="gpx" type="file"/>
