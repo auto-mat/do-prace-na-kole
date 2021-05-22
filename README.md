@@ -51,6 +51,8 @@ Launching the development webserver
 In another window launch the development webserver
 
     $ sudo docker exec -it dopracenakole_web_1 bash
+    # su test
+    $ poetry shell
     $ python3 manage.py runserver 0.0.0.0:8021
     
 Clone and launch the front end server according to its own docs: https://github.com/auto-mat/do-prace-na-kole-frontend
