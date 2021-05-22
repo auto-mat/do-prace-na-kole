@@ -1,12 +1,11 @@
 #!/bin/bash
-npm install
-npm run build
-python3 manage.py collectstatic
-python3 manage.py migrate
-python3 manage.py createsuperuser
-python3 manage.py sitetree_resync_apps
-python3 manage.py import_czech_psc
-python3 manage.py loaddata apps/dpnk/fixtures/commute_mode.json
-python3 manage.py loaddata apps/dpnk/fixtures/sites.json
-python3 manage.py loaddata apps/dpnk/fixtures/occupation.json
-django-admin compilemessages
+poetry install
+poetry run python3 manage.py collectstatic
+poetry run python3 manage.py migrate
+poetry run python3 manage.py createsuperuser
+poetry run python3 manage.py sitetree_resync_apps
+poetry run python3 manage.py import_czech_psc
+poetry run python3 manage.py loaddata apps/dpnk/fixtures/commute_mode.json
+poetry run python3 manage.py loaddata apps/dpnk/fixtures/sites.json
+poetry run python3 manage.py loaddata apps/dpnk/fixtures/occupation.json
+poetry run django-admin compilemessages
