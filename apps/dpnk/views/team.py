@@ -93,10 +93,10 @@ class UploadTeamPhoto(
 
 class TeamMembers(
     TitleViewMixin,
+    LoginRequiredMixin,
     UserAttendanceViewMixin,
     MustBeInRegistrationPhaseMixin,
     MustBeApprovedForTeamMixin,
-    LoginRequiredMixin,
     TemplateView,
 ):
     template_name = "registration/team_admin_members.html"
