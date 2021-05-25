@@ -312,6 +312,9 @@ class Campaign(Pricable, models.Model):
     def active(self):
         return self.day_active(util.today())
 
+    def entry_enabled_end(self):
+        return self.phase("entry_enabled").date_to
+
     def day_active(self, day, day_today=None):
         """ Return if this day can be changed by user """
         try:
