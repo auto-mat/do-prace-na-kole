@@ -1,10 +1,10 @@
 {% load static %}
+<script src='{% static "leaflet/dist/leaflet.js"%}'></script>
 {% include "registration/leaflet_settings.html" %}
 <script src="{% static '/leaflet/leaflet.forms.js' %}" type="text/javascript"></script>
 <script src="{% static '/leaflet/leaflet.extras.js' %}" type="text/javascript"></script>
 
 <script>
- $(document).ready(function (){
 ClearableGeometryField = L.GeometryField.extend({
     addTo: function (map) {
         L.GeometryField.prototype.addTo.call(this, map);
@@ -21,5 +21,30 @@ ClearableGeometryField = L.GeometryField.extend({
 	      console.log(this.drawnItems)
 	  },
 });
- });
+
+ // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
+ function load_track (map, trip_url, options, editable_layers) {
+     var track_geojson = L.geoJson();
+     console.log(editable_layers);
+     console.log(map);
+     if(!editable_layers) {
+         //map.clearLayers();
+         track_geojson.addTo(map);
+     }
+     $.ajax({
+         dataType: "json",
+         url: trip_url,
+         success: function(data) {
+             track_geojson.addData(data);
+             if(editable_layers) {
+                 editable_layers.clearLayers();
+                 var layers = track_geojson.getLayers();
+                 for (i in layers) {
+                     layers[i].addTo(editable_layers);
+                 }
+             }
+             map.fitBounds(track_geojson.getBounds())
+         }
+     }).error(function() {});
+ }
 </script>

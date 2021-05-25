@@ -43,6 +43,7 @@
 			{% leaflet_map "track_map" callback="window.load_this_track" %}
 			<script type="text/javascript">
 			 load_this_track = function(map, options) {
+           console.log(map);
 			     load_track(map, "{% url 'trip_geojson' date=trip.date direction=trip.direction %}", options);
 			 }
 			</script>
