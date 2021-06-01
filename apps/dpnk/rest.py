@@ -113,7 +113,7 @@ class DistanceMetersSerializer(serializers.IntegerField):
         return super().to_representation(value)
 
 
-class TripSerializer(serializers.ModelSerializer):
+class MinimalTripSerializer(serializers.ModelSerializer):
     distanceMeters = DistanceMetersSerializer(
         required=False,
         min_value=0,
@@ -140,15 +140,18 @@ class TripSerializer(serializers.ModelSerializer):
         source="source_application",
         help_text="Any string identifiing the source application of the track",
     )
-    sourceId = serializers.CharField(
-        required=False,
-        source="source_id",
-        help_text="Any string identifiing the id in the source application",
-    )
     trip_date = serializers.DateField(
         required=False,
         source="date",
         help_text='Date of the trip e.g. "1970-01-23"',
+    )
+
+
+class TripSerializer(MinimalTripSerializer):
+    sourceId = serializers.CharField(
+        required=False,
+        source="source_id",
+        help_text="Any string identifiing the id in the source application",
     )
     file = serializers.FileField(
         required=False,
@@ -219,6 +222,38 @@ class TripSerializer(serializers.ModelSerializer):
 class TripDetailSerializer(TripSerializer):
     class Meta(TripSerializer.Meta):
         extra_kwargs = {}
+
+
+class CollegueTripSeralizer(MinimalTripSerializer):
+    user = RequestSpecificField(
+        lambda trip, req: trip.user_attendance.name(),
+    )
+    team = RequestSpecificField(
+        lambda trip, req: trip.user_attendance.team.name,
+    )
+    subsidiary = RequestSpecificField(
+        lambda trip, req: str(trip.user_attendance.team.subsidiary),
+    )
+    has_track = RequestSpecificField(
+        lambda trip, req: trip.track is not None,
+    )
+
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "trip_date",
+            "direction",
+            "commuteMode",
+            "durationSeconds",
+            "distanceMeters",
+            "sourceApplication",
+            "user",
+            "user_attendance",
+            "team",
+            "subsidiary",
+            "has_track",
+        )
 
 
 class TripUpdateSerializer(TripSerializer):
@@ -304,6 +339,37 @@ class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
             return TripUpdateSerializer
         return TripDetailSerializer if self.action == "retrieve" else TripSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ColleagueTripRangeSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Documentation: https://www.dopracenakole.cz/rest-docs/
+
+    get:
+    Return a list of all trips in date range for logged in user and their colleagues.
+
+    get on /rest/colleague_trip/{id}:
+    Return track detail including a track geometry.
+    """
+
+    def get_queryset(self):
+        qs = Trip.objects.filter(
+            user_attendance__team__subsidiary__company=self.ua().team.subsidiary.company.pk,
+        ).select_related(
+            "user_attendance",
+            "user_attendance__team",
+            "user_attendance__team__subsidiary",
+        )
+        start_date = self.request.query_params.get("start", None)
+        end_date = self.request.query_params.get("end", None)
+        if start_date and end_date:
+            qs = qs.filter(
+                date__range=[start_date, end_date],
+            )
+        return qs
+
+    serializer_class = CollegueTripSeralizer
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -1172,6 +1238,7 @@ class LandingPageIconSet(viewsets.ReadOnlyModelViewSet):
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
+router.register(r"colleague_trips", ColleagueTripRangeSet, basename="colleague_trip")
 router.register(r"team", TeamSet, basename="team")
 router.register(r"my_team", MyTeamSet, basename="my_team")
 router.register(r"city_in_campaign", CityInCampaignSet, basename="city_in_campaign")
