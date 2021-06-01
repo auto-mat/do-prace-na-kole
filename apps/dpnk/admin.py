@@ -659,7 +659,11 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
         "ecc_password",
         "ecc_email",
     )
-    raw_id_fields = ("user", "occupation", "gallery",)
+    raw_id_fields = (
+        "user",
+        "occupation",
+        "gallery",
+    )
     actions = (actions.remove_mailing_id,)
 
     @property
