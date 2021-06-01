@@ -152,7 +152,7 @@ class DiscountCoupon(models.Model):
 
     def get_pdf(self):
         try:
-            url = self.couponsandwich_set.get().pdf.url
+            url = self.couponsandwich_set.first().pdf.url
         except (CouponSandwich.DoesNotExist, ValueError):
             try:
                 url = self.coupon_pdf.url
