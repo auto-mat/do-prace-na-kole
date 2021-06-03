@@ -144,11 +144,13 @@
 						 	{{ opening_message }}
 						{% endif %}
 
+				        <div id="app"></div>
 						{% block error %}
 			              	<div id="inner-content">
 			                  {{ block.super }}
 			              	</div>
 						{% endblock %}
+
 				    {% if user.is_authenticated %}
                       {% include "base_modal_windows.html" %}
             {% endif %}
