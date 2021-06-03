@@ -356,6 +356,7 @@ class ColleagueTripRangeSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         qs = Trip.objects.filter(
             user_attendance__team__subsidiary__company=self.ua().team.subsidiary.company.pk,
+            user_attendance__campaign=self.ua().campaign,
         ).select_related(
             "user_attendance",
             "user_attendance__team",
