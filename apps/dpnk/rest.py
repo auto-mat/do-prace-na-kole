@@ -354,14 +354,18 @@ class ColleagueTripRangeSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     """
 
     def get_queryset(self):
-        qs = Trip.objects.filter(
-            user_attendance__team__subsidiary__company=self.ua().team.subsidiary.company.pk,
-            user_attendance__campaign=self.ua().campaign,
-        ).select_related(
-            "user_attendance",
-            "user_attendance__team",
-            "user_attendance__team__subsidiary",
-        ).order_by('date')
+        qs = (
+            Trip.objects.filter(
+                user_attendance__team__subsidiary__company=self.ua().team.subsidiary.company.pk,
+                user_attendance__campaign=self.ua().campaign,
+            )
+            .select_related(
+                "user_attendance",
+                "user_attendance__team",
+                "user_attendance__team__subsidiary",
+            )
+            .order_by("date")
+        )
         start_date = self.request.query_params.get("start", None)
         end_date = self.request.query_params.get("end", None)
         if start_date and end_date:
