@@ -74,6 +74,21 @@ Add a user profile for your user <http://test.localhost:8021/admin/dpnk/userprof
 
 Now you can go to 'http://test.localhost:8021/' and start to play around.
 
+Backing up your local development database
+---------------------------------------------------
+
+Once you have your test environment working, it's a good idea to back up your database.
+
+First stop docker compose
+
+    $ docker-compose down
+
+Then copy db folder
+
+    $ cp -r ./db ./db-bk
+
+
+
 Deployment
 ------------
 
@@ -107,16 +122,29 @@ Deploying [the frontend](https://github.com/auto-mat/do-prace-na-kole-frontend) 
 
 Which helps you deploy frontend builds. This script is documented. To see it's documentation simply run the script with the `--help` flag.
 
-Backing up your database
-------------------------
+Connecting to test and production servers (bash and python shell)
+------------------------------------------------------------------------------
 
-Once you have your test environment working, it's a good idea to back up your database.
+The `pyshell` script is quite usefull for this
 
-First stop docker compose
+```
+./scripts/pyshell
+```
 
-    $ docker-compose down
+For example, to get a python shell on the production instance run.
 
-Then copy db folder
+```
+./scripts/pyshell dpnk --instance 0
+```
 
-    $ cp -r ./db ./db-bk
+To get a bash shell in the docker container run
 
+```
+./scripts/pyshell dpnk --instance 0 --cmd bash
+```
+
+And to get it directly on the host run
+
+```
+./scripts/pyshell dpnk --instance 0 --sys-cmd bash
+```
