@@ -21,15 +21,13 @@ run apt-get update && apt-get install -y \
    memcached \
    poppler-utils \
    texlive-extra-utils \
-   pdftk-java \
    postgresql-common \
    postgresql-client \
-   python-tk \
    tcl8.6-dev \
-   tk8.6-dev \
    zlib1g-dev \
    libgettextpo-dev \
-   curl
+   curl \
+   postgis
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
