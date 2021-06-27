@@ -25,6 +25,9 @@ test:
 prod:
   url: https://dpnk.dopracenakole.cz/
   token: <token>
+  default-campaign-type: 2
+  assets-template: https://dpnk-frontend.s3-eu-west-1.amazonaws.com/{}/
+
 
 Where the main keys can be anything and the urls can be any url.
 
@@ -36,20 +39,39 @@ https://github.com/auto-mat/do-prace-na-kole/blob/devel/docs/API.md#authentifica
 parser = argparse.ArgumentParser(description='Set frontend URL')
 parser.add_argument('server', metavar='server', type=str,
                     help='Server as specified in {}. Current options are: {}'.format(access_file, ", ".join(ac.keys())))
-parser.add_argument('--url', dest='url', type=str,
-                    help='')
-parser.add_argument('--campaign-id', dest='id', type=int,
-                    help='Id of campaign to configure')
+parser.add_argument('--url', dest='url', default=None, type=str,
+                    help='New URL of static assets')
+parser.add_argument('--url-var', dest='url_var', default=None, type=str,
+                    help='Variable to insert into url template when generating url of static assets. Set the template in your access file by setting the \'url-template\' and {} to place the variable.')
+parser.add_argument('--campaign-type-id', dest='id', default=None, type=int,
+                    help='Id of campaign type to configure')
 
 args = parser.parse_args()
 
 server = ac[args.server]
 head = {"Authorization":"Token {}".format(server["token"])}
-url = '{url}rest/campaign_type/{id}/'.format(url=server["url"], id=args.id)
-payload = {'frontend_url' : args.url }
+if args.id:
+  id = args.id
+else:
+  try:
+    id = server["default-campaign-type"]
+  except KeyError:
+    sys.exit("You must either specify a --campaign-type-id or set a default-campaign-type in your access file.")
+url = '{url}rest/campaign_type/{id}/'.format(url=server["url"], id=id)
+if args.url:
+  frontend_url = args.url
+else:
+  try:
+    frontend_url = server["frontend-url-template"].format(args.url_var)
+  except KeyError:
+    sys.exit("You must either specify a --url or set a frontend-url-template in your access file and specify a --url-var.")
+payload = {'frontend_url' :  frontend_url}
 
 print(url)
 
 response = requests.patch(url, payload, headers=head)
 print(response.text)
-#import pdb;pdb.set_trace()
+if response.status_code == 200:
+  print("Frontend URL successfully updated.")
+else:
+  print("Hmm. something seems to have gone wrong.")
