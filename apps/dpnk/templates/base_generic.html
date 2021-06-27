@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load static %}
 {% load sitetree %}
 {% load notifications_tags %}
 {% load inline_static_tags %}
@@ -16,7 +15,7 @@
 					<div class="head_in_body">
 						<div class="_head">
 							<a target="_blank" class="logo" {% if campaign %}href="{{campaign.campaign_type.web}}"{%endif%}>
-								 <img src="{% static 'img/dpnk_logo.svg' %}" alt="DPNK" />
+								  <img src="{{campaign.campaign_type.frontend_url}}img/dpnk_logo.svg" alt="DPNK" />
 							</a>
 
 	                  		{% include "lang_switch.html" %}

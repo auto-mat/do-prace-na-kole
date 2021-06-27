@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{% load static %}
 <html>
 	<head>
 		<title>
@@ -67,7 +66,7 @@
 				padding-top: 12vh;
 			}
 			._404{
-				background-image: url({% static "img/404-cut.svg" %});
+				  background-image: url({{campaign.campaign_type.frontend_url}}img/404-cut.svg);
 				background-size: cover;
 			}
 			.crouch_home{
@@ -120,7 +119,7 @@
 			<b>4</b>
 		</div>
 		<a href="/" class="crouch_home">
-			<img class="dpnk-head-logo" src="{% static 'img/dpnk_logo.svg' %}" alt="DPNK" />
+			  <img class="dpnk-head-logo" src="{{campaign.campaign_type.frontend_url}}img/dpnk_logo.svg" alt="DPNK" />
 		</a>
 	</body>
 </html>

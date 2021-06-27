@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 {% load dpnk_tags %}
 {% load i18n %}
 {% load crispy_forms_tags %}
@@ -11,7 +10,7 @@
       <div class="row d-flex comeX">
          <div class="col-12 col-sm-4 item d-flex">
             <div class="x _0">
-               <img src="{% static 'img/comeX/dpnk.svg' %}" alt="Do práce na kole" id="dpnk">
+                <img src="{{campaign.campaign_type.frontend_url}}img/comeX/dpnk.svg" alt="Do práce na kole" id="dpnk">
             </div>
          </div>
          <div class="col-12 col-sm-8 d-flex item" id="formality_holder">
@@ -33,7 +32,7 @@
                      <div class="form_head">
                         <h1>
                            <a href="/" id="go_home">
-                              <img class="dpnk-head-logo" src="{% static 'img/dpnk_logo.svg' %}" alt="DPNK" />
+                               <img class="dpnk-head-logo" src="{{campaign.campaign_type.frontend_url}}img/dpnk_logo.svg" alt="DPNK" />
                            </a>
                            {% if campaign %}
                               {{ campaign.display_name|upper }}
