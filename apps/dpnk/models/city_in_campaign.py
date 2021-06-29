@@ -74,6 +74,16 @@ class CityInCampaign(models.Model):
         default="",
         blank=True,
     )
+    data_export_password = models.CharField(
+        max_length=30,
+        default="",
+        blank=True,
+    )
+    data_export = models.FileField(
+        upload_to="city_data_exports",
+        max_length=255,
+        blank=True,
+    )
 
     @property
     def name(self):

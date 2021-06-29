@@ -9,4 +9,4 @@ RUN apt-get -qq update
 run apt-get install -y python3-gi
 RUN apt-get install -y gtk+3
 RUN cd /home/aplikace ; poetry install
-run chown -R test /opt/poetry
+run mkdir -p /opt/poetry ; chown -R test /opt/poetry
