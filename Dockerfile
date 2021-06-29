@@ -2,12 +2,8 @@ from auto0mat/dopracenakole-base
 
 maintainer Automat
 
-copy poetry.lock /home/aplikace/poetry.lock
-copy pyproject.toml /home/aplikace/pyproject.toml
-env POETRY_HOME=/opt/poetry
-run poetry install --no-dev
-
-copy . .
+copy . /tmp/src
+run mv /tmp/src/* .
 
 run DPNK_SECRET_KEY="fake_key" DPNK_DEBUG_TOOLBAR=True DPNK_SILK=True poetry run python manage.py  compilemessages
 
