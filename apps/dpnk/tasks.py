@@ -234,7 +234,7 @@ def flush_denorm():
 
 
 @shared_task
-def generate_anonymized_trips_table(cities_to_export=None):
+def generate_anonymized_trips_table(cities_to_export=None, rebuild_anon_table=False):
     from django.db import connection
 
     sql = """
@@ -270,8 +270,9 @@ GRANT ALL PRIVILEGES ON TABLE dpnk_trip_anonymized TO dpnk;
 CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_geom);
     """
 
-    with connection.cursor() as cursor:
-        cursor.execute(sql)
+    if rebuild_anon_table:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
 
     if cities_to_export:
         from uuid import uuid4

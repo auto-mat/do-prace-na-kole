@@ -186,7 +186,11 @@ class CityInCampaignAdmin(RelatedFieldAdmin):
         "organizer_url",
     )
     list_filter = (CampaignFilter,)
-    actions = (make_pdfsandwich, actions.create_shape_files_for_cities)
+    actions = (
+        make_pdfsandwich,
+        actions.create_shape_files_for_cities,
+        actions.build_table_and_create_shape_files_for_cities,
+    )
 
 
 @admin.register(models.CityInCampaignDiploma)

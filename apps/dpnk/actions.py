@@ -253,6 +253,25 @@ def create_invoices(modeladmin, request, queryset, celery=True):
 create_invoices.short_description = _("Vytvořit faktury pro neplacené platby")
 
 
+def build_table_and_create_shape_files_for_cities(
+    modeladmin, request, queryset, celery=True
+):
+    city_pks = [c.pk for c in queryset]
+    if celery:
+        tasks.generate_anonymized_trips_table.delay(
+            cities_to_export=city_pks, rebuild_anon_table=True
+        )
+    else:
+        tasks.generate_anonymized_trips_table(
+            cities_to_export=city_pks, rebuild_anon_table=True
+        )
+
+
+build_table_and_create_shape_files_for_cities_build.short_description = _(
+    "Vygenerovat tabulka anonymních jízd a vytvořit .shp soubor pro export GIS data"
+)
+
+
 def create_shape_files_for_cities(modeladmin, request, queryset, celery=True):
     city_pks = [c.pk for c in queryset]
     if celery:
