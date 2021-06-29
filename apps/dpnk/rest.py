@@ -997,6 +997,13 @@ class MyCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+def get_data_export_url(city, campaign):
+    try:
+        return CityInCampaign.objects.get(city=city, campaign=req.campaign).data_export.url
+    except ValueError:
+        return None
+
+
 class CoordinatedCitySerializer(CitySerializer):
     data_export_password = RequestSpecificField(
         lambda city, req: CityInCampaign.objects.get(
@@ -1005,9 +1012,7 @@ class CoordinatedCitySerializer(CitySerializer):
     )
 
     data_export_url = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).data_export.url,
+        lambda city, req: get_data_export_url(city, req.campaign),
     )
 
     class Meta:
