@@ -627,6 +627,11 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
         if ua.userprofile.user.pk == req.user.pk
         else None,
     )
+    is_coordinator = RequestSpecificField(
+        lambda ua, req: ua.userprofile.administrated_cities.exists()
+        if ua.userprofile.user.pk == req.user.pk
+        else None,
+    )
     registration_complete = RequestSpecificField(
         lambda ua, req: ua.entered_competition(),
     )
@@ -666,6 +671,7 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
             "registration_complete",
             "gallery",
             "unread_notification_count",
+            "is_coordinator",
         )
 
 
@@ -991,6 +997,50 @@ class MyCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class CoordinatedCitySerializer(CitySerializer):
+    data_export_password = RequestSpecificField(
+        lambda city, req: CityInCampaign.objects.get(
+            city=city, campaign=req.campaign
+        ).data_export_password,
+    )
+
+    data_export_url = RequestSpecificField(
+        lambda city, req: CityInCampaign.objects.get(
+            city=city, campaign=req.campaign
+        ).data_export.url,
+    )
+
+    class Meta:
+        model = City
+        fields = (
+            "id",
+            "name",
+            "location",
+            "wp_url",
+            "competitor_count",
+            "trip_stats",
+            # 'frequency', TODO
+            "emissions",
+            "subsidiaries",
+            "eco_trip_count",
+            "distance",
+            "organizer",
+            "organizer_url",
+            "description",
+            "competitions",
+            "data_export_password",
+            "data_export_url",
+        )
+
+
+class CoordinatedCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return City.objects.filter(id__in=self.ua().userprofile.administrated_cities.all())
+
+    serializer_class = CoordinatedCitySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class CommuteModeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CommuteMode
@@ -1269,3 +1319,6 @@ router.register(r"photo", PhotoSet, basename="photo")
 router.register(r"gallery", GallerySet, basename="gallery")
 router.register(r"strava_account", StravaAccountSet, basename="strava_account")
 router.register(r"landing_page_icon", LandingPageIconSet, basename="landing_page_icon")
+
+
+router.register(r"coordinators/city", CoordinatedCitySet, basename="coordinated-city")
