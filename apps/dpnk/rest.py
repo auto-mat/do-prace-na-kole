@@ -999,7 +999,7 @@ class MyCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
 
 def get_data_export_url(city, campaign):
     try:
-        return CityInCampaign.objects.get(city=city, campaign=req.campaign).data_export.url
+        return CityInCampaign.objects.get(city=city, campaign=campaign).data_export.url
     except ValueError:
         return None
 
