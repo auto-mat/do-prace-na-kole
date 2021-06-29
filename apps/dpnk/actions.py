@@ -267,7 +267,7 @@ def build_table_and_create_shape_files_for_cities(
         )
 
 
-build_table_and_create_shape_files_for_cities_build.short_description = _(
+build_table_and_create_shape_files_for_cities.short_description = _(
     "Vygenerovat tabulka anonymních jízd a vytvořit .shp soubor pro export GIS data"
 )
 
