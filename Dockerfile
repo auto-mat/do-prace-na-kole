@@ -33,6 +33,7 @@ run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
 
 run pip3 install poetry
-run curl https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/poetry.lock > poetry.lock
-run curl https://raw.githubusercontent.com/auto-mat/do-prace-na-kole/devel/pyproject.toml > pyproject.toml
+copy poetry.lock .
+copy pyproject.toml .
+env POETRY_HOME=/opt/poetry
 run poetry install --no-dev
