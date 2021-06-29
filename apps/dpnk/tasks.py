@@ -232,6 +232,7 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
 def flush_denorm():
     denorm.flush
 
+
 @shared_task
 def generate_anonymized_trips_table(cities_to_export=None):
     from django.db import connection
@@ -288,10 +289,40 @@ CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_ge
             with tempfile.TemporaryDirectory() as tmpdirname:
                 os.chdir(tmpdirname)
                 try:
-                    check_output(["pgsql2shp", "-f", city.city.slug + ".shp", "-h", db_settings["HOST"], "-u", db_settings["USER"], "-P", db_settings["PASSWORD"], db_settings["NAME"], "SELECT * FROM dpnk_trip_anonymized WHERE city = '"+city.city.slug+"'"], stderr=STDOUT)
+                    check_output(
+                        [
+                            "pgsql2shp",
+                            "-f",
+                            city.city.slug + ".shp",
+                            "-h",
+                            db_settings["HOST"],
+                            "-u",
+                            db_settings["USER"],
+                            "-P",
+                            db_settings["PASSWORD"],
+                            db_settings["NAME"],
+                            "SELECT * FROM dpnk_trip_anonymized WHERE city = '"
+                            + city.city.slug
+                            + "'",
+                        ],
+                        stderr=STDOUT,
+                    )
                 except CalledProcessError:
                     pass
-                check_output(["zip", city.city.slug + ".zip", "-e", "-P", city.data_export_password] + [f for f in os.listdir(tmpdirname)], stderr=STDOUT)
+                check_output(
+                    [
+                        "zip",
+                        city.city.slug + ".zip",
+                        "-e",
+                        "-P",
+                        city.data_export_password,
+                    ]
+                    + [f for f in os.listdir(tmpdirname)],
+                    stderr=STDOUT,
+                )
                 with open(city.city.slug + ".zip", "rb") as fd:
-                    city.data_export.save(city.city.slug + "-" + city.campaign.slug_identifier + ".zip", File(fd))
+                    city.data_export.save(
+                        city.city.slug + "-" + city.campaign.slug_identifier + ".zip",
+                        File(fd),
+                    )
             city.save()

@@ -502,7 +502,6 @@ urlpatterns = [
         ),
         name="company_coordinator",
     ),
-
     # admin urls
     url(
         r"^admin/answers/$",

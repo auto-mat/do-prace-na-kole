@@ -1035,7 +1035,9 @@ class CoordinatedCitySerializer(CitySerializer):
 
 class CoordinatedCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return City.objects.filter(id__in=self.ua().userprofile.administrated_cities.all())
+        return City.objects.filter(
+            id__in=self.ua().userprofile.administrated_cities.all()
+        )
 
     serializer_class = CoordinatedCitySerializer
     permission_classes = [permissions.IsAuthenticated]
