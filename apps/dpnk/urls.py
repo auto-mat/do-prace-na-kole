@@ -494,6 +494,15 @@ urlpatterns = [
         views.test_errors,
         name="test_errors",
     ),
+    # city coordinator urls
+    url(
+        r"^coordinators/$",
+        views.VueView.as_view(
+            title=_("Města které koordinujete"),
+        ),
+        name="company_coordinator",
+    ),
+
     # admin urls
     url(
         r"^admin/answers/$",

@@ -15,6 +15,7 @@ __all__ = (
     SwitchLang,
     status,
     test_errors,
+    VueView,
     # team
     Company,
     UpdateTeam,

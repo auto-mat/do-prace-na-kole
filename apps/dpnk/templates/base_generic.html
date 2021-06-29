@@ -56,7 +56,6 @@
 											{% sitetree_menu from campaign.campaign_type.sitetree_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
 			                           {% endif %}
 									{% endblock %}
-
 			                        {% block second_menu %}
 			                           {% if user_attendance.entered_competition %}
 			                              {{ block.super }}
@@ -104,6 +103,8 @@
 									{% if user.is_staff %}
 										 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 									{% endif %}
+					                       <div class="dynamic-menu">
+					                       </div>
 	                {% if user_attendance.helpdesk_iframe_url %}
 			            <li>
 			                <a href="#" class="helpdesk-shower" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>

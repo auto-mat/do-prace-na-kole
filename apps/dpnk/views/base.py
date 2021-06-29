@@ -39,6 +39,11 @@ class LandingView(RegistrationCompleteMixin, UserAttendanceView):
         return super().dispatch(request, *args, **kwargs)
 
 
+class VueView(UserAttendanceView):
+    template_name = "registration/vue.html"
+    title = _("Vítejte v dalším ročníku soutěže!")
+
+
 def status(request):
     status_page = str(datetime.datetime.now()) + "\n"
     status_page += socket.gethostname()
