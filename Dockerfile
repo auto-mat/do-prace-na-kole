@@ -11,5 +11,4 @@ run DPNK_SECRET_KEY="fake_key" DPNK_DEBUG_TOOLBAR=True DPNK_SILK=True poetry run
 
 EXPOSE 8000
 RUN mkdir media logs -p
-VOLUME ["logs", "media"]
 ENTRYPOINT ["./docker-entrypoint.sh"]
