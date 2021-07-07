@@ -12,18 +12,28 @@ class TestTasks(TestCase):
     def setUp(self):
         self.delivery_batch = mommy.make(
             "DeliveryBatch",
-            order_pdf=File(open("apps/t_shirt_delivery/test_files/batch198.pdf", "rb+")),
+            order_pdf=File(
+                open("apps/t_shirt_delivery/test_files/batch198.pdf", "rb+")
+            ),
         )
         mommy.make(
             "SubsidiaryBox",
             delivery_batch=self.delivery_batch,
-            customer_sheets=File(open("apps/t_shirt_delivery/test_files/customer_sheets_33431.pdf", "rb+")),
+            customer_sheets=File(
+                open(
+                    "apps/t_shirt_delivery/test_files/customer_sheets_33431.pdf", "rb+"
+                )
+            ),
             id=33431,
         )
         mommy.make(
             "SubsidiaryBox",
             delivery_batch=self.delivery_batch,
-            customer_sheets=File(open("apps/t_shirt_delivery/test_files/customer_sheets_33432.pdf", "rb+")),
+            customer_sheets=File(
+                open(
+                    "apps/t_shirt_delivery/test_files/customer_sheets_33432.pdf", "rb+"
+                )
+            ),
             id=33432,
         )
 
