@@ -1,5 +1,0 @@
-#!/bin/bash
-for var in "$@"
-do
-    ssh -oStrictHostKeyChecking=no -t ubuntu@"$var" 'bash /home/ubuntu/restart_docker_containers; exit'
-done
