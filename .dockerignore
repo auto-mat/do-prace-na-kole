@@ -28,3 +28,5 @@ cookies.txt
 docker.env
 third_party/
 pipenv
+poetry.lock
+pyproject.toml
