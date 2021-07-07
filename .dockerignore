@@ -27,3 +27,4 @@ fabfile.py
 cookies.txt
 docker.env
 third_party/
+pipenv
