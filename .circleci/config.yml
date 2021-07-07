@@ -19,15 +19,9 @@ jobs:
          command: |
             if [ "$DOCKER_USER" != "" ] ; then
               TAG="$(date +%Y).${CIRCLE_BUILD_NUM}"
-              docker tag dopracenakole:latest auto0mat/dopracenakole-test:$TAG
-              if [ "$CIRCLE_BRANCH" == "devel" ] ; then
-                 docker tag dopracenakole:latest auto0mat/dopracenakole-test:latest
-              fi
+              docker tag dopracenakole:latest auto0mat/dopracenakole:$TAG
               docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker push auto0mat/dopracenakole-test:$TAG
-              if [ "$CIRCLE_BRANCH" == "devel" ] ; then
-                 docker push auto0mat/dopracenakole-test:latest
-              fi
+              docker push auto0mat/dopracenakole:$TAG
             fi
       - run:
          name: Build test Docker image
