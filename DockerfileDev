@@ -1,12 +1,5 @@
 FROM dpnk-base
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
 RUN useradd test
 RUN chsh test -s /bin/bash
 RUN mkdir /home/test ; chown test /home/test ; chgrp test /home/test
-RUN apt-get install -y libgirepository1.0-dev idle3
-RUN apt-get -qq update
-run apt-get install -y python3-gi
-RUN apt-get install -y gtk+3
-RUN cd /home/aplikace ; poetry install
 run mkdir -p /opt/poetry ; chown -R test /opt/poetry
