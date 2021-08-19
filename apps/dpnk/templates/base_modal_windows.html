@@ -5,7 +5,7 @@
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
 <script>
 {% if user_attendance %}
-window.helpdesk_iframe_url = '{{user_attendance.helpdesk_iframe_url}}';
+window.helpdesk_iframe_url = '{{user_attendance.helpdesk_iframe_url | safe}}';
 {% else %}
 window.helpdesk_iframe_url = '';
 {% endif %}
