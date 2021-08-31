@@ -86,6 +86,8 @@ class CampaignFilter(SimpleListFilter):
 
         if self.value() == "none":
             return queryset.filter(**none_queryarg).distinct()
+        if issubclass(queryset.model, models.Trip):
+            return queryset.filter(Q(**campaign_queryarg)).distinct()
         return queryset.filter(Q(**campaign_queryarg) | Q(**none_queryarg)).distinct()
 
 
