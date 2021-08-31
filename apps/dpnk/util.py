@@ -94,7 +94,7 @@ def days_count(competition, day=None):
 
 
 def days_active(competition):
-    """ Get editable days for this competition/campaign """
+    """Get editable days for this competition/campaign"""
     day_today = today()
     potential_days = daterange(
         competition.campaign._first_possibly_active_day(day_today=day_today), day_today
