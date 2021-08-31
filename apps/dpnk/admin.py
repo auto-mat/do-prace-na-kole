@@ -53,6 +53,8 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from daterange_filter.filter import DateRangeFilter
+
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
 from import_export_celery.admin_actions import create_export_job_action
@@ -1245,15 +1247,15 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         "user_attendance",
         "gallery",
     )
-    # list_filter = (
-    #     campaign_filter_generator('user_attendance__campaign'),
-    #     'direction',
-    #     'commute_mode',
-    #     ('date', DateRangeFilter),
-    #     'user_attendance__team__subsidiary__city',
-    #     'source_application',
-    #     'user_attendance__payment_status',
-    # )
+    list_filter = (
+        campaign_filter_generator("user_attendance__campaign"),
+        "direction",
+        "commute_mode",
+        ("date", DateRangeFilter),
+        "user_attendance__team__subsidiary__city",
+        "source_application",
+        "user_attendance__payment_status",
+    )
     readonly_fields = ("created", "author", "updated_by")
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
