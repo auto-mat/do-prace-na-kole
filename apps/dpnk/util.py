@@ -26,8 +26,10 @@ import denorm
 from django.conf import settings
 from django.contrib import contenttypes
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.paginator import Paginator
+from django.db import connection, OperationalError, transaction
 from django.utils import six
-from django.utils.functional import lazy
+from django.utils.functional import cached_property, lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
@@ -92,7 +94,7 @@ def days_count(competition, day=None):
 
 
 def days_active(competition):
-    """ Get editable days for this competition/campaign """
+    """Get editable days for this competition/campaign"""
     day_today = today()
     potential_days = daterange(
         competition.campaign._first_possibly_active_day(day_today=day_today), day_today
@@ -194,3 +196,23 @@ def get_multilinestring_length(mls):
                 (start_lat, start_long), (end_lat, end_long)
             ).km
     return length
+
+
+class CustomPaginator(Paginator):
+    @cached_property
+    def count(self):
+        try:
+            with transaction.atomic(), connection.cursor() as cursor:
+                # Limit to 150 ms
+                cursor.execute("SET LOCAL statement_timeout TO 150;")
+                return super().count
+        except OperationalError:
+            pass
+        with transaction.atomic(), connection.cursor() as cursor:
+            # Obtain estimated values (only valid with PostgreSQL)
+            cursor.execute(
+                "SELECT reltuples FROM pg_class WHERE relname = %s",
+                [self.object_list.query.model._meta.db_table],
+            )
+            estimate = int(cursor.fetchone()[0])
+            return estimate
