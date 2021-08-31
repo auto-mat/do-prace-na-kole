@@ -114,6 +114,9 @@ class Trip(WithGalleryMixin, models.Model):
         verbose_name_plural = _("Jízdy")
         unique_together = (("user_attendance", "date", "direction"),)
         ordering = ("date", "-direction")
+        indexes = [
+            models.Index(fields=["date", "-direction", "-id", "source_application"]),
+        ]
 
     objects = BulkUpdateManager()
 

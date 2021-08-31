@@ -100,6 +100,7 @@ from .filters import (
     PSCFilter,
     campaign_filter_generator,
 )
+from .util import CustomPaginator
 
 
 def admin_links(args_generator):
@@ -1219,6 +1220,8 @@ class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
 
 @admin.register(models.Trip)
 class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
+    paginator = CustomPaginator
+    show_full_result_count = False
     queryset_city_param = "user_attendance__team__subsidiary__city__in"
     list_display = (
         "user_attendance__name_for_trusted",
