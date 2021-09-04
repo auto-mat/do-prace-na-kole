@@ -86,7 +86,7 @@ django-sitetree = "*"
 django-admin-views = "*"
 single-beat = "*"
 vokativ = "*"
-django-fm = "*"
+django-fm = {git = "https://github.com/auto-mat/django-fm.git", rev = "fix-jquery-ajax-deprecated-methods"}
 django-initial-field = "*"
 django-betterforms = "*"
 django-adminfilters = "==1.0.0"
