@@ -620,6 +620,18 @@ class UserProfileAdminInline(NestedStackedInline):
     form = UserProfileForm
     inlines = [UserAttendanceInline, CompanyAdminInline]
     filter_horizontal = ("administrated_cities",)
+    fields = (
+        "nickname",
+        ("telephone", "telephone_opt_in"),
+        ("sex", "age_group"),
+        "occupation", 
+        ("language", "mailing_opt_in"),
+        "note",
+        ("default_rides_view"),
+        ("mailing_id", "mailing_hash"),
+        "gallery"
+
+    )
     raw_id_fields = (
         "gallery",
     )
@@ -762,6 +774,14 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
         "userprofile__sex",
         "userprofile__administrated_cities",
         EmailFilter,
+    ]
+    fieldsets = [
+        (None, {
+            "fields": [("username", "email"), ("first_name", "last_name"), ('last_login', 'date_joined')]
+        }),
+        (_('Permissions'), {
+            'fields': (('is_active', 'is_staff', 'is_superuser'), 'groups', 'user_permissions'),
+        }),
     ]
     list_max_show_all = 10000
 
