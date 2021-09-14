@@ -39,18 +39,20 @@ Využijte možnost stáhnout si novou mobilní aplikaci Do práce na kole. Vše 
   </div>
   {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
   <div class="card">
+
+      <img class="card-img-top mx-auto" alt="Cyclers" src="https://cyclers.tech/assets/img/Cyclers-Logo.png" style="width: 10em;" />
       <div class="card-body">
-          <h5 class="card-title">UrbanCyclers</h5>
-          <a href="{% url 'open-application-with-rest-token' 1 %}" class="btn btn-secondary stretched-link">Propojit se UrbanCyclers</a>
+          <h5 class="card-title">Cyclers</h5>
+          <a href="{% url 'open-application-with-rest-token' 1 %}" class="btn btn-secondary stretched-link">Propojit se Cyclers</a>
       </div>
   </div>
   <div class="card">
+      <img class="card-img-top mx-auto" alt="Na kole Prahou" src="https://play-lh.googleusercontent.com/N7O-O0xiVAGy_ok5MEkQZ2yLXAVSM-Nx4XPmD_M2YA4TKsQZgkfiJauzRgNJtcQyxCHk=s360" style="width: 10em;" />
       <div class="card-body">
           <h5 class="card-title">Na kole Prahou</h5>
           <div  style="padding-bottom: 10px;">
-          <a href="{% url 'open-application-with-rest-token' 0 %}" class="btn btn-secondary stretched-link">Propojit se Na kole Prahou</a>
+          <a href="{% url 'open-application-with-rest-token' 3 %}" class="btn btn-secondary stretched-link">Propojit se Na kole Prahou</a>
           </div>
-          <a href="{% url 'open-application-with-rest-token' 3 %}" class="btn btn-secondary stretched-link">Propojit se Na kole Prahou (iOS)</a>
       </div>
   </div>
   {% endif %}
