@@ -620,6 +620,10 @@ class UserProfileAdminInline(NestedStackedInline):
     form = UserProfileForm
     inlines = [UserAttendanceInline, CompanyAdminInline]
     filter_horizontal = ("administrated_cities",)
+    raw_id_fields = (
+        "gallery",
+    )
+
 
 
 @admin.register(models.UserProfile)
