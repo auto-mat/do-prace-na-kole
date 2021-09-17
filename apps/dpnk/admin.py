@@ -776,7 +776,7 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
             None,
             {
                 "fields": [
-                    ("username", "email"),
+                    ("username", "email", "password"),
                     ("first_name", "last_name"),
                     ("last_login", "date_joined"),
                 ]
