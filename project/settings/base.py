@@ -65,6 +65,7 @@ DATABASES = {
         "PASSWORD": os.environ.get("DPNK_DB_PASSWORD", ""),
         "HOST": os.environ.get("DPNK_DB_HOST", "localhost"),
         "PORT": os.environ.get("DPNK_DB_PORT", ""),
+        "DISABLE_SERVER_SIDE_CURSORS": True,
         "CONN_MAX_AGE": 60,
     },
 }
