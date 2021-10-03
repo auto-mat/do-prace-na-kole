@@ -91,7 +91,7 @@ class DPNKLoginView(
 
 class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     form_class = ChangeTeamForm
-    template_name = "registration/change_team.html"
+    template_name = "dpnk/change_team.html"
     next_url = "zmenit_triko"
     prev_url = "upravit_profil"
     registration_phase = "zmenit_tym"
@@ -240,7 +240,7 @@ class ConfirmTeamInvitationView(
     SuccessMessageMixin,
     FormView,
 ):
-    template_name = "registration/team_invitation.html"
+    template_name = "dpnk/team_invitation.html"
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy("zmenit_tym")
     registration_phase = "zmenit_tym"
@@ -322,7 +322,7 @@ class PaymentTypeView(
     CampaignParameterMixin,
     FormView,
 ):
-    template_name = "registration/payment_type.html"
+    template_name = "dpnk/payment_type.html"
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
@@ -464,7 +464,7 @@ class PaymentView(
     UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin, TemplateView
 ):
     beneficiary = False
-    template_name = "registration/payment.html"
+    template_name = "dpnk/payment.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -546,7 +546,7 @@ class BeneficiaryPaymentView(PaymentView):
 
 class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = "typ_platby"
-    template_name = "registration/payment_result.html"
+    template_name = "dpnk/payment_result.html"
 
     def dispatch(self, request, *args, **kwargs):
         payment = Payment.objects.get(session_id=kwargs["session_id"])
@@ -723,7 +723,7 @@ def payment_status(request):
 
 class RegistrationCompleteView(TitleViewMixin, TemplateView):
     title = _("Registrace dokončena!")
-    template_name = "registration/dpnk_registration_complete.html"
+    template_name = "dpnk/dpnk_registration_complete.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -758,7 +758,7 @@ class RegistrationUncompleteForm(
 
 
 class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
-    template_name = "registration/package.html"
+    template_name = "dpnk/package.html"
     title = _("Sledování balíčku")
     registration_phase = "zmenit_tym"
 
@@ -769,7 +769,7 @@ class RegistrationProfileView(
     LoginRequiredMixin,
     UpdateView,
 ):
-    template_name = "registration/profile_update.html"
+    template_name = "dpnk/profile_update.html"
     form_class = RegistrationProfileUpdateForm
     model = UserProfile
     success_message = _("Vaše osobní údaje jsme pečlivě uložili.")
@@ -795,13 +795,13 @@ class UpdateProfileView(RegistrationProfileView):
     form_class = ProfileUpdateForm
     success_url = "edit_profile_detailed"
     title = _("Můj profil")
-    template_name = "registration/profile_update_detailed.html"
+    template_name = "dpnk/profile_update_detailed.html"
 
 
 class TeamApprovalRequest(
     TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView
 ):
-    template_name = "registration/request_team_approval.html"
+    template_name = "dpnk/request_team_approval.html"
     title = _("Žádost o ověření členství byla odeslána")
     registration_phase = "zmenit_tym"
 

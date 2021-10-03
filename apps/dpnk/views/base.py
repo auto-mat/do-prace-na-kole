@@ -30,7 +30,7 @@ class UserAttendanceView(
 
 
 class LandingView(RegistrationCompleteMixin, UserAttendanceView):
-    template_name = "registration/landing.html"
+    template_name = "dpnk/landing.html"
     title = _("Vítejte v dalším ročníku soutěže!")
 
     def dispatch(self, request, *args, **kwargs):
@@ -40,7 +40,7 @@ class LandingView(RegistrationCompleteMixin, UserAttendanceView):
 
 
 class VueView(UserAttendanceView):
-    template_name = "registration/vue.html"
+    template_name = "dpnk/vue.html"
     title = _("Vítejte v dalším ročníku soutěže!")
 
 

@@ -106,7 +106,7 @@ class RidesView(
     uncreated_trips = []
     success_message = _("Tabulka jízd úspěšně změněna")
     registration_phase = "profile_view"
-    template_name = "registration/competition_profile.html"
+    template_name = "dpnk/competition_profile.html"
     title = ""
 
     @method_decorator(never_cache)
@@ -223,7 +223,7 @@ class RidesDetailsView(
     TemplateView,
 ):
     title = _("Podrobný přehled jízd")
-    template_name = "registration/rides_details.html"
+    template_name = "dpnk/rides_details.html"
     registration_phase = "profile_view"
 
     def get_context_data(self, *args, **kwargs):
@@ -272,7 +272,7 @@ class CalendarView(
     TemplateView,
 ):
     title = _("Zapište svou jízdu do kalendáře")
-    template_name = "registration/calendar.html"
+    template_name = "dpnk/calendar.html"
     registration_phase = "profile_view"
 
     def get_context_data(self, *args, **kwargs):
@@ -384,7 +384,7 @@ class EditTripView(
 ):
     form_class = forms.TrackTripForm
     model = models.Trip
-    template_name = "registration/trip.html"
+    template_name = "dpnk/trip.html"
     title = _("Zadat trasu")
 
     def get_initial(self, initial=None):
@@ -425,7 +425,7 @@ class CreateTripView(EditTripView, CreateView):
 
 
 class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
-    template_name = "registration/view_trip.html"
+    template_name = "dpnk/view_trip.html"
     title = _("Prohlédnout trasu")
 
     def get_context_data(self, *args, **kwargs):

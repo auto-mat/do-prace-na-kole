@@ -154,7 +154,7 @@ urlpatterns = [
     url(
         r"^dalsi_clenove_vysledky/$",
         views.OtherTeamMembers.as_view(
-            template_name="registration/team_members_results.html",
+            template_name="dpnk/team_members_results.html",
         ),
         name="other_team_members_results",
     ),
@@ -186,7 +186,7 @@ urlpatterns = [
     url(
         r"^souteze/pravidla/(?P<city_slug>[^&]+)/$",
         views.CompetitionsRulesView.as_view(
-            template_name="registration/competitions_rules.html",
+            template_name="dpnk/competitions_rules.html",
         ),
         name="competition-rules-city",
     ),
@@ -194,7 +194,7 @@ urlpatterns = [
         r"^souteze/vysledky/(?P<city_slug>[^&]+)/$",
         views.CompetitionsRulesView.as_view(
             title_base=_("Výsledky soutěží"),
-            template_name="registration/competitions_results_city.html",
+            template_name="dpnk/competitions_results_city.html",
         ),
         name="competition-results-city",
     ),
@@ -328,7 +328,7 @@ urlpatterns = [
     url(
         r"^emisni_kalkulacka/$",
         views.UserAttendanceView.as_view(
-            template_name="registration/emission_calculator.html",
+            template_name="dpnk/emission_calculator.html",
             title=_(u"Emisní kalkulačka"),
         ),
         name="emission_calculator",
@@ -336,7 +336,7 @@ urlpatterns = [
     url(
         r"^help/$",
         views.UserAttendanceView.as_view(
-            template_name="registration/help.html",
+            template_name="dpnk/help.html",
             title=_("Nápověda"),
         ),
         name="help",

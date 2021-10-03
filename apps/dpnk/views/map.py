@@ -9,7 +9,7 @@ from ..views_permission_mixins import RegistrationCompleteMixin
 
 
 class MapView(LoginRequiredMixin, RegistrationCompleteMixin, TemplateView):
-    template_name = "registration/map.html"
+    template_name = "dpnk/map.html"
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)

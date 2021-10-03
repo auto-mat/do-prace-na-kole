@@ -49,7 +49,7 @@ class WithCompetitionMixin(UserAttendanceParameterMixin):
 
 
 class CompetitionResultsView(WithCompetitionMixin, TitleViewMixin, TemplateView):
-    template_name = "registration/competition_results.html"
+    template_name = "dpnk/competition_results.html"
     title = _("Výsledky soutěže")
 
     def get_context_data(self, *args, **kwargs):

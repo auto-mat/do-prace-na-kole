@@ -48,7 +48,7 @@ class UpdateTeam(
     LoginRequiredMixin,
     UpdateView,
 ):
-    template_name = "registration/edit_team.html"
+    template_name = "dpnk/edit_team.html"
     form_class = TeamSettingsForm
     success_url = reverse_lazy("team_members")
     title = _("Upravit údaje týmu")
@@ -99,7 +99,7 @@ class TeamMembers(
     MustBeApprovedForTeamMixin,
     TemplateView,
 ):
-    template_name = "registration/team_admin_members.html"
+    template_name = "dpnk/team_admin_members.html"
     registration_phase = "zmenit_tym"
 
     def get_title(self, *args, **kwargs):
@@ -190,7 +190,7 @@ class OtherTeamMembers(
     LoginRequiredMixin,
     TemplateView,
 ):
-    template_name = "registration/team_members.html"
+    template_name = "dpnk/team_members.html"
     title = ""
 
     @method_decorator(never_cache)
@@ -224,7 +224,7 @@ class Company(
     LoginRequiredMixin,
     TemplateView,
 ):
-    template_name = "registration/company.html"
+    template_name = "dpnk/company.html"
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)

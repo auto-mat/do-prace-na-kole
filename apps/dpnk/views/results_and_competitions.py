@@ -52,7 +52,7 @@ class DiplomasView(
     TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView
 ):
     title = _("Vaše diplomy a výsledky v minulých ročnících")
-    template_name = "registration/diplomas.html"
+    template_name = "dpnk/diplomas.html"
     registration_phase = "profile_view"
 
     def get_context_data(self, *args, **kwargs):
@@ -70,7 +70,7 @@ class DiplomasView(
 
 
 class FrequencyView(OtherTeamMembers):
-    template_name = "registration/frequency.html"
+    template_name = "dpnk/frequency.html"
     title = _("Pravidelnost")
 
     def get_context_data(self, *args, **kwargs):
@@ -128,23 +128,23 @@ class AdmissionsView(
 class LengthCompetitionsView(AdmissionsView):
     title = _("Výsledky výkonnostních soutěží")
     competition_types = ("length",)
-    template_name = "registration/competitions.html"
+    template_name = "dpnk/competitions.html"
 
 
 class FrequencyCompetitionsView(AdmissionsView):
     title = _("Výsledky pravidelnostních soutěží")
     competition_types = ("frequency",)
-    template_name = "registration/competitions.html"
+    template_name = "dpnk/competitions.html"
 
 
 class QuestionareCompetitionsView(AdmissionsView):
     title = _("Výsledky dotazníkových soutěží a soutěží na kreativitu")
     competition_types = ("questionnaire",)
-    template_name = "registration/competitions.html"
+    template_name = "dpnk/competitions.html"
 
 
 class CompetitionResultsView(TitleViewMixin, TemplateView):
-    template_name = "registration/competition_results.html"
+    template_name = "dpnk/competition_results.html"
     title = _("Výsledky soutěže")
 
     def get_context_data(self, *args, **kwargs):
@@ -175,7 +175,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
 
 class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
-    template_name = "registration/questionaire.html"
+    template_name = "dpnk/questionaire.html"
     success_url = reverse_lazy("profil")
     title = _("Vyplňte odpovědi")
     form_class = forms.AnswerForm
@@ -290,7 +290,7 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
 
 
 class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
-    template_name = "registration/questionnaire_answers_all.html"
+    template_name = "dpnk/questionnaire_answers_all.html"
     title = _("Výsledky všech soutěží")
 
     def get_context_data(self, *args, **kwargs):
@@ -541,7 +541,7 @@ def trips(trips):
 @cache_page(60 * 60)
 def statistics(
     request,
-    template="registration/statistics.html",
+    template="dpnk/statistics.html",
 ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
@@ -593,7 +593,7 @@ def statistics(
 @cache_page(60 * 60)
 def daily_chart(
     request,
-    template="registration/daily-chart.html",
+    template="dpnk/daily-chart.html",
 ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
@@ -633,7 +633,7 @@ def daily_distance_extra_json(
 
 
 class CompetitorCountView(TitleViewMixin, TemplateView):
-    template_name = "registration/competitor_count.html"
+    template_name = "dpnk/competitor_count.html"
     title = _("Počty soutěžících")
 
     @method_decorator(cache_page(60 * 60 - 4))
