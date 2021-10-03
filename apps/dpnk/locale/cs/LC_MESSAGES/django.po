@@ -2769,21 +2769,21 @@ msgstr ""
 msgid "Smazat user attendance (DEBUG)"
 msgstr ""
 
-#: apps/dpnk/templates/base_login_registration.html:11
+#: apps/dpnk/templates/dpnk/base_login_registration.html:11
 msgid ""
 "Pokud s námi nejedete poprvé, zadejte stejný e-mail jako v minulém roce a "
 "pokračujte rovnou na přihlášení."
 msgstr ""
 
-#: apps/dpnk/templates/base_login_registration.html:17
+#: apps/dpnk/templates/dpnk/base_login_registration.html:17
 msgid "Nejezdíš do práce, ale do školy? Přihlas se do"
 msgstr ""
 
-#: apps/dpnk/templates/base_login_registration.html:18
+#: apps/dpnk/templates/dpnk/base_login_registration.html:18
 msgid "Je to zdarma."
 msgstr ""
 
-#: apps/dpnk/templates/base_login_registration.html:24
+#: apps/dpnk/templates/dpnk/base_login_registration.html:24
 msgid "Už máte školní léta nějaký ten pátek za sebou? Tak s námi jezděte"
 msgstr ""
 

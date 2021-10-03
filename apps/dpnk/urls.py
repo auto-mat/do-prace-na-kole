@@ -425,7 +425,7 @@ urlpatterns = [
         r"^login/(?P<initial_email>[^&]+)/$$",
         views.DPNKLoginView.as_view(
             form_class=auth.AuthenticationFormDPNK,
-            template_name="base_login_registration.html",
+            template_name="dpnk/base_login_registration.html",
         ),
         name="login",
     ),
@@ -433,7 +433,7 @@ urlpatterns = [
         r"^login/?$",
         views.DPNKLoginView.as_view(
             form_class=auth.AuthenticationFormDPNK,
-            template_name="base_login_registration.html",
+            template_name="dpnk/base_login_registration.html",
         ),
         name="login",
     ),
