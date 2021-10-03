@@ -2787,7 +2787,7 @@ msgstr ""
 msgid "Už máte školní léta nějaký ten pátek za sebou? Tak s námi jezděte"
 msgstr ""
 
-#: apps/dpnk/templates/base_modal_windows.html:42
+#: apps/dpnk/templates/dpnk/base_modal_windows.html:42
 msgid "Upozornění"
 msgstr ""
 
