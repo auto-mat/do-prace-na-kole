@@ -1,4 +1,4 @@
-{% extends "base_generic_form.html" %}
+{% extends "dpnk/base_generic_form.html" %}
 {% load i18n %}
 {% load leaflet_tags %}
 
@@ -13,5 +13,5 @@
 		{% blocktrans %}Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="{{ application_url }}">mobilních aplikací</a>.{% endblocktrans %}
 	</div>
 	{{ block.super }}
-	{% include "registration/application_link.html" %}
+	{% include "dpnk/application_link.html" %}
 {% endblock %}

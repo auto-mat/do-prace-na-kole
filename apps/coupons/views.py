@@ -41,7 +41,7 @@ class DiscountCouponView(
     RegistrationViewMixin,
     FormView,
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = forms.DiscountCouponForm
     success_url = reverse_lazy("typ_platby")
     next_url = "typ_platby"

@@ -736,7 +736,7 @@ class RegistrationCompleteView(TitleViewMixin, TemplateView):
 class RegistrationUncompleteForm(
     TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     title = _("Nastal čas seřídit kolo a vyřešit drobné papírování…")
     opening_message = util.mark_safe_lazy(
         _(
@@ -819,7 +819,7 @@ class InviteView(
     LoginRequiredMixin,
     FormView,
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = InviteForm
     title = _("Pozvěte další kolegy do svého týmu")
     registration_phase = "zmenit_tym"
@@ -901,7 +901,7 @@ class InviteView(
 
 
 class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
-    template_name = "registration/applications.html"
+    template_name = "dpnk/applications.html"
     title = _("Aplikace")
     registration_phase = "application"
 

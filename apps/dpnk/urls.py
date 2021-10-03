@@ -302,7 +302,7 @@ urlpatterns = [
     url(
         r"^address/$",
         views.UserAttendanceView.as_view(
-            template_name="registration/address.html",
+            template_name="dpnk/address.html",
         ),
     ),
     url(

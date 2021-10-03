@@ -184,5 +184,5 @@ class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
 
 
 class PasswordChangeView(django_views.PasswordChangeView):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = PasswordChangeForm

@@ -224,7 +224,7 @@ class SelectUsersPayView(
 class CompanyEditView(
     TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy("company_structure")
@@ -237,7 +237,7 @@ class CompanyEditView(
 class CompanyAdminApplicationView(
     CampaignFormKwargsMixin, TitleViewMixin, CompanyAdminMixin, RegistrationView
 ):
-    template_name = "base_login.html"
+    template_name = "dpnk/base_login.html"
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = reverse_lazy("company_structure")
@@ -278,7 +278,7 @@ class CompanyAdminView(
     LoginRequiredMixin,
     UpdateView,
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = CompanyAdminForm
     model = CompanyAdmin
     success_url = "profil"
@@ -327,7 +327,7 @@ class CompanyAdminView(
 class EditSubsidiaryView(
     TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = SubsidiaryForm
     success_url = reverse_lazy("company_structure")
     model = Subsidiary
@@ -353,7 +353,7 @@ class CompanyViewException(Exception):
 class CompanyCompetitionView(
     TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView
 ):
-    template_name = "base_generic_form.html"
+    template_name = "dpnk/base_generic_form.html"
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy("company_admin_competitions")

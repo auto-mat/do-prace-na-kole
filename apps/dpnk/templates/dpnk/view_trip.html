@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+{% extends "dpnk/base_generic.html" %}
 {% load i18n %}
 {% load dpnk_tags %}
 {% load leaflet_tags %}
@@ -51,5 +51,5 @@
 			{% trans 'Žádná trasa nebyla zadána' %}
 		{% endif %}
 	{% endif %}
-	{% include "registration/application_link.html" %}
+	{% include "dpnk/application_link.html" %}
 {% endblock %}
