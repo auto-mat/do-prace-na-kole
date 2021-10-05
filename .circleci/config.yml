@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /home/aplikace
     docker:
-      - image: docker:git
+      - image: circleci/buildpack-deps:stretch
 
     steps:
       - checkout
