@@ -83,7 +83,7 @@ jobs:
            if scripts/test_changes --invert-match monorepo/ ; then
             sleep 10
             docker run \
-               --entrypoint="$PDW/docker-test-entrypoint.sh" \
+               --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
                --env DPNK_DB_HOST=postgres \
                --env DPNK_SECRET_KEY=secret \
                --env DPNK_DB_NAME=postgres \
