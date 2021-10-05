@@ -1,0 +1,8 @@
+#!/usr/bin/python3
+import subprocess
+from subprocess import PIPE
+import sys
+
+result = subprocess.run("git diff --name-only $COMMITS | grep " + " ".join(sys.argv[1:]), shell=True, stdout=PIPE)
+if not result.stdout:
+   sys.exit("No changes")

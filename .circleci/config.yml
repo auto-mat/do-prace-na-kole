@@ -9,34 +9,76 @@ jobs:
       - checkout
       - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM}" > apps/dpnk/static/version.txt
       - run: echo "$(git rev-parse HEAD)" > apps/dpnk/static/git-commit.txt
+      - run: |
+            LAST_SUCCESSFUL_BUILD_URL="https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?filter=completed&limit=1"
+            LAST_SUCCESSFUL_COMMIT=`curl -Ss -u "$CIRCLE_TOKEN:" $LAST_SUCCESSFUL_BUILD_URL | jq -r '.[0]["vcs_revision"]'`
+            #first commit in a branch
+            if [[ ${LAST_SUCCESSFUL_COMMIT} == "null" ]]; then
+              COMMITS="origin/master"
+            else
+              COMMITS="${CIRCLE_SHA1}..${LAST_SUCCESSFUL_COMMIT}"
+            fi
+            export COMMITS
       - setup_remote_docker:
           reusable: true
       - run:
+         name: Build base docker image
+         command:
+           if scripts/test_changes monorepo/docker-base-image ; then
+             docker build -t dopracenakole-base .
+           fi
+      - run:
+         name: Deploy base docker image
+         command: |
+           if scripts/test_changes monorepo/docker-base-image ; then
+            if [ "$DOCKER_USER" != "" ] ; then
+              TAG="$(date +%Y).${CIRCLE_BUILD_NUM}"
+              docker tag dopracenakole-base:latest auto0mat/dopracenakole-base:$TAG
+              docker tag dopracenakole-base:latest auto0mat/dopracenakole-base:latest
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker push auto0mat/dopracenakole-base:$TAG
+              docker push auto0mat/dopracenakole-base:latest
+            fi
+           fi
+      - run:
          name: Build Docker image
-         command: docker build -t dopracenakole .
+         command: |
+           if scripts/test_changes --invert-match monorepo/ ; then
+             docker build -t dopracenakole .
+           fi
       - run:
          name: Deploy test Docker image
          command: |
+           if scripts/test_changes --invert-match monorepo/ ; then
             if [ "$DOCKER_USER" != "" ] ; then
               TAG="$(date +%Y).${CIRCLE_BUILD_NUM}"
               docker tag dopracenakole:latest auto0mat/dopracenakole:$TAG
               docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker push auto0mat/dopracenakole:$TAG
             fi
+           fi
       - run:
          name: Build test Docker image
-         command: docker build -t dopracenakole-test -f TestDockerfile .
+         command: |
+           if scripts/test_changes --invert-match monorepo/ ; then
+             docker build -t dopracenakole-test -f TestDockerfile .
+           fi
       - run:
          name: Start PostGIS container
          command: |
+           if scripts/test_changes --invert-match monorepo/ ; then
             docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis:9.6
+           fi
       - run:
          name: Start RabbitMQ container
          command: |
+           if scripts/test_changes --invert-match monorepo/ ; then
             docker run -d --hostname dpnk-rabbit --name dpnk-rabbit rabbitmq
+           fi
       - run:
          name: Test Docker container in Django
          command: |
+           if scripts/test_changes --invert-match monorepo/ ; then
             sleep 10
             docker run \
                --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
@@ -50,7 +92,7 @@ jobs:
                --link dpnk-postgres:postgres \
                --name dpnk-test \
                dopracenakole-test
-
+           fi
       - store_artifacts:
           path: /tmp/reports
           destination: reports
