@@ -1,7 +1,6 @@
 version: 2
 jobs:
   build:
-    working_directory: /home/aplikace
     docker:
       - image: circleci/buildpack-deps:stretch
 
@@ -81,7 +80,7 @@ jobs:
            if scripts/test_changes --invert-match monorepo/ ; then
             sleep 10
             docker run \
-               --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
+               --entrypoint="$PDW/docker-test-entrypoint.sh" \
                --env DPNK_DB_HOST=postgres \
                --env DPNK_SECRET_KEY=secret \
                --env DPNK_DB_NAME=postgres \
