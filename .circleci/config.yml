@@ -24,9 +24,9 @@ jobs:
          name: Build base docker image
          command: |
            if scripts/test_changes monorepo/docker-base-image ; then
-             cd monorepo/docker-base-image
+             cd /home/circleci/project/monorepo/docker-base-image
              docker build -t dopracenakole-base .
-             cd ../..
+             cd /home/circleci/project
            fi
       - run:
          name: Deploy base docker image
@@ -45,6 +45,7 @@ jobs:
          name: Build Docker image
          command: |
            if scripts/test_changes --invert-match monorepo/ ; then
+             cd /home/circleci/project
              docker build -t dopracenakole .
            fi
       - run:
