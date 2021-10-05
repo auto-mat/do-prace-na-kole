@@ -92,27 +92,9 @@ Then copy db folder
 Deployment
 ------------
 
-Every time you push changes to github, new builds will be built. In this case, a build is a docker image. There are a number of scripts which you can find in the `scripts` directory of this repository. In order to deploy to test you need to first find the ip address of the test server
+Every time you push changes to github, new builds will be built. In this case, a build is a docker image. 
 
-```
-./scripts/sync-hosts.py
-```
-
-Then you can run
-
-```
-./scripts/restart_containers_on_server <ip-of-test-server>
-```
-
-This will update the test server to the latest build.
-
-In order to deploy to production you should first deploy to test, then, after testing a bit, look at the build number on test. The build number can be found at the bottom of the menu. It is in a format like ` 2021.1212 . 2021.24 ` which stands for `<backend-build-number> . <frontend-build-number>`.
-
-In order to deploy from test to production you will need to run the script.
-
-```
-./deploy_from_test_to_prod <backend-build-number>
-```
+In order to deploy to production you should first deploy to test, then, after testing a bit, look at the build number on test. Deployment is done by updating build numbers in [the kubernetes config](https://github.com/auto-mat/k8s).  The build number can be found at the bottom of the menu. It is in a format like ` 2021.1212 . 2021.24 ` which stands for `<backend-build-number> . <frontend-build-number>`.
 
 Deploying [the frontend](https://github.com/auto-mat/do-prace-na-kole-frontend) is similar. There is a script.
 
@@ -120,7 +102,7 @@ Deploying [the frontend](https://github.com/auto-mat/do-prace-na-kole-frontend) 
 ./scripts/deploy_frontend --help
 ```
 
-Which helps you deploy frontend builds. This script is documented. To see it's documentation simply run the script with the `--help` flag.
+Which helps you deploy frontend builds. This script is self documenting. To see it's documentation simply run the script with the `--help` flag.
 
 Connecting to test and production servers (bash and python shell)
 ------------------------------------------------------------------------------
