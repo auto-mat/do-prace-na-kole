@@ -58,3 +58,6 @@ test-dpnk.log
 scripts/ansible-playbooks/get_containers.retry
 scripts/output.sql
 node_modules/
+db/*
+avatar_locale/locale/en/LC_MESSAGES/django.po
+tmp_gls/*
