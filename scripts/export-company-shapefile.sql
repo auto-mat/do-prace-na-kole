@@ -1,1 +1,0 @@
-select track from dpnk_trip where user_attendance_id in (select id from dpnk_userattendance where team_id in (select id from dpnk_team where subsidiary_id in (select id from dpnk_subsidiary where company_id = 6440))) and track is not null
