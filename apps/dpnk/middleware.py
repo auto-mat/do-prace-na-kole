@@ -46,6 +46,7 @@ def get_or_create_userattendance(request, campaign_slug):
         if created:
             ua.approved_for_team = "undecided"
             ua.save()
+        return ua
 
 
 class UserAttendanceMiddleware(MiddlewareMixin):
