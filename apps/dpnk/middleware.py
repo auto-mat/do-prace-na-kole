@@ -32,25 +32,20 @@ from .tasks import flush_denorm
 
 def get_or_create_userattendance(request, campaign_slug):
     if request.user and request.user.is_authenticated:
-        try:
-            return UserAttendance.objects.select_related(
-                "campaign",
-                "team__subsidiary__city",
-                "t_shirt_size",
-                "userprofile__user",
-                "representative_payment",
-                "related_company_admin",
-            ).get(
-                userprofile__user=request.user,
-                campaign__slug=campaign_slug,
-            )
-        except UserAttendance.DoesNotExist:
-            if hasattr(request.user, "userprofile") and request.campaign:
-                return UserAttendance.objects.create(
-                    userprofile=request.user.userprofile,
-                    campaign=request.campaign,
-                    approved_for_team="undecided",
-                )
+        ua, created = UserAttendance.objects.select_related(
+            "campaign",
+            "team__subsidiary__city",
+            "t_shirt_size",
+            "userprofile__user",
+            "representative_payment",
+            "related_company_admin",
+        ).get_or_create(
+            userprofile__user=request.user,
+            campaign__slug=campaign_slug,
+        )
+        if created:
+            ua.approved_for_team = "undecided"
+            ua.save()
 
 
 class UserAttendanceMiddleware(MiddlewareMixin):
