@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView, View
+from django.utils.datastructures import MultiValueDictKeyError
 
 # Local imports
 from ..forms import UserProfileLanguageUpdateForm
@@ -60,7 +61,10 @@ class SwitchLang(LoginRequiredMixin, View):
             )
             if form.is_valid():
                 form.save()
-        return redirect(self.request.GET["redirect"])
+        try:
+            return redirect(self.request.GET["redirect"])
+        except MultiValueDictKeyError:
+            return redirect("/")
 
 
 def test_errors(request):
