@@ -24,6 +24,7 @@ import denorm
 from django.core.exceptions import ValidationError
 from django.db.models import F, Window
 from django.db.models.functions import DenseRank
+from django.db import IntegrityError
 
 from donation_chooser.rest import organization_router
 
@@ -96,6 +97,12 @@ class InactiveDayGPX(serializers.ValidationError):
 class GPXParsingFail(serializers.ValidationError):
     status_code = 400
     default_detail = {"file": "Can't parse GPX file"}
+
+
+class TripAlreadyExists(serializers.ValidationError):
+    status_code = 400
+    default_detail = {"date": "Trip already exists", "direction": "Trip already exists."}
+
 
 
 class CompetitionDoesNotExist(serializers.ValidationError):
@@ -191,6 +198,8 @@ class TripSerializer(MinimalTripSerializer):
             instance = Trip.objects.create(**validated_data)
         except ValidationError:
             raise GPXParsingFail
+        except IntegrityError:
+            raise TripAlreadyExists
         return instance
 
     class Meta:
