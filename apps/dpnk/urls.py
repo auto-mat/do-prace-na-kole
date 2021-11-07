@@ -78,7 +78,7 @@ urlpatterns = [
         name="upload_team_photo",
     ),
     url(
-        r"^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)/$$",
+        r"^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>\S+@\S+\.\w+)/$$",
         views.ConfirmTeamInvitationView.as_view(),
         name="change_team_invitation",
     ),
@@ -89,13 +89,13 @@ urlpatterns = [
         name="registrace",
     ),
     url(
-        r"^registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&/]+)/$$",
+        r"^registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>\S+@\S+\.\w+)/$$",
         views.RegistrationView.as_view(),
         {"success_url": "typ_platby"},
         name="registrace",
     ),
     url(
-        r"^registrace/(?P<initial_email>[^&]+)/$$",
+        r"^registrace/(?P<initial_email>\S+@\S+\.\w+)/$$",
         views.RegistrationView.as_view(),
         {"success_url": "typ_platby"},
         name="registrace",

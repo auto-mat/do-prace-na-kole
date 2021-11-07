@@ -503,7 +503,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
 
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
-    email = forms.CharField(
+    email = forms.EmailField(
         required=True,
         label=_("Zadejte svůj e-mail"),
         help_text=_(
