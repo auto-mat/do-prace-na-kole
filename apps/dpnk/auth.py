@@ -42,10 +42,10 @@ from .string_lazy import format_html_lazy
 class EmailModelBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None):
         try:
-            user = User.objects.get(is_active=True, username__iexact=username)
+            user = User.objects.get(is_active=True, username=username)
         except User.DoesNotExist:
             try:
-                user = User.objects.get(is_active=True, email__iexact=username)
+                user = User.objects.get(is_active=True, email=username)
             except User.DoesNotExist:
                 return None
 
