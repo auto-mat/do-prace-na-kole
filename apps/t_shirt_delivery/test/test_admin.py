@@ -220,7 +220,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         )
 
     def test_deliverybatch_admin_add_t_shirt(self):
-        """ Test with t_shirts to add """
+        """Test with t_shirts to add"""
         self.user_attendance = UserAttendanceRecipe.make(
             t_shirt_size=self.t_shirt_size,
             transactions=[mommy.make("Payment", status=99)],

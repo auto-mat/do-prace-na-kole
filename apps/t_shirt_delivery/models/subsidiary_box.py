@@ -54,7 +54,7 @@ class SubsidiaryBoxManager(models.Manager):
 
 
 class SubsidiaryBox(TimeStampedModel, models.Model):
-    """ Krabice pro pobočku """
+    """Krabice pro pobočku"""
 
     class Meta:
         verbose_name = _("Krabice pro pobočku")
@@ -108,7 +108,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         return self.__str__()
 
     def get_representative_addressee(self):
-        """ Returns UserAttendance to which this box should be addressed """
+        """Returns UserAttendance to which this box should be addressed"""
         if self.subsidiary and self.subsidiary.box_addressee_name:
             name = self.subsidiary.box_addressee_name
             email = self.subsidiary.box_addressee_email
@@ -134,7 +134,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         return PackageTransaction.objects.filter(team_package__box=self).count()
 
     def get_weight(self):
-        """ Returns weight of this box """
+        """Returns weight of this box"""
         t_shirt_weight = self.delivery_batch.campaign.package_weight
         t_shirt_count = self.get_t_shirt_count()
         return t_shirt_weight * t_shirt_count

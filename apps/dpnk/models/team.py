@@ -169,25 +169,25 @@ class Team(WithGalleryMixin, models.Model):
         )
 
     def all_members(self):
-        """ Return all members of this team, including unapproved. """
+        """Return all members of this team, including unapproved."""
         return self.users.filter(userprofile__user__is_active=True)
 
     def undenied_members(self):
-        """ Return approved members of this team. """
+        """Return approved members of this team."""
         return self.users.filter(userprofile__user__is_active=True,).exclude(
             approved_for_team="denied",
         )
 
     @mproperty
     def members(self):
-        """ Return approved members of this team. """
+        """Return approved members of this team."""
         return self.users.filter(
             approved_for_team="approved",
             userprofile__user__is_active=True,
         ).order_by("id")
 
     def paid_members(self):
-        """ Return approved members of this team. """
+        """Return approved members of this team."""
         return self.members.filter(
             payment_status__in=("done", "no_admission"),
         )
@@ -204,11 +204,11 @@ class Team(WithGalleryMixin, models.Model):
         return sum([member.get_working_rides_base_count() for member in self.members])
 
     def get_remaining_rides_count(self):
-        """ Return number of rides, that are remaining to the end of competition """
+        """Return number of rides, that are remaining to the end of competition"""
         return self.members.count() * self.members.first().get_remaining_rides_count()
 
     def get_remaining_max_theoretical_frequency_percentage(self):
-        """ Return maximal frequency that can be achieved till end of the competition """
+        """Return maximal frequency that can be achieved till end of the competition"""
         remaining_rides = self.get_remaining_rides_count()
         rides_count = self.get_rides_count_denorm
         working_rides_base = self.get_working_trips_count()
@@ -219,7 +219,7 @@ class Team(WithGalleryMixin, models.Model):
         )
 
     def get_missing_rides_for_minimum_percentage(self):
-        """ Return number of eco rides that would have to be done till end of competition to fullfill mimimal percentage """
+        """Return number of eco rides that would have to be done till end of competition to fullfill mimimal percentage"""
         minimal_percentage = self.campaign.minimum_percentage / 100
         rides_count = self.get_rides_count_denorm
         working_rides_base = self.get_working_trips_count()

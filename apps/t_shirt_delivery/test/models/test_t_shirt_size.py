@@ -25,7 +25,7 @@ from model_mommy import mommy
 
 class TestMethods(TestCase):
     def test_str(self):
-        """ Test __str__() """
+        """Test __str__()"""
         t_shirt_size = mommy.make(
             "TShirtSize",
             price=0,
@@ -35,7 +35,7 @@ class TestMethods(TestCase):
         self.assertEqual(str(t_shirt_size), "Foo size (foo_campaign)")
 
     def test_str_price(self):
-        """ Test __str__() """
+        """Test __str__()"""
         t_shirt_size = mommy.make(
             "TShirtSize",
             price=10,
@@ -45,7 +45,7 @@ class TestMethods(TestCase):
         self.assertEqual(str(t_shirt_size), "Foo size (foo_campaign, 10 Kč navíc)")
 
     def test_user_string(self):
-        """ Test user_string() """
+        """Test user_string()"""
         t_shirt_size = mommy.make(
             "TShirtSize",
             price=0,
@@ -54,7 +54,7 @@ class TestMethods(TestCase):
         self.assertEqual(t_shirt_size.user_string(), "Foo size")
 
     def test_user_string_price(self):
-        """ Test user_string() """
+        """Test user_string()"""
         t_shirt_size = mommy.make(
             "TShirtSize",
             price=10,

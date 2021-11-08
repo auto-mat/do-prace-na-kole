@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 
 def test_render():
-    """ Test render method """
+    """Test render method"""
     renderer = widgets.CommuteModeSelect(
         {},
         [
@@ -28,7 +28,7 @@ def test_render():
 
 
 def test_render_str():
-    """ Test render method if the value is string and item int """
+    """Test render method if the value is string and item int"""
     renderer = widgets.CommuteModeSelect(
         {},
         [(1, "Item 1")],

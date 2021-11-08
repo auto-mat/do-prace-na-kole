@@ -167,7 +167,7 @@ class MessagesTest(TestCase):
         self.assertQuerysetEqual(messages, (message1, message3), transform=lambda x: x)
 
     def test_get_random_simple(self):
-        """ Random enabled message from set with highest priority should be returned """
+        """Random enabled message from set with highest priority should be returned"""
         message1 = mommy.make("MotivationMessage", message="message1", priority=2)
         message2 = mommy.make("MotivationMessage", message="message2", priority=2)
         mommy.make("MotivationMessage", message="message2d", enabled=False)

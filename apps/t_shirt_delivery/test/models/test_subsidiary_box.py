@@ -221,7 +221,7 @@ class TestSubsidiaryBox(TestCase):
         self.assertTrue(subsidiary_box.all_packages_dispatched())
 
     def test_all_packages_dispatched_annotation(self):
-        """ Test that the dispatched packages functions work through annotations """
+        """Test that the dispatched packages functions work through annotations"""
         mommy.make("TeamPackage", dispatched=True)
         subsidiary_box = SubsidiaryBox.objects.first()
         self.assertEquals(subsidiary_box.packages_count(), 1)

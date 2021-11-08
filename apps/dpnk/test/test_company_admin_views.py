@@ -121,7 +121,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         )
 
     def test_get_unfilled_company_details(self):
-        """ Test, that if company doesn't have it's details filled in, the invoice couldn't be generated """
+        """Test, that if company doesn't have it's details filled in, the invoice couldn't be generated"""
         self.user_attendance.team.subsidiary.company.ico = None
         self.user_attendance.team.subsidiary.company.save()
         response = self.client.get(reverse("invoices"))
@@ -136,7 +136,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         )
 
     def test_get_not_allowed(self):
-        """ Test, that if company doesn't have it's details filled in, the invoice couldn't be generated """
+        """Test, that if company doesn't have it's details filled in, the invoice couldn't be generated"""
         self.company_admin.can_confirm_payments = False
         self.company_admin.save()
         response = self.client.get(reverse("invoices"))

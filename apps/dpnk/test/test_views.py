@@ -57,7 +57,7 @@ from .mommy_recipes import (
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
-    """ Tests in which the user is logged in """
+    """Tests in which the user is logged in"""
 
     fixtures = ["sites", "campaign", "auth_user", "users", "transactions", "batches"]
 
@@ -132,7 +132,7 @@ class CompetitionsViewTests(ViewsLogon):
         )
 
     def test_payment_http_x_forwarded_for(self):
-        """ Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR """
+        """Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR"""
         address = reverse("payment")
         response = self.client.get(address, HTTP_X_FORWARDED_FOR="123.123.123.123")
         self.assertContains(
@@ -142,7 +142,7 @@ class CompetitionsViewTests(ViewsLogon):
         )
 
     def test_payment_http_x_forwarded_for_proxy(self):
-        """ Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR and the client is behid proxy """
+        """Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR and the client is behid proxy"""
         address = reverse("payment")
         response = self.client.get(
             address, HTTP_X_FORWARDED_FOR="unknown, 123.123.123.123"
@@ -1124,7 +1124,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         )
 
     def test_duplicate_ico(self):
-        """ Test, that duplicate IČO error is reported to the user """
+        """Test, that duplicate IČO error is reported to the user"""
         mommy.make("Company", ico="12345679")
         post_data = {
             "ico": "12345679",
@@ -1147,7 +1147,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         )
 
     def test_invalid_ico(self):
-        """ Test, that duplicate IČO error is reported to the user """
+        """Test, that duplicate IČO error is reported to the user"""
         mommy.make("Company", ico="1234")
         post_data = {
             "ico": "1234",
@@ -1767,7 +1767,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(str(msg.subject), "[Testing campaign 1] Pozvánka")
 
     def test_dpnk_team_no_team(self):
-        """ Test, that invitation shows warning if the team is not set """
+        """Test, that invitation shows warning if the team is not set"""
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse("pozvanky"))
@@ -1779,7 +1779,7 @@ class ViewsTestsLogon(ViewsLogon):
         )
 
     def test_dpnk_team_get(self):
-        """ Test number of team members for invitation """
+        """Test number of team members for invitation"""
         response = self.client.get(reverse("pozvanky"))
         self.assertContains(
             response,
@@ -1864,7 +1864,7 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_dpnk_team_change_me_undecided(self):
-        """ If I my team membership is undecided, I have to be able to leave the team """
+        """If I my team membership is undecided, I have to be able to leave the team"""
         self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         UserAttendanceRecipe.make(
@@ -1877,7 +1877,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_undecided(self):
-        """ If I am the only approved team member of a team where all others are undicided, I can't leave the team """
+        """If I am the only approved team member of a team where all others are undicided, I can't leave the team"""
         self.user_attendance.approved_for_team = "approved"
         self.user_attendance.save()
         UserAttendanceRecipe.make(
@@ -1895,7 +1895,7 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_dpnk_team_change_alone_undecided(self):
-        """ If I am in the team alone, I can leave the team if I am undecided """
+        """If I am in the team alone, I can leave the team if I am undecided"""
         self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         self.team.save()
@@ -1905,7 +1905,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_change_alone_approved(self):
-        """ If I am in the team alone, I can leave the team if I am approved """
+        """If I am in the team alone, I can leave the team if I am approved"""
         self.user_attendance.approved_for_team = "approved"
         self.user_attendance.save()
         self.team.save()
@@ -1923,7 +1923,7 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_get_one_team_member(self):
-        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        """Test that user chooses only subsidiary when in campaign with 1 team member"""
         self.campaign.max_team_members = 1
         self.campaign.save()
         response = self.client.get(reverse("zmenit_tym"))
@@ -1950,7 +1950,7 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_get_previous(self):
-        """ Test that team with same name as in last year is preselected """
+        """Test that team with same name as in last year is preselected"""
         previous_campaign = CampaignRecipe.make(year=2018)
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
@@ -1973,7 +1973,7 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_get_previous_none_team(self):
-        """ Test that team with same name asi in last year doesn't exist, no team is preselected """
+        """Test that team with same name asi in last year doesn't exist, no team is preselected"""
         previous_campaign = CampaignRecipe.make(year=2018)
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
@@ -1995,7 +1995,7 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_get_previous_different_company(self):
-        """ Test that team with same name asi in last year exists, but is in different company, no team is preselected """
+        """Test that team with same name asi in last year exists, but is in different company, no team is preselected"""
         previous_campaign = CampaignRecipe.make(year=2018)
         previous_campaign = CampaignRecipe.make(year=2017)
         self.campaign.previous_campaign = previous_campaign
@@ -2041,7 +2041,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(self.user_attendance.approved_for_team, "approved")
 
     def test_change_one_team_member(self):
-        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        """Test that user chooses only subsidiary when in campaign with 1 team member"""
         self.campaign.max_team_members = 1
         self.campaign.save()
         new_subsidiary = mommy.make(
@@ -2060,7 +2060,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(self.team.subsidiary, new_subsidiary)
 
     def test_change_one_team_member_without_team(self):
-        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        """Test that user chooses only subsidiary when in campaign with 1 team member"""
         self.user_attendance.team = None
         self.user_attendance.save()
         self.campaign.max_team_members = 1
@@ -2401,7 +2401,7 @@ class TripViewTests(ViewsLogon):
         self.assertEqual(response.status_code, 403)
 
     def test_dpnk_views_trip_no_track_city(self):
-        """ Test, that the location is changed accordingly to the user's city. """
+        """Test, that the location is changed accordingly to the user's city."""
         self.user_attendance.team.subsidiary.city = mommy.make(
             "City", location="POINT(14.42 50.08)"
         )
@@ -2666,7 +2666,7 @@ class RidesDetailsTests(ViewsLogon):
 
 @ddt
 class TestNotLoggedIn(TestCase):
-    """ Test, that views in which user must be logged on redirects to login page. """
+    """Test, that views in which user must be logged on redirects to login page."""
 
     fixtures = ["sites"]
 

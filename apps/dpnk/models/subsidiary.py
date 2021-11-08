@@ -109,7 +109,7 @@ class Subsidiary(WithGalleryMixin, models.Model):
         return get_address_string(self.address)
 
     def get_recipient_string(self):
-        """ makes recipient from address_recipient and company name """
+        """makes recipient from address_recipient and company name"""
         if self.address_recipient:
             if (
                 self.address_recipient.lower().strip()

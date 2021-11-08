@@ -25,7 +25,7 @@ from model_utils.models import TimeStampedModel
 
 
 class TeamPackage(TimeStampedModel, models.Model):
-    """ Balíček pro tým """
+    """Balíček pro tým"""
 
     class Meta:
         verbose_name = _("týmový balíček")

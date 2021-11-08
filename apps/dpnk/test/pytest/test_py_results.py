@@ -94,7 +94,7 @@ def mens_frequency_competition_company(campaign):
 
 
 def test_single_user_frequency(campaign, mens_frequency_competition_company):
-    """ Test if _filter_query_single_user function returns correct filter_query dict. """
+    """Test if _filter_query_single_user function returns correct filter_query dict."""
     frequency_competition = mens_frequency_competition_company
 
     filter_query = results._filter_query_single_user(frequency_competition)
@@ -122,7 +122,7 @@ def frequency_competition_city(campaign, city):
 
 
 def test_single_user_frequency_city(frequency_competition_city):
-    """ Test if _filter_query_single_user function returns correct filter_query dict with city filter. """
+    """Test if _filter_query_single_user function returns correct filter_query dict with city filter."""
     filter_query = results._filter_query_single_user(frequency_competition_city)
     assert (
         str(filter_query["team__subsidiary__city__in"]) == "<QuerySet [<City: City 1>]>"
@@ -142,7 +142,7 @@ def team_frequency_competition_company(campaign):
 
 
 def test_team_frequency(campaign, team_frequency_competition_company):
-    """ Test if _filter_query_team function returns correct filter_query dict. """
+    """Test if _filter_query_team function returns correct filter_query dict."""
     competition = team_frequency_competition_company
     filter_query = results._filter_query_team(competition)
     expected_dict = {
@@ -165,7 +165,7 @@ def team_frequency_competition_city(campaign, city):
 
 
 def test_team_frequency_city(campaign, team_frequency_competition_city):
-    """ Test if _filter_query_team function returns correct filter_query dict with city filter. """
+    """Test if _filter_query_team function returns correct filter_query dict with city filter."""
     competition = team_frequency_competition_city
     filter_query = results._filter_query_team(competition)
     assert str(filter_query["subsidiary__city__in"]) == "<QuerySet [<City: City 1>]>"
@@ -184,7 +184,7 @@ def frequency_competition_company(campaign):
 
 
 def test_company_frequency(frequency_competition_company):
-    """ Test if _filter_query_company function returns correct filter_query dict. """
+    """Test if _filter_query_company function returns correct filter_query dict."""
     competition = frequency_competition_company
     filter_query = results._filter_query_company(competition)
     expected_dict = {
@@ -206,7 +206,7 @@ def frequency_competition_city_team(city, campaign):
 
 
 def test_company_frequency_city(frequency_competition_city_team):
-    """ Test if _filter_query_company function returns correct filter_query dict with city filter. """
+    """Test if _filter_query_company function returns correct filter_query dict with city filter."""
     competition = frequency_competition_city_team
     filter_query = results._filter_query_company(competition)
     assert str(filter_query["subsidiaries__city__in"]) == "<QuerySet [<City: City 1>]>"

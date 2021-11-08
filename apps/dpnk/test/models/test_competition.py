@@ -396,7 +396,7 @@ class GetResultsIdRankDictTests(TestCase):
 
 class SelectRelatedResultsTests(TestCase):
     def test_single(self):
-        """ Test if selecting related on single user competition doesn't fail """
+        """Test if selecting related on single user competition doesn't fail"""
         competition = mommy.make("dpnk.Competition", competitor_type="single_user")
         mommy.make("dpnk.CompetitionResult", competition=competition),
         qs = competition.select_related_results(competition.results)
@@ -404,7 +404,7 @@ class SelectRelatedResultsTests(TestCase):
         self.assertQuerysetEqual(qs, expected_qs)
 
     def test_team(self):
-        """ Test if selecting related on team competition doesn't fail """
+        """Test if selecting related on team competition doesn't fail"""
         competition = mommy.make("dpnk.Competition", competitor_type="team")
         mommy.make("dpnk.CompetitionResult", competition=competition),
         qs = competition.select_related_results(competition.results)
@@ -412,7 +412,7 @@ class SelectRelatedResultsTests(TestCase):
         self.assertQuerysetEqual(qs, expected_qs)
 
     def test_company(self):
-        """ Test if selecting related on company competition doesn't fail """
+        """Test if selecting related on company competition doesn't fail"""
         competition = mommy.make("dpnk.Competition", competitor_type="company")
         mommy.make("dpnk.CompetitionResult", competition=competition),
         qs = competition.select_related_results(competition.results)

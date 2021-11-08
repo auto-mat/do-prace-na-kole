@@ -88,7 +88,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
 
     def test_single_user_frequency(self):
-        """ Test if _filter_query_single_user function returns correct filter_query dict. """
+        """Test if _filter_query_single_user function returns correct filter_query dict."""
         competition = mommy.make(
             "dpnk.Competition",
             competition_type="frequency",
@@ -109,7 +109,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         self.assertDictEqual(filter_query, expected_dict)
 
     def test_single_user_frequency_city(self):
-        """ Test if _filter_query_single_user function returns correct filter_query dict with city filter. """
+        """Test if _filter_query_single_user function returns correct filter_query dict with city filter."""
         city = mommy.make("dpnk.City", name="City 1")
         competition = mommy.make(
             "dpnk.Competition",
@@ -125,7 +125,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
 
     def test_team_frequency(self):
-        """ Test if _filter_query_team function returns correct filter_query dict. """
+        """Test if _filter_query_team function returns correct filter_query dict."""
         competition = mommy.make(
             "dpnk.Competition",
             competition_type="frequency",
@@ -141,7 +141,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         self.assertDictEqual(filter_query, expected_dict)
 
     def test_team_frequency_city(self):
-        """ Test if _filter_query_team function returns correct filter_query dict with city filter. """
+        """Test if _filter_query_team function returns correct filter_query dict with city filter."""
         city = mommy.make("dpnk.City", name="City 1")
         competition = mommy.make(
             "dpnk.Competition",
@@ -157,7 +157,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
 
     def test_company_frequency(self):
-        """ Test if _filter_query_company function returns correct filter_query dict. """
+        """Test if _filter_query_company function returns correct filter_query dict."""
         competition = mommy.make(
             "dpnk.Competition",
             competition_type="frequency",
@@ -172,7 +172,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         self.assertDictEqual(filter_query, expected_dict)
 
     def test_company_frequency_city(self):
-        """ Test if _filter_query_company function returns correct filter_query dict with city filter. """
+        """Test if _filter_query_company function returns correct filter_query dict with city filter."""
         city = mommy.make("dpnk.City", name="City 1")
         competition = mommy.make(
             "dpnk.Competition",

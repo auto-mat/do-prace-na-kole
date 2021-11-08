@@ -165,7 +165,7 @@ class Company(WithGalleryMixin, models.Model):
             )
 
     def get_related_competitions(self, campaign):
-        """ Get all competitions where this company is involved filtered by given campaign """
+        """Get all competitions where this company is involved filtered by given campaign"""
         from .competition import Competition
 
         cities = self.subsidiaries.values("city")

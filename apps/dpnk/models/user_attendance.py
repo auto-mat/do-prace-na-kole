@@ -422,27 +422,27 @@ class UserAttendance(StaleSyncMixin, models.Model):
     )
     @depend_on_related("Trip", foreign_key="user_attendance")
     def working_rides_base_count(self):
-        """ Return number of rides, that should be acomplished to this date """
+        """Return number of rides, that should be acomplished to this date"""
         from .. import results
 
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
 
     def get_working_rides_base_count(self):
-        """ Return number of rides, that should be acomplished to this date """
+        """Return number of rides, that should be acomplished to this date"""
         if self.working_rides_base_count is not None:
             return self.working_rides_base_count
         else:
             return 0
 
     def get_remaining_rides_count(self):
-        """ Return number of rides, that are remaining to the end of competition """
+        """Return number of rides, that are remaining to the end of competition"""
         competition_phase = self.campaign.competition_phase()
         days_count = util.days_count(competition_phase, competition_phase.date_to)
         days_count_till_now = util.days_count(competition_phase, util.today())
         return (days_count - days_count_till_now).days * 2
 
     def get_remaining_max_theoretical_frequency_percentage(self):
-        """ Return maximal frequency that can be achieved till end of the competition """
+        """Return maximal frequency that can be achieved till end of the competition"""
         from .. import results
 
         remaining_rides = self.get_remaining_rides_count()
@@ -636,7 +636,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     )
     @depend_on_related("UserProfile", skip={"mailing_hash"})
     def related_company_admin(self):
-        """ Get company coordinator profile for this user attendance """
+        """Get company coordinator profile for this user attendance"""
         try:
             return CompanyAdmin.objects.get(
                 userprofile=self.userprofile, campaign=self.campaign
@@ -659,7 +659,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.unanswered_questionnaires().exists()
 
     def get_asociated_company_admin(self):
-        """ Get coordinator, that manages company of this user attendance """
+        """Get coordinator, that manages company of this user attendance"""
         if not self.team:
             return None
         return self.team.subsidiary.company.company_admin.filter(

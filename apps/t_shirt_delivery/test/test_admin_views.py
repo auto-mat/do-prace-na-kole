@@ -42,7 +42,7 @@ class DispatchViewTests(TestCase):
         self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_bad_format(self):
-        """ Test, that bad input format shows error """
+        """Test, that bad input format shows error"""
         post_data = {
             "dispatch_id": "a34",
             "next": "Next",
@@ -55,7 +55,7 @@ class DispatchViewTests(TestCase):
         )
 
     def test_already_dispatched(self):
-        """ Test, that warning shows if package is already dispatched """
+        """Test, that warning shows if package is already dispatched"""
         mommy.make(
             "TeamPackage",
             dispatched=True,
@@ -98,7 +98,7 @@ class DispatchViewTests(TestCase):
         )
 
     def test_not_found(self):
-        """ Test, that warning shows if package is not found """
+        """Test, that warning shows if package is not found"""
         post_data = {
             "dispatch_id": "T123",
             "next": "Next",
@@ -111,7 +111,7 @@ class DispatchViewTests(TestCase):
         )
 
     def test_dispatch(self):
-        """ Test, that warning shows if package is already dispatched """
+        """Test, that warning shows if package is already dispatched"""
         team_package = mommy.make(
             "TeamPackage",
             id=123,

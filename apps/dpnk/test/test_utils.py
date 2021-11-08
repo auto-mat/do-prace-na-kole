@@ -51,7 +51,7 @@ class TodayTests(TestCase):
 
 class FormatPSCTests(TestCase):
     def test_format_psc(self):
-        """ Test format_psc function """
+        """Test format_psc function"""
         self.assertEqual(util.format_psc(12345), "123 45")
         self.assertEqual(util.format_psc(12345678), "123456 78")
         self.assertEqual(util.format_psc(0), "0")

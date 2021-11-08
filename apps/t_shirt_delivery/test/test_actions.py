@@ -39,7 +39,7 @@ class TestActions(TestCase):
         setattr(self.request, "_messages", self.messages)
 
     def test_create_batch(self):
-        """ Test, that create_batch action makes DeliveryBatch with it's boxes """
+        """Test, that create_batch action makes DeliveryBatch with it's boxes"""
         UserAttendanceRecipe.make(
             _quantity=2,
         )

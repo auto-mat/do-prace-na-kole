@@ -84,7 +84,7 @@ class TestBatchCsv(TestCase):
         )
 
     def test_batch_csv(self):
-        """ Test generating batch CSV """
+        """Test generating batch CSV"""
         batch = self.delivery_batch
         self.subsidiary_box.subsidiary.box_addressee_name = ""
         self.subsidiary_box.subsidiary.save()
@@ -109,7 +109,7 @@ class TestBatchCsv(TestCase):
         os.system("rm %s" % temp_file.name)
 
     def test_batch_csv_addressee(self):
-        """ Test, that if subsidiary.addressee_name is filled, it will appear in CSV """
+        """Test, that if subsidiary.addressee_name is filled, it will appear in CSV"""
         batch = self.delivery_batch
         self.subsidiary_box.subsidiary.box_addressee_name = "Addressee name"
         self.subsidiary_box.subsidiary.box_addressee_email = "addressee@email.cz"

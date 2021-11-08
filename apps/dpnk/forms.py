@@ -147,7 +147,7 @@ class PrevNextMixin(object):
 
 
 class CampaignMixin(object):
-    """ set self.campaign parameter from kwargs """
+    """set self.campaign parameter from kwargs"""
 
     def __init__(self, *args, **kwargs):
         self.campaign = kwargs.pop("campaign", None)

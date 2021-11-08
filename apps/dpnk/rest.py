@@ -101,8 +101,10 @@ class GPXParsingFail(serializers.ValidationError):
 
 class TripAlreadyExists(serializers.ValidationError):
     status_code = 400
-    default_detail = {"date": "Trip already exists", "direction": "Trip already exists."}
-
+    default_detail = {
+        "date": "Trip already exists",
+        "direction": "Trip already exists.",
+    }
 
 
 class CompetitionDoesNotExist(serializers.ValidationError):

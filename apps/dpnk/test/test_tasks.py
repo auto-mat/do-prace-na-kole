@@ -48,7 +48,7 @@ class TestSendUnfilledRidesNotification(TestCase):
         )
 
     def test_notification(self):
-        """ Test that email is send, if the user has't got rides in last 5 days """
+        """Test that email is send, if the user has't got rides in last 5 days"""
         self.user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
             team__campaign=testing_campaign,
@@ -86,7 +86,7 @@ class TestSendUnfilledRidesNotification(TestCase):
         )
 
     def test_notification_with_rides(self):
-        """ Test that no email is send, if the user has recent rides """
+        """Test that no email is send, if the user has recent rides"""
         self.user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
             team__campaign=testing_campaign,
@@ -116,7 +116,7 @@ class TestSendUnfilledRidesNotification(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_notification_not_paid(self):
-        """ Test that email is send, if the user didn't pay. """
+        """Test that email is send, if the user didn't pay."""
         self.user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
             team__campaign=testing_campaign,
@@ -138,7 +138,7 @@ class TestSendUnfilledRidesNotification(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_notification_not_stale(self):
-        """ Test that email is not send, if the user is not stale. """
+        """Test that email is not send, if the user is not stale."""
         self.user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
             team__campaign=testing_campaign,
@@ -178,7 +178,7 @@ class TestSendUnfilledRidesNotification(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_notification_pks(self):
-        """ Test that email is send, if the user has't got rides in last 5 days """
+        """Test that email is send, if the user has't got rides in last 5 days"""
         self.user_attendance = UserAttendanceRecipe.make(
             campaign=testing_campaign,
             team__campaign=testing_campaign,
@@ -246,7 +246,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
         self.user_attendance.save()
 
     def test_notification(self):
-        """ Test that email is sent, if the invoice hasn't been paid in 14 days """
+        """Test that email is sent, if the invoice hasn't been paid in 14 days"""
         mommy.make(
             "Invoice",
             campaign=testing_campaign,
@@ -268,7 +268,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
         )
 
     def test_english_notification(self):
-        """ Test that email is sent, if the invoice hasn't been paid in 14 days """
+        """Test that email is sent, if the invoice hasn't been paid in 14 days"""
         mommy.make(
             "Invoice",
             campaign=testing_campaign,
@@ -292,7 +292,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
         )
 
     def test_notification_not_set_when_not_stale(self):
-        """ Test that email is not sent, if 14 days hasn't passed"""
+        """Test that email is not sent, if 14 days hasn't passed"""
         mommy.make(
             "Invoice",
             campaign=testing_campaign,

@@ -91,7 +91,7 @@ def _get_competitors_without_admission(competition):
 
 
 def get_competitors(competition):
-    """ Return query with competitors attending given competition """
+    """Return query with competitors attending given competition"""
     query = _get_competitors_without_admission(competition)
 
     if competition.competitor_type == "liberos":

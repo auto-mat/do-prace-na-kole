@@ -39,11 +39,11 @@ class TestSocialPipeline(TestCase):
         self.assertEqual(user.userprofile.sex, "unknown")
 
     def test_create_userprofile_null_user(self):
-        """ Test, that call with null user doesn't cause exception """
+        """Test, that call with null user doesn't cause exception"""
         create_userprofile(None, None, {}, None, is_new=True)
 
     def test_create_userprofile_is_not_new(self):
-        """ Test, that call with is_new=False doesn't create profile """
+        """Test, that call with is_new=False doesn't create profile"""
         user = mommy.make("User")
         create_userprofile(None, None, {}, user, is_new=False)
         self.assertFalse(hasattr(user, "userprofile"))

@@ -153,7 +153,7 @@ def freq_results(freq_result1, freq_result2):
 
 
 def test_team_length(factory, results):
-    """ Test if team length competition result JSON is returned """
+    """Test if team length competition result JSON is returned"""
     request = factory.get("")
     request.subdomain = "testing-campaign"
     response = CompetitionResultListJson.as_view()(
@@ -173,7 +173,7 @@ def test_team_length(factory, results):
 
 
 def test_team_length_search(factory, results):
-    """ Test if searching by string works """
+    """Test if searching by string works"""
     get_params = {"search[value]": "oo cit"}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"
@@ -193,7 +193,7 @@ def test_team_length_search(factory, results):
 
 
 def test_team_length_company_search(factory, results):
-    """ Test if searching by company name works """
+    """Test if searching by company name works"""
     get_params = {"columns[0][search][value]": "company"}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"
@@ -214,7 +214,7 @@ def test_team_length_company_search(factory, results):
 
 
 def test_team_length_company_search_quotes(factory, results):
-    """ Test if searching by exact company name works """
+    """Test if searching by exact company name works"""
     get_params = {"columns[0][search][value]": '"bar company"'}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"
@@ -234,7 +234,7 @@ def test_team_length_company_search_quotes(factory, results):
 
 
 def test_get(factory, freq_results):
-    """ Test if single user frequency competition result JSON is returned """
+    """Test if single user frequency competition result JSON is returned"""
     request = factory.get("")
     request.subdomain = "testing-campaign"
     response = CompetitionResultListJson.as_view()(
@@ -330,7 +330,7 @@ def test_paging_filter(factory, freq_results, campaign, single_frequency_competi
 
 
 def test_search_user_nickname(factory, freq_results):
-    """ Test if searching by user nickname field works """
+    """Test if searching by user nickname field works"""
     get_params = {"search[value]": "oo user"}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"
@@ -361,7 +361,7 @@ def test_search_user_nickname(factory, freq_results):
 
 
 def test_search_user_name(factory, freq_results):
-    """ Test if searching by user name field works """
+    """Test if searching by user name field works"""
     get_params = {"search[value]": "Novak Jan"}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"
@@ -392,7 +392,7 @@ def test_search_user_name(factory, freq_results):
 
 
 def test_search_sex_female(factory, freq_results):
-    """ Test if searching by female sex name field works """
+    """Test if searching by female sex name field works"""
     get_params = {"search[value]": "Žena"}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"
@@ -423,7 +423,7 @@ def test_search_sex_female(factory, freq_results):
 
 
 def test_search_sex_male(factory, freq_results):
-    """ Test if searching by male sex name field works """
+    """Test if searching by male sex name field works"""
     get_params = {"search[value]": "Muž"}
     request = factory.get("", get_params)
     request.subdomain = "testing-campaign"

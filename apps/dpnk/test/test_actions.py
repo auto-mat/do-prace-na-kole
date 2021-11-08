@@ -39,7 +39,7 @@ from .mommy.mommy import Fixtures
 
 
 class TestActionsMommy(TestCase):
-    """ Tests that are independend of fixtures """
+    """Tests that are independend of fixtures"""
 
     def setUp(self):
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")

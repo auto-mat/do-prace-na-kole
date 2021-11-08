@@ -278,7 +278,7 @@ class PayuTests(ClearCacheMixin, TestCase):
         )
 
     def test_dpnk_payment_status_view_create_round(self):
-        """ Test that payment amount is rounded to whole crowns """
+        """Test that payment amount is rounded to whole crowns"""
         response = self.payment_status_view(
             session_id="2075-1J1455206434",
             amount="15150",

@@ -55,7 +55,7 @@ class TestPasswordForms(ViewsLogonMommy):
         )
 
     def test_password_recovery_no_password(self):
-        """ Test, that sending password works also for users without password thorough Social auth """
+        """Test, that sending password works also for users without password thorough Social auth"""
         self.client = Client(
             HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer"
         )
@@ -107,7 +107,7 @@ class TestPasswordForms(ViewsLogonMommy):
         )
 
     def test_password_reset_confirm_post(self):
-        """ Test, that password must be at least 6 characters long """
+        """Test, that password must be at least 6 characters long"""
         user = mommy.make("User", email="test@test.cz")
         token_generator = PasswordResetTokenGenerator()
         token = token_generator.make_token(user)

@@ -206,7 +206,7 @@ class RestTests(TestCase):
             )
 
     def test_gpx_duplicate_gpx(self):
-        """ Test, that if trip exists, it gets modified """
+        """Test, that if trip exists, it gets modified"""
         trip = mommy.make(
             "Trip",
             date=datetime.date(2010, 11, 19),

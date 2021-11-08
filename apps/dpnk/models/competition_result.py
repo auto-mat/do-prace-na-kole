@@ -171,7 +171,7 @@ class CompetitionResult(models.Model):
             return self.company.city
 
     def get_result(self):
-        """ Get result in kilometers rounded to reasonable number of decimal places. """
+        """Get result in kilometers rounded to reasonable number of decimal places."""
         return round(self.result, 1)
 
     def get_result_divisor(self):
