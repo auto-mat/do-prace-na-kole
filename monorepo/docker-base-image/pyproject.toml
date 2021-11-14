@@ -62,7 +62,7 @@ django-model-utils = "*"
 django-price-level = "*"
 django-datatables-view = "*"
 django-rank-query = "*"
-django-adminactions = {git = "https://github.com/saxix/django-adminactions.git", rev = "develop"}
+django-adminactions = "1.12.0"
 django-avatar = "*"
 django-photologue = {git = "https://github.com/auto-mat/django-photologue.git", rev = "s3links"}
 boto3 = "*"
