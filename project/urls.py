@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.urls import path
 from django.views.generic import RedirectView
 
-from dpnk.rest import router
+from dpnk.rest import router, PhotoURLGet
 
 import notifications.urls
 
@@ -37,6 +37,7 @@ urlpatterns = [
     url(r"^redactor/", include("redactor.urls")),
     url(r"^nested_admin/", include("nested_admin.urls")),
     url(r"^rest/", include(router.urls)),
+    url(r"^rest/photo-url/(?P<photo_url>.+)", PhotoURLGet.as_view()),
     url(r"^likes/", include("likes.urls")),
     url(r"^avatar/", include("avatar.urls")),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),

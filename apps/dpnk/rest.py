@@ -25,6 +25,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import F, Window
 from django.db.models.functions import DenseRank
 from django.db import IntegrityError
+from django.shortcuts import get_object_or_404
 
 from donation_chooser.rest import organization_router
 
@@ -37,6 +38,8 @@ import photologue
 
 from rest_framework import mixins, permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .middleware import get_or_create_userattendance
 from .models import (
@@ -58,6 +61,7 @@ from .models import (
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 
+from photologue.models import Photo
 from stravasync.models import StravaAccount
 
 
@@ -1306,6 +1310,26 @@ class LandingPageIconSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = LandingPageIconSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class GetPhotoURLAccess(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if (
+            request.user.is_authenticated
+            and request.user.groups.filter(name="metabase").exists()
+        ):
+            return True
+        return False
+
+
+class PhotoURLGet(APIView):
+    """Get photo URL"""
+
+    permission_classes = [GetPhotoURLAccess]
+
+    def get(self, request, photo_url=None):
+        photo = get_object_or_404(Photo, image=photo_url)
+        return Response(photo.get_display_url())
 
 
 router = routers.DefaultRouter()
