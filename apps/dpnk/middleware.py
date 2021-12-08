@@ -26,7 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sesame.middleware import AuthenticationMiddleware
 
-from .models import Campaign, UserAttendance
+from .models import Campaign, UserAttendance, UserProfile
 from .tasks import flush_denorm
 
 
@@ -45,6 +45,8 @@ def get_or_create_userattendance(request, campaign_slug):
         )
         if created:
             ua.approved_for_team = "undecided"
+            ua.campaign = Campaign.objects.get(slug=campaign_slug)
+            ua.userprofile = UserProfile.objects.get(user=request.user)
             ua.save()
         return ua
 
