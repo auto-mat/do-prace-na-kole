@@ -29,11 +29,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.min.js" integrity="sha512-RlGrSmkje9EE/FXpJKWf0fvOlg4UULy/blvNsviBX9LFwMj/uewXVoanRbxTIRDXy/0A3fBQppTmJ/qOboJzmA==" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
+		<script src="https://cdn.ravenjs.com/3.24.0/raven.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" integrity="sha512-RXf+QSDCUQs5uwRKaDoXt55jygZZm2V++WUZduaU/Ui/9EGp3f/2KZVahFZBKGH0s774sd3HmrhUy+SgOFQLVQ==" crossorigin="anonymous"></script>
     <script src="{{campaign.campaign_type.frontend_url}}js/form_functions.js"> </script>
 		<script>
      window.frontend_url = "{{campaign.campaign_type.frontend_url}}";
+		 Raven.config("https://4e4629eadae349b9b6430f0b6af8c9ce@o427898.ingest.sentry.io/6098076").install();
+		{% if user.is_authenticated %}
+			Raven.setUserContext({
+				email: '{{ user.email }}',
+				id: '{{ user.id }}'
+			})
+		{% endif %}
 		</script>
 
     <script src="{{campaign.campaign_type.frontend_url}}js/views.js"> </script>
