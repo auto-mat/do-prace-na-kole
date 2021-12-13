@@ -32,6 +32,8 @@ from .tasks import flush_denorm
 
 def get_or_create_userattendance(request, campaign_slug):
     if request.user and request.user.is_authenticated:
+        campaign = Campaign.objects.get(slug=campaign_slug)
+        userprofile = UserProfile.objects.get(user=request.user)
         ua, created = UserAttendance.objects.select_related(
             "campaign",
             "team__subsidiary__city",
@@ -40,13 +42,11 @@ def get_or_create_userattendance(request, campaign_slug):
             "representative_payment",
             "related_company_admin",
         ).get_or_create(
-            userprofile__user=request.user,
-            campaign__slug=campaign_slug,
+            userprofile=userprofile,
+            campaign=campaign,
         )
         if created:
             ua.approved_for_team = "undecided"
-            ua.campaign = Campaign.objects.get(slug=campaign_slug)
-            ua.userprofile = UserProfile.objects.get(user=request.user)
             ua.save()
         return ua
 
