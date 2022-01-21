@@ -32,15 +32,12 @@ Building the docker images
 
     $ make docker-compose
 
-Launching the docker-compose containers
----------------------------------------
-
-    $ sudo docker-compose up
-    
 Setting up the database
 ---------------------
 
-    $ sudo docker exec -it dopracenakole_web_1 bash
+In a separate terminal window:
+
+    $ sudo docker exec -it do-prace-na-kole_web_1 bash
 
     # su test
     $ ./setup.sh
@@ -48,31 +45,23 @@ Setting up the database
 Launching the development webserver
 ------------------------------------
 
-In another window launch the development webserver
-
     $ sudo docker exec -it dopracenakole_web_1 bash
     # su test
     $ poetry shell
-    $ python3 manage.py runserver 0.0.0.0:8021
+    $ python3 manage.py runserver 0.0.0.0:8000
     
 Clone and launch the front end server according to its own docs: https://github.com/auto-mat/do-prace-na-kole-frontend
+
+Open the web app
+-------------------
+
+Go to `http://test.lvh.me:8021/`.
     
+Launching the docker-compose containers
+---------------------------------------
 
-
-Setting up the server for the first time
-----------------------------------------
-
-On your first visit you should go to the URL:
-
-Go to <http://test.localhost:8021/admin/dpnk/campaign/>
-
-Log in.
-
-Add a campaign named Test and individual phases.
-
-Add a user profile for your user <http://test.localhost:8021/admin/dpnk/userprofile/>
-
-Now you can go to 'http://test.localhost:8021/' and start to play around.
+    $ sudo docker-compose up
+    
 
 Backing up your local development database
 ---------------------------------------------------

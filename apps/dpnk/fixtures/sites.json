@@ -1,8 +1,8 @@
 [
     {
         "fields": {
-            "domain": "example.com",
-            "name": "example.com"
+            "domain": "lvh.me:8021",
+            "name": "lvh.me:8021"
         },
         "model": "sites.site",
         "pk": 1
