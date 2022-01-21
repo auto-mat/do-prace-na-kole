@@ -126,13 +126,13 @@ class DiscountCoupon(models.Model):
     )
     created = models.DateTimeField(
         # black
-        verbose_name=_(u"Datum vytvoření"),
+        verbose_name=_("Datum vytvoření"),
         auto_now_add=True,
         null=True,
     )
     updated = models.DateTimeField(
         # black
-        verbose_name=_(u"Datum poslední změny"),
+        verbose_name=_("Datum poslední změny"),
         auto_now=True,
         null=True,
     )
@@ -144,7 +144,7 @@ class DiscountCoupon(models.Model):
     )
     coupon_pdf = models.FileField(
         # black
-        verbose_name=_(u"DEPRECATED"),
+        verbose_name=_("DEPRECATED"),
         upload_to="coupons",
         blank=True,
         null=True,
