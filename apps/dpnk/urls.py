@@ -329,7 +329,7 @@ urlpatterns = [
         r"^emisni_kalkulacka/$",
         views.UserAttendanceView.as_view(
             template_name="dpnk/emission_calculator.html",
-            title=_(u"Emisní kalkulačka"),
+            title=_("Emisní kalkulačka"),
         ),
         name="emission_calculator",
     ),

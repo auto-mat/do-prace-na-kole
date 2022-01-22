@@ -42,32 +42,32 @@ class Phase(models.Model):
     """fáze kampaně"""
 
     class Meta:
-        verbose_name = _(u"fáze kampaně")
-        verbose_name_plural = _(u"fáze kampaně")
+        verbose_name = _("fáze kampaně")
+        verbose_name_plural = _("fáze kampaně")
         unique_together = (("phase_type", "campaign"),)
 
     campaign = models.ForeignKey(
         "Campaign",
-        verbose_name=_(u"Kampaň"),
+        verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     phase_type = models.CharField(
-        verbose_name=_(u"Typ fáze"),
+        verbose_name=_("Typ fáze"),
         choices=TYPE,
         max_length=16,
         null=False,
         default="registration",
     )
     date_from = models.DateField(
-        verbose_name=_(u"Datum začátku fáze"),
+        verbose_name=_("Datum začátku fáze"),
         default=None,
         null=True,
         blank=True,
     )
     date_to = models.DateField(
-        verbose_name=_(u"Datum konce fáze"),
+        verbose_name=_("Datum konce fáze"),
         default=None,
         null=True,
         blank=True,

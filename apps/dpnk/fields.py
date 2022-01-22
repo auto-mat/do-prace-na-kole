@@ -26,9 +26,9 @@ class ShowPointsMultipleModelChoiceField(forms.ModelMultipleChoiceField):
 
     def label_from_instance(self, obj):
         if self.show_points and obj.points:
-            return u"%s (%s %s)" % (obj.text, obj.points, _("b"))
+            return "%s (%s %s)" % (obj.text, obj.points, _("b"))
         else:
-            return u"%s" % (obj.text)
+            return "%s" % (obj.text)
 
 
 class CommaFloatField(forms.FloatField):

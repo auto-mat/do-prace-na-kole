@@ -42,20 +42,20 @@ class UserProfile(WithGalleryMixin, models.Model):
     """Uživatelský profil"""
 
     class Meta:
-        verbose_name = _(u"Uživatelský profil")
-        verbose_name_plural = _(u"Uživatelské profily")
+        verbose_name = _("Uživatelský profil")
+        verbose_name_plural = _("Uživatelské profily")
         ordering = ["user__last_name", "user__first_name"]
 
         permissions = (("can_edit_all_cities", _("Může editovat všechna města")),)
 
     GENDER = [
-        ("male", _(u"Muž")),
-        ("female", _(u"Žena")),
+        ("male", _("Muž")),
+        ("female", _("Žena")),
     ]
 
     LANGUAGE = [
-        ("cs", _(u"Čeština")),
-        ("en", _(u"Angličtna")),
+        ("cs", _("Čeština")),
+        ("en", _("Angličtna")),
     ]
     RIDES_VIEWS = [
         ("calendar", _("Kalendář")),
@@ -101,7 +101,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         default=None,
     )
     language = models.CharField(
-        verbose_name=_(u"Jazyk e-mailové komunikace"),
+        verbose_name=_("Jazyk e-mailové komunikace"),
         help_text=_(
             "V tomto jazyce Vám budou přicházet e-maily z registračního systému"
         ),
@@ -119,7 +119,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         default=None,
     )
     mailing_id = models.CharField(
-        verbose_name=_(u"ID uživatele v mailing listu"),
+        verbose_name=_("ID uživatele v mailing listu"),
         max_length=128,
         db_index=True,
         default=None,
@@ -129,13 +129,13 @@ class UserProfile(WithGalleryMixin, models.Model):
         blank=True,
     )
     mailing_hash = models.TextField(
-        verbose_name=_(u"Hash poslední synchronizace s mailingem"),
+        verbose_name=_("Hash poslední synchronizace s mailingem"),
         default=None,
         null=True,
         blank=True,
     )
     sex = models.CharField(
-        verbose_name=_(u"Pohlaví"),
+        verbose_name=_("Pohlaví"),
         help_text=_(
             "Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií."
         ),
@@ -146,7 +146,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         default=None,
     )
     note = models.TextField(
-        verbose_name=_(u"Interní poznámka"),
+        verbose_name=_("Interní poznámka"),
         null=True,
         blank=True,
     )
@@ -157,7 +157,7 @@ class UserProfile(WithGalleryMixin, models.Model):
     )
     mailing_opt_in = models.NullBooleanField(
         verbose_name=_("Soutěžní e-maily"),
-        help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
+        help_text=_("Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
     )
     occupation = models.ForeignKey(
@@ -247,9 +247,9 @@ class UserProfile(WithGalleryMixin, models.Model):
         if self.nickname:
             full_name = self.user.get_full_name()
             if full_name:
-                return u"%s (%s)" % (full_name, self.nickname)
+                return "%s (%s)" % (full_name, self.nickname)
             else:
-                return u"%s (%s)" % (self.user.username, self.nickname)
+                return "%s (%s)" % (self.user.username, self.nickname)
         else:
             full_name = self.user.get_full_name()
             if full_name:
@@ -279,7 +279,7 @@ class UserProfile(WithGalleryMixin, models.Model):
             .count()
             > 0
         ):
-            logger.error(u"Mailing id %s is already used" % self.mailing_id)
+            logger.error("Mailing id %s is already used" % self.mailing_id)
 
         if self.pk is None:
             self.ecc_password = User.objects.make_random_password()

@@ -20,14 +20,14 @@ from django.utils.translation import ugettext_lazy as _
 
 class LandingPageIcon(models.Model):
     file = models.FileField(
-        verbose_name=_(u"Landing page image"),
+        verbose_name=_("Landing page image"),
         max_length=512,
     )
     ROLES = [
-        ("main", _(u"Hlavní obráz")),
+        ("main", _("Hlavní obráz")),
     ]
     role = models.CharField(
-        verbose_name=_(u"Role pro obráz"),
+        verbose_name=_("Role pro obráz"),
         max_length=64,
         choices=ROLES,
         blank=False,

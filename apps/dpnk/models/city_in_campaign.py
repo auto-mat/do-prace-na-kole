@@ -37,8 +37,8 @@ class CityInCampaign(models.Model):
     """Město v kampani"""
 
     class Meta:
-        verbose_name = _(u"Město v kampani")
-        verbose_name_plural = _(u"Města v kampani")
+        verbose_name = _("Město v kampani")
+        verbose_name_plural = _("Města v kampani")
         unique_together = (("city", "campaign"),)
         ordering = (
             "campaign",
@@ -59,18 +59,18 @@ class CityInCampaign(models.Model):
         on_delete=models.CASCADE,
     )
     allow_adding_rides = models.BooleanField(
-        verbose_name=_(u"povolit zapisování jízd"),
+        verbose_name=_("povolit zapisování jízd"),
         null=False,
         blank=False,
         default=True,
     )
     organizer = models.TextField(
-        verbose_name=_(u"Jméno pořadatele"),
+        verbose_name=_("Jméno pořadatele"),
         default="",
         blank=True,
     )
     organizer_url = models.URLField(
-        verbose_name=_(u"URL pořadatele"),
+        verbose_name=_("URL pořadatele"),
         default="",
         blank=True,
     )

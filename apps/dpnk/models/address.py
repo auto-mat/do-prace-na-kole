@@ -51,14 +51,14 @@ def address_generator(
 ):
     if char_psc:
         psc_field = models.CharField(
-            verbose_name=_(u"PSČ"),
+            verbose_name=_("PSČ"),
             max_length=50,
             null=True,
             blank=True,
         )
     else:
         psc_field = models.IntegerField(
-            verbose_name=_(u"PSČ"),
+            verbose_name=_("PSČ"),
             validators=[
                 MaxValueValidator(99999),
                 MinValueValidator(10000),
@@ -70,14 +70,14 @@ def address_generator(
 
     class AddressField(CompositeField):
         street = models.CharField(
-            verbose_name=_(u"Ulice"),
+            verbose_name=_("Ulice"),
             default="",
             max_length=50,
             null=null_blank,
             blank=null_blank,
         )
         street_number = models.CharField(
-            verbose_name=_(u"Číslo domu"),
+            verbose_name=_("Číslo domu"),
             default="",
             max_length=10,
             null=null_blank,
@@ -95,7 +95,7 @@ def address_generator(
         )
         psc = psc_field
         city = models.CharField(
-            verbose_name=_(u"Město"),
+            verbose_name=_("Město"),
             default="",
             max_length=50,
             null=null_blank,

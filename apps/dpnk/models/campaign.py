@@ -44,8 +44,8 @@ class Campaign(Pricable, models.Model):
     """kampaň"""
 
     class Meta:
-        verbose_name = _(u"kampaň")
-        verbose_name_plural = _(u"kampaně")
+        verbose_name = _("kampaň")
+        verbose_name_plural = _("kampaně")
         permissions = (("can_see_application_links", "Can see application links"),)
         ordering = ("-id",)
         unique_together = [
@@ -70,7 +70,7 @@ class Campaign(Pricable, models.Model):
     )
     slug = models.SlugField(
         unique=True,
-        verbose_name=u"Doména v URL",
+        verbose_name="Doména v URL",
         blank=False,
     )
     slug_identifier = models.SlugField(
@@ -90,21 +90,21 @@ class Campaign(Pricable, models.Model):
         on_delete=models.SET_NULL,
     )
     email_footer = models.TextField(
-        verbose_name=_(u"Patička uživatelských e-mailů"),
+        verbose_name=_("Patička uživatelských e-mailů"),
         default="",
         max_length=5000,
         null=True,
         blank=True,
     )
     mailing_list_id = models.CharField(
-        verbose_name=_(u"ID mailing listu"),
+        verbose_name=_("ID mailing listu"),
         max_length=60,
         default="",
         blank=True,
         null=False,
     )
     mailing_list_type = models.CharField(
-        verbose_name=_(u"ID mailing listu"),
+        verbose_name=_("ID mailing listu"),
         choices=[
             (None, _("Disabled")),
             ("campaign_monitor", _("Campaign monitor")),
@@ -121,7 +121,7 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     mailing_list_enabled = models.NullBooleanField(
-        verbose_name=_(u"Povolit mailing list"),
+        verbose_name=_("Povolit mailing list"),
         default=None,
         null=True,
         blank=True,
@@ -139,53 +139,53 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     minimum_rides_base = models.PositiveIntegerField(
-        verbose_name=_(u"Minimální základ počtu jízd"),
+        verbose_name=_("Minimální základ počtu jízd"),
         help_text=_(
-            u"Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"
+            "Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"
         ),
         default=25,
         blank=False,
         null=False,
     )
     minimum_percentage = models.PositiveIntegerField(
-        verbose_name=_(u"Minimální procento pro kvalifikaci do pravidelnostní soutěže"),
+        verbose_name=_("Minimální procento pro kvalifikaci do pravidelnostní soutěže"),
         default=66,
         blank=False,
         null=False,
     )
     trip_plus_distance = models.PositiveIntegerField(
-        verbose_name=_(u"Maximální navýšení vzdálenosti"),
-        help_text=_(u"Počet kilometrů, o které je možné prodloužit si jednu jízdu"),
+        verbose_name=_("Maximální navýšení vzdálenosti"),
+        help_text=_("Počet kilometrů, o které je možné prodloužit si jednu jízdu"),
         default=5,
         blank=True,
         null=True,
     )
     tracking_number_first = models.PositiveIntegerField(
-        verbose_name=_(u"První číslo řady pro doručování balíčků"),
+        verbose_name=_("První číslo řady pro doručování balíčků"),
         default=0,
         blank=False,
         null=False,
     )
     tracking_number_last = models.PositiveIntegerField(
-        verbose_name=_(u"Poslední číslo řady pro doručování balíčků"),
+        verbose_name=_("Poslední číslo řady pro doručování balíčků"),
         default=999999999,
         blank=False,
         null=False,
     )
     package_height = models.PositiveIntegerField(
-        verbose_name=_(u"Výška balíku"),
+        verbose_name=_("Výška balíku"),
         default=1,
         blank=True,
         null=True,
     )
     package_width = models.PositiveIntegerField(
-        verbose_name=_(u"Šířka balíku"),
+        verbose_name=_("Šířka balíku"),
         default=26,
         blank=True,
         null=True,
     )
     package_depth = models.PositiveIntegerField(
-        verbose_name=_(u"Hloubka balíku"),
+        verbose_name=_("Hloubka balíku"),
         default=35,
         blank=True,
         null=True,
@@ -197,7 +197,7 @@ class Campaign(Pricable, models.Model):
         null=True,
     )
     package_weight = models.FloatField(
-        verbose_name=_(u"Váha balíku"),
+        verbose_name=_("Váha balíku"),
         null=True,
         blank=True,
         default=0.25,
@@ -207,29 +207,29 @@ class Campaign(Pricable, models.Model):
         ],
     )
     invoice_sequence_number_first = models.PositiveIntegerField(
-        verbose_name=_(u"První číslo řady pro faktury"),
+        verbose_name=_("První číslo řady pro faktury"),
         default=1,
         blank=False,
         null=False,
     )
     invoice_sequence_number_last = models.PositiveIntegerField(
-        verbose_name=_(u"Poslední číslo řady pro faktury"),
+        verbose_name=_("Poslední číslo řady pro faktury"),
         default=999999999,
         blank=False,
         null=False,
     )
     benefitial_admission_fee = models.FloatField(
-        verbose_name=_(u"Benefiční startovné"),
+        verbose_name=_("Benefiční startovné"),
         null=False,
         default=0,
     )
     benefitial_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Benefiční startovné pro organizace"),
+        verbose_name=_("Benefiční startovné pro organizace"),
         null=False,
         default=0,
     )
     free_entry_cases_html = models.TextField(
-        verbose_name=_(u"Případy, kdy je startovné zdarma"),
+        verbose_name=_("Případy, kdy je startovné zdarma"),
         null=True,
         blank=True,
     )
@@ -446,7 +446,7 @@ class Campaign(Pricable, models.Model):
     #############################################
     name = models.CharField(
         unique=False,
-        verbose_name=_(u"Deprecated: Jméno kampaně"),
+        verbose_name=_("Deprecated: Jméno kampaně"),
         max_length=60,
         null=True,
     )

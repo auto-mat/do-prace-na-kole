@@ -54,8 +54,8 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     """Faktura"""
 
     class Meta:
-        verbose_name = _(u"Faktura")
-        verbose_name_plural = _(u"Faktury")
+        verbose_name = _("Faktura")
+        verbose_name_plural = _("Faktury")
         unique_together = (("sequence_number", "campaign"),)
         ordering = (
             "sequence_number",
@@ -65,17 +65,17 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     last_sync_string = _("Poslední odeslání upomínky")
 
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
+        verbose_name=_("Datum vytvoření"),
         default=datetime.datetime.now,
         null=False,
     )
     exposure_date = models.DateField(
-        verbose_name=_(u"Den vystavení daňového dokladu"),
+        verbose_name=_("Den vystavení daňového dokladu"),
         null=True,
         blank=True,
     )
     taxable_date = models.DateField(
-        verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
+        verbose_name=_("Den uskutečnění zdanitelného plnění"),
         null=True,
         blank=True,
     )
@@ -85,7 +85,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         blank=True,
     )
     paid_date = models.DateField(
-        verbose_name=_(u"Datum zaplacení"),
+        verbose_name=_("Datum zaplacení"),
         default=None,
         null=True,
         blank=True,
@@ -101,12 +101,12 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         default=False,
     )
     total_amount = models.FloatField(
-        verbose_name=_(u"Celková částka"),
+        verbose_name=_("Celková částka"),
         null=False,
         default=0,
     )
     invoice_pdf = models.FileField(
-        verbose_name=_(u"PDF faktury"),
+        verbose_name=_("PDF faktury"),
         upload_to=get_invoice_dir,
         max_length=512,
         blank=True,
@@ -121,24 +121,24 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     )
     company = models.ForeignKey(
         Company,
-        verbose_name=_(u"Organizace"),
+        verbose_name=_("Organizace"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
         "Campaign",
-        verbose_name=_(u"Kampaň"),
+        verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     sequence_number = models.PositiveIntegerField(
-        verbose_name=_(u"Pořadové číslo faktury"),
+        verbose_name=_("Pořadové číslo faktury"),
         null=False,
     )
     order_number = models.BigIntegerField(
-        verbose_name=_(u"Číslo objednávky (nepovinné)"),
+        verbose_name=_("Číslo objednávky (nepovinné)"),
         null=True,
         blank=True,
     )
@@ -187,7 +187,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         blank=True,
     )
     note = models.TextField(
-        verbose_name=_(u"Interní poznámka"),
+        verbose_name=_("Interní poznámka"),
         null=True,
         blank=True,
     )
@@ -265,7 +265,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
             last_transaction = last_transaction.last()
             if last_transaction:
                 if last_transaction.sequence_number == last:
-                    raise Exception(_(u"Došla číselná řada faktury"))
+                    raise Exception(_("Došla číselná řada faktury"))
                 self.sequence_number = last_transaction.sequence_number + 1
             else:
                 self.sequence_number = first
@@ -298,7 +298,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
             and hasattr(self, "campaign")
             and not self.payments_to_add().exists()
         ):
-            raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
+            raise ValidationError(_("Neexistuje žádná nefakturovaná platba"))
 
 
 def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):

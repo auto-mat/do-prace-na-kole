@@ -27,12 +27,12 @@ class City(models.Model):
     """Město"""
 
     class Meta:
-        verbose_name = _(u"Město")
-        verbose_name_plural = _(u"Města")
+        verbose_name = _("Město")
+        verbose_name_plural = _("Města")
         ordering = ("name",)
 
     name = models.CharField(
-        verbose_name=_(u"Jméno"),
+        verbose_name=_("Jméno"),
         unique=True,
         max_length=40,
         null=False,
@@ -50,12 +50,12 @@ class City(models.Model):
         null=True,
     )
     cyklistesobe_slug = models.SlugField(
-        verbose_name=_(u"Jméno skupiny na webu Cyklisté sobě"),
+        verbose_name=_("Jméno skupiny na webu Cyklisté sobě"),
         max_length=40,
         null=True,
     )
     location = models.PointField(
-        verbose_name=_(u"poloha města"),
+        verbose_name=_("poloha města"),
         srid=4326,
         null=True,
         blank=False,
