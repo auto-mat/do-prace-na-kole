@@ -69,8 +69,8 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         on_delete=models.CASCADE,
     )
     customer_sheets = models.FileField(
-        verbose_name=_(u"Zákaznické listy"),
-        upload_to=u"customer_sheets",
+        verbose_name=_("Zákaznické listy"),
+        upload_to="customer_sheets",
         blank=True,
         null=True,
         max_length=512,

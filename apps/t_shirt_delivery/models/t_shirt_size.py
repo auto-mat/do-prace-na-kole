@@ -29,12 +29,12 @@ class TShirtSize(models.Model):
     """Velikost trička"""
 
     name = models.CharField(
-        verbose_name=_(u"Velikost trička"),
+        verbose_name=_("Velikost trička"),
         max_length=40,
         null=False,
     )
     code = models.CharField(
-        verbose_name=_(u"Kód v skladu"),
+        verbose_name=_("Kód v skladu"),
         max_length=80,
         null=True,
         default="",
@@ -42,7 +42,7 @@ class TShirtSize(models.Model):
     )
     campaign = models.ForeignKey(
         Campaign,
-        verbose_name=_(u"Kampaň"),
+        verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
@@ -53,33 +53,33 @@ class TShirtSize(models.Model):
         null=False,
     )
     ship = models.BooleanField(
-        verbose_name=_(u"Posílá se?"),
+        verbose_name=_("Posílá se?"),
         default=True,
         null=False,
     )
     available = models.BooleanField(
-        verbose_name=_(u"Je dostupné?"),
-        help_text=_(u"Zobrazuje se v nabídce trik"),
+        verbose_name=_("Je dostupné?"),
+        help_text=_("Zobrazuje se v nabídce trik"),
         default=True,
         null=False,
     )
     t_shirt_preview = models.FileField(
-        verbose_name=_(u"Náhled trika"),
-        upload_to=u"t_shirt_preview",
+        verbose_name=_("Náhled trika"),
+        upload_to="t_shirt_preview",
         blank=True,
         null=True,
         max_length=512,
     )
     price = models.IntegerField(
-        verbose_name=_(u"Cena"),
+        verbose_name=_("Cena"),
         default=0,
         blank=False,
         null=False,
     )
 
     class Meta:
-        verbose_name = _(u"Velikost trička")
-        verbose_name_plural = _(u"Velikosti trička")
+        verbose_name = _("Velikost trička")
+        verbose_name_plural = _("Velikosti trička")
         unique_together = (("name", "campaign"),)
         db_table = "t_shirt_delivery_tshirtsize"
         ordering = ["order"]

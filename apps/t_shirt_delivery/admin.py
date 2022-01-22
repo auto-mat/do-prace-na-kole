@@ -578,8 +578,8 @@ class DeliveryBatchDeadlineAdmin(admin.ModelAdmin):
 
 class UserAttendanceToBatch(UserAttendance):
     class Meta:
-        verbose_name = _(u"Uživatel na dávku objednávek")
-        verbose_name_plural = _(u"Uživatelé na dávku objednávek")
+        verbose_name = _("Uživatel na dávku objednávek")
+        verbose_name_plural = _("Uživatelé na dávku objednávek")
         proxy = True
 
 

@@ -29,13 +29,13 @@ class PackageTransaction(Transaction):
 
     t_shirt_size = models.ForeignKey(
         "t_shirt_delivery.TShirtSize",
-        verbose_name=_(u"Velikost trička"),
+        verbose_name=_("Velikost trička"),
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
     )
     tracking_number = models.PositiveIntegerField(
-        verbose_name=_(u"Tracking number"),
+        verbose_name=_("Tracking number"),
         unique=True,
         null=True,
         blank=True,
