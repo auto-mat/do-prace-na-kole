@@ -1117,7 +1117,6 @@ class IsAdminOrReadOnly(BasePermission):
             return True
         else:
             return request.user.is_staff
-        return False
 
 
 class CampaignTypeSet(viewsets.ModelViewSet):
