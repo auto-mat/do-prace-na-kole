@@ -41,7 +41,6 @@ logger = logging.getLogger(__name__)
 class Status(object):
     NEW = 1
     CANCELED = 2
-    REJECTED = 3
     COMMENCED = 4
     WAITING_CONFIRMATION = 5
     REJECTED = 7
