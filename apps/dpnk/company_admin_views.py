@@ -377,7 +377,7 @@ class CompanyCompetitionView(
             competition = get_object_or_404(Competition.objects, slug=competition_slug)
             if competition.company != company:
                 raise CompanyViewException(
-                    _(u"K editování této soutěže nemáte oprávnění."),
+                    _("K editování této soutěže nemáte oprávnění."),
                     _("Nedostatečné oprávnění"),
                 )
         else:
@@ -386,7 +386,7 @@ class CompanyCompetitionView(
                 >= settings.MAX_COMPETITIONS_PER_COMPANY
             ):
                 raise CompanyViewException(
-                    _(u"Překročen maximální počet soutěží pro organizaci."),
+                    _("Překročen maximální počet soutěží pro organizaci."),
                     _("Dosažen maximální počet soutěží"),
                 )
             phase = campaign.phase("competition")

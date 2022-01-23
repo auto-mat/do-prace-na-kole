@@ -440,7 +440,7 @@ class SubsidiaryAdmin(
             ],
         )
 
-    team_links.short_description = _(u"Týmy")
+    team_links.short_description = _("Týmy")
 
 
 class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
@@ -528,12 +528,12 @@ class CompetitionAdmin(
                 (reverse("competition_results", kwargs={"competition_slug": obj.slug})),
             )
 
-    competition_results_link.short_description = _(u"Výsledky soutěže")
+    competition_results_link.short_description = _("Výsledky soutěže")
 
     def questionnaire_results_link(self, obj):
         if obj.competition_type == "questionnaire" and obj.slug:
             return format_html(
-                u'<a href="{}">odpovědi</a>',
+                '<a href="{}">odpovědi</a>',
                 (
                     reverse(
                         "admin_questionnaire_results",
@@ -542,16 +542,16 @@ class CompetitionAdmin(
                 ),
             )
 
-    questionnaire_results_link.short_description = _(u"Odpovědi")
+    questionnaire_results_link.short_description = _("Odpovědi")
 
     def questionnaire_link(self, obj):
         if obj.competition_type == "questionnaire" and obj.slug:
             return format_html(
-                u'<a href="{}">dotazník</a>',
+                '<a href="{}">dotazník</a>',
                 (reverse("questionnaire", kwargs={"questionnaire_slug": obj.slug})),
             )
 
-    questionnaire_link.short_description = _(u"Dotazník")
+    questionnaire_link.short_description = _("Dotazník")
 
     def draw_link(self, obj):
         if (
@@ -564,7 +564,7 @@ class CompetitionAdmin(
                 (reverse("admin_draw_results", kwargs={"competition_slug": obj.slug})),
             )
 
-    draw_link.short_description = _(u"Losování")
+    draw_link.short_description = _("Losování")
 
 
 class UserAttendanceForm(forms.ModelForm):
@@ -1177,7 +1177,7 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
     def attachment_url(self, obj):
         if obj.attachment:
             return format_html(
-                u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment
+                "<a href='{}'>{}</a>", obj.attachment.url, obj.attachment
             )
 
     actions = (create_export_job_action,)

@@ -32,12 +32,12 @@ def recalculate_competitions_results(modeladmin, request, queryset):
     )
     if request:
         modeladmin.message_user(
-            request, _(u"Zadáno přepočítání %s výsledků" % (queryset.count()))
+            request, _("Zadáno přepočítání %s výsledků" % (queryset.count()))
         )
 
 
 recalculate_competitions_results.short_description = _(
-    u"Přepočítat výsledku vybraných soutěží"
+    "Přepočítat výsledku vybraných soutěží"
 )
 
 
@@ -89,11 +89,11 @@ touch_items.short_description = _("Obnovit denormalizované sloupce")
 def recalculate_results(modeladmin, request, queryset):
     for user_attendance in queryset.all():
         results.recalculate_result_competitor_nothread(user_attendance)
-    modeladmin.message_user(request, _(u"Výsledky přepočítány"))
+    modeladmin.message_user(request, _("Výsledky přepočítány"))
 
 
 recalculate_results.short_description = _(
-    u"Přepočítat výsledky soutěží pro vybrané účasti v kampani"
+    "Přepočítat výsledky soutěží pro vybrané účasti v kampani"
 )
 
 
@@ -108,7 +108,7 @@ def show_distance(modeladmin, request, queryset):
     )
 
 
-show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
+show_distance.short_description = _("Ukázat ujetou vzdálenost")
 
 
 def assign_vouchers(modeladmin, request, queryset):
@@ -131,7 +131,7 @@ def assign_vouchers(modeladmin, request, queryset):
         )
 
 
-assign_vouchers.short_description = _(u"Přiřadit vouchery")
+assign_vouchers.short_description = _("Přiřadit vouchery")
 
 
 def update_mailing(modeladmin, request, queryset):
@@ -146,7 +146,7 @@ def update_mailing(modeladmin, request, queryset):
     )
 
 
-update_mailing.short_description = _(u"Aktualizovat mailing list")
+update_mailing.short_description = _("Aktualizovat mailing list")
 
 
 def approve_am_payment(modeladmin, request, queryset):
@@ -164,10 +164,10 @@ def approve_am_payment(modeladmin, request, queryset):
                 description=payment_description,
                 amount=0,
             )
-    modeladmin.message_user(request, _(u"Platby potvrzeny"))
+    modeladmin.message_user(request, _("Platby potvrzeny"))
 
 
-approve_am_payment.short_description = _(u"Potvrdit platbu")
+approve_am_payment.short_description = _("Potvrdit platbu")
 
 
 def remove_mailing_id(modeladmin, request, queryset):
@@ -177,11 +177,11 @@ def remove_mailing_id(modeladmin, request, queryset):
         userprofile.save()
     modeladmin.message_user(
         request,
-        _(u"Mailing ID a hash byl úspěšne odebrán %s profilům") % queryset.count(),
+        _("Mailing ID a hash byl úspěšne odebrán %s profilům") % queryset.count(),
     )
 
 
-remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
+remove_mailing_id.short_description = _("Odstranit mailing ID a hash")
 
 
 def show_distance_trips(modeladmin, request, queryset):
@@ -192,7 +192,7 @@ def show_distance_trips(modeladmin, request, queryset):
     )
 
 
-show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
+show_distance_trips.short_description = _("Ukázat ujetou vzdálenost")
 
 
 def update_mailing_coordinator(modeladmin, request, queryset):
@@ -209,7 +209,7 @@ def update_mailing_coordinator(modeladmin, request, queryset):
     )
 
 
-update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
+update_mailing_coordinator.short_description = _("Aktualizovat mailing list")
 
 
 def mark_invoices_paid(modeladmin, request, queryset):

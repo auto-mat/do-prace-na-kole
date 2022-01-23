@@ -51,8 +51,8 @@ class Company(WithGalleryMixin, models.Model):
     """Organizace"""
 
     class Meta:
-        verbose_name = _(u"Organizace")
-        verbose_name_plural = _(u"Organizace")
+        verbose_name = _("Organizace")
+        verbose_name_plural = _("Organizace")
         ordering = ("name",)
 
     name = models.CharField(
@@ -64,7 +64,7 @@ class Company(WithGalleryMixin, models.Model):
     address = CompanyAddress()
     dic = StdNumField(
         "cz.dic",
-        verbose_name=_(u"DIČ"),
+        verbose_name=_("DIČ"),
         max_length=15,
         default="",
         validators=[
@@ -78,14 +78,14 @@ class Company(WithGalleryMixin, models.Model):
         null=True,
     )
     active = models.BooleanField(
-        verbose_name=_(u"Aktivní"),
+        verbose_name=_("Aktivní"),
         default=True,
         null=False,
     )
     ico = StdNumField(
         "cz.dic",
         default=None,
-        verbose_name=_(u"IČO"),
+        verbose_name=_("IČO"),
         validators=[RegexValidator(r"^[0-9]*$", _("IČO musí být číslo"))],
         error_messages={"stdnum_format": ICO_ERROR_MESSAGE},
         blank=True,

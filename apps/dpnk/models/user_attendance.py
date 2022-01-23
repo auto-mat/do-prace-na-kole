@@ -64,26 +64,26 @@ class UserAttendance(StaleSyncMixin, models.Model):
     last_sync_string = _("Poslední odeslání notifikačního e-mailu")
 
     class Meta:
-        verbose_name = _(u"Účastník kampaně")
-        verbose_name_plural = _(u"Účastníci kampaně")
+        verbose_name = _("Účastník kampaně")
+        verbose_name_plural = _("Účastníci kampaně")
         unique_together = (("userprofile", "campaign"),)
 
     TEAMAPPROVAL = (
-        ("approved", _(u"Odsouhlasený")),
-        ("undecided", _(u"Nerozhodnuto")),
-        ("denied", _(u"Zamítnutý")),
+        ("approved", _("Odsouhlasený")),
+        ("undecided", _("Nerozhodnuto")),
+        ("denied", _("Zamítnutý")),
     )
 
     campaign = models.ForeignKey(
         "Campaign",
-        verbose_name=_(u"Kampaň"),
+        verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     userprofile = models.ForeignKey(
         "UserProfile",
-        verbose_name=_(u"Uživatelský profil"),
+        verbose_name=_("Uživatelský profil"),
         related_name="userattendance_set",
         unique=False,
         null=False,
@@ -91,14 +91,14 @@ class UserAttendance(StaleSyncMixin, models.Model):
         on_delete=models.CASCADE,
     )
     distance = models.FloatField(
-        verbose_name=_(u"DEPRECATED"),
-        help_text=_(u"DEPRECATED"),
+        verbose_name=_("DEPRECATED"),
+        help_text=_("DEPRECATED"),
         default=None,
         blank=True,
         null=True,
     )
     track = models.MultiLineStringField(
-        verbose_name=_(u"DEPRECATED"),
+        verbose_name=_("DEPRECATED"),
         help_text=MAP_DESCRIPTION,
         srid=4326,
         null=True,
@@ -106,21 +106,21 @@ class UserAttendance(StaleSyncMixin, models.Model):
         geography=True,
     )
     dont_want_insert_track = models.BooleanField(
-        verbose_name=_(u"DEPRECATED"),
+        verbose_name=_("DEPRECATED"),
         default=False,
         null=False,
     )
     team = models.ForeignKey(
         "Team",
         related_name="users",
-        verbose_name=_(u"Tým"),
+        verbose_name=_("Tým"),
         null=True,
         blank=True,
         default=None,
         on_delete=models.SET_NULL,
     )
     approved_for_team = models.CharField(
-        verbose_name=_(u"Souhlas týmu"),
+        verbose_name=_("Souhlas týmu"),
         choices=TEAMAPPROVAL,
         max_length=16,
         null=False,
@@ -141,17 +141,17 @@ class UserAttendance(StaleSyncMixin, models.Model):
         on_delete=models.SET_NULL,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
+        verbose_name=_("Datum vytvoření"),
         auto_now_add=True,
         null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
+        verbose_name=_("Datum poslední změny"),
         auto_now=True,
         null=True,
     )
     personal_data_opt_in = models.BooleanField(
-        verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
+        verbose_name=_("Souhlas se zpracováním osobních údajů."),
         blank=False,
         default=False,
     )
@@ -180,13 +180,13 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.userprofile.name(cs_vokativ=cs_vokativ)
 
     name.admin_order_field = "userprofile__user__last_name"
-    name.short_description = _(u"Jméno")
+    name.short_description = _("Jméno")
 
     def name_for_trusted(self):
         return self.userprofile.name_for_trusted()
 
     name_for_trusted.admin_order_field = "userprofile__user__last_name"
-    name_for_trusted.short_description = _(u"Jméno")
+    name_for_trusted.short_description = _("Jméno")
 
     def __str__(self):
         return self.userprofile.name()
@@ -271,11 +271,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return None
 
     PAYMENT_CHOICES = (
-        ("no_admission", _(u"neplatí se")),
-        ("none", _(u"žádné platby")),
-        ("done", _(u"zaplaceno")),
-        ("waiting", _(u"nepotvrzeno")),
-        ("unknown", _(u"neznámý")),
+        ("no_admission", _("neplatí se")),
+        ("none", _("žádné platby")),
+        ("done", _("zaplaceno")),
+        ("waiting", _("nepotvrzeno")),
+        ("unknown", _("neznámý")),
     )
 
     @denormalized(

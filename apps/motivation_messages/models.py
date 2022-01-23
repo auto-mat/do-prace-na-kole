@@ -94,8 +94,8 @@ class MotivationMessage(models.Model):
     priority = models.IntegerField(
         verbose_name=_("Priorita"),
         help_text=_(
-            "Priorita hlášky. Zobrazuje se vždy náhodná hláška z těch, které mají nejvyšší prioritu splňují ostatní podmínky."
-            "Možno nastavit záporě pro hlášky které mají mít zobrazovat jen pokud není žádní lepší k dispozici."
+            "Priorita hlášky. Zobrazuje se vždy náhodná hláška z těch, které mají nejvyšší prioritu a splňují ostatní podmínky."
+            "Možno nastavit záporně pro hlášky které mají mít zobrazovat jen pokud není žádní lepší k dispozici."
         ),
         null=False,
         blank=False,

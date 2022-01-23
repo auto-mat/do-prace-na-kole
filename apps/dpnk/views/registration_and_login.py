@@ -489,7 +489,7 @@ class PaymentView(
         )
         p.save()
         logger.info(
-            u"Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s"
+            "Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s"
             % (
                 uid,
                 order_id,
@@ -563,7 +563,7 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, success, trans_id, session_id, pay_type, error=None):
         context_data = super().get_context_data()
         logger.info(
-            u"Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)"
+            "Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)"
             % (
                 success,
                 trans_id,

@@ -73,7 +73,7 @@ def generate_invoice(invoice):
     )
 
     invoice_gen = Invoice(client, provider, creator)
-    invoice_gen.title = u"Faktura %s/%03d" % (
+    invoice_gen.title = "Faktura %s/%03d" % (
         invoice.exposure_date.year,
         invoice.sequence_number,
     )
@@ -85,8 +85,8 @@ def generate_invoice(invoice):
     invoice_gen.rounding_result = True
     invoice_gen.rounding_strategy = decimal.ROUND_HALF_UP
     invoice_gen.use_tax = True
-    invoice_gen.currency_locale = u"cs_CZ.UTF-8"
-    invoice_gen.paytype = u"bankovním převodem"
+    invoice_gen.currency_locale = "cs_CZ.UTF-8"
+    invoice_gen.paytype = "bankovním převodem"
 
     for payment in invoice.payment_set.order_by(
         "user_attendance__userprofile__user__last_name",

@@ -76,18 +76,18 @@ PACKAGE_STATUSES = [
 ]
 
 PAYMENT_STATUSES = [
-    (Status.NEW, _(u"Nová")),
-    (Status.CANCELED, _(u"Zrušena")),
-    (Status.REJECTED, _(u"Odmítnuta")),
-    (Status.COMMENCED, _(u"Zahájena")),
-    (Status.WAITING_CONFIRMATION, _(u"Očekává potvrzení")),
-    (Status.REJECTED, _(u"Platba zamítnuta, prostředky nemožno vrátit, řeší PayU")),
-    (Status.DONE, _(u"Platba přijata")),
-    (Status.WRONG_STATUS, _(u"Nesprávný status -- kontaktovat PayU")),
-    (Status.COMPANY_ACCEPTS, _(u"Platba akceptována organizací")),
+    (Status.NEW, _("Nová")),
+    (Status.CANCELED, _("Zrušena")),
+    (Status.REJECTED, _("Odmítnuta")),
+    (Status.COMMENCED, _("Zahájena")),
+    (Status.WAITING_CONFIRMATION, _("Očekává potvrzení")),
+    (Status.REJECTED, _("Platba zamítnuta, prostředky nemožno vrátit, řeší PayU")),
+    (Status.DONE, _("Platba přijata")),
+    (Status.WRONG_STATUS, _("Nesprávný status -- kontaktovat PayU")),
+    (Status.COMPANY_ACCEPTS, _("Platba akceptována organizací")),
     (Status.FREE_FOR_PARTNER, _("Partner má startovné zdarma")),
-    (Status.INVOICE_MADE, _(u"Faktura vystavena")),
-    (Status.INVOICE_PAID, _(u"Faktura zaplacena")),
+    (Status.INVOICE_MADE, _("Faktura vystavena")),
+    (Status.INVOICE_PAID, _("Faktura zaplacena")),
 ]
 
 BIKE_REPAIR_STATUSES = [
@@ -108,7 +108,7 @@ class Transaction(PolymorphicModel):
     """Transakce"""
 
     status = models.PositiveIntegerField(
-        verbose_name=_(u"Status"),
+        verbose_name=_("Status"),
         default=0,
         choices=STATUS,
         null=False,
@@ -123,41 +123,41 @@ class Transaction(PolymorphicModel):
         on_delete=models.CASCADE,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Vytvoření"),
+        verbose_name=_("Vytvoření"),
         default=datetime.datetime.now,
         null=False,
     )
     description = models.TextField(
-        verbose_name=_(u"Popis"),
+        verbose_name=_("Popis"),
         null=True,
         blank=True,
         default="",
     )
     realized = models.DateTimeField(
-        verbose_name=_(u"Realizace"),
+        verbose_name=_("Realizace"),
         null=True,
         blank=True,
     )
 
     class Meta:
-        verbose_name = _(u"Transakce")
-        verbose_name_plural = _(u"Transakce")
+        verbose_name = _("Transakce")
+        verbose_name_plural = _("Transakce")
 
 
 class CommonTransaction(Transaction):
     """Obecná transakce"""
 
     class Meta:
-        verbose_name = _(u"Obecná transakce")
-        verbose_name_plural = _(u"Obecné transakce")
+        verbose_name = _("Obecná transakce")
+        verbose_name_plural = _("Obecné transakce")
 
 
 class UserActionTransaction(Transaction):
     """Uživatelská akce"""
 
     class Meta:
-        verbose_name = _(u"Uživatelská akce")
-        verbose_name_plural = _(u"Uživatelské akce")
+        verbose_name = _("Uživatelská akce")
+        verbose_name_plural = _("Uživatelské akce")
 
 
 class Payment(Transaction):
@@ -229,8 +229,8 @@ class Payment(Transaction):
     ]
 
     class Meta:
-        verbose_name = _(u"Platební transakce")
-        verbose_name_plural = _(u"Platební transakce")
+        verbose_name = _("Platební transakce")
+        verbose_name_plural = _("Platební transakce")
 
     order_id = models.CharField(
         verbose_name="Order ID",
@@ -254,18 +254,18 @@ class Payment(Transaction):
         blank=True,
     )
     amount = models.PositiveIntegerField(
-        verbose_name=_(u"Částka"),
+        verbose_name=_("Částka"),
         null=False,
     )
     pay_type = models.CharField(
-        verbose_name=_(u"Typ platby"),
+        verbose_name=_("Typ platby"),
         choices=PAY_TYPES,
         max_length=50,
         null=True,
         blank=True,
     )
     error = models.PositiveIntegerField(
-        verbose_name=_(u"Chyba"),
+        verbose_name=_("Chyba"),
         null=True,
         blank=True,
     )
@@ -310,7 +310,7 @@ class Payment(Transaction):
         if self.id:
             status_before_update = Payment.objects.get(pk=self.id).status
             logger.info(
-                u"Saving payment (before): %s"
+                "Saving payment (before): %s"
                 % Payment.objects.get(pk=self.id).full_string()
             )
         super().save(*args, **kwargs)
@@ -334,7 +334,7 @@ class Payment(Transaction):
             payment_confirmation_company_mail(self.user_attendance)
 
         logger.info(
-            u"Saving payment (after):  %s"
+            "Saving payment (after):  %s"
             % Payment.objects.get(pk=self.id).full_string()
         )
 

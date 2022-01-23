@@ -124,7 +124,7 @@ def payment_confirmation_company_mail(user_attendance):
     context = {
         "company": user_attendance.team.subsidiary.company
         if user_attendance.team
-        else _(u"(není vybraná)", user_attendance.userprofile.language),
+        else _("(není vybraná)", user_attendance.userprofile.language),
     }
     campaign_mail(
         user_attendance,

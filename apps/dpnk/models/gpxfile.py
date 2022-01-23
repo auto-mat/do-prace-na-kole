@@ -60,7 +60,7 @@ def normalize_gpx_filename(instance, filename):
 @with_author
 class GpxFile(models.Model):
     file = models.FileField(
-        verbose_name=_(u"GPX soubor"),
+        verbose_name=_("GPX soubor"),
         help_text=_(
             mark_safe(
                 "Zadat trasu nahráním souboru GPX. "
@@ -74,17 +74,17 @@ class GpxFile(models.Model):
         max_length=512,
     )
     DIRECTIONS = [
-        ("trip_to", _(u"Tam")),
-        ("trip_from", _(u"Zpět")),
+        ("trip_to", _("Tam")),
+        ("trip_from", _("Zpět")),
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
     trip_date = models.DateField(
-        verbose_name=_(u"Datum vykonání cesty"),
+        verbose_name=_("Datum vykonání cesty"),
         null=False,
         blank=False,
     )
     direction = models.CharField(
-        verbose_name=_(u"Směr cesty"),
+        verbose_name=_("Směr cesty"),
         choices=DIRECTIONS,
         max_length=50,
         null=False,
@@ -97,7 +97,7 @@ class GpxFile(models.Model):
         on_delete=models.CASCADE,
     )
     track = models.MultiLineStringField(
-        verbose_name=_(u"trasa"),
+        verbose_name=_("trasa"),
         help_text=MAP_DESCRIPTION,
         srid=4326,
         null=True,
@@ -135,29 +135,29 @@ class GpxFile(models.Model):
         blank=False,
     )
     from_application = models.BooleanField(
-        verbose_name=_(u"Nahráno z aplikace"),
+        verbose_name=_("Nahráno z aplikace"),
         default=False,
         null=False,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
+        verbose_name=_("Datum vytvoření"),
         auto_now_add=True,
         null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
+        verbose_name=_("Datum poslední změny"),
         auto_now=True,
         null=True,
     )
     ecc_last_upload = models.DateTimeField(
-        verbose_name=_(u"Datum posledního nahrátí do ECC"),
+        verbose_name=_("Datum posledního nahrátí do ECC"),
         null=True,
         blank=True,
     )
 
     class Meta:
-        verbose_name = _(u"GPX soubor")
-        verbose_name_plural = _(u"GPX soubory")
+        verbose_name = _("GPX soubor")
+        verbose_name_plural = _("GPX soubory")
         unique_together = (
             ("user_attendance", "trip_date", "direction"),
             ("trip", "direction"),

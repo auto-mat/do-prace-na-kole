@@ -34,8 +34,8 @@ class CompetitionResult(models.Model):
     """Výsledek soutěže"""
 
     class Meta:
-        verbose_name = _(u"Výsledek soutěže")
-        verbose_name_plural = _(u"Výsledky soutěží")
+        verbose_name = _("Výsledek soutěže")
+        verbose_name_plural = _("Výsledky soutěží")
         unique_together = (("user_attendance", "competition"), ("team", "competition"))
 
     user_attendance = models.ForeignKey(
@@ -70,7 +70,7 @@ class CompetitionResult(models.Model):
         on_delete=models.CASCADE,
     )
     result = models.DecimalField(
-        verbose_name=_(u"Výsledek"),
+        verbose_name=_("Výsledek"),
         max_digits=10,
         decimal_places=6,
         null=True,
@@ -91,12 +91,12 @@ class CompetitionResult(models.Model):
         default=None,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
+        verbose_name=_("Datum vytvoření"),
         auto_now_add=True,
         null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
+        verbose_name=_("Datum poslední změny"),
         auto_now=True,
         null=True,
     )

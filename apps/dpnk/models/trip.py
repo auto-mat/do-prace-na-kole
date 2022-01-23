@@ -103,9 +103,9 @@ class Trip(WithGalleryMixin, models.Model):
     """Jízdy"""
 
     DIRECTIONS = [
-        ("trip_to", _(u"Tam")),
-        ("trip_from", _(u"Zpět")),
-        ("recreational", _(u"Výlet")),
+        ("trip_to", _("Tam")),
+        ("trip_from", _("Zpět")),
+        ("recreational", _("Výlet")),
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
 
@@ -129,7 +129,7 @@ class Trip(WithGalleryMixin, models.Model):
         on_delete=models.CASCADE,
     )
     direction = models.CharField(
-        verbose_name=_(u"Směr cesty"),
+        verbose_name=_("Směr cesty"),
         choices=DIRECTIONS,
         max_length=20,
         default=None,
@@ -137,7 +137,7 @@ class Trip(WithGalleryMixin, models.Model):
         blank=False,
     )
     date = models.DateField(
-        verbose_name=_(u"Datum cesty"),
+        verbose_name=_("Datum cesty"),
         default=datetime.date.today,
         null=False,
     )
@@ -150,7 +150,7 @@ class Trip(WithGalleryMixin, models.Model):
         blank=False,
     )
     track = models.MultiLineStringField(
-        verbose_name=_(u"trasa"),
+        verbose_name=_("trasa"),
         help_text=MAP_DESCRIPTION,
         srid=4326,
         null=True,
@@ -158,7 +158,7 @@ class Trip(WithGalleryMixin, models.Model):
         geography=True,
     )
     gpx_file = models.FileField(
-        verbose_name=_(u"GPX soubor"),
+        verbose_name=_("GPX soubor"),
         help_text=_(
             mark_safe(
                 "Zadat trasu nahráním souboru GPX. "
@@ -172,7 +172,7 @@ class Trip(WithGalleryMixin, models.Model):
         max_length=512,
     )
     distance = models.FloatField(
-        verbose_name=_(u"Ujetá vzdálenost (km)"),
+        verbose_name=_("Ujetá vzdálenost (km)"),
         null=True,
         blank=True,
         default=None,
@@ -187,7 +187,7 @@ class Trip(WithGalleryMixin, models.Model):
         blank=True,
     )
     from_application = models.BooleanField(
-        verbose_name=_(u"Nahráno z aplikace"),
+        verbose_name=_("Nahráno z aplikace"),
         default=False,
         null=False,
     )
@@ -204,12 +204,12 @@ class Trip(WithGalleryMixin, models.Model):
         blank=True,
     )
     created = models.DateTimeField(
-        verbose_name=_(u"Datum vytvoření"),
+        verbose_name=_("Datum vytvoření"),
         auto_now_add=True,
         null=True,
     )
     updated = models.DateTimeField(
-        verbose_name=_(u"Datum poslední změny"),
+        verbose_name=_("Datum poslední změny"),
         auto_now=True,
         null=True,
     )
@@ -221,7 +221,7 @@ class Trip(WithGalleryMixin, models.Model):
         on_delete=models.CASCADE,
     )
     description = models.TextField(
-        verbose_name=_(u"Popis cesty"),
+        verbose_name=_("Popis cesty"),
         default="",
         null=False,
         blank=True,

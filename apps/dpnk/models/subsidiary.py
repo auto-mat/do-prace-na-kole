@@ -40,8 +40,8 @@ class Subsidiary(WithGalleryMixin, models.Model):
     """Pobočka"""
 
     class Meta:
-        verbose_name = _(u"Pobočka organizace")
-        verbose_name_plural = _(u"Pobočky organizací")
+        verbose_name = _("Pobočka organizace")
+        verbose_name_plural = _("Pobočky organizací")
 
     address = Address()
     company = ChainedForeignKey(
@@ -59,7 +59,7 @@ class Subsidiary(WithGalleryMixin, models.Model):
         on_delete=models.CASCADE,
     )
     active = models.BooleanField(
-        verbose_name=_(u"Aktivní"),
+        verbose_name=_("Aktivní"),
         default=True,
         null=False,
     )

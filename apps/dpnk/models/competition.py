@@ -52,19 +52,19 @@ class Competition(models.Model):
     CTYPES = (
         ("length", _("Výkonnost")),
         ("frequency", _("Pravidelnost")),
-        ("questionnaire", _(u"Dotazník")),
+        ("questionnaire", _("Dotazník")),
     )
 
     CCOMPETITORTYPES = (
-        ("single_user", _(u"Jednotliví soutěžící")),
-        ("liberos", _(u"Liberos")),
-        ("team", _(u"Týmy")),
-        ("company", _(u"Soutěž organizací")),
+        ("single_user", _("Jednotliví soutěžící")),
+        ("liberos", _("Liberos")),
+        ("team", _("Týmy")),
+        ("company", _("Soutěž organizací")),
     )
 
     class Meta:
-        verbose_name = _(u"Soutěžní kategorie")
-        verbose_name_plural = _(u"Soutěžní kategorie")
+        verbose_name = _("Soutěžní kategorie")
+        verbose_name_plural = _("Soutěžní kategorie")
         ordering = ("-campaign", "-priority", "name")
 
     name = models.CharField(
@@ -75,7 +75,7 @@ class Competition(models.Model):
     )
     campaign = models.ForeignKey(
         Campaign,
-        verbose_name=_(u"Kampaň"),
+        verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
@@ -83,7 +83,7 @@ class Competition(models.Model):
     slug = models.SlugField(
         unique=True,
         default="",
-        verbose_name=u"Doména v URL",
+        verbose_name="Doména v URL",
         blank=False,
     )
     url = models.URLField(
@@ -112,11 +112,11 @@ class Competition(models.Model):
         blank=False,
     )
     competition_type = models.CharField(
-        verbose_name=_(u"Typ"),
+        verbose_name=_("Typ"),
         help_text=_(
-            u"Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost),"
-            u' nebo na pravidelnost. Volba "Dotazník" slouží pro kreativní soutěže,'
-            u" cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."
+            "Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost),"
+            ' nebo na pravidelnost. Volba "Dotazník" slouží pro kreativní soutěže,'
+            " cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."
         ),
         choices=CTYPES,
         max_length=16,
@@ -125,7 +125,7 @@ class Competition(models.Model):
     competitor_type = models.CharField(
         verbose_name=_("Počet soutěžících"),
         help_text=_(
-            u"Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."
+            "Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."
         ),
         choices=CCOMPETITORTYPES,
         max_length=16,
@@ -142,15 +142,15 @@ class Competition(models.Model):
     )
     city = models.ManyToManyField(
         City,
-        verbose_name=_(u"Soutěž pouze pro města"),
+        verbose_name=_("Soutěž pouze pro města"),
         help_text=_(
-            u"Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."
+            "Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."
         ),
         blank=True,
     )
     company = models.ForeignKey(
         Company,
-        verbose_name=_(u"Soutěž pouze pro organizace"),
+        verbose_name=_("Soutěž pouze pro organizace"),
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -177,12 +177,12 @@ class Competition(models.Model):
         null=False,
     )
     public_answers = models.BooleanField(
-        verbose_name=_(u"Zveřejňovat soutěžní odpovědi"),
+        verbose_name=_("Zveřejňovat soutěžní odpovědi"),
         default=False,
         null=False,
     )
     is_public = models.BooleanField(
-        verbose_name=_(u"Soutěž je veřejná"),
+        verbose_name=_("Soutěž je veřejná"),
         help_text=_("Zobrazovat v přehledech soutěží a výsledků?"),
         default=True,
         null=False,
@@ -199,20 +199,20 @@ class Competition(models.Model):
         null=False,
     )
     entry_after_beginning_days = models.IntegerField(
-        verbose_name=_(u"Prodloužené přihlášky"),
-        help_text=_(u"Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"),
+        verbose_name=_("Prodloužené přihlášky"),
+        help_text=_("Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"),
         default=7,
         blank=False,
         null=False,
     )
     rules = models.TextField(
-        verbose_name=_(u"Pravidla soutěže"),
+        verbose_name=_("Pravidla soutěže"),
         default=None,
         blank=True,
         null=True,
     )
     results_text = models.TextField(
-        verbose_name=_(u"Text u výsledek"),
+        verbose_name=_("Text u výsledek"),
         default=None,
         blank=True,
         null=True,

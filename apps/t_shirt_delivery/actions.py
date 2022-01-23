@@ -32,12 +32,12 @@ def create_batch(modeladmin, request, queryset):
     tasks.create_batch.delay(campaign_slug=request.subdomain, ids=ids)
     modeladmin.message_user(
         request,
-        _(u"Požadavek na tvorbu dávku %s položek byl poslan do celery")
+        _("Požadavek na tvorbu dávku %s položek byl poslan do celery")
         % queryset.count(),
     )
 
 
-create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
+create_batch.short_description = _("Vytvořit dávku z vybraných uživatelů")
 
 delivery_box_batch_download = actions.batch_download_action_generator("customer_sheets")
 delivery_box_batch_download.short_description = _("Hromadně stáhnout PDF")

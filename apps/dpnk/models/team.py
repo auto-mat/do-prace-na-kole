@@ -50,27 +50,27 @@ class Team(WithGalleryMixin, models.Model):
     """Profil týmu"""
 
     class Meta:
-        verbose_name = _(u"Tým")
-        verbose_name_plural = _(u"Týmy")
+        verbose_name = _("Tým")
+        verbose_name_plural = _("Týmy")
         ordering = ("name",)
         unique_together = (("name", "campaign"),)
 
     name = models.CharField(
-        verbose_name=_(u"Název týmu"),
+        verbose_name=_("Název týmu"),
         max_length=50,
         null=True,
         unique=False,
     )
     subsidiary = models.ForeignKey(
         Subsidiary,
-        verbose_name=_(u"Pobočka"),
+        verbose_name=_("Pobočka"),
         related_name="teams",
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     invitation_token = models.CharField(
-        verbose_name=_(u"Token pro pozvánky"),
+        verbose_name=_("Token pro pozvánky"),
         default="",
         max_length=100,
         null=False,
@@ -80,7 +80,7 @@ class Team(WithGalleryMixin, models.Model):
     )
     campaign = models.ForeignKey(
         "Campaign",
-        verbose_name=_(u"Kampaň"),
+        verbose_name=_("Kampaň"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
@@ -151,7 +151,7 @@ class Team(WithGalleryMixin, models.Model):
 
     @denormalized(
         models.IntegerField,
-        verbose_name=_(u"Počet neschválených členů týmu"),
+        verbose_name=_("Počet neschválených členů týmu"),
         null=True,
         blank=False,
         db_index=True,

@@ -37,8 +37,8 @@ class ChoiceType(models.Model):
     """Typ volby"""
 
     class Meta:
-        verbose_name = _(u"Typ volby")
-        verbose_name_plural = _(u"Typ volby")
+        verbose_name = _("Typ volby")
+        verbose_name_plural = _("Typ volby")
         unique_together = (("competition", "name"),)
 
     competition = models.ForeignKey(
@@ -48,13 +48,13 @@ class ChoiceType(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(
-        verbose_name=_(u"Jméno"),
+        verbose_name=_("Jméno"),
         unique=True,
         max_length=40,
         null=True,
     )
     universal = models.BooleanField(
-        verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
+        verbose_name=_("Typ volby je použitelný pro víc otázek"),
         default=False,
     )
 
@@ -86,48 +86,48 @@ class QuestionForm(forms.ModelForm):
 
 class Question(models.Model):
     class Meta:
-        verbose_name = _(u"Anketní otázka")
-        verbose_name_plural = _(u"Anketní otázky")
+        verbose_name = _("Anketní otázka")
+        verbose_name_plural = _("Anketní otázky")
         ordering = ("order",)
 
     QTYPES = (
-        ("text", _(u"Text")),
-        ("choice", _(u"Výběr odpovědi")),
-        ("multiple-choice", _(u"Výběr z více odpovědí")),
+        ("text", _("Text")),
+        ("choice", _("Výběr odpovědi")),
+        ("multiple-choice", _("Výběr z více odpovědí")),
     )
 
     COMMENT_TYPES = (
-        (None, _(u"Nic")),
-        ("text", _(u"Text")),
-        ("link", _(u"Odkaz")),
-        ("one-liner", _(u"Jeden řádek textu")),
+        (None, _("Nic")),
+        ("text", _("Text")),
+        ("link", _("Odkaz")),
+        ("one-liner", _("Jeden řádek textu")),
     )
 
     name = models.CharField(
-        verbose_name=_(u"Jméno"),
+        verbose_name=_("Jméno"),
         max_length=60,
         null=True,
         blank=True,
     )
     text = models.TextField(
-        verbose_name=_(u"Otázka"),
+        verbose_name=_("Otázka"),
         null=True,
         blank=True,
     )
     date = models.DateField(
-        verbose_name=_(u"Den"),
+        verbose_name=_("Den"),
         null=True,
         blank=True,
     )
     question_type = models.CharField(
-        verbose_name=_(u"Typ"),
+        verbose_name=_("Typ"),
         choices=QTYPES,
         default="text",
         max_length=16,
         null=False,
     )
     comment_type = models.CharField(
-        verbose_name=_(u"Typ komentáře"),
+        verbose_name=_("Typ komentáře"),
         choices=COMMENT_TYPES,
         default=None,
         max_length=16,
@@ -135,32 +135,32 @@ class Question(models.Model):
         null=True,
     )
     with_attachment = models.BooleanField(
-        verbose_name=_(u"Povolit přílohu"),
+        verbose_name=_("Povolit přílohu"),
         default=False,
         null=False,
     )
     order = models.IntegerField(
-        verbose_name=_(u"Pořadí"),
+        verbose_name=_("Pořadí"),
         null=True,
         blank=True,
     )
     competition = models.ForeignKey(
         Competition,
-        verbose_name=_(u"Soutěž"),
+        verbose_name=_("Soutěž"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     choice_type = models.ForeignKey(
         ChoiceType,
-        verbose_name=_(u"Typ volby"),
+        verbose_name=_("Typ volby"),
         default=None,
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
     required = models.BooleanField(
-        verbose_name=_(u"Povinná otázka"),
+        verbose_name=_("Povinná otázka"),
         default=True,
         null=False,
     )
@@ -179,26 +179,26 @@ class Question(models.Model):
 
 class Choice(models.Model):
     class Meta:
-        verbose_name = _(u"Nabídka k anketním otázce")
-        verbose_name_plural = _(u"Nabídky k anketním otázkám")
+        verbose_name = _("Nabídka k anketním otázce")
+        verbose_name_plural = _("Nabídky k anketním otázkám")
         unique_together = (("choice_type", "text"),)
         ordering = ("order",)
 
     choice_type = models.ForeignKey(
         ChoiceType,
-        verbose_name=_(u"Typ volby"),
+        verbose_name=_("Typ volby"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
     )
     text = models.CharField(
-        verbose_name=_(u"Nabídka"),
+        verbose_name=_("Nabídka"),
         max_length=250,
         db_index=True,
         null=False,
     )
     points = models.IntegerField(
-        verbose_name=_(u"Body"),
+        verbose_name=_("Body"),
         null=True,
         blank=True,
         default=None,
@@ -225,8 +225,8 @@ class Answer(models.Model):
     """Odpověď"""
 
     class Meta:
-        verbose_name = _(u"Odpověď")
-        verbose_name_plural = _(u"Odpovědi")
+        verbose_name = _("Odpověď")
+        verbose_name_plural = _("Odpovědi")
         ordering = ("user_attendance__team__subsidiary__city", "pk")
         unique_together = (("user_attendance", "question"),)
 
@@ -246,7 +246,7 @@ class Answer(models.Model):
         blank=True,
     )
     comment = models.TextField(
-        verbose_name=_(u"Komentář"),
+        verbose_name=_("Komentář"),
         max_length=600,
         null=True,
         blank=True,

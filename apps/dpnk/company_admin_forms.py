@@ -142,7 +142,7 @@ class CompanyForm(SubmitMixin, AddressForm):
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        self.fields["address_recipient"].label = _(u"Adresát na faktuře")
+        self.fields["address_recipient"].label = _("Adresát na faktuře")
         self.fields["address_recipient"].help_text = _(
             "Zadejte pokud potřebujete mít na faktuře jiného adresáta, než název společnosti."
         )
@@ -235,12 +235,12 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
         max_length=30,
     )
     first_name = forms.CharField(
-        label=_(u"Jméno"),
+        label=_("Jméno"),
         max_length=30,
         required=True,
     )
     last_name = forms.CharField(
-        label=_(u"Příjmení"),
+        label=_("Příjmení"),
         max_length=30,
         required=True,
     )
@@ -263,7 +263,7 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
             company_admin_approved="approved",
         ).exists():
             raise forms.ValidationError(
-                _(u"Tato organizace již má svého firemního koordinátora.")
+                _("Tato organizace již má svého firemního koordinátora.")
             )
         return company
 
@@ -288,13 +288,13 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
 class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
     submit_text = _("Vypsat")
     competition_type = forms.ChoiceField(
-        label=_(u"Typ soutěže"),
+        label=_("Typ soutěže"),
         choices=[x for x in Competition.CTYPES if x[0] != "questionnaire"],
         required=True,
     )
 
     competitor_type = forms.ChoiceField(
-        label=_(u"Typ soutěžícího"),
+        label=_("Typ soutěžícího"),
         choices=[
             x for x in Competition.CCOMPETITORTYPES if x[0] in ["single_user", "team"]
         ],
@@ -313,7 +313,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
             )
             if Competition.objects.filter(slug=self.instance.slug).exists():
                 raise forms.ValidationError(
-                    _(u"%(model_name)s with this %(field_label)s already exists.")
+                    _("%(model_name)s with this %(field_label)s already exists.")
                     % {
                         "model_name": self.instance._meta.verbose_name,
                         "field_label": self.instance._meta.get_field(

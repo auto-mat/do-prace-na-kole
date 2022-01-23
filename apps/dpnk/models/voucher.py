@@ -66,12 +66,12 @@ class Voucher(models.Model):
         on_delete=models.CASCADE,
     )
     token = models.TextField(
-        verbose_name=_(u"token"),
+        verbose_name=_("token"),
         blank=False,
         null=True,
     )
     amount = models.TextField(
-        verbose_name=_(u"hodnota"),
+        verbose_name=_("hodnota"),
         blank=True,
         null=True,
     )
@@ -108,7 +108,7 @@ class Voucher(models.Model):
         ("am-eshop", _("Automat benefiční obchod")),
     ]
     voucher_type = models.CharField(
-        verbose_name=_(u"DEPRECATED"),
+        verbose_name=_("DEPRECATED"),
         choices=TYPES,
         max_length=10,
         null=False,
