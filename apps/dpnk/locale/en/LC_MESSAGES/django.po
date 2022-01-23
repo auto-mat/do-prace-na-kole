@@ -692,6 +692,11 @@ msgstr "Login by"
 msgid "Registrovat přes"
 msgstr "Register by"
 
+#: apps/dpnk/forms.py:216
+#: apps/dpnk/forms.py:218
+msgid "PSČ musí být pěticiferné číslo."
+msgstr "PSČ must be five digit number."
+
 #: apps/dpnk/forms.py:250
 msgid "Zvolte jméno, pod kterým bude Váš tým bojovat."
 msgstr "Choose a name for your team."
