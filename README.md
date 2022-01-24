@@ -10,7 +10,10 @@ Do práce na kole is designed to use Python 3.4+ and Django 2.1
 Dependencies
 ------------
 
- - Docker
+ - Docker Engine
+ - Docker Compose
+
+Check [docker](https://docs.docker.com/) documentation for installation instructions
 
 Setting up the dev env
 ===================
