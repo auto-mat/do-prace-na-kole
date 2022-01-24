@@ -15,6 +15,8 @@ Dependencies
 Setting up the dev env
 ===================
 
+Click thumbnail for video instructions.
+
 [![Alt text for your video](https://img.youtube.com/vi/7A8kPsMj5uE/0.jpg)](http://www.youtube.com/watch?v=7A8kPsMj5uE)
 
 Check out and setup repo
