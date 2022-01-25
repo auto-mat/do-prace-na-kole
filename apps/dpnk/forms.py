@@ -213,9 +213,9 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         try:
             address_psc = int(address_psc.replace(" ", ""))
         except (TypeError, ValueError):
-            raise ValidationError("PSČ musí být pěticiferné číslo")
+            raise ValidationError(_("PSČ musí být pěticiferné číslo."))
         if address_psc > 99999 or address_psc < 10000:
-            raise ValidationError("PSČ musí být pěticiferné číslo")
+            raise ValidationError(_("PSČ musí být pěticiferné číslo."))
         return address_psc
 
     def __init__(self, *args, **kwargs):

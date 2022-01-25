@@ -692,6 +692,11 @@ msgstr "Login by"
 msgid "Registrovat přes"
 msgstr "Register by"
 
+#: apps/dpnk/forms.py:216
+#: apps/dpnk/forms.py:218
+msgid "PSČ musí být pěticiferné číslo."
+msgstr "PSČ must be five digit number."
+
 #: apps/dpnk/forms.py:250
 msgid "Zvolte jméno, pod kterým bude Váš tým bojovat."
 msgstr "Choose a name for your team."
@@ -1000,6 +1005,8 @@ msgid ""
 "Vyplňte pouze pokud Vaše interní předpisy vyžadují jméno toho, kdo je za "
 "vyřízení faktury zodpovědný."
 msgstr ""
+"Fill in only if name of person responsible for invoice processing is "
+"required by your company's internal policy"
 
 #: apps/dpnk/models/address.py:109
 msgid ""
@@ -4638,17 +4645,17 @@ msgid "Nastal čas seřídit kolo a vyřešit drobné papírování…"
 msgstr "It's time to set up your bike and do small paperwork…"
 
 #: apps/dpnk/views/registration_and_login.py:645
-#, fuzzy
-#| msgid ""
-#| "Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. Stačí si "
-#| "ještě poradit s pár maličkostmi a dostanete se na startovací čáru."
 msgid ""
-"<p>Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. Stačí si "
-"ještě poradit s pár maličkostmi a dostanete se na startovací čáru.</p><img "
-"src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'/>"
+"<p>"
+"Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. "
+"Stačí si ještě poradit s pár maličkostmi a dostanete se na startovací čáru."
+"</p>"
+"<img src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'/>"
 msgstr ""
-"We can't let You in, Your registration is not complete yet. Get done with "
-"few thinks and You can line up on the starting line."
+"<p>""We can't let You in, Your registration is not complete yet. Get done with "
+"few things and You can line up on the starting line."
+"</p>"
+"<img src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'/>"
 
 #: apps/dpnk/views/registration_and_login.py:664
 msgid "Sledování balíčku"
@@ -4937,13 +4944,13 @@ msgstr ""
 #: apps/dpnk/views_mixins.py:90
 #, python-brace-format
 msgid ""
-"<b>Podpořte týmového ducha.</b><br/>Vaši kolegové v týmu {team} ještě "
-"nepotvrdili Vaše členství. <a href='{address}'>Je na čase je trochu "
-"popostrčit</a>."
+"<p><b>Podpořte týmového ducha.</b><p/>"
+"Vaši kolegové v týmu {team} ještě nepotvrdili Vaše členství. "
+"<a href='{address}'>Je na čase je trochu popostrčit</a>."
 msgstr ""
-"<b>Support Your team spirit.</b><br/>Colleagues from your team {team} didn't "
-"confirm Your team membership yet. <a href='{address}'>It's time to push them "
-"a little</a>."
+"<p><b>Support Your team spirit.</b><p>"
+"Colleagues from your team {team} didn't confirm Your team membership yet. "
+"<a href='{address}'>It's time to push them a little</a>."
 
 #: apps/dpnk/views_mixins.py:102
 #, python-format
