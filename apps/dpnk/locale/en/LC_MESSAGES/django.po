@@ -1005,6 +1005,8 @@ msgid ""
 "Vyplňte pouze pokud Vaše interní předpisy vyžadují jméno toho, kdo je za "
 "vyřízení faktury zodpovědný."
 msgstr ""
+"Fill in only if name of person responsible for invoice processing is "
+"required by your company's internal policy"
 
 #: apps/dpnk/models/address.py:109
 msgid ""
