@@ -8,5 +8,5 @@ poetry run python3 manage.py loaddata apps/dpnk/fixtures/commute_mode.json
 poetry run python3 manage.py loaddata apps/dpnk/fixtures/sites.json
 poetry run python3 manage.py loaddata apps/dpnk/fixtures/occupation.json
 poetry run python3 manage.py loaddata apps/dpnk/fixtures/test-campaign.json
-poetry run python3 manage.py compilemessages
+cd apps/ && poetry run python3 ../manage.py compilemessages && cd ../
 poetry run python3 manage.py createsuperuser
