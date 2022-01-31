@@ -763,6 +763,24 @@ class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = "zmenit_tym"
 
 
+class DataReportView(LoginRequiredMixin, TemplateView):
+    """Incorporate Metabase app individual, organization, city data report
+    dashboard
+    """
+
+    template_name = "dpnk/datareport.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        base_url = settings.METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL
+        if "organization" == kwargs["unit"]:
+            base_url = settings.METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL
+        if "city" == kwargs["unit"]:
+            base_url = settings.METABASE_DPNK_CITY_DATA_REPORT_URL
+        context["base_url"] = base_url
+        return context
+
+
 class RegistrationProfileView(
     CampaignFormKwargsMixin,
     RegistrationPersonalViewMixin,

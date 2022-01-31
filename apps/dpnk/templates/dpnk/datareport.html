@@ -1,0 +1,20 @@
+{% extends "dpnk/base_generic_form.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block container_header %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    // Recalculate embed element height
+    $("embed").attr("height", $("#page-content").height());
+  });
+</script>
+{% if unit == "individual" %}
+  <embed type="text/html" src="{{ base_url }}?jm%25C3%25A9no={{ user.first_name }}&p%25C5%2599%25C3%25ADjmen%25C3%25AD_={{ user.last_name }}&ro%25C4%258Dn%25C3%25ADk_dpnk={% if user_attendance %}{{ user_attendance.campaign.year }}{% endif %}&" }} width="100%" height="100%">
+{% elif unit == "organization" %}
+  <embed type="text/html" src="{{ base_url }}?jm%25C3%25A9no_organizaze={% if user_attendance %}{{ user_attendance.company }}{% endif %}&ro%25C4%258Dn%25C3%25ADk_dpnk={% if user_attendance %}{{ user_attendance.campaign.year }}{% endif %}" }} width="100%" height="100%">
+{% else %}
+  <embed type="text/html" src="{{ base_url }}?jm%25C3%25A9no_m%25C4%259Bsta={% if user_attendance and user_attendance.team %}{{ user_attendance.team.subsidiary.city }}{% endif %}&ro%25C4%258Dn%25C3%25ADk_dpnk={% if user_attendance %}{{ user_attendance.campaign.year }}{% endif %}" }} width="100%" height="100%">
+{% endif %}
+  {{ block.super }}
+{% endblock %}

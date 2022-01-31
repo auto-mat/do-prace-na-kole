@@ -47,6 +47,28 @@ sitetrees = (
                     item("Minulé ročníky", "diplomas", title_en="Previous Years"),
                 ],
             ),
+            item(
+                "Data report",
+                None,
+                title_en="Data report",
+                children=[
+                    item(
+                        "Jednotlivec",
+                        "datareport individual",
+                        title_en="Individual",
+                    ),
+                    item(
+                        "Organizace",
+                        "datareport organization",
+                        title_en="Organization",
+                    ),
+                    item(
+                        "Město",
+                        "datareport city",
+                        title_en="City",
+                    ),
+                ],
+            ),
         ],
     ),
     tree(
