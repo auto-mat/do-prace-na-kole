@@ -796,3 +796,20 @@ DPNK_MOBILE_APP_URLS = os.environ.get(
 TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES = os.environ.get(
     "TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES", "ios-app"
 ).split(" ")
+
+METABASE_APP_DOMAIN = "https://metabase.dopracenakole.net/"
+METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL = (
+    "{}public/dashboard/03659536-f587-4103-ac3a-2b6ac786a197".format(
+        METABASE_APP_DOMAIN,
+    )
+)
+METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL = (
+    "{}public/dashboard/6ab474dd-7dc3-4345-8109-0e7703e8aaf3".format(
+        METABASE_APP_DOMAIN,
+    )
+)
+METABASE_DPNK_CITY_DATA_REPORT_URL = (
+    "{}public/dashboard/ce7967e3-a581-42af-b2e5-bebe021ca2ec".format(
+        METABASE_APP_DOMAIN,
+    )
+)

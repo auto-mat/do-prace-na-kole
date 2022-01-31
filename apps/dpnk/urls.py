@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.conf.urls import url
+from django.urls import path
 from django.contrib.auth import views as django_views
 from django.utils.translation import ugettext_lazy as _
 
@@ -359,6 +360,11 @@ urlpatterns = [
         r"^switch_rides_view/$",
         views.SwitchRidesView.as_view(),
         name="switch_rides_view",
+    ),
+    path(
+        "datareport/<unit>/",
+        views.DataReportView.as_view(),
+        name="datareport",
     ),
     # company admin:
     url(
