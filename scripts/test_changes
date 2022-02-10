@@ -4,8 +4,9 @@ from subprocess import PIPE
 import sys
 import os
 
-print("Checking for changes in ", os.environ.get("CIRCLE_COMPARE_URL"))
+commit_range = os.path.split(os.environ.get("CIRCLE_COMPARE_URL", None))[-1]
+print("Checking for changes in ", commit_range)
 
-result = subprocess.run("git diff --name-only $COMMITS | grep " + " ".join(sys.argv[1:]), shell=True, stdout=PIPE)
+result = subprocess.run("git diff --name-only " + commit_range + " | grep " + " ".join(sys.argv[1:]), shell=True, stdout=PIPE)
 if not result.stdout:
    sys.exit("No changes")
