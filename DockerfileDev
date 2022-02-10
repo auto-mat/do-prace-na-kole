@@ -1,5 +1,6 @@
 FROM --platform=linux/amd64 dpnk-base
-RUN useradd test
+ARG UID
+RUN useradd test --uid $UID
 RUN chsh test -s /bin/bash
 RUN mkdir /home/test ; chown test /home/test ; chgrp test /home/test
 RUN mkdir -p /opt/poetry ; chown -R test /opt/poetry
