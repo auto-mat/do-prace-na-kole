@@ -21,4 +21,108 @@
 {{ user_attendance.team.subsidiary }}
 </pre>
 {{ block.super }}
+
+
+<script>
+    let unique_years = [];
+    let years_and_options = {};
+    let years_and_tshirt_url = {}
+    let selected_year = null
+    let current_button = null
+    {# All T-Shirts from the view: filtered by current user_attendance campaign #}
+    let all_ts = {{ all_tshirts | safe }}
+
+    {# Get one Tshirt for each year #}
+    for (let i = 0; i < all_ts.length; i++) {
+        let t_shirt_name = all_ts[i]["fields"]["name"]
+        let t_shirt_preview = all_ts[i]["fields"]["t_shirt_preview"]
+
+        let [year, _] = t_shirt_name.split("-")
+        if (year && t_shirt_preview) {
+            years_and_tshirt_url[year] = t_shirt_preview
+        }
+    }
+
+    {# wait until DOM is loaded #}
+    document.addEventListener("DOMContentLoaded", function(event) {
+
+        {# TShirt select element add/removeAll #}
+        let TShirt_select_element = document.getElementById("id_userattendance-t_shirt_size");
+        function add(option_object){
+	    TShirt_select_element.options[TShirt_select_element.options.length] = option_object;
+        }
+        function removeAll(){
+            TShirt_select_element.options.length = 0;
+        }
+
+        {# Parse OPTIONS objects #}
+        let TShirt_select_element_options = Array.from(TShirt_select_element.options);
+        for (let i = 0; i < TShirt_select_element_options.length; i++) {
+            // Split option name
+          let option_object = TShirt_select_element_options[i]
+          let [year, no_year_innerText] = option_object.innerText.split("-")
+            // Get unique years Array
+          if (unique_years.indexOf(year) === -1 && year) {
+              unique_years.push(year)
+          }
+
+          // remove year from OPTION's text
+          option_object.innerText = no_year_innerText
+            // parse OPTION to specific year
+          years_and_options[year] ? years_and_options[year].push(option_object) : years_and_options[year] = Array(option_object)
+        }
+
+        {# Create HTML flex container #}
+        const TShirtYearContainer = document.createElement("div");
+        TShirtYearContainer.style.cssText = 'display: flex; flex-wrap: nowrap; padding-top: 50px; padding-bottom: 50px;'
+        for (let i = 0; i < unique_years.length; i++) {
+            // Card for Tshirt IMG and year BTN
+          const TShirtYearCard = document.createElement("div");
+          TShirtYearCard.style.cssText = 'display: flex; flex-direction:column; align-items:center; justify-content:space-around;   '
+
+          // Button with Year
+          const newButton = document.createElement("button");
+          newButton.innerText = unique_years[i]
+            newButton.type = "button"
+            newButton.classList.add('btn')
+            newButton.classList.add('btn-default')
+
+            // TShirt image
+            const newImg = document.createElement('img')
+            img_url = years_and_tshirt_url[unique_years[i]]
+            newImg.src = '/media/upload/' + img_url
+
+            // Put components together
+            TShirtYearContainer.appendChild(TShirtYearCard)
+            TShirtYearCard.appendChild(newImg);
+            TShirtYearCard.appendChild(newButton);
+
+          // Place container into existing HTML structure (before TShirt Select element)
+          const currentDiv = document.getElementById("div_id_userattendance-t_shirt_size");
+            currentDiv.parentNode.insertBefore(TShirtYearContainer, currentDiv);
+
+            // Listen for button click
+            newButton.addEventListener('click', () => {
+                selected_year = newButton.innerText
+                // Remove previous active button CSS
+                if (current_button) {
+                    current_button.classList.remove('btn-primary')
+                }
+                // Save current button  as last clicked and add style
+                current_button = newButton
+                current_button.classList.add('btn-primary')
+
+                // Delete all Tshirt SELECT option
+                removeAll()
+
+                // Set new SELECT OPTIONS based on the year
+                for (let i=0; i < years_and_options[selected_year].length; i++) {
+                    add(years_and_options[selected_year][i], years_and_options[selected_year][i])
+                }
+            })
+        }
+})
+
+</script>
+
 {% endblock %}
