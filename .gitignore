@@ -62,3 +62,4 @@ db/*
 avatar_locale/locale/en/LC_MESSAGES/django.po
 tmp_gls/*
 .idea
+*.log
