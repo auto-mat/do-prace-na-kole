@@ -24,22 +24,22 @@
 
 
 <script>
-    let unique_years = [];
-    let years_and_options = {};
-    let years_and_tshirt_url = {}
-    let selected_year = null
-    let current_button = null
+    let uniqueYears = [];
+    let yearAndOptions = {};
+    let yearsAndTshirtUrl = {};
+    let selectedYear = null;
+    let currentButton = null;
     {# All T-Shirts from the view: filtered by current user_attendance campaign #}
-    let all_ts = {{ all_tshirts | safe }}
+    let allTshirts = {{ all_tshirts | safe }};
 
     {# Get one Tshirt for each year #}
-    for (let i = 0; i < all_ts.length; i++) {
-        let t_shirt_name = all_ts[i]["fields"]["name"]
-        let t_shirt_preview = all_ts[i]["fields"]["t_shirt_preview"]
+    for (let i = 0; i < allTshirts.length; i++) {
+        let tShirtName = allTshirts[i]["fields"]["name"]
+        let tShirtPreview = allTshirts[i]["fields"]["t_shirt_preview"]
 
-        let [year, _] = t_shirt_name.split("-")
-        if (year && t_shirt_preview) {
-            years_and_tshirt_url[year] = t_shirt_preview
+        let [year, _] = tShirtName.split("-")
+        if (year && tShirtPreview) {
+            yearsAndTshirtUrl[year] = tShirtPreview
         }
     }
 
@@ -47,49 +47,49 @@
     document.addEventListener("DOMContentLoaded", function(event) {
 
         {# TShirt select element add/removeAll #}
-        let TShirt_select_element = document.getElementById("id_userattendance-t_shirt_size");
+        let TShirtSelectElement = document.getElementById("id_userattendance-t_shirt_size");
         function add(option_object){
-	    TShirt_select_element.options[TShirt_select_element.options.length] = option_object;
+	    TShirtSelectElement.options[TShirtSelectElement.options.length] = option_object;
         }
         function removeAll(){
-            TShirt_select_element.options.length = 0;
+            TShirtSelectElement.options.length = 0;
         }
 
         {# Parse OPTIONS objects #}
-        let TShirt_select_element_options = Array.from(TShirt_select_element.options);
-        for (let i = 0; i < TShirt_select_element_options.length; i++) {
+        let TShirtSelectElementOptions = Array.from(TShirtSelectElement.options);
+        for (let i = 0; i < TShirtSelectElementOptions.length; i++) {
             // Split option name
-          let option_object = TShirt_select_element_options[i]
-          let [year, no_year_innerText] = option_object.innerText.split("-")
+          let optionObject = TShirtSelectElementOptions[i]
+          let [year, noYearInnerText] = optionObject.innerText.split("-")
             // Get unique years Array
-          if (unique_years.indexOf(year) === -1 && year) {
-              unique_years.push(year)
+          if (uniqueYears.indexOf(year) === -1 && year) {
+              uniqueYears.push(year)
           }
 
           // remove year from OPTION's text
-          option_object.innerText = no_year_innerText
+          optionObject.innerText = noYearInnerText
             // parse OPTION to specific year
-          years_and_options[year] ? years_and_options[year].push(option_object) : years_and_options[year] = Array(option_object)
+          yearAndOptions[year] ? yearAndOptions[year].push(optionObject) : yearAndOptions[year] = Array(optionObject)
         }
 
         {# Create HTML flex container #}
         const TShirtYearContainer = document.createElement("div");
         TShirtYearContainer.style.cssText = 'display: flex; flex-wrap: nowrap; padding-top: 50px; padding-bottom: 50px;'
-        for (let i = 0; i < unique_years.length; i++) {
+        for (let i = 0; i < uniqueYears.length; i++) {
             // Card for Tshirt IMG and year BTN
           const TShirtYearCard = document.createElement("div");
           TShirtYearCard.style.cssText = 'display: flex; flex-direction:column; align-items:center; justify-content:space-around;   '
 
           // Button with Year
           const newButton = document.createElement("button");
-          newButton.innerText = unique_years[i]
+          newButton.innerText = uniqueYears[i]
             newButton.type = "button"
             newButton.classList.add('btn')
             newButton.classList.add('btn-default')
 
             // TShirt image
             const newImg = document.createElement('img')
-            img_url = years_and_tshirt_url[unique_years[i]]
+            img_url = yearsAndTshirtUrl[uniqueYears[i]]
             newImg.src = "{{ MEDIA_URL }}" + img_url
 
             // Put components together
@@ -103,21 +103,21 @@
 
             // Listen for button click
             newButton.addEventListener('click', () => {
-                selected_year = newButton.innerText
+                selectedYear = newButton.innerText
                 // Remove previous active button CSS
-                if (current_button) {
-                    current_button.classList.remove('btn-primary')
+                if (currentButton) {
+                    currentButton.classList.remove('btn-primary')
                 }
                 // Save current button  as last clicked and add style
-                current_button = newButton
-                current_button.classList.add('btn-primary')
+                currentButton = newButton
+                currentButton.classList.add('btn-primary')
 
                 // Delete all Tshirt SELECT option
                 removeAll()
 
                 // Set new SELECT OPTIONS based on the year
-                for (let i=0; i < years_and_options[selected_year].length; i++) {
-                    add(years_and_options[selected_year][i], years_and_options[selected_year][i])
+                for (let i=0; i < yearAndOptions[selectedYear].length; i++) {
+                    add(yearAndOptions[selectedYear][i], yearAndOptions[selectedYear][i])
                 }
             })
         }
