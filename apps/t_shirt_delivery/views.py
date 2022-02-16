@@ -91,12 +91,21 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
         except DeliveryBatchDeadline.DoesNotExist:
             pass
 
-        context["all_tshirts"] = serializers.serialize(
-            "json",
-            TShirtSize.objects.filter(
-                campaign=self.user_attendance.campaign, available=True
-            ),
-        )
+        tshirt_query = TShirtSize.objects.filter(
+            campaign=self.user_attendance.campaign, available=True
+        ).exclude(t_shirt_preview=None)
+
+        context["all_tshirts"] = serializers.serialize("json", tshirt_query)
+
+        tshirts_urls = {}
+        for t in tshirt_query:
+            try:
+                t_year, t_name = t.name.split("-")
+                if t_year not in tshirts_urls:
+                    tshirts_urls.update({t_year: t.t_shirt_preview.url})
+            except ValueError:
+                pass
+        context["tshirts_urls"] = tshirts_urls
 
         return context
 

@@ -31,6 +31,7 @@
     let currentButton = null;
     {# All T-Shirts from the view: filtered by current user_attendance campaign #}
     let allTshirts = {{ all_tshirts | safe }};
+    let allTshirtsUrls = {{ tshirts_urls | safe }}
 
     {# Get one Tshirt for each year #}
     for (let i = 0; i < allTshirts.length; i++) {
@@ -89,8 +90,7 @@
 
             // TShirt image
             const newImg = document.createElement('img')
-            img_url = yearsAndTshirtUrl[uniqueYears[i]]
-            newImg.src = "{{ MEDIA_URL }}" + img_url
+            newImg.src = allTshirtsUrls[uniqueYears[i]]
 
             // Put components together
             TShirtYearContainer.appendChild(TShirtYearCard)
