@@ -90,7 +90,7 @@
             // TShirt image
             const newImg = document.createElement('img')
             img_url = years_and_tshirt_url[unique_years[i]]
-            newImg.src = '/media/upload/' + img_url
+            newImg.src = "{{ MEDIA_URL }}" + img_url
 
             // Put components together
             TShirtYearContainer.appendChild(TShirtYearCard)
