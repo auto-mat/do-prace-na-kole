@@ -22,6 +22,7 @@ import datetime
 
 from braces.views import LoginRequiredMixin
 
+from django.core import serializers
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -35,7 +36,7 @@ from dpnk.models import UserAttendance, Payment
 from dpnk.views import RegistrationViewMixin
 
 from .forms import TShirtUpdateForm
-from .models import DeliveryBatchDeadline
+from .models import DeliveryBatchDeadline, TShirtSize
 
 
 class TShirtDeliveryView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
@@ -89,6 +90,23 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             )
         except DeliveryBatchDeadline.DoesNotExist:
             pass
+
+        tshirt_query = TShirtSize.objects.filter(
+            campaign=self.user_attendance.campaign, available=True
+        ).exclude(t_shirt_preview=None)
+
+        context["all_tshirts"] = serializers.serialize("json", tshirt_query)
+
+        tshirts_urls = {}
+        for t in tshirt_query:
+            try:
+                t_year, t_name = t.name.split("-")
+                if t_year not in tshirts_urls:
+                    tshirts_urls.update({t_year: t.t_shirt_preview.url})
+            except ValueError:
+                pass
+        context["tshirts_urls"] = tshirts_urls
+
         return context
 
     def dispatch(self, request, *args, **kwargs):
