@@ -255,7 +255,6 @@ TEMPLATES = [
                 # 'social_django.context_processors.backends',
                 "social_django.context_processors.login_redirect",
                 "django.template.context_processors.static",
-                "django.template.context_processors.media",
             ),
             "loaders": [
                 (
