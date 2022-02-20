@@ -440,17 +440,17 @@ LEAFLET_CONFIG = {
     "DEFAULT_CENTER": (50.0866699218750000, 14.4387817382809995),
     "TILES": [
         (
-            _(u"cyklomapa"),
+            _("cyklomapa"),
             "https://tiles.prahounakole.cz/{z}/{x}/{y}.png",
             {
-                "attribution": u'&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                "attribution": '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             },
         ),
         (
-            _(u"Všeobecná mapa"),
+            _("Všeobecná mapa"),
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
-                "attribution": u'&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                "attribution": '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             },
         ),
     ],
@@ -677,7 +677,7 @@ EXTRA_LANG_INFO = {
         "bidi": False,
         "code": "dsnkcs",
         "name": "Do Školy na kole",
-        "name_local": u"Do skoly na kole",
+        "name_local": "Do skoly na kole",
     },
 }
 

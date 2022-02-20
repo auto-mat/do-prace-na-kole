@@ -254,7 +254,6 @@ try:
             if "address_psc" in self._errors:
                 del self._errors["address_psc"]
 
-
 except NameError:
     pass
 
@@ -524,7 +523,7 @@ class CompetitionAdmin(
     def competition_results_link(self, obj):
         if obj.slug:
             return format_html(
-                u'<a href="{}">výsledky</a>',
+                '<a href="{}">výsledky</a>',
                 (reverse("competition_results", kwargs={"competition_slug": obj.slug})),
             )
 
@@ -560,7 +559,7 @@ class CompetitionAdmin(
             and obj.slug
         ):
             return format_html(
-                u'<a href="{}">losovani</a>',
+                '<a href="{}">losovani</a>',
                 (reverse("admin_draw_results", kwargs={"competition_slug": obj.slug})),
             )
 
@@ -1026,7 +1025,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
 
     def link_to_gallery(self, obj):
         link = reverse("admin:photologue_gallery_change", args=[obj.gallery.id])
-        return format_html(u'<a href="{link}">team photos</a>', link=link)
+        return format_html('<a href="{link}">team photos</a>', link=link)
 
     def members(self, obj):
         return admin_links(

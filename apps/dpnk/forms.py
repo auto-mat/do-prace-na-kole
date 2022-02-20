@@ -1046,7 +1046,12 @@ class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
                         "Ano, zajímají mě akce na triko, slevové kódy i výhry a také dění v oblasti udržitelné mobility."
                     ),
                 ),
-                (False, _("Ne, kromě upozornění nestojím o žádné informace (a nevadí mi, že přijdu o spoustu výhod).")),
+                (
+                    False,
+                    _(
+                        "Ne, kromě upozornění nestojím o žádné informace (a nevadí mi, že přijdu o spoustu výhod)."
+                    ),
+                ),
             ]
             self.fields["mailing_opt_in"].label = _(
                 "Přejete si od nás dostávat zprávy?"
