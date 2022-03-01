@@ -27,6 +27,7 @@ run apt-get update && apt-get install -y \
    zlib1g-dev \
    libgettextpo-dev \
    curl \
+   pdftk-java \
    postgis
 
 run mkdir /home/aplikace -p
