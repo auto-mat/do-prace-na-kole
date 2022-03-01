@@ -97,26 +97,21 @@ Which helps you deploy frontend builds. This script is self documenting. To see 
 Connecting to test and production servers (bash and python shell)
 ------------------------------------------------------------------------------
 
-The `pyshell` script is quite usefull for this
+Use `kubectl`.
 
 ```
-./scripts/pyshell
+$ kubectl get pods | grep dpnk
 ```
 
-For example, to get a python shell on the production instance run.
+Get a bash shell with
 
 ```
-./scripts/pyshell dpnk --instance 0
+$ kubectl exec -it <pod-id> -- bash
 ```
 
-To get a bash shell in the docker container run
+Once you connect you can get a python shell with
 
 ```
-./scripts/pyshell dpnk --instance 0 --cmd bash
-```
-
-And to get it directly on the host run
-
-```
-./scripts/pyshell dpnk --instance 0 --sys-cmd bash
+# poetry shell
+# python3 manage.py shell_plus
 ```
