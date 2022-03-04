@@ -26,7 +26,6 @@ class OldLanguageRedirectView(RedirectView):
 
 
 urlpatterns = [
-    url(r"^admin/", admin.site.urls),
     url(r"^admin/", include("massadmin.urls")),
     url(r"^advanced_filters/", include("advanced_filters.urls")),
     url(r"^su/", include("django_su.urls")),
@@ -76,6 +75,7 @@ urlpatterns += i18n_patterns(
     url(r"^", include("coupons.urls")),
     url("social/", include("social_django.urls", namespace="social")),
     url(r"^strava/", include("stravasync.urls")),
+    url(r"^admin/", admin.site.urls),
     prefix_default_language=False,
 )
 
