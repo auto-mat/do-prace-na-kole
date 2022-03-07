@@ -20,6 +20,8 @@
 import datetime
 import gzip
 import logging
+import requests
+from lxml import etree
 from collections import OrderedDict
 
 from betterforms.multiform import MultiModelForm
@@ -60,6 +62,8 @@ from . import email, models, util, views
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy
 from .widgets import CommuteModeSelect
+
+from .models.campaign_type import CampaignType
 
 logger = logging.getLogger(__name__)
 
@@ -196,8 +200,40 @@ class RegisterCompanyForm(forms.ModelForm):
 
     class Meta:
         model = models.Company
-        fields = ("name", "ico")
+        fields = ("ico", "name")
         error_messages = {"ico": {"stdnum_format": models.company.ICO_ERROR_MESSAGE}}
+
+    @staticmethod
+    def _ares_company_by_ico(ico: str):
+        ico = ico.strip()
+        nsmap = {
+            "are": "http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer/v_1.0.1"
+        }
+        r = requests.get(f"https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico={ico}")
+        tree = etree.fromstring(r.content)
+        root = tree.getroottree()
+
+        company = root.find("//are:Obchodni_firma", namespaces=nsmap)
+
+        if company is not None:
+            return company.text
+
+        return None
+
+    def clean(self):
+        cleaned_data = super(RegisterCompanyForm, self).clean()
+
+        form_ico = cleaned_data["ico"]
+        print("form_ico", form_ico)
+
+        if form_ico:
+            ares_company_name = self._ares_company_by_ico(form_ico)
+            print("ares_company_name", ares_company_name)
+            if ares_company_name:
+                cleaned_data["name"] = ares_company_name
+                print("NEW NAME", cleaned_data["name"])
+
+        return cleaned_data
 
 
 class AddressForm(CampaignMixin, forms.ModelForm):
