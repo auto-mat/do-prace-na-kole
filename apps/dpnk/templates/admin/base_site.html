@@ -3,6 +3,24 @@
 
 {% block title %}{{ title }} | Správa kampaně Do práce na kole{% endblock %}
 
+{% block userlinks %}
+{{ block.super }}
+{% load dpnk_tags %}
+<div class="lang_switch">
+    <ul>
+        {% block langchanger %}
+        {% for lang_code, lang_name in campaign.campaign_type.get_available_languages %}
+        {% change_lang lang_code as redirect_url %}
+        <a href="{% url 'switch_lang' %}?redirect={{redirect_url | urlencode }}&lang={{ lang_code }}"
+           class="switch-{{ lang_code }}" title="{{ lang_name }}">
+            {{ lang_code|cut:campaign.language_prefixes|upper }}
+        </a>
+        {% endfor %}
+        {% endblock %}
+    </ul>
+</div>
+{% endblock %}
+
 {% block branding %}
 <h1 id="site-name">Správa kampaně Do práce na kole</h1>
 {% endblock %}
