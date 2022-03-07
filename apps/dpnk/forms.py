@@ -224,14 +224,11 @@ class RegisterCompanyForm(forms.ModelForm):
         cleaned_data = super(RegisterCompanyForm, self).clean()
 
         form_ico = cleaned_data["ico"]
-        print("form_ico", form_ico)
 
         if form_ico:
             ares_company_name = self._ares_company_by_ico(form_ico)
-            print("ares_company_name", ares_company_name)
             if ares_company_name:
                 cleaned_data["name"] = ares_company_name
-                print("NEW NAME", cleaned_data["name"])
 
         return cleaned_data
 
