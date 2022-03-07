@@ -236,6 +236,12 @@ class RegisterCompanyForm(forms.ModelForm):
 
         return cleaned_data
 
+    def clean_name(self):
+        if self.cleaned_data['name'] == "":
+            return None
+        else:
+            return self.cleaned_data['name']
+
 
 class AddressForm(CampaignMixin, forms.ModelForm):
     required_css_class = "required"
