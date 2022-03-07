@@ -224,6 +224,10 @@ class RegisterCompanyForm(forms.ModelForm):
         cleaned_data = super(RegisterCompanyForm, self).clean()
 
         form_ico = cleaned_data["ico"]
+        form_company_name = cleaned_data["name"]
+
+        if not (form_ico or form_company_name):
+            raise ValidationError(_("At least one field has to be filled"))
 
         if form_ico:
             ares_company_name = self._ares_company_by_ico(form_ico)

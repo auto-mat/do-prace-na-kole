@@ -59,7 +59,8 @@ class Company(WithGalleryMixin, models.Model):
         unique=True,
         verbose_name=_("Název společnosti"),
         max_length=60,
-        null=False,
+        null=True,
+        blank=True,
     )
     address = CompanyAddress()
     dic = StdNumField(
