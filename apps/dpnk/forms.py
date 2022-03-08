@@ -209,7 +209,7 @@ class RegisterCompanyForm(forms.ModelForm):
         nsmap = {
             "are": "http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer/v_1.0.1"
         }
-        r = requests.get(f"https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico={ico}")
+        r = requests.get(f"https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico={ico}", timeout=3)
         tree = etree.fromstring(r.content)
         root = tree.getroottree()
 
