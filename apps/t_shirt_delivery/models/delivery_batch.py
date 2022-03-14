@@ -37,7 +37,7 @@ from dpnk.models import Subsidiary
 from .package_transaction import PackageTransaction, Status
 from .t_shirt_size import TShirtSize
 from .team_package import TeamPackage
-from .. import batch_csv
+from .. import batch_csv, wellpack_csv
 from ..gls.generate_gls_pdf import generate_pdf
 
 
@@ -67,6 +67,13 @@ class DeliveryBatch(models.Model):
     tnt_order = models.FileField(
         verbose_name=_("CSV objednávka"),
         upload_to="csv_delivery",
+        blank=True,
+        null=True,
+        max_length=512,
+    )
+    wellpack_csv = models.FileField(
+        verbose_name=_("Wellpack CSV tabulka"),
+        upload_to="wellpack_csv",
         blank=True,
         null=True,
         max_length=512,
@@ -221,21 +228,46 @@ class DeliveryBatch(models.Model):
             subsidiary_box.save()
 
 
+def generate_csv(file_name, instance, instance_field, generate_csv_func):
+    """Generate and save CSV file to model instance field
+
+    :param str file_name: output CSV base file name
+    :param class instance_field: model instance
+    :param str db_field: model instance field name for saving CSV file
+    :param function generate_csv_func: generate CSV file function
+    """
+    buf = StringIO()
+    generate_csv_func(buf, instance)
+    date = instance.created.strftime("%Y-%m-%d")
+    file_name = f"{file_name}_{instance.pk}_{date}.csv"
+    buf.seek(0)
+    read_content = buf.read()
+    read_content = read_content.encode("utf-8")
+    temp_read = ContentFile(read_content, name=file_name)
+    getattr(instance, instance_field).save(file_name, temp_read)
+    buf.close()
+
+
 @receiver(post_save, sender=DeliveryBatch)
 def create_delivery_files(sender, instance, created, **kwargs):
+
     if created and getattr(instance, "add_packages_on_save", True):
         instance.add_packages()
 
     if not instance.tnt_order and getattr(instance, "add_packages_on_save", True):
-        buf = StringIO()
-        batch_csv.generate_csv(buf, instance)
-        file_name = "delivery_batch_%s_%s.csv" % (
-            instance.pk,
-            instance.created.strftime("%Y-%m-%d"),
+        generate_csv(
+            file_name="delivery_batch",
+            instance=instance,
+            instance_field="tnt_order",
+            generate_csv_func=batch_csv.generate_csv,
         )
-        buf.seek(0)
-        read_content = buf.read()
-        read_content = read_content.encode("utf-8")
-        temp_read = ContentFile(read_content, name=file_name)
-        instance.tnt_order.save(file_name, temp_read)
+        instance.save()
+
+    if not instance.wellpack_csv and getattr(instance, "add_packages_on_save", True):
+        generate_csv(
+            file_name="wellpack",
+            instance=instance,
+            instance_field="wellpack_csv",
+            generate_csv_func=wellpack_csv.generate_csv,
+        )
         instance.save()
