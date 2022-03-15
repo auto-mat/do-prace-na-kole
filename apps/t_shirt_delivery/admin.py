@@ -436,6 +436,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         "customer_sheets__url",
         "pdf_data_url",
         "csv_data_url",
+        "wellpack_csv_data_url",
         "combined_opt_pdf_url",
         "pickup_date",
     ]
@@ -530,6 +531,13 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
     def csv_data_url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>csv_data</a>", obj.tnt_order.url)
+
+    def wellpack_csv_data_url(self, obj):
+        if obj.wellpack_csv:
+            return format_html(
+                "<a href='{}'>wellpack_csv_data</a>",
+                obj.wellpack_csv.url,
+            )
 
     def combined_opt_pdf_url(self, obj):
         if obj.combined_opt_pdf:
