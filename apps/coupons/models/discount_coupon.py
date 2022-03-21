@@ -28,7 +28,7 @@ from django.core.validators import MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 import smmapdfs
 import smmapdfs.model_abcs
