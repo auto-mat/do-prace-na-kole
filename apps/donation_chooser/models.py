@@ -1,9 +1,8 @@
 from django import forms
 from django.db import models
 from django.utils.html import escape, format_html
-
+from django.utils.translation import ugettext_lazy as _
 from dpnk.models.trip import Trip, distance_all_modes
-
 from redactor.widgets import RedactorEditor
 
 
@@ -29,23 +28,29 @@ def get_charitative_results_column(user_profile):
 
 
 class CharitativeOrganization(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
+    name = models.CharField(
+        verbose_name=_("Jméno"),
+        max_length=255,
+    )
+    description = models.TextField(verbose_name=_("Popis"))
     campaign = models.ForeignKey(
         # black
         "dpnk.Campaign",
+        verbose_name=_("Kampaň"),
         on_delete=models.CASCADE,
         null=False,
         blank=False,
     )
     image = models.ImageField(
         # black
+        verbose_name=_("Obrázek"),
         upload_to="charitative_organization/image",
         null=True,
         blank=True,
     )
     icon = models.ImageField(
         # black
+        verbose_name=_("Ikona"),
         upload_to="charitative_organization/image",
         null=True,
         blank=True,
@@ -68,6 +73,8 @@ class CharitativeOrganization(models.Model):
         return self.name
 
     class Meta:
+        verbose_name = _("Charitativní organizace")
+        verbose_name_plural = _("Charitativní organizace")
         ordering = (
             "order",
             "name",
@@ -94,7 +101,12 @@ class UserChoice(models.Model):
     charitative_organization = models.ForeignKey(
         # black
         "CharitativeOrganization",
+        verbose_name=_("Charitativní organizace"),
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
+
+    class Meta:
+        verbose_name = _("Uživatelská volba")
+        verbose_name_plural = _("Uživatelské volby")

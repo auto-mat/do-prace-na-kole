@@ -1,16 +1,15 @@
 from django.contrib import admin
 from django.db.models import Q
 from django.utils.html import mark_safe
-
+from django.utils.translation import ugettext_lazy as _
 from dpnk.models import CampaignType
-
 from import_export.admin import ImportExportMixin
 
 from . import models
 
 
 class CampaignTypeFilter(admin.SimpleListFilter):
-    title = "campaign type"
+    title = _("Campaign type")
     parameter_name = "campaign_type"
 
     def lookups(self, request, model_admin):
@@ -24,7 +23,7 @@ class CampaignTypeFilter(admin.SimpleListFilter):
 
 
 class MyMessagesFilter(admin.SimpleListFilter):
-    title = "Filter my messages"
+    title = _("Filter my messages")
     parameter_name = "my_messages"
 
     def lookups(self, request, model_admin):

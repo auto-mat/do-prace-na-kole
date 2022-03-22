@@ -1,0 +1,104 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-09 14:57+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/motivation_messages/admin.py:13
+msgid "Campaign type"
+msgstr ""
+
+#: apps/motivation_messages/admin.py:27
+msgid "Filter my messages"
+msgstr ""
+
+#: apps/motivation_messages/apps.py:7 apps/motivation_messages/models.py:16
+msgid "Motivační hlášky"
+msgstr "Motivation messages"
+
+#: apps/motivation_messages/models.py:15
+msgid "Motivační hláška"
+msgstr "Motivation message"
+
+#: apps/motivation_messages/models.py:24
+msgid "Hláška"
+msgstr "Message"
+
+#: apps/motivation_messages/models.py:29
+msgid "Poznámka"
+msgstr ""
+
+#: apps/motivation_messages/models.py:35
+msgid "Min pravidelnost"
+msgstr ""
+
+#: apps/motivation_messages/models.py:40
+msgid "Max pravidelnost"
+msgstr ""
+
+#: apps/motivation_messages/models.py:45
+msgid "Ode dne"
+msgstr ""
+
+#: apps/motivation_messages/models.py:47 apps/motivation_messages/models.py:55
+msgid ""
+"Počet dní od začátku soutěžní fáze kampaně. Možno zadat i záporné hodnoty "
+"pro období před kampaní."
+msgstr ""
+
+#: apps/motivation_messages/models.py:53
+msgid "Do dne"
+msgstr ""
+
+#: apps/motivation_messages/models.py:61
+msgid "Od pořadí v týmu"
+msgstr ""
+
+#: apps/motivation_messages/models.py:66
+msgid "Do pořadí v týmu"
+msgstr ""
+
+#: apps/motivation_messages/models.py:71
+msgid "Od pořadí v týmu od konce"
+msgstr ""
+
+#: apps/motivation_messages/models.py:76
+msgid "Do pořadí v týmu od konce"
+msgstr ""
+
+#: apps/motivation_messages/models.py:81
+msgid "Datum od"
+msgstr "Date from"
+
+#: apps/motivation_messages/models.py:86
+msgid "Datum do"
+msgstr "Date to"
+
+#: apps/motivation_messages/models.py:91
+msgid "Povoleno"
+msgstr "Allowed"
+
+#: apps/motivation_messages/models.py:95
+msgid "Priorita"
+msgstr "Priority"
+
+#: apps/motivation_messages/models.py:97
+msgid ""
+"Priorita hlášky. Zobrazuje se vždy náhodná hláška z těch, které mají "
+"nejvyšší prioritu a splňují ostatní podmínky.Možno nastavit záporně pro "
+"hlášky které mají mít zobrazovat jen pokud není žádní lepší k dispozici."
+msgstr ""
