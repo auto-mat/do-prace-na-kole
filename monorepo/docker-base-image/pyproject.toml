@@ -133,6 +133,7 @@ pre-commit = "*"
 django-report-builder = "*"
 dj-rest-auth = "*"
 memoize = "^1.0.0"
+fakturoid = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

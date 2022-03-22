@@ -1724,6 +1724,18 @@ python-dateutil = ">=2.4"
 text-unidecode = "1.3"
 
 [[package]]
+name = "fakturoid"
+version = "1.5.1"
+description = "Python API for fakturoid.cz"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+python-dateutil = "*"
+requests = "*"
+
+[[package]]
 name = "filelock"
 version = "3.0.12"
 description = "A platform independent file lock."
@@ -3337,7 +3349,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e949c4ebfb4718088b99bb0caf4f1a0b7d11eeacd83e8ddc15ed80add37bee46"
+content-hash = "a9a602982a7613e353601865d01b1ec55bb2853528705afdd3b0c7f7d576d8e6"
 
 [metadata.files]
 amqp = [
@@ -3957,6 +3969,10 @@ exifread = [
 faker = [
     {file = "Faker-8.6.0-py3-none-any.whl", hash = "sha256:8f2800605b55cbf92d30c1a9db2cc11d0bfb200732590f597603a7789a43f5f4"},
     {file = "Faker-8.6.0.tar.gz", hash = "sha256:69febb4db797d2c463e5bd56263aa0068c99480ace3beeb6ba0e14bf82d46607"},
+]
+fakturoid = [
+    {file = "fakturoid-1.5.1-py3-none-any.whl", hash = "sha256:eb062778d6fe4c1df8bb847024bbeeb3c3e8918c9330fcc3f0c4a494df072969"},
+    {file = "fakturoid-1.5.1.tar.gz", hash = "sha256:c1294cc7035e69aec26d0e65d6eecd70dbd38261013579c742afda6125f0ecfc"},
 ]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
