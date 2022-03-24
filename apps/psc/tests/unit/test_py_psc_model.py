@@ -1,4 +1,20 @@
+import pytest
+from django.utils.translation import activate, deactivate
 from psc.models import PSC
+
+
+class SetupError(AssertionError):
+    """ Used to signal something went wrong during test setup """
+
+
+@pytest.fixture(scope="function", name="switch_language")
+def switch_language_fixture(request):
+    if request.param not in ("cs", "en"):
+        raise SetupError(f"Invalid language option: '{request.param}'!")
+
+    activate(request.param)
+    yield
+    deactivate()
 
 
 def test_model_verbose_name():
