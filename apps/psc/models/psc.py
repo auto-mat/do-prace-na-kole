@@ -22,7 +22,7 @@ from author.decorators import with_author
 
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
 
 @with_author
@@ -50,7 +50,7 @@ class PSC(models.Model):
         blank=True,
     )
     psc = models.IntegerField(
-        verbose_name=_("PSČ"),
+        verbose_name=pgettext_lazy("zip code model ctxt", "PSČ"),
         help_text=_("Např.: „130 00“"),
         validators=[
             MaxValueValidator(99999),
