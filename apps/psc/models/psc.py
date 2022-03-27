@@ -50,7 +50,7 @@ class PSC(models.Model):
         blank=True,
     )
     psc = models.IntegerField(
-        verbose_name=pgettext_lazy("zip code model ctxt", "ZIP code"),
+        verbose_name=pgettext_lazy("psc field ctxt", "ZIP code"),
         help_text=_("e.g. „130 00“"),
         validators=[
             MaxValueValidator(99999),

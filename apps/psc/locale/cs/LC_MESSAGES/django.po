@@ -39,7 +39,7 @@ msgid "District name"
 msgstr "Název okresu"
 
 #: apps/psc/models/psc.py:53
-msgctxt "zip code model ctxt"
+msgctxt "psc field ctxt"
 msgid "ZIP code"
 msgstr "PSČ"
 
