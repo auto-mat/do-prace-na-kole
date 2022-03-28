@@ -28,6 +28,7 @@ import unicodedata
 import django.conf.locale
 from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
@@ -822,3 +823,52 @@ METABASE_DPNK_CITY_DATA_REPORT_URL = "{}{}".format(
         "public/dashboard/ce7967e3-a581-42af-b2e5-bebe021ca2ec",
     ),
 )
+
+
+def get_formatted_date(name, default=timezone.datetime(2023, 1, 1)):
+    """Get formatted date global variable
+
+    :param str name: global variable name
+    :param datetime.datetime instance default: default date value
+
+    :return datetime.datetime instance: global var date value
+    """
+    val = os.getenv(name, default)
+    if isinstance(val, str):
+        return timezone.datetime.strptime(val, "%Y-%m-%d")  # ISO 8601
+    return val
+
+
+FAKTUROID = {
+    "date_from_create_invoices": get_formatted_date(
+        name="FAKTUROID_DATE_FROM_CREATE_INVOICES",
+    ),
+    "production": {
+        "user_account": os.getenv(
+            "FAKTUROID_PRODUCTION_USER_ACCOUNT",
+        ),
+        "user_email": os.getenv(
+            "FAKTUROID_PRODUCTION_USER_EMAIL",
+        ),
+        "api_key": os.getenv(
+            "FAKTUROID_PRODUCTION_API_KEY",
+        ),
+        "user_agent_header": os.getenv(
+            "FAKTUROID_PRODUCTION_USER_AGENT_HEADER",
+        ),
+    },
+    "test": {
+        "user_account": os.getenv(
+            "FAKTUROID_TEST_USER_ACCOUNT",
+        ),
+        "user_email": os.getenv(
+            "FAKTUROID_TEST_USER_EMAIL",
+        ),
+        "api_key": os.getenv(
+            "FAKTUROID_TEST_API_KEY",
+        ),
+        "user_agent_header": os.getenv(
+            "FAKTUROID_TEST_USER_AGENT_HEADER",
+        ),
+    },
+}

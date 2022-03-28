@@ -34,6 +34,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.db import transaction
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
+from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -42,7 +43,7 @@ from stale_notifications.model_mixins import StaleSyncMixin
 from .address import InvoiceAddress
 from .company import Company
 from .transactions import Payment, Status
-from .. import invoice_gen, util
+from .. import fakturoid_invoice_gen, invoice_gen, util
 
 
 def get_invoice_dir(instance, filename):
@@ -341,37 +342,48 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
 
-    if not instance.invoice_pdf or not instance.invoice_xml:
-        invoice_data = invoice_gen.generate_invoice(instance)
-        instance.total_amount = invoice_data.price_tax
-        filename = slugify(
-            "invoice_%s_%s_%s_%s"
-            % (
-                instance.sequence_number,
-                instance.company.name[0:40],
-                instance.exposure_date.strftime("%Y-%m-%d"),
-                uuid.uuid4(),
-            ),
-        )
+    if instance.created < settings.FAKTUROID["date_from_create_invoices"]:
+        if not instance.invoice_pdf or not instance.invoice_xml:
+            invoice_data = invoice_gen.generate_invoice(instance)
+            instance.total_amount = invoice_data.price_tax
+            filename = slugify(
+                "invoice_%s_%s_%s_%s"
+                % (
+                    instance.sequence_number,
+                    instance.company.name[0:40],
+                    instance.exposure_date.strftime("%Y-%m-%d"),
+                    uuid.uuid4(),
+                ),
+            )
 
-        if not instance.invoice_pdf:
-            temp_pdf = NamedTemporaryFile()
-            invoice_gen.make_invoice_pdf(temp_pdf, invoice_data)
-            instance.invoice_pdf.save("%s.pdf" % filename, File(temp_pdf), save=False)
+            if not instance.invoice_pdf:
+                temp_pdf = NamedTemporaryFile()
+                invoice_gen.make_invoice_pdf(temp_pdf, invoice_data)
+                instance.invoice_pdf.save(
+                    "%s.pdf" % filename,
+                    File(temp_pdf),
+                    save=False,
+                )
 
-        if not instance.invoice_xml:
-            temp_xml = NamedTemporaryFile()
-            invoice_gen.make_invoice_xml(temp_xml, invoice_data)
-            instance.invoice_xml.save("%s.xml" % filename, File(temp_xml), save=False)
+            if not instance.invoice_xml:
+                temp_xml = NamedTemporaryFile()
+                invoice_gen.make_invoice_xml(temp_xml, invoice_data)
+                instance.invoice_xml.save(
+                    "%s.xml" % filename,
+                    File(temp_xml),
+                    save=False,
+                )
 
-        instance.save()
+            instance.save()
 
-    if created:
-        from dpnk.tasks import send_new_invoice_notification
+        if created:
+            from dpnk.tasks import send_new_invoice_notification
 
-        send_new_invoice_notification.delay(
-            pks=[instance.pk], campaign_slug=instance.campaign.slug
-        )
+            send_new_invoice_notification.delay(
+                pks=[instance.pk], campaign_slug=instance.campaign.slug
+            )
+    else:
+        fakturoid_invoice_gen.generate_invoice()
 
 
 @receiver(pre_delete, sender=Invoice)

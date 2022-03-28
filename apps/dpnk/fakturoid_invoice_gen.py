@@ -1,0 +1,143 @@
+"""Create Fakturoid invoice"""
+
+import decimal
+
+from django.conf import settings
+
+from fakturoid import Fakturoid, Invoice, InvoiceLine, Subject
+
+
+def create_or_update_subject(fa, invoice):
+    """Create or update Fakturoid subject
+
+    :param class instance fa: fakturoid.Fakturoid class instance
+    :param class instance: Invoice model class instance
+    """
+    # Subject
+    fa_subject_data = {
+        "custom_id": invoice.company.id,
+        "name": invoice.company_name,
+        "street": (
+            f"{invoice.company.address.street or ''} "
+            f"{invoice.company.address.street_number or ''}",
+        ),
+        "zip": invoice.company_address_psc,
+        "country": invoice.country or "CZ",
+        "registration_no": invoice.company_ico,
+        "vat_no": invoice.company_dic,
+        "city": invoice.company_address_city,
+        "phone": invoice.company_admin_telephones(),
+        "note": invoice.client_note,
+    }
+    fa_subject_emails = invoice.company_admin_emails().split(",")
+    fa_subject_data["email"] = fa_subject_emails[0]
+    if len(fa_subject_emails) == 2:
+        fa_subject_data["email_copy"] = fa_subject_emails[1]
+
+    fa_subject = fa.subjects(custom_id=invoice.company.id)
+    if not fa_subject:
+        fa_subject = Subject(**fa_subject_data)
+    else:
+        fa_subject = fa_subject[0]
+        fa_subject.update(fa_subject_data)
+    fa.save(fa_subject)
+    return fa_subject
+
+
+def create_invoice_lines(invoice):
+    """Make Fakturoiud invoice lines
+
+    :param class instance invoice: Invoice model class instance
+
+    :return list lines: list of InvoiceLine class model instaces
+    """
+
+    lines = []
+    for payment in invoice.payment_set.order_by(
+        "user_attendance__userprofile__user__last_name",
+        "user_attendance__userprofile__user__first_name",
+    ):
+        if invoice.company_pais_benefitial_fee:
+            amount = invoice.campaign.benefitial_admission_fee_company
+        else:
+            amount = payment.amount
+        user_name = (
+            "" if invoice.anonymize else payment.user_attendance.name_for_trusted()
+        )
+        description = f"Platba za soutěžící/ho {user_name}"
+        lines.append(
+            # https://fakturoid.docs.apiary.io/#reference/lines
+            InvoiceLine(
+                name=description,
+                quantity=1,
+                unit_price=decimal.Decimal(amount),
+                vat_rate=21,
+            )
+        )
+    return lines
+
+
+def create_or_update_invoice(fa, subject, invoice):
+    """Create or update Fakturoid invoice
+
+    :param class instance fa: fakturoid.Fakturoid class instance
+    :param class instance subject: fakturoid.Subject model class instance
+    :param class instance: Invoice model class instance
+    """
+    # Invoice
+    fa_invoice = fa.invoices(custom_id=invoice.id)
+    try:
+        fa_invoice = list(fa_invoice)[0]
+    except IndexError:
+        fa_invoice = None
+    fa_invoice_data = {
+        "custom_id": invoice.id,
+        "subject_id": subject.id,
+        "number": f"{invoice.exposure_date.year}-{invoice.sequence_number}",
+        "order_number": invoice.sequence_number,
+        "lines": [],
+    }
+    if not fa_invoice:
+        fa_invoice_data["lines"] = create_invoice_lines(invoice=invoice)
+        fa_invoice = Invoice(**fa_invoice_data)
+    else:
+        fa_invoice.lines = []
+        fa.save(fa_invoice)
+        fa_invoice_data["lines"] = create_invoice_lines(invoice=invoice)
+        fa_invoice.update(fa_invoice_data)
+    fa.save(fa_invoice)
+
+
+def get_fakturoid_api(account):
+    """Get Fakturoid API class instance
+
+    :param str account: Fakturoid account type "production" or "test"
+
+    :return class instance fakturoid.Fakturoid: Fakturoid API class
+                                                instance
+    """
+    return Fakturoid(
+        slug=settings.FAKTUROID[account]["user_account"],
+        email=settings.FAKTUROID[account]["user_email"],
+        api_key=settings.FAKTUROID[account]["api_key"],
+        user_agent=settings.FAKTUROID[account]["user_agent_header"],
+    )
+
+
+def generate_invoice(invoice, fakturoid_account=None):
+    """Generate Fakturoid invoice
+
+    :param class instance: Invoice model class instance
+    :param str account: Fakturoid account type "production" or "test"
+    """
+    if not fakturoid_account:
+        if invoice.created < settings.FAKTUROID["date_from_create_invoices"]:
+            fakturoid_account = "test"
+        else:
+            fakturoid_account = "production"
+    if settings.FAKTUROID[fakturoid_account]["user_account"]:
+        fa = get_fakturoid_api(account=fakturoid_account)
+        # Subject
+        fa_subject = create_or_update_subject(fa=fa, invoice=invoice)
+        # Invoice
+        create_or_update_invoice(fa=fa, invoice=invoice, subject=fa_subject)

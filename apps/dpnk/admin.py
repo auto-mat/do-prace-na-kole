@@ -21,6 +21,8 @@
 
 import pprint
 
+from django.conf import settings
+
 from admin_views.admin import AdminViews
 
 try:
@@ -1643,6 +1645,14 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     def invoice_xml_url(self, obj):
         if obj.invoice_xml:
             return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
+
+    def has_change_permission(self, request, obj=None):
+        if (
+            obj is not None
+            and obj.created >= settings.FAKTUROID["date_from_create_invoices"]
+        ):
+            return False
+        return super().has_change_permission(request, obj=obj)
 
 
 @admin.register(models.Voucher)
