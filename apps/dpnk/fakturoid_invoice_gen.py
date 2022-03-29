@@ -1,6 +1,7 @@
 """Create Fakturoid invoice"""
 
 import decimal
+import requests
 
 from django.conf import settings
 
@@ -124,15 +125,79 @@ def get_fakturoid_api(account):
     )
 
 
+def send_invoice_by_email(invoice, fa):
+    """Send invoce by email
+
+    :param class instance fa: fakturoid.Fakturoid class instance
+    :param class instance: Invoice model class instance
+    """
+    import logging
+
+    logger = logging.getLogger(__name__)
+    email_base_url = (
+        "https://app.fakturoid.cz/api/v2/"
+        "accounts/{fakturoid_user_account_slug}/invoices/{invoice_custom_id}/"
+        "message.json"
+    )
+    error_message = (
+        "Sending Fakturoid invoice with custom_id={invoice_custom_id}"
+        " by email wasn't succesfull with Fakturoid testing account"
+        " '{fakturoid_user_account_slug}' due error: '{error}'"
+    )
+
+    try:
+        response = requests.post(
+            email_base_url.format(
+                fakturoid_user_account_slug=fa.slug,
+                invoice_custom_id=invoice.id,
+            ),
+            headers={
+                "User-Agent": fa.user_agent,
+                "Content-Type": "application/json",
+            },
+            auth=requests.auth.HTTPBasicAuth(
+                fa.email,
+                fa.api_key,
+            ),
+        )
+        if not response.ok:
+            logger.error(
+                error_message.format(
+                    invoice_custom_id=invoice.id,
+                    fakturoid_user_account_slug=fa.slug,
+                    error=response.status_code,
+                )
+            )
+    except (
+        requests.RequestException,
+        requests.ConnectionError,
+        requests.HTTPError,
+        requests.URLRequired,
+        requests.TooManyRedirects,
+        requests.Timeout,
+    ) as error:
+        logger.error(
+            error_message.format(
+                invoice_custom_id=invoice.id,
+                fakturoid_user_account_slug=fa.slug,
+                error=error,
+            )
+        )
+
+
 def generate_invoice(invoice, fakturoid_account=None):
     """Generate Fakturoid invoice
 
     :param class instance: Invoice model class instance
     :param str account: Fakturoid account type "production" or "test"
     """
+    manually_send_invoice = False
     if not fakturoid_account:
         if invoice.created < settings.FAKTUROID["date_from_create_invoices"]:
             fakturoid_account = "test"
+            """test Fakturoid account doesn't have opt to send email
+            automatically by robot"""
+            manually_send_invoice = True
         else:
             fakturoid_account = "production"
     if settings.FAKTUROID[fakturoid_account]["user_account"]:
@@ -141,3 +206,6 @@ def generate_invoice(invoice, fakturoid_account=None):
         fa_subject = create_or_update_subject(fa=fa, invoice=invoice)
         # Invoice
         create_or_update_invoice(fa=fa, invoice=invoice, subject=fa_subject)
+        # Send email
+        if manually_send_invoice:
+            send_invoice_by_email(invoice=invoice, fa=fa)
