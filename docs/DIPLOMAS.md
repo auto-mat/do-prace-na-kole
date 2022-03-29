@@ -28,6 +28,8 @@ On the left of each page is a filter box. YOU NEED TO FILTER BY PDF SANDWICH TYP
 
 For example, if you are prepairing the user diplomas for the 2022 Lednová Výzva you would select the "Lednová výzva 2022" pdfs sandwich type before configuring fields.
 
+Finally, before you can generate diplomas you need to connect the template to the campaing by opening the [campaign admin](https://dpnk.dopracenakole.cz/admin/dpnk/campaign/) and searching for the "Diplomas" section and setting the sandwitch type.
+
 In order to generate diplomas you need to open up the admin object listing for the given objects and run the "Make PDF sandwich" action on the objects for which you want to generate the diplomas.
 
 1. [User attendance admin listing](https://dpnk.dopracenakole.cz/admin/dpnk/userattendance/)
