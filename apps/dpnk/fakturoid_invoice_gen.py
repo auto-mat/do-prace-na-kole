@@ -159,6 +159,7 @@ def send_invoice_by_email(invoice, fa):
                 fa.email,
                 fa.api_key,
             ),
+            data=f"{{'email': '{fa.email}'}}"
         )
         if not response.ok:
             logger.error(
