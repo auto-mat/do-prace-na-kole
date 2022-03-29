@@ -382,8 +382,8 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
             send_new_invoice_notification.delay(
                 pks=[instance.pk], campaign_slug=instance.campaign.slug
             )
-    else:
-        fakturoid_invoice_gen.generate_invoice()
+
+    fakturoid_invoice_gen.generate_invoice()
 
 
 @receiver(pre_delete, sender=Invoice)
