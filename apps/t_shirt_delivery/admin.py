@@ -55,6 +55,7 @@ from related_admin import RelatedFieldAdmin, getter_for_related_field
 from . import actions, filters, models
 from .admin_forms import IDENTIFIER_REGEXP
 from .admin_mixins import ReadOnlyModelAdminMixin
+from .delivery_batch_resources import DeliveryBatchModelBaseResource
 from .forms import PackageTransactionForm
 
 
@@ -396,9 +397,8 @@ class SubsidiaryBoxInline(NestedTabularInline):
     )
 
 
-class DeliveryBatchResource(resources.ModelResource):
+class DeliveryBatchResource(DeliveryBatchModelBaseResource):
     box_count = resources.Field()
-    tshirt_sizes = resources.Field()
 
     class Meta:
         model = models.DeliveryBatch
@@ -409,15 +409,11 @@ class DeliveryBatchResource(resources.ModelResource):
             "campaign__name",
             "dispatched",
             "box_count",
-            "tshirt_sizes",
+            *DeliveryBatchModelBaseResource.fields,
         )
 
     def dehydrate_box_count(self, db):
         return db.box_count()
-
-    def dehydrate_tshirt_sizes(self, db):
-        t_shirts = db.t_shirt_size_counts()
-        return ";".join("%s;%i" % (k, v) for k, v in t_shirts)
 
 
 @admin.register(models.DeliveryBatch)
