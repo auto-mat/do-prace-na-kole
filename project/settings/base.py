@@ -825,15 +825,14 @@ METABASE_DPNK_CITY_DATA_REPORT_URL = "{}{}".format(
 )
 
 
-def get_formatted_date(name, default=timezone.datetime(2023, 1, 1)):
+def get_formatted_date(name):
     """Get formatted date global variable
 
     :param str name: global variable name
-    :param datetime.datetime instance default: default date value
 
-    :return datetime.datetime instance: global var date value
+    :return timezone.datetime instance/None: global var date value
     """
-    val = os.getenv(name, default)
+    val = os.getenv(name)
     if isinstance(val, str):
         return timezone.datetime.strptime(val, "%Y-%m-%d")  # ISO 8601
     return val

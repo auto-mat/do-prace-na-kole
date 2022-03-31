@@ -159,7 +159,7 @@ def send_invoice_by_email(invoice, fa):
                 fa.email,
                 fa.api_key,
             ),
-            data=f"{{'email': '{fa.email}'}}"
+            data=f"{{'email': '{fa.email}'}}",
         )
         if not response.ok:
             logger.error(
@@ -193,8 +193,9 @@ def generate_invoice(invoice, fakturoid_account=None):
     :param str account: Fakturoid account type "production" or "test"
     """
     manually_send_invoice = False
+    date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
     if not fakturoid_account:
-        if invoice.created < settings.FAKTUROID["date_from_create_invoices"]:
+        if not date_from_create_invoices or invoice.created < date_from_create_invoices:
             fakturoid_account = "test"
             """test Fakturoid account doesn't have opt to send email
             automatically by robot"""

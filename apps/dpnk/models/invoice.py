@@ -342,7 +342,10 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
 
-    if instance.created < settings.FAKTUROID["date_from_create_invoices"]:
+    date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
+    if (date_from_create_invoices and instance.created < date_from_create_invoices) or (
+        not date_from_create_invoices
+    ):
         if not instance.invoice_pdf or not instance.invoice_xml:
             invoice_data = invoice_gen.generate_invoice(instance)
             instance.total_amount = invoice_data.price_tax

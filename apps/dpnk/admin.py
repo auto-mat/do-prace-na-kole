@@ -1647,9 +1647,11 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
             return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
 
     def has_change_permission(self, request, obj=None):
+        date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
         if (
             obj is not None
-            and obj.created >= settings.FAKTUROID["date_from_create_invoices"]
+            and date_from_create_invoices
+            and obj.created >= date_from_create_invoices
         ):
             return False
         return super().has_change_permission(request, obj=obj)
