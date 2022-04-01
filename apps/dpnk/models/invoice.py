@@ -120,6 +120,12 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         blank=True,
         null=True,
     )
+    fakturoid_invoice_url = models.CharField(
+        verbose_name=_("URL Fakturoid web faktúry"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
     company = models.ForeignKey(
         Company,
         verbose_name=_("Organizace"),
@@ -301,6 +307,10 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         ):
             raise ValidationError(_("Neexistuje žádná nefakturovaná platba"))
 
+    @property
+    def generate_fakturoid_invoice(self):
+        return self.created >= settings.FAKTUROID["date_from_create_invoices"]
+
 
 def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = next(iter(changed_fields.items()))
@@ -343,7 +353,7 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
         instance.add_payments()
 
     date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
-    if (date_from_create_invoices and instance.created < date_from_create_invoices) or (
+    if (date_from_create_invoices and not instance.generate_fakturoid_invoice) or (
         not date_from_create_invoices
     ):
         if not instance.invoice_pdf or not instance.invoice_xml:
@@ -386,7 +396,10 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
                 pks=[instance.pk], campaign_slug=instance.campaign.slug
             )
 
-    fakturoid_invoice_gen.generate_invoice()
+    fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=instance)
+    if fa_invoice:
+        instance.fakturoid_invoice_url = fa_invoice.public_html_url
+        instance.save()
 
 
 @receiver(pre_delete, sender=Invoice)

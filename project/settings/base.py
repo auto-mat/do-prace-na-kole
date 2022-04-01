@@ -842,6 +842,10 @@ FAKTUROID = {
     "date_from_create_invoices": get_formatted_date(
         name="FAKTUROID_DATE_FROM_CREATE_INVOICES",
     ),
+    "invoice_number_width": os.getenv(
+        "FAKTUROID_INVOICE_NUMBER_WIDTH",
+        4,
+    ),
     "production": {
         "user_account": os.getenv(
             "FAKTUROID_PRODUCTION_USER_ACCOUNT",

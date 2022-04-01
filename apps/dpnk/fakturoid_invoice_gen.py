@@ -84,6 +84,8 @@ def create_or_update_invoice(fa, subject, invoice):
     :param class instance fa: fakturoid.Fakturoid class instance
     :param class instance subject: fakturoid.Subject model class instance
     :param class instance: Invoice model class instance
+
+    :return Fakturoid Invoice class instance: Fakturoid invoice
     """
     # Invoice
     fa_invoice = fa.invoices(custom_id=invoice.id)
@@ -94,7 +96,10 @@ def create_or_update_invoice(fa, subject, invoice):
     fa_invoice_data = {
         "custom_id": invoice.id,
         "subject_id": subject.id,
-        "number": f"{invoice.exposure_date.year}-{invoice.sequence_number}",
+        "number": (
+            f"{invoice.exposure_date.year}-"
+            f"{invoice.sequence_number:0{settings.FAKTUROID['invoice_number_width']}d}",
+        ),
         "order_number": invoice.sequence_number,
         "lines": [],
     }
@@ -107,6 +112,7 @@ def create_or_update_invoice(fa, subject, invoice):
         fa_invoice_data["lines"] = create_invoice_lines(invoice=invoice)
         fa_invoice.update(fa_invoice_data)
     fa.save(fa_invoice)
+    return fa_invoice
 
 
 def get_fakturoid_api(account):
@@ -191,11 +197,13 @@ def generate_invoice(invoice, fakturoid_account=None):
 
     :param class instance: Invoice model class instance
     :param str account: Fakturoid account type "production" or "test"
+
+    :return Fakturoid Invoice class instance: Fakturoid invoice
     """
     manually_send_invoice = False
     date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
     if not fakturoid_account:
-        if not date_from_create_invoices or invoice.created < date_from_create_invoices:
+        if not date_from_create_invoices or not invoice.generate_fakturoid_invoice:
             fakturoid_account = "test"
             """test Fakturoid account doesn't have opt to send email
             automatically by robot"""
@@ -207,7 +215,12 @@ def generate_invoice(invoice, fakturoid_account=None):
         # Subject
         fa_subject = create_or_update_subject(fa=fa, invoice=invoice)
         # Invoice
-        create_or_update_invoice(fa=fa, invoice=invoice, subject=fa_subject)
+        fa_invoice = create_or_update_invoice(
+            fa=fa,
+            invoice=invoice,
+            subject=fa_subject,
+        )
         # Send email
         if manually_send_invoice:
             send_invoice_by_email(invoice=invoice, fa=fa)
+        return fa_invoice

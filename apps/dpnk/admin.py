@@ -1583,6 +1583,7 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
         "payments_count",
         "invoice_pdf_url",
         "invoice_xml_url",
+        "fakturoid_invoice_url_link",
         "campaign",
         "sequence_number",
         "order_number",
@@ -1646,12 +1647,20 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
         if obj.invoice_xml:
             return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
 
+    def fakturoid_invoice_url_link(self, obj):
+        if obj.fakturoid_invoice_url:
+            return format_html(
+                "<a href='{}'>{}</a>",
+                obj.fakturoid_invoice_url,
+                _("Fakturoid faktura"),
+            )
+
     def has_change_permission(self, request, obj=None):
         date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
         if (
             obj is not None
             and date_from_create_invoices
-            and obj.created >= date_from_create_invoices
+            and obj.generate_fakturoid_invoice
         ):
             return False
         return super().has_change_permission(request, obj=obj)
