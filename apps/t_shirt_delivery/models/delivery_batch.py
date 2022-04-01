@@ -141,7 +141,7 @@ class DeliveryBatch(models.Model):
             team_package__box__delivery_batch=self
         ).count()
 
-    def t_shirt_size_counts(self, campaign=None):
+    def t_shirt_size_counts(self, campaign=None, value_field="name"):
         if hasattr(self, "campaign"):
             campaign = self.campaign
         if not self.pk:
@@ -158,7 +158,7 @@ class DeliveryBatch(models.Model):
                 packagetransaction__in=package_transactions
             )
             t_shirts = t_shirts.annotate(size_count=models.Count("packagetransaction"))
-        t_shirt_counts = t_shirts.values_list("name", "size_count")
+        t_shirt_counts = t_shirts.values_list(value_field, "size_count")
         ordered_t_shirt_counts = collections.OrderedDict(
             [
                 (size.name, 0)
