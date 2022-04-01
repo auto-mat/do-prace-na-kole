@@ -161,10 +161,10 @@ class DeliveryBatch(models.Model):
         t_shirt_counts = t_shirts.values_list(value_field, "size_count")
         ordered_t_shirt_counts = collections.OrderedDict(
             [
-                (size.name, 0)
+                (getattr(size, value_field), 0)
                 for size in TShirtSize.objects.filter(
                     campaign=campaign,
-                ).order_by("name")
+                ).order_by(value_field)
             ]
         )
         for count in t_shirt_counts:
