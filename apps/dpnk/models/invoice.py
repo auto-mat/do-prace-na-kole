@@ -395,11 +395,11 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
             send_new_invoice_notification.delay(
                 pks=[instance.pk], campaign_slug=instance.campaign.slug
             )
-
-    fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=instance)
-    if fa_invoice:
-        instance.fakturoid_invoice_url = fa_invoice.public_html_url
-        instance.save()
+    if created:
+        fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=instance)
+        if fa_invoice:
+            instance.fakturoid_invoice_url = fa_invoice.public_html_url
+            instance.save(update_fields=["fakturoid_invoice_url"])
 
 
 @receiver(pre_delete, sender=Invoice)
