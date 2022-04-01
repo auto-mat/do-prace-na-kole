@@ -5,7 +5,7 @@ from import_export import fields
 from import_export.resources import ModelResource
 
 from .models import TShirtSize
-from .test.test_admin import DeliveryBatchAdminTests
+from t_shirt_delivery.test.test_admin import DeliveryBatchAdminTests
 
 
 def dehydrate_decorator(value_field, t_shirt_code_name):
