@@ -1,6 +1,8 @@
 import sys
 from operator import itemgetter
 
+from django.core.exceptions import ImproperlyConfigured
+
 from import_export import fields
 from import_export.resources import ModelResource
 
@@ -42,10 +44,14 @@ def get_all_t_shirt_codes(value_field):
     """
     if sys.argv[1] == "test":
         return ("TEST",)
-    codes = set(
-        TShirtSize.objects.all().values_list(value_field, flat=True),
-    )
-    codes.difference_update(["", "nic"])
+    # During build Docker image DB isnt accessible
+    try:
+        codes = set(
+            TShirtSize.objects.all().values_list(value_field, flat=True),
+        )
+        codes.difference_update(["", "nic"])
+    except ImproperlyConfigured:
+        codes = {}
     return codes
 
 
