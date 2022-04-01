@@ -36,13 +36,13 @@ CACHES = {
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.environ.get("DB", "circle_test"),
+        "NAME": os.environ.get("DPNK_DB_NAME", "circle_test"),
         "USER": os.environ.get("DPNK_DB_USER", "ubuntu"),
         "PASSWORD": os.environ.get("DPNK_DB_PASSWORD", ""),
         "HOST": os.environ.get("DPNK_DB_HOST", "localhost"),
         "PORT": os.environ.get("DPNK_DB_PORT", ""),
         "TEST": {
-            "NAME": os.environ.get("DB", "circle_test"),
+            "NAME": os.environ.get("DPNK_DB_NAME", "circle_test"),
         },
     },
 }
