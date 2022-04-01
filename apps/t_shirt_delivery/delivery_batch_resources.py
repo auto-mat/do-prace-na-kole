@@ -50,8 +50,8 @@ def get_all_t_shirt_codes(value_field):
         codes = {}
         # Check if "TShirtSize" model DB table exist, during tests
         if (
-            TShirtSize._meta.db_table in
-            connections["default"].introspection.table_names()
+            TShirtSize._meta.db_table
+            in connections["default"].introspection.table_names()
         ):
             codes = set(
                 TShirtSize.objects.all().values_list(value_field, flat=True),
