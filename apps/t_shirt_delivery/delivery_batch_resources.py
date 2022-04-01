@@ -39,16 +39,14 @@ def get_all_t_shirt_codes(value_field):
 
     :param str value_field: TShirtSize value field name
 
-    :return list codes: t-shirts codes
+    :return set codes: unique t-shirts codes
     """
     if sys.argv[1] == "test":
         return (DeliveryBatchAdminTests.t_shirt_code,)
-    codes = list(
-        set(TShirtSize.objects.all().values_list(value_field, flat=True)),
+    codes = set(
+        TShirtSize.objects.all().values_list(value_field, flat=True),
     )
-    for i in ("", "nic"):
-        if i in codes:
-            codes.pop(codes.index(i))
+    codes.difference_update(["", "nic"])
     return codes
 
 
