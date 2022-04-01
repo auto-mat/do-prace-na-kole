@@ -159,10 +159,9 @@ class PackageTransactionTests(AdminTestBase):
 
 
 class DeliveryBatchAdminTests(AdminTestBase):
-    t_shirt_code = "TEST"
-
     def setUp(self):
         super().setUp()
+        self.t_shirt_code = "TEST"
         self.campaign = testing_campaign
         self.t_shirt_size = mommy.make(
             "TShirtSize",

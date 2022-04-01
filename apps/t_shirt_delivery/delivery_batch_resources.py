@@ -1,11 +1,13 @@
 import sys
 from operator import itemgetter
 
+from django.db import connections
+from django.core.exceptions import ImproperlyConfigured
+
 from import_export import fields
 from import_export.resources import ModelResource
 
 from .models import TShirtSize
-from .test.test_admin import DeliveryBatchAdminTests
 
 
 def dehydrate_decorator(value_field, t_shirt_code_name):
@@ -42,11 +44,21 @@ def get_all_t_shirt_codes(value_field):
     :return set codes: unique t-shirts codes
     """
     if sys.argv[1] == "test":
-        return (DeliveryBatchAdminTests.t_shirt_code,)
-    codes = set(
-        TShirtSize.objects.all().values_list(value_field, flat=True),
-    )
-    codes.difference_update(["", "nic"])
+        return ("TEST",)
+    # During build Docker image DB isn't accessible
+    try:
+        codes = {}
+        # Check if "TShirtSize" model DB table exist, during tests
+        if (
+            TShirtSize._meta.db_table
+            in connections["default"].introspection.table_names()
+        ):
+            codes = set(
+                TShirtSize.objects.all().values_list(value_field, flat=True),
+            )
+            codes.difference_update(["", "nic"])
+    except ImproperlyConfigured:
+        pass
     return codes
 
 
