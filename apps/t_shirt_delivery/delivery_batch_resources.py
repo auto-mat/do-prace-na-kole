@@ -44,7 +44,7 @@ def get_all_t_shirt_codes(value_field):
     """
     if sys.argv[1] == "test":
         return ("TEST",)
-    # During build Docker image DB isnt accessible
+    # During build Docker image DB isn't accessible
     try:
         codes = set(
             TShirtSize.objects.all().values_list(value_field, flat=True),
