@@ -31,7 +31,6 @@ def dehydrate_decorator(value_field, t_shirt_code_name):
         for t_shirt in t_shirts:
             if t_shirt[0] == t_shirt_code_name:
                 return t_shirt[1]
-            return 0
 
     return wrap
 
