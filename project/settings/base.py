@@ -846,6 +846,9 @@ FAKTUROID = {
         "FAKTUROID_INVOICE_NUMBER_WIDTH",
         4,
     ),
+    "base_rest_api_url": os.getenv(
+        "FAKTUROID_BASE_REST_API_URL",
+    ),
     "production": {
         "user_account": os.getenv(
             "FAKTUROID_PRODUCTION_USER_ACCOUNT",
