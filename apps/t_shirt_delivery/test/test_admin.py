@@ -161,11 +161,13 @@ class PackageTransactionTests(AdminTestBase):
 class DeliveryBatchAdminTests(AdminTestBase):
     def setUp(self):
         super().setUp()
+        self.t_shirt_code = "TEST"
         self.campaign = testing_campaign
         self.t_shirt_size = mommy.make(
             "TShirtSize",
             campaign=self.campaign,
             name="Testing t-shirt size",
+            code=self.t_shirt_code,
             ship=True,
         )
         delivery_batch = mommy.make(
@@ -244,6 +246,17 @@ class DeliveryBatchAdminTests(AdminTestBase):
             "<div class='readonly'>Testing t-shirt size: 1</div>"
             "</div>",
             html=True,
+        )
+
+    def test_deliverybatch_export(self):
+        address = "/admin/t_shirt_delivery/deliverybatch/export/"
+        post_data = {
+            "file_format": 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(
+            response,
+            self.t_shirt_code,
         )
 
 
