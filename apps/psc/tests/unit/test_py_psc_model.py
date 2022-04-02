@@ -4,7 +4,7 @@ from psc.models import PSC
 
 
 class SetupError(AssertionError):
-    """ Used to signal something went wrong during test setup """
+    """Used to signal something went wrong during test setup"""
 
 
 @pytest.fixture(scope="function", name="switch_language")
@@ -67,7 +67,9 @@ def test_municipality_name_field_verbose_name(switch_language, expected_verbose_
     ],
     indirect=["switch_language"],
 )
-def test_municipality_part_name_field_verbose_name(switch_language, expected_verbose_name):
+def test_municipality_part_name_field_verbose_name(
+    switch_language, expected_verbose_name
+):
     actual_verbose_name = PSC._meta.get_field("municipality_part_name").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
