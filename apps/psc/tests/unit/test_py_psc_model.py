@@ -25,8 +25,7 @@ def switch_language_fixture(request):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_model_verbose_name(expected_verbose_name):
+def test_model_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.verbose_name
 
     assert actual_verbose_name == expected_verbose_name
@@ -40,8 +39,7 @@ def test_model_verbose_name(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_model_verbose_name_plural(expected_verbose_name):
+def test_model_verbose_name_plural(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.verbose_name_plural
 
     assert actual_verbose_name == expected_verbose_name
@@ -55,8 +53,7 @@ def test_model_verbose_name_plural(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_municipality_name_field_verbose_name(expected_verbose_name):
+def test_municipality_name_field_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.get_field("municipality_name").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
@@ -70,8 +67,7 @@ def test_municipality_name_field_verbose_name(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_municipality_part_name_field_verbose_name(expected_verbose_name):
+def test_municipality_part_name_field_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.get_field("municipality_part_name").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
@@ -85,8 +81,7 @@ def test_municipality_part_name_field_verbose_name(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_district_name_field_verbose_name(expected_verbose_name):
+def test_district_name_field_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.get_field("district_name").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
@@ -100,8 +95,7 @@ def test_district_name_field_verbose_name(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_psc_field_verbose_name(expected_verbose_name):
+def test_psc_field_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.get_field("psc").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
@@ -115,8 +109,7 @@ def test_psc_field_verbose_name(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_psc_field_help_text(expected_help_text):
+def test_psc_field_help_text(switch_language, expected_help_text):
     actual_help_text = PSC._meta.get_field("psc").help_text
 
     assert actual_help_text == expected_help_text
@@ -130,8 +123,7 @@ def test_psc_field_help_text(expected_help_text):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_post_name_field_verbose_name(expected_verbose_name):
+def test_post_name_field_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.get_field("post_name").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
@@ -145,8 +137,7 @@ def test_post_name_field_verbose_name(expected_verbose_name):
     ],
     indirect=["switch_language"],
 )
-@pytest.mark.usefixtures("switch_language")
-def test_code_field_verbose_name(expected_verbose_name):
+def test_code_field_verbose_name(switch_language, expected_verbose_name):
     actual_verbose_name = PSC._meta.get_field("code").verbose_name
 
     assert actual_verbose_name == expected_verbose_name
