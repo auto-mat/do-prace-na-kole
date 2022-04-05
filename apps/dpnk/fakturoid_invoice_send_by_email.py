@@ -15,9 +15,8 @@ def send_invoice_by_email(invoice, fa):
     :param class instance: Invoice model class instance
     """
     email_base_url = (
-        "{base_rest_api_url}/api/v2/accounts/"
-        "{fakturoid_user_account_slug}/invoices/{invoice_custom_id}/"
-        "message.json"
+        "{base_rest_api_url}/accounts/{fakturoid_user_account_slug}"
+        "/invoices/{invoice_custom_id}/message.json"
     )
     error_message = (
         "Sending Fakturoid invoice with custom_id={invoice_custom_id}"
