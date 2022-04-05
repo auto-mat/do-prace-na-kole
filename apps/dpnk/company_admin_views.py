@@ -457,6 +457,9 @@ class InvoicesView(
         ] = self.company_admin.administrated_company.invoice_set.filter(
             campaign=self.company_admin.campaign
         )
+        context["fakturoid_date_from_create_invoices"] = settings.FAKTUROID[
+            "date_from_create_invoices"
+        ]
         return context
 
     def dispatch(self, request, *args, **kwargs):

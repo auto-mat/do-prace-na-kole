@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import re
 
 from django.conf import settings
 from django.test import Client, TestCase
@@ -31,6 +32,9 @@ from dpnk.test.util import print_response  # noqa
 from model_mommy import mommy
 
 from .mommy_recipes import UserAttendanceRecipe, testing_campaign
+
+from ..fakturoid_invoice_gen import get_fakturoid_api, generate_invoice
+from .test_fakturoid_invoice_gen import TestGenerateFakturoidInvoice
 
 
 class CompanyAdminViewTests(ViewsLogon):
@@ -82,6 +86,9 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
 )
 class InvoiceTests(ClearCacheMixin, TestCase):
     def setUp(self):
+        self.fakturoid_account = "test"
+        self.fa = get_fakturoid_api(account=self.fakturoid_account)
+        self.payment_amount = 1500
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
         self.user_attendance = UserAttendanceRecipe.make(
             team__subsidiary__company__address_street="Foo street",
@@ -110,6 +117,13 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         self.client.force_login(
             self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0]
         )
+
+    def tearDown(self):
+        if hasattr(self, "fa_invoice") and self.fa_invoice:
+            TestGenerateFakturoidInvoice.deleteFakturoidModels(
+                fa=self.fa,
+                fa_invoice=self.fa_invoice,
+            )
 
     def test_get_blank(self):
         self.user_attendance.team.subsidiary.company.save()
@@ -156,7 +170,22 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             campaign=testing_campaign,
             exposure_date=datetime.date(2010, 10, 10),
             variable_symbol=2010111,
+            payment__amount=self.payment_amount,
         )
+        mommy.make(
+            "Payment",
+            user_attendance__campaign=testing_campaign,
+            user_attendance__team__campaign=testing_campaign,
+            invoice=invoice,
+            user_attendance__team__name="Foo team",
+            user_attendance__userprofile__user__email="test@email.cz",
+            amount=self.payment_amount,
+        )
+        self.fa_invoice = generate_invoice(
+            invoice=invoice,
+            fakturoid_account=self.fakturoid_account,
+        )
+        self.assertIsNotNone(self.fa_invoice)
         response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
@@ -166,12 +195,20 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             '<a href="/media/upload/%s">PDF soubor</a>'
             "<br/>"
             '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
+            "<br/>"
+            '(<a href="%s">PDF soubor</a>)'
             "</td>"
-            "<td>0</td>"
+            "<td>1</td>"
             "<td>2010111</td>"
             "<td>0,0</td>"
             "<td>Zaplacení nepotvrzeno</td>"
-            "</tr>" % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
+            "</tr>"
+            % (
+                invoice.invoice_pdf,
+                invoice.invoice_xml,
+                invoice.id,
+                self.fa_invoice.public_html_url,
+            ),
             html=True,
         )
 
@@ -183,7 +220,22 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             exposure_date=datetime.date(2010, 10, 10),
             paid_date=datetime.date(2010, 10, 10),
             variable_symbol=2010111,
+            payment__amount=self.payment_amount,
         )
+        mommy.make(
+            "Payment",
+            user_attendance__campaign=testing_campaign,
+            user_attendance__team__campaign=testing_campaign,
+            invoice=invoice,
+            user_attendance__team__name="Foo team",
+            user_attendance__userprofile__user__email="test@email.cz",
+            amount=self.payment_amount,
+        )
+        self.fa_invoice = generate_invoice(
+            invoice=invoice,
+            fakturoid_account=self.fakturoid_account,
+        )
+        self.assertIsNotNone(self.fa_invoice)
         response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
@@ -193,12 +245,20 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             '<a href="/media/upload/%s">PDF soubor</a>'
             "<br/>"
             '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
+            "<br/>"
+            '(<a href="%s">PDF soubor</a>)'
             "</td>"
-            "<td>0</td>"
+            "<td>1</td>"
             "<td>2010111</td>"
             "<td>0,0</td>"
             "<td>10. října 2010</td>"
-            "</tr>" % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
+            "</tr>"
+            % (
+                invoice.invoice_pdf,
+                invoice.invoice_xml,
+                invoice.id,
+                self.fa_invoice.public_html_url,
+            ),
             html=True,
         )
 
@@ -244,6 +304,10 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             follow=True,
         )
         self.assertRedirects(response, reverse("invoices"))
+        fa_invoice = re.search(r"fakturoid(.*?)\"", response.content.decode())
+        if fa_invoice:
+            fa_invoice_number = fa_invoice.group(0).rsplit("/", 1)[-1].rstrip('"')
+            self.fa_invoice = list(self.fa.invoices(number=fa_invoice_number))[0]
         self.assertContains(
             response,
             "<td>Zaplacení nepotvrzeno</td>",
