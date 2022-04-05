@@ -469,7 +469,7 @@ with_social = ["django-allauth (>=0.40.0,<0.45.0)"]
 
 [[package]]
 name = "django"
-version = "2.2.24"
+version = "2.2.27"
 description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
@@ -1046,7 +1046,7 @@ tablib = {version = ">=0.14.0", extras = ["html", "ods", "xls", "xlsx", "yaml"]}
 
 [[package]]
 name = "django-import-export-celery"
-version = "1.1.6"
+version = "1.1.8"
 description = "Process long running django imports and exports in celery"
 category = "main"
 optional = false
@@ -1062,7 +1062,7 @@ django-import-export = "*"
 type = "git"
 url = "https://github.com/auto-mat/django-import-export-celery.git"
 reference = "master"
-resolved_reference = "3b5a233dd3221e6811ca860843c8e827480170bd"
+resolved_reference = "7f1b2b2fda52f27e74a1a86fae5e8b67de5271aa"
 
 [[package]]
 name = "django-initial-field"
@@ -3634,8 +3634,8 @@ dj-rest-auth = [
     {file = "dj-rest-auth-2.1.7.tar.gz", hash = "sha256:45f95fa982c41ae7ba5dee041de5dbb6e3724347796e718cf2bb5c0b681b2d10"},
 ]
 django = [
-    {file = "Django-2.2.24-py3-none-any.whl", hash = "sha256:f2084ceecff86b1e631c2cd4107d435daf4e12f1efcdf11061a73bf0b5e95f92"},
-    {file = "Django-2.2.24.tar.gz", hash = "sha256:3339ff0e03dee13045aef6ae7b523edff75b6d726adf7a7a48f53d5a501f7db7"},
+    {file = "Django-2.2.27-py3-none-any.whl", hash = "sha256:90763c764738586b11d7e1f44828032c153366e43ad7f782908193a1bb2d6d92"},
+    {file = "Django-2.2.27.tar.gz", hash = "sha256:1ee37046b0bf2b61e83b3a01d067323516ec3b6f2b17cd49b1326dd4ba9dc913"},
 ]
 django-admin-charts = [
     {file = "django-admin-charts-0.24.1.tar.gz", hash = "sha256:ff9e886c2780fe88180e47c57b665ccc9063797da6162fc2e9d7d22675c57d43"},
