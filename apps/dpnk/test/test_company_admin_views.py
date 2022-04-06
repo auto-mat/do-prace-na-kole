@@ -196,7 +196,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             "<br/>"
             '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
             "<br/>"
-            '(<a href="%s">PDF soubor</a>)'
+            '(<a href="%s">Fakturoid PDF soubor</a>)'
             "</td>"
             "<td>1</td>"
             "<td>2010111</td>"
@@ -246,7 +246,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             "<br/>"
             '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
             "<br/>"
-            '(<a href="%s">PDF soubor</a>)'
+            '(<a href="%s">Fakturoid PDF soubor</a>)'
             "</td>"
             "<td>1</td>"
             "<td>2010111</td>"
