@@ -152,10 +152,8 @@ msgid "Ne"
 msgstr "No"
 
 #: t_shirt_delivery/forms.py:45
-#, fuzzy
-#| msgid "Vyberte velikost trika"
 msgid "Vyberte velikost trika"
-msgstr "Choose t-shirt type"
+msgstr "Choose t-shirt size"
 
 #: t_shirt_delivery/forms.py:49
 msgid ""
@@ -398,8 +396,6 @@ msgstr ""
 "found please contact us at e-mail %(emails)s.\n"
 
 #: t_shirt_delivery/templates/registration/change_tshirt.html:129
-#, fuzzy
-#| msgid "Vyberte velikost trika"
 msgid "Vyberte typ trika"
 msgstr "Choose t-shirt type"
 
@@ -438,8 +434,6 @@ msgid "Uložili jsme si Vaší velikost"
 msgstr "We've saved your selected size"
 
 #: t_shirt_delivery/views.py:75
-#, fuzzy
-#| msgid "Změňte velikost soutěžního trička"
 msgid "Změňte velikost a typ soutěžního trička"
 msgstr "Change the size and type of your shirt"
 
