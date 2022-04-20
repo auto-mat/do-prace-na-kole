@@ -4,7 +4,7 @@
 
 {% block form_intro %}
 <p>
-{% trans "Jaká velikost bude v květnu ta pravá? Je čas si vybrat." %}
+{% trans "Jaké tričko vám bude letos dělat radost? Je čas si vybrat. Letos si můžete vybrat tričko s novou grafikou od Elišky Podzimkové, loňské tričko od Toy_Box či starší model od Jaromíra 99. Upozorňujeme, že u starších modelů jsou počty kusů na skladě omezené." %}
 </p><p>
 {% if next_batch.deadline %}
 {% blocktrans with deadline=next_batch.deadline.date delivery_from=next_batch.delivery_from.date delivery_to=next_batch.delivery_to.date %}
@@ -21,7 +21,6 @@
 {{ user_attendance.team.subsidiary }}
 </pre>
 {{ block.super }}
-
 
 <script>
 (function () {
@@ -125,6 +124,20 @@
                     }
                 })
             }
+            const telOptDiv = document.getElementById("div_id_userprofile-telephone_opt_in");
+            telOptDiv.insertAdjacentHTML(
+              'afterend', '<strong>{% trans "Vyberte typ trika" %}</strong>'
+            );
+            {# Choose actual year t-shirt #}
+            let actualTshirtBtn = document.evaluate(
+              `//button[contains(., ${new Date().getFullYear()})]`,
+              document,
+              null,
+              XPathResult.ANY_TYPE,
+              null
+            );
+            actualTshirtBtn = actualTshirtBtn.iterateNext();
+            if (actualTshirtBtn != null ) {actualTshirtBtn.click();}
         })
     }
 )()
