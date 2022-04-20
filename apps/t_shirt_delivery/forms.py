@@ -39,9 +39,16 @@ class ShirtUserAttendanceForm(forms.ModelForm):
             campaign=self.instance.campaign, available=True
         )
         self.fields["t_shirt_size"].label_from_instance = lambda i: i.user_string()
-        self.fields["t_shirt_size"].label = _("Vyberte velikost trika")
+        self.fields["t_shirt_size"].label = format_html(
+            "<strong>{}</strong>",
+            _("Vyberte velikost trika"),
+        )
         self.fields["t_shirt_size"].help_text = format_html(
-            _("Podívejte se na {}."),
+            _(
+                "Podívejte se na {}. Trika se snažíme doručovat co"
+                " nejekologičtěji, proto je zasíláme hromadně vždy po"
+                " skončení přihlašovací vlny (zpravidla na začátku měsíce)."
+            ),
             format_html(
                 "<a target='_blank' href='http://www.dopracenakole.cz/trika'>{}</a>",
                 _("vzhled a velikosti triček"),
@@ -63,7 +70,8 @@ class TelephoneUpdateForm(forms.ModelForm):
             (
                 True,
                 _(
-                    "Chci vědět vše. Včetně novinek ohledně podpory cyklistů ve městech."
+                    "Chci vědět vše a souhlasím s tím, že se mi ozvete"
+                    " ohledně podpory aktivní dopravy a veřejného prostoru."
                 ),
             ),
             (False, _("Chci pouze dostat zprávu o stavu balíčku a registrace.")),

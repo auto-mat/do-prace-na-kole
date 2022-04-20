@@ -72,9 +72,9 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.tshirt_complete():
-            return _("Změňte velikost soutěžního trička")
+            return _("Změňte velikost a typ soutěžního trička")
         else:
-            return _("Vyberte velikost soutěžního trička")
+            return _("Vyberte velikost a typ soutěžního trička")
 
     def get_object(self):
         return {
