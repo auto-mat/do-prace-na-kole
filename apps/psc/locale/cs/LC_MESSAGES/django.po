@@ -1,0 +1,56 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-26 20:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
+"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+#: apps/psc/models/psc.py:31
+msgid "ZIP code"
+msgstr "Poštovní směrovací číslo"
+
+#: apps/psc/models/psc.py:32
+msgid "ZIP codes"
+msgstr "Poštovní směrovací čísla"
+
+#: apps/psc/models/psc.py:35
+msgid "Municipality name"
+msgstr "Název obce"
+
+#: apps/psc/models/psc.py:41
+msgid "Municipality part name"
+msgstr "Název části obce"
+
+#: apps/psc/models/psc.py:47
+msgid "District name"
+msgstr "Název okresu"
+
+#: apps/psc/models/psc.py:53
+msgctxt "psc field ctxt"
+msgid "ZIP code"
+msgstr "PSČ"
+
+#: apps/psc/models/psc.py:54
+msgid "e.g. „130 00“"
+msgstr "Např.: „130 00“"
+
+#: apps/psc/models/psc.py:61
+msgid "Post office name"
+msgstr "Název pošty"
+
+#: apps/psc/models/psc.py:67
+msgid "Code"
+msgstr "Kód"
