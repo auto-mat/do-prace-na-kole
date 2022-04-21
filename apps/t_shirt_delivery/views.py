@@ -100,7 +100,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
         tshirts_urls = {}
         for t in tshirt_query:
             try:
-                t_year, t_name = t.name.split("-")
+                t_year, t_name = t.name.split("-", 1)
                 if t_year not in tshirts_urls:
                     tshirts_urls.update({t_year: t.t_shirt_preview.url})
             except ValueError:
