@@ -144,9 +144,9 @@ def create_or_update_invoice(fa, subject, invoice):
         "subject_id": subject.id,
         "number": (
             f"{invoice.exposure_date.year}-"
-            f"{invoice.sequence_number:0{settings.FAKTUROID['invoice_number_width']}d}",
+            f"{invoice.sequence_number:0{settings.FAKTUROID['invoice_number_width']}d}"
         ),
-        "order_number": invoice.sequence_number,
+        "order_number": invoice.order_number,
         "lines": [],
     }
     if not fa_invoice:

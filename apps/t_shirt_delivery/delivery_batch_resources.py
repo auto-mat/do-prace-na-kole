@@ -42,7 +42,7 @@ def get_all_t_shirt_codes(value_field):
 
     :return set codes: unique t-shirts codes
     """
-    if sys.argv[1] == "test":
+    if len(sys.argv) >= 2 and sys.argv[1] == "test":
         return ("TEST",)
     # During build Docker image DB isn't accessible
     try:
