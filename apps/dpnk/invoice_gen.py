@@ -60,7 +60,7 @@ def generate_invoice(invoice):
         bank_code="2010",
         vat_id="CZ22670319",
         ir="22670319",
-        phone="212 240 666",
+        phone="234 697 808",
         logo_filename=os.path.join(DIR, "static/img/logo_am.png"),
         note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119. "
         "AutoMat - společně s vámi tvoříme město, ve kterém chceme žít."
