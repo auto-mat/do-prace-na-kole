@@ -231,14 +231,10 @@ def generate_invoice(invoice, fakturoid_account=None):
                                                               None
     """
     fa_invoice = None
-    manually_send_invoice = False
     date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
     if not fakturoid_account:
         if not date_from_create_invoices or not invoice.generate_fakturoid_invoice:
             fakturoid_account = "test"
-            """test Fakturoid account doesn't have opt to send email
-            automatically by robot"""
-            manually_send_invoice = True
         else:
             fakturoid_account = "production"
     if settings.FAKTUROID[fakturoid_account]["user_account"]:
@@ -254,6 +250,5 @@ def generate_invoice(invoice, fakturoid_account=None):
                     subject=fa_subject,
                 )
                 # Send email
-                if manually_send_invoice:
-                    send_invoice_by_email(invoice=fa_invoice, fa=fa)
+                send_invoice_by_email(invoice=fa_invoice, fa=fa)
         return fa_invoice
