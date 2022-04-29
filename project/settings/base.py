@@ -833,7 +833,7 @@ def get_formatted_date(name):
     :return timezone.datetime instance/None: global var date value
     """
     val = os.getenv(name)
-    if isinstance(val, str):
+    if val and isinstance(val, str):
         return timezone.datetime.strptime(val, "%Y-%m-%d")  # ISO 8601
     return val
 
