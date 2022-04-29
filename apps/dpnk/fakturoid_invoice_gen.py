@@ -250,5 +250,9 @@ def generate_invoice(invoice, fakturoid_account=None):
                     subject=fa_subject,
                 )
                 # Send email
-                send_invoice_by_email(invoice=fa_invoice, fa=fa)
+                send_invoice_by_email(
+                    invoice=fa_invoice,
+                    fa=fa,
+                    fakturoid_account=fakturoid_account,
+                )
         return fa_invoice
