@@ -8,11 +8,12 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
-def send_invoice_by_email(invoice, fa):
+def send_invoice_by_email(invoice, fa, fakturoid_account):
     """Send invoce by email
 
     :param class instance fa: fakturoid.Fakturoid class instance
     :param class instance: Invoice model class instance
+    :param str fakturoid_account: Fakturoid account type
     """
     email_base_url = (
         "{base_rest_api_url}/accounts/{fakturoid_user_account_slug}"
@@ -23,7 +24,9 @@ def send_invoice_by_email(invoice, fa):
         " by email wasn't succesfull with Fakturoid testing account"
         " '{fakturoid_user_account_slug}' due error: '{error}'"
     )
-    data = f'{{"email": "{fa.email}"}}'
+    data = "{}"
+    if fakturoid_account == "test":
+        data = f'{{"email": "{fa.email}"}}'
     post_data(
         invoice=invoice,
         fa=fa,
