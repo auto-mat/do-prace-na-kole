@@ -824,7 +824,7 @@ class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
     company = serializers.CharField(read_only=True)
     place = serializers.IntegerField(read_only=True)
     name = serializers.CharField(source="__str__", read_only=True)
-    icon_url = serializers.CharField(source="get_icon_url", read_only=True)
+    icon_url = RequestSpecificField(lambda a, b: "")
     divident = serializers.IntegerField(source="result_divident", read_only=True)
     divisor = serializers.IntegerField(source="result_divisor", read_only=True)
     emissions = serializers.JSONField(source="get_emissions", read_only=True)
