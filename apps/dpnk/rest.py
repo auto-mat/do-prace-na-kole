@@ -21,11 +21,13 @@ import time
 
 import denorm
 
+from django.utils.decorators import method_decorator
 from django.core.exceptions import ValidationError
 from django.db.models import F, Window
 from django.db.models.functions import DenseRank
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.views.decorators.cache import cache_page
 
 from donation_chooser.rest import organization_router
 
@@ -803,6 +805,11 @@ class TeamSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # TODO TODO TODO invalidate or do correctly somehow
+    @method_decorator(cache_page(600))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MyTeamSet(
