@@ -717,11 +717,6 @@ class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = UserAttendanceSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    # TODO TODO TODO invalidate or do correctly somehow
-    @method_decorator(cache_page(600))
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
     distance = serializers.FloatField(
