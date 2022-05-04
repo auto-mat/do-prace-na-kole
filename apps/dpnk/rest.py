@@ -19,7 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import time
 
-import denorm
+# TODO re-enable or fix denorm
+# import denorm
 
 from django.utils.decorators import method_decorator
 from django.core.exceptions import ValidationError
@@ -694,7 +695,7 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
 
 class AllUserAttendanceSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
-        denorm.flush()
+        # denorm.flush()
         return UserAttendance.objects.all().select_related("userprofile__user")
 
     serializer_class = UserAttendanceSerializer
@@ -708,7 +709,7 @@ class AllUserAttendanceSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
 class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        denorm.flush()
+        # denorm.flush()
         return UserAttendance.objects.filter(
             id=self.ua().id,
         ).select_related("userprofile__user")
