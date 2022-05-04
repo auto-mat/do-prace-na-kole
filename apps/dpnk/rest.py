@@ -700,6 +700,11 @@ class AllUserAttendanceSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = UserAttendanceSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # TODO TODO TODO invalidate or do correctly somehow
+    @method_decorator(cache_page(600))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
 
 class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
@@ -829,6 +834,11 @@ class MyTeamSet(
 
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # TODO TODO TODO invalidate or do correctly somehow
+    @method_decorator(cache_page(600))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
