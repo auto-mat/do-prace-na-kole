@@ -52,8 +52,23 @@ Launching the development webserver
 
     $ ./develop.sh
     $ python3 manage.py runserver 0.0.0.0:8000
-    
+
 Clone and launch the front end server according to its own docs: https://github.com/auto-mat/do-prace-na-kole-frontend
+
+Running tests
+-------------
+
+Running tests can be done with the command
+
+    pytest apps
+
+In order to get a fast test loop, start out by running `pytest apps` then edit your local version of the django migrate command (found in `./pyenv/.cache/pypoetry/virtualenvs/do-prace-na-kole-bQ0wwWJR-py3.9/lib/python3.9/site-packages/django/core/management/commands/migrate.py`) so that the [`handle`](https://github.com/django/django/blob/21d8ea4eb3e22d458515b5278c8cd3a15b069799/django/core/management/commands/migrate.py#L94) method starts with `return`.
+
+Finally run
+
+    ./single-pytest.sh apps/dpnk/test/pytest/test_py_results.py
+
+Replacing `test_py_results.py` with the specific test file you want to run.
 
 Open the web app
 -------------------
