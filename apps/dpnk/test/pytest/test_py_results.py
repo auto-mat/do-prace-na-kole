@@ -235,6 +235,9 @@ def team_competition(campaign):
         "dpnk.Competition",
         competitor_type="team",
         campaign=campaign,
+        date_from=datetime.date(year=2010, month=11, day=1),
+        date_to=datetime.date(year=2010, month=11, day=15),
+        minimum_rides_base=23,
     ) as o:
         yield o
 
@@ -274,3 +277,57 @@ def liberos_competition(campaign):
 def test_get_competitors_liberos(liberos_competition, team, ua1):
     query = results.get_competitors(liberos_competition)
     assert str(query.all()) == "<QuerySet [<UserAttendance: Foo user>]>"
+
+
+def test_get_minimum_rides_base_proportional(team_competition):
+    assert (
+        results.get_minimum_rides_base_proportional(
+            team_competition, datetime.date(2010, 11, 1)
+        )
+        == 1
+    )
+    assert (
+        results.get_minimum_rides_base_proportional(
+            team_competition, datetime.date(2010, 11, 7)
+        )
+        == 10
+    )
+    assert (
+        results.get_minimum_rides_base_proportional(
+            team_competition, datetime.date(2010, 11, 15)
+        )
+        == 23
+    )
+    assert (
+        results.get_minimum_rides_base_proportional(
+            team_competition, datetime.date(2010, 11, 30)
+        )
+        == 23
+    )
+
+
+def test_get_minimum_rides_base_proportional_phase(competition_phase):
+    assert (
+        results.get_minimum_rides_base_proportional(
+            competition_phase, datetime.date(2010, 11, 1)
+        )
+        == 0
+    )
+    assert (
+        results.get_minimum_rides_base_proportional(
+            competition_phase, datetime.date(2010, 11, 7)
+        )
+        == 5
+    )
+    assert (
+        results.get_minimum_rides_base_proportional(
+            competition_phase, datetime.date(2010, 11, 15)
+        )
+        == 12
+    )
+    assert (
+        results.get_minimum_rides_base_proportional(
+            competition_phase, datetime.date(2010, 11, 30)
+        )
+        == 25
+    )
