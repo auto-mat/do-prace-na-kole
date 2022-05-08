@@ -81,14 +81,14 @@ def test_get_minimum_rides_base_proportional_phase(competition_phase):
 
 # Get competitors without admission tests
 @pytest.fixture()
-def mens_frequency_competition_company(campaign):
+def mens_frequency_competition_company(campaign, company):
     with Mom(
         "dpnk.Competition",
         competition_type="frequency",
         competitor_type="single_user",
         campaign=campaign,
         sex="male",
-        company__name="Foo company",
+        company=company,
     ) as o:
         yield o
 
@@ -130,13 +130,13 @@ def test_single_user_frequency_city(frequency_competition_city):
 
 
 @pytest.fixture()
-def team_frequency_competition_company(campaign):
+def team_frequency_competition_company(campaign, company):
     with Mom(
         "dpnk.Competition",
         competition_type="frequency",
         competitor_type="team",
         campaign=campaign,
-        company__name="Foo company",
+        company=company,
     ) as o:
         yield o
 
@@ -172,13 +172,13 @@ def test_team_frequency_city(campaign, team_frequency_competition_city):
 
 
 @pytest.fixture()
-def frequency_competition_company(campaign):
+def frequency_competition_company(campaign, company):
     with Mom(
         "dpnk.Competition",
         competition_type="frequency",
         competitor_type="company",
         campaign=campaign,
-        company__name="Foo company",
+        company=company,
     ) as o:
         yield o
 
@@ -331,3 +331,146 @@ def test_get_minimum_rides_base_proportional_phase(competition_phase):
         )
         == 25
     )
+
+
+@fixture()
+def company_competition_single_user(campaign):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="single_user",
+        campaign=campaign,
+        sex="male",
+        company__name="Foo company",
+    ) as o:
+        yield o
+
+
+def test_single_user_frequency_competitor_without_admission(
+    company_competition_single_user, campaign
+):
+    """Test if _filter_query_single_user function returns correct filter_query dict."""
+    competition = company_competition_single_user
+    filter_query = results._filter_query_single_user(competition)
+    expected_dict = {
+        "approved_for_team": "approved",
+        "campaign": campaign,
+        "userprofile__user__is_active": True,
+        "payment_status__in": ("done", "no_admission"),
+        "team__subsidiary__company": competition.company,
+        "userprofile__sex": "male",
+    }
+    assert filter_query == expected_dict
+
+
+@fixture()
+def city_competition_single_user(campaign, city):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="single_user",
+        campaign=campaign,
+        city=[city],
+    ) as o:
+        yield o
+
+
+def test_single_user_frequency_city_competitor_without_admission(
+    city_competition_single_user,
+):
+    """Test if _filter_query_single_user function returns correct filter_query dict with city filter."""
+    filter_query = results._filter_query_single_user(city_competition_single_user)
+    assert (
+        str(filter_query["team__subsidiary__city__in"]) == "<QuerySet [<City: City 1>]>"
+    )
+
+
+@fixture()
+def company_competition_team(campaign):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="team",
+        campaign=campaign,
+        company__name="Foo company",
+    ) as o:
+        yield o
+
+
+def test_team_frequency_competitor_without_admission(
+    campaign, company_competition_team
+):
+    """Test if _filter_query_team function returns correct filter_query dict."""
+    competition = company_competition_team
+    filter_query = results._filter_query_team(competition)
+    expected_dict = {
+        "campaign": campaign,
+        "subsidiary__company": competition.company,
+    }
+    assert filter_query == expected_dict
+
+
+@fixture()
+def city_competition_team_frequency(campaign, city):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="team",
+        campaign=campaign,
+        city=[city],
+    ) as o:
+        yield o
+
+
+def test_team_frequency_city_competitor_without_admission(
+    city_competition_team_frequency,
+):
+    """Test if _filter_query_team function returns correct filter_query dict with city filter."""
+    competition = city_competition_team_frequency
+    filter_query = results._filter_query_team(competition)
+    assert str(filter_query["subsidiary__city__in"]) == "<QuerySet [<City: City 1>]>"
+
+
+@fixture()
+def company_competition_company_frequency(campaign, company):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="company",
+        campaign=campaign,
+        company=company,
+    ) as o:
+        yield o
+
+
+def test_company_frequency_competitor_without_admission(
+    company_competition_company_frequency,
+):
+    """Test if _filter_query_company function returns correct filter_query dict."""
+    competition = company_competition_company_frequency
+    filter_query = results._filter_query_company(competition)
+    expected_dict = {
+        "pk": competition.company.pk,
+    }
+    assert filter_query == expected_dict
+
+
+@fixture()
+def city_competition_company_frequency(campaign, company, city):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="company",
+        campaign=campaign,
+        city=[city],
+    ) as o:
+        yield o
+
+
+def test_company_frequency_city_competitor_without_admission(
+    city_competition_company_frequency,
+):
+    """Test if _filter_query_company function returns correct filter_query dict with city filter."""
+    competition = city_competition_company_frequency
+    filter_query = results._filter_query_company(competition)
+    assert str(filter_query["subsidiaries__city__in"]) == "<QuerySet [<City: City 1>]>"
