@@ -13,7 +13,7 @@ from dpnk.test.pytest.util import Mom
 
 
 @pytest.fixture()
-def competition(campaign):
+def competition_team_frequency(campaign):
     with Mom(
         "dpnk.Competition",
         competition_type="frequency",
@@ -21,11 +21,12 @@ def competition(campaign):
         date_from=datetime.date(year=2010, month=11, day=1),
         date_to=datetime.date(year=2010, month=11, day=15),
         minimum_rides_base=23,
+            campaign=campaign,
     ) as o:
         yield o
 
 
-def test_get_minimum_rides_base_proportional(competition):
+def test_get_minimum_rides_base_proportional(competition_team_frequency):
     assert (
         results.get_minimum_rides_base_proportional(
             competition, datetime.date(2010, 11, 1)
@@ -474,3 +475,59 @@ def test_company_frequency_city_competitor_without_admission(
     competition = city_competition_company_frequency
     filter_query = results._filter_query_company(competition)
     assert str(filter_query["subsidiaries__city__in"]) == "<QuerySet [<City: City 1>]>"
+
+# Get competitor tests
+def test_get_competitors(team, ua1, ua2, campaign):
+    competition = mommy.make(
+        "dpnk.Competition",
+        competitor_type="team",
+        campaign=campaign,
+    )
+    query = results.get_competitors(competition)
+    assert str(query.all()) == "<QuerySet [<Team: Foo team (Bar user, Foo user)>]>"
+
+
+@pytest.fixture()
+def competition_single_user_length(campaign):
+    with Mom(
+            "Competition",
+            competition_type="length",
+            competitor_type="single_user",
+            campaign=campaign,
+            date_from=datetime.date(2017, 4, 3),
+            date_to=datetime.date(2017, 5, 23),
+            commute_modes=models.CommuteMode.objects.filter(
+                slug__in=("bicycle", "by_foot")
+            ),
+    ) as o:
+        yield o
+
+
+def test_get_competitors_with_admission_single(ua1, competition_single_user_length):
+    mommy.make("Payment", status=99, userattendance=ua1)
+    query = results.get_competitors(competition_single_user_length)
+    assert str(query.all()), "<QuerySet [<UserAttendance: Foo user>]"
+
+def test_get_competitors_with_admission_team(ua1, ua2, competition_team_frequency, team):
+    mommy.make("Payment", status=99, userattendance=ua1).save()
+    mommy.make("Payment", status=99, userattendance=ua2).save()
+    query = results.get_competitors(competition_team_frequency)
+    assert str(query.all()) == "<QuerySet [<Team: Foo team (Bar user, Foo user)>]>"
+
+@fixture()
+def competition_company_frequency(campaign, company):
+    with Mom(
+        "dpnk.Competition",
+        competition_type="frequency",
+        competitor_type="company",
+        campaign=campaign,
+    ) as o:
+        yield o
+
+def test_get_competitors_with_admission_company(competition_company_frequency):
+    query = results.get_competitors(competition_company_frequency)
+    assert str(query.all()) == "<QuerySet [<Company: Foo company>]>"
+
+def test_get_competitors_liberos(ua1, team, competition_single_user_length):
+    query = results.get_competitors(competition_single_user_length)
+    assert str(query.all()) == "<QuerySet [<UserAttendance: Foo user>]>"

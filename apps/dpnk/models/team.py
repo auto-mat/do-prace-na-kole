@@ -178,7 +178,7 @@ class Team(WithGalleryMixin, models.Model):
             approved_for_team="denied",
         )
 
-    @mproperty
+    @property
     def members(self):
         """Return approved members of this team."""
         return self.users.filter(
