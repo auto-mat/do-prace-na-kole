@@ -44,17 +44,13 @@ Setting up the database
 
 In a separate terminal window:
 
-    $ sudo docker exec -it do-prace-na-kole_web_1 bash
-
-    # su test
+    $ ./develop.sh
     $ ./setup.sh
 
 Launching the development webserver
 ------------------------------------
 
-    $ sudo docker exec -it dopracenakole_web_1 bash
-    # su test
-    $ poetry shell
+    $ ./develop.sh
     $ python3 manage.py runserver 0.0.0.0:8000
     
 Clone and launch the front end server according to its own docs: https://github.com/auto-mat/do-prace-na-kole-frontend
