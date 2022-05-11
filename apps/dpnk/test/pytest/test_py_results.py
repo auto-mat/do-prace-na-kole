@@ -21,7 +21,7 @@ def competition_team_frequency(campaign):
         date_from=datetime.date(year=2010, month=11, day=1),
         date_to=datetime.date(year=2010, month=11, day=15),
         minimum_rides_base=23,
-            campaign=campaign,
+        campaign=campaign,
     ) as o:
         yield o
 
@@ -310,27 +310,27 @@ def test_get_minimum_rides_base_proportional(team_competition):
 def test_get_minimum_rides_base_proportional_phase(competition_phase):
     assert (
         results.get_minimum_rides_base_proportional(
-            competition_phase, datetime.date(2010, 11, 1)
+            competition_phase, datetime.date(2017, 4, 2)
         )
         == 0
     )
     assert (
         results.get_minimum_rides_base_proportional(
-            competition_phase, datetime.date(2010, 11, 7)
+            competition_phase, datetime.date(2017, 4, 11)
         )
         == 5
     )
     assert (
         results.get_minimum_rides_base_proportional(
-            competition_phase, datetime.date(2010, 11, 15)
+            competition_phase, datetime.date(2017, 4, 24)
         )
-        == 12
+        == 11
     )
     assert (
         results.get_minimum_rides_base_proportional(
-            competition_phase, datetime.date(2010, 11, 30)
+            competition_phase, datetime.date(2017, 5, 1)
         )
-        == 25
+        == 15
     )
 
 
@@ -476,6 +476,7 @@ def test_company_frequency_city_competitor_without_admission(
     filter_query = results._filter_query_company(competition)
     assert str(filter_query["subsidiaries__city__in"]) == "<QuerySet [<City: City 1>]>"
 
+
 # Get competitor tests
 def test_get_competitors(team, ua1, ua2, campaign):
     competition = mommy.make(
@@ -490,15 +491,15 @@ def test_get_competitors(team, ua1, ua2, campaign):
 @pytest.fixture()
 def competition_single_user_length(campaign):
     with Mom(
-            "Competition",
-            competition_type="length",
-            competitor_type="single_user",
-            campaign=campaign,
-            date_from=datetime.date(2017, 4, 3),
-            date_to=datetime.date(2017, 5, 23),
-            commute_modes=models.CommuteMode.objects.filter(
-                slug__in=("bicycle", "by_foot")
-            ),
+        "Competition",
+        competition_type="length",
+        competitor_type="single_user",
+        campaign=campaign,
+        date_from=datetime.date(2017, 4, 3),
+        date_to=datetime.date(2017, 5, 23),
+        commute_modes=models.CommuteMode.objects.filter(
+            slug__in=("bicycle", "by_foot")
+        ),
     ) as o:
         yield o
 
@@ -508,11 +509,15 @@ def test_get_competitors_with_admission_single(ua1, competition_single_user_leng
     query = results.get_competitors(competition_single_user_length)
     assert str(query.all()), "<QuerySet [<UserAttendance: Foo user>]"
 
-def test_get_competitors_with_admission_team(ua1, ua2, competition_team_frequency, team):
+
+def test_get_competitors_with_admission_team(
+    ua1, ua2, competition_team_frequency, team
+):
     mommy.make("Payment", status=99, userattendance=ua1).save()
     mommy.make("Payment", status=99, userattendance=ua2).save()
     query = results.get_competitors(competition_team_frequency)
     assert str(query.all()) == "<QuerySet [<Team: Foo team (Bar user, Foo user)>]>"
+
 
 @fixture()
 def competition_company_frequency(campaign, company):
@@ -524,10 +529,148 @@ def competition_company_frequency(campaign, company):
     ) as o:
         yield o
 
+
 def test_get_competitors_with_admission_company(competition_company_frequency):
     query = results.get_competitors(competition_company_frequency)
     assert str(query.all()) == "<QuerySet [<Company: Foo company>]>"
 
+
 def test_get_competitors_liberos(ua1, team, competition_single_user_length):
     query = results.get_competitors(competition_single_user_length)
     assert str(query.all()) == "<QuerySet [<UserAttendance: Foo user>]>"
+
+
+# Test results
+@fixture()
+def results_trips(ua1, bicycle, by_foot, no_work, by_other_vehicle):
+    mommy.make(
+        "Trip",
+        commute_mode=bicycle,
+        distance="1",
+        direction="trip_to",
+        user_attendance=ua1,
+        date="2017-05-01",
+    ).save()
+    mommy.make(
+        "Trip",
+        commute_mode=no_work,
+        direction="trip_to",
+        date="2017-05-02",
+        user_attendance=ua1,
+    ).save()
+    mommy.make(
+        "Trip",
+        commute_mode=no_work,
+        direction="trip_from",
+        date="2017-05-02",
+        user_attendance=ua1,
+    ).save()
+    mommy.make(
+        "Trip",
+        commute_mode=by_foot,
+        distance="1",
+        direction="trip_from",
+        date="2017-05-03",
+        user_attendance=ua1,
+    ).save()
+    ua1.save()
+
+
+@fixture
+def may_fifth(settings):
+    settings.FAKE_DATE = datetime.date(year=2017, month=5, day=5)
+
+
+def test_get_userprofile_length(
+    campaign,
+    ua1,
+    results_trips,
+    may_fifth,
+):
+    competition = mommy.make(
+        "Competition",
+        competition_type="length",
+        competitor_type="single_user",
+        campaign=campaign,
+        date_from=datetime.date(2017, 4, 3),
+        date_to=datetime.date(2017, 5, 23),
+        commute_modes=models.CommuteMode.objects.filter(
+            slug__in=("bicycle", "by_foot")
+        ),
+    )
+    result = results.get_userprofile_length([ua1], competition)
+    assert result == 2.0
+
+    util.rebuild_denorm_models([ua1])
+    ua1.refresh_from_db()
+
+    result = ua1.trip_length_total
+    assert result == 2.0
+
+
+def test_get_userprofile_frequency(ua1, ua2, campaign, results_trips, may_fifth):
+    competition = mommy.make(
+        "Competition",
+        competition_type="frequency",
+        competitor_type="team",
+        campaign=campaign,
+        date_from=datetime.date(2017, 4, 3),
+        date_to=datetime.date(2017, 5, 23),
+        commute_modes=models.CommuteMode.objects.filter(
+            slug__in=("bicycle", "by_foot")
+        ),
+    )
+    mommy.make("Payment", status=99, userattendance=ua1)
+    mommy.make("Payment", status=99, userattendance=ua2)
+
+    util.rebuild_denorm_models([ua1, ua2, ua1.team])
+    ua1.refresh_from_db()
+    ua2.refresh_from_db()
+    ua1.team.refresh_from_db()
+
+    result = ua1.get_rides_count_denorm
+    assert result == 2
+
+    result = ua1.get_working_rides_base_count()
+    assert result == 47
+
+    result = ua1.frequency
+    assert result == 0.0425531914893617
+
+    result = ua2.frequency
+    assert result == 0
+
+    result = ua1.team.frequency
+    assert result == 0.0212765957446809
+
+    result = ua1.team.get_rides_count_denorm
+    assert result == 2
+
+    result = results.get_working_trips_count(ua1, competition)
+    assert result == 47
+
+    result = results.get_working_trips_count(ua2, competition)
+    assert result == 48
+
+    result = ua1.team.get_working_trips_count()
+    assert result == 95
+
+    result = results.get_userprofile_frequency(ua1, competition)
+    assert result == (2, 47, 2 / 47.0)
+
+    result = results.get_team_frequency(ua1.team.members, competition)
+    assert result == (2, 95, 2 / 95.0)
+
+
+def test_get_userprofile_length_by_foot(ua1, campaign, results_trips, may_fifth):
+    competition = mommy.make(
+        "Competition",
+        competition_type="length",
+        competitor_type="single_user",
+        campaign=campaign,
+        date_from=datetime.date(2017, 4, 1),
+        date_to=datetime.date(2017, 5, 31),
+        commute_modes=models.CommuteMode.objects.filter(slug__in=("by_foot",)),
+    )
+    result = results.get_userprofile_length([ua1], competition)
+    assert result == 1.0

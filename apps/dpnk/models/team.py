@@ -201,11 +201,11 @@ class Team(WithGalleryMixin, models.Model):
         return rides_count
 
     def get_working_trips_count(self):
-        return sum([member.get_working_rides_base_count() for member in self.members])
+        return sum([member.get_working_rides_base_count() for member in self.paid_members()])
 
     def get_remaining_rides_count(self):
         """Return number of rides, that are remaining to the end of competition"""
-        return self.members.count() * self.members.first().get_remaining_rides_count()
+        return self.paid_members().count() * self.paid.members.first().get_remaining_rides_count()
 
     def get_remaining_max_theoretical_frequency_percentage(self):
         """Return maximal frequency that can be achieved till end of the competition"""
@@ -232,11 +232,11 @@ class Team(WithGalleryMixin, models.Model):
         from .. import results
 
         return results.get_team_frequency(
-            self.members, self.campaign.phase("competition")
+            self.paid_members(), self.campaign.phase("competition")
         )
 
     def get_frequency_(self):
-        members = self.members
+        members = self.paid_members()
         count = len(members)
         if count == 0:
             return 0, 0
@@ -246,7 +246,7 @@ class Team(WithGalleryMixin, models.Model):
         return self.get_frequency_()[0]
 
     def get_eco_trip_count(self):
-        return sum([member.eco_trip_count() for member in self.members])
+        return sum([member.eco_trip_count() for member in self.paid_members()])
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_length())
@@ -260,7 +260,7 @@ class Team(WithGalleryMixin, models.Model):
         return (self.frequency or 0) * 100
 
     def get_length(self):
-        return sum([member.trip_length_total for member in self.members])
+        return sum([member.trip_length_total for member in self.paid_members()])
 
     @denormalized(models.TextField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
