@@ -259,6 +259,7 @@ def get_working_trips_count_without_minimum(
         user_attendance=user_attendance,
         commute_mode__does_count=False,
         date__in=working_days,
+        direction__in=("trip_to", "trip_from"),
     ).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = (
