@@ -201,11 +201,16 @@ class Team(WithGalleryMixin, models.Model):
         return rides_count
 
     def get_working_trips_count(self):
-        return sum([member.get_working_rides_base_count() for member in self.paid_members()])
+        return sum(
+            [member.get_working_rides_base_count() for member in self.paid_members()]
+        )
 
     def get_remaining_rides_count(self):
         """Return number of rides, that are remaining to the end of competition"""
-        return self.paid_members().count() * self.paid.members.first().get_remaining_rides_count()
+        return (
+            self.paid_members().count()
+            * self.paid.members.first().get_remaining_rides_count()
+        )
 
     def get_remaining_max_theoretical_frequency_percentage(self):
         """Return maximal frequency that can be achieved till end of the competition"""

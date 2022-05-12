@@ -106,6 +106,7 @@ def ua2(team, campaign, competition_phase):
 def bicycle(db):
     try:
         from dpnk.models import CommuteMode
+
         yield CommuteMode.objects.get(slug="bicycle")
     except:
         with Mom(
@@ -136,10 +137,12 @@ def bicycle(db):
             yield o
             o.delete()
 
+
 @fixture()
 def by_foot(db):
     try:
         from dpnk.models import CommuteMode
+
         yield CommuteMode.objects.get(slug="by_foot")
     except:
         with Mom(
@@ -175,6 +178,7 @@ def by_foot(db):
 def by_other_vehicle(db):
     try:
         from dpnk.models import CommuteMode
+
         yield CommuteMode.objects.get(slug="by_other_vehicle")
     except:
         with Mom(
@@ -205,10 +209,12 @@ def by_other_vehicle(db):
             yield o
             o.delete()
 
+
 @fixture()
 def no_work(db):
     try:
         from dpnk.models import CommuteMode
+
         yield CommuteMode.objects.get(slug="no_work")
     except:
         with Mom(
