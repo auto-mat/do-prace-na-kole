@@ -118,10 +118,17 @@ def get_notification_queryset(
 ):
     campaign = Campaign.objects.get(slug=campaign_slug)
     queryset = model.get_stale_objects(days_between_notifications * 24 * 60 * 60)
+    q = {}
+    if issubclass(model, Invoice):
+        from django.conf import settings
+
+        date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
+        if date_from_create_invoices:
+            q = {"created__lt": date_from_create_invoices}
     if not pks:
-        return queryset.filter(campaign=campaign)
+        return queryset.filter(campaign=campaign, **q)
     else:
-        return queryset.filter(pk__in=pks, campaign=campaign)
+        return queryset.filter(pk__in=pks, campaign=campaign, **q)
 
 
 @shared_task(bind=True)
