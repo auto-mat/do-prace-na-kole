@@ -2,6 +2,7 @@
 
 import decimal
 import logging
+import re
 import requests
 
 from django.conf import settings
@@ -30,6 +31,7 @@ def create_or_update_subject(fa, invoice):
         " '{fakturoid_user_account_slug}' due error: '{error}'"
     )
     # Subject
+    pattern = re.compile(r"\s+")
     fa_subject_data = {
         "custom_id": invoice.company.id,
         "name": invoice.company_name,
@@ -42,7 +44,11 @@ def create_or_update_subject(fa, invoice):
         "registration_no": invoice.company_ico,
         "vat_no": invoice.company_dic,
         "city": invoice.company_address_city,
-        "phone": invoice.company_admin_telephones(),
+        "phone": re.sub(
+            pattern,
+            "",
+            invoice.company_admin_telephones().split(",")[0],
+        ),
         "note": invoice.client_note,
     }
     fa_subject_emails = invoice.company_admin_emails().split(",")
