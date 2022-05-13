@@ -135,7 +135,6 @@ def bicycle(db):
             eco=True,
         ) as o:
             yield o
-            o.delete()
 
 
 @fixture()
@@ -171,7 +170,6 @@ def by_foot(db):
             eco=True,
         ) as o:
             yield o
-            o.delete()
 
 
 @fixture()
@@ -207,7 +205,6 @@ def by_other_vehicle(db):
             eco=False,
         ) as o:
             yield o
-            o.delete()
 
 
 @fixture()
@@ -243,4 +240,3 @@ def no_work(db):
             eco=True,
         ) as o:
             yield o
-            o.delete()

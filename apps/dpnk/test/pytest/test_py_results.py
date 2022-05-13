@@ -53,6 +53,14 @@ def test_get_minimum_rides_base_proportional(competition_team_frequency):
     )
 
 
+def test_team_get_remaining_rides_count_empty_team(team):
+    assert team.get_remaining_rides_count() == 0
+
+
+def test_team_get_remaining_rides_count_empty_team(team, may_fifth, ua1, ua2):
+    assert team.get_remaining_rides_count() == 60
+
+
 def test_get_minimum_rides_base_proportional_phase(competition_phase):
     assert (
         results.get_minimum_rides_base_proportional(
