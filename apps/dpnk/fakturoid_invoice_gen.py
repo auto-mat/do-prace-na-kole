@@ -148,10 +148,6 @@ def create_or_update_invoice(fa, subject, invoice):
     fa_invoice_data = {
         "custom_id": invoice.id,
         "subject_id": subject.id,
-        "number": (
-            f"{invoice.exposure_date.year}D"
-            f"{invoice.sequence_number:0{settings.FAKTUROID['invoice_number_width']}d}"
-        ),  # #yyyy#D#dddd#
         "order_number": invoice.order_number,
         "lines": [],
     }
