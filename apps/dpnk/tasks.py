@@ -34,6 +34,8 @@ from django.utils.translation import ugettext as _
 
 from notifications.signals import notify
 
+from celery.utils.log import get_task_logger
+
 import smmapdfs.email
 import smmapdfs.tasks
 
@@ -49,6 +51,8 @@ from .models import (
     Voucher,
     payments_to_invoice,
 )
+
+logger = get_task_logger(__name__)
 
 
 @shared_task(bind=True)
@@ -184,7 +188,10 @@ def send_new_invoice_notification(self, pks=None, campaign_slug=""):
 def create_invoice_if_needed(self, pk=None, campaign_slug=""):
     company = Company.objects.get(pk=pk)
     campaign = Campaign.objects.get(slug=campaign_slug)
+    logger.info(f"Company name: {company}")
+    logger.info(f"Campaign: {campaign}")
     payments = payments_to_invoice(company, campaign)
+    logger.info(f"Number of payments: {payments.count()}")
     if payments:
         Invoice.objects.create(
             company=company,
