@@ -11,7 +11,7 @@
 </script>
 {% trans "Otevřít na nové kartě" as new_tab %}
 {% if unit == "individual" %}
-  {% with url=base_url|add:"?jm%25C3%25A9no="|add:user.first_name|add:"&p%25C5%2599%25C3%25ADjmen%25C3%25AD_="|add:user.last_name|add:"&ro%25C4%258Dn%25C3%25ADk_dpnk=" %}
+  {% with url=base_url|add:"?u%25C5%25BEivatelsk%25C3%25A9_jm%25C3%25A9no="|add:user.username|add:"&ro%25C4%258Dn%25C3%25ADk_dpnk=" %}
     <div class="row mb-2">
       <div class="col">
         {% if user_attendance %}
