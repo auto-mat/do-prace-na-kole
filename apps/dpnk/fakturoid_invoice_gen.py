@@ -37,7 +37,7 @@ def create_or_update_subject(fa, invoice):
         "name": invoice.company_name,
         "street": (
             f"{invoice.company.address.street or ''} "
-            f"{invoice.company.address.street_number or ''}",
+            f"{invoice.company.address.street_number or ''}"
         ),
         "zip": invoice.company_address_psc,
         "country": invoice.country or "CZ",
