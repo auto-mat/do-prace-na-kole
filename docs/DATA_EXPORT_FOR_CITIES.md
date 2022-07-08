@@ -11,11 +11,20 @@ Then select the cities you want to generate data for, and run the "Vytvořit tab
 
 The admin action will run the task in celery and it will take up to several hours to complete.
 
+Finding the data
+================
+
+As admin
+--------
+
 Once the action is done you can download it in the admin by opening up a specific city.
 
 ![image](https://user-images.githubusercontent.com/1391608/176538832-92f39e9f-d6d2-430a-a917-15e656e577cf.png)
 
 The data is stored in an encrypted ZIP file. The password is visible in the admin. **Do not send the encrypted ZIP file and password in the same message, always use two methods of sending, for exmaple send the file via google drive and the password via SMS**.
+
+As city coordinator
+-------------------
 
 The data is also accessible to city coordinators. They can get it by clicking on the "Městský koordinator" item in the main menu:
 
