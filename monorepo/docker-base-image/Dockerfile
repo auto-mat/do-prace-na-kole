@@ -28,7 +28,9 @@ run apt-get update && apt-get install -y \
    libgettextpo-dev \
    curl \
    pdftk-java \
-   postgis
+   postgis \
+   fuse3 \
+   s3fs
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
