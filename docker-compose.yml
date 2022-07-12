@@ -17,6 +17,10 @@ services:
   stdin_open: true
   working_dir: /app-v/
   user: root
+  cap_add:
+    - SYS_ADMIN
+  devices:
+    - /dev/fuse
   volumes:
    - ./:/app-v/
    - ./pyenv:/home/test
