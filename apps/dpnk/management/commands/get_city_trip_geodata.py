@@ -69,6 +69,13 @@ class Command(BaseCommand):
             required=True,
             help=_("Buffer around city district, use meter unit"),
         )
+        parser.add_argument(
+            "--aws_s3_gpkg_dir",
+            dest="aws_s3_gpkg_dir",
+            type=str,
+            default="exported_trip_gpkg",
+            help=_("AWS S3 Bucket GPKG geodata directory"),
+        )
 
     def _get_clip_trip_sql(
         self,
@@ -199,6 +206,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         city = options.get("city")
         buffer = options.get("buffer")
+        aws_s3_bucket_exported_gpkgs_dir = options.get("aws_s3_gpkg_dir")
 
         db_settings = settings.DATABASES["default"]
         shp_suffix = ".shp"
@@ -221,7 +229,6 @@ class Command(BaseCommand):
             pg_city_buffer = f"{pg_city}_buffer"
             pg_input_clipped = "trip"
 
-            aws_s3_bucket_exported_gpkgs_dir = "exported_trip_gpkg"
             aws_s3_bucket_mnt_dir = os.path.join(
                 os.path.expanduser("~"),
                 "mnt",
