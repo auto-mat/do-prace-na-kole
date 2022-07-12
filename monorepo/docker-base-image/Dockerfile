@@ -1,4 +1,4 @@
-from python:3.9-buster
+from python:3.9-bullseye
 
 maintainer Automat
 
