@@ -272,7 +272,7 @@ class Command(BaseCommand):
                     "mount_aws_s3_bucket.sh",
                 )
                 cmd = (
-                    f"{mnt_s3_sh_script} {temp_dir}"
+                    f"{mnt_s3_sh_script}"
                     f" {aws_s3_bucket_mnt_dir}"
                     f" {aws_s3_bucket_exported_gpkgs_dir}"
                 )
