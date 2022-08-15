@@ -741,20 +741,14 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 format_html(
                     '{} Kč<p class="price-descriptor">{}</p>',
                     round(self.user_attendance.beneficiary_admission_fee()),
-                    _("Podpořím soutěž benefičním startovným %s Kč.")
-                    % (
-                        round(
-                            self.user_attendance.beneficiary_admission_fee()
-                            - self.user_attendance.admission_fee()
-                        )
-                    ),
+                    _("Podpořím výzvu benefičním darem."),
                 ),
             ),
             (
                 "company",
                 format_html(
                     '0 Kč<p class="price-descriptor">{}</p>',
-                    _("Startovné mi platí zaměstnavatel."),
+                    _("Příspěvek za mě platí zaměstnavatel."),
                 ),
             ),
         ]
@@ -765,7 +759,9 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                     format_html(
                         '0 Kč<p class="price-descriptor">{}</p>',
                         _(
-                            "Chci se stát členem Klubu přátel organizace AutoMat a podpořit rozvoj udržitelné mobility. "
+                            "Chci pravidelně podporovat spolek AutoMat"
+                            " a rozvoj udržitelné mobility, a mít tak"
+                            " účast ve výzvách vždy zdarma."
                         ),
                     ),
                 ),
