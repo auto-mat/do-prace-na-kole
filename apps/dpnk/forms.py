@@ -741,7 +741,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 format_html(
                     '{} Kč<p class="price-descriptor">{}</p>',
                     round(self.user_attendance.beneficiary_admission_fee()),
-                    _("Podpořím výzvu benefičním darem.")
+                    _("Podpořím výzvu benefičním darem."),
                 ),
             ),
             (
