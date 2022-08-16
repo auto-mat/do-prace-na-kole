@@ -733,7 +733,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 format_html(
                     '<span id="payment_amount">{} Kč</span><p class="price-descriptor">{}</p>',
                     round(self.user_attendance.admission_fee()),
-                    _("Zaplatím běžné startovné."),
+                    _("Podpořím výzvu základním darem."),
                 ),
             ),
             (
@@ -744,13 +744,13 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                     _("Podpořím výzvu benefičním darem."),
                 ),
             ),
-            (
-                "company",
-                format_html(
-                    '0 Kč<p class="price-descriptor">{}</p>',
-                    _("Příspěvek za mě platí zaměstnavatel."),
-                ),
-            ),
+            # (
+            #     "company",
+            #     format_html(
+            #         '0 Kč<p class="price-descriptor">{}</p>',
+            #         _("Příspěvek za mě platí zaměstnavatel."),
+            #     ),
+            # ),
         ]
         if self.user_attendance.campaign.club_membership_integration:
             self.fields["payment_type"].choices.append(
