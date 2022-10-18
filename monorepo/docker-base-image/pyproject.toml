@@ -64,7 +64,7 @@ django-datatables-view = "*"
 django-rank-query = "*"
 django-adminactions = "1.12.0"
 django-avatar = "*"
-django-photologue = {git = "https://github.com/auto-mat/django-photologue.git", rev = "s3links"}
+django-photologue = "3.15.1"
 boto3 = "*"
 django-google-tag-manager = "*"
 django-ses = "*"
