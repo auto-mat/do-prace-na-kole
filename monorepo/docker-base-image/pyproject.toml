@@ -121,7 +121,7 @@ dj-fiobank-payments = "<=0.3.0"
 asgiref = "*"
 django-dbtemplates = "*"
 django-reversion = "*"
-django-admin-charts = "*"
+django-admin-charts = "<1.2.0" # https://github.com/PetrDlouhy/django-admin-charts/commit/758b5809483872eb81e83491ae0617019c87fd42#r87232967
 django-inline-static = "*"
 django-notifications-hq = {git = "https://github.com/auto-mat/django-notifications.git", rev = "list_all"}
 django-extra-fields = "*"
