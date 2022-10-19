@@ -44,14 +44,14 @@ jobs:
       - run:
          name: Build Docker image
          command: |
-           if scripts/test_changes --invert-match monorepo/ ; then
+           if scripts/test_changes --invert-match docs/ ; then
              cd /home/circleci/project
              docker build -t dopracenakole .
            fi
       - run:
          name: Deploy test Docker image
          command: |
-           if scripts/test_changes --invert-match monorepo/ ; then
+           if scripts/test_changes --invert-match docs/ ; then
             if [ "$DOCKER_USER" != "" ] ; then
               TAG="$(date +%Y).${CIRCLE_BUILD_NUM}"
               docker tag dopracenakole:latest auto0mat/dopracenakole:$TAG
@@ -62,25 +62,25 @@ jobs:
       - run:
          name: Build test Docker image
          command: |
-           if scripts/test_changes --invert-match monorepo/ ; then
+           if scripts/test_changes --invert-match docs/ ; then
              docker build -t dopracenakole-test -f TestDockerfile .
            fi
       - run:
          name: Start PostGIS container
          command: |
-           if scripts/test_changes --invert-match monorepo/ ; then
+           if scripts/test_changes --invert-match docs/ ; then
             docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis:9.6
            fi
       - run:
          name: Start RabbitMQ container
          command: |
-           if scripts/test_changes --invert-match monorepo/ ; then
+           if scripts/test_changes --invert-match docs/ ; then
             docker run -d --hostname dpnk-rabbit --name dpnk-rabbit rabbitmq
            fi
       - run:
          name: Test Docker container in Django
          command: |
-           if scripts/test_changes --invert-match monorepo/ ; then
+           if scripts/test_changes --invert-match docs/ ; then
             sleep 10
             docker run \
                --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
