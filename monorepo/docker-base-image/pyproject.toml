@@ -102,7 +102,7 @@ django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-re
 django-selectable = "*"
 django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", rev = "develop"}
 django-braces = "*"
-django-modeltranslation = "*"
+django-modeltranslation = "==0.17.7"
 django_polymorphic = "*"
 Unidecode = "*"
 Pillow = "==9.0.1"
@@ -111,7 +111,7 @@ SQLAlchemy = "*"
 django_celery_beat = "*"
 django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", rev = "mergeup"}
 PyPDF2 = "*"
-django-bootstrap4 = "==0.0.8" 
+django-bootstrap4 = "==0.0.8"
 html2text = "*"
 tornado = "<6"
 dj_anonymizer = "*"
