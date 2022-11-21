@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django import forms
+from django.apps import apps
 from django.contrib.gis.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
@@ -291,7 +292,8 @@ class Answer(models.Model):
     #      return "%s" % self.str_choices()
 
 
-secretballot.enable_voting_on(Answer)
+if apps.ready:
+    secretballot.enable_voting_on(Answer)
 
 
 @receiver(post_save, sender=Answer)
