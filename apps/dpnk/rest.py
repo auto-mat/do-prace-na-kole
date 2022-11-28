@@ -322,7 +322,7 @@ class TripSet(UserAttendanceMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.request.method == "PUT":
+        if self.request and self.request.method == "PUT":
             return TripUpdateSerializer
         return TripDetailSerializer if self.action == "retrieve" else TripSerializer
 
@@ -353,7 +353,7 @@ class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
         return qs
 
     def get_serializer_class(self):
-        if self.request.method == "PUT":
+        if self.request and self.request.method == "PUT":
             return TripUpdateSerializer
         return TripDetailSerializer if self.action == "retrieve" else TripSerializer
 
