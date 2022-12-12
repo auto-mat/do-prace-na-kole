@@ -33,7 +33,7 @@ polyline = "*"
 InvoiceGenerator = {git = "https://github.com/auto-mat/InvoiceGenerator.git", rev = "master"}
 django-related-admin = "*"
 newrelic = "*"
-django-crispy-forms = "*"
+django-crispy-forms = "1.11.2"
 django-class-based-auth-views = "*"
 slumber = "*"
 geopy = "==1.22.0"
