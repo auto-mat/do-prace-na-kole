@@ -888,11 +888,11 @@ six = ">=1.4.0"
 
 [[package]]
 name = "django-crispy-forms"
-version = "1.14.0"
+version = "1.11.2"
 description = "Best way to have Django DRY forms"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.5"
 
 [[package]]
 name = "django-datatables-view"
@@ -3498,7 +3498,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stravalib"
-version = "0.10.4"
+version = "0.10.4.post32"
 description = "Python library for interacting with Strava v3 REST API"
 category = "main"
 optional = false
@@ -3519,7 +3519,7 @@ units = "*"
 type = "git"
 url = "https://github.com/hozn/stravalib"
 reference = "master"
-resolved_reference = "20389c3a77083d3d197d68f9b7bd9f3a0049433a"
+resolved_reference = "a67e847453ec13864a88dcc0287ca940a95b85ad"
 
 [[package]]
 name = "svg2rlg"
@@ -3832,7 +3832,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "353ab7ef1ebcd4cd7477c40d193114522044464ab90fac63cbdb47ea3b67321c"
+content-hash = "99efa7fd846f123e329c7f8403b0bcd32f6c8f68424b2008fc86796938b1ebee"
 
 [metadata.files]
 aioredis = [
@@ -4318,8 +4318,8 @@ django-coverage-plugin = [
     {file = "django_coverage_plugin-2.0.3.tar.gz", hash = "sha256:e73231e3bfddb2ac836fd43cb0e6ec2ab3a97457b1d9ca2468085e506beb7935"},
 ]
 django-crispy-forms = [
-    {file = "django-crispy-forms-1.14.0.tar.gz", hash = "sha256:35887b8851a931374dd697207a8f56c57a9c5cb9dbf0b9fa54314da5666cea5b"},
-    {file = "django_crispy_forms-1.14.0-py3-none-any.whl", hash = "sha256:bc4d2037f6de602d39c0bc452ac3029d1f5d65e88458872cc4dbc01c3a400604"},
+    {file = "django-crispy-forms-1.11.2.tar.gz", hash = "sha256:88efa857ce6111bd696cc4f74057539a3456102fe9c3a3ece8868e1e4579e70a"},
+    {file = "django_crispy_forms-1.11.2-py3-none-any.whl", hash = "sha256:3db71ab06d17ec9d0195c086d3ad454da300ac268752ac3a4f63d72f7a490254"},
 ]
 django-datatables-view = [
     {file = "django-datatables-view-1.19.1.tar.gz", hash = "sha256:22f9920008bb11eb2a2ac7886ff2151f749a86a08c9cbf999571f32255da3621"},
