@@ -34,7 +34,7 @@ run apt-get update && apt-get install -y \
    npm
 
 run mkdir /home/aplikace -p \
-    npm install -g bower
+    && npm install -g bower
 WORKDIR "/home/aplikace"
 
 run pip3 install poetry
