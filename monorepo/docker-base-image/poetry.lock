@@ -1157,7 +1157,7 @@ django-import-export = "*"
 type = "git"
 url = "https://github.com/auto-mat/django-import-export-celery.git"
 reference = "master"
-resolved_reference = "272cbcb941243308be2b6301f489308073d9dc6e"
+resolved_reference = "534741958fa24c32ee285f08ce4b34276cbc9897"
 
 [[package]]
 name = "django-initial-field"
@@ -3519,7 +3519,7 @@ units = "*"
 type = "git"
 url = "https://github.com/hozn/stravalib"
 reference = "master"
-resolved_reference = "a67e847453ec13864a88dcc0287ca940a95b85ad"
+resolved_reference = "19e051ed0d7f52b7f3fc17522eeb0c1b0f3a991f"
 
 [[package]]
 name = "svg2rlg"
@@ -3832,7 +3832,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "99efa7fd846f123e329c7f8403b0bcd32f6c8f68424b2008fc86796938b1ebee"
+content-hash = "cd2004db6d593a4e4a57662c76fa7f4caee4075824714d0e589ccd825f8c3f26"
 
 [metadata.files]
 aioredis = [

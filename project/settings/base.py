@@ -150,6 +150,7 @@ if AWS_ACCESS_KEY_ID:
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "djangobower.finders.BowerFinder",
 )
 
 
@@ -360,6 +361,7 @@ INSTALLED_APPS = [
     "reversion",
     "inline_static",
     "notifications",
+    "djangobower",
 ]
 
 # DBTEMPLATES_USE_REVERSION = True
@@ -879,3 +881,10 @@ FAKTUROID = {
         ),
     },
 }
+
+BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, "components")
+
+BOWER_INSTALLED_APPS = (
+    "d3#3.5.17",
+    "nvd3#1.8.6",
+)
