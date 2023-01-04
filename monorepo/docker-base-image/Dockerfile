@@ -30,9 +30,11 @@ run apt-get update && apt-get install -y \
    pdftk-java \
    postgis \
    fuse3 \
-   s3fs
+   s3fs \
+   npm
 
-run mkdir /home/aplikace -p
+run mkdir /home/aplikace -p \
+    && npm install -g bower
 WORKDIR "/home/aplikace"
 
 run pip3 install poetry
