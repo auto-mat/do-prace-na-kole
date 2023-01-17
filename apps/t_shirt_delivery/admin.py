@@ -47,6 +47,7 @@ from dpnk.models import Campaign, UserAttendance
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin
+from import_export_celery.admin_actions import create_export_job_action
 
 from nested_admin import NestedModelAdmin, NestedTabularInline
 
@@ -402,12 +403,13 @@ class DeliveryBatchResource(DeliveryBatchModelBaseResource):
 
     class Meta:
         model = models.DeliveryBatch
-        fields = ("note", "created", "campaign__name", "dispatched")
+        fields = ("note", "created", "campaign__name", "dispatched", "id")
         export_order = (
             "note",
             "created",
             "campaign__name",
             "dispatched",
+            "id",
             "box_count",
             *DeliveryBatchModelBaseResource.fields,
         )
@@ -441,6 +443,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
         actions.regenerate_all_box_pdfs,
         actions.delivery_batch_generate_pdf,
         actions.delivery_batch_generate_pdf_for_opt,
+        create_export_job_action,
     ]
     readonly_fields = (
         "author",
