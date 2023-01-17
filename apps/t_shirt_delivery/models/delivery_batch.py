@@ -227,6 +227,17 @@ class DeliveryBatch(models.Model):
             subsidiary_box.add_packages_on_save = True
             subsidiary_box.save()
 
+    @classmethod
+    def export_resource_classes(cls):
+        from ..admin import DeliveryBatchResource
+
+        return {
+            "deliverybatch": (
+                "DeliveryBatch",
+                DeliveryBatchResource,
+            ),
+        }
+
 
 def generate_csv(file_name, instance, instance_field, generate_csv_func):
     """Generate and save CSV file to model instance field
