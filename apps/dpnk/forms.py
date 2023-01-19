@@ -522,6 +522,14 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
             social_html(False),
         )
 
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if not email.islower():
+            raise ValidationError(
+                _("Zadejte e-mailovou adresu malými písmeny."),
+            )
+        return email
+
 
 class EmailUsernameMixin(object):
     def clean_username(self):
