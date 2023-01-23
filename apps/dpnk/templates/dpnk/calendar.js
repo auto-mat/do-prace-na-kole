@@ -12,7 +12,7 @@ var commute_modes = {
         'eco': {{cm.eco|yesno:"true,false" }},
         'name': "{{cm.name}}",
         'add_command': "{{cm.add_command}}",
-        'choice_description': "{{cm.choice_description|safe}}",
+        'choice_description': "{{cm.choice_description|escapejs}}",
         'does_count': {{cm.does_count|yesno:"true,false" }},
         'icon_html': "{{cm.icon_html|urlencode}}",
         'points': "{{cm.points_display}}",
