@@ -25,6 +25,11 @@
 		{% trans "Dopravní prostředek" %}
 	</h3>
 	{{ trip.commute_mode }}
+  {% if trip.commute_mode.duration_important %}
+	<h3>
+			{% trans "Doba" %}
+	</h3>
+	{{ trip.duration_minutes }} min
   {% endif %}
   {% if trip.commute_mode.distance_important %}
 		<h3>
