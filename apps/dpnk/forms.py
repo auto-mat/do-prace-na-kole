@@ -1168,6 +1168,7 @@ class TripForm(InitialFieldsMixin, forms.ModelForm):
     duration = CommaFloatField(
         label=_("Doba (min)"),
         required=False,
+        widget=forms.HiddenInput(),
     )
 
     def __init__(self, *args, **kwargs):
