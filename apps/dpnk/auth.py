@@ -32,6 +32,8 @@ from django.contrib.auth.forms import (
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.urls import NoReverseMatch, reverse, reverse_lazy
+from django.utils import timezone
+from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
@@ -115,6 +117,12 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
         return clean_email(username)
 
     def __init__(self, *args, **kwargs):
+        campaign = kwargs.get("campaign")
+        disable_registration_btn = False
+        if campaign:
+            campaign_registration_date_to = campaign.phase("registration").date_to
+            if campaign_registration_date_to <= timezone.now().date():
+                disable_registration_btn = True
         ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
@@ -129,8 +137,26 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             ),
             social_html(True),
             HTML(
-                '<a class="registerme btn" href="{%% url "registration_access" %%}">%s</a>'
-                % _("Registrovat")
+                '<a class="registerme btn {disable_btn}"'
+                ' href="{{% url "registration_access" %}}">{btn_txt}</a>'
+                "{warning_txt}".format(
+                    disable_btn="disabled" if disable_registration_btn else "",
+                    btn_txt=_("Registrovat"),
+                    warning_txt="<p>{}</p>".format(
+                        _(
+                            "Registrace není možná, protože je"
+                            " ukončena dne {campaign_registration_date_to}.",
+                        ).format(
+                            campaign_registration_date_to=date_format(
+                                campaign_registration_date_to,
+                                format="SHORT_DATE_FORMAT",
+                                use_l10n=True,
+                            )
+                        )
+                    )
+                    if disable_registration_btn
+                    else "",
+                ),
             ),
             HTML(
                 '<a class="register_coordinator" href="{%% url "register_admin" %%}">%s</a>'
