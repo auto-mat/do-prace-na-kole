@@ -290,7 +290,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         for payment in payments:
             payment.status = Status.INVOICE_MADE
             payment.save()
-            # denorm.flush()
+            denorm.flush()
 
     def fill_company_details(self):
         if not self.company_name:  # set invoice parameters from company
