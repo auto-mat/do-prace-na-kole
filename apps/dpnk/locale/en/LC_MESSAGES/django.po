@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-19 14:11+0100\n"
+"POT-Creation-Date: 2023-01-31 05:20+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -247,32 +247,32 @@ msgstr "Fakturoid invoice"
 msgid "Nemá účast v kampani"
 msgstr "Hasn't user attendance?"
 
-#: apps/dpnk/auth.py:66
+#: apps/dpnk/auth.py:68
 msgid "Problém na trase! Sesedněte z kola a nejprve svůj účet {}."
 msgstr "Bump ahead! Get off your bike and first {} your account."
 
-#: apps/dpnk/auth.py:70
+#: apps/dpnk/auth.py:72
 msgid "aktivujte"
 msgstr "activate"
 
-#: apps/dpnk/auth.py:79
+#: apps/dpnk/auth.py:81
 #, fuzzy
 #| msgid "Neplatná"
 msgid "Neplatný email"
 msgstr "Invalid"
 
-#: apps/dpnk/auth.py:86
+#: apps/dpnk/auth.py:88
 #, fuzzy
 #| msgid "Tento e-mail v systému není zanesen."
 msgid "Tento e-mail neznáme. "
 msgstr "This e-mail is not registered in our system"
 
-#: apps/dpnk/auth.py:88 apps/dpnk/auth.py:133 apps/dpnk/forms.py:552
+#: apps/dpnk/auth.py:90 apps/dpnk/auth.py:144 apps/dpnk/forms.py:552
 #: apps/dpnk/forms.py:608
 msgid "Registrovat"
 msgstr "Register"
 
-#: apps/dpnk/auth.py:100
+#: apps/dpnk/auth.py:102
 msgid ""
 "Problém na trase! Sesedněte z kola a zkontrolujte si heslo. Dejte pozor na "
 "malá a velká písmena."
@@ -280,27 +280,36 @@ msgstr ""
 "Bump ahead! Get off your bike and check your password. Mind the upper and "
 "lowercase letters."
 
-#: apps/dpnk/auth.py:104
+#: apps/dpnk/auth.py:106
 msgid "Nepamatujete si heslo?"
 msgstr "Don't remember your password?"
 
-#: apps/dpnk/auth.py:107
+#: apps/dpnk/auth.py:109
 msgid "This account is inactive."
 msgstr ""
 
-#: apps/dpnk/auth.py:125 apps/dpnk/templates/registration/logged_out.html:14
+#: apps/dpnk/auth.py:133 apps/dpnk/templates/registration/logged_out.html:14
 msgid "Přihlásit"
 msgstr "Login"
 
-#: apps/dpnk/auth.py:128 apps/dpnk/auth.py:145
+#: apps/dpnk/auth.py:136 apps/dpnk/auth.py:171
 msgid "Obnovit heslo"
 msgstr "Reset password"
 
-#: apps/dpnk/auth.py:137
+#: apps/dpnk/auth.py:147
+#, python-brace-format
+msgid ""
+"Registrace není možná, protože je ukončena dne "
+"{campaign_registration_date_to}."
+msgstr ""
+"Registration is not possible because it ends on "
+"{campaign_registration_date_to}."
+
+#: apps/dpnk/auth.py:163
 msgid "Registrovat firemního koordinátora"
 msgstr "Register company coordinator"
 
-#: apps/dpnk/auth.py:140 apps/dpnk/company_admin_forms.py:65
+#: apps/dpnk/auth.py:166 apps/dpnk/company_admin_forms.py:65
 #: apps/dpnk/filters.py:156 apps/dpnk/forms.py:985
 #: apps/dpnk/models/invoice.py:181
 #: apps/dpnk/templates/company_admin/select_users_pay_for.html:29
@@ -308,15 +317,15 @@ msgstr "Register company coordinator"
 msgid "E-mail"
 msgstr "E-mail"
 
-#: apps/dpnk/auth.py:160
+#: apps/dpnk/auth.py:186
 msgid "Zadejte e-mail"
 msgstr "Fill in your e-mail"
 
-#: apps/dpnk/auth.py:173
+#: apps/dpnk/auth.py:199
 msgid "V případě registrace přes sociální sítě nechte pole prázdné."
 msgstr "If you log in via a social network account leave blank"
 
-#: apps/dpnk/auth.py:176 apps/dpnk/forms.py:575
+#: apps/dpnk/auth.py:202 apps/dpnk/forms.py:575
 msgid "Heslo musí mít minimálně 6 znaků a obsahovat alespoň jedno písmeno."
 msgstr "Password must have at least 6 character and one letter."
 
@@ -998,17 +1007,17 @@ msgstr "Distance (km)"
 msgid "Doba (min)"
 msgstr ""
 
-#: apps/dpnk/forms.py:1202
+#: apps/dpnk/forms.py:1203
 msgid "Musíte vyplnit vzdálenost"
 msgstr "You have to fill in distance"
 
-#: apps/dpnk/forms.py:1210
+#: apps/dpnk/forms.py:1211
 #, fuzzy, python-brace-format
 #| msgid "Pěší cesta musí mít minimálně jeden a půl kilometru"
 msgid "Cesta musí mít minimálně {km} kilometrů"
 msgstr "Pedestrian trip has to be at least one and half kilometer long"
 
-#: apps/dpnk/forms.py:1219
+#: apps/dpnk/forms.py:1220
 #, python-format
 msgid "Činnost musí trvat minimálně %(min)d minuta"
 msgid_plural "Činnost musí trvat minimálně %(min)d minut"
