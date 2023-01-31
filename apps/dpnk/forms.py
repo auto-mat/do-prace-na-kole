@@ -38,7 +38,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
-from django.utils import formats
+from django.utils import formats, timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ngettext
@@ -154,34 +154,65 @@ class CampaignMixin(object):
         return super().__init__(*args, **kwargs)
 
 
-def social_html(login=True):
+def social_html(
+    login=True,
+    disable_social_login_btns=False,
+    campaign_registration_date_to=None,
+):
+    """Social login buttons HTML string
+
+    :param bool login: login default
+    :param bool disable_social_login_btns: True if campaign registration
+                                           phase is finished
+    :param date campaign_registration_date_to: campaign registration phase
+                                               end date, set if
+                                               disable_social_login_btns
+                                               is True
+
+    :return str: HTML string
+    """
     action_word = _("Přihlásit přes") if login else _("Registrovat přes")
     apple_action_word = _("Pokračovat přes") if login else _("Zaregistrovat se přes")
     return HTML(
         format_html_lazy(
             '<div class="social-login-buttons">'
             "<p>"
-            '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
+            '<a class="btn facebook {disable_btn}" href="{{% url "social:begin" "facebook" %}}">'
             '<i class="fab fa-facebook"></i>&nbsp;'
-            "{} Facebook"
+            "{action_word} Facebook"
             "</a>"
             "</p>"
             "<p>"
-            '<a class="btn google" href="{{% url "social:begin" "google-oauth2" %}}">'
+            '<a class="btn google {disable_btn}" href="{{% url "social:begin" "google-oauth2" %}}">'
             '<i class="fab fa-google"></i>&nbsp;'
-            "{} Google"
+            "{action_word} Google"
             "</a>"
             "</p>"
             "<p>"
-            '<a class="btn apple" href="{{% url "social:begin" "apple-id" %}}">'
+            '<a class="btn apple {disable_btn}" href="{{% url "social:begin" "apple-id" %}}">'
             '<i class="fab fa-apple"></i>&nbsp;'
-            "{} Apple"
+            "{apple_action_word} Apple"
             "</a>"
             "</p>"
+            "<p>{warning_text}</p>"
             "</div>",
-            action_word,
-            action_word,
-            apple_action_word,
+            disable_btn="disabled" if disable_social_login_btns else "",
+            action_word=action_word,
+            apple_action_word=apple_action_word,
+            warning_text=_(
+                "Registrace není možná, protože je ukončena dne"
+                " {campaign_registration_date_to}."
+            ).format(
+                campaign_registration_date_to=formats.date_format(
+                    campaign_registration_date_to,
+                    format="SHORT_DATE_FORMAT",
+                    use_l10n=True,
+                )
+                if campaign_registration_date_to
+                else ""
+            )
+            if disable_social_login_btns
+            else "",
         ),
     )
 
@@ -513,13 +544,30 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
 
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        disable_social_login_btns = False
+        campaign_registration_date_to = None
+        if request:
+            campaign = request.get("campaign")
+            if campaign:
+                campaign_registration_date_to = campaign.phase("registration").date_to
+                if campaign_registration_date_to <= timezone.now().date():
+                    disable_social_login_btns = True
+                    self.fields["email"].widget.attrs["readonly"] = True
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "registration-access-form"
         self.helper.layout = Layout(
             "email",
-            Submit("submit", _("Pokračovat")),
-            social_html(False),
+            Submit(
+                "submit",
+                _("Pokračovat"),
+                disabled=True if disable_social_login_btns else False,
+            ),
+            social_html(
+                False,
+                disable_social_login_btns,
+                campaign_registration_date_to,
+            ),
         )
 
     def clean_email(self):
