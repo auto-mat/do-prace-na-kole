@@ -196,11 +196,19 @@ class RegisterSubsidiaryView(
 
 
 class RegistrationAccessView(
-    CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView
+    CampaignParameterMixin,
+    TitleViewMixin,
+    ProfileRedirectMixin,
+    FormView,
 ):
     template_name = "dpnk/base_login_registration.html"
     form_class = RegistrationAccessFormDPNK
     title = ""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.get_form_class()({"campaign": self.campaign})
+        return context
 
     def form_valid(self, form):
         email = form.cleaned_data["email"]
