@@ -8,14 +8,14 @@
 {% get_current_language as current_language_code %}
 <script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/{{ PAYU_POS_ID }}/{{ PAYU_KEY_1|slice:":2" }}/template:3/ext_calc:0/paytype.js'></script>
 <script
-		src="https://code.jquery.com/jquery-3.6.0.min.js"
-		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-		crossorigin="anonymous"></script>
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
 {{ block.super }}
 {% endblock %}
 
 {% block messages %}
-{% trans "Vyberte způsob platby a výši startovného, kterým mimo jiné podpoříte rozvoj udržitelné mobility v Česku. Za váš dar obdržíte voucher do našeho e-shopu ve výši 100 Kč a také potvrzení o daru, které si můžete odečíst z daní." %}
+{% trans "Vyberte způsob platby a výši startovného, kterým mimo jiné podpoříte rozvoj udržitelné mobility v Česku." %}
 {{ block.super }}
 {% endblock %}
 

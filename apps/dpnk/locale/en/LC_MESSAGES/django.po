@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 13:56+0100\n"
+"POT-Creation-Date: 2023-02-02 15:25+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -883,6 +883,12 @@ msgid "Podpořím výzvu benefičním darem."
 msgstr ""
 "I want to support this competition and with beneficiary participant fee %s "
 "Kč. <i class='fa fa-heart'></i>"
+
+#: dpnk/forms.py:807
+#, fuzzy
+#| msgid "Startovné mi platí zaměstnavatel."
+msgid "Příspěvek za mě platí zaměstnavatel."
+msgstr "Participation fee will be paid by my employer."
 
 #: dpnk/forms.py:818
 msgid ""
@@ -4025,10 +4031,12 @@ msgstr "Try entering the payment again"
 
 #: dpnk/templates/dpnk/payment_type.html:18
 msgid ""
-"Vyberte způsob a výši příspěvku na rozvoj výzvy Do práce na kole a můžete "
-"vyrazit. Za váš dar obdržíte voucher do našeho e-shopu ve výši 100 Kč a také "
-"potvrzení o daru, které si můžete odečíst z daní."
+"Vyberte způsob platby a výši startovného, kterým mimo jiné podpoříte rozvoj "
+"udržitelné mobility v Česku."
 msgstr ""
+"Choose the method of payment and the amount of the entry fee, with which "
+"you will, among other things, support the development of sustainable mobility "
+"in the Czech Republic."
 
 #: dpnk/templates/dpnk/payment_type.html:78
 msgid "Platba startovného zaměstnavatelem"
@@ -5153,9 +5161,6 @@ msgstr ""
 #, python-format
 #~ msgid "Podpořím soutěž benefičním startovným %s Kč."
 #~ msgstr "I support the competition with beneficiary participation fee %s Kč."
-
-#~ msgid "Startovné mi platí zaměstnavatel."
-#~ msgstr "Participation fee will be paid by my employer."
 
 #~ msgid ""
 #~ "Chci se stát členem Klubu přátel organizace AutoMat a podpořit rozvoj "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-20 09:40+0200\n"
+"POT-Creation-Date: 2023-02-02 15:25+0100\n"
 "PO-Revision-Date: 2020-01-13 19:51+0100\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -67,41 +67,41 @@ msgstr ""
 msgid "Přegenerovat CSV u vybraných dávek"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:175
+#: t_shirt_delivery/admin.py:176
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr "Mark packages/boxes as done"
 
-#: t_shirt_delivery/admin.py:271 t_shirt_delivery/admin.py:337
+#: t_shirt_delivery/admin.py:272 t_shirt_delivery/admin.py:338
 msgid "ID krabice"
 msgstr "Box ID"
 
-#: t_shirt_delivery/admin.py:273 t_shirt_delivery/models/team_package.py:43
+#: t_shirt_delivery/admin.py:274 t_shirt_delivery/models/team_package.py:43
 msgid "Tým"
 msgstr "Team"
 
-#: t_shirt_delivery/admin.py:274 t_shirt_delivery/models/team_package.py:36
+#: t_shirt_delivery/admin.py:275 t_shirt_delivery/models/team_package.py:36
 msgid "Krabice"
 msgstr "Box"
 
-#: t_shirt_delivery/admin.py:484
+#: t_shirt_delivery/admin.py:487
 msgid "Trik k odeslání"
 msgstr "T-shirts for sending"
 
-#: t_shirt_delivery/admin.py:493
+#: t_shirt_delivery/admin.py:496
 msgid "Velikosti trik"
 msgstr "T-shirt sizes"
 
-#: t_shirt_delivery/admin.py:515
+#: t_shirt_delivery/admin.py:518
 #, fuzzy
 #| msgid "Týmový balíček"
 msgid "Týmových balíčků k odeslání"
 msgstr "Team package"
 
-#: t_shirt_delivery/admin.py:585
+#: t_shirt_delivery/admin.py:588
 msgid "Uživatel na dávku objednávek"
 msgstr "User for delivery batch"
 
-#: t_shirt_delivery/admin.py:586
+#: t_shirt_delivery/admin.py:589
 msgid "Uživatelé na dávku objednávek"
 msgstr "Users for delivery batch"
 
@@ -151,11 +151,11 @@ msgstr "Yes"
 msgid "Ne"
 msgstr "No"
 
-#: t_shirt_delivery/forms.py:45
+#: t_shirt_delivery/forms.py:44
 msgid "Vyberte velikost trika"
 msgstr "Choose t-shirt size"
 
-#: t_shirt_delivery/forms.py:49
+#: t_shirt_delivery/forms.py:48
 msgid ""
 "Podívejte se na {}. Trika se snažíme doručovat co nejekologičtěji, proto je "
 "zasíláme hromadně vždy po skončení přihlašovací vlny (zpravidla na začátku "
@@ -165,15 +165,15 @@ msgstr ""
 "always send them in bulk after the end of the registration wave (usually at "
 "the beginning months)."
 
-#: t_shirt_delivery/forms.py:55
+#: t_shirt_delivery/forms.py:54
 msgid "vzhled a velikosti triček"
 msgstr "T-shirt design and check the sizes"
 
-#: t_shirt_delivery/forms.py:68
+#: t_shirt_delivery/forms.py:67
 msgid "Vyplňte telefonní číslo"
 msgstr "Fill in Your telephone number"
 
-#: t_shirt_delivery/forms.py:74
+#: t_shirt_delivery/forms.py:73
 msgid ""
 "Chci vědět vše a souhlasím s tím, že se mi ozvete ohledně podpory aktivní "
 "dopravy a veřejného prostoru."
@@ -181,7 +181,7 @@ msgstr ""
 "I want to know everything and I agree that you will contact me about support "
 "active transport and public space."
 
-#: t_shirt_delivery/forms.py:78
+#: t_shirt_delivery/forms.py:77
 msgid "Chci pouze dostat zprávu o stavu balíčku a registrace."
 msgstr ""
 "I want to get information only about my team package status and registration."
@@ -357,14 +357,14 @@ msgstr ""
 #: t_shirt_delivery/templates/registration/change_tshirt.html:7
 msgid ""
 "Jaké tričko vám bude letos dělat radost? Je čas si vybrat. Letos si můžete "
-"vybrat tričko s novou grafikou od Elišky Podzimkové, loňské tričko od "
-"Toy_Box či starší model od Jaromíra 99. Upozorňujeme, že u starších modelů "
-"jsou počty kusů na skladě omezené."
+"vybrat tričko s novou grafikou od Jana Charváta, nebo jeden ze starších "
+"modelů od Elišky Podzimkové, Toy_Box či Jaromíra 99. Upozorňujeme, že u "
+"starších modelů jsou počty kusů na skladě omezené."
 msgstr ""
-"What t-shirt will make you happy this year? It's time to choose. This year "
-"you can choose a t-shirt with new graphics by Eliška Podzimková, last year's "
-"t-shirt from Toy_Box or older model from Jaromír 99. Please note that for "
-"older models the number of pieces in stock is limited."
+"Which t-shirt will make you happy this year? It's time to choose. This year you can "
+"choose a t-shirt with new graphics from Jan Charvát, or one of the older "
+"models from Eliška Podzimková, Toy_Box or Jaromír 99. Please note that at "
+" older models are limited in stock."
 
 #: t_shirt_delivery/templates/registration/change_tshirt.html:10
 #, python-format
