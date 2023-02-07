@@ -96,6 +96,18 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
         ).exclude(t_shirt_preview=None)
 
         context["all_tshirts"] = serializers.serialize("json", tshirt_query)
+        context["actual_t_shirt"] = ""
+        context["none_t_shirt"] = ""
+        context["campaign_t_shirt_year"] = self.user_attendance.campaign.year
+        if self.user_attendance.t_shirt_size:
+            context["actual_t_shirt"] = self.user_attendance.t_shirt_size.name
+            t_shirts = TShirtSize.objects.filter(
+                campaign=self.user_attendance.campaign,
+            )
+            if t_shirts:
+                none_t_shirt = t_shirts.first()
+                if self.user_attendance.t_shirt_size.name == none_t_shirt.name:
+                    context["none_t_shirt"] = none_t_shirt.name
 
         tshirts_urls = {}
         for t in tshirt_query:

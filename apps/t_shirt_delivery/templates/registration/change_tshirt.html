@@ -32,6 +32,9 @@
         {# All T-Shirts from the view: filtered by current user_attendance campaign #}
         let allTshirts = {{ all_tshirts | safe }};
         let allTshirtsUrls = {{ tshirts_urls | safe }};
+        let actualTshirt = "{{ actual_t_shirt | safe }}";
+        let campaignTshirtYear = "{{ campaign_t_shirt_year | safe }}";
+        noneTshirt = "{{ none_t_shirt | safe }}";
 
         {# Get one Tshirt for each year #}
         for (let i = 0; i < allTshirts.length; i++) {
@@ -122,22 +125,66 @@
                     for (let i = 0; i < yearAndOptions[selectedYear].length; i++) {
                         addOpt(yearAndOptions[selectedYear][i])
                     }
+
                 })
             }
             const telOptDiv = document.getElementById("div_id_userprofile-telephone_opt_in");
             telOptDiv.insertAdjacentHTML(
               'afterend', '<strong>{% trans "Vyberte typ trika" %}</strong>'
             );
-            {# Choose actual year t-shirt #}
-            let actualTshirtBtn = document.evaluate(
-              `//button[contains(., ${new Date().getFullYear()})]`,
-              document,
-              null,
-              XPathResult.ANY_TYPE,
-              null
-            );
-            actualTshirtBtn = actualTshirtBtn.iterateNext();
-            if (actualTshirtBtn != null ) {actualTshirtBtn.click();}
+
+            /**
+             * Select select element option
+             *
+             * param {String} selectId - select element id
+             * param {String} opt - select element option text
+             */
+            function selectOpt(selectId, opt) {
+                const tshirtSelectElement = document.getElementById(selectId);
+                for (let i = 0; i < tshirtSelectElement.options.length; i++) {
+                    if (tshirtSelectElement.options[i].text === opt) {
+                        tshirtSelectElement.options[i].selected = true;
+                    }
+                }
+            }
+
+            /**
+             * Search an click on the t-shirt button widget
+             *
+             * @param {String} btnTxt - t-shirt button widget text
+             * @return {String} tshirtSizeOpt - user choosed t-shirt option text
+            */
+            function searchAndClickBtn(btnTxt, tshirtSizeOpt) {
+                let tshirtBtn = document.evaluate(
+                    `//button[contains(text(), '${btnTxt}')]`,
+                    document,
+                    null,
+                    XPathResult.ANY_TYPE,
+                    null
+                );
+                tshirtBtn = tshirtBtn.iterateNext();
+                if (tshirtBtn != null) {
+                    tshirtBtn.click();
+                    {# Select user choosed t-shirt opt #}
+                    if (typeof tshirtSizeOpt !== "undefined") {
+                        selectOpt("id_userattendance-t_shirt_size", tshirtSizeOpt)
+                    }
+                }
+            }
+
+            {# Choose None t-shirt #}
+            if (noneTshirt) {
+                const splitted = noneTshirt.split("-", 2);
+                searchAndClickBtn(splitted[0]);
+            } else {
+                {# User choosed t-shirt exists #}
+                if (actualTshirt) {
+                    const splitted = actualTshirt.split("-", 2);
+                    campaignTshirtYear =  splitted[0];
+                    actualTshirt = splitted[1];
+                }
+                searchAndClickBtn(campaignTshirtYear, actualTshirt);
+            }
         })
     }
 )()
