@@ -245,11 +245,11 @@ class CompanyInCampaign:
 
 class CompanyType(models.Model):
     class Meta:
-        verbose_name = _("Company type")
-        verbose_name_plural = _("Types of companies")
+        verbose_name = _("Typ společnosti")
+        verbose_name_plural = _("Typy společností")
 
     type = models.CharField(
-        verbose_name=_("Type"),
+        verbose_name=_("Typ"),
         max_length=255,
     )
 
