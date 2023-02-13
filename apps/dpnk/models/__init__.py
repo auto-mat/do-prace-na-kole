@@ -34,7 +34,7 @@ from .city import City
 from .city_in_campaign import CityInCampaign
 from .city_in_campaign_diploma import CityInCampaignDiploma, CityInCampaignDiplomaField
 from .commute_mode import CommuteMode
-from .company import Company
+from .company import Company, CompanyType
 from .company_admin import CompanyAdmin
 from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
@@ -83,6 +83,7 @@ __all__ = (
     City,
     CommuteMode,
     Company,
+    CompanyType,
     CompanyAdmin,
     Competition,
     CompetitionForm,

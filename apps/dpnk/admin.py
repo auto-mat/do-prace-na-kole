@@ -277,6 +277,7 @@ class CompanyAdmin(
 ):
     list_display = (
         "name",
+        "type",
         "subsidiaries_text",
         "ico",
         "dic",
@@ -290,6 +291,7 @@ class CompanyAdmin(
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
     list_filter = [
+        "type",
         "subsidiaries__teams__campaign",
         "subsidiaries__city",
         "active",
@@ -1775,4 +1777,9 @@ class TeamDiplomaAdmin(PdfSandwichAdmin):
 
 @admin.register(models.TeamDiplomaField)
 class TeamDiplomaFieldAdmin(PdfSandwichFieldAdmin):
+    pass
+
+
+@admin.register(models.CompanyType)
+class CompanyTypeAdmin(admin.ModelAdmin):
     pass

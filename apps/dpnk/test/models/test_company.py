@@ -153,3 +153,14 @@ class TestCompany(TestCase):
             company_admin__campaign=testing_campaign,
         )
         self.assertEqual(company.admin_telephones(testing_campaign()), "1234234")
+
+    def test_company_type(self):
+        """
+        Test that admin_company returns company type if company admin
+        type exists
+        """
+        company = mommy.make(
+            "Company",
+            type__type="Company",
+        )
+        self.assertEqual(company.type.type, "Company")

@@ -61,6 +61,14 @@ class Company(WithGalleryMixin, models.Model):
         max_length=60,
         null=False,
     )
+    type = models.ForeignKey(
+        "dpnk.CompanyType",
+        verbose_name=_("Company type"),
+        related_name="company_type",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     address = CompanyAddress()
     dic = StdNumField(
         "cz.dic",
@@ -233,3 +241,17 @@ class CompanyInCampaign:
     @mproperty
     def emissions(self):
         return util.get_emissions(self.distance)
+
+
+class CompanyType(models.Model):
+    class Meta:
+        verbose_name = _("Company type")
+        verbose_name_plural = _("Types of companies")
+
+    type = models.CharField(
+        verbose_name=_("Type"),
+        max_length=255,
+    )
+
+    def __str__(self):
+        return str(self.type)
