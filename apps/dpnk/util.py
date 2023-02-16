@@ -120,7 +120,7 @@ def today():
 
 
 def get_client_ip(request):
-    logger.debug(request.META)
+    logger.info(request.META)
     ip = get_real_ip(request)
     logger.info(f"IP address {ip}")
     if ip is not None:
