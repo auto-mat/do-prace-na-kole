@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import datetime
+import logging
 from itertools import tee
 
 import denorm
@@ -38,6 +39,8 @@ import geopy.distance
 from ipware.ip import get_real_ip
 
 from . import exceptions
+
+logger = logging.getLogger(__name__)
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -117,7 +120,9 @@ def today():
 
 
 def get_client_ip(request):
+    logger.debug(request.META)
     ip = get_real_ip(request)
+    logger.info(f"IP address {ip}")
     if ip is not None:
         return ip
     else:
