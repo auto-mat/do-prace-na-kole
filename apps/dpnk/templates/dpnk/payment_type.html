@@ -23,7 +23,7 @@
 <script>
 $(function(){
     $.getJSON("https://api.ipify.org?format=json", function(data) {
-        document.cookie = `client_ip=${data.ip}; path=/`
+        document.cookie = `client_ip=${data.ip}; path=/`;
     });
 });
 
