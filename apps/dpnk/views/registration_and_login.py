@@ -514,7 +514,8 @@ class PaymentView(
         email = profile.user.email  # email
         amount_hal = int(amount * 100)  # v halerich
         description = "Ucastnicky poplatek Do prace na kole"
-        client_ip = util.get_client_ip(self.request)
+        # client_ip = util.get_client_ip(self.request)
+        client_ip = self.request.COOKIES.get("client_ip")
         timestamp = str(int(time.time()))
         language_code = self.user_attendance.userprofile.language
 

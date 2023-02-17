@@ -21,6 +21,12 @@
 
 {% block container_footer %}
 <script>
+$(function(){
+    $.getJSON("https://api.ipify.org?format=json", function(data) {
+        document.cookie = `client_ip=${data.ip}; path=/`
+    });
+});
+
 function selected_value(){
    return $('input[name=payment_type]:checked', '#div_id_payment_type').val();
 };
