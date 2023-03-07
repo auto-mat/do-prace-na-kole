@@ -58,13 +58,15 @@ def get_all_t_shirt_codes(value_field):
                 .exclude(Q(code="") | Q(code="nic"))
                 .values("code", "name", "campaign__year")
             )
-            codes = list(
-                {
-                    v["code"]: v
-                    for v in sorted(
-                        codes, key=itemgetter("campaign__year", "name", "code")
-                    )
-                }.values()
+            # Unique codes sorted by campaign year, name, code
+            codes = sorted(
+                list(
+                    {
+                        v["code"]: v
+                        for v in sorted(codes, key=itemgetter("campaign__year", "name"))
+                    }.values()
+                ),
+                key=itemgetter("code"),
             )
     except ImproperlyConfigured:
         pass
