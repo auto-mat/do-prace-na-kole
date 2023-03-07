@@ -66,7 +66,7 @@ def get_all_t_shirt_codes(value_field):
                         for v in sorted(codes, key=itemgetter("campaign__year", "name"))
                     }.values()
                 ),
-                key=itemgetter("code"),
+                key=itemgetter("name", "code"),
             )
     except ImproperlyConfigured:
         pass
