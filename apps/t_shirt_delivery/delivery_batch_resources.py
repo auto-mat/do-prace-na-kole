@@ -2,6 +2,7 @@ import sys
 from operator import itemgetter
 
 from django.db import connections
+from django.db.models import Q
 from django.core.exceptions import ImproperlyConfigured
 
 from import_export import fields
@@ -52,10 +53,12 @@ def get_all_t_shirt_codes(value_field):
             TShirtSize._meta.db_table
             in connections["default"].introspection.table_names()
         ):
-            codes = set(
-                TShirtSize.objects.all().values_list(value_field, flat=True),
+            codes = (
+                TShirtSize.objects.all()
+                .exclude(Q(code="") | Q(code="nic"))
+                .values("code", "name", "campaign__year")
             )
-            codes.difference_update(["", "nic"])
+            codes = sorted(codes, key=itemgetter("campaign__year", "name"))
     except ImproperlyConfigured:
         pass
     return codes
@@ -63,21 +66,22 @@ def get_all_t_shirt_codes(value_field):
 
 def get_model_resource_class_body():
     """Get model resource class body"""
+
     body = {}
     all_fields = []
     tshirt_code_field = "code"
-    for idx, t_shirt_code in enumerate(
+    for idx, t_shirt in enumerate(
         get_all_t_shirt_codes(tshirt_code_field),
     ):
         field_name = f"tshirt_code_{idx}"
-        body[field_name] = fields.Field(column_name=t_shirt_code)
+        body[field_name] = fields.Field(column_name=t_shirt[tshirt_code_field])
         dehydrate_func = dehydrate_decorator(
             value_field=tshirt_code_field,
-            t_shirt_code_name=t_shirt_code,
+            t_shirt_code_name=t_shirt[tshirt_code_field],
         )
         body["dehydrate_{}".format(field_name)] = dehydrate_func
-        all_fields.append((field_name, t_shirt_code))
-    body["fields"] = sorted(all_fields, key=itemgetter(1))
+        all_fields.append((field_name, t_shirt[tshirt_code_field]))
+    body["fields"] = all_fields
     return body
 
 
