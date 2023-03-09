@@ -71,7 +71,7 @@ def generate_csv(csvfile, delivery_batch):
                 subsidiary_box.get_weight(),
                 subsidiary_box.get_volume(),
                 1,
-                "č. krab. %s Nezastihnete-li adresáta, volejte AutoMat: 212 240 666"
+                "č. krab. %s Nezastihnete-li opakovaně adresáta, doručte balík na adresu níže."
                 % subsidiary_box.id,  # Popis zboží",
                 "",  # Druh obalu (zkratka)",
                 "",  # Typ zásilky",
