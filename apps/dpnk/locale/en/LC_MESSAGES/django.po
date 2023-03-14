@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 13:36+0100\n"
+"POT-Creation-Date: 2023-03-14 16:21+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -1270,35 +1270,35 @@ msgstr "Date since which are displayed WordPress API articles."
 msgid "Počet lidí v týmu"
 msgstr "Number of people in team"
 
-#: apps/dpnk/models/campaign.py:476
+#: apps/dpnk/models/campaign.py:485
 msgid "Deprecated: Jméno kampaně"
 msgstr "Name of campaign"
 
-#: apps/dpnk/models/campaign.py:482
+#: apps/dpnk/models/campaign.py:491
 msgid "Deprecated: Adresa pro Wordpress API se články"
 msgstr "Address for Wordpress article API"
 
-#: apps/dpnk/models/campaign.py:487
+#: apps/dpnk/models/campaign.py:496
 msgid "Deprecated: Web kampáně"
 msgstr "Campaign web"
 
-#: apps/dpnk/models/campaign.py:493
+#: apps/dpnk/models/campaign.py:502
 msgid "Deprecated: Kontaktní e-mail"
 msgstr "Contact e-mail"
 
-#: apps/dpnk/models/campaign.py:500
+#: apps/dpnk/models/campaign.py:509
 msgid "Deprecated: Postfix pro menu"
 msgstr "Posfix for menu"
 
-#: apps/dpnk/models/campaign.py:508 apps/dpnk/models/campaign_type.py:37
+#: apps/dpnk/models/campaign.py:517 apps/dpnk/models/campaign_type.py:37
 msgid "Do práce na kole"
 msgstr "Bike to work"
 
-#: apps/dpnk/models/campaign.py:509 apps/dpnk/models/campaign_type.py:38
+#: apps/dpnk/models/campaign.py:518 apps/dpnk/models/campaign_type.py:38
 msgid "Do školy na kole"
 msgstr "Bike to school"
 
-#: apps/dpnk/models/campaign.py:512
+#: apps/dpnk/models/campaign.py:521
 msgid "Deprecated: Jazyková sada"
 msgstr "Language pack"
 
@@ -4711,11 +4711,11 @@ msgstr "We don't want your money"
 
 #: apps/dpnk/views/registration_and_login.py:403
 msgid ""
-"Platba není možná. Vámi vybraná velikost trika {} již není dostupné. Vyberte "
+"Platba není možná. Vámi vybraná velikost trika {} již není dostupná. Vyberte "
 "jinú velikost trika."
 msgstr ""
-"Payment is not possible. Your selected t-shirt size {} is no longer available. "
-"Select a different t-shirt size."
+"Payment is not possible. Your selected t-shirt size {} is no longer "
+"available. Select a different t-shirt size."
 
 #: apps/dpnk/views/registration_and_login.py:441
 msgid "Vaše členství v klubu přátel ještě bude muset být schváleno."

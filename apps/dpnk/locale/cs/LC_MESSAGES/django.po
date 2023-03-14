@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 13:36+0100\n"
+"POT-Creation-Date: 2023-03-14 16:21+0100\n"
 "PO-Revision-Date: 2019-04-23 17:53+0058\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1215,35 +1215,35 @@ msgstr ""
 msgid "Počet lidí v týmu"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:476
+#: apps/dpnk/models/campaign.py:485
 msgid "Deprecated: Jméno kampaně"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:482
+#: apps/dpnk/models/campaign.py:491
 msgid "Deprecated: Adresa pro Wordpress API se články"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:487
+#: apps/dpnk/models/campaign.py:496
 msgid "Deprecated: Web kampáně"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:493
+#: apps/dpnk/models/campaign.py:502
 msgid "Deprecated: Kontaktní e-mail"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:500
+#: apps/dpnk/models/campaign.py:509
 msgid "Deprecated: Postfix pro menu"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:508 apps/dpnk/models/campaign_type.py:37
+#: apps/dpnk/models/campaign.py:517 apps/dpnk/models/campaign_type.py:37
 msgid "Do práce na kole"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:509 apps/dpnk/models/campaign_type.py:38
+#: apps/dpnk/models/campaign.py:518 apps/dpnk/models/campaign_type.py:38
 msgid "Do školy na kole"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:512
+#: apps/dpnk/models/campaign.py:521
 msgid "Deprecated: Jazyková sada"
 msgstr ""
 
@@ -4349,7 +4349,7 @@ msgstr ""
 
 #: apps/dpnk/views/registration_and_login.py:403
 msgid ""
-"Platba není možná. Vámi vybraná velikost trika {} již není dostupné. Vyberte "
+"Platba není možná. Vámi vybraná velikost trika {} již není dostupná. Vyberte "
 "jinú velikost trika."
 msgstr ""
 

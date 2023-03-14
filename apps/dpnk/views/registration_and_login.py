@@ -401,7 +401,7 @@ class PaymentTypeView(
             context["disable_payment_btn"] = "disabled"
             context["payment_disabled_txt"] = _(
                 "Platba není možná. Vámi vybraná velikost trika {} již"
-                " není dostupné. Vyberte jinú velikost trika."
+                " není dostupná. Vyberte jinú velikost trika."
             ).format(
                 "<strong>{}</strong>".format(
                     self.user_attendance.t_shirt_size.name,
