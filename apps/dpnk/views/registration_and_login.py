@@ -34,6 +34,8 @@ from registration.backends.default.views import (
 
 from unidecode import unidecode
 
+from t_shirt_delivery.models import TShirtSize
+
 # Local imports
 from .team import approve_for_team
 from .. import exceptions
@@ -385,6 +387,27 @@ class PaymentTypeView(
         context["amount"] = self.user_attendance.admission_fee()
         context["beneficiary_amount"] = self.user_attendance.beneficiary_admission_fee()
         context["prev_url"] = self.prev_url
+
+        campaign_tshirts = (
+            TShirtSize.objects.filter(
+                campaign=self.campaign,
+                available=True,
+            )
+            .exclude(t_shirt_preview=None)
+            .values_list("name", flat=True)
+        )
+        context["disable_payment_btn"] = ""
+        if self.user_attendance.t_shirt_size.name not in campaign_tshirts:
+            context["disable_payment_btn"] = "disabled"
+            context["payment_disabled_txt"] = _(
+                "Platba není možná. Vámi vybrané triko {} již není dostupné."
+                " Vyberte jiné tričko.".format(
+                    "<strong>{}</strong>".format(
+                        self.user_attendance.t_shirt_size.name,
+                    )
+                )
+            )
+
         return context
 
     def get_form(self, form_class=PaymentTypeForm):

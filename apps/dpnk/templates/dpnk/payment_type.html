@@ -90,14 +90,21 @@ $(function(){
          {% trans "Můj firemní koordinátor: " %} {{ company_admin|default:"Není" }}<br/>
          {% trans "E-mail na koordinátora: " %}<a href='mailto:{{ company_admin.userprofile.user.email|default:"Není" }}'>{{ company_admin.userprofile.user.email|default:"Není" }}</a><br/>
       {% empty %}
-         <br/>
+         <p>
          {% trans "Je nám líto. Váš zaměstnavatel buď nemá zvoleného firemního koordinátora nebo neumožňuje platbu startovného." %}
          <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem své organizace." %}</a>
+         </p>
+         {% if disable_payment_btn|length > 0 %}
+         <p>{{ payment_disabled_txt|safe }}</p>
+         {% endif %}
       {% endfor %}
    </div>
    <div class="description_switcher_div description coupon_description" style="display:none">
       <h3>{% trans "Platba startovného pomocí voucheru" %}</h3>
-      {% trans "Uplatněte slevu z startovného." %}
+      <p>{% trans "Uplatněte slevu z startovného." %}</p>
+      {% if disable_payment_btn|length > 0 %}
+      <p>{{ payment_disabled_txt|safe }}</p>
+      {% endif %}
    </div>
    <div class="description_switcher_div description member_wannabe_description" style="display:none">
       <h3>{% trans "Vstupte do Klubu přátel" %}</h3>
@@ -119,9 +126,11 @@ $(function(){
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();
    </script>
-   <br/>
+   {% if disable_payment_btn|length > 0 %}
+   <p>{{ payment_disabled_txt|safe }}</p>
+   {% endif %}
    <input type="button" name="prev" value="{% trans "Předchozí" %}" class="btn btn-default" id="button-id-prev" onclick="window.location.href='{% url prev_url %}'">
-   <input type="submit" class="btn btn-primary" value="{% trans "Zaplatit" %}"/>
+   <input type="submit" class="btn btn-primary" value="{% trans "Zaplatit" %}" {{ disable_payment_btn }}/>
 </form>
 </div>
 {% endblock %}

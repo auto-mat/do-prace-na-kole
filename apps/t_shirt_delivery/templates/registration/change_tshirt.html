@@ -169,6 +169,12 @@
                     if (typeof tshirtSizeOpt !== "undefined") {
                         selectOpt("id_userattendance-t_shirt_size", tshirtSizeOpt)
                     }
+                } else {
+                    $("#div_id_userprofile-telephone_opt_in").next().after(
+                    '<div>{% trans "Vámi vybraná předchozí velikost" %}'
+                    + ' <strong>' + btnTxt + ' - ' + tshirtSizeOpt + '</strong> '
+                    + '{% trans "již není dostupná. Vyberte jinou velikost." %}'
+                    + "</div>");
                 }
             }
 

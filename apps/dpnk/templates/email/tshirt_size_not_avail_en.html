@@ -1,0 +1,17 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+
+{% block content %}
+{% language lang_code %}
+<p>
+Hi, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+The previous t-shirt size you selected {{ user_attendance.t_shirt_size.name }}
+is no longer available. Choose another size.
+</p><p>
+
+{% url 't_shirt_delivery:zmenit_triko' as button_link %}
+{% include "./button.html" with button_text="Change shirt" %}
+
+% endlanguage %}
+{% endblock %}

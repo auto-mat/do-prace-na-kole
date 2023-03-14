@@ -56,6 +56,8 @@ import photologue
 
 import registration.forms
 
+from t_shirt_delivery.models import TShirtSize
+
 from . import email, models, util, views
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy
@@ -114,6 +116,7 @@ class SubmitMixin(object):
 class PrevNextMixin(object):
     next_text = _("Pokračovat")
     submit_text = _("Hotovo")
+    next_btn_disabled = False
 
     def show_edit_form(self):
         if getattr(self, "instance", False):
@@ -141,7 +144,12 @@ class PrevNextMixin(object):
             )
         if not hasattr(self, "no_next"):
             self.helper.add_input(
-                Submit("next", self.next_text, css_class="form-actions")
+                Submit(
+                    "next",
+                    self.next_text,
+                    css_class="form-actions",
+                    disabled=self.next_btn_disabled,
+                )
             )
         return ret_val
 
@@ -780,6 +788,16 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.user_attendance = kwargs.pop("user_attendance")
+        campaign_tshirts = (
+            TShirtSize.objects.filter(
+                campaign=self.user_attendance.campaign,
+                available=True,
+            )
+            .exclude(t_shirt_preview=None)
+            .values_list("name", flat=True)
+        )
+        if self.user_attendance.t_shirt_size.name not in campaign_tshirts:
+            self.next_btn_disabled = True
         ret_val = super().__init__(*args, **kwargs)
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "payment-type-form"
@@ -832,6 +850,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 ),
             ),
         )
+
         return ret_val
 
 

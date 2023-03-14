@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-02 15:41+0100\n"
+"POT-Creation-Date: 2023-03-14 10:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: apps/t_shirt_delivery/actions.py:38
+#: apps/t_shirt_delivery/actions.py:35
 #, python-format
-msgid "Vytvořena nová dávka obsahující %s položek"
+msgid "Požadavek na tvorbu dávku %s položek byl poslan do celery"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:41
+#: apps/t_shirt_delivery/actions.py:40
 msgid "Vytvořit dávku z vybraných uživatelů"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:44
+#: apps/t_shirt_delivery/actions.py:43
 msgid "Hromadně stáhnout PDF"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:50 apps/t_shirt_delivery/actions.py:68
+#: apps/t_shirt_delivery/actions.py:49 apps/t_shirt_delivery/actions.py:71
 msgid "Chybí CSV soubor objednávky"
 msgstr ""
 
@@ -39,96 +39,96 @@ msgstr ""
 msgid "V jedné z dávek chybí trika k odeslání"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:59
+#: apps/t_shirt_delivery/actions.py:61
 msgid "1) Nahrát data do GLS a vytvořit PDF"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:65
+#: apps/t_shirt_delivery/actions.py:68
 msgid "Chybí PDF z objednávky GLS"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:74
+#: apps/t_shirt_delivery/actions.py:78
 msgid "2) Vytvořit kombinované PDF pro OPT"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:86
+#: apps/t_shirt_delivery/actions.py:92
 msgid "Přegenerovat všechna PDF všech krabic u vybraných dávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/actions.py:97
+#: apps/t_shirt_delivery/actions.py:104
 msgid "Přegenerovat CSV u vybraných dávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:165
+#: apps/t_shirt_delivery/admin.py:176
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:260 apps/t_shirt_delivery/admin.py:324
+#: apps/t_shirt_delivery/admin.py:272 apps/t_shirt_delivery/admin.py:338
 msgid "ID krabice"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:261
+#: apps/t_shirt_delivery/admin.py:274
 #: apps/t_shirt_delivery/models/team_package.py:43
 msgid "Tým"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:262
+#: apps/t_shirt_delivery/admin.py:275
 #: apps/t_shirt_delivery/models/team_package.py:36
 msgid "Krabice"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:459
+#: apps/t_shirt_delivery/admin.py:487
 msgid "Trik k odeslání"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:463
+#: apps/t_shirt_delivery/admin.py:496
 msgid "Velikosti trik"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:484
+#: apps/t_shirt_delivery/admin.py:518
 msgid "Týmových balíčků k odeslání"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:546
+#: apps/t_shirt_delivery/admin.py:588
 msgid "Uživatel na dávku objednávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:547
+#: apps/t_shirt_delivery/admin.py:589
 msgid "Uživatelé na dávku objednávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin_forms.py:35
+#: apps/t_shirt_delivery/admin_forms.py:36
 msgid "Balík/krabice s tímto číslem byl sestaven"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin_views.py:48
+#: apps/t_shirt_delivery/admin_views.py:49
 #, python-format
 msgid "Balíček/krabice byl v minulosti již zařazen k sestavení: %s"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin_views.py:54
+#: apps/t_shirt_delivery/admin_views.py:60
 msgid ""
 "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: <a "
 "href='{}?box__id__exact={}&amp;dispatched__exact=0'>zobrazit seznam "
 "nesestavených balíčků</a>"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin_views.py:66
+#: apps/t_shirt_delivery/admin_views.py:73
 #, python-format
 msgid "Balíček/krabice zařazen jako sestavený: %s"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin_views.py:76
+#: apps/t_shirt_delivery/admin_views.py:85
 #, python-format
 msgid "Balíček/krabice %s nebyl nalezen."
 msgstr ""
 
-#: apps/t_shirt_delivery/admin_views.py:82
+#: apps/t_shirt_delivery/admin_views.py:92
 msgid "Zařadit balíky k sestavení"
 msgstr ""
 
 #: apps/t_shirt_delivery/filters.py:26
-#: apps/t_shirt_delivery/models/subsidiary_box.py:143
+#: apps/t_shirt_delivery/models/subsidiary_box.py:157
 msgid "Všechny balíčky vyřízeny"
 msgstr ""
 
@@ -140,43 +140,48 @@ msgstr ""
 msgid "Ne"
 msgstr ""
 
-#: apps/t_shirt_delivery/forms.py:40
+#: apps/t_shirt_delivery/forms.py:44
 msgid "Vyberte velikost trika"
 msgstr ""
 
-#: apps/t_shirt_delivery/forms.py:42
-msgid "Podívejte se na {}."
+#: apps/t_shirt_delivery/forms.py:48
+msgid ""
+"Podívejte se na {}. Trika se snažíme doručovat co nejekologičtěji, proto je "
+"zasíláme hromadně vždy po skončení přihlašovací vlny (zpravidla na začátku "
+"měsíce)."
 msgstr ""
 
-#: apps/t_shirt_delivery/forms.py:45
+#: apps/t_shirt_delivery/forms.py:54
 msgid "vzhled a velikosti triček"
 msgstr ""
 
-#: apps/t_shirt_delivery/forms.py:58
+#: apps/t_shirt_delivery/forms.py:67
 msgid "Vyplňte telefonní číslo"
 msgstr ""
 
-#: apps/t_shirt_delivery/forms.py:61
-msgid "Chci vědět vše. Včetně novinek ohledně podpory cyklistů ve městech."
+#: apps/t_shirt_delivery/forms.py:73
+msgid ""
+"Chci vědět vše a souhlasím s tím, že se mi ozvete ohledně podpory aktivní "
+"dopravy a veřejného prostoru."
 msgstr ""
 
-#: apps/t_shirt_delivery/forms.py:62
+#: apps/t_shirt_delivery/forms.py:77
 msgid "Chci pouze dostat zprávu o stavu balíčku a registrace."
 msgstr ""
 
 #: apps/t_shirt_delivery/models/delivery_batch.py:49
-#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:21
+#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:24
 msgid "Datum vytvoření"
 msgstr ""
 
 #: apps/t_shirt_delivery/models/delivery_batch.py:55
-#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:28
+#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:31
 #: apps/t_shirt_delivery/models/t_shirt_size.py:45
 msgid "Kampaň"
 msgstr ""
 
 #: apps/t_shirt_delivery/models/delivery_batch.py:61
-#: apps/t_shirt_delivery/models/subsidiary_box.py:68
+#: apps/t_shirt_delivery/models/subsidiary_box.py:72
 msgid "Zákaznické listy"
 msgstr ""
 
@@ -185,39 +190,43 @@ msgid "CSV objednávka"
 msgstr ""
 
 #: apps/t_shirt_delivery/models/delivery_batch.py:75
-msgid "PDF objednávky"
+msgid "Wellpack CSV tabulka"
 msgstr ""
 
 #: apps/t_shirt_delivery/models/delivery_batch.py:82
-msgid "Kombinované PDF pro OPT"
+msgid "PDF objednávky"
 msgstr ""
 
 #: apps/t_shirt_delivery/models/delivery_batch.py:89
+msgid "Kombinované PDF pro OPT"
+msgstr ""
+
+#: apps/t_shirt_delivery/models/delivery_batch.py:96
 msgid "Vyřízeno"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/delivery_batch.py:95
+#: apps/t_shirt_delivery/models/delivery_batch.py:102
 msgid "Krátká poznámka"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/delivery_batch.py:101
+#: apps/t_shirt_delivery/models/delivery_batch.py:108
 msgid "Datum vyzvednutí"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/delivery_batch.py:107
-#: apps/t_shirt_delivery/models/subsidiary_box.py:62
+#: apps/t_shirt_delivery/models/delivery_batch.py:114
+#: apps/t_shirt_delivery/models/subsidiary_box.py:66
 msgid "Dávka objednávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/delivery_batch.py:108
+#: apps/t_shirt_delivery/models/delivery_batch.py:115
 msgid "Dávky objednávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:48
+#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:51
 msgid "Deadline dávky objednávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:49
+#: apps/t_shirt_delivery/models/delivery_batch_deadline.py:52
 msgid "Deadline dáveky objednávek"
 msgstr ""
 
@@ -240,36 +249,36 @@ msgstr ""
 msgid "Transakce trika"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:56
+#: apps/t_shirt_delivery/models/subsidiary_box.py:60
 msgid "Krabice pro pobočku"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:57
+#: apps/t_shirt_delivery/models/subsidiary_box.py:61
 msgid "Krabice pro pobočky"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:76
+#: apps/t_shirt_delivery/models/subsidiary_box.py:80
 msgid "Pobočka"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:82
+#: apps/t_shirt_delivery/models/subsidiary_box.py:86
 msgid "Krabice evidována u dopravce"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:88
+#: apps/t_shirt_delivery/models/subsidiary_box.py:92
 msgid "Identifikace u dopravce"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:100
+#: apps/t_shirt_delivery/models/subsidiary_box.py:105
 #, python-format
 msgid "Krabice pro pobočku %s"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:153
+#: apps/t_shirt_delivery/models/subsidiary_box.py:168
 msgid "Počet vyřízených balíků"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/subsidiary_box.py:185
+#: apps/t_shirt_delivery/models/subsidiary_box.py:205
 msgid "Přegenerovat PDF"
 msgstr ""
 
@@ -313,12 +322,12 @@ msgstr ""
 msgid "Balíek vyřízen"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/team_package.py:62
+#: apps/t_shirt_delivery/models/team_package.py:63
 #, python-format
 msgid "Balíček pro tým %s"
 msgstr ""
 
-#: apps/t_shirt_delivery/models/team_package.py:64
+#: apps/t_shirt_delivery/models/team_package.py:65
 msgid "Balíček bez týmu"
 msgstr ""
 
@@ -326,11 +335,15 @@ msgstr ""
 msgid "Balík obsahuje:"
 msgstr ""
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:8
-msgid "Jaká velikost bude v květnu ta pravá? Je čas si vybrat."
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:7
+msgid ""
+"Jaké tričko vám bude letos dělat radost? Je čas si vybrat. Letos si můžete "
+"vybrat tričko s novou grafikou od Jana Charváta, nebo jeden ze starších "
+"modelů od Elišky Podzimkové, Toy_Box či Jaromíra 99. Upozorňujeme, že u "
+"starších modelů jsou počty kusů na skladě omezené."
 msgstr ""
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:11
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
 #, python-format
 msgid ""
 "\n"
@@ -339,12 +352,24 @@ msgid ""
 "pracovní adresu zaklepe balík s triky pro všechny členy týmu.\n"
 msgstr ""
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:16
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:15
 #, python-format
 msgid ""
 "\n"
-"Zkontrolujte si tedy pečlivě doručovací adresu společnosti. Případnou chybu "
-"nahlaste na e-mail %(emails)s.\n"
+"    Zkontrolujte si tedy pečlivě doručovací adresu společnosti. Případnou "
+"chybu v adrese nahlaste na e-mail %(emails)s.\n"
+msgstr ""
+
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:134
+msgid "Vyberte typ trika"
+msgstr ""
+
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:180
+msgid "Vámi vybraná předchozí velikost"
+msgstr ""
+
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:182
+msgid "již není dostupná. Vyberte jinou velikost."
 msgstr ""
 
 #: apps/t_shirt_delivery/templates/registration/tshirt_delivery.html:7
@@ -369,31 +394,31 @@ msgstr ""
 msgid "Zásilku můžete sledovat pomocí trackovacího čísla"
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:42
+#: apps/t_shirt_delivery/views.py:44
 msgid "Vaše triko je již na cestě"
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:62
+#: apps/t_shirt_delivery/views.py:68
 msgid "Uložili jsme si Vaší velikost"
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:69
-msgid "Změňte velikost soutěžního trička"
+#: apps/t_shirt_delivery/views.py:75
+msgid "Změňte velikost a typ soutěžního trička"
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:71
-msgid "Vyberte velikost soutěžního trička"
+#: apps/t_shirt_delivery/views.py:77
+msgid "Vyberte velikost a typ soutěžního trička"
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:92
+#: apps/t_shirt_delivery/views.py:129
 #, python-brace-format
 msgid "Nejdříve se {join_team} a pak si vyberte tričko."
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:96
+#: apps/t_shirt_delivery/views.py:133
 msgid "přidejte k týmu"
 msgstr ""
 
-#: apps/t_shirt_delivery/views.py:100
+#: apps/t_shirt_delivery/views.py:137
 msgid "Buďte týmovým hráčem!"
 msgstr ""

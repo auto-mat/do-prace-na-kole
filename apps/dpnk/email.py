@@ -222,6 +222,14 @@ def invoice_mail(invoice, subject, template):
             )
 
 
+def tshirt_size_not_avail(user_attendance):
+    campaign_mail(
+        user_attendance,
+        _("Vámi vybraná předchozí velikost trička již není dostupná"),
+        "tshirt_size_not_avail_%s.html",
+    )
+
+
 def campaign_mail(
     user_attendance, subject, template_path, extra_context={}, email=None
 ):

@@ -288,6 +288,33 @@ class Campaign(Pricable, models.Model):
         on_delete=models.SET_NULL,
     )
 
+    def save(self, *args, **kwargs):
+        from t_shirt_delivery.models import TShirtSize
+
+        from ..tasks import send_tshirt_size_not_avail_notif
+
+        super().save(*args, **kwargs)
+        campaign_tshirts = (
+            TShirtSize.objects.filter(
+                campaign=self,
+                available=True,
+            )
+            .exclude(t_shirt_preview=None)
+            .values_list("name", flat=True)
+        )
+        users_with_tshirts = UserAttendance.objects.filter(
+            campaign=self,
+        ).values_list("t_shirt_size__name", flat=True)
+        if campaign_tshirts and users_with_tshirts:
+            tshirts_diffs = list(
+                set(users_with_tshirts) - set(campaign_tshirts),
+            )
+            if tshirts_diffs:
+                users_without_avail_tshirt = UserAttendance.objects.filter(
+                    campaign=self, t_shirt_size__name__in=tshirts_diffs
+                )
+                send_tshirt_size_not_avail_notif(users_without_avail_tshirt)
+
     def display_name(self):
         if self.name:
             return self.name
