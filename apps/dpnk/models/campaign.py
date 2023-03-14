@@ -294,17 +294,26 @@ class Campaign(Pricable, models.Model):
         from ..tasks import send_tshirt_size_not_avail_notif
 
         super().save(*args, **kwargs)
+        exclude_tshirts_code = ["nic", ""]
         campaign_tshirts = (
             TShirtSize.objects.filter(
                 campaign=self,
                 available=True,
             )
             .exclude(t_shirt_preview=None)
+            .exclude(code__in=exclude_tshirts_code)
             .values_list("name", flat=True)
         )
-        users_with_tshirts = UserAttendance.objects.filter(
-            campaign=self,
-        ).values_list("t_shirt_size__name", flat=True)
+        users_with_tshirts = (
+            UserAttendance.objects.filter(
+                campaign=self,
+                t_shirt_size__isnull=False,
+            )
+            .exclude(
+                t_shirt_size__code__in=exclude_tshirts_code,
+            )
+            .values_list("t_shirt_size__name", flat=True)
+        )
         if campaign_tshirts and users_with_tshirts:
             tshirts_diffs = list(
                 set(users_with_tshirts) - set(campaign_tshirts),
