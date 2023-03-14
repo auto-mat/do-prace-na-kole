@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 10:13+0100\n"
+"POT-Creation-Date: 2023-03-14 13:36+0100\n"
 "PO-Revision-Date: 2019-04-23 17:53+0058\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -840,7 +840,7 @@ msgstr ""
 msgid "Odeslat pozvánku"
 msgstr ""
 
-#: apps/dpnk/forms.py:764 apps/dpnk/templates/dpnk/payment_type.html:124
+#: apps/dpnk/forms.py:764 apps/dpnk/templates/dpnk/payment_type.html:133
 msgid "Zaplatit"
 msgstr ""
 
@@ -3810,31 +3810,31 @@ msgstr ""
 msgid "Chci se sám stát koordinátorem své organizace."
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:99
+#: apps/dpnk/templates/dpnk/payment_type.html:103
 msgid "Platba startovného pomocí voucheru"
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:100
+#: apps/dpnk/templates/dpnk/payment_type.html:104
 msgid "Uplatněte slevu z startovného."
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:103
+#: apps/dpnk/templates/dpnk/payment_type.html:110
 msgid "Vstupte do Klubu přátel"
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:108
+#: apps/dpnk/templates/dpnk/payment_type.html:115
 msgid "Platba startovného"
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:111
+#: apps/dpnk/templates/dpnk/payment_type.html:118
 msgid "Platba benefičního startovného"
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:115
+#: apps/dpnk/templates/dpnk/payment_type.html:122
 msgid "Děkujeme, že se zajímáte o veřejný prostor."
 msgstr ""
 
-#: apps/dpnk/templates/dpnk/payment_type.html:123
+#: apps/dpnk/templates/dpnk/payment_type.html:132
 msgid "Předchozí"
 msgstr ""
 
@@ -3993,7 +3993,7 @@ msgid "Další nahrané jízdy"
 msgstr ""
 
 #: apps/dpnk/templates/dpnk/rides_view_switcher.html:12
-#: apps/dpnk/views/registration_and_login.py:947
+#: apps/dpnk/views/registration_and_login.py:955
 msgid "Aplikace"
 msgstr ""
 
@@ -4347,97 +4347,103 @@ msgstr ""
 msgid "Dobrá hospodyňka pro kolo i přes plot skočí"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:433
-msgid "Vaše členství v klubu přátel ještě bude muset být schváleno."
+#: apps/dpnk/views/registration_and_login.py:403
+msgid ""
+"Platba není možná. Vámi vybraná velikost trika {} již není dostupné. Vyberte "
+"jinú velikost trika."
 msgstr ""
 
 #: apps/dpnk/views/registration_and_login.py:441
+msgid "Vaše členství v klubu přátel ještě bude muset být schváleno."
+msgstr ""
+
+#: apps/dpnk/views/registration_and_login.py:449
 #, python-brace-format
 msgid "Platbu ještě musí schválit koordinátor Vaší organizace {email}. "
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:456
+#: apps/dpnk/views/registration_and_login.py:464
 msgid ""
 "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte "
 "zastaralý prohlížeč nebo máte vypnutý JavaScript."
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:621
+#: apps/dpnk/views/registration_and_login.py:629
 msgid "Platba úspěšná"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:623
+#: apps/dpnk/views/registration_and_login.py:631
 msgid ""
 "Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme Vám vědět na e-"
 "mail. Tím bude Vaše registrace úspěšně dokončena."
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:628
+#: apps/dpnk/views/registration_and_login.py:636
 msgid "Platba neúspěšná"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:641
+#: apps/dpnk/views/registration_and_login.py:649
 msgid ""
 "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou "
 "platbu."
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:749
+#: apps/dpnk/views/registration_and_login.py:757
 msgid "Registrace dokončena!"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:764
+#: apps/dpnk/views/registration_and_login.py:772
 msgid "Nastal čas seřídit kolo a vyřešit drobné papírování…"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:767
+#: apps/dpnk/views/registration_and_login.py:775
 msgid ""
 "<p>Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. Stačí si "
 "ještě poradit s pár maličkostmi a dostanete se na startovací čáru.</p><img "
 "src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'/>"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:786
+#: apps/dpnk/views/registration_and_login.py:794
 msgid "Sledování balíčku"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:817
+#: apps/dpnk/views/registration_and_login.py:825
 msgid "Vaše osobní údaje jsme pečlivě uložili."
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:820
+#: apps/dpnk/views/registration_and_login.py:828
 msgid "Vyplňte soutěžní údaje"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:839
+#: apps/dpnk/views/registration_and_login.py:847
 msgid "Můj profil"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:847
+#: apps/dpnk/views/registration_and_login.py:855
 msgid "Žádost o ověření členství byla odeslána"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:866
+#: apps/dpnk/views/registration_and_login.py:874
 msgid "Pozvěte další kolegy do svého týmu"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:881
+#: apps/dpnk/views/registration_and_login.py:889
 #, python-format
 msgid ""
 "Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až %s členů."
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:914
+#: apps/dpnk/views/registration_and_login.py:922
 #, python-format
 msgid "Uživatel %(user)s byl přijat do Vašeho týmu."
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:928
+#: apps/dpnk/views/registration_and_login.py:936
 #, python-format
 msgid "Odeslána pozvánka uživateli %(user)s na e-mail %(email)s"
 msgstr ""
 
-#: apps/dpnk/views/registration_and_login.py:938
+#: apps/dpnk/views/registration_and_login.py:946
 #, python-format
 msgid "Odeslána pozvánka na e-mail %s"
 msgstr ""

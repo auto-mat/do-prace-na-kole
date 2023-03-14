@@ -400,11 +400,11 @@ class PaymentTypeView(
         if self.user_attendance.t_shirt_size.name not in campaign_tshirts:
             context["disable_payment_btn"] = "disabled"
             context["payment_disabled_txt"] = _(
-                "Platba není možná. Vámi vybrané triko {} již není dostupné."
-                " Vyberte jiné tričko.".format(
-                    "<strong>{}</strong>".format(
-                        self.user_attendance.t_shirt_size.name,
-                    )
+                "Platba není možná. Vámi vybraná velikost trika {} již"
+                " není dostupné. Vyberte jinú velikost trika."
+            ).format(
+                "<strong>{}</strong>".format(
+                    self.user_attendance.t_shirt_size.name,
                 )
             )
 
