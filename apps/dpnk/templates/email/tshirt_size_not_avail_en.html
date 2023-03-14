@@ -10,7 +10,7 @@ The previous t-shirt size you selected {{ user_attendance.t_shirt_size.name }}
 is no longer available. Choose another size.
 </p><p>
 
-{% url 't_shirt_delivery:zmenit_triko' as button_link %}
+{% url 'zmenit_triko' as button_link %}
 {% include "./button.html" with button_text="Change shirt" %}
 
 {% endlanguage %}
