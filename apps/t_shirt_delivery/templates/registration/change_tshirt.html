@@ -144,8 +144,10 @@
                 for (let i = 0; i < tshirtSelectElement.options.length; i++) {
                     if (tshirtSelectElement.options[i].text === opt) {
                         tshirtSelectElement.options[i].selected = true;
+                        return true
                     }
                 }
+                return false
             }
 
             /**
@@ -163,18 +165,23 @@
                     null
                 );
                 tshirtBtn = tshirtBtn.iterateNext();
+                const paymentDisabledTxt = (
+                    '<div>{% trans "Vámi vybraná předchozí velikost" %}'
+                    + ' <strong>' + btnTxt + ' - ' + tshirtSizeOpt + '</strong> '
+                    + '{% trans "již není dostupná. Vyberte jinou velikost." %}'
+                    + "</div>"
+                )
                 if (tshirtBtn != null) {
                     tshirtBtn.click();
                     {# Select user choosed t-shirt opt #}
                     if (typeof tshirtSizeOpt !== "undefined") {
-                        selectOpt("id_userattendance-t_shirt_size", tshirtSizeOpt)
+                        const findOpt = selectOpt("id_userattendance-t_shirt_size", tshirtSizeOpt)
+                        if (!findOpt) {$("#div_id_userprofile-telephone_opt_in").next().after(paymentDisabledTxt);}
+                    } else {
+                        $("#div_id_userprofile-telephone_opt_in").next().after(paymentDisabledTxt);
                     }
                 } else {
-                    $("#div_id_userprofile-telephone_opt_in").next().after(
-                    '<div>{% trans "Vámi vybraná předchozí velikost" %}'
-                    + ' <strong>' + btnTxt + ' - ' + tshirtSizeOpt + '</strong> '
-                    + '{% trans "již není dostupná. Vyberte jinou velikost." %}'
-                    + "</div>");
+                    $("#div_id_userprofile-telephone_opt_in").next().after(paymentDisabledTxt);
                 }
             }
 
