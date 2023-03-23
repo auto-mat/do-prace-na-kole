@@ -341,9 +341,3 @@ CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_ge
                         File(fd),
                     )
             city.save()
-
-
-@shared_task(bind=True)
-def send_tshirt_size_not_avail_notif(self, user_attendances):
-    for user_attendance in user_attendances:
-        email.tshirt_size_not_avail(user_attendance)

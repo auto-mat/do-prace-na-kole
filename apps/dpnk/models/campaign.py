@@ -26,7 +26,6 @@ from colorfield.fields import ColorField
 
 from denorm import denormalized, depend_on_related
 
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
@@ -288,49 +287,6 @@ class Campaign(Pricable, models.Model):
         default="",
         on_delete=models.SET_NULL,
     )
-
-    def save(self, *args, **kwargs):
-        from t_shirt_delivery.models import TShirtSize
-
-        from ..tasks import send_tshirt_size_not_avail_notif
-
-        super().save(*args, **kwargs)
-        exclude_tshirts_code = ["nic", ""]
-        package_transaction = ContentType.objects.get(
-            model="packagetransaction",
-            app_label="t_shirt_delivery",
-        )
-        campaign_tshirts = (
-            TShirtSize.objects.filter(
-                campaign=self,
-                available=True,
-            )
-            .exclude(t_shirt_preview=None)
-            .exclude(code__in=exclude_tshirts_code)
-            .values_list("name", flat=True)
-        )
-        users_with_tshirts = (
-            UserAttendance.objects.filter(
-                campaign=self,
-                t_shirt_size__isnull=False,
-            )
-            .exclude(
-                t_shirt_size__code__in=exclude_tshirts_code,
-            )
-            .values_list("t_shirt_size__name", flat=True)
-        )
-        if campaign_tshirts and users_with_tshirts:
-            tshirts_diffs = list(
-                set(users_with_tshirts) - set(campaign_tshirts),
-            )
-            if tshirts_diffs:
-                users_without_avail_tshirt = UserAttendance.objects.filter(
-                    campaign=self,
-                    t_shirt_size__name__in=tshirts_diffs,
-                ).exclude(
-                    transactions__polymorphic_ctype_id__in=[package_transaction.id],
-                )
-                send_tshirt_size_not_avail_notif(users_without_avail_tshirt)
 
     def display_name(self):
         if self.name:

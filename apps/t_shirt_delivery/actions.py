@@ -23,7 +23,7 @@ from dpnk import actions
 from dpnk.models import Campaign
 
 from t_shirt_delivery import tasks
-from t_shirt_delivery.models import DeliveryBatch
+from t_shirt_delivery.models import DeliveryBatch, TShirtSize
 
 
 def create_batch(modeladmin, request, queryset):
@@ -102,3 +102,67 @@ def recreate_delivery_csv(modeladmin, request, queryset):
 
 
 recreate_delivery_csv.short_description = _("Přegenerovat CSV u vybraných dávek")
+
+
+def send_tshirt_size_not_avail_notif(modeladmin, request, queryset):
+    from django.contrib.contenttypes.models import ContentType
+
+    from dpnk.models import UserAttendance
+
+    campaign = request.user_attendance.campaign
+    exclude_tshirts_code = ["nic", ""]
+    package_transaction = ContentType.objects.get(
+        model="packagetransaction",
+        app_label="t_shirt_delivery",
+    )
+    campaign_tshirts = (
+        TShirtSize.objects.filter(
+            campaign=campaign,
+            available=True,
+        )
+        .exclude(t_shirt_preview=None)
+        .exclude(code__in=exclude_tshirts_code)
+        .values_list("name", flat=True)
+    )
+    users_with_tshirts = (
+        UserAttendance.objects.filter(
+            campaign=campaign,
+            t_shirt_size__isnull=False,
+        )
+        .exclude(
+            t_shirt_size__code__in=exclude_tshirts_code,
+        )
+        .values_list("t_shirt_size__name", flat=True)
+    )
+    if campaign_tshirts and users_with_tshirts:
+        tshirts_diffs = list(
+            set(users_with_tshirts) - set(campaign_tshirts),
+        )
+        if tshirts_diffs:
+            users_without_avail_tshirt = UserAttendance.objects.filter(
+                campaign=campaign,
+                t_shirt_size__name__in=tshirts_diffs,
+            ).exclude(
+                transactions__polymorphic_ctype_id__in=[package_transaction.id],
+            )
+            tasks.send_tshirt_size_not_avail_notif(users_without_avail_tshirt)
+
+            modeladmin.message_user(
+                request,
+                _("Odeslání {} notifikačních emailů bylo zadáno.").format(
+                    users_without_avail_tshirt.count(),
+                ),
+            )
+        else:
+            modeladmin.message_user(
+                request,
+                _(
+                    "Odeslání notifikačních emailů nebylo zadáno."
+                    " Žádný uživatel nemá nedostupnou velikost trika."
+                ),
+            )
+
+
+send_tshirt_size_not_avail_notif.short_description = _(
+    "Odeslat notifikaci nedostupných velikostí triček"
+)

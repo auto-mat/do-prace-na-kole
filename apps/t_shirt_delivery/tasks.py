@@ -108,3 +108,11 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
             batch.combined_opt_pdf.save(os.path.basename(filename), f)
             batch.save()
         subprocess.call(["rm", "tmp_pdf/", "-r"])
+
+
+@shared_task(bind=True)
+def send_tshirt_size_not_avail_notif(self, user_attendances):
+    from dpnk.email import tshirt_size_not_avail
+
+    for user_attendance in user_attendances:
+        tshirt_size_not_avail(user_attendance)
