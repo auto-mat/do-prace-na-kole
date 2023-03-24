@@ -116,7 +116,7 @@ def create_invoice_lines(invoice):
                 name=description,
                 quantity=1,
                 unit_price=decimal.Decimal(amount),
-                vat_rate=21,
+                vat_rate=0,
             )
         )
     return lines
