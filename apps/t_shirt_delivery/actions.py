@@ -164,5 +164,5 @@ def send_tshirt_size_not_avail_notif(modeladmin, request, queryset):
 
 
 send_tshirt_size_not_avail_notif.short_description = _(
-    "Odeslat notifikaci nedostupných velikostí triček"
+    "Odeslat notifikační email nedostupných velikostí triček"
 )
