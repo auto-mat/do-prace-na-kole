@@ -108,12 +108,17 @@ def send_tshirt_size_not_avail_notif(modeladmin, request, queryset):
     from django.contrib.contenttypes.models import ContentType
 
     from dpnk.models import UserAttendance
+    from dpnk.models.transactions import Status
 
     campaign = request.user_attendance.campaign
     exclude_tshirts_code = ["nic", ""]
-    package_transaction = ContentType.objects.get(
+    package_transaction_content_type = ContentType.objects.get(
         model="packagetransaction",
         app_label="t_shirt_delivery",
+    )
+    payment_content_type = ContentType.objects.get(
+        model="payment",
+        app_label="dpnk",
     )
     campaign_tshirts = (
         TShirtSize.objects.filter(
@@ -139,11 +144,22 @@ def send_tshirt_size_not_avail_notif(modeladmin, request, queryset):
             set(users_with_tshirts) - set(campaign_tshirts),
         )
         if tshirts_diffs:
-            users_without_avail_tshirt = UserAttendance.objects.filter(
-                campaign=campaign,
-                t_shirt_size__name__in=tshirts_diffs,
-            ).exclude(
-                transactions__polymorphic_ctype_id__in=[package_transaction.id],
+            users_without_avail_tshirt = (
+                UserAttendance.objects.filter(
+                    campaign=campaign,
+                    t_shirt_size__name__in=tshirts_diffs,
+                )
+                .exclude(
+                    transactions__polymorphic_ctype_id__in=[
+                        package_transaction_content_type.id,
+                    ],
+                )
+                .exclude(
+                    transactions__polymorphic_ctype_id__in=[
+                        payment_content_type.id,
+                    ],
+                    payment__status=Status.DONE,
+                )
             )
             tasks.send_tshirt_size_not_avail_notif(users_without_avail_tshirt)
 
