@@ -15,6 +15,7 @@ from class_based_auth_views.views import LoginView
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
 from django.db.models import Q
@@ -387,6 +388,7 @@ class PaymentTypeView(
         context["amount"] = self.user_attendance.admission_fee()
         context["beneficiary_amount"] = self.user_attendance.beneficiary_admission_fee()
         context["prev_url"] = self.prev_url
+        context["disable_payment_btn"] = ""
 
         campaign_tshirts = (
             TShirtSize.objects.filter(
@@ -396,8 +398,32 @@ class PaymentTypeView(
             .exclude(t_shirt_preview=None)
             .values_list("name", flat=True)
         )
-        context["disable_payment_btn"] = ""
-        if self.user_attendance.t_shirt_size.name not in campaign_tshirts:
+        package_transaction_content_type = ContentType.objects.get(
+            model="packagetransaction",
+            app_label="t_shirt_delivery",
+        )
+        payment_content_type = ContentType.objects.get(
+            model="payment",
+            app_label="dpnk",
+        )
+        transactions = self.user_attendance.transactions.all()
+        if transactions:
+            payment_not_done_transaction = transactions.exclude(
+                polymorphic_ctype_id__in=[
+                    package_transaction_content_type.id,
+                ],
+            ).exclude(
+                polymorphic_ctype_id__in=[
+                    payment_content_type.id,
+                ],
+                payment__status=models.Status.DONE,
+            )
+        else:
+            payment_not_done_transaction = True
+        if (
+            self.user_attendance.t_shirt_size.name not in campaign_tshirts
+            and payment_not_done_transaction
+        ):
             context["disable_payment_btn"] = "disabled"
             context["payment_disabled_txt"] = _(
                 "Platba není možná. Vámi vybraná velikost trika {} již"
