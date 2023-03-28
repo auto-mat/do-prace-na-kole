@@ -56,7 +56,6 @@ from related_admin import RelatedFieldAdmin, getter_for_related_field
 from . import actions, filters, models
 from .admin_forms import IDENTIFIER_REGEXP
 from .admin_mixins import ReadOnlyModelAdminMixin
-from .delivery_batch_resources import DeliveryBatchModelBaseResource
 from .forms import PackageTransactionForm
 
 
@@ -398,24 +397,31 @@ class SubsidiaryBoxInline(NestedTabularInline):
     )
 
 
-class DeliveryBatchResource(DeliveryBatchModelBaseResource):
-    box_count = resources.Field()
+def get_delivery_batch_model_resource_instance():
+    from .delivery_batch_resources import get_delivery_batch_model_base_resource_class
 
-    class Meta:
-        model = models.DeliveryBatch
-        fields = ("note", "created", "campaign__name", "dispatched", "id")
-        export_order = (
-            "note",
-            "created",
-            "campaign__name",
-            "dispatched",
-            "id",
-            "box_count",
-            *DeliveryBatchModelBaseResource.fields,
-        )
+    DeliveryBatchModelBaseResource = get_delivery_batch_model_base_resource_class()
 
-    def dehydrate_box_count(self, db):
-        return db.box_count()
+    class DeliveryBatchResource(DeliveryBatchModelBaseResource):
+        box_count = resources.Field()
+
+        class Meta:
+            model = models.DeliveryBatch
+            fields = ("note", "created", "campaign__name", "dispatched", "id")
+            export_order = (
+                "note",
+                "created",
+                "campaign__name",
+                "dispatched",
+                "id",
+                "box_count",
+                *DeliveryBatchModelBaseResource.fields,
+            )
+
+        def dehydrate_box_count(self, db):
+            return db.box_count()
+
+    return DeliveryBatchResource()
 
 
 @admin.register(models.DeliveryBatch)
@@ -458,7 +464,7 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
     )
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
-    resource_class = DeliveryBatchResource
+    resource_class = lambda x: get_delivery_batch_model_resource_instance()
 
     def get_list_display(self, request):
         for t_size in models.TShirtSize.objects.filter(

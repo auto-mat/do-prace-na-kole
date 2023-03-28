@@ -43,33 +43,24 @@ def get_all_t_shirt_codes(value_field):
 
     :return set codes: unique t-shirts codes
     """
-    if len(sys.argv) >= 2 and sys.argv[1] == "test":
-        return ("TEST",)
-    # During build Docker image DB isn't accessible
-    try:
-        codes = {}
-        # Check if "TShirtSize" model DB table exist, during tests
-        if (
-            TShirtSize._meta.db_table
-            in connections["default"].introspection.table_names()
-        ):
-            codes = (
-                TShirtSize.objects.all()
-                .exclude(Q(code="") | Q(code="nic"))
-                .values("code", "name", "campaign__year")
-            )
-            # Unique codes sorted by campaign year, name, code
-            codes = sorted(
-                list(
-                    {
-                        v["code"]: v
-                        for v in sorted(codes, key=itemgetter("campaign__year", "name"))
-                    }.values()
-                ),
-                key=itemgetter("name", "code"),
-            )
-    except ImproperlyConfigured:
-        pass
+    codes = {}
+    # Check if "TShirtSize" model DB table exist, during tests
+    if TShirtSize._meta.db_table in connections["default"].introspection.table_names():
+        codes = (
+            TShirtSize.objects.all()
+            .exclude(Q(code="") | Q(code="nic"))
+            .values("code", "name", "campaign__year")
+        )
+        # Unique codes sorted by campaign year, name, code
+        codes = sorted(
+            list(
+                {
+                    v["code"]: v
+                    for v in sorted(codes, key=itemgetter("campaign__year", "name"))
+                }.values()
+            ),
+            key=itemgetter("name", "code"),
+        )
     return codes
 
 
@@ -91,11 +82,14 @@ def get_model_resource_class_body():
         body["dehydrate_{}".format(field_name)] = dehydrate_func
         all_fields.append((field_name, t_shirt[tshirt_code_field]))
     body["fields"] = all_fields
+
     return body
 
 
-DeliveryBatchModelBaseResource = type(
-    "DeliveryBatchModelBaseResource",
-    (ModelResource,),
-    get_model_resource_class_body(),
-)
+def get_delivery_batch_model_base_resource_class():
+    DeliveryBatchModelBaseResource = type(
+        "DeliveryBatchModelBaseResource",
+        (ModelResource,),
+        get_model_resource_class_body(),
+    )
+    return DeliveryBatchModelBaseResource
