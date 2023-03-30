@@ -606,6 +606,7 @@ class UserAttendanceToBatchAdmin(
         "t_shirt_size",
         "team__subsidiary",
         "team__subsidiary__city",
+        "team__subsidiary__address_psc",
         "payment_created",
         "representative_payment__realized",
     )
@@ -613,6 +614,7 @@ class UserAttendanceToBatchAdmin(
         ("team__subsidiary__city", RelatedFieldCheckBoxFilter),
         ("t_shirt_size", RelatedFieldComboFilter),
         "transactions__status",
+        "team__subsidiary__address_psc",
     )
     search_fields = (
         "userprofile__nickname",
