@@ -599,7 +599,10 @@ class UserAttendanceToBatch(UserAttendance):
 
 @admin.register(UserAttendanceToBatch)
 class UserAttendanceToBatchAdmin(
-    ReadOnlyModelAdminMixin, RelatedFieldAdmin, NestedModelAdmin
+    AdminAdvancedFiltersMixin,
+    ReadOnlyModelAdminMixin,
+    RelatedFieldAdmin,
+    NestedModelAdmin,
 ):
     list_display = (
         "name",
@@ -628,6 +631,12 @@ class UserAttendanceToBatchAdmin(
         "team__subsidiary__address_recipient",
         "team__subsidiary__address_city",
         "team__subsidiary__company__name",
+    )
+    advanced_filter_fields = (
+        "team__subsidiary__city",
+        "t_shirt_size",
+        "transactions__status",
+        "team__subsidiary__address_psc",
     )
     actions = (actions.create_batch,)
 
