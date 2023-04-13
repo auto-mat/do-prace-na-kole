@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 14:57+0100\n"
+"POT-Creation-Date: 2023-04-06 09:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
 "<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
-#: apps/motivation_messages/admin.py:13
+#: apps/motivation_messages/admin.py:12
 msgid "Campaign type"
 msgstr "Typ kampaně"
 
-#: apps/motivation_messages/admin.py:27
+#: apps/motivation_messages/admin.py:26
 msgid "Filter my messages"
 msgstr "Filtruj moje zprávy"
 
