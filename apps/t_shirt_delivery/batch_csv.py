@@ -26,6 +26,7 @@ def generate_csv(csvfile, delivery_batch):
     spamwriter.writerow(
         [
             "Číslo dokladu",
+            "GLS tracking ID",
             "Příjemce - Název",
             "Příjemce - Stát",
             "Příjemce - Město",
@@ -54,6 +55,16 @@ def generate_csv(csvfile, delivery_batch):
         spamwriter.writerow(
             [
                 "",  # Číslo dokladu",
+                ", ".join(
+                    list(
+                        set(
+                            subsidiary_box.teampackage_set.all().values_list(
+                                "box__carrier_identification",
+                                flat=True,
+                            )
+                        )
+                    )
+                ),  # GLS tracking ID
                 subsidiary.get_recipient_string(),
                 "CZ",
                 subsidiary.address_city,
