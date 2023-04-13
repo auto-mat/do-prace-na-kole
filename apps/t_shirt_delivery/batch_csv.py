@@ -58,7 +58,9 @@ def generate_csv(csvfile, delivery_batch):
                 ", ".join(
                     list(
                         set(
-                            subsidiary_box.teampackage_set.all().values_list(
+                            subsidiary_box.teampackage_set.exclude(
+                                box__carrier_identification__isnull=True
+                            ).values_list(
                                 "box__carrier_identification",
                                 flat=True,
                             )
