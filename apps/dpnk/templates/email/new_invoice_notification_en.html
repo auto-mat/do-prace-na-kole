@@ -6,14 +6,14 @@
 <p>
 Hello, {{ user_attendance.userprofile.first_name }}
 </p><p>
-Your {{ user_attendance.team.subsidiary.company.name }} company invoice for the {{ user_attendance.campaign.name }} competition is ready. Please check it before the due date {{invoice.payback_date}}.
+your {{ user_attendance.team.subsidiary.company.name }} company invoice for the {{ user_attendance.campaign.name }} challenge is ready. Please check it before the due date {{invoice.payback_date}}.
 </p>
 
 {% url 'invoices' as button_link %}
 {% include "./button.html" with button_text="Check &amp; Pay" %}
 
 <p>
-All invoices are guarded in Your <a href="{{ absolute_uri }}{% url 'invoices' %}">profile</a>.
+All invoices are guarded in your <a href="{{ absolute_uri }}{% url 'invoices' %}">profile</a>.
 </p>
 {% endlanguage %}
 {% endblock %}
