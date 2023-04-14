@@ -6,7 +6,7 @@
 <p>
 Good news{% if invited %} {{ invited.userprofile.first_name }}{% endif %}!
 </p><p>
-Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with You in the {{inviting.team.name}} team.
+Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with you in the {{inviting.team.name}} team.
 </p>
 
 {% if not invited %}
@@ -17,7 +17,7 @@ Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with You i
 {% include "./button.html" with button_text="Let's Ride" %}
 
 <p>
-Need more information? Respond directly to Your fellow colleague at <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
+Need more information? Respond directly to your fellow colleague at <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
 </p>
 {% endlanguage %}
 {% endblock %}
