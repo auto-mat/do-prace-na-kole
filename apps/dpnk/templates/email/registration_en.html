@@ -4,26 +4,26 @@
 {% block content %}
 {% language lang_code %}
 <p>
-Welcome to the {{user_attendance.campaign.display_name}} competition!
+Welcome to the {{user_attendance.campaign.display_name}} challenge!
 </p><p>
 Our ride begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
 </p><p>
 Before you head off, there are still some stuff you need to do.
-Check the profile. There You will track Your bike trips every day.
+Check the profile, there you can track your courses every day.
 </p>
 
 {% url 'upravit_profil' as button_link %}
 {% include "./button.html" with button_text="Complete my profile" %}
 
 <p>
-That could be much more interesting if You compare Your results with fellow coworkers. Send them an invitation to Your team.
+That could be much more interesting if you compare your results with fellow coworkers. Send them an invitation to your team.
 </p>
 
 {% url 'pozvanky' as button_link %}
 {% include "./button.html" with button_text="Invite people" %}
 
 <p>
-Do You have some questions? Let us know at <a href="mailto:{{user_attendance.campaign.campaign_type.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
+Do you have any questions? Let us know at <a href="mailto:{{user_attendance.campaign.campaign_type.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
 </p>
 {% endlanguage %}
 {% endblock %}
