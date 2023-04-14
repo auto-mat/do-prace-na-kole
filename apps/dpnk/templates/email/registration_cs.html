@@ -6,20 +6,20 @@
 <p>
 Vítejte mezi námi!
 </p><p>
-Registrace do soutěže {{ user_attendance.campaign }} proběhla úspěšně. Jízda Vašeho života právě začíná.
+Registrace do výzvy {{ user_attendance.campaign }} proběhla úspěšně. Jízda vašeho života právě začíná.
 </p><p>
-Desatero doporučení před startem.
+Desatero doporučení před startem:
 </p>
 
 <ul>
    <li>
  Vypucujte kolo. Kdo řetěz maže, ten jede.
    </li><li>
- Nastartujte fyzičku. Připravte svá stehna na pravidelnou ranní jízdu.
+ Nastartujte fyzičku. Připravte svá stehna na pravidelnou ranní jízdu, běh či procházku.
    </li><li>
       Zapamatujte si svůj přihlašovací e-mail <b>{{ email }}</b>.
    </li><li>
- Zapamatujte si, že soutěž začíná {{ user_attendance.campaign.competition_phase.date_from }} a končí {{ user_attendance.campaign.competition_phase.date_to }}.
+ Zapamatujte si, že výzva začíná {{ user_attendance.campaign.competition_phase.date_from }} a končí {{ user_attendance.campaign.competition_phase.date_to }}.
    </li><li>
  Své jízdy si pravidelně zaznamenávejte v <a href="{{ absolute_uri }}{% url 'profil' %}">profilu</a>.
    </li><li>
@@ -29,7 +29,7 @@ Desatero doporučení před startem.
    </li><li>
  Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených <a href="{{user_attendance.campaign.campaign_type.web}}/aplikace">aplikací</a>.
    </li><li>
- Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem <a href="{{user_attendance.campaign.campaign_type.web}}">webu</a>.
+ Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z vašeho města na našem <a href="{{user_attendance.campaign.campaign_type.web}}">webu</a>.
    </li>
 </ul>
 
