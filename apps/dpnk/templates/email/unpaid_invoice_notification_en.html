@@ -5,14 +5,14 @@
 <p>
 Is everything OK, {{ user_attendance.userprofile.first_name }}?
 </p><p>
-We haven't get Your payment for the team invoice issued on {{ invoice.exposure_date }} with the due date {{invoice.payback_date}}.
+We haven't get your payment for the team invoice issued on {{ invoice.exposure_date }} with the due date {{invoice.payback_date}}.
 </p>
 
 {% url 'invoices' as button_link %}
 {% include "./button.html" with button_text="Manage my payments" %}
 
 <p>
-You can also check all invoices in <a href="{{ absolute_uri }}{% url 'invoices' %}">Your profile</a>.
+You can also check all invoices in <a href="{{ absolute_uri }}{% url 'invoices' %}">your profile</a>.
 </p>
 {% endlanguage %}
 {% endblock %}
