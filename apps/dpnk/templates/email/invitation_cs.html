@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block header %}
-Pozvánka do soutěže
+Pozvánka do výzvy
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@ Hezký den{% if invited %} {{ invited.userprofile.first_name_vokativ }}{% endif 
 </p>
 <p>
 {{ inviting.userprofile.name }} si myslí, že je dnes perfektní den pro jízdu na kole.
-Proto Vám posílá pozvánku do svého týmu {{inviting.team.name}} v soutěži {{ inviting.campaign }}.
+Proto Vám posílá pozvánku do svého týmu {{inviting.team.name}} ve výzvě {{ inviting.campaign }}.
 </p>
 
 {% if not invited %}
@@ -23,7 +23,7 @@ Proto Vám posílá pozvánku do svého týmu {{inviting.team.name}} v soutěž
 {% include "./button.html" with button_text="Chci šlápnout do pedálů" %}
 
 <p>
-Více o soutěži se dozvíte na <a href="{{ inviting.campaign.campaign_type.web }}">našem webu</a> nebo od svých nových týmových parťáků.
+Více o výzvě se dozvíte na <a href="{{ inviting.campaign.campaign_type.web }}">našem webu</a> nebo od svých nových týmových parťáků.
 </p>
 {% endlanguage %}
 {% endblock %}
