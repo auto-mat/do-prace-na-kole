@@ -5,16 +5,16 @@
 <p>
 Hezký den, {{ team_member.userprofile.first_name_vokativ }}
 </p><p>
-Váš tým v soutěži {{ new_user.campaign.display_name }} začíná být velmi populární.
+váš tým v soutěži {{ new_user.campaign.display_name }} začíná být velmi populární.
 </p><p>
-Právě teď {{ new_user.userprofile.name }} pošilhává po volném místečku ve Vašem pelotonu {{ new_user.team.name }}.
+Právě teď {{ new_user.userprofile.name }} pošilhává po volném místečku ve vašem pelotonu {{ new_user.team.name }}.
 </p>
 
 {% url 'team_members' as button_link %}
 {% include "./button.html" with button_text="Přidat člena" %}
 
 <p>
-Pokud nechcete, aby Váš tým měl o dvě kolečka navíc, můžete členství nováčka <a href="{{ absolute_uri }}{% url 'team_members' %}">zamítnout</a>.
+Pokud nechcete, aby váš tým měl o dvě kolečka navíc, můžete členství nováčka <a href="{{ absolute_uri }}{% url 'team_members' %}">zamítnout</a>.
 </p>
 {% endblock %}
 {% endlanguage %}
