@@ -3,13 +3,13 @@
 <p>
 Good news, {{ user_attendance.userprofile.first_name }}
 </p><p>
-You are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
+you are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
 </p>
 
 {% url 'login' as button_link %}
 {% include "./button.html" with button_text="Sign up as a team member" %}
 
 <p>
-    Welcome to the {{user_attendance.campaign.display_name}} competition!
+    Welcome to the {{user_attendance.campaign.display_name}} challenge!
 </p>
 {% endblock %}
