@@ -71,7 +71,7 @@ def save_filefield(filefield, directory):
             sep=";",
         )
         csv_content.drop("GLS tracking ID", inplace=True, axis=1)
-        f.write(csv_content.to_csv())
+        f.write(csv_content.to_csv().encode())
         filefield.close()
     return filename
 
