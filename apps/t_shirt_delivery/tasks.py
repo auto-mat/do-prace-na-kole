@@ -66,12 +66,13 @@ def delivery_batch_generate_pdf(self, ids):
 def save_filefield(filefield, directory):
     filename = directory + "/" + os.path.basename(filefield.name)
     with open(filename, "wb+") as f:
+        csv_sep = ";"
         csv_content = pandas.read_csv(
             io.StringIO(filefield.read().decode()),
-            sep=";",
+            sep=csv_sep,
         )
         csv_content.drop("GLS tracking ID", inplace=True, axis=1)
-        f.write(csv_content.to_csv().encode())
+        f.write(csv_content.to_csv(sep=csv_sep, index=False).encode())
         filefield.close()
     return filename
 
