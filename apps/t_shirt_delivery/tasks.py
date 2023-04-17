@@ -19,6 +19,7 @@
 
 
 import datetime
+import io
 import os
 import subprocess
 
@@ -26,6 +27,7 @@ from celery import shared_task
 
 from django.conf import settings
 
+import pandas
 import tablib
 
 from dpnk.models import Campaign, UserAttendance
@@ -64,7 +66,9 @@ def delivery_batch_generate_pdf(self, ids):
 def save_filefield(filefield, directory):
     filename = directory + "/" + os.path.basename(filefield.name)
     with open(filename, "wb+") as f:
-        f.write(filefield.read())
+        csv_content = pandas.read_csv(io.StringIO(filefield.read().decode()))
+        csv_content.drop("GLS tracking ID", inplace=True, axis=1)
+        f.write(csv_content.to_csv())
         filefield.close()
     return filename
 
