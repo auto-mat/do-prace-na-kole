@@ -397,7 +397,7 @@ class SubsidiaryBoxInline(NestedTabularInline):
     )
 
 
-def get_delivery_batch_model_resource_instance():
+def get_delivery_batch_model_resource_instance(instance=True):
     from .delivery_batch_resources import get_delivery_batch_model_base_resource_class
 
     DeliveryBatchModelBaseResource = get_delivery_batch_model_base_resource_class()
@@ -421,7 +421,7 @@ def get_delivery_batch_model_resource_instance():
         def dehydrate_box_count(self, db):
             return db.box_count()
 
-    return DeliveryBatchResource()
+    return DeliveryBatchResource() if instance else DeliveryBatchResource
 
 
 @admin.register(models.DeliveryBatch)

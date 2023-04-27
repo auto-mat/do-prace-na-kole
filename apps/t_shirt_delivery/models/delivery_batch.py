@@ -229,12 +229,12 @@ class DeliveryBatch(models.Model):
 
     @classmethod
     def export_resource_classes(cls):
-        from ..admin import DeliveryBatchResource
+        from ..admin import get_delivery_batch_model_resource_instance
 
         return {
             "deliverybatch": (
                 "DeliveryBatch",
-                DeliveryBatchResource,
+                get_delivery_batch_model_resource_instance(instance=False),
             ),
         }
 
