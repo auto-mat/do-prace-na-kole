@@ -442,19 +442,12 @@ LEAFLET_CONFIG = {
     "DEFAULT_CENTER": (50.0866699218750000, 14.4387817382809995),
     "TILES": [
         (
-            _("cyklomapa"),
-            "https://tiles.prahounakole.cz/{z}/{x}/{y}.png",
-            {
-                "attribution": '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            },
-        ),
-        (
             _("Všeobecná mapa"),
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
                 "attribution": '&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             },
-        ),
+        )
     ],
     "NO_GLOBALS": False,
     "DEFAULT_ZOOM": 8,
