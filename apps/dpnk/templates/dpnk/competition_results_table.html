@@ -48,7 +48,8 @@
                 } );
                 $('.dt-buttons').children().removeClass('btn-secondary').addClass('btn-default');
             },
-            "ajax": "{% url 'competition_result_list_json' competition.slug %}"
+            "ajax": "{% url 'competition_result_list_json' competition.slug %}",
+            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ]
         });
     });
     </script>
