@@ -53,7 +53,7 @@ def str_to_bool(string):
 DEBUG = str_to_bool(os.environ.get("DPNK_DEBUG", False))
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (("Timothy Hobbs", "it@auto-mat.cz"),)
+ADMINS = (("Timothy Hobbs", os.environ.get("DPNK_ADMIN_EMAIL")),)
 DEFAULT_FROM_EMAIL = "Do práce na kole <kontakt@dopracenakole.cz>"
 MANAGERS = ADMINS
 DATABASES = {
