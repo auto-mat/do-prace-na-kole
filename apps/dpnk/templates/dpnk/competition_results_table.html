@@ -22,7 +22,35 @@
             "buttons": [
                 { extend: 'csv', exportOptions: { modifier : { order : 'index', page : 'all', search : 'applied'}}},
                 'spacer',
-                { extend: 'excel', exportOptions: { modifier : { order : 'index', page : 'all', search : 'applied'}}},
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        modifier : { order : 'index', page : 'all', search : 'applied'},
+                        columns: ':visible',
+                        format: {
+                            body: function(data, row, column, node) {
+                                data = $('<p>' + data + '</p>').text();
+                                /*
+                                Convert float number to string and fix output
+                                float number format
+
+                                Example:
+
+                                Wrong output format due thousands separator:
+
+                                1 024,65
+                                9,5748
+
+                                Correct output format:
+
+                                1 024,65
+                                957,48
+                                */
+                                return $.isNumeric(data.replace(/\s/g, "").replace(',', '.')) ? "\0" + data : data;
+                            },
+                        }
+                    },
+                },
                 'spacer',
                 { extend: 'pdf', exportOptions: { modifier : { order : 'index', page : 'all', search : 'applied'}}},
                 'spacer',
