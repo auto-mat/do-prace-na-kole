@@ -4,6 +4,7 @@ import os
 
 from celery import Celery
 
+from project.test_celery_liveness import LivenessProbe
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 
@@ -26,3 +27,5 @@ try:
     app.conf.task_always_eager = settings.CELERY_TASK_ALWAYS_EAGER
 except AttributeError:
     pass
+
+app.steps["worker"].add(LivenessProbe)
