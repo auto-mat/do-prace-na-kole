@@ -243,11 +243,11 @@ send_invoice_notifications.short_description = _(
 
 def create_invoices(modeladmin, request, queryset, celery=True):
     campaign = request.user_attendance.campaign
-    for company in queryset:
-        if celery:
-            tasks.create_invoice_if_needed.delay(company.pk, campaign.slug)
-        else:
-            tasks.create_invoice_if_needed(company.pk, campaign.slug)
+    company_pk = list(queryset.values_list("pk", flat=True))
+    if celery:
+        tasks.create_invoice_if_needed.delay(company_pk, campaign.slug)
+    else:
+        tasks.create_invoice_if_needed(company_pk, campaign.slug)
 
 
 create_invoices.short_description = _("Vytvořit faktury pro neplacené platby")

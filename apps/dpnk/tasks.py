@@ -185,18 +185,20 @@ def send_new_invoice_notification(self, pks=None, campaign_slug=""):
 
 
 @shared_task(bind=True)
-def create_invoice_if_needed(self, pk=None, campaign_slug=""):
-    company = Company.objects.get(pk=pk)
-    campaign = Campaign.objects.get(slug=campaign_slug)
-    logger.info(f"Company name: {company}")
-    logger.info(f"Campaign: {campaign}")
-    payments = payments_to_invoice(company, campaign)
-    logger.info(f"Number of payments: {payments.count()}")
-    if payments:
-        Invoice.objects.create(
-            company=company,
-            campaign=campaign,
-        )
+def create_invoice_if_needed(self, pks=[], campaign_slug=""):
+    for pk in pks:
+        company = Company.objects.get(pk=pk)
+        campaign = Campaign.objects.get(slug=campaign_slug)
+        logger.info(f"Company name: {company}")
+        logger.info(f"Campaign: {campaign}")
+        payments = payments_to_invoice(company, campaign)
+        logger.info(f"Number of payments: {payments.count()}")
+        print("INSIDE", company, campaign)
+        if payments:
+            Invoice.objects.create(
+                company=company,
+                campaign=campaign,
+            )
 
 
 @shared_task(bind=True)
