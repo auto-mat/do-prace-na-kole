@@ -421,7 +421,8 @@ class PaymentTypeView(
         else:
             payment_not_done_transaction = True
         if (
-            self.user_attendance.t_shirt_size.name not in campaign_tshirts
+            self.user_attendance.t_shirt_size
+            and self.user_attendance.t_shirt_size.name not in campaign_tshirts
             and payment_not_done_transaction
         ):
             context["disable_payment_btn"] = "disabled"

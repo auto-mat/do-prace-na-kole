@@ -796,7 +796,10 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             .exclude(t_shirt_preview=None)
             .values_list("name", flat=True)
         )
-        if self.user_attendance.t_shirt_size.name not in campaign_tshirts:
+        if (
+            self.user_attendance.t_shirt_size
+            and self.user_attendance.t_shirt_size.name not in campaign_tshirts
+        ):
             self.next_btn_disabled = True
         ret_val = super().__init__(*args, **kwargs)
         self.helper.form_class = "noAsterisks"
