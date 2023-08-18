@@ -6,6 +6,19 @@
 {% block body-class %}login-layout{% endblock %}
 
 {% block body %}
+{% if request.resolver_match.url_name == "registration_access" or request.resolver_match.url_name == "register_admin" %}
+<script>
+if (window.rc && window.rc.conversionHit) {
+  window.rc.conversionHit({id: 100171240, value: 100});
+}
+</script>
+{% elif request.resolver_match.url_name == "registration_complete" %}
+<script>
+if (window.rc && window.rc.conversionHit) {
+  window.rc.conversionHit({id: 100182765, value: null});
+}
+</script>
+{% endif %}
    <div class="container-fluid standalone-login-form">
       <div class="row d-flex comeX">
          <div class="col-12 col-sm-4 item d-flex">
