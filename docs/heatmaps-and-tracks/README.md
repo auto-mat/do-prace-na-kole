@@ -2,7 +2,7 @@
 Skript na vytvoení anonimizovaných tras z DPNK
 
 1. In the [DPNK city in campaign admin](https://dpnk.dopracenakole.cz/admin/dpnk/cityincampaign/) run the admin action "Vygenerovat tabulka anonymních jízd a vytvořit .shp soubor pro export GIS data".
-2. Now go to the [geoserver web interface](https://geoserver.prahounakole.cz/geoserver/web/)
+2. Now go to the [geoserver web interface](https://geoserver1.prahounakole.cz/geoserver/web/)
 3. Now select dpnk:dpnk-amazon
 ![](screenshots/screenshot_1.png)
 4. Click the "Configure new SQL view..." link
