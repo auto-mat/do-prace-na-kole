@@ -3,6 +3,7 @@ from python:3.9-bullseye
 maintainer Automat
 
 run apt-get update && apt-get install -y \
+   autossh \
    binutils \
    gdal-bin \
    gettext \
