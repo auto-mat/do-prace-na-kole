@@ -15,5 +15,5 @@ then
 fi
 
 # run Celery worker for our project myproject with Celery configuration stored in Celeryconf
-echo Starting celery worker
-poetry run celery worker -A project.celery -l info --queues ${CELERY_TASK_QUEUES:-celery} --hostname ${CELERY_HOSTNAME:-dpnk-worker}
+echo "Starting celery worker"
+poetry run celery worker -A project.celery --pool=prefork --concurrency="${CELERY_CONCURENCY-4}" --loglevel="${CELERY_LOGLEVEL-info}"
