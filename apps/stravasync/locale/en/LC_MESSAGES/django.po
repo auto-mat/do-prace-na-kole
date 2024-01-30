@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-02 15:47+0100\n"
+"POT-Creation-Date: 2024-01-23 10:14+0100\n"
 "PO-Revision-Date: 2020-01-13 19:45+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.11\n"
 
-#: apps/stravasync/models.py:15
+#: apps/stravasync/models.py:16
 msgid "Účet Strava"
 msgstr "Strava account"
 
-#: apps/stravasync/models.py:16
+#: apps/stravasync/models.py:17
 msgid "Účty Strava"
 msgstr "Strava accounts"
 
@@ -30,7 +30,7 @@ msgstr "Strava accounts"
 msgid "Jste propojeni s účtem "
 msgstr "You are connected to the account "
 
-#: apps/stravasync/templates/stravasync/about.html:13
+#: apps/stravasync/templates/stravasync/about.html:18
 #, python-format
 msgid ""
 "\n"
@@ -45,7 +45,7 @@ msgstr ""
 "        from a total of %(synced_trips)s trips.\n"
 "        "
 
-#: apps/stravasync/templates/stravasync/about.html:19
+#: apps/stravasync/templates/stravasync/about.html:24
 #, fuzzy, python-format
 #| msgid ""
 #| "\n"
@@ -56,7 +56,7 @@ msgstr ""
 #| "        "
 msgid ""
 "\n"
-"        Ve Stravě máte  %(synced_activities)s aktivit ale žadné nejsou "
+"        Ve Stravě máte  %(synced_activities)s aktivit a žadné nejsou "
 "označené hashtagem. Přidejte hashtagy %(hashtag_to)s nebo %(hashtag_from)s "
 "do názvu aktivit aby se počítaly jako jízdy do práce a z práce.\n"
 "        "
@@ -67,7 +67,7 @@ msgstr ""
 "%(hashtag_from)s to the title of your Strava activities.\n"
 "        "
 
-#: apps/stravasync/templates/stravasync/about.html:22
+#: apps/stravasync/templates/stravasync/about.html:27
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -87,23 +87,23 @@ msgstr ""
 "connected Strava, those trips will not be synchronized. You can change that "
 "option by disconnecting and reconnecting."
 
-#: apps/stravasync/templates/stravasync/about.html:27
+#: apps/stravasync/templates/stravasync/about.html:33
 msgid "Našli jsme následující aktivity:"
 msgstr "We found the following activities:"
 
-#: apps/stravasync/templates/stravasync/about.html:35
+#: apps/stravasync/templates/stravasync/about.html:40
 msgid "Synchronizace selhala"
 msgstr "Synchronization failed"
 
-#: apps/stravasync/templates/stravasync/about.html:38
+#: apps/stravasync/templates/stravasync/about.html:43
 msgid "Poslední synchronizace proběhla "
 msgstr "Last synchronization time "
 
-#: apps/stravasync/templates/stravasync/about.html:40
+#: apps/stravasync/templates/stravasync/about.html:45
 msgid "Nastala chyba, synchronizace neproběhla."
 msgstr "An error occurred, synchronization failed."
 
-#: apps/stravasync/templates/stravasync/about.html:46
+#: apps/stravasync/templates/stravasync/about.html:51
 msgid ""
 "\n"
 "    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
@@ -115,23 +115,23 @@ msgstr ""
 "www.dopracenakole.cz/en/contact\">call the helpdesk</a>.\n"
 "    "
 
-#: apps/stravasync/templates/stravasync/about.html:54
+#: apps/stravasync/templates/stravasync/about.html:59
 msgid "Synchronizovat"
 msgstr "Synchronize"
 
-#: apps/stravasync/templates/stravasync/about.html:60
+#: apps/stravasync/templates/stravasync/about.html:65
 msgid "Odpojit"
 msgstr "Disconnect"
 
-#: apps/stravasync/templates/stravasync/about.html:63
+#: apps/stravasync/templates/stravasync/about.html:68
 msgid "Ještě nejste propojeni se Stravou "
 msgstr "You haven't connected your account with Strava "
 
-#: apps/stravasync/templates/stravasync/about.html:66
+#: apps/stravasync/templates/stravasync/about.html:71
 msgid "Synchronizovat i soukromé jízdy a zóny"
 msgstr "Synchronize private activities and zones."
 
-#: apps/stravasync/templates/stravasync/about.html:67
+#: apps/stravasync/templates/stravasync/about.html:72
 msgid ""
 "\n"
 "        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href=\"https://"
@@ -145,35 +145,46 @@ msgstr ""
 "\"https://support.strava.com/hc/en-us/articles/115000173384-Privacy-Zones"
 "\">privacy zones</a> in Strava, in order to maintain your privacy."
 
-#: apps/stravasync/templates/stravasync/about.html:71
+#: apps/stravasync/templates/stravasync/about.html:76
 msgid "Propojit se Stravou"
 msgstr "Connect to Strava"
 
-#: apps/stravasync/templates/stravasync/about.html:75
+#: apps/stravasync/templates/stravasync/about.html:80
 msgid "Jak to funguje"
 msgstr "How it works"
 
-#: apps/stravasync/templates/stravasync/about.html:76
-#, python-format
+#: apps/stravasync/templates/stravasync/about.html:81
 msgid ""
 "\n"
 "V aplikaci Strava napište do názvu (nikoliv do popisu) svých aktivit hashtag "
-"%(hashtag_to)s nebo %(hashtag_from)s. Poté se jízdy budou automaticky "
-"synchronizovat.\n"
+"#dpnktam nebo #dpnkzpět. Poté se jízdy budou automaticky synchronizovat. "
+"Bohužel vás ale musíme informovat o možné komplikaci s přenosem dat ze "
+"Stravy - žádost o zvýšení limitu připojení stále nebyla na straně Stravy "
+"schválena a je tak možné, že se vám nějaké jízdy v systému neobjeví hned. "
+"Pro radu, jak postupovat dále, prosíme navštivte <a href=\"https://www."
+"dopracenakole.cz/o-vyzve/faq\">Často kladené otázky (FAQ)</a>\n"
 msgstr ""
-"\n"
-"Put the hashtag %(hashtag_to)s or %(hashtag_from)s in the title (not "
-"description) of your Strava activities. After that, your Trips will be "
-"synchronized automatically.\n"
 
 #: apps/stravasync/views.py:26
 msgid "Propojení se Stravou"
 msgstr "Connect to Strava"
 
-#: apps/stravasync/views.py:50
+#: apps/stravasync/views.py:59
 msgid "Aplikace Strava není dostupná."
 msgstr "Strava is down."
 
-#: apps/stravasync/views.py:52
+#: apps/stravasync/views.py:61
 msgid "API limit vyčerpan."
 msgstr "API limit exceeded."
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "V aplikaci Strava napište do názvu (nikoliv do popisu) svých aktivit "
+#~ "hashtag %(hashtag_to)s nebo %(hashtag_from)s. Poté se jízdy budou "
+#~ "automaticky synchronizovat.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Put the hashtag %(hashtag_to)s or %(hashtag_from)s in the title (not "
+#~ "description) of your Strava activities. After that, your Trips will be "
+#~ "synchronized automatically.\n"

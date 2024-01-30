@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-06 09:37+0200\n"
+"POT-Creation-Date: 2024-01-23 10:14+0100\n"
 "PO-Revision-Date: 2023-04-13 17:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -156,7 +156,7 @@ msgstr ""
 
 #: apps/t_shirt_delivery/forms.py:44
 msgid "Vyberte velikost trika"
-msgstr ""
+msgstr "Vyberte velikost"
 
 #: apps/t_shirt_delivery/forms.py:48
 msgid ""
@@ -356,6 +356,14 @@ msgid ""
 "modelů od Elišky Podzimkové, Toy_Box či Jaromíra 99. Upozorňujeme, že u "
 "starších modelů jsou počty kusů na skladě omezené."
 msgstr ""
+"Bude vám letos dělat radost účastnické tričko, nebo si vyberete ponožky, "
+"či nákrčník? Vyberte si nejnovější design, nebo zvolte loňský model. Pozor, "
+"u dámského trika došlo v roce 2024 ke změně střihu (je lehce širší a kratší). "
+"Prosím, zkontrolujte si dobře "
+"<a href='https://dopracenakole.cz/o-vyzve/trika#damske_tricko'>tabulku velikostí</a>. "
+"Střih pánského trika zůstává stejný. Lze vybrat max. 1 jednu "
+"odměnu, další produkty lze objednat samostatně na e-shopu. Můžete také zvolit "
+"„žádné“ a ještě více snížit uhlíkovou stopu výzvy a podpořit AutoMat."
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
 #, python-format
@@ -376,7 +384,7 @@ msgstr ""
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:133
 msgid "Vyberte typ trika"
-msgstr ""
+msgstr "Vyberte typ odměny"
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:169
 msgid "Vámi vybraná předchozí velikost"

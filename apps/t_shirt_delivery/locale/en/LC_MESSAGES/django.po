@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 10:13+0100\n"
+"POT-Creation-Date: 2024-01-23 10:14+0100\n"
 "PO-Revision-Date: 2020-01-13 19:51+0100\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -67,43 +67,57 @@ msgstr ""
 msgid "Přegenerovat CSV u vybraných dávek"
 msgstr ""
 
-#: apps/t_shirt_delivery/admin.py:176
+#: apps/t_shirt_delivery/actions.py:168
+msgid "Odeslání {} notifikačních emailů bylo zadáno."
+msgstr ""
+
+#: apps/t_shirt_delivery/actions.py:176
+msgid ""
+"Odeslání notifikačních emailů nebylo zadáno. Žádný uživatel nemá nedostupnou "
+"velikost trika."
+msgstr ""
+
+#: apps/t_shirt_delivery/actions.py:183
+msgid "Odeslat notifikační email nedostupných velikostí triček"
+msgstr ""
+
+#: apps/t_shirt_delivery/admin.py:175
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr "Mark packages/boxes as done"
 
-#: apps/t_shirt_delivery/admin.py:272 apps/t_shirt_delivery/admin.py:338
+#: apps/t_shirt_delivery/admin.py:271 apps/t_shirt_delivery/admin.py:337
 msgid "ID krabice"
 msgstr "Box ID"
 
-#: apps/t_shirt_delivery/admin.py:274
+#: apps/t_shirt_delivery/admin.py:273
 #: apps/t_shirt_delivery/models/team_package.py:43
 msgid "Tým"
 msgstr "Team"
 
-#: apps/t_shirt_delivery/admin.py:275
+#: apps/t_shirt_delivery/admin.py:274
 #: apps/t_shirt_delivery/models/team_package.py:36
 msgid "Krabice"
 msgstr "Box"
 
-#: apps/t_shirt_delivery/admin.py:487
+#: apps/t_shirt_delivery/admin.py:494
 msgid "Trik k odeslání"
 msgstr "T-shirts for sending"
 
-#: apps/t_shirt_delivery/admin.py:496
+#: apps/t_shirt_delivery/admin.py:503
 msgid "Velikosti trik"
 msgstr "T-shirt sizes"
 
-#: apps/t_shirt_delivery/admin.py:518
+#: apps/t_shirt_delivery/admin.py:525
 #, fuzzy
 #| msgid "Týmový balíček"
 msgid "Týmových balíčků k odeslání"
 msgstr "Team package"
 
-#: apps/t_shirt_delivery/admin.py:588
+#: apps/t_shirt_delivery/admin.py:595
 msgid "Uživatel na dávku objednávek"
 msgstr "User for delivery batch"
 
-#: apps/t_shirt_delivery/admin.py:589
+#: apps/t_shirt_delivery/admin.py:596
 msgid "Uživatelé na dávku objednávek"
 msgstr "Users for delivery batch"
 
@@ -156,7 +170,7 @@ msgstr "No"
 
 #: apps/t_shirt_delivery/forms.py:44
 msgid "Vyberte velikost trika"
-msgstr "Choose t-shirt size"
+msgstr "Select size"
 
 #: apps/t_shirt_delivery/forms.py:48
 msgid ""
@@ -364,10 +378,15 @@ msgid ""
 "modelů od Elišky Podzimkové, Toy_Box či Jaromíra 99. Upozorňujeme, že u "
 "starších modelů jsou počty kusů na skladě omezené."
 msgstr ""
-"Which t-shirt will make you happy this year? It's time to choose. This year "
-"you can choose a t-shirt with new graphics from Jan Charvát, or one of the "
-"older models from Eliška Podzimková, Toy_Box or Jaromír 99. Please note that "
-"at  older models are limited in stock."
+"Will you enjoy a participant t-shirt or socks or a neck warmer? Choose "
+"the latest design, or go with last year's model. Attention, the women's "
+"t-shirt´s size has changed in 2024 (it is now slightly wider and shorter). "
+"Please check carefuly "
+"<a href='https://dopracenakole.cz/en/about-the-challenge/t-shirts#ladies_tshirt'>the size chart</a>. "
+"The style/size of the men's shirt remains the same. Please, select one "
+"single reward, other products can be ordered separately in our e-shop. "
+"You can also choose "none" and further reduce your carbon footprint "
+"and support AutoMat."
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
 #, python-format
@@ -398,15 +417,15 @@ msgstr ""
 "Check the address one more time for the sake of safety. With any mistake "
 "found please contact us at e-mail %(emails)s.\n"
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:134
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:133
 msgid "Vyberte typ trika"
-msgstr "Choose t-shirt type"
+msgstr "Select the type of reward"
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:180
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:169
 msgid "Vámi vybraná předchozí velikost"
 msgstr "The previous size you selected"
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:182
+#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:171
 msgid "již není dostupná. Vyberte jinou velikost."
 msgstr "is no longer available. Choose another size."
 
