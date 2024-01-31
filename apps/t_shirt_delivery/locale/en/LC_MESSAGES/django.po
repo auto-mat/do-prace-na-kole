@@ -382,10 +382,10 @@ msgstr ""
 "the latest design, or go with last year's model. Attention, the women's "
 "t-shirt´s size has changed in 2024 (it is now slightly wider and shorter). "
 "Please check carefuly "
-"<a href='https://dopracenakole.cz/en/about-the-challenge/t-shirts#ladies_tshirt'>the size chart</a>. "
+"<a href='https://dopracenakole.cz/en/about-the-challenge/t-shirts#womens_tshirt'>the size chart</a>. "
 "The style/size of the men's shirt remains the same. Please, select one "
 "single reward, other products can be ordered separately in our e-shop. "
-"You can also choose "none" and further reduce your carbon footprint "
+"You can also choose 'none' and further reduce your carbon footprint "
 "and support AutoMat."
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
@@ -397,8 +397,8 @@ msgid ""
 "pracovní adresu zaklepe balík s triky pro všechny členy týmu.\n"
 msgstr ""
 "\n"
-"Those who registered until %(deadline)s we will send the T-shirt or "
-"neckwarmer from %(delivery_from)s till %(delivery_to)s. So do not forget to "
+"Those who registered until %(deadline)s we will send the T-shirt, neckwarmer or "
+"socks from %(delivery_from)s till %(delivery_to)s. So do not forget to "
 "check Your work address for upcoming packages which will contain starting "
 "pack for all company team members.\n"
 
@@ -438,8 +438,8 @@ msgid ""
 "   "
 msgstr ""
 "\n"
-"We try to send the t-shirts in bulk to reduce our impact on the environment. "
-"We will send out your shirt in the next bulk shipment."
+"We try to send the rewards in bulk to reduce our impact on the environment. "
+"We will send out your reward in the next bulk shipment."
 
 #: apps/t_shirt_delivery/templates/registration/tshirt_delivery.html:11
 #, python-format
@@ -465,13 +465,13 @@ msgstr "We've saved your selected size"
 
 #: apps/t_shirt_delivery/views.py:75
 msgid "Změňte velikost a typ soutěžního trička"
-msgstr "Change the size and type of your shirt"
+msgstr "Change the size and type of your reward"
 
 #: apps/t_shirt_delivery/views.py:77
 #, fuzzy
 #| msgid "Vyberte velikost soutěžního trička"
 msgid "Vyberte velikost a typ soutěžního trička"
-msgstr "Choose T-shirt size and type"
+msgstr "Choose the size and type of the reward"
 
 #: apps/t_shirt_delivery/views.py:129
 #, python-brace-format

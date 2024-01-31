@@ -363,7 +363,7 @@ msgstr ""
 "<a href='https://dopracenakole.cz/o-vyzve/trika#damske_tricko'>tabulku velikostí</a>. "
 "Střih pánského trika zůstává stejný. Lze vybrat max. 1 jednu "
 "odměnu, další produkty lze objednat samostatně na e-shopu. Můžete také zvolit "
-"„žádné“ a ještě více snížit uhlíkovou stopu výzvy a podpořit AutoMat."
+"'žádné' a ještě více snížit uhlíkovou stopu výzvy a podpořit AutoMat."
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
 #, python-format
@@ -373,6 +373,9 @@ msgid ""
 "odesílat od %(delivery_from)s do %(delivery_to)s. Jednoho dne pak na Vaši "
 "pracovní adresu zaklepe balík s triky pro všechny členy týmu.\n"
 msgstr ""
+"Účastníkům zaregistrovaným do %(deadline)s budeme trika, nákrčníky i ponožky "
+"hromadně odesílat od %(delivery_from)s do %(delivery_to)s. Jednoho dne pak na Vaši "
+"pracovní adresu zaklepe balík s triky pro všechny členy týmu.\n"
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:15
 #, python-format
@@ -398,7 +401,7 @@ msgstr ""
 msgid ""
 "\n"
 "      Snažíme se šetřit životní prostředí, a proto trika posíláme vždy "
-"hromadně. Nejbližší zásilku, ve které bude i vaše triko odešleme co "
+"hromadně. Nejbližší zásilku, ve které bude i vaše odměna odešleme co "
 "nejdříve.\n"
 "   "
 msgstr ""
@@ -426,11 +429,11 @@ msgstr ""
 
 #: apps/t_shirt_delivery/views.py:75
 msgid "Změňte velikost a typ soutěžního trička"
-msgstr "Změňte velikost a typ účastnického trička"
+msgstr "Změňte velikost a typ účastnické odměny"
 
 #: apps/t_shirt_delivery/views.py:77
 msgid "Vyberte velikost a typ soutěžního trička"
-msgstr "Vyberte velikost a typ účastnického účastnického trička"
+msgstr "Vyberte velikost a typ účastnické odměny"
 
 #: apps/t_shirt_delivery/views.py:129
 #, python-brace-format
