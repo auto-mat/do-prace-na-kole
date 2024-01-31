@@ -385,7 +385,7 @@ msgstr ""
 "<a href='https://dopracenakole.cz/en/about-the-challenge/t-shirts#ladies_tshirt'>the size chart</a>. "
 "The style/size of the men's shirt remains the same. Please, select one "
 "single reward, other products can be ordered separately in our e-shop. "
-"You can also choose \"none\" and further reduce your carbon footprint "
+"You can also choose "none" and further reduce your carbon footprint "
 "and support AutoMat."
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
