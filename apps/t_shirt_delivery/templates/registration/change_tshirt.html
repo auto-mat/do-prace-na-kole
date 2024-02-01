@@ -171,9 +171,9 @@
                     + '{% trans "již není dostupná. Vyberte jinou velikost." %}'
                     + "</div>"
                 )
-                if (noneTshirt) return;
                 if (tshirtBtn != null) {
                     tshirtBtn.click();
+                    if (noneTshirt !== "" || tshirtSizeOpt === "") return;
                     {# Select user choosed t-shirt opt #}
                     if (typeof tshirtSizeOpt !== "undefined") {
                         const findOpt = selectOpt("id_userattendance-t_shirt_size", tshirtSizeOpt)
