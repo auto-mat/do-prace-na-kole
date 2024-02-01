@@ -171,6 +171,7 @@
                     + '{% trans "již není dostupná. Vyberte jinou velikost." %}'
                     + "</div>"
                 )
+                if (noneTshirt) return;
                 if (tshirtBtn != null) {
                     tshirtBtn.click();
                     {# Select user choosed t-shirt opt #}
