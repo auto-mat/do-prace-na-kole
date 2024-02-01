@@ -20,19 +20,19 @@
 
 import random
 
+from django.db.models import Q
+
 from .models import Competition, CompetitionResult
 
 
 def all_members_paid(team):
     """Has all members of team paid?"""
-
-    for userattendance in team.members:
-        if (
-            userattendance.userprofile.user.is_active
-            and userattendance.payment_status != "done"
-        ):
-            return False
-    return True
+    paid = True
+    if team.members.filter(
+        Q(userprofile__user__is_active=True) & ~Q(payment_status="done")
+    ):
+        paid = False
+    return paid
 
 
 def draw(competition_slug, limit=10):
