@@ -559,7 +559,7 @@ class CompetitionAdmin(
     def draw_link(self, obj):
         if (
             obj.competition_type == "frequency"
-            and obj.competitor_type == "team"
+            and (obj.competitor_type == "team" or obj.competitor_type == "single_user")
             and obj.slug
         ):
             return format_html(
