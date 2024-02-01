@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import itertools
 import random
 
 from django.db.models import Q
@@ -65,8 +66,12 @@ def draw_weighed(results):
 
     result_members = []
     for result in results:
-        for team_member in result.team.members:
-            result_members.append(result)
+        result_members.extend(
+            itertools.repeat(
+                result,
+                result.team.members.count(),
+            )
+        )
     result_members = sorted(result_members, key=lambda x: random.random())
 
     return result_members
