@@ -172,7 +172,7 @@ class Competition(models.Model):
         help_text=_(
             "Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"
         ),
-        default=28,
+        default=1,
         blank=False,
         null=False,
     )
