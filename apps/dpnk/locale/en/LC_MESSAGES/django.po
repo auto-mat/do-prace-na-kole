@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 10:14+0100\n"
+"POT-Creation-Date: 2024-02-02 05:53+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -162,7 +162,7 @@ msgstr "Teams"
 msgid "Není vnitrofiremní soutěž?"
 msgstr "Isn't company competition?"
 
-#: apps/dpnk/admin.py:534 apps/dpnk/views/results_and_competitions.py:149
+#: apps/dpnk/admin.py:534 apps/dpnk/views/results_and_competitions.py:150
 #: apps/dpnk/views_results.py:53
 msgid "Výsledky soutěže"
 msgstr "Competition results"
@@ -175,7 +175,7 @@ msgstr "Answers"
 msgid "Dotazník"
 msgstr "Questionnaire"
 
-#: apps/dpnk/admin.py:570 apps/dpnk/views/results_and_competitions.py:675
+#: apps/dpnk/admin.py:570 apps/dpnk/views/results_and_competitions.py:677
 msgid "Losování"
 msgstr "Drawing"
 
@@ -1640,7 +1640,7 @@ msgstr "Performance"
 #: apps/dpnk/templates/dpnk/diplomas.html:11
 #: apps/dpnk/templates/dpnk/diplomas.html:35
 #: apps/dpnk/templates/dpnk/rides.html:48
-#: apps/dpnk/views/results_and_competitions.py:75
+#: apps/dpnk/views/results_and_competitions.py:76
 msgid "Pravidelnost"
 msgstr "Frequency"
 
@@ -1959,7 +1959,7 @@ msgid "Výsledek soutěže"
 msgstr "Competition result"
 
 #: apps/dpnk/models/competition_result.py:38 apps/dpnk/urls.py:197
-#: apps/dpnk/views/results_and_competitions.py:107
+#: apps/dpnk/views/results_and_competitions.py:108
 msgid "Výsledky soutěží"
 msgstr "Competition results"
 
@@ -2965,6 +2965,32 @@ msgstr ""
 "href='mailto:request.user_attendance.campaign.contact_email?subject=Chybová "
 "stránka'>request.user_attendance.campaign.contact_email</a> with detailed "
 "description, how the error occurred."
+
+#: apps/dpnk/templates/admin/draw.html:40
+msgid "první"
+msgstr "first"
+
+#: apps/dpnk/templates/admin/draw.html:41
+msgid "předchozí"
+msgstr "previous"
+
+#: apps/dpnk/templates/admin/draw.html:45
+msgid ""
+"\n"
+"               Strana %(page)s z %(pages)s.\n"
+"            "
+msgstr ""
+"\n"
+"               Page %(page)s of %(pages)s.\n"
+"            "
+
+#: apps/dpnk/templates/admin/draw.html:51
+msgid "další"
+msgstr "next"
+
+#: apps/dpnk/templates/admin/draw.html:52
+msgid "poslední"
+msgstr "last"
 
 #: apps/dpnk/templates/avatar/change.html:6
 msgid "Your current avatar: "
@@ -4837,27 +4863,27 @@ msgstr "Invitation sent to the user %(user)s to the e-mail %(email)s"
 msgid "Odeslána pozvánka na e-mail %s"
 msgstr "Invitation sent to an e-mail %s"
 
-#: apps/dpnk/views/results_and_competitions.py:55
+#: apps/dpnk/views/results_and_competitions.py:56
 msgid "Vaše diplomy a výsledky v minulých ročnících"
 msgstr "Your diplomas and historical results"
 
-#: apps/dpnk/views/results_and_competitions.py:84
+#: apps/dpnk/views/results_and_competitions.py:85
 msgid "Pravidla soutěží"
 msgstr "Competitions rules"
 
-#: apps/dpnk/views/results_and_competitions.py:130
+#: apps/dpnk/views/results_and_competitions.py:131
 msgid "Výsledky výkonnostních soutěží"
 msgstr "Results of performance competitions"
 
-#: apps/dpnk/views/results_and_competitions.py:136
+#: apps/dpnk/views/results_and_competitions.py:137
 msgid "Výsledky pravidelnostních soutěží"
 msgstr "Results of frequency competitions"
 
-#: apps/dpnk/views/results_and_competitions.py:142
+#: apps/dpnk/views/results_and_competitions.py:143
 msgid "Výsledky dotazníkových soutěží a soutěží na kreativitu"
 msgstr "Results of questionnaire and creativity competitions"
 
-#: apps/dpnk/views/results_and_competitions.py:165
+#: apps/dpnk/views/results_and_competitions.py:166
 msgid ""
 "Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky "
 "nějaké soutěže, napište prosím na <a href=\"mailto:kontakt@dopracenakole.cz?"
@@ -4867,15 +4893,15 @@ msgstr ""
 "results, please write an e-mail to <a href=\"mailto:kontakt@dopracenakole.cz?"
 "subject=Nonexisten competition\">kontakt@dopracenakole.cz</a>"
 
-#: apps/dpnk/views/results_and_competitions.py:169 apps/dpnk/views/team.py:175
+#: apps/dpnk/views/results_and_competitions.py:170 apps/dpnk/views/team.py:175
 msgid "Není vybraný tým"
 msgstr "No team chosen"
 
-#: apps/dpnk/views/results_and_competitions.py:181
+#: apps/dpnk/views/results_and_competitions.py:182
 msgid "Vyplňte odpovědi"
 msgstr "Fill in your answers"
 
-#: apps/dpnk/views/results_and_competitions.py:199
+#: apps/dpnk/views/results_and_competitions.py:200
 #, python-brace-format
 msgid ""
 "<div class=\"text-danger\">Tento dotazník v systému nemáme. Pokud si "
@@ -4888,58 +4914,58 @@ msgstr ""
 "\"mailto:{contact_email}?subject=Nonexistent questionnaire\">{contact_email}"
 "</a></div>"
 
-#: apps/dpnk/views/results_and_competitions.py:237
+#: apps/dpnk/views/results_and_competitions.py:238
 msgid "Soutěž již nelze vyplňovat"
 msgstr "It is not possible to fill in the competition anymore"
 
-#: apps/dpnk/views/results_and_competitions.py:272
+#: apps/dpnk/views/results_and_competitions.py:273
 msgid "Odpovědi byly úspěšně zadány"
 msgstr "Answers were successfully submitted"
 
-#: apps/dpnk/views/results_and_competitions.py:295
+#: apps/dpnk/views/results_and_competitions.py:296
 msgid "Výsledky všech soutěží"
 msgstr "Results from all competitions"
 
-#: apps/dpnk/views/results_and_competitions.py:308
+#: apps/dpnk/views/results_and_competitions.py:309
 msgid "Tato soutěž nemá povolené prohlížení odpovědí."
 msgstr "It is not possible to view answers in this competition."
 
-#: apps/dpnk/views/results_and_competitions.py:310
+#: apps/dpnk/views/results_and_competitions.py:311
 msgid "Odpovědi nejsou dostupné"
 msgstr "Questions are not available"
 
-#: apps/dpnk/views/results_and_competitions.py:351
+#: apps/dpnk/views/results_and_competitions.py:352
 msgid "Otázky v dotaznících"
 msgstr "Questions in questionnaires"
 
-#: apps/dpnk/views/results_and_competitions.py:370
-#: apps/dpnk/views/results_and_competitions.py:400
+#: apps/dpnk/views/results_and_competitions.py:371
+#: apps/dpnk/views/results_and_competitions.py:401
 msgid "Soutěž je vypsána ve městě, pro které nemáte oprávnění."
 msgstr ""
 "The competition is announced for a town for which you don't have a "
 "permission."
 
-#: apps/dpnk/views/results_and_competitions.py:382
+#: apps/dpnk/views/results_and_competitions.py:383
 msgid "Výsledky odpovědí na dotazník"
 msgstr "Results of questionnaire answers"
 
-#: apps/dpnk/views/results_and_competitions.py:408
+#: apps/dpnk/views/results_and_competitions.py:409
 msgid "<div class=\"text-danger\">Nesprávně zadaný soutěžící.</div>"
 msgstr "<div class=\"text-danger\">Competitor details are wrong.</div>"
 
-#: apps/dpnk/views/results_and_competitions.py:422
+#: apps/dpnk/views/results_and_competitions.py:423
 msgid "Odpovědi na dotazník"
 msgstr "Questionnaire answers"
 
-#: apps/dpnk/views/results_and_competitions.py:439
+#: apps/dpnk/views/results_and_competitions.py:440
 msgid "Otázka je položená ve městě, pro které nemáte oprávnění."
 msgstr "The question is asked in a town for which you don't have a permission."
 
-#: apps/dpnk/views/results_and_competitions.py:516
+#: apps/dpnk/views/results_and_competitions.py:517
 msgid "Odpověd na dotazník"
 msgstr "Questionnaire answer"
 
-#: apps/dpnk/views/results_and_competitions.py:638
+#: apps/dpnk/views/results_and_competitions.py:639
 msgid "Počty soutěžících"
 msgstr "Competitors count"
 
@@ -5810,9 +5836,6 @@ msgstr ""
 
 #~ msgid "pozvánka do týmu"
 #~ msgstr "you've been invited to join a team"
-
-#~ msgid "Další"
-#~ msgstr "Next"
 
 #~ msgid "Přihlásit/registrovat se pomocí Google"
 #~ msgstr "Log in/register by Google account"

@@ -6,6 +6,8 @@ import logging
 from braces.views import LoginRequiredMixin
 
 from django.conf import settings
+from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -673,9 +675,67 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
 class DrawResultsView(LoginRequiredMixin, TitleViewMixin, TemplateView):
     template_name = "admin/draw.html"
     title = _("Losování")
+    paginate_by = 20
+
+    def _get_counter_class(self):
+        """Get Counter class"""
+
+        class Counter:
+            count = 0
+
+            def increment(self):
+                self.count += 1
+                return ""
+
+        return Counter
+
+    def _handle_cache(self, competition_slug, timeout=3600):
+        """Handle cache
+
+        :param str competition_slug: competition slug
+        :param int timeout: cache timeout with default value 1200 seconds
+
+        :return str draw_results: list of CompetitionResult model instances
+        """
+        draw_results_competition_slug = cache.get(competition_slug)
+        if (
+            not draw_results_competition_slug
+            or draw_results_competition_slug != competition_slug
+        ):
+            draw_results = draw.draw(competition_slug)
+            cache.set_many(
+                {
+                    f"{competition_slug}-results": draw_results,
+                    competition_slug: competition_slug,
+                },
+                timeout=timeout,
+            )
+        elif draw_results_competition_slug:
+            draw_results = cache.get(f"{competition_slug}-results")
+            if not draw_results:
+                draw_results = draw.draw(competition_slug)
+                cache.set_many(
+                    {
+                        f"{competition_slug}-results": draw_results,
+                        competition_slug: competition_slug,
+                    },
+                    timeout=timeout,
+                )
+        return draw_results
 
     def get_context_data(self, city_slug=None, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         competition_slug = kwargs.get("competition_slug")
-        context_data["results"] = draw.draw(competition_slug)
+        Counter = self._get_counter_class()
+        # Paginator
+        paginator = Paginator(
+            self._handle_cache(competition_slug),
+            self.paginate_by,
+        )
+        page = self.request.GET.get("page", 1)
+        Counter.count = int(page) * self.paginate_by - self.paginate_by
+        page_obj = paginator.page(page)
+        # Context data
+        context_data["results"] = page_obj
+        context_data["page"] = Counter()
         return context_data

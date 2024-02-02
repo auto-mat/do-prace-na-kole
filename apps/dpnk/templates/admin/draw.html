@@ -10,7 +10,8 @@
 {% for result in results %}
    <ul>
       <li>
-         {{ forloop.counter }}. tah: Tým {{ result }} {% if result.team %}z organizace {{ result.team.subsidiary.company }}{% endif %}
+         {{ page.increment }}
+         {{ page.count }}. tah: Tým {{ result }} {% if result.team %}z organizace {{ result.team.subsidiary.company }}{% endif %}
          <br/>
          {% if result.competition.competition_type == 'frequency' %}
          pravidelnost jízd {{ result.get_result_percentage|floatformat:-1|intcomma }}&nbsp;%
@@ -33,4 +34,24 @@
       </li>
    </ul>
 {% endfor %}
+<div class="pagination">
+    <span class="step-links">
+        {% if results.has_previous %}
+            <a href="?page=1">&laquo; {% trans "první" %}</a> |
+            <a href="?page={{ results.previous_page_number }}">{% trans "předchozí" %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with page=results.number pages=results.paginator.num_pages %}
+               Strana {{ page }} z {{ pages }}.
+            {% endblocktrans %}
+        </span>
+
+        {% if results.has_next %}
+            <a href="?page={{ results.next_page_number }}">{% trans "další" %}</a> |
+            <a href="?page={{ results.paginator.num_pages }}">{% trans "poslední" %} &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 {% endblock %}
