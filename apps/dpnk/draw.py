@@ -21,19 +21,9 @@
 import itertools
 import random
 
-from django.db.models import Q
+from django.db.models import F, Q
 
-from .models import Competition, CompetitionResult
-
-
-def all_members_paid(team):
-    """Has all members of team paid?"""
-    paid = True
-    if team.members.filter(
-        Q(userprofile__user__is_active=True) & ~Q(payment_status="done")
-    ):
-        paid = False
-    return paid
+from .models import Competition, CompetitionResult, Team
 
 
 def draw(competition_slug, limit=10):
@@ -45,33 +35,43 @@ def draw(competition_slug, limit=10):
     condition["competition"] = competition
     if competition.competition_type == "frequency":
         condition["result__gt"] = threshold
+
     results = CompetitionResult.objects.filter(**condition).order_by("result")
 
     if competition.competitor_type == "team":
-        results = [result for result in results if all_members_paid(result.team)]
+        teams_all_members_paid = Team.objects.filter(
+            Q(
+                id__in=results.distinct().values_list("team_id", flat=True),
+                users__userprofile__user__is_active=True,
+                paid_member_count=F("member_count"),
+                campaign=competition.campaign,
+            )
+        )
+        results = results.filter(
+            team_id__in=teams_all_members_paid.values_list("id", flat=True)
+        )
 
     if (
         competition.competition_type == "frequency"
         and competition.competitor_type == "team"
     ):
-        return draw_weighed(results)
+        qs = []
+        for i in (
+            results.order_by("id")
+            .distinct("id")
+            .values("team__id", "team__member_count")
+        ):
+            qs.extend(
+                itertools.repeat(
+                    results.filter(team_id=i["team__id"]),
+                    i["team__member_count"],
+                )
+            )
+        first_qs = qs.pop(0)
+        # Union querysets with allowing duplicates
+        results = list(first_qs.union(*qs, all=True).order_by("result"))
+        return sorted(results, key=lambda x: random.random())
 
     results = sorted(results[:limit], key=lambda x: random.random())
 
     return results
-
-
-def draw_weighed(results):
-    """Draw competitors weighed by count of team members"""
-
-    result_members = []
-    for result in results:
-        result_members.extend(
-            itertools.repeat(
-                result,
-                result.team.members.count(),
-            )
-        )
-    result_members = sorted(result_members, key=lambda x: random.random())
-
-    return result_members
