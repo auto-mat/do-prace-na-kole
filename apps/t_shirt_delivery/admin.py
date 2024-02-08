@@ -57,6 +57,7 @@ from . import actions, filters, models
 from .admin_forms import IDENTIFIER_REGEXP
 from .admin_mixins import ReadOnlyModelAdminMixin
 from .forms import PackageTransactionForm
+from .resources import UserAttendanceResource
 
 
 class PackageTransactionResource(resources.ModelResource):
@@ -600,6 +601,7 @@ class UserAttendanceToBatch(UserAttendance):
 @admin.register(UserAttendanceToBatch)
 class UserAttendanceToBatchAdmin(
     AdminAdvancedFiltersMixin,
+    ImportExportMixin,
     ReadOnlyModelAdminMixin,
     RelatedFieldAdmin,
     NestedModelAdmin,
@@ -614,6 +616,7 @@ class UserAttendanceToBatchAdmin(
         "representative_payment__realized",
     )
     list_filter = (
+        filters.IdFilter,
         ("team__subsidiary__city", RelatedFieldCheckBoxFilter),
         ("t_shirt_size", RelatedFieldComboFilter),
         "transactions__status",
@@ -639,6 +642,7 @@ class UserAttendanceToBatchAdmin(
         "team__subsidiary__address_psc",
     )
     actions = (actions.create_batch,)
+    resource_class = UserAttendanceResource
 
     def get_actions(self, request):
         return {

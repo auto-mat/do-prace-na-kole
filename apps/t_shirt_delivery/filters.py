@@ -37,3 +37,31 @@ class AllPackagesDispatched(SimpleListFilter):
             return queryset.exclude(teampackage__dispatched=False)
         if self.value() == "no":
             return queryset.filter(teampackage__dispatched=False)
+
+
+class InputFilter(SimpleListFilter):
+    template = "admin/input_filter.html"
+
+    def lookups(self, request, model_admin):
+        # Dummy, required to show the filter.
+        return ((),)
+
+
+class IdFilter(InputFilter):
+    parameter_name = "id"
+    title = _("Id")
+
+    def choices(self, changelist):
+        # Grab only the "all" option.
+        all_choice = next(super().choices(changelist))
+        all_choice["query_parts"] = (
+            (k, v)
+            for k, v in changelist.get_filters_params().items()
+            if k != self.parameter_name
+        )
+        yield all_choice
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            ids = self.value()
+            return queryset.filter(id__in=[id.strip() for id in ids.split(",")])
