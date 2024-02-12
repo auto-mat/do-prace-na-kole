@@ -601,7 +601,7 @@ class UserAttendanceToBatch(UserAttendance):
 @admin.register(UserAttendanceToBatch)
 class UserAttendanceToBatchAdmin(
     AdminAdvancedFiltersMixin,
-    ImportExportMixin,
+    ExportMixin,
     ReadOnlyModelAdminMixin,
     RelatedFieldAdmin,
     NestedModelAdmin,
@@ -641,7 +641,10 @@ class UserAttendanceToBatchAdmin(
         "transactions__status",
         "team__subsidiary__address_psc",
     )
-    actions = (actions.create_batch,)
+    actions = (
+        actions.create_batch,
+        create_export_job_action,
+    )
     resource_class = UserAttendanceResource
 
     def get_actions(self, request):
@@ -650,7 +653,12 @@ class UserAttendanceToBatchAdmin(
                 actions.create_batch,
                 "create_batch",
                 actions.create_batch.short_description,
-            )
+            ),
+            "create_export_job_action": (
+                create_export_job_action,
+                "create_export_job_action",
+                create_export_job_action.short_description,
+            ),
         }
 
     list_max_show_all = 10000
