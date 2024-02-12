@@ -46,6 +46,7 @@ from .models import (
     Invoice,
     Subsidiary,
     UserAttendance,
+    UserProfile,
 )
 
 
@@ -250,6 +251,10 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
         required=True,
     )
     username = forms.CharField(widget=forms.HiddenInput, required=False)
+    mailing_opt_in = forms.BooleanField(
+        label=UserProfile._meta.get_field("mailing_opt_in").verbose_name,
+        required=False,
+    )
 
     def get_campaign(self):
         return self.initial["campaign"]
@@ -283,6 +288,22 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
             "will_pay_opt_in",
             "personal_data_opt_in",
         )
+
+    field_order = (
+        "campaign",
+        "motivation_company_admin",
+        "first_name",
+        "last_name",
+        "administrated_company",
+        "email",
+        "telephone",
+        "password1",
+        "password2",
+        "username",
+        "mailing_opt_in",
+        "will_pay_opt_in",
+        "personal_data_opt_in",
+    )
 
 
 class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):

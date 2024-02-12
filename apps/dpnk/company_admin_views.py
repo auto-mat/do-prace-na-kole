@@ -56,6 +56,7 @@ from .models import (
     Payment,
     Subsidiary,
     UserProfile,
+    UserAttendance,
 )
 from .models.transactions import Status
 from .resources import UserAttendanceResource
@@ -255,9 +256,16 @@ class CompanyAdminApplicationView(
             # black
             user=new_user,
             telephone=form.cleaned_data["telephone"],
+            mailing_opt_in=form.cleaned_data["mailing_opt_in"],
         )
         userprofile.save()
-
+        ua = UserAttendance(
+            campaign=form.cleaned_data["campaign"],
+            userprofile=userprofile,
+            personal_data_opt_in=form.cleaned_data["personal_data_opt_in"],
+            payment_status="None",
+        )
+        ua.save()
         admin = CompanyAdmin(
             motivation_company_admin=form.cleaned_data["motivation_company_admin"],
             will_pay_opt_in=form.cleaned_data["will_pay_opt_in"],

@@ -161,6 +161,10 @@ class EcoMailing:
 
 
 def get_custom_fields(user_attendance):
+    # Company coordinator register by URL name "register_admin" has not
+    # all fields values (city, team_member_count), therefore is required
+    # to replace None value with "None" string
+    none_str = "None"
     user = user_attendance.get_userprofile().user
     city = None
     payment_status = None
@@ -192,7 +196,7 @@ def get_custom_fields(user_attendance):
             ("first_name", user.first_name),
             ("last_name", user.last_name),
             ("email", user.email),
-            ("Mesto", city),
+            ("Mesto", city if city is not None else none_str),
             ("Firemni_spravce", company_admin_approved),
             ("Stav_platby", payment_status),
             ("Aktivni", user.is_active),
@@ -201,7 +205,10 @@ def get_custom_fields(user_attendance):
             ("Novacek", is_new_user),
             ("Kampan", user_attendance.campaign.pk),
             ("Vstoupil_do_souteze", entered_competition),
-            ("Pocet_lidi_v_tymu", team_member_count),
+            (
+                "Pocet_lidi_v_tymu",
+                team_member_count if team_member_count is not None else none_str,
+            ),
             ("Povoleni_odesilat_emaily", mailing_approval),
         ]
     )
