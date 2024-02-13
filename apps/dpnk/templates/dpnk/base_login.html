@@ -11,6 +11,9 @@
 if (window.rc && window.rc.conversionHit) {
   window.rc.conversionHit({id: 100171240, value: 100});
 }
+$(document).ready(function(){
+  $(".invalid-feedback")?.show();
+});
 </script>
 {% elif request.resolver_match.url_name == "registration_complete" %}
 <script>
