@@ -113,6 +113,11 @@ class Company(WithGalleryMixin, models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    note = models.TextField(
+        verbose_name=_("Poznámka"),
+        null=True,
+        blank=True,
+    )
 
     def has_filled_contact_information(self):
         address_complete = (

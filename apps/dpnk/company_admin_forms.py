@@ -135,6 +135,7 @@ class CompanyForm(SubmitMixin, AddressForm):
             "address_city",
             "ico",
             "dic",
+            "note",
         )
         error_messages = {
             "ico": {"stdnum_format": models.company.ICO_ERROR_MESSAGE},

@@ -288,6 +288,7 @@ class CompanyAdmin(
         "address_psc",
         "id",
         "icon",
+        "note",
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
     list_filter = [
