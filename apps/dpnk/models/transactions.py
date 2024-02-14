@@ -57,7 +57,8 @@ class Status(object):
     PACKAGE_SENT = 20004
     PACKAGE_DELIVERY_CONFIRMED = 20005
     PACKAGE_DELIVERY_DENIED = 20006
-    PACKAGE_RECLAIM = 20007
+    PACKAGE_RECLAIM_CAUSED = 20007
+    PACKAGE_RECLAIM_UNCAUSED = 20008
 
     BIKE_REPAIR = 40001
 
@@ -65,13 +66,14 @@ class Status(object):
 
 
 PACKAGE_STATUSES = [
-    (Status.PACKAGE_NEW, "Nový"),
-    (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, "Přijat k sestavení"),
-    (Status.PACKAGE_ASSEMBLED, "Sestaven"),
-    (Status.PACKAGE_SENT, "Odeslán"),
-    (Status.PACKAGE_DELIVERY_CONFIRMED, "Doručení potvrzeno"),
-    (Status.PACKAGE_DELIVERY_DENIED, "Dosud nedoručeno"),
-    (Status.PACKAGE_RECLAIM, "Reklamován"),
+    (Status.PACKAGE_NEW, _("Nový")),
+    (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, _("Přijat k sestavení")),
+    (Status.PACKAGE_ASSEMBLED, _("Sestaven")),
+    (Status.PACKAGE_SENT, _("Odeslán")),
+    (Status.PACKAGE_DELIVERY_CONFIRMED, _("Doručení potvrzeno")),
+    (Status.PACKAGE_DELIVERY_DENIED, _("Dosud nedoručeno")),
+    (Status.PACKAGE_RECLAIM_CAUSED, _("Reklamován (zaviněná)")),
+    (Status.PACKAGE_RECLAIM_UNCAUSED, _("Reklamován (nezaviněná)")),
 ]
 
 PAYMENT_STATUSES = [
