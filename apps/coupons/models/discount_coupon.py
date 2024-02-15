@@ -193,7 +193,9 @@ class DiscountCoupon(models.Model):
         return self.__str__()
 
     def attached_user_attendances_list(self):
-        return ", ".join([str(u) for u in self.userattendance_set.all()])
+        return ", ".join(
+            [u.userprofile.user.get_full_name() for u in self.userattendance_set.all()]
+        )
 
     def attached_user_attendances_count(self):
         return self.userattendance_set.count()
