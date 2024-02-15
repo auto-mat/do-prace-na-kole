@@ -298,9 +298,7 @@ class CompanyAdmin(
         "active",
         ICOFilter,
     ]
-    list_editable = (
-        "note",
-    )
+    list_editable = ("note",)
     readonly_fields = [
         "subsidiary_links",
         "author",
