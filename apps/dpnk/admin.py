@@ -200,7 +200,7 @@ class CityInCampaignAdmin(RelatedFieldAdmin):
 
 @admin.register(models.CityInCampaignDiploma)
 class CityInCampaignDiplomaAdmin(PdfSandwichAdmin):
-    search_fields = ("obj__city__name",)
+    search_fields = (f"obj__city__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",)
 
 
 @admin.register(models.CityInCampaignDiplomaField)
@@ -304,14 +304,14 @@ class CompanyAdmin(
         "updated_by",
     ]
     search_fields = (
-        "name",
-        "address_street",
-        "address_street_number",
-        "address_recipient",
-        "address_city",
-        "address_psc",
-        "ico",
-        "dic",
+        f"name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_street_number__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_recipient__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_city__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_psc__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"ico__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"dic__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     raw_id_fields = (
         "icon",
@@ -376,12 +376,12 @@ class SubsidiaryAdmin(
         ActiveCityFilter,
     )
     search_fields = (
-        "address_recipient",
-        "company__name",
-        "address_street",
-        "address_street_number",
-        "address_city",
-        "address_psc",
+        f"address_recipient__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_street_number__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_city__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"address_psc__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     advanced_filter_fields = (
         "company__name",
@@ -482,7 +482,11 @@ class CompetitionAdmin(
         "id",
     )
     filter_horizontal = ("city",)
-    search_fields = ("name", "company__name", "slug")
+    search_fields = (
+        f"name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"slug__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    )
     list_filter = (
         CampaignFilter,
         "city",
@@ -670,13 +674,13 @@ class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
     )
     filter_horizontal = ("administrated_cities",)
     search_fields = [
-        "nickname",
-        "user__first_name",
-        "user__last_name",
-        "user__username",
-        "user__email",
-        "ecc_password",
-        "ecc_email",
+        f"nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"ecc_password__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"ecc_email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     ]
     readonly_fields = (
         "ecc_password",
@@ -757,11 +761,11 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
         "id",
     )
     search_fields = [
-        "first_name",
-        "last_name",
-        "username",
-        "email",
-        "userprofile__company_admin__administrated_company__name",
+        f"first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__company_admin__administrated_company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     ]
     list_filter = [
         "userprofile__userattendance_set__campaign",
@@ -916,17 +920,17 @@ class UserAttendanceAdmin(
     )
     raw_id_fields = ("userprofile", "team", "discount_coupon")
     search_fields = (
-        "userprofile__nickname",
-        "userprofile__user__first_name",
-        "userprofile__user__last_name",
-        "userprofile__user__username",
-        "userprofile__user__email",
-        "team__name",
-        "team__subsidiary__address_street",
-        "team__subsidiary__address_psc",
-        "team__subsidiary__address_recipient",
-        "team__subsidiary__address_city",
-        "team__subsidiary__company__name",
+        f"userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_psc__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_recipient__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_city__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     readonly_fields = (
         "avatar_large",
@@ -1000,7 +1004,11 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
         "get_frequency",
         "id",
     )
-    search_fields = ["name", "subsidiary__address_street", "subsidiary__company__name"]
+    search_fields = [
+        f"name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    ]
     list_filter = [
         CampaignFilter,
         "subsidiary__city",
@@ -1088,14 +1096,14 @@ class PaymentAdmin(ImportExportMixin, RelatedFieldAdmin):
         "user_attendance__team__subsidiary__company__name",
     )
     search_fields = (
-        "user_attendance__userprofile__nickname",
-        "user_attendance__userprofile__user__first_name",
-        "user_attendance__userprofile__user__last_name",
-        "user_attendance__userprofile__user__username",
-        "session_id",
-        "trans_id",
-        "order_id",
-        "user_attendance__team__subsidiary__company__name",
+        f"user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"session_id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"trans_id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"order_id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     list_filter = [
         campaign_filter_generator("user_attendance__campaign"),
@@ -1156,14 +1164,14 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
         "question__text",
     )
     search_fields = (
-        "user_attendance__userprofile__nickname",
-        "user_attendance__userprofile__user__first_name",
-        "user_attendance__userprofile__user__last_name",
-        "user_attendance__userprofile__user__email",
-        "question__text",
-        "question__name",
-        "question__competition__name",
-        "user_attendance__team__subsidiary__company__name",
+        f"user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"question__text__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"question__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"question__competition__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     list_filter = (
         campaign_filter_generator("question__competition__campaign"),
@@ -1218,7 +1226,10 @@ class QuestionAdmin(
         "competition__city",
         "competition",
     )
-    search_fields = ("text", "competition__name")
+    search_fields = (
+        f"text__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"competition__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    )
     save_as = True
 
     readonly_fields = [
@@ -1274,12 +1285,12 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         "id",
     )
     search_fields = (
-        "user_attendance__userprofile__nickname",
-        "user_attendance__userprofile__user__first_name",
-        "user_attendance__userprofile__user__last_name",
-        "user_attendance__userprofile__user__username",
-        "user_attendance__userprofile__user__email",
-        "user_attendance__team__subsidiary__company__name",
+        f"user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     raw_id_fields = (
         "user_attendance",
@@ -1346,13 +1357,13 @@ class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
         "competition",
     )
     search_fields = (
-        "user_attendance__userprofile__nickname",
-        "user_attendance__userprofile__user__first_name",
-        "user_attendance__userprofile__user__last_name",
-        "user_attendance__userprofile__user__username",
-        "user_attendance__userprofile__user__email",
-        "team__name",
-        "competition__name",
+        f"user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"competition__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     raw_id_fields = ("user_attendance", "team")
     resource_class = resources.AdminCompetitionResultResource
@@ -1542,12 +1553,12 @@ class CompanyAdminAdmin(
         "administrated_company__subsidiaries__city",
     ]
     search_fields = [
-        "administrated_company__name",
-        "userprofile__nickname",
-        "userprofile__user__first_name",
-        "userprofile__user__last_name",
-        "userprofile__user__username",
-        "userprofile__user__email",
+        f"administrated_company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     ]
     raw_id_fields = ["userprofile"]
     list_max_show_all = 100000
@@ -1615,12 +1626,12 @@ class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
         isnull_filter("fio_payments"),
     ]
     search_fields = [
-        "company__name",
-        "variable_symbol",
-        "company_ico",
-        "company_dic",
-        "sequence_number",
-        "total_amount",
+        f"company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"variable_symbol__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"company_ico__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"company_dic__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"sequence_number__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"total_amount__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     ]
     inlines = [PaymentInline]
     actions = [
@@ -1674,11 +1685,11 @@ class VoucherAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ("id", "voucher_type1", "token", "user_attendance", "campaign")
     raw_id_fields = ("user_attendance",)
     search_fields = (
-        "user_attendance__userprofile__user__first_name",
-        "user_attendance__userprofile__user__last_name",
-        "user_attendance__userprofile__user__username",
-        "user_attendance__userprofile__nickname",
-        "user_attendance__userprofile__user__email",
+        f"user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     list_filter = [
         CampaignFilter,
@@ -1696,11 +1707,11 @@ class VoucherTypeAdmin(ImportMixin, admin.ModelAdmin):
 @admin.register(models.VoucherPDF)
 class VoucherPDFAdmin(PdfSandwichAdmin):
     search_fields = (
-        "obj__user_attendance__userprofile__user__email",
-        "obj__user_attendance__userprofile__nickname",
-        "obj__user_attendance__userprofile__user__first_name",
-        "obj__user_attendance__userprofile__user__last_name",
-        "obj__user_attendance__userprofile__user__username",
+        f"obj__user_attendance__userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"obj__user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"obj__user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"obj__user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"obj__user_attendance__userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
 
 
@@ -1735,17 +1746,17 @@ class SessionAdmin(admin.ModelAdmin):
     _session_data.allow_tags = True
     list_display = ["session_key", "_session_data", "expire_date"]
     readonly_fields = ["_session_data"]
-    search_fields = ("session_key",)
+    search_fields = (f"session_key__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",)
     date_hierarchy = "expire_date"
 
 
 TokenAdmin.raw_id_fields = ("user",)
 TokenAdmin.search_fields = (
-    "user__email",
-    "user__first_name",
-    "user__last_name",
-    "user__username",
-    "key",
+    f"user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    f"user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    f"user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    f"user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+    f"key__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
 )
 
 
@@ -1761,8 +1772,8 @@ except NameError:
 @admin.register(models.Diploma)
 class DiplomaAdmin(PdfSandwichAdmin):
     search_fields = (
-        "obj__userprofile__user__first_name",
-        "obj__userprofile__user__last_name",
+        f"obj__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"obj__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
 
 
@@ -1773,7 +1784,7 @@ class DiplomaFieldAdmin(PdfSandwichFieldAdmin):
 
 @admin.register(models.TeamDiploma)
 class TeamDiplomaAdmin(PdfSandwichAdmin):
-    search_fields = ("obj__name",)
+    search_fields = (f"obj__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",)
 
 
 @admin.register(models.TeamDiplomaField)

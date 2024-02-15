@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 
 from . import models
@@ -20,11 +21,11 @@ class StravaAccountAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
 
     search_fields = (
-        "user__username",
-        "user__first_name",
-        "strava_username",
-        "first_name",
-        "last_name",
+        f"user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"strava_username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
 
     list_display = (

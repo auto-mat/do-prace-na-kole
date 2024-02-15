@@ -33,6 +33,7 @@ from advanced_filters.admin import AdminAdvancedFiltersMixin
 from daterange_filter.filter import DateRangeFilter
 
 from django import forms
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Case, CharField, Count, TextField, When
 from django.forms import Textarea
@@ -196,13 +197,13 @@ class SubsidiaryBoxAdmin(
         "subsidiary",
     )
     search_fields = (
-        "id",
-        "carrier_identification",
-        "subsidiary__address_street",
-        "subsidiary__address_psc",
-        "subsidiary__address_recipient",
-        "subsidiary__address_city",
-        "subsidiary__company__name",
+        f"id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"carrier_identification__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__address_psc__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__address_recipient__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__address_city__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     advanced_filter_fields = (
         "carrier_identification",
@@ -285,12 +286,12 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin, NestedModelAdmin):
         "team",
     )
     search_fields = (
-        "id",
-        "team__name",
-        "team__subsidiary__address_street",
-        "team__subsidiary__company__name",
-        "box__id",
-        "box__carrier_identification",
+        f"id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"box__id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"box__carrier_identification__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     inlines = (NestedPackageTransactionInline,)
 
@@ -338,12 +339,12 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         "team_package__box__delivery_batch__id", short_description=_("ID krabice")
     )
     search_fields = (
-        "id",
-        "user_attendance__userprofile__nickname",
-        "user_attendance__userprofile__user__first_name",
-        "user_attendance__userprofile__user__last_name",
-        "user_attendance__userprofile__user__username",
-        "user_attendance__team__subsidiary__company__name",
+        f"id__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"user_attendance__team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     list_filter = [
         campaign_filter_generator("user_attendance__campaign"),
@@ -623,17 +624,17 @@ class UserAttendanceToBatchAdmin(
         "team__subsidiary__address_psc",
     )
     search_fields = (
-        "userprofile__nickname",
-        "userprofile__user__first_name",
-        "userprofile__user__last_name",
-        "userprofile__user__username",
-        "userprofile__user__email",
-        "team__name",
-        "team__subsidiary__address_street",
-        "team__subsidiary__address_psc",
-        "team__subsidiary__address_recipient",
-        "team__subsidiary__address_city",
-        "team__subsidiary__company__name",
+        f"userprofile__nickname__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__first_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__last_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__username__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"userprofile__user__email__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_street__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_psc__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_recipient__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__address_city__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"team__subsidiary__company__name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     advanced_filter_fields = (
         "team__subsidiary__city",

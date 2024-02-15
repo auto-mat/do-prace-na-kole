@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.conf import settings
 from django.contrib import admin
 
 from import_export.admin import ImportExportMixin
@@ -35,11 +36,11 @@ class PSCAdmin(ImportExportMixin, admin.ModelAdmin):
         "code",
     )
     search_fields = (
-        "municipality_name",
-        "municipality_part_name",
-        "psc",
-        "post_name",
-        "code",
+        f"municipality_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"municipality_part_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"psc__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"post_name__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"code__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
     readonly_fields = (
         "author",

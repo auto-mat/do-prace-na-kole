@@ -882,3 +882,5 @@ FAKTUROID = {
         ),
     },
 }
+
+ADMIN_SEARCH_FIELD_LOOKUP = "exact"

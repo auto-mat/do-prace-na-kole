@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
@@ -136,9 +137,9 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         NullUserAttendanceListFilter,
     )
     search_fields = (
-        "token",
-        "note",
-        "receiver",
+        f"token__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"note__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
+        f"receiver__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",
     )
 
     resource_class = DiscountCouponResource
