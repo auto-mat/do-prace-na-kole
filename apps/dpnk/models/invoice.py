@@ -144,10 +144,11 @@ class Invoice(StaleSyncMixin, AbstractOrder):
         verbose_name=_("Pořadové číslo faktury"),
         null=False,
     )
-    order_number = models.BigIntegerField(
+    order_number = models.CharField(
         verbose_name=_("Číslo objednávky (nepovinné)"),
         null=True,
         blank=True,
+        max_length=120,
     )
     company_name = models.CharField(
         verbose_name=_("Název organizace"),
