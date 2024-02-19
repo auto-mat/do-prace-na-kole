@@ -46,7 +46,6 @@ from .models import (
     Invoice,
     Subsidiary,
     UserAttendance,
-    UserProfile,
 )
 
 
@@ -253,7 +252,7 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationBaseForm):
     )
     username = forms.CharField(widget=forms.HiddenInput, required=False)
     mailing_opt_in = forms.BooleanField(
-        label=UserProfile._meta.get_field("mailing_opt_in").verbose_name,
+        label=_("Chci všechny informace o výzvě do e-mailu (důrazně doporučujeme)"),
         required=False,
     )
 
