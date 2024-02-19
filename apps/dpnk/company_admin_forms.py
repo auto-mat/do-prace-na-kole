@@ -22,7 +22,6 @@ from crispy_forms.layout import HTML, Layout
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.db.models import ExpressionWrapper, F, Func, CharField, Value
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -93,21 +92,11 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
                 "t_shirt_size",
                 "representative_payment",
             )
-            .annotate(
-                subsidiary_city_with_full_name=ExpressionWrapper(
-                    Func(
-                        F("team__subsidiary__city__name"),
-                        Value(" "),
-                        F("userprofile__user__first_name"),
-                        Value(" "),
-                        F("userprofile__user__last_name"),
-                        function="CONCAT",
-                    ),
-                    output_field=CharField(),
-                )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
             )
-            .distinct("subsidiary_city_with_full_name")
-            .order_by("subsidiary_city_with_full_name")
         )
 
         ret_val = super().__init__(*args, **kwargs)
