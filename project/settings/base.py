@@ -883,4 +883,4 @@ FAKTUROID = {
     },
 }
 
-ADMIN_SEARCH_FIELD_LOOKUP = "exact"
+ADMIN_SEARCH_FIELD_LOOKUP = "icontains"
