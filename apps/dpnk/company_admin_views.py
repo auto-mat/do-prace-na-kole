@@ -193,7 +193,7 @@ class SelectUsersPayView(
                 "user_attendance__team__subsidiary",
             )
             .annotate(
-                subsidiary_city_full_name=ExpressionWrapper(
+                subsidiary_city_with_full_name=ExpressionWrapper(
                     Func(
                         F("user_attendance__team__subsidiary__city__name"),
                         Value(" "),
