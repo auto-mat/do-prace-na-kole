@@ -24,6 +24,7 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import ExpressionWrapper, F, Func, CharField, Value
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
@@ -177,18 +178,35 @@ class SelectUsersPayView(
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         company_admin = self.company_admin
-        context_data["approved"] = Payment.objects.filter(
-            user_attendance__team__subsidiary__company=company_admin.administrated_company,
-            user_attendance__campaign=company_admin.campaign,
-            user_attendance__userprofile__user__is_active=True,
-            pay_type="fc",
-            payment_status=Status.COMPANY_ACCEPTS,
-        ).select_related(
-            "user_attendance",
-            "user_attendance__userprofile",
-            "user_attendance__userprofile__user",
-            "user_attendance__team__subsidiary",
+        context_data["approved"] = (
+            Payment.objects.filter(
+                user_attendance__team__subsidiary__company=company_admin.administrated_company,
+                user_attendance__campaign=company_admin.campaign,
+                user_attendance__userprofile__user__is_active=True,
+                pay_type="fc",
+                payment_status=Status.COMPANY_ACCEPTS,
+            )
+            .select_related(
+                "user_attendance",
+                "user_attendance__userprofile",
+                "user_attendance__userprofile__user",
+                "user_attendance__team__subsidiary",
+            )
+            .annotate(
+                subsidiary_city_full_name=ExpressionWrapper(
+                    Func(
+                        F("user_attendance__team__subsidiary__city__name"),
+                        Value(" "),
+                        F("user_attendance__userprofile__user__first_name"),
+                        Value(" "),
+                        F("user_attendance__userprofile__user__last_name"),
+                        function="CONCAT",
+                    ),
+                    output_field=CharField(),
+                ).distinct("subsidiary_city_with_full_name")
+            )
         )
+
         context_data["total_approved_count"] = len(context_data["approved"])
         context_data["total_approved_amount"] = sum(
             ua.amount for ua in context_data["approved"]
