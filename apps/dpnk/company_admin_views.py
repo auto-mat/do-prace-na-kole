@@ -203,8 +203,9 @@ class SelectUsersPayView(
                         function="CONCAT",
                     ),
                     output_field=CharField(),
-                ).distinct("subsidiary_city_with_full_name")
+                )
             )
+            .distinct("subsidiary_city_with_full_name")
         )
 
         context_data["total_approved_count"] = len(context_data["approved"])
