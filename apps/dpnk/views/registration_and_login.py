@@ -22,9 +22,11 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
@@ -324,6 +326,7 @@ class ConfirmTeamInvitationView(
         return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator(never_cache, name="dispatch")
 class PaymentTypeView(
     UserAttendanceFormKwargsMixin,
     RegistrationViewMixin,
