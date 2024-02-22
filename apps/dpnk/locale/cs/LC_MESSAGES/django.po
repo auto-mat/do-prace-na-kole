@@ -752,7 +752,7 @@ msgstr ""
 
 #: apps/dpnk/forms.py:447
 msgid "Pozvěte další členy do Vášeho týmu"
-msgstr ""
+msgstr "Pozvěte další členy do svého týmu"
 
 #: apps/dpnk/forms.py:463
 msgid "Zadejte adresu, kam jezdíte každý den do práce."
@@ -4464,7 +4464,7 @@ msgstr ""
 msgid ""
 "<p>Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. Stačí si "
 "ještě poradit s pár maličkostmi a dostanete se na startovací čáru.</p><img "
-"src='https://www.dopracenakole.cz/wp-content/uploads/bajk-servis.jpg'/>"
+"src='https://dopracenakole.cz/app/uploads/bajk-servis.jpg'/>"
 msgstr ""
 
 #: apps/dpnk/views/registration_and_login.py:821
