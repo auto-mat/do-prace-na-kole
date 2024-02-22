@@ -60,7 +60,7 @@ class Questionnaire(NotificationType):
         super().__init__()
 
     def populate(self, template):
-        template.verb = "Nezapomeňte výplnit '" + self.questionnaire.name + "'"
+        template.verb = "Nezapomeňte vyplnit '" + self.questionnaire.name + "'"
         template.verb_en = "Don't forget to fill out '" + self.questionnaire.name + "'"
         template.url = reverse_lazy(
             "questionnaire", kwargs={"questionnaire_slug": self.questionnaire.slug}
