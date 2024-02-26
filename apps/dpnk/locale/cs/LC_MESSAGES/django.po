@@ -4459,7 +4459,7 @@ msgstr ""
 
 #: dpnk/views/registration_and_login.py:802
 msgid "Nastal čas seřídit kolo a vyřešit drobné papírování…"
-msgstr "wwwwww"
+msgstr ""
 
 #: dpnk/views/registration_and_login.py:805
 msgid ""
