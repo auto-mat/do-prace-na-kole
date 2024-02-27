@@ -4821,7 +4821,7 @@ msgid ""
 msgstr ""
 "<p>We can't let You in, Your registration is not complete yet. Get done with "
 "few things and You can line up on the starting line.</p><img src='https://"
-"www.dopracenakole.cz/app/uploads/bajk-servis.jpg'/>"
+"www.dopracenakole.cz/app/uploads/bajk-servis-1.jpg'/>"
 
 #: dpnk/views/registration_and_login.py:824
 msgid "Sledování balíčku"

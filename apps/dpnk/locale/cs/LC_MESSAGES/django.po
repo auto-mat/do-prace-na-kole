@@ -4469,7 +4469,7 @@ msgid ""
 msgstr ""
 "<p>Nemůžeme Vás pustit dál, protože Vaše registrace není kompletní. Stačí si "
 "ještě poradit s pár maličkostmi a dostanete se na startovací čáru.</p><img "
-"src='https://www.dopracenakole.cz/app/uploads/bajk-servis.jpg'/>"
+"src='https://www.dopracenakole.cz/app/uploads/bajk-servis-1.jpg'/>"
 
 #: dpnk/views/registration_and_login.py:824
 msgid "Sledování balíčku"
