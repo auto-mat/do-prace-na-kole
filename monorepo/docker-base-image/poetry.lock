@@ -1862,19 +1862,19 @@ requests = ">=2.13.0"
 
 [[package]]
 name = "django-photologue"
-version = "3.15.1"
+version = "3.16"
 description = "Powerful image management for the Django web framework."
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-photologue-3.15.1.tar.gz", hash = "sha256:a630d773a9cd3f5e6941ff9115bd78bca95fd9e80f44ebda2e6f6883cf3e88b0"},
-    {file = "django_photologue-3.15.1-py2.py3-none-any.whl", hash = "sha256:75a636cbd7405f405a816dab1e60d835eb3c4a6a66ca0257eaa3d9a2de09af0f"},
+    {file = "django-photologue-3.16.tar.gz", hash = "sha256:ce6f0693a80565f356edeb69a8144cd96985765a17a2c64f725c5fc5ad77a310"},
+    {file = "django_photologue-3.16-py2.py3-none-any.whl", hash = "sha256:509cb2f4fba63cc90f48d4ba215f4273741309d3617d27e6a47f6a26ddfed8de"},
 ]
 
 [package.dependencies]
 django-sortedm2m = ">=3.1.1"
-ExifRead = ">=2.1.2"
-Pillow = ">=6.0.0"
+ExifRead = ">=3"
+Pillow = ">=9"
 
 [[package]]
 name = "django-polymorphic"
@@ -5546,4 +5546,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "62b092e2ba31a396e3ee237a5aa7c661ca29a5956227b251bccc67854b5b6273"
+content-hash = "dd2bdb81b771c5da05c988b4b1d1a72fb1178abf068b4bbcdfdddbf9073af079"
