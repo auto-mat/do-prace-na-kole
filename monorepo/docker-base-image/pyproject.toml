@@ -97,7 +97,7 @@ social-auth-app-django = "*"
 svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git"}
 django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains", rev = "django20"}
 django-advanced-filters = "*"
-stravalib = {git = "https://github.com/hozn/stravalib", rev = "main"}
+stravalib = {git = "https://github.com/hozn/stravalib", rev = "master"}
 django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor"}
 django-selectable = "*"
 django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", rev = "develop"}
