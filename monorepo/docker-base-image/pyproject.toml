@@ -137,6 +137,7 @@ fakturoid = "^1.5.1"
 pytest-cov = "^3.0.0"
 coveragepy-lcov = "^0.1.2"
 osmnx = "^1.2.1"
+pillow = "9.5.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
