@@ -112,7 +112,7 @@ django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.gi
 PyPDF2 = "*"
 django-bootstrap4 = "==0.0.8"
 html2text = "*"
-tornado = "<6"
+tornado = "<7"
 dj_anonymizer = "*"
 faker = "*"
 django-colorfield = "*"
