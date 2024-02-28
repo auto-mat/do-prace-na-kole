@@ -2032,13 +2032,13 @@ files = [
 
 [[package]]
 name = "django-ses"
-version = "3.2.0"
+version = "3.5.0"
 description = "A Django email backend for Amazon's Simple Email Service"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "django-ses-3.2.0.tar.gz", hash = "sha256:6c9e56b610317ed16701951870e6b498d04bbc4aba46d957917585580803d182"},
-    {file = "django_ses-3.2.0-py3-none-any.whl", hash = "sha256:87c57bb30f54cec4774871b86e587d92976a42da53508f5d790bffc630545611"},
+    {file = "django_ses-3.5.0-py3-none-any.whl", hash = "sha256:3522fe531155eb06bb015b3b36324c059194450633b33f9bd5bc9d1328822fe2"},
+    {file = "django_ses-3.5.0.tar.gz", hash = "sha256:dc1644f50608fbf3a64f085a371c61d56d68eba3c5efa69651f13dc3ba05049d"},
 ]
 
 [package.dependencies]
@@ -2047,8 +2047,8 @@ django = ">=2.2"
 pytz = ">=2016.10"
 
 [package.extras]
-bounce = ["cryptography (>=36.0.2,<37.0.0)", "requests (>=2.27.1,<3.0.0)"]
-events = ["cryptography (>=36.0.2,<37.0.0)", "requests (>=2.27.1,<3.0.0)"]
+bounce = ["cryptography (>=36.0.2)", "requests (>=2.27.1)"]
+events = ["cryptography (>=36.0.2)", "requests (>=2.27.1)"]
 
 [[package]]
 name = "django-sesame"
