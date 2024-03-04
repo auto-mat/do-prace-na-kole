@@ -23,4 +23,5 @@ exec poetry run gunicorn wsgi:application \
 	 --log-level=debug \
 	 --log-file=- \
 	 --access-logfile=- \
+	 --limit_request_line=0 \
 	 "$@"
