@@ -34,7 +34,7 @@ def create_or_update_subject(fa, invoice):
     pattern = re.compile(r"\s+")
     fa_subject_data = {
         "custom_id": invoice.company.id,
-        "name": invoice.company_name,
+        "name": invoice.company.address.recipient if invoice.company.address.recipient else invoice.company_name,
         "street": (
             f"{invoice.company.address.street or ''} "
             f"{invoice.company.address.street_number or ''}"
