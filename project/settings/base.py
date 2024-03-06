@@ -32,6 +32,8 @@ from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
+from celery.schedules import crontab
+
 from model_utils import Choices
 
 
@@ -884,3 +886,12 @@ FAKTUROID = {
 }
 
 ADMIN_SEARCH_FIELD_LOOKUP = "icontains"
+
+CELERYBEAT_SCHEDULE = {
+    "check_celerybeat_liveness": {
+        "task": "dpnk.tasks.check_celerybeat_liveness",
+        "schedule": crontab(minute="*/1"),
+    },
+}
+
+CELERYBEAT_LIVENESS_REDIS_UNIQ_KEY = "celerybeat-liveness"

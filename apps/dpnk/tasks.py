@@ -19,14 +19,17 @@
 from __future__ import absolute_import
 
 from datetime import timedelta
+from urllib.parse import urlparse
 from urllib.request import urlopen
 
+import redis
 from celery import shared_task
 
 import denorm
 
 from dj_fiobank_payments.statement import parse
 
+from django.conf import settings
 from django.contrib import contenttypes
 from django.urls import reverse
 from django.utils import translation
@@ -343,3 +346,22 @@ CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_ge
                         File(fd),
                     )
             city.save()
+
+
+@shared_task()
+def check_celerybeat_liveness(set_key=True):
+    """Check Celery Beat liveness with setting Redis key"""
+    parsed_redis_url = urlparse(settings.REDIS_URL)
+    redis_instance = redis.StrictRedis(
+        host=parsed_redis_url.hostname,
+        port=parsed_redis_url.port if parsed_redis_url.port else 6379,
+        db=0,
+    )
+    if set_key:
+        redis_instance.set(
+            settings.CELERYBEAT_LIVENESS_REDIS_UNIQ_KEY,
+            settings.CELERYBEAT_LIVENESS_REDIS_UNIQ_KEY,
+            ex=120,
+        )
+    else:
+        return redis_instance.get(settings.CELERYBEAT_LIVENESS_REDIS_UNIQ_KEY)
