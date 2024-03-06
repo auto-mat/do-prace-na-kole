@@ -351,7 +351,7 @@ CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_ge
 @shared_task()
 def check_celerybeat_liveness(set_key=True):
     """Check Celery Beat liveness with setting Redis key"""
-    parsed_redis_url = urlparse(settings.REDIS_URL)
+    parsed_redis_url = urlparse(settings.BROKER_URL)
     redis_instance = redis.StrictRedis(
         host=parsed_redis_url.hostname,
         port=parsed_redis_url.port if parsed_redis_url.port else 6379,
