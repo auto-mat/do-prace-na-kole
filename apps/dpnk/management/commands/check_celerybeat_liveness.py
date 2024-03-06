@@ -2,7 +2,7 @@
 
 import sys
 
-from django.core.management.base import BaseCommand
+from django.core.management import BaseCommand
 
 from dpnk.tasks import check_celerybeat_liveness
 
