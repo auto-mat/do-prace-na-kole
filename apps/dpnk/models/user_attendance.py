@@ -561,6 +561,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.payment_status not in ("none", None)
 
     def payment_complete_date(self):
+        if self.discount_coupon:
+            return self.discount_coupon_used
         if self.representative_payment is not None:
             if self.representative_payment.realized:
                 return self.representative_payment.realized
