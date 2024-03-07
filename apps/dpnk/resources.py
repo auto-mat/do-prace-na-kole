@@ -151,7 +151,7 @@ def create_subsidiary_resource(campaign_slugs):
 def create_userprofile_resource(campaign_slugs):  # noqa: C901
     campaign_fields = ["user_attended_%s" % sl for sl in campaign_slugs]
 
-    class UserProileResource(resources.ModelResource):
+    class UserProfileResource(resources.ModelResource):
         class Meta:
             model = models.UserProfile
             fields = [
@@ -187,12 +187,12 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
                 return user_profile.get().payment_status
 
         setattr(
-            UserProileResource,
+            UserProfileResource,
             "dehydrate_user_attended_%s" % slug,
             types.MethodType(func, slug),
         )
 
-    return UserProileResource
+    return UserProfileResource
 
 
 class UserAttendanceResource(resources.ModelResource):
