@@ -869,6 +869,8 @@ class UserAttendanceAdmin(
         "frequency",
         "trip_length_total",
         "get_rides_count_denorm",
+        "discount_coupon",
+        "discount_coupon_used",
         "created",
         "updated",
         "last_sync_time",
@@ -940,6 +942,7 @@ class UserAttendanceAdmin(
         "created",
         "updated",
         "payment_status",
+        "discount_coupon_used",
     )
     exclude = (
         "track",

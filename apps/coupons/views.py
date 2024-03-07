@@ -25,6 +25,7 @@ import logging
 from braces.views import LoginRequiredMixin
 
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView
 
@@ -58,6 +59,7 @@ class DiscountCouponView(
     def form_valid(self, form):
         self.discount_coupon = form.cleaned_data["discount_coupon"]
         self.user_attendance.discount_coupon = self.discount_coupon
+        self.user_attendance.discount_coupon_used = timezone.now()
         self.user_attendance.save()
         ret_val = super().form_valid(form)
         return ret_val

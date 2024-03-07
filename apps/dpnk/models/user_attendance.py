@@ -140,6 +140,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    discount_coupon_used = models.DateTimeField(
+        verbose_name=_("Datum použití slevového kupónu"),
+        null=True,
+        blank=True,
+    )
     created = models.DateTimeField(
         verbose_name=_("Datum vytvoření"),
         auto_now_add=True,
