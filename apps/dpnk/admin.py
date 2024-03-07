@@ -864,7 +864,7 @@ class UserAttendanceAdmin(
         "representative_payment__pay_type",
         "representative_payment__status",
         "representative_payment__amount",
-        "representative_payment__realized",
+        "representative_payment_realized",
         "team__member_count",
         "frequency",
         "trip_length_total",
@@ -910,7 +910,7 @@ class UserAttendanceAdmin(
         "representative_payment__pay_type",
         "representative_payment__status",
         "representative_payment__amount",
-        ("representative_payment__realized", _("Datum realizace platby")),
+        ("representative_payment_realized", _("Datum realizace platby")),
         "payment_status",
         "team__member_count",
         ("t_shirt_size__ship", _("Posílá se triko?")),
@@ -981,6 +981,19 @@ class UserAttendanceAdmin(
         )
 
     user_link.short_description = _("Uživatel")
+
+    def representative_payment_realized(self, obj):
+        if obj.discount_coupon:
+            realized = obj.discount_coupon_used
+        else:
+            realized = (
+                obj.representative_payment.realized
+                if obj.representative_payment
+                else None
+            )
+        return realized
+
+    # representative_payment_realized.short_description = _("Datum realizace platby")
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
