@@ -231,6 +231,8 @@ class UserAttendanceResource(resources.ModelResource):
             "payment_status",
             "payment_type",
             "payment_amount",
+            "discount_coupon",
+            "discount_coupon_used",
         ]
         export_order = fields
 
@@ -244,6 +246,18 @@ class UserAttendanceResource(resources.ModelResource):
         readonly=True, attribute="representative_payment__amount"
     )
     company_admin_emails = fields.Field(readonly=True, attribute="company_admin_emails")
+    representative_payment_amount = fields.Field(readonly=True)
+
+    def dehydrate_representative_payment_amount(self, obj):
+        if obj.discount_coupon:
+            realized = obj.discount_coupon_used
+        else:
+            realized = (
+                obj.representative_payment.realized
+                if obj.representative_payment
+                else None
+            )
+        return realized
 
 
 class AnswerResource(resources.ModelResource):
