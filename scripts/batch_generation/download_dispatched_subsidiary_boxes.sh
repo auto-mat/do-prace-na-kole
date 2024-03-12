@@ -9,7 +9,7 @@ dateFrom=$GLS_DISPATCHED_SUBSIDIARY_BOXES_DATE_FROM
 if [ "$GLS_DISPATCHED_SUBSIDIARY_BOXES_DATE_TO" == "date +%d.%m.%Y" ]; then
     dateTo=$($GLS_DISPATCHED_SUBSIDIARY_BOXES_DATE_TO)
 else
-    dateTo=$GLS_DISPATCHED_SUBSIDIARY_BOXES_DATE_TO
+    dateTo=${GLS_DISPATCHED_SUBSIDIARY_BOXES_DATE_TO-$(date +%d.%m.%Y)}
 fi
 
 file=$(curl -b cookies.txt "$GLS_BASE_URL/ll_getReportClass.php?uid=10424&lng=cz&fileType=CSV&dateFrom=$dateFrom&dateTo=$dateTo&senderID=-1&replist=0-30&gapid=-1")
