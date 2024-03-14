@@ -26,7 +26,7 @@ msgstr "Recalculation of %s results was assigned"
 
 #: dpnk/actions.py:40
 msgid "Přepočítat výsledku vybraných soutěží"
-msgstr "Recalculate results of selected competitions"
+msgstr "Recalculate results of selected challenges"
 
 #: dpnk/actions.py:57
 msgid "Hromadně stáhnout PDF"
@@ -164,7 +164,7 @@ msgstr "Isn't company competition?"
 #: dpnk/admin.py:540 dpnk/views/results_and_competitions.py:151
 #: dpnk/views_results.py:53
 msgid "Výsledky soutěže"
-msgstr "Competition results"
+msgstr "Challenge results"
 
 #: dpnk/admin.py:554 dpnk/models/questionnaire.py:230
 msgid "Odpovědi"
@@ -474,7 +474,7 @@ msgstr "Company"
 
 #: dpnk/company_admin_views.py:123
 msgid "Oficiální soutěže"
-msgstr "Official competitions"
+msgstr "Official challenges"
 
 #: dpnk/company_admin_views.py:148
 msgid "Od teď mohou schválení hráči soutěžit."
@@ -535,7 +535,7 @@ msgstr "Enroll company competition"
 msgid "K editování této soutěže nemáte oprávnění."
 msgstr ""
 "<div class='text-warning'>You don't have permission to edit this "
-"competition</div>"
+"challenge</div>"
 
 #: dpnk/company_admin_views.py:408
 msgid "Nedostatečné oprávnění"
@@ -889,7 +889,7 @@ msgstr ""
 #, fuzzy
 msgid "Podpořím výzvu benefičním darem."
 msgstr ""
-"I want to support this competition and with beneficiary participant fee %s "
+"I want to support this challenge and with beneficiary participant fee %s "
 "Kč. <i class='fa fa-heart'></i>"
 
 #: dpnk/forms.py:828
@@ -1176,7 +1176,7 @@ msgstr "Minimal rides count, with which is possible to reach 100% rides ridden"
 
 #: dpnk/models/campaign.py:151
 msgid "Minimální procento pro kvalifikaci do pravidelnostní soutěže"
-msgstr "Minimal percentage for competition qualification"
+msgstr "Minimal percentage for challenge qualification"
 
 #: dpnk/models/campaign.py:157
 msgid "Maximální navýšení vzdálenosti"
@@ -3750,11 +3750,11 @@ msgid_plural ""
 "                       "
 msgstr[0] ""
 "\n"
-"Before the end of the competition you can run or bike one more trip for a "
+"Before the end of the challenge you can run or bike one more trip for a "
 "maximum of %(max_percentage)s%%."
 msgstr[1] ""
 "\n"
-"Before the end of the competition there are still %(rides_num)s possible for "
+"Before the end of the challenge there are still %(rides_num)s possible for "
 "a maximum of %(max_percentage)s%%."
 
 #: dpnk/templates/dpnk/frequency.html:89
