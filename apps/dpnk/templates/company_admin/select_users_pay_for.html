@@ -5,8 +5,8 @@
 {{ block.super }}
 {% include "datatables_header.html" %}
 <style>
- .form-check-input { 
-     position: relative; 
+ .form-check-input {
+     position: relative;
      margin-left: 0.5rem;
  }
 </style>
@@ -29,6 +29,7 @@
         <th>{% trans "E-mail" %}</th>
         <th>{% trans "Město" %}</th>
         <th>{% trans "Čas registrace" %}</th>
+        <th>{% trans "Čas žádosti o platbu" %}</th>
     </tr>
     {% for tr in approved %}
     <tr>
@@ -39,6 +40,7 @@
     <td>{{tr.user_attendance.userprofile.user.email}}</td>
     <td>{{tr.user_attendance.team.subsidiary.city}}</td>
     <td>{{tr.user_attendance.created}}</td>
+    <td>{{tr.created}}</td>
     </tr>
     {% endfor %}
 </table>
