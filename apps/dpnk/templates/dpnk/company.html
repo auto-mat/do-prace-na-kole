@@ -16,7 +16,7 @@
         <div class="col-12 col-sm-6 col-md-4 card team-card" >
 			      {% if team.lead_photo %}
 				    <a href="{{team.lead_photo.image.url}}"target="_blank" rel="noopener noreferrer">
-				        <img src="{{team.lead_photo.get_display_url}}"/>
+				        <img src="{{team.lead_photo.image.url}}"/>
 				    </a>
 			      {% else %}
 					  <img src="{{campaign.campaign_type.frontend_url}}img/dpnk_logo.svg"/>
