@@ -127,7 +127,7 @@ class CompanyForm(SubmitMixin, AddressForm):
         model = Company
         fields = (
             "name",
-            "address_recipient",
+            # "address_recipient",
             "address_street",
             "address_street_number",
             "address_psc",
@@ -143,10 +143,10 @@ class CompanyForm(SubmitMixin, AddressForm):
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        self.fields["address_recipient"].label = _("Adresát na faktuře")
-        self.fields["address_recipient"].help_text = _(
-            "Zadejte pokud potřebujete mít na faktuře jiného adresáta, než název společnosti."
-        )
+        # self.fields["address_recipient"].label = _("Adresát na faktuře")
+        # self.fields["address_recipient"].help_text = _(
+        #     "Zadejte pokud potřebujete mít na faktuře jiného adresáta, než název společnosti."
+        # )
         self.fields["ico"].required = True
         self.helper.layout.insert(1, "name")
         self.helper.layout.append("ico")
