@@ -12,10 +12,10 @@
    <tr>
    <th>{% trans "Den vystavení daňového dokladu" %}</th>
    <th>{% trans "Soubor s fakturou" %}</th>
-   <th>{% trans "Počet plateb" %}</th>
+   {# <th>{% trans "Počet plateb" %}</th> #}
    {# <th>{% trans "Povinný variabilní symbol" %}</th> #}
-   <th>{% trans "Částka včetně DPH" %}</th>
-   <th>{% trans "Datum potvrzení zaplacení" %}</th>
+   {# <th>{% trans "Částka včetně DPH" %}</th> #}
+   {# <th>{% trans "Datum potvrzení zaplacení" %}</th> #}
    </tr>
    {% for invoice in invoices %}
       <tr>
@@ -39,13 +39,13 @@
           (<a href="{{ invoice.fakturoid_invoice_url }}">{% trans "Fakturoid PDF soubor" %}</a>)
         {% endif %}
       </td>
-      <td>{{ invoice.payment_set.count }}</td>
+      {# <td>{{ invoice.payment_set.count }}</td> #}
       {# <td>{{ invoice.variable_symbol }}</td> #}
-      <td>{{ invoice.total_amount }}</td>
+      <td>{{ invoice.total_amount }}</td> #}
       {% if invoice.paid %}
-      <td>{{ invoice.paid_date }}</td>
+      {# <td>{{ invoice.paid_date }}</td> #}
       {% else %}
-      <td>{% trans "Zaplacení nepotvrzeno" %}</td>
+      {# <td>{% trans "Zaplacení nepotvrzeno" %}</td> #}
       {% endif %}
       </tr>
    {% endfor %}
