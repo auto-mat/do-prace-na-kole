@@ -3162,8 +3162,8 @@ msgstr ""
 "promise you a successful transfer."
 
 #: dpnk/templates/company_admin/invoices.html:14
-msgid "Soubor s fakturou"
-msgstr "File with invoice"
+msgid "Faktura a stav platby"
+msgstr "Invoice and status of payment"
 
 #: dpnk/templates/company_admin/invoices.html:17
 msgid "Částka včetně DPH"
