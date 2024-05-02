@@ -170,9 +170,7 @@ def get_activity_as_rest_trip(activity):
     return {
         "commuteMode": get_commute_mode_slug(activity.type),
         "durationSeconds": activity.elapsed_time.total_seconds(),
-        "distanceMeters": round(
-            stravalib.unithelper.meters(activity.distance).get_num(), 0
-        ),
+        "distanceMeters": round(stravalib.unithelper.meters(activity.distance), 0),
         "trip_date": str(activity.start_date.date()),
         "sourceApplication": "strava",
         "sourceId": activity.id,
