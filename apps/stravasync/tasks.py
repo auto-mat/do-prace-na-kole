@@ -219,9 +219,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
             "direction": direction,
             "user_attendance": user_attendance.id,
             "commute_mode": commute_mode,
-            "distance": round(
-                stravalib.unithelper.kilometers(activity.distance), 2
-            ),
+            "distance": round(stravalib.unithelper.kilometers(activity.distance), 2),
             "duration": activity.elapsed_time.total_seconds(),
             "source_application": "strava",
             "source_id": activity.id,
