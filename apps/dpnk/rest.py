@@ -23,6 +23,7 @@ import time
 # import denorm
 
 from django.utils.decorators import method_decorator
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import F, Window
 from django.db.models.functions import DenseRank
@@ -63,6 +64,7 @@ from .models import (
 )
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
+from .util import get_all_logged_in_users
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -1344,6 +1346,19 @@ class PhotoURLGet(APIView):
         return Response(photo.get_display_url())
 
 
+class LoggedInUsersListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username"]
+
+
+class LoggedInUsersListGet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+
+    queryset = get_all_logged_in_users()
+    serializer_class = LoggedInUsersListSerializer
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1376,3 +1391,6 @@ router.register(r"landing_page_icon", LandingPageIconSet, basename="landing_page
 
 
 router.register(r"coordinators/city", CoordinatedCitySet, basename="coordinated-city")
+router.register(
+    r"logged-in-user-list", LoggedInUsersListGet, basename="logged_in_user_list"
+)
