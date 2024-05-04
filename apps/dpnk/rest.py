@@ -1364,9 +1364,10 @@ class LoggedInUsersListSerializer(serializers.ModelSerializer):
 
 class LoggedInUsersListGet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsSuperuser]
-
-    queryset = get_all_logged_in_users()
     serializer_class = LoggedInUsersListSerializer
+
+    def get_queryset(self):
+        return get_all_logged_in_users()
 
 
 router = routers.DefaultRouter()
