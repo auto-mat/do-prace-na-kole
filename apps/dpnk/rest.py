@@ -1134,6 +1134,16 @@ class IsAdminOrReadOnly(BasePermission):
             return request.user.is_staff
 
 
+class IsSuperuser(BasePermission):
+    def has_permission(self, request, view):
+        if (
+            request.method in SAFE_METHODS
+            and request.user.is_authenticated
+            and request.user.is_superuser
+        ):
+            return True
+
+
 class CampaignTypeSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return CampaignType.objects.all()
@@ -1353,7 +1363,7 @@ class LoggedInUsersListSerializer(serializers.ModelSerializer):
 
 
 class LoggedInUsersListGet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsSuperuser]
 
     queryset = get_all_logged_in_users()
     serializer_class = LoggedInUsersListSerializer
