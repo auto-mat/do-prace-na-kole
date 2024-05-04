@@ -12,6 +12,7 @@ __all__ = (
     # base
     UserAttendanceView,
     LandingView,
+    LoggedInUsersListView,
     SwitchLang,
     status,
     test_errors,

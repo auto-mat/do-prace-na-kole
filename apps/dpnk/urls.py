@@ -534,4 +534,9 @@ urlpatterns = [
         views.DrawResultsView.as_view(),
         name="admin_draw_results",
     ),
+    url(
+        r"^admin/logged-in-user-list/$",
+        views.LoggedInUsersListView.as_view(),
+        name="logged_in_user_list",
+    ),
 ]
