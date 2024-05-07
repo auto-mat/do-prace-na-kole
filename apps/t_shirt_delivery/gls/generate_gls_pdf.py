@@ -205,6 +205,13 @@ def generate_pdf_part(csv_file, batch):
                 "response5": response5.text,
             },
         )
+    """
+    If caling this URL addr var return error message: URL not found 404 error
+    You must manually login into web page https://online.gls-czech.com/index.php#
+    and check "Importování údajů o štítcích" page list. There is a limit for
+    500 rows. If limit is exceeded you should delete all rows from the web
+    page and execute Admin action "Nahrát data do GLS a vytvořit PDF" again.
+    """
     response = session.get(addr)
     # with open("batch.pdf", "wb") as f:
     #     f.write(response.content)
