@@ -596,9 +596,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         import avatar.models
 
         try:
-            return avatar.models.Avatar.objects.filter(
+            avatars = avatar.models.Avatar.objects.filter(
                 user=self.userprofile.user,
-            )[0].get_absolute_url()
+            )
+            return avatars[0].get_absolute_url() if avatars.count >= 1 else ""
         except avatar.models.Avatar.DoesNotExist:
             return ""
 
