@@ -246,7 +246,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
 
 
 @shared_task(bind=False)
-def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=300):
+def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=700):
     """
     Syncs any accounts which have not been synced for at least min_time_between_syncs seconds.
     Will sync at most max_batch_size accounts.
