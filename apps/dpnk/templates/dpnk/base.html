@@ -43,6 +43,9 @@
 			})
 		{% endif %}
 		</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3T7BED8NQF"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-3T7BED8NQF'); </script>
 
     <script src="{{campaign.campaign_type.frontend_url}}js/views.js"> </script>
     <script type="text/javascript" src=https://c.seznam.cz/js/rc.js></script>
@@ -83,7 +86,7 @@
 {% endblock %}
 {% endblock %}
 <script>
-	jQuery(document).ready(function($) {  
+	jQuery(document).ready(function($) {
 		// deactivate unfulfilled links
 		$('.readonly').click(function (e) {
 			e.preventDefault();
