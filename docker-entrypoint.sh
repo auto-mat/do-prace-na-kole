@@ -14,7 +14,7 @@ service memcached restart
 
 if [[ "${USE_BJOERN_WSGI_SERVER:-'False'}" == "True" ]]; then
     echo "Starting bjoern."
-    exec poetry run /app-v/wsgi.py
+    exec poetry run /home/aplikace/wsgi.py
 else
     # Start Gunicorn processes
     echo "Starting Gunicorn."
