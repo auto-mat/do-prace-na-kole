@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y \
    postgis \
    fuse3 \
    s3fs \
-   libev-dev \ # required for bjoern WSGI server
+   libev-dev # required for bjoern WSGI server
 
 RUN mkdir /home/aplikace -p \
     && cd /usr/local/src/ \
