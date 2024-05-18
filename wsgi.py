@@ -60,9 +60,11 @@ application = newrelic.agent.wsgi_application()(application)
 if os.getenv("USE_BJOERN_WSGI_SERVER") == "true":
     sys.path.append("/usr/local/src/bjoern/")
 
+    import signal
+
     import bjoern
 
-    bjoern.run(
+    bjoern.listen(
         wsgi_app=application,
         host="0.0.0.0",
         port=8000,
@@ -73,3 +75,25 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "true":
             "ns": "${STATSD_SERVER_NAME_SPACE:-'bjoern'}",
         },
     )
+
+    worker_pids = []
+    num_workers = os.getenv("BJOERN_WSGI_SERVER_NUM_WORKERS", 4)
+    for _ in range(num_workers):
+        pid = os.fork()
+        if pid > 0:
+            # in master
+            worker_pids.append(pid)
+        elif pid == 0:
+            # in worker
+            try:
+                bjoern.run()
+            except KeyboardInterrupt:
+                pass
+            exit()
+
+    try:
+        for _ in range(num_workers):
+            os.wait()
+    except KeyboardInterrupt:
+        for pid in worker_pids:
+            os.kill(pid, signal.SIGINT)
