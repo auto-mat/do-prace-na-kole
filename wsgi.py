@@ -82,12 +82,12 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
             # in worker
             try:
                 bjoern.run(
-                    # statsd={
-                    #     "enable": True,
-                    #     "host": os.getenv("STATSD_SERVER_HOST", "statsd"),
-                    #     "port": os.getenv("STATSD_SERVER_PORT", 8125),
-                    #     "ns": os.getenv("STATSD_SERVER_NAME_SPACE", "bjoern"),
-                    # },
+                    statsd={
+                        "enable": True,
+                        "host": os.getenv("STATSD_SERVER_HOST", "statsd"),
+                        "port": os.getenv("STATSD_SERVER_PORT", 8125),
+                        "ns": os.getenv("STATSD_SERVER_NAME_SPACE", "bjoern"),
+                    },
                 )
             except KeyboardInterrupt:
                 pass
