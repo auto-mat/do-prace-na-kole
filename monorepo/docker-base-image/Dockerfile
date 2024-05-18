@@ -42,7 +42,7 @@ RUN mkdir /home/aplikace -p \
     && cd /usr/local/src/ \
     && git clone --recurse-submodules -j8 https://github.com/jonashaag/bjoern.git \
     && cd /usr/local/src/bjoern \
-    && sed -i "s/python2/python/g" Makefile
+    && sed -i "s/python2/python/g" Makefile \
     && WANT_STATSD=yes WANT_STATSD_TAGS=yes make all
 WORKDIR "/home/aplikace"
 
