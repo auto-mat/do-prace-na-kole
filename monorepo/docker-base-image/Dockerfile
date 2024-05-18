@@ -31,9 +31,14 @@ run apt-get update && apt-get install -y \
    pdftk-java \
    postgis \
    fuse3 \
-   s3fs
+   s3fs \
+   libev-dev \ # required for bjoern WSGI server
 
-run mkdir /home/aplikace -p
+run mkdir /home/aplikace -p \
+    && cd /usr/local/src/
+    && git clone --recurse-submodules -j8 https://github.com/jonashaag/bjoern.git
+    && cd /usr/local/src/bjoern
+    && WANT_STATSD=yes WANT_STATSD_TAGS=yes make all
 WORKDIR "/home/aplikace"
 
 run pip3 install poetry

@@ -24,24 +24,26 @@ import newrelic.agent
 from project.settings import PROJECT_ROOT
 
 
-newrelic.agent.initialize(os.path.join(PROJECT_ROOT, 'newrelic.ini'))
+newrelic.agent.initialize(os.path.join(PROJECT_ROOT, "newrelic.ini"))
 
-ALLDIRS = [os.path.join(PROJECT_ROOT, 'env/lib/python2.6/site-packages'), ]
+# ALLDIRS = [
+#     os.path.join(PROJECT_ROOT, "env/lib/python2.6/site-packages"),
+# ]
 
-# Remember original sys.path.
-prev_sys_path = list(sys.path)
+# # Remember original sys.path.
+# prev_sys_path = list(sys.path)
 
-# Add each new site-packages directory.
-for directory in ALLDIRS:
-    site.addsitedir(directory)
+# # Add each new site-packages directory.
+# for directory in ALLDIRS:
+#     site.addsitedir(directory)
 
-# Reorder sys.path so new directories at the front.
-new_sys_path = []
-for item in list(sys.path):
-    if item not in prev_sys_path:
-        new_sys_path.append(item)
-        sys.path.remove(item)
-sys.path[:0] = new_sys_path
+# # Reorder sys.path so new directories at the front.
+# new_sys_path = []
+# for item in list(sys.path):
+#     if item not in prev_sys_path:
+#         new_sys_path.append(item)
+#         sys.path.remove(item)
+# sys.path[:0] = new_sys_path
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 
@@ -54,3 +56,20 @@ application = newrelic.agent.wsgi_application()(application)
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
+if os.getenv("USE_BJOERN_WSGI_SERVER") == "true":
+    sys.path.append("/usr/local/src/bjoern/")
+
+    import bjoern
+
+    bjoern.run(
+        wsgi_app=application,
+        host="0.0.0.0",
+        port=8000,
+        statsd={
+            "enable": True,
+            "host": "${STATSD_SERVER_HOST:-'statsd'}",
+            "port": "${STATSD_SERVER_PORT:-'8125'}",
+            "ns": "${STATSD_SERVER_NAME_SPACE:-'bjoern'}",
+        },
+    )
