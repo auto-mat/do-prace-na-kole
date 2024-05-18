@@ -72,7 +72,7 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
     )
 
     worker_pids = []
-    num_workers = os.getenv("BJOERN_WSGI_SERVER_NUM_WORKERS", 4)
+    num_workers = int(os.getenv("BJOERN_WSGI_SERVER_NUM_WORKERS", 4))
     for _ in range(num_workers):
         pid = os.fork()
         if pid > 0:
