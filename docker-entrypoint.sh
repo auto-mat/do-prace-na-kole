@@ -12,7 +12,7 @@ tail -n 0 -f logs/*.log &
 
 service memcached restart
 
-if [[ "${USE_BJOERN_WSGI_SERVER:-'false'}" == "true" ]]; then
+if [[ "${USE_BJOERN_WSGI_SERVER:-'False'}" == "True" ]]; then
     echo "Starting bjoern."
     exec poetry run /app-v/wsgi.py
 else

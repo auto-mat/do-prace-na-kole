@@ -57,7 +57,7 @@ application = newrelic.agent.wsgi_application()(application)
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
 
-if os.getenv("USE_BJOERN_WSGI_SERVER") == "true":
+if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
     sys.path.append("/usr/local/src/bjoern/")
 
     import signal
