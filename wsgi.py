@@ -59,6 +59,7 @@ application = newrelic.agent.wsgi_application()(application)
 
 if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
     sys.path.append("/usr/local/src/bjoern/")
+    sys.path.append("/usr/local/src/bjoern/build/")
 
     import signal
 
