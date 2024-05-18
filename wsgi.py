@@ -69,12 +69,6 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
         wsgi_app=application,
         host="0.0.0.0",
         port=8000,
-        statsd={
-            "enable": True,
-            "host": "${STATSD_SERVER_HOST:-'statsd'}",
-            "port": "${STATSD_SERVER_PORT:-'8125'}",
-            "ns": "${STATSD_SERVER_NAME_SPACE:-'bjoern'}",
-        },
     )
 
     worker_pids = []
@@ -87,7 +81,14 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
         elif pid == 0:
             # in worker
             try:
-                bjoern.run()
+                bjoern.run(
+                    statsd={
+                        "enable": True,
+                        "host": "${STATSD_SERVER_HOST:-'statsd'}",
+                        "port": "${STATSD_SERVER_PORT:-'8125'}",
+                        "ns": "${STATSD_SERVER_NAME_SPACE:-'bjoern'}",
+                    },
+                )
             except KeyboardInterrupt:
                 pass
             exit()
