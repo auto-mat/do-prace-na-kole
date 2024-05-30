@@ -55,21 +55,9 @@ def draw(competition_slug, limit=10):
         competition.competition_type == "frequency"
         and competition.competitor_type == "team"
     ):
-        qs = []
-        for i in (
-            results.order_by("id")
-            .distinct("id")
-            .values("team__id", "team__member_count")
-        ):
-            qs.extend(
-                itertools.repeat(
-                    results.filter(team_id=i["team__id"]),
-                    i["team__member_count"],
-                )
-            )
-        first_qs = qs.pop(0)
-        # Union querysets with allowing duplicates
-        results = list(first_qs.union(*qs, all=True).order_by("result"))
+        results.order_by("id").distinct("team_id").values(
+            "team__id", "team__member_count"
+        )
         return sorted(results, key=lambda x: random.random())
 
     results = sorted(results[:limit], key=lambda x: random.random())
