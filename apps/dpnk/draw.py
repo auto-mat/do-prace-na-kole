@@ -21,7 +21,7 @@
 import itertools
 import random
 
-from django.db.models import F, Q
+from django.db.models import Q
 
 from .models import Competition, CompetitionResult, Team
 
@@ -43,7 +43,7 @@ def draw(competition_slug, limit=10):
             Q(
                 id__in=results.distinct().values_list("team_id", flat=True),
                 users__userprofile__user__is_active=True,
-                paid_member_count=F("member_count"),
+                paid_member_count__gt=1,
                 campaign=competition.campaign,
             )
         )
