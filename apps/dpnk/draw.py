@@ -55,7 +55,7 @@ def draw(competition_slug, limit=10):
         competition.competition_type == "frequency"
         and competition.competitor_type == "team"
     ):
-        results.order_by("id").distinct("team_id").values(
+        results.order_by("id", "team_id").distinct("id", "team_id").values(
             "team__id", "team__member_count"
         )
         return sorted(results, key=lambda x: random.random())
