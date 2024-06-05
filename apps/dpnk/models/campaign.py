@@ -147,9 +147,9 @@ class Campaign(Pricable, models.Model):
         blank=False,
         null=False,
     )
-    minimum_percentage = models.PositiveIntegerField(
+    minimum_percentage = models.FloatField(
         verbose_name=_("Minimální procento pro kvalifikaci do pravidelnostní soutěže"),
-        default=66,
+        default=66.6,
         blank=False,
         null=False,
     )
