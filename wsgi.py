@@ -69,6 +69,7 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
         wsgi_app=application,
         host="0.0.0.0",
         port=8000,
+        reuse_port=True,
     )
 
     worker_pids = []
@@ -88,7 +89,6 @@ if os.getenv("USE_BJOERN_WSGI_SERVER") == "True":
                         "port": int(os.getenv("STATSD_SERVER_PORT", 8125)),
                         "ns": os.getenv("STATSD_SERVER_NAME_SPACE", "bjoern"),
                     },
-                    reuse_port=True,
                 )
             except KeyboardInterrupt:
                 pass
