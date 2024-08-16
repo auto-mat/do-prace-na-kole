@@ -38,7 +38,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
 
-from .util import MAP_DESCRIPTION
+from .util import MAP_DESCRIPTION, disable_for_loaddata
 from .. import util
 from ..model_mixins import WithGalleryMixin
 
@@ -285,6 +285,7 @@ def trip_pre_save(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Trip)
+@disable_for_loaddata
 def trip_post_save(sender, instance, **kwargs):
     if instance.user_attendance and not hasattr(instance, "dont_recalculate"):
         from .. import results
