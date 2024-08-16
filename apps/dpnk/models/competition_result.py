@@ -244,7 +244,7 @@ class CompetitionResult(models.Model):
 
 
 @receiver(pre_save, sender=CompetitionResult)
-#@disable_for_loaddata
+# @disable_for_loaddata
 def calculate_general_results(sender, instance, *args, **kwargs):
     from .. import results
 

@@ -52,9 +52,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class GPXTests(TestCase):
-    fixtures = [
-        "dump"
-    ]
+    fixtures = ["dump"]
 
     def setUp(self):
         super().setUp()
@@ -105,11 +103,9 @@ class GPXTests(TestCase):
             response.content.decode(),
             {
                 "id": 1,
-                'track': {
-                    'coordinates': [
-                        [[15.567627, 50.680797], [14.710693, 50.212064]]
-                    ],
-                    'type': 'MultiLineString'
+                "track": {
+                    "coordinates": [[[15.567627, 50.680797], [14.710693, 50.212064]]],
+                    "type": "MultiLineString",
                 },
                 "trip_date": "2024-08-04",
                 "direction": "trip_to",
@@ -119,7 +115,7 @@ class GPXTests(TestCase):
                 "distanceMeters": 80150,
                 "sourceApplication": None,
                 "sourceId": None,
-                "description": ""
+                "description": "",
             },
         )
 
@@ -321,9 +317,7 @@ class TokenAuthenticationTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class CommuteModeTest(TestCase):
-    fixtures = [
-        "dump"
-    ]
+    fixtures = ["dump"]
 
     def setUp(self):
         super().setUp()
@@ -354,7 +348,7 @@ class CommuteModeTest(TestCase):
                 "icon": None,
                 "name_en": "No trip",
                 "name_cs": "Žádná cesta",
-                "points": 0
+                "points": 0,
             },
         )
 
@@ -372,7 +366,7 @@ class CommuteModeTest(TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-    MEDIA_ROOT=os.path.join(os.path.dirname(__file__), 'test_media'),
+    MEDIA_ROOT=os.path.join(os.path.dirname(__file__), "test_media"),
 )
 class PhotoTest(TestCase):
     fixtures = [
@@ -404,7 +398,7 @@ class PhotoTest(TestCase):
         self.assertEqual(photo_count, 2)
 
         response_data = json.loads(response.content)
-        photo_id = response_data['id']
+        photo_id = response_data["id"]
 
         photo = photologue.models.Photo.objects.get(id=photo_id)
         self.assertEqual(photo.caption, "masozravka")
@@ -412,7 +406,9 @@ class PhotoTest(TestCase):
     def test_get(self):
         with open("apps/dpnk/test_files/DSC00002.JPG", "rb") as photofile:
             photofile_content = photofile.read()
-        uploaded_file = SimpleUploadedFile(name="masozravka.jpeg", content=photofile_content, content_type="image/jpeg")
+        uploaded_file = SimpleUploadedFile(
+            name="masozravka.jpeg", content=photofile_content, content_type="image/jpeg"
+        )
         data = {"file_field": uploaded_file}
 
         photo = photologue.models.Photo.objects.create(
@@ -482,9 +478,9 @@ class SubsidiaryTest(TestCase):
                             "ch4": 617.2,
                             "so2": 392.7,
                             "solid": 2805.2,
-                            "pb": 0.9
+                            "pb": 0.9,
                         },
-                        "working_rides_base_count": 1537
+                        "working_rides_base_count": 1537,
                     }
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/1/",
@@ -499,14 +495,14 @@ class SubsidiaryTest(TestCase):
                     "ch4": 617.2,
                     "so2": 392.7,
                     "solid": 2805.2,
-                    "pb": 0.9
+                    "pb": 0.9,
                 },
                 "distance": 80.15,
                 "icon": None,
                 "icon_url": None,
                 "gallery": "http://testing-campaign.testserver/rest/gallery/3/",
                 "gallery_slug": "subsidiary-1-photos",
-                "working_rides_base_count": 1537
+                "working_rides_base_count": 1537,
             },
             {
                 "id": 2,
@@ -530,9 +526,9 @@ class SubsidiaryTest(TestCase):
                             "ch4": 0.0,
                             "so2": 0.0,
                             "solid": 0.0,
-                            "pb": 0.0
+                            "pb": 0.0,
                         },
-                        "working_rides_base_count": 1522
+                        "working_rides_base_count": 1522,
                     }
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/2/",
@@ -547,14 +543,14 @@ class SubsidiaryTest(TestCase):
                     "ch4": 0.0,
                     "so2": 0.0,
                     "solid": 0.0,
-                    "pb": 0.0
+                    "pb": 0.0,
                 },
                 "distance": 0.0,
                 "icon": None,
                 "icon_url": None,
                 "gallery": None,
                 "gallery_slug": "subsidiary-2-photos",
-                "working_rides_base_count": 1522
+                "working_rides_base_count": 1522,
             },
         )
 
@@ -594,7 +590,7 @@ class NotificationTest(TestCase):
                 "timestamp": "2024-08-04T00:29:50.729000",
                 "data": "{'url': '/pozvanky/', 'icon': '/static/img/dpnk_logo.svg'}",
                 "mark_as_read": "http://testing-campaign.testserver/inbox/notifications/mark-as-read/110910/",
-                "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110910/"
+                "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110910/",
             },
         )
 
@@ -708,9 +704,9 @@ class MyTeamTest(TestCase):
                             "ch4": 617.2,
                             "so2": 392.7,
                             "solid": 2805.2,
-                            "pb": 0.9
+                            "pb": 0.9,
                         },
-                        "is_me": True
+                        "is_me": True,
                     }
                 ],
                 "frequency": 0.000650618087182824,
@@ -726,12 +722,12 @@ class MyTeamTest(TestCase):
                     "ch4": 617.2,
                     "so2": 392.7,
                     "solid": 2805.2,
-                    "pb": 0.9
+                    "pb": 0.9,
                 },
                 "campaign": "http://testing-campaign.testserver/rest/campaign/20/",
                 "icon_url": "/media/upload/photologue/photos/frj337AJ0AD47aLGBgIFt8rsDSC00002.JPG",
                 "gallery": "http://testing-campaign.testserver/rest/gallery/2/",
-                "gallery_slug": "team-1-photos"
+                "gallery_slug": "team-1-photos",
             },
         )
 
@@ -787,10 +783,10 @@ class MyCompanyTest(TestCase):
                                     "ch4": 617.2,
                                     "so2": 392.7,
                                     "solid": 2805.2,
-                                    "pb": 0.9
+                                    "pb": 0.9,
                                 },
                                 "eco_trip_count": 1,
-                                "working_rides_base_count": 1523
+                                "working_rides_base_count": 1523,
                             }
                         ],
                         "eco_trip_count": 1,
@@ -804,17 +800,17 @@ class MyCompanyTest(TestCase):
                             "ch4": 617.2,
                             "so2": 392.7,
                             "solid": 2805.2,
-                            "pb": 0.9
+                            "pb": 0.9,
                         },
                         "distance": 80.15,
                         "icon": None,
                         "icon_url": None,
                         "gallery": "http://testing-campaign.testserver/rest/gallery/1/",
                         "gallery_slug": "company-1-photos",
-                        "working_rides_base_count": 1523
+                        "working_rides_base_count": 1523,
                     }
                 ],
-            }
+            },
         )
 
 
@@ -860,7 +856,7 @@ class ColleagueTripsTest(TestCase):
                         "user_attendance": 1,
                         "team": "Tým1",
                         "subsidiary": "Jindřišská 4, 110 00 Praha - Praha",
-                        "has_track": True
+                        "has_track": True,
                     },
                     {
                         "id": 2,
@@ -874,10 +870,10 @@ class ColleagueTripsTest(TestCase):
                         "user_attendance": 3,
                         "team": "Tým1",
                         "subsidiary": "Jindřišská 4, 110 00 Praha - Praha",
-                        "has_track": True
-                    }
-                ]
-            }
+                        "has_track": True,
+                    },
+                ],
+            },
         )
 
 
@@ -902,7 +898,9 @@ class TripsTest(TestCase):
 
     def test_get(self):
         address = reverse("trip-list")
-        response = self.client.get(address, {'start': '2024-08-01', 'end': '2024-08-11'})
+        response = self.client.get(
+            address, {"start": "2024-08-01", "end": "2024-08-11"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode(),
@@ -925,37 +923,23 @@ class TripsTest(TestCase):
                         "track": {
                             "type": "MultiLineString",
                             "coordinates": [
-                                [
-                                    [
-                                        15.567627,
-                                        50.680797
-                                    ],
-                                    [
-                                        14.710693,
-                                        50.212064
-                                    ]
-                                ]
-                            ]
-                        }
+                                [[15.567627, 50.680797], [14.710693, 50.212064]]
+                            ],
+                        },
                     }
-                ]
-            }
+                ],
+            },
         )
 
     def test_get_no_trip(self):
         address = reverse("trip-list")
-        response = self.client.get(address, {'start': '2024-09-01', 'end': '2024-09-11'})
+        response = self.client.get(
+            address, {"start": "2024-09-01", "end": "2024-09-11"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode(),
-            {
-                "count": 0,
-                "next": None,
-                "previous": None,
-                "results": [
-
-                ]
-            }
+            {"count": 0, "next": None, "previous": None, "results": []},
         )
 
 
@@ -994,23 +978,23 @@ class CityInCampaignTest(TestCase):
                         "city__name": "Brno",
                         "city__location": {
                             "latitude": 49.197261,
-                            "longitude": 16.627808
+                            "longitude": 16.627808,
                         },
                         "city__wp_url": "https://dopracenakole.cz/mesta/brno",
-                        "competitor_count": 1
+                        "competitor_count": 1,
                     },
                     {
                         "id": 1,
                         "city__name": "Praha",
                         "city__location": {
                             "latitude": 50.104139,
-                            "longitude": 14.644775
+                            "longitude": 14.644775,
                         },
                         "city__wp_url": "https://dopracenakole.cz/mesta/praha",
-                        "competitor_count": 2
-                    }
-                ]
-            }
+                        "competitor_count": 2,
+                    },
+                ],
+            },
         )
 
 
@@ -1049,10 +1033,7 @@ class CityTest(TestCase):
                         "name": "Brno",
                         "location": {
                             "type": "Point",
-                            "coordinates": [
-                                16.627808,
-                                49.197261
-                            ]
+                            "coordinates": [16.627808, 49.197261],
                         },
                         "wp_url": "https://dopracenakole.cz/mesta/brno",
                         "competitor_count": 1,
@@ -1063,7 +1044,7 @@ class CityTest(TestCase):
                             "count_bicycle": None,
                             "distance_bicycle": None,
                             "count_foot": None,
-                            "distance_foot": None
+                            "distance_foot": None,
                         },
                         "emissions": {
                             "co2": 0.0,
@@ -1074,7 +1055,7 @@ class CityTest(TestCase):
                             "ch4": 0.0,
                             "so2": 0.0,
                             "solid": 0.0,
-                            "pb": 0.0
+                            "pb": 0.0,
                         },
                         "subsidiaries": [
                             "http://testing-campaign.testserver/rest/subsidiary/2/"
@@ -1084,17 +1065,14 @@ class CityTest(TestCase):
                         "organizer": "",
                         "organizer_url": "",
                         "description": "Do práce na kole v tomto městě pořádá ",
-                        "competitions": []
+                        "competitions": [],
                     },
                     {
                         "id": 1,
                         "name": "Praha",
                         "location": {
                             "type": "Point",
-                            "coordinates": [
-                                14.644775,
-                                50.104139
-                            ]
+                            "coordinates": [14.644775, 50.104139],
                         },
                         "wp_url": "https://dopracenakole.cz/mesta/praha",
                         "competitor_count": 2,
@@ -1105,7 +1083,7 @@ class CityTest(TestCase):
                             "count_bicycle": 1,
                             "distance_bicycle": 80.15,
                             "count_foot": 1,
-                            "distance_foot": 57.75
+                            "distance_foot": 57.75,
                         },
                         "emissions": {
                             "co2": 17789.1,
@@ -1116,7 +1094,7 @@ class CityTest(TestCase):
                             "ch4": 1061.8,
                             "so2": 675.7,
                             "solid": 4826.5,
-                            "pb": 1.5
+                            "pb": 1.5,
                         },
                         "subsidiaries": [
                             "http://testing-campaign.testserver/rest/subsidiary/1/"
@@ -1126,10 +1104,10 @@ class CityTest(TestCase):
                         "organizer": "",
                         "organizer_url": "",
                         "description": "Do práce na kole v tomto městě pořádá ",
-                        "competitions": []
-                    }
-                ]
-            }
+                        "competitions": [],
+                    },
+                ],
+            },
         )
 
 
@@ -1168,10 +1146,7 @@ class MyCityTest(TestCase):
                         "name": "Praha",
                         "location": {
                             "type": "Point",
-                            "coordinates": [
-                                14.644775,
-                                50.104139
-                            ]
+                            "coordinates": [14.644775, 50.104139],
                         },
                         "wp_url": "https://dopracenakole.cz/mesta/praha",
                         "competitor_count": 2,
@@ -1182,7 +1157,7 @@ class MyCityTest(TestCase):
                             "count_bicycle": 1,
                             "distance_bicycle": 80.15,
                             "count_foot": 1,
-                            "distance_foot": 57.75
+                            "distance_foot": 57.75,
                         },
                         "emissions": {
                             "co2": 17789.1,
@@ -1193,7 +1168,7 @@ class MyCityTest(TestCase):
                             "ch4": 1061.8,
                             "so2": 675.7,
                             "solid": 4826.5,
-                            "pb": 1.5
+                            "pb": 1.5,
                         },
                         "subsidiaries": [
                             "http://testing-campaign.testserver/rest/subsidiary/1/"
@@ -1203,10 +1178,10 @@ class MyCityTest(TestCase):
                         "organizer": "",
                         "organizer_url": "",
                         "description": "Do práce na kole v tomto městě pořádá ",
-                        "competitions": []
+                        "competitions": [],
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1259,7 +1234,7 @@ class UserAttendanceTest(TestCase):
                             "ch4": 617.2,
                             "so2": 392.7,
                             "solid": 2805.2,
-                            "pb": 0.9
+                            "pb": 0.9,
                         },
                         "avatar_url": "",
                         "working_rides_base_count": 1537,
@@ -1269,10 +1244,10 @@ class UserAttendanceTest(TestCase):
                         "registration_complete": True,
                         "gallery": "http://testing-campaign.testserver/rest/gallery/4/",
                         "unread_notification_count": 2,
-                        "is_coordinator": True
+                        "is_coordinator": True,
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1316,42 +1291,42 @@ class ThisCampaignTest(TestCase):
                             {
                                 "phase_type": "registration",
                                 "date_from": None,
-                                "date_to": "2025-11-21"
+                                "date_to": "2025-11-21",
                             },
                             {
                                 "phase_type": "competition",
                                 "date_from": "2021-09-01",
-                                "date_to": "2025-12-31"
+                                "date_to": "2025-12-31",
                             },
                             {
                                 "phase_type": "results",
                                 "date_from": "2021-06-01",
-                                "date_to": None
+                                "date_to": None,
                             },
                             {
                                 "phase_type": "admissions",
                                 "date_from": None,
-                                "date_to": None
+                                "date_to": None,
                             },
                             {
                                 "phase_type": "payment",
                                 "date_from": "2020-01-01",
-                                "date_to": "2025-08-01"
+                                "date_to": "2025-08-01",
                             },
                             {
                                 "phase_type": "invoices",
                                 "date_from": None,
-                                "date_to": None
+                                "date_to": None,
                             },
                             {
                                 "phase_type": "entry_enabled",
                                 "date_from": "2021-07-01",
-                                "date_to": "2025-06-03"
-                            }
-                        ]
+                                "date_to": "2025-06-03",
+                            },
+                        ],
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1390,61 +1365,61 @@ class CampaignTest(TestCase):
                             {
                                 "phase_type": "competition",
                                 "date_from": None,
-                                "date_to": None
+                                "date_to": None,
                             }
                         ],
                         "id": 21,
                         "slug": "test2",
                         "days_active": 7,
                         "year": "2024",
-                        "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/"
+                        "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/",
                     },
                     {
                         "phase_set": [
                             {
                                 "phase_type": "registration",
                                 "date_from": None,
-                                "date_to": "2025-11-21"
+                                "date_to": "2025-11-21",
                             },
                             {
                                 "phase_type": "competition",
                                 "date_from": "2021-09-01",
-                                "date_to": "2025-12-31"
+                                "date_to": "2025-12-31",
                             },
                             {
                                 "phase_type": "results",
                                 "date_from": "2021-06-01",
-                                "date_to": None
+                                "date_to": None,
                             },
                             {
                                 "phase_type": "admissions",
                                 "date_from": None,
-                                "date_to": None
+                                "date_to": None,
                             },
                             {
                                 "phase_type": "payment",
                                 "date_from": "2020-01-01",
-                                "date_to": "2025-08-01"
+                                "date_to": "2025-08-01",
                             },
                             {
                                 "phase_type": "invoices",
                                 "date_from": None,
-                                "date_to": None
+                                "date_to": None,
                             },
                             {
                                 "phase_type": "entry_enabled",
                                 "date_from": "2021-07-01",
-                                "date_to": "2025-06-03"
-                            }
+                                "date_to": "2025-06-03",
+                            },
                         ],
                         "id": 20,
                         "slug": "testing-campaign",
                         "days_active": 8,
                         "year": "2021",
-                        "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/"
-                    }
-                ]
-            }
+                        "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/",
+                    },
+                ],
+            },
         )
 
 
@@ -1487,12 +1462,12 @@ class CampaignTypeTest(TestCase):
                         "web": "https://www.dopracenakole.cz",
                         "campaigns": [
                             "http://testing-campaign.testserver/rest/campaign/21/",
-                            "http://testing-campaign.testserver/rest/campaign/20/"
+                            "http://testing-campaign.testserver/rest/campaign/20/",
                         ],
-                        "frontend_url": "https://dpnk-frontend.s3-eu-west-1.amazonaws.com/2021.10/"
+                        "frontend_url": "https://dpnk-frontend.s3-eu-west-1.amazonaws.com/2021.10/",
                     }
-                ]
-            }
+                ],
+            },
         )
 
     def test_post(self):
@@ -1553,13 +1528,13 @@ class CharitativeOrganizationTest(TestCase):
                             "count_bicycle": None,
                             "distance_bicycle": None,
                             "count_foot": None,
-                            "distance_foot": None
+                            "distance_foot": None,
                         },
                         "image": None,
-                        "icon": None
+                        "icon": None,
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1599,12 +1574,12 @@ class CompetitionTest(TestCase):
                         "slug": "vyzva1",
                         "competitor_type": "single_user",
                         "competition_type": "length",
-                        "url":None,
+                        "url": None,
                         "results": "http://testing-campaign.testserver/rest/result/vyzva1/",
-                        "priority": 0
+                        "priority": 0,
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1663,11 +1638,11 @@ class CompetitionResultsTest(TestCase):
                             "ch4": 0.0,
                             "so2": 0.0,
                             "solid": 0.0,
-                            "pb": 0.0
-                        }
+                            "pb": 0.0,
+                        },
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1697,7 +1672,6 @@ class MySubsidiaryTest(TestCase):
         self.assertJSONEqual(
             response.content.decode(),
             {
-
                 "id": 1,
                 "address_street": "Jindřišská",
                 "company": "http://testing-campaign.testserver/rest/company/1/",
@@ -1711,41 +1685,40 @@ class MySubsidiaryTest(TestCase):
                         "rest_url": "http://testing-campaign.testserver/rest/team/1/",
                         "eco_trip_count": 1,
                         "emissions": {
-                                "co2": 10339.4,
-                                "co": 58060.7,
-                                "nox": 13601.5,
-                                "n2o": 2003.8,
-                                "voc": 6644.4,
-                                "ch4": 617.2,
-                                "so2": 392.7,
-                                "solid": 2805.2,
-                                "pb": 0.9
+                            "co2": 10339.4,
+                            "co": 58060.7,
+                            "nox": 13601.5,
+                            "n2o": 2003.8,
+                            "voc": 6644.4,
+                            "ch4": 617.2,
+                            "so2": 392.7,
+                            "solid": 2805.2,
+                            "pb": 0.9,
                         },
-                        "working_rides_base_count": 1537
+                        "working_rides_base_count": 1537,
                     }
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/1/",
                 "eco_trip_count": 1,
                 "frequency": 0.000650618087182824,
                 "emissions": {
-                        "co2": 10339.4,
-                        "co": 58060.7,
-                        "nox": 13601.5,
-                        "n2o": 2003.8,
-                        "voc": 6644.4,
-                        "ch4": 617.2,
-                        "so2": 392.7,
-                        "solid": 2805.2,
-                        "pb": 0.9
+                    "co2": 10339.4,
+                    "co": 58060.7,
+                    "nox": 13601.5,
+                    "n2o": 2003.8,
+                    "voc": 6644.4,
+                    "ch4": 617.2,
+                    "so2": 392.7,
+                    "solid": 2805.2,
+                    "pb": 0.9,
                 },
                 "distance": 80.15,
                 "icon": None,
                 "icon_url": None,
                 "gallery": "http://testing-campaign.testserver/rest/gallery/3/",
                 "gallery_slug": "subsidiary-1-photos",
-                "working_rides_base_count": 1537
-            }
-
+                "working_rides_base_count": 1537,
+            },
         )
 
 
@@ -1795,10 +1768,10 @@ class MyCompanyTest(TestCase):
                             "ch4": 617.2,
                             "so2": 392.7,
                             "solid": 2805.2,
-                            "pb": 0.9
+                            "pb": 0.9,
                         },
                         "eco_trip_count": 1,
-                        "working_rides_base_count": 1537
+                        "working_rides_base_count": 1537,
                     }
                 ],
                 "eco_trip_count": 1,
@@ -1812,16 +1785,15 @@ class MyCompanyTest(TestCase):
                     "ch4": 617.2,
                     "so2": 392.7,
                     "solid": 2805.2,
-                    "pb": 0.9
+                    "pb": 0.9,
                 },
                 "distance": 80.15,
                 "icon": None,
                 "icon_url": None,
                 "gallery": "http://testing-campaign.testserver/rest/gallery/1/",
                 "gallery_slug": "company-1-photos",
-                "working_rides_base_count": 1537
-            }
-
+                "working_rides_base_count": 1537,
+            },
         )
 
 
@@ -1865,7 +1837,7 @@ class NotificationTest(TestCase):
                         "timestamp": "2024-08-04T21:00:58.344000",
                         "data": "{'url': '/pozvanky/', 'icon': ''}",
                         "mark_as_read": "http://testing-campaign.testserver/inbox/notifications/mark-as-read/110911/",
-                        "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110911/"
+                        "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110911/",
                     },
                     {
                         "id": 1,
@@ -1877,10 +1849,10 @@ class NotificationTest(TestCase):
                         "timestamp": "2024-08-04T00:29:50.729000",
                         "data": "{'url': '/pozvanky/', 'icon': '/static/img/dpnk_logo.svg'}",
                         "mark_as_read": "http://testing-campaign.testserver/inbox/notifications/mark-as-read/110910/",
-                        "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110910/"
-                    }
-                ]
-            }
+                        "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110910/",
+                    },
+                ],
+            },
         )
 
 
@@ -1919,10 +1891,10 @@ class StravaAccountTest(TestCase):
                         "first_name": "Test",
                         "last_name": "Test",
                         "user_sync_count": 0,
-                        "errors": ""
+                        "errors": "",
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -1961,10 +1933,7 @@ class CoordinatedCityTest(TestCase):
                         "name": "Praha",
                         "location": {
                             "type": "Point",
-                            "coordinates": [
-                                14.644775,
-                                50.104139
-                            ]
+                            "coordinates": [14.644775, 50.104139],
                         },
                         "wp_url": "https://dopracenakole.cz/mesta/praha",
                         "competitor_count": 2,
@@ -1975,19 +1944,18 @@ class CoordinatedCityTest(TestCase):
                             "count_bicycle": 1,
                             "distance_bicycle": 80.15,
                             "count_foot": 1,
-                            "distance_foot": 57.75
+                            "distance_foot": 57.75,
                         },
                         "emissions": {
                             "co2": 17789.1,
                             "co": 99894.8,
                             "nox": 23401.6,
-
                             "n2o": 3447.5,
                             "voc": 11431.9,
                             "ch4": 1061.8,
                             "so2": 675.7,
                             "solid": 4826.5,
-                            "pb": 1.5
+                            "pb": 1.5,
                         },
                         "subsidiaries": [
                             "http://testing-campaign.testserver/rest/subsidiary/1/"
@@ -1999,10 +1967,10 @@ class CoordinatedCityTest(TestCase):
                         "description": "Do práce na kole v tomto městě pořádá ",
                         "competitions": [],
                         "data_export_password": "",
-                        "data_export_url": None
+                        "data_export_url": None,
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -2040,10 +2008,10 @@ class LandingPageIconTest(TestCase):
                         "file": "http://testing-campaign.testserver/media/upload/kojot.jpg",
                         "role": "main",
                         "min_frequency": None,
-                        "max_frequency": None
+                        "max_frequency": None,
                     }
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -2076,10 +2044,8 @@ class GalleryTest(TestCase):
                 "title": "team-1-photos",
                 "slug": "team-1-photos",
                 "description": "",
-                "photos": [
-                    "http://testing-campaign.testserver/rest/photo/1/"
-                ]
-            }
+                "photos": ["http://testing-campaign.testserver/rest/photo/1/"],
+            },
         )
 
 
