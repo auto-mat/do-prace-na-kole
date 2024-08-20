@@ -142,11 +142,12 @@ class CompetitionResult(models.Model):
     def get_team(self):
         if self.competition.competitor_type in ["liberos", "single_user"]:
             return self.user_attendance.team
-        if self.competition.competitor_type == "team":
+        elif self.competition.competitor_type == "team":
             return self.team
 
     def get_team_name(self):
-        return self.get_team().name or ""
+        team = self.get_team()
+        return team.name if team else ""
 
     def get_company(self):
         if self.competition.competitor_type == "company":
