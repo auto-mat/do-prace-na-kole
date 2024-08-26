@@ -28,6 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from .company import Company
 from .team import Team
 from .user_attendance import UserAttendance
+from .util import disable_for_loaddata
 
 
 class CompetitionResult(models.Model):
@@ -244,6 +245,7 @@ class CompetitionResult(models.Model):
 
 
 @receiver(pre_save, sender=CompetitionResult)
+# @disable_for_loaddata
 def calculate_general_results(sender, instance, *args, **kwargs):
     from .. import results
 
