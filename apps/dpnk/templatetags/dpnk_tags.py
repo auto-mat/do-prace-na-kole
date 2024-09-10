@@ -215,3 +215,9 @@ def render_logged_in_user_list():
         "users": ",<br> ".join(list(users.values_list("username", flat=True))),
         "users_count": users.count,
     }
+
+
+@register.simple_tag
+def concat_all(*args):
+    """Concatenate all args"""
+    return "".join(map(str, args))

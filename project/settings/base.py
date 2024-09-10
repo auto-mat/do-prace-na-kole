@@ -811,28 +811,20 @@ METABASE_APP_DOMAIN = os.getenv(
     "METABASE_APP_DOMAIN",
     "https://metabase.dopracenakole.net/",
 )
-METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL = "{}{}".format(
+METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
-        "METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL",
-        "public/dashboard/03659536-f587-4103-ac3a-2b6ac786a197",
+        "METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL",
+        "public/dashboard/5a9ff7aa-19df-490a-add9-38604038e29a",
     ),
 )
-METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL = "{}{}".format(
+METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
-        "METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL",
-        "public/dashboard/6ab474dd-7dc3-4345-8109-0e7703e8aaf3",
+        "METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL",
+        "public/dashboard/4724654c-6a09-4c93-af0e-b283ab505ffb",
     ),
 )
-METABASE_DPNK_CITY_DATA_REPORT_URL = "{}{}".format(
-    METABASE_APP_DOMAIN,
-    os.getenv(
-        "METABASE_DPNK_CITY_DATA_REPORT_URL",
-        "public/dashboard/ce7967e3-a581-42af-b2e5-bebe021ca2ec",
-    ),
-)
-
 
 def get_formatted_date(name):
     """Get formatted date global variable

@@ -362,7 +362,7 @@ urlpatterns = [
         name="switch_rides_view",
     ),
     path(
-        "datareport/<unit>/",
+        "datareport/<challenge>/",
         views.DataReportView.as_view(),
         name="datareport",
     ),
