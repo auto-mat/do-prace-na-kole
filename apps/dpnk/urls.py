@@ -366,6 +366,11 @@ urlpatterns = [
         views.DataReportView.as_view(),
         name="datareport",
     ),
+    path(
+        "datareport-results/<type>/",
+        views.DataReportResultsView.as_view(),
+        name="datareport-results",
+    ),
     # company admin:
     url(
         r"^spolecnost/oficialni_souteze/$",

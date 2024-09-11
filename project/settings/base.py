@@ -809,22 +809,51 @@ TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES = os.environ.get(
 
 METABASE_APP_DOMAIN = os.getenv(
     "METABASE_APP_DOMAIN",
-    "https://metabase.dopracenakole.net/",
+    "",
 )
 METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
         "METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL",
-        "public/dashboard/5a9ff7aa-19df-490a-add9-38604038e29a",
+        "",
     ),
 )
 METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
         "METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL",
-        "public/dashboard/4724654c-6a09-4c93-af0e-b283ab505ffb",
+        "",
     ),
 )
+METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+METABASE_DPNK_ORGANIZATION_REVIEW_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_ORGANIZATION_REVIEW_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+
 
 def get_formatted_date(name):
     """Get formatted date global variable

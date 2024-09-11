@@ -36,6 +36,8 @@ __all__ = (
     TripView,
     TripGeoJsonView,
     # registration and login
+    DataReportView,
+    DataReportResultsView,
     DPNKLoginView,
     ChangeTeamView,
     RegisterTeamView,

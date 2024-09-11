@@ -221,3 +221,20 @@ def render_logged_in_user_list():
 def concat_all(*args):
     """Concatenate all args"""
     return "".join(map(str, args))
+
+
+@register.simple_tag
+def concat_cities_into_url_param(user_profile):
+    """Concatenate cities into URL city param value
+
+    :param Object user_profile: UseProfile model instance
+
+    :return str: URL city param with value &city=Praha&city=Brno...
+    """
+    cities = [
+        f"&city={city}"
+        for city in set(
+            user_profile.administrated_cities.all().values_list("name", flat=True)
+        )
+    ]
+    return "".join(cities)

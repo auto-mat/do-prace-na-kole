@@ -844,6 +844,36 @@ class DataReportView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class DataReportResultsView(LoginRequiredMixin, TemplateView):
+    """Incorporate Metabase app
+
+    1. organization regulariry (Company/City organizator),
+    2. organization/city performance (Company/City organizator),
+    3. orgaznization review
+
+    results data report dashboard.
+    """
+
+    template_name = "dpnk/datareport_results.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "regularity" == kwargs["type"]:
+            base_url = settings.METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL
+        elif "performance-organization" == kwargs["type"]:
+            base_url = (
+                settings.METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL
+            )
+        elif "performance-city" == kwargs["type"]:
+            base_url = settings.METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL
+        elif "organizations-review" == kwargs["type"]:
+            base_url = (
+                settings.METABASE_DPNK_ORGANIZATION_REVIEW_RESULTS_DATA_REPORT_URL
+            )
+        context["base_url"] = base_url
+        return context
+
+
 class RegistrationProfileView(
     CampaignFormKwargsMixin,
     RegistrationPersonalViewMixin,
