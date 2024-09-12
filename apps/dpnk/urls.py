@@ -22,6 +22,12 @@ from django.urls import path
 from django.contrib.auth import views as django_views
 from django.utils.translation import ugettext_lazy as _
 
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 from . import auth
 from . import company_admin_views
 from . import views, views_results
@@ -544,4 +550,6 @@ urlpatterns = [
         views.LoggedInUsersListView.as_view(),
         name="logged_in_user_list",
     ),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
 ]
