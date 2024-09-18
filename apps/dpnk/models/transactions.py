@@ -209,6 +209,7 @@ class Payment(Transaction):
         ("kb", _("Komerční banka")),
         ("kbs", _("Komerční banka")),
         ("mons", _("MONETA Money Bank")),
+        ("dpcz", _("Pay later with Twisto - Czech")),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 
