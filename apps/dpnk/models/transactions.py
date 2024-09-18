@@ -203,6 +203,7 @@ class Payment(Transaction):
         ("amw", _("kandidát na členství v Klubu přátel AutoMatu")),
         ("fe", _("neplatí startovné")),
         ("rbczs", _("Raiffeisen Bank")),
+        ("rf", _("Raiffeisen Bank")),
         ("cbs", _("Československá obchodní banka")),
         ("kb", _("Komerční banka")),
         ("kbs", _("Komerční banka")),
