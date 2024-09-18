@@ -201,6 +201,7 @@ class Payment(Transaction):
         ("amw", _("kandidát na členství v Klubu přátel AutoMatu")),
         ("fe", _("neplatí startovné")),
         ("rbczs", _("Raiffeisen Bank")),
+        ("cbs", _("Československá obchodní banka")),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 
