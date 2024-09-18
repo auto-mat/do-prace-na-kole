@@ -32,6 +32,11 @@ from .autocomplete_views import (
 )
 from .views import answers, questionnaire_answers, questionnaire_results, questions
 
+from django.urls import path, re_path
+
+from apps.dpnk.rest_registration import CustomRegisterView
+from allauth.account.views import confirm_email
+
 urlpatterns = [
     url(
         r"^tym/$",
@@ -375,6 +380,18 @@ urlpatterns = [
         "rest/auth/",
         include("dj_rest_auth.urls"),
     ),
+    path(
+        "rest/auth/registration/",
+        CustomRegisterView.as_view(),
+        name="custom_register",
+    ),
+    re_path(
+        r"^rest/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$",
+        confirm_email,
+        name="account_confirm_email",
+    ),
+    url(r"^account/", include("allauth.urls")),
+    path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
     # company admin:
     url(
         r"^spolecnost/oficialni_souteze/$",

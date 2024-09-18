@@ -130,7 +130,7 @@ django-debug-toolbar-request-history = "*"
 django-silk = "*"
 pre-commit = "*"
 django-report-builder = "*"
-dj-rest-auth = "*"
+dj-rest-auth = {version = "*", extras = ["with_social"]}
 memoize = "^1.0.0"
 fakturoid = "^1.5.1"
 pytest-cov = "^3.0.0"
