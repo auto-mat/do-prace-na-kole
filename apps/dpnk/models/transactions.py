@@ -184,6 +184,7 @@ class Payment(Transaction):
         ("pg", _("GE Money Bank")),
         ("pv", _("Sberbank (Volksbank)")),
         ("pf", _("Fio banka")),
+        ("pfs", _("Fio banka")),
         ("cs", _("Česká spořitelna")),
         ("css", _("Česká spořitelna")),
         ("era", _("Era - Poštovní spořitelna")),
