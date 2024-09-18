@@ -204,6 +204,8 @@ class Payment(Transaction):
         ("fe", _("neplatí startovné")),
         ("rbczs", _("Raiffeisen Bank")),
         ("cbs", _("Československá obchodní banka")),
+        ("kb", _("Komerční banka")),
+        ("kbs", _("Komerční banka")),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 
