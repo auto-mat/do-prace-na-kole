@@ -208,6 +208,7 @@ class Payment(Transaction):
         ("cbs", _("Československá obchodní banka")),
         ("kb", _("Komerční banka")),
         ("kbs", _("Komerční banka")),
+        ("mons", _("MONETA Money Bank")),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 
