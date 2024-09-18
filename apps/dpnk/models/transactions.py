@@ -185,6 +185,7 @@ class Payment(Transaction):
         ("pv", _("Sberbank (Volksbank)")),
         ("pf", _("Fio banka")),
         ("cs", _("Česká spořitelna")),
+        ("css", _("Česká spořitelna")),
         ("era", _("Era - Poštovní spořitelna")),
         ("cb", _("ČSOB")),
         ("c", _("Kreditní karta přes GPE")),
