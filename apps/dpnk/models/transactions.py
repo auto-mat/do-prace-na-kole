@@ -179,6 +179,7 @@ class Payment(Transaction):
 
     PAY_TYPES = (
         ("mp", _("mPenize - mBank")),
+        ("mps", _("mPenize - mBank")),
         ("kb", _("MojePlatba")),
         ("rf", _("ePlatby pro eKonto")),
         ("pg", _("GE Money Bank")),
