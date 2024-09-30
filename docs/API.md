@@ -41,8 +41,8 @@ Set-Cookie:  sessionid=bdrhssn6ygjrxvhiu250k18iu0dvs8le; expires=Mon, 30 Sep 202
 Set-Cookie:  csrftoken=tIYxxVwbgF1WUbAXP2hUrAJUpF7qqfaOFi0MqnZ829gGrm9VCLlORhSY4jOJnTnk; expires=Mon, 15 Sep 2025 09:34:56 GMT; Max-Age=31449600; Path=/; SameSite=Lax
 
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NDc5NTk2LCJqdGkiOiJlZWM5ODZhYTc1Mjk0MjA4YWRkNWE0NzI4ZDk0N2E2OCIsInVzZXJfaWQiOjF9.t1rO4HSOXhPGb81jP7zAdoiiVMT5nGj7Ic0DDfiQynE",
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNjU2NTY5NiwianRpIjoiOTJhMzI0ODY4NThkNDI5YWI5YzBiMzllNzk4M2M4OWIiLCJ1c2VyX2lkIjoxfQ.iARxyUr3hiWBgg4t8GgF6Xdi0LnL3J1CCeMdgrNO2pg",
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NDc5NTk2LCJqdGkiOiJlZWM5ODZhYTc1Mjk0MjA4YWRkNWE0NzI4ZDk0N2E2OCIsInVzZXJfaWQiOjF9.t1rO4HSOXhPGb81jP7zAdoiiVMT5nGj7Ic0DDfiQynE",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNjU2NTY5NiwianRpIjoiOTJhMzI0ODY4NThkNDI5YWI5YzBiMzllNzk4M2M4OWIiLCJ1c2VyX2lkIjoxfQ.iARxyUr3hiWBgg4t8GgF6Xdi0LnL3J1CCeMdgrNO2pg",
   "user": {
     "pk": 1,
     "username": "foobar",
@@ -53,7 +53,7 @@ Set-Cookie:  csrftoken=tIYxxVwbgF1WUbAXP2hUrAJUpF7qqfaOFi0MqnZ829gGrm9VCLlORhSY4
 }
 ```
 
-You can refresh a token by using the rest/auth/refresh/tokens/ URL endpoint.
+You can refresh a token by using the rest/auth/token/refresh/ URL endpoint.
 
 Request:
 
@@ -82,7 +82,7 @@ X-XSS-Protection: 1; mode=block
 
 {
   "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NDgwMDA4LCJqdGkiOiIzYjg5MjlhZTFkMDM0YmYwYmRmNTBiNWYxNTEyYzMwNSIsInVzZXJfaWQiOjF9.EchyE6QVe-DUyYbtpY2wo3vVqXckC3f60_ntAZtD9VQ",
-  "access_token_expiration": "2024-09-16T11:46:48.551800"
+  "access_expiration": "2024-09-16T11:46:48.551800"
 }
 ```
 
