@@ -23,6 +23,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from ..string_lazy import format_lazy
+from functools import wraps
 
 urls = {
     "pnk_map_url": "https://mapa.prahounakole.cz/?zoom=13&lat=50.08741&lon=14.4211&layers=_Wgt",
@@ -41,3 +42,17 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     ),
     **urls,
 )
+
+
+def disable_for_loaddata(signal_handler):
+    """
+    Decorator that turns off signal handlers when loading fixture data.
+    """
+
+    @wraps(signal_handler)
+    def wrapper(*args, **kwargs):
+        if kwargs["raw"]:
+            return
+        signal_handler(*args, **kwargs)
+
+    return wrapper

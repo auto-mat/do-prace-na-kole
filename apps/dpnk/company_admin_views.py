@@ -293,7 +293,8 @@ class CompanyAdminApplicationView(
             userprofile=userprofile,
         )
         admin.save()
-        company_admin_register_no_competitor_mail(admin)
+        # Disable sending email
+        # company_admin_register_no_competitor_mail(admin)
         return ret_val
 
 
@@ -347,7 +348,8 @@ class CompanyAdminView(
 
     def form_valid(self, form):
         ret_val = super().form_valid(form)
-        company_admin_register_competitor_mail(self.user_attendance)
+        # Disable sending email
+        # company_admin_register_competitor_mail(self.user_attendance)
         return ret_val
 
 

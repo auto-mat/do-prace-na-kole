@@ -2,19 +2,23 @@ from rest_framework import routers, serializers, viewsets
 
 from .models import CharitativeOrganization
 
+import drf_serpy as serpy
 
-class CharitativeOrganizationSerializer(serializers.ModelSerializer):
-    ridden_distance = serializers.ReadOnlyField(source="get_ridden_distance")
+# dup
+class OptionalImageField(serpy.ImageField):
+    def to_value(self, value):
+        # if value is None:
+        if not value:
+            return None
+        return super().to_value(value)
 
-    class Meta:
-        model = CharitativeOrganization
-        fields = (
-            "name",
-            "description",
-            "ridden_distance",
-            "image",
-            "icon",
-        )
+
+class CharitativeOrganizationSerializer(serpy.Serializer):
+    ridden_distance = serpy.Field(attr="get_ridden_distance", call=True)
+    name = serpy.StrField()
+    description = serpy.StrField()
+    image = OptionalImageField()
+    icon = OptionalImageField()
 
 
 class CharitativeOrganizationViewSet(viewsets.ReadOnlyModelViewSet):

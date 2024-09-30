@@ -356,35 +356,40 @@ msgid ""
 "modelů od Elišky Podzimkové, Toy_Box či Jaromíra 99. Upozorňujeme, že u "
 "starších modelů jsou počty kusů na skladě omezené."
 msgstr ""
-"Bude vám letos dělat radost účastnické tričko, nebo si vyberete ponožky, "
-"či nákrčník? Vyberte si nejnovější design, nebo zvolte loňský model. Pozor, "
-"u dámského trika došlo v roce 2024 ke změně střihu (je lehce širší a kratší). "
-"Prosím, zkontrolujte si dobře "
+"<strong>Pokud se chcete registrovat do Květnové výzvy, vyplňte pouze telefonní číslo a pokračujte dále.</strong>"
+"<p>"
+"Díky registraci se stanete plnohodnotnou součástí Květnové výzvy. Budete členem či členkou týmu, "
+"můžete zapisovat své cesty, sledovat svou pravidelnost, účastnit se Akcí na triko a závěrečného "
+"vyhlášení ve svém městě a v neposlední řadě přispějete na rozvoj městské cyklistiky."
+"</p><p>"
+"Ale nesmutněte - trička, ponožky a spoustu dalšího najdete také v e-shopu spolku AutoMat. "
+"Jako poděkování vám patří sleva ve výši 250 Kč v e-shopu AutoMatu. Tu vám pošleme do "
+"e-mailu začátkem týdne následujícím po týdni, kdy se registrujete a zaplatíte startovné."
+"</p>"
+"Pozor, při výběru velikosti dámského trika na e-shopu: u dámského trika došlo v roce 2024 "
+"ke změně střihu (je lehce širší a kratší). Prosím, zkontrolujte si dobře "
 "<a href='https://dopracenakole.cz/o-vyzve/trika#damske_tricko'>tabulku velikostí</a>. "
-"Střih pánského trika zůstává stejný. Lze vybrat max. 1 jednu "
-"odměnu, další produkty lze objednat samostatně na e-shopu. Můžete také zvolit "
-"'žádné' a ještě více snížit uhlíkovou stopu výzvy a podpořit AutoMat."
+"Střih pánského trika zůstává stejný."
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:10
 #, python-format
 msgid ""
-"\n"
+"<p>"
 "Účastníkům zaregistrovaným do %(deadline)s budeme trika i nákrčníky hromadně "
 "odesílat od %(delivery_from)s do %(delivery_to)s. Jednoho dne pak na Vaši "
-"pracovní adresu zaklepe balík s triky pro všechny členy týmu.\n"
+"pracovní adresu zaklepe balík s triky pro všechny členy týmu."
 msgstr ""
-"\n"
+"</p>"
 "Účastníkům zaregistrovaným do %(deadline)s budeme trika, nákrčníky i ponožky "
 "hromadně odesílat od %(delivery_from)s do %(delivery_to)s. Jednoho dne pak na Vaši "
-"pracovní adresu zaklepe balík s triky pro všechny členy týmu.\n"
+"pracovní adresu zaklepe balík s triky pro všechny členy týmu."
 
-#: apps/t_shirt_delivery/templates/registration/change_tshirt.html:15
-#, python-format
-msgid ""
-"\n"
-"    Zkontrolujte si tedy pečlivě doručovací adresu společnosti. Případnou "
-"chybu v adrese nahlaste na e-mail %(emails)s.\n"
-msgstr ""
+# #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:15
+# #, python-format
+# msgid ""
+# "    Zkontrolujte si tedy pečlivě doručovací adresu společnosti. Případnou "
+# "chybu v adrese nahlaste na e-mail %(emails)s."
+# msgstr ""
 
 #: apps/t_shirt_delivery/templates/registration/change_tshirt.html:133
 msgid "Vyberte typ trika"
@@ -430,11 +435,11 @@ msgstr ""
 
 #: apps/t_shirt_delivery/views.py:75
 msgid "Změňte velikost a typ soutěžního trička"
-msgstr "Změňte velikost a typ účastnické odměny"
+msgstr "Účastnické odměny (trika a ponožky) už nejsou nyní v rámci doregistrace dostupné"
 
 #: apps/t_shirt_delivery/views.py:77
 msgid "Vyberte velikost a typ soutěžního trička"
-msgstr "Vyberte velikost a typ účastnické odměny"
+msgstr "Účastnické odměny (trika a ponožky) už nejsou nyní v rámci doregistrace dostupné"
 
 #: apps/t_shirt_delivery/views.py:129
 #, python-brace-format

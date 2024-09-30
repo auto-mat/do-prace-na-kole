@@ -3359,7 +3359,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Even before the competition starts you can put your planned holiday into the "
+"During May you can put your planned holiday into the "
 "calendar so your sunny days at the beach won’t be throwing shade on Your "
 "results."
 

@@ -1,0 +1,91 @@
+{% extends "dpnk/base_generic_form.html" %}
+{% load i18n %}
+{% load static %}
+{% load dpnk_tags %}
+
+{% block container_header %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    // Recalculate embed element height
+    $("embed").attr("height", $("#page-content").height() - $(".col").height() - $(".row.mb-2").height() );
+  });
+</script>
+{% trans "Otevřít na nové kartě" as new_tab %}
+{% if type == "regularity" %}
+   {# Organization admin #}
+   {% if user_attendance.related_company_admin.is_approved and not user_attendance.userprofile.administrated_cities.all %}
+      {% concat_all base_url "?organizace=" user_attendance.company "&campaign_year=" user_attendance.campaign.year as url %}
+
+   {# City admin #}
+   {% elif user_attendance.userprofile.administrated_cities.all and not user_attendance.related_company_admin.is_approved %}
+      {% concat_cities_into_url_param user_attendance.userprofile as cities_url_param %}
+      {% concat_all base_url "?campaign_year=" user_attendance.campaign.year cities_url_param as url %}
+
+   {# Organization == City admin #}
+   {% elif user_attendance.userprofile.administrated_cities.all and user_attendance.related_company_admin.is_approved %}
+      {% concat_cities_into_url_param user_attendance.userprofile as cities_url_param %}
+      {% concat_all base_url "?organizace=" user_attendance.company cities_url_param "&campaign_year=" user_attendance.campaign.year as url %}
+   {% endif %}
+    <div class="row mb-2">
+      <div class="col">
+          <a class="sidenote" href="{{ url }}" target="_blank" rel="noopener noreferrer">
+            {{ new_tab }}
+          </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <embed type="text/html" src="{{ url }}"" width="100%" height="100%">
+      </div>
+    </div>
+
+{% elif type == "performance-organization" %}
+   {# Organization admin #}
+   {% concat_all base_url "?organizace=" user_attendance.company "&campaign_year=" user_attendance.campaign.year as url %}
+    <div class="row mb-2">
+      <div class="col">
+          <a class="sidenote" href="{{ url }}" target="_blank" rel="noopener noreferrer">
+            {{ new_tab }}
+          </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <embed type="text/html" src="{{ url }}" width="100%" height="100%">
+      </div>
+    </div>
+
+{% elif type == "performance-city" %}
+   {% concat_cities_into_url_param user_attendance.userprofile as cities_url_param %}
+   {% concat_all base_url "?campaign_year=" user_attendance.campaign.year cities_url_param as url %}
+    <div class="row mb-2">
+      <div class="col">
+          <a class="sidenote" href="{{ url }}" target="_blank" rel="noopener noreferrer">
+            {{ new_tab }}
+          </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <embed type="text/html" src="{{ url }}" width="100%" height="100%">
+      </div>
+    </div>
+
+{% elif type == "organizations-review" %}
+   {% concat_all base_url "?city=" user_attendance.company.address_city  as url %}
+    <div class="row mb-2">
+      <div class="col">
+          <a class="sidenote" href="{{ url }}" target="_blank" rel="noopener noreferrer">
+            {{ new_tab }}
+          </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <embed type="text/html" src="{{ url }}" width="100%" height="100%">
+      </div>
+    </div>
+
+{% endif %}
+  {{ block.super }}
+{% endblock %}
