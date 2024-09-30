@@ -3162,8 +3162,8 @@ msgstr ""
 "promise you a successful transfer."
 
 #: dpnk/templates/company_admin/invoices.html:14
-msgid "Soubor s fakturou"
-msgstr "File with invoice"
+msgid "Faktura a stav platby"
+msgstr "Invoice and status of payment"
 
 #: dpnk/templates/company_admin/invoices.html:17
 msgid "Částka včetně DPH"
@@ -3359,7 +3359,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Even before the competition starts you can put your planned holiday into the "
+"During May you can put your planned holiday into the "
 "calendar so your sunny days at the beach won’t be throwing shade on Your "
 "results."
 

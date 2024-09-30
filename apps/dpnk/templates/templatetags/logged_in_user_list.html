@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% if users %}
+{% comment %}
+<ul class="user-list">
+    {% for user in users %}
+    <li>{{ user }}</li>
+    {% endfor %}
+</ul>
+{% endcomment %}
+<div style="margin-bottom: 20px;">
+{{ users|safe }}
+</div>
+<div>
+{% trans "Počet přihlášených uživatelů:" %} {{ users_count }}
+</div>
+{% endif %}

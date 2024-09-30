@@ -36,6 +36,8 @@ from celery.schedules import crontab
 
 from model_utils import Choices
 
+from django.apps import AppConfig
+
 
 def normpath(*args):
     return os.path.normpath(os.path.abspath(os.path.join(*args)))
@@ -275,6 +277,13 @@ TEMPLATES = [
         },
     },
 ]
+
+
+class DjRESTAuthRegistrationConfig(AppConfig):
+    name = "dj_rest_auth.registration"
+    label = "dj_rest_auth_registration"
+
+
 INSTALLED_APPS = [
     "modeltranslation",
     "admin_tools_stats",
@@ -294,6 +303,10 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "django.contrib.gis",
     "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "project.settings.DjRESTAuthRegistrationConfig",
     "photologue",
     "registration",
     "price_level",
@@ -393,8 +406,21 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+    "DEFAULT_VERSION": "v1",
+    "ALLOWED_VERSIONS": ["v1", "v2"],
+}
+
+REST_USE_JWT = True
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "dpnk-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "dpnk-refresh-token",
+    "JWT_AUTH_HTTPONLY": False,
 }
 
 REDACTOR_OPTIONS = {
@@ -470,6 +496,7 @@ LEAFLET_CONFIG = {
 
 CORS_ORIGIN_REGEX = [
     r"^(https?://)?(\w+\.)?dopracenakole\.(cz|net)$",
+    "https://rtwbb-test.dopracenakole.net",
 ]
 
 CORS_ORIGIN_REGEX_WHITELIST = CORS_ORIGIN_REGEX
@@ -806,27 +833,48 @@ TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES = os.environ.get(
 
 METABASE_APP_DOMAIN = os.getenv(
     "METABASE_APP_DOMAIN",
-    "https://metabase.dopracenakole.net/",
+    "",
 )
-METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL = "{}{}".format(
+METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
-        "METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL",
-        "public/dashboard/03659536-f587-4103-ac3a-2b6ac786a197",
+        "METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL",
+        "",
     ),
 )
-METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL = "{}{}".format(
+METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
-        "METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL",
-        "public/dashboard/6ab474dd-7dc3-4345-8109-0e7703e8aaf3",
+        "METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL",
+        "",
     ),
 )
-METABASE_DPNK_CITY_DATA_REPORT_URL = "{}{}".format(
+METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL = "{}{}".format(
     METABASE_APP_DOMAIN,
     os.getenv(
-        "METABASE_DPNK_CITY_DATA_REPORT_URL",
-        "public/dashboard/ce7967e3-a581-42af-b2e5-bebe021ca2ec",
+        "METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+METABASE_DPNK_ORGANIZATION_REVIEW_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_ORGANIZATION_REVIEW_RESULTS_DATA_REPORT_URL",
+        "",
     ),
 )
 
@@ -895,3 +943,10 @@ CELERYBEAT_SCHEDULE = {
 }
 
 CELERYBEAT_LIVENESS_REDIS_UNIQ_KEY = "celerybeat-liveness"
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(
+    os.getenv("DPNK_DATA_UPLOAD_MAX_MEMORY_SIZE", 2621440)
+)
+FILE_UPLOAD_MAX_MEMORY_SIZE = int(
+    os.getenv("DPNK_FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
+)

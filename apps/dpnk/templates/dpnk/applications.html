@@ -1,5 +1,6 @@
 {% extends "dpnk/base_generic_form.html" %}
 {% load i18n %}
+{% load static %}
 
 
 {% block caption %}
@@ -40,7 +41,7 @@
         {% endcomment %}
         {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
         <div class="card">
-            <img class="card-img-top mx-auto" alt="Cyclers" src="https://cyclers.tech/assets/img/Cyclers-Logo.png" style="width: 10em;" />
+            <img class="card-img-top mx-auto" alt="Cyclers" src="{% static "img/cyclers_logo.png" %}" style="width: 13em;" />
             <div class="card-body">
                 <h5 class="card-title">Cyclers</h5>
                 <a href="{% url 'open-application-with-rest-token' 1 %}" class="btn btn-secondary stretched-link">Propojit se Cyclers</a>

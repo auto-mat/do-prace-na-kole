@@ -3042,7 +3042,7 @@ msgid ""
 msgstr ""
 
 #: dpnk/templates/company_admin/invoices.html:14
-msgid "Soubor s fakturou"
+msgid "Faktura a stav platby"
 msgstr ""
 
 #: dpnk/templates/company_admin/invoices.html:17
@@ -3223,7 +3223,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"            Ještě před začátkem výzvy si můžete v kalendáři poznačit "
+"            V květnu si můžete v kalendáři poznačit "
 "plánovanou dovolenou. Tímto způsobem se například výlety do Chorvatska "
 "negativně neodrazí na celkovém skóre.\n"
 "        "

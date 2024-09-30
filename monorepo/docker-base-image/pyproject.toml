@@ -130,13 +130,15 @@ django-debug-toolbar-request-history = "*"
 django-silk = "*"
 pre-commit = "*"
 django-report-builder = "*"
-dj-rest-auth = "*"
+dj-rest-auth = {version = "*", extras = ["with_social"]}
 memoize = "^1.0.0"
 fakturoid = "^1.5.1"
 pytest-cov = "^3.0.0"
 coveragepy-lcov = "^0.1.2"
 osmnx = "^1.2.1"
 pillow = "9.5.0"
+drf-serpy = "^0.5.0"
+djangorestframework-simplejwt = "4.8.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

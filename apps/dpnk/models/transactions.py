@@ -179,12 +179,15 @@ class Payment(Transaction):
 
     PAY_TYPES = (
         ("mp", _("mPenize - mBank")),
+        ("mps", _("mPenize - mBank")),
         ("kb", _("MojePlatba")),
         ("rf", _("ePlatby pro eKonto")),
         ("pg", _("GE Money Bank")),
         ("pv", _("Sberbank (Volksbank)")),
         ("pf", _("Fio banka")),
+        ("pfs", _("Fio banka")),
         ("cs", _("Česká spořitelna")),
+        ("css", _("Česká spořitelna")),
         ("era", _("Era - Poštovní spořitelna")),
         ("cb", _("ČSOB")),
         ("c", _("Kreditní karta přes GPE")),
@@ -200,6 +203,13 @@ class Payment(Transaction):
         ("am", _("člen Klubu přátel AutoMatu")),
         ("amw", _("kandidát na členství v Klubu přátel AutoMatu")),
         ("fe", _("neplatí startovné")),
+        ("rbczs", _("Raiffeisen Bank")),
+        ("rf", _("Raiffeisen Bank")),
+        ("cbs", _("Československá obchodní banka")),
+        ("kb", _("Komerční banka")),
+        ("kbs", _("Komerční banka")),
+        ("mons", _("MONETA Money Bank")),
+        ("dpcz", _("Pay later with Twisto - Czech")),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 

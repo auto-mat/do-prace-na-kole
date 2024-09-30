@@ -23,6 +23,7 @@ import time
 # import denorm
 
 from django.utils.decorators import method_decorator
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import F, Window
 from django.db.models.functions import DenseRank
@@ -63,26 +64,123 @@ from .models import (
 )
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
+from .util import get_all_logged_in_users
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
 
+import drf_serpy as serpy
 
-class RequestSpecificField(serializers.Field):
+from django.contrib.gis.geos import GEOSGeometry
+from django.utils.encoding import smart_str
+
+import json
+
+
+class OptionalImageField(serpy.ImageField):
+    def to_value(self, value):
+        if not value:
+            return None
+        return super().to_value(value)
+
+
+class GeometryField(serpy.Field):
+    def to_value(self, value):
+        if value is None:
+            return value
+
+        if value.geojson:
+            geojson = json.loads(value.geojson)
+        else:
+            geojson = {"type": value.geom_type, "coordinates": []}
+        return geojson
+
+
+class PointField(serpy.Field):
+    def __init__(self, *args, **kwargs):
+        self.str_points = kwargs.pop("str_points", False)
+        self.srid = kwargs.pop("srid", None)
+        self.format = kwargs.pop("format", "latlon")
+
+        if self.format not in ["latlon", "coords"]:
+            raise ValueError(f"Unsupported format: {self.format}")
+
+        super(PointField, self).__init__(*args, **kwargs)
+
+    def to_value(self, value):
+        if value is None:
+            return value
+
+        if isinstance(value, GEOSGeometry):
+            if self.format == "coords":
+                value = {"coordinates": [value.x, value.y], "type": "Point"}
+
+            elif self.format == "latlon":
+                value = {"latitude": value.y, "longitude": value.x}
+        if self.str_points:
+            if self.format == "coords":
+                # 'location': {'coordinates': [14.644775, 50.104139],'type': 'Point'}
+                value = {
+                    "coordinates": [value.pop("longitude"), value.pop("latitude")],
+                    "type": "Point",
+                }
+            elif self.format == "latlon":
+                value["longitude"] = smart_str(value.pop("longitude"))
+                value["latitude"] = smart_str(value.pop("latitude"))
+
+        return value
+
+
+class HyperlinkedField(serpy.Field):
+    getter_takes_serializer = True
+
+    def __init__(self, view_name, **kwargs):
+        self.view_name = view_name
+        super().__init__(**kwargs)
+
+    def as_getter(self, serializer_field_name, serializer_cls):
+        if self.attr == "":
+            getter = lambda instance: instance
+        else:
+            getter = serializer_cls.default_getter(self.attr or serializer_field_name)
+        return lambda serializer, instance: self.to_value(
+            (getter(instance), serializer.context)
+        )
+
+    def to_value(self, value):
+        object, context = value
+
+        # Fetch the request from the context
+        request = context.get("request")
+
+        return self.get_url(object, request)
+
+    def get_url(self, object, request):
+        if object is None:
+            return None
+
+        # Generate the relative URL
+        relative_url = reverse(self.view_name, kwargs={"pk": object.id})
+
+        # Generate the fully qualified URL
+        return request.build_absolute_uri(relative_url)
+
+
+class RequestSpecificField(serpy.Field):
+    getter_takes_serializer = True
+
     def __init__(self, method, *args, **kwargs):
         self.method = method
         return super().__init__(*args, **kwargs)
 
-    def get_attribute(self, instance):
-        # We pass the object instance onto `to_representation`,
-        # not just the field attribute.
-        return instance
+    def as_getter(self, serializer_field_name, serializer_cls):
+        return lambda serializer, instance: self.to_value(
+            (instance, serializer.context)
+        )
 
-    def to_representation(self, value):
-        """
-        Serialize the value's class name.
-        """
-        return self.method(value, self.context["request"])
+    def to_value(self, value):
+        object, context = value
+        return self.method(object, context["request"])
 
 
 class UserAttendanceMixin:
@@ -119,7 +217,7 @@ class CompetitionDoesNotExist(serializers.ValidationError):
     default_detail = {"competition": "Competition with this slug not found"}
 
 
-class DistanceMetersSerializer(serializers.IntegerField):
+class DistanceMetersDeserializer(serializers.IntegerField):
     def to_internal_value(self, data):
         value = super().to_internal_value(data)
         return value / 1000
@@ -129,8 +227,14 @@ class DistanceMetersSerializer(serializers.IntegerField):
         return super().to_representation(value)
 
 
-class MinimalTripSerializer(serializers.ModelSerializer):
-    distanceMeters = DistanceMetersSerializer(
+class DistanceMetersSerializer(serpy.IntField):
+    def to_value(self, data):
+        value = round(data * 1000)
+        return super().to_value(value)
+
+
+class MinimalTripDeserializer(serializers.ModelSerializer):
+    distanceMeters = DistanceMetersDeserializer(
         required=False,
         min_value=0,
         max_value=1000 * 1000,
@@ -163,7 +267,41 @@ class MinimalTripSerializer(serializers.ModelSerializer):
     )
 
 
-class TripSerializer(MinimalTripSerializer):
+class MinimalTripSerializer(serpy.Serializer):
+    distanceMeters = DistanceMetersSerializer(
+        required=False,
+        # min_value=0,
+        # max_value=1000 * 1000,
+        attr="distance",
+        # help_text="Distance in meters. If not set, distance will be calculated from the track",
+    )
+    durationSeconds = serpy.IntField(
+        required=False,
+        # min_value=0,
+        attr="duration",
+        # help_text="Duration of track in seconds",
+    )
+    commuteMode = serpy.StrField(
+        # many=False,
+        required=False,
+        # slug_field="slug",
+        attr="commute_mode.slug",
+        # queryset=CommuteMode.objects.all(),
+        # help_text="Transport mode of the trip",
+    )
+    sourceApplication = serpy.StrField(
+        required=False,
+        attr="source_application",
+        # help_text="Any string identifiing the source application of the track",
+    )
+    trip_date = serpy.DateField(
+        required=False,
+        attr="date",
+        # help_text='Date of the trip e.g. "1970-01-23"',
+    )
+
+
+class TripDeserializer(MinimalTripDeserializer):
     sourceId = serializers.CharField(
         required=False,
         source="source_id",
@@ -237,12 +375,33 @@ class TripSerializer(MinimalTripSerializer):
         }
 
 
-class TripDetailSerializer(TripSerializer):
-    class Meta(TripSerializer.Meta):
-        extra_kwargs = {}
+class TripSerializer(MinimalTripSerializer):
+    sourceId = serpy.StrField(
+        required=False,
+        attr="source_id",
+        # help_text="Any string identifiing the id in the source application",
+    )
+
+    file = RequestSpecificField(
+        lambda trip, req: req.build_absolute_uri(trip.gpx_file.file.url)
+        if trip.gpx_file
+        else None,
+        required=False,
+        # attr="gpx_file",
+        # help_text="GPX file with the track",
+    )
+
+    description = serpy.StrField(
+        required=False,
+        # help_text="Description of the trip as input by user"
+    )
+
+    id = serpy.IntField()
+    direction = serpy.StrField(required=False)
+    track = GeometryField(required=False)
 
 
-class CollegueTripSeralizer(MinimalTripSerializer):
+class ColleagueTripSeralizer(MinimalTripSerializer):
     user = RequestSpecificField(
         lambda trip, req: trip.user_attendance.name(),
     )
@@ -256,26 +415,13 @@ class CollegueTripSeralizer(MinimalTripSerializer):
         lambda trip, req: trip.track is not None,
     )
 
-    class Meta:
-        model = Trip
-        fields = (
-            "id",
-            "trip_date",
-            "direction",
-            "commuteMode",
-            "durationSeconds",
-            "distanceMeters",
-            "sourceApplication",
-            "user",
-            "user_attendance",
-            "team",
-            "subsidiary",
-            "has_track",
-        )
+    id = serpy.IntField()
+    direction = serpy.StrField(required=False)
+    user_attendance = serpy.IntField(attr="user_attendance.id", required=False)
 
 
-class TripUpdateSerializer(TripSerializer):
-    class Meta(TripSerializer.Meta):
+class TripUpdateDeserializer(TripDeserializer):
+    class Meta(TripDeserializer.Meta):
         fields = (
             "id",
             "file",
@@ -322,9 +468,12 @@ class TripSet(UserAttendanceMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.request and self.request.method == "PUT":
-            return TripUpdateSerializer
-        return TripDetailSerializer if self.action == "retrieve" else TripSerializer
+        if self.action in ["list", "retrieve"]:
+            return TripSerializer
+        elif self.action in ["update", "partial_update"]:
+            return TripUpdateDeserializer
+        else:
+            return TripDeserializer
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -341,6 +490,14 @@ class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
     """
 
     def get_queryset(self):
+        subsidiaries = RequestSpecificField(
+            lambda company, req: [
+                MinimalSubsidiarySerializer(sub, context={"request": req}).data
+                for sub in company.subsidiaries.filter(
+                    teams__campaign__slug=req.subdomain, active=True
+                ).distinct()
+            ]
+        )
         qs = Trip.objects.filter(
             user_attendance=self.ua(),
         )
@@ -353,9 +510,12 @@ class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
         return qs
 
     def get_serializer_class(self):
-        if self.request and self.request.method == "PUT":
-            return TripUpdateSerializer
-        return TripDetailSerializer if self.action == "retrieve" else TripSerializer
+        if self.action in ["list", "retrieve"]:
+            return TripSerializer
+        elif self.action in ["update", "partial_update"]:
+            return TripUpdateDeserializer
+        else:
+            return TripDeserializer
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -392,25 +552,20 @@ class ColleagueTripRangeSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
             )
         return qs
 
-    serializer_class = CollegueTripSeralizer
+    serializer_class = ColleagueTripSeralizer
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
-    results = serializers.SerializerMethodField()
+class CompetitionSerializer(serpy.Serializer):
+    results = serpy.MethodField()
 
-    class Meta:
-        model = Competition
-        fields = (
-            "id",
-            "name",
-            "slug",
-            "competitor_type",
-            "competition_type",
-            "url",
-            "results",
-            "priority",
-        )
+    id = serpy.IntField()
+    name = serpy.StrField()
+    slug = serpy.StrField()
+    competitor_type = serpy.StrField()
+    competition_type = serpy.StrField()
+    url = serpy.StrField(required=False)
+    priority = serpy.IntField()
 
     def get_results(self, obj):
         return reverse(
@@ -429,18 +584,19 @@ class CompetitionSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
 
 
 class CompanyInCampaignField(RequestSpecificField):
-    def to_representation(self, value):
+    def to_value(self, value):
+        object, context = value
         try:
-            cic = value.__company_in_campaign
+            cic = object.__company_in_campaign
         except AttributeError:
-            value.__company_in_campaign = CompanyInCampaign(
-                value, self.context["request"].campaign
+            object.__company_in_campaign = CompanyInCampaign(
+                object, context["request"].campaign
             )
-            cic = value.__company_in_campaign
-        return self.method(cic, self.context["request"])
+            cic = object.__company_in_campaign
+        return self.method(cic, context["request"])
 
 
-class CompanySerializer(serializers.HyperlinkedModelSerializer):
+class CompanySerializer(serpy.Serializer):
     subsidiaries = RequestSpecificField(
         lambda company, req: [
             MinimalSubsidiarySerializer(sub, context={"request": req}).data
@@ -465,22 +621,12 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
         lambda cic, req: cic.working_rides_base_count,
     )
 
-    class Meta:
-        model = Company
-        fields = (
-            "id",
-            "name",
-            "subsidiaries",
-            "eco_trip_count",
-            "frequency",
-            "emissions",
-            "distance",
-            "icon",
-            "icon_url",
-            "gallery",
-            "gallery_slug",
-            "working_rides_base_count",
-        )
+    id = serpy.IntField()
+    name = serpy.StrField()
+    icon = OptionalImageField()
+    icon_url = serpy.Field(call=True)
+    gallery = HyperlinkedField("gallery-detail")
+    gallery_slug = serpy.Field(call=True)
 
 
 class CompanySet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -502,18 +648,19 @@ class MyCompanySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
 
 
 class SubsidiaryInCampaignField(RequestSpecificField):
-    def to_representation(self, value):
+    def to_value(self, value):
+        object, context = value
         try:
-            sic = value.__subsidiary_in_campaign
+            sic = object.__subsidiary_in_campaign
         except AttributeError:
-            value.__subsidiary_in_campaign = SubsidiaryInCampaign(
-                value, self.context["request"].campaign
+            object.__subsidiary_in_campaign = SubsidiaryInCampaign(
+                object, context["request"].campaign
             )
-            sic = value.__subsidiary_in_campaign
-        return self.method(sic, self.context["request"])
+            sic = object.__subsidiary_in_campaign
+        return self.method(sic, context["request"])
 
 
-class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
+class BaseSubsidiarySerializer(serpy.Serializer):
     frequency = SubsidiaryInCampaignField(
         lambda sic, req: sic.frequency,
     )
@@ -529,54 +676,32 @@ class MinimalSubsidiarySerializer(serializers.HyperlinkedModelSerializer):
     emissions = SubsidiaryInCampaignField(
         lambda sic, req: sic.emissions,
     )
-    rest_url = RequestSpecificField(
-        lambda sub, req: serializers.HyperlinkedRelatedField(
-            read_only=True, view_name="subsidiary-detail"
-        ).get_url(sub, "subsidiary-detail", req, None)
-    )
 
-    class Meta:
-        model = Subsidiary
-        fields = (
-            "id",
-            "address_street",
-            "city",
-            "frequency",
-            "distance",
-            "icon_url",
-            "rest_url",
-            "emissions",
-            "eco_trip_count",
-            "working_rides_base_count",
-        )
+    id = serpy.IntField()
+    address_street = serpy.StrField()
+    city = HyperlinkedField("city-detail")
+    icon_url = serpy.Field(call=True)
 
 
-class SubsidiarySerializer(MinimalSubsidiarySerializer):
+class MinimalSubsidiarySerializer(BaseSubsidiarySerializer):
+    rest_url = HyperlinkedField("subsidiary-detail", attr="")
+
+
+class SubsidiarySerializer(BaseSubsidiarySerializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req: [
             MinimalTeamSerializer(team, context={"request": req}).data
             for team in sic.teams
         ]
     )
-
-    class Meta:
-        model = Subsidiary
-        fields = (
-            "id",
-            "address_street",
-            "company",
-            "teams",
-            "city",
-            "eco_trip_count",
-            "frequency",
-            "emissions",
-            "distance",
-            "icon",
-            "icon_url",
-            "gallery",
-            "gallery_slug",
-            "working_rides_base_count",
-        )
+    id = serpy.IntField()
+    address_street = serpy.StrField()
+    company = HyperlinkedField("company-detail")
+    city = HyperlinkedField("city-detail")
+    icon = HyperlinkedField("photo-detail")
+    icon_url = serpy.Field(call=True)
+    gallery = HyperlinkedField("gallery-detail")
+    gallery_slug = serpy.Field(call=True)
 
 
 class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
@@ -597,48 +722,45 @@ class MySubsidiarySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class MinimalUserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
-    distance = serializers.FloatField(
-        source="trip_length_total",
-        help_text="Distance ecologically traveled in Km",
+class BaseUserAttendanceSerializer(serpy.Serializer):
+    distance = serpy.FloatField(
+        attr="trip_length_total",
+        # help_text="Distance ecologically traveled in Km",
     )
+
+    emissions = serpy.Field(
+        attr="get_emissions",
+        call=True,
+        # help_text="Emission reduction estimate",
+    )
+    working_rides_base_count = serpy.IntField(
+        attr="get_working_rides_base_count",
+        call=True,
+        # help_text="Max number of possible trips",
+    )
+
+    id = serpy.IntField()
+    name = serpy.StrField(call=True)
+    frequency = serpy.FloatField()
+    avatar_url = serpy.Field(call=True)
+    eco_trip_count = serpy.IntField(call=True)
+
+
+class MinimalUserAttendanceSerializer(BaseUserAttendanceSerializer):
     rest_url = RequestSpecificField(
-        lambda ua, req: serializers.HyperlinkedRelatedField(
-            read_only=True, view_name="userattendance-detail"
-        ).get_url(ua, "userattendance-detail", req, None)
+        lambda ua, req: HyperlinkedField("userattendance-detail").get_url(ua, req)
     )
-    emissions = serializers.JSONField(
-        source="get_emissions",
-        help_text="Emission reduction estimate",
-    )
-    working_rides_base_count = serializers.IntegerField(
-        source="get_working_rides_base_count",
-        help_text="Max number of possible trips",
-    )
+
     is_me = RequestSpecificField(
         lambda ua, req: True if ua.userprofile.user.pk == req.user.pk else False,
     )
 
-    class Meta:
-        model = UserAttendance
-        fields = (
-            "id",
-            "rest_url",
-            "name",
-            "frequency",
-            "distance",
-            "avatar_url",
-            "eco_trip_count",
-            "working_rides_base_count",
-            "emissions",
-            "is_me",
-        )
 
-
-class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
-    remaining_rides_count = serializers.IntegerField(
-        source="get_remaining_rides_count",
-        help_text="Remaining number of possible trips",
+class UserAttendanceSerializer(BaseUserAttendanceSerializer):
+    remaining_rides_count = serpy.IntField(
+        attr="get_remaining_rides_count",
+        call=True
+        # help_text="Remaining number of possible trips",
     )
     sesame_token = RequestSpecificField(
         lambda ua, req: ua.userprofile.get_sesame_token()
@@ -654,14 +776,9 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
         lambda ua, req: ua.entered_competition(),
     )
     gallery = RequestSpecificField(
-        lambda ua, req: serializers.HyperlinkedRelatedField(
-            read_only=True,
-            view_name="gallery-detail",
-        ).get_url(
+        lambda ua, req: HyperlinkedField("gallery-detail",).get_url(
             ua.userprofile.get_gallery(),
-            "gallery-detail",
             req,
-            None,
         ),
     )
     unread_notification_count = RequestSpecificField(
@@ -670,27 +787,9 @@ class UserAttendanceSerializer(MinimalUserAttendanceSerializer):
         else None,
     )
 
-    class Meta:
-        model = UserAttendance
-        fields = (
-            "id",
-            "name",
-            "frequency",
-            "distance",
-            "points",
-            "points_display",
-            "eco_trip_count",
-            "team",
-            "emissions",
-            "avatar_url",
-            "working_rides_base_count",
-            "remaining_rides_count",
-            "sesame_token",
-            "registration_complete",
-            "gallery",
-            "unread_notification_count",
-            "is_coordinator",
-        )
+    points = serpy.IntField()
+    points_display = serpy.StrField(call=True)
+    team = HyperlinkedField("team-detail")
 
 
 class AllUserAttendanceSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -718,77 +817,53 @@ class MyUserAttendanceSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class MinimalTeamSerializer(serializers.HyperlinkedModelSerializer):
-    distance = serializers.FloatField(
-        source="get_length",
-        help_text="Distance ecologically traveled in Km",
-        read_only=True,
+class BaseTeamSerializer(serpy.Serializer):
+    distance = serpy.FloatField(
+        attr="get_length",
+        call=True,
     )
-    frequency = serializers.FloatField(
-        source="get_frequency",
-        help_text="Fequeny of travel in as a fraction (multiply by 100 to get percentage)",
-        read_only=True,
+    frequency = serpy.FloatField(
+        attr="get_frequency",
+        call=True,
+        # help_text="Fequeny of travel in as a fraction (multiply by 100 to get percentage)",
+        # read_only=True,
     )
-    emissions = serializers.JSONField(
-        source="get_emissions",
-        help_text="Emission reduction estimate",
-        read_only=True,
+    emissions = serpy.Field(
+        attr="get_emissions",
+        call=True,
     )
-    eco_trip_count = serializers.IntegerField(
-        source="get_eco_trip_count",
-        help_text="Number of ecologically traveled trips by team members",
-        read_only=True,
+    eco_trip_count = serpy.IntField(
+        attr="get_eco_trip_count",
+        call=True,
     )
-    working_rides_base_count = serializers.IntegerField(
-        source="get_working_trips_count",
-        read_only=True,
-    )
-    rest_url = RequestSpecificField(
-        lambda team, req: serializers.HyperlinkedRelatedField(
-            read_only=True, view_name="team-detail"
-        ).get_url(team, "team-detail", req, None)
+    working_rides_base_count = serpy.IntField(
+        attr="get_working_trips_count",
+        call=True,
     )
 
-    class Meta:
-        model = Team
-        fields = (
-            "name",
-            "id",
-            "frequency",
-            "distance",
-            "icon_url",
-            "rest_url",
-            "eco_trip_count",
-            "emissions",
-            "working_rides_base_count",
-        )
+    name = serpy.StrField(required=False)
+    id = serpy.IntField()
+    icon_url = serpy.Field(call=True)
 
 
-class TeamSerializer(MinimalTeamSerializer):
-    members = MinimalUserAttendanceSerializer(
-        many=True,
-        read_only=True,
+class MinimalTeamSerializer(BaseTeamSerializer):
+    rest_url = HyperlinkedField("team-detail", attr="")
+
+
+class TeamSerializer(BaseTeamSerializer):
+    members = RequestSpecificField(
+        lambda team, req: MinimalUserAttendanceSerializer(
+            team.members, context={"request": req}, many=True
+        ).data
     )
 
-    class Meta:
-        model = Team
-        fields = (
-            "name",
-            "icon",
-            "id",
-            "subsidiary",
-            "members",
-            "frequency",
-            "distance",
-            "eco_trip_count",
-            "working_rides_base_count",
-            "emissions",
-            "campaign",
-            "icon_url",
-            "gallery",
-            "gallery_slug",
-        )
-        read_only_fields = (
+    icon = HyperlinkedField("photo-detail")
+    subsidiary = HyperlinkedField("subsidiary-detail")
+    campaign = HyperlinkedField("campaign-detail")
+    gallery = HyperlinkedField("gallery-detail")
+    gallery_slug = serpy.Field(call=True)
+
+    """read_only_fields = (
             "id",
             "subsidiary",
             "members",
@@ -800,7 +875,7 @@ class TeamSerializer(MinimalTeamSerializer):
             "icon_url",
             "gallery",
             "gallery_slug",
-        )
+    )"""
 
 
 class TeamSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -832,34 +907,22 @@ class MyTeamSet(
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
-    user_attendance = serializers.CharField(read_only=True)
-    company = serializers.CharField(read_only=True)
-    place = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(source="__str__", read_only=True)
+class CompetitionResultSerializer(serpy.Serializer):
+    user_attendance = serpy.StrField(required=False)
+    company = HyperlinkedField("company-detail")
+    place = serpy.IntField()
+    name = serpy.StrField(attr="__str__", call=True)
     icon_url = RequestSpecificField(lambda a, b: "")
-    divident = serializers.IntegerField(source="result_divident", read_only=True)
-    divisor = serializers.IntegerField(source="result_divisor", read_only=True)
-    emissions = serializers.JSONField(source="get_emissions", read_only=True)
-
-    class Meta:
-        model = CompetitionResult
-        fields = (
-            "id",
-            "user_attendance",
-            "team",
-            "company",
-            "competition",
-            "result",
-            "place",
-            "name",
-            "icon_url",
-            "frequency",
-            "divident",
-            "divisor",
-            "distance",
-            "emissions",
-        )
+    divident = serpy.IntField(attr="result_divident", required=False)
+    divisor = serpy.IntField(attr="result_divisor", required=False)
+    emissions = serpy.Field(attr="get_emissions", call=True)
+    id = serpy.IntField()
+    team = HyperlinkedField("team-detail")
+    competition = HyperlinkedField("competition-detail")
+    result = serpy.StrField(required=False)
+    place = serpy.IntField()
+    frequency = serpy.FloatField(required=False)
+    distance = serpy.FloatField(required=False)
 
 
 class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
@@ -887,20 +950,13 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CityInCampaignSerializer(serializers.HyperlinkedModelSerializer):
-    city__name = serializers.CharField(source="city.name")
-    city__location = PointField(source="city.location")
-    city__wp_url = serializers.CharField(source="city.get_wp_url")
+class CityInCampaignSerializer(serpy.Serializer):
+    city__name = serpy.StrField(attr="city.name")
+    city__location = PointField(attr="city.location", format="latlon", required=False)
+    city__wp_url = serpy.StrField(attr="city.get_wp_url", call=True)
 
-    class Meta:
-        model = CityInCampaign
-        fields = (
-            "id",
-            "city__name",
-            "city__location",
-            "city__wp_url",
-            "competitor_count",
-        )
+    id = serpy.IntField()
+    competitor_count = serpy.IntField(call=True)
 
 
 class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
@@ -911,7 +967,7 @@ class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
-class CitySerializer(serializers.HyperlinkedModelSerializer):
+class CitySerializer(serpy.Serializer):
     competitor_count = RequestSpecificField(
         lambda city, req: CityInCampaign.objects.get(
             city=city, campaign=req.campaign
@@ -950,6 +1006,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             city=city, campaign=req.campaign
         ).organizer,
     )
+
     organizer_url = RequestSpecificField(
         lambda city, req: CityInCampaign.objects.get(
             city=city, campaign=req.campaign
@@ -957,10 +1014,9 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     )
     subsidiaries = RequestSpecificField(
         lambda city, req: [
-            serializers.HyperlinkedRelatedField(  # noqa
-                read_only=True,
-                view_name="subsidiary-detail",
-            ).get_url(subsidiary, "subsidiary-detail", req, None)
+            HyperlinkedField(  # noqa
+                "subsidiary-detail",
+            ).get_url(subsidiary, req)
             for subsidiary in Subsidiary.objects.filter(  # noqa  # noqa
                 id__in=Team.objects.filter(
                     subsidiary__city=city,
@@ -977,29 +1033,15 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
             )
         ]
     )
-    wp_url = serializers.CharField(
-        source="get_wp_url",
+    wp_url = serpy.StrField(
+        attr="get_wp_url",
+        call=True,
     )
 
-    class Meta:
-        model = City
-        fields = (
-            "id",
-            "name",
-            "location",
-            "wp_url",
-            "competitor_count",
-            "trip_stats",
-            # 'frequency', TODO
-            "emissions",
-            "subsidiaries",
-            "eco_trip_count",
-            "distance",
-            "organizer",
-            "organizer_url",
-            "description",
-            "competitions",
-        )
+    id = serpy.IntField()
+    name = serpy.StrField()
+    location = PointField(format="coords")
+    # 'frequency', TODO
 
 
 class CitySet(viewsets.ReadOnlyModelViewSet):
@@ -1043,28 +1085,6 @@ class CoordinatedCitySerializer(CitySerializer):
         lambda city, req: get_data_export_url(city, req.campaign),
     )
 
-    class Meta:
-        model = City
-        fields = (
-            "id",
-            "name",
-            "location",
-            "wp_url",
-            "competitor_count",
-            "trip_stats",
-            # 'frequency', TODO
-            "emissions",
-            "subsidiaries",
-            "eco_trip_count",
-            "distance",
-            "organizer",
-            "organizer_url",
-            "description",
-            "competitions",
-            "data_export_password",
-            "data_export_url",
-        )
-
 
 class CoordinatedCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
@@ -1076,26 +1096,22 @@ class CoordinatedCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CommuteModeSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = CommuteMode
-        fields = (
-            "id",
-            "slug",
-            "does_count",
-            "eco",
-            "distance_important",
-            "duration_important",
-            "minimum_distance",
-            "minimum_duration",
-            "description_en",
-            "description_cs",
-            "icon",
-            "name_en",
-            "name_cs",
-            "points",
-            # icon TODO
-        )
+class CommuteModeSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    slug = serpy.StrField()
+    does_count = serpy.BoolField()
+    eco = serpy.BoolField()
+    distance_important = serpy.BoolField()
+    duration_important = serpy.BoolField()
+    minimum_distance = serpy.FloatField()
+    minimum_duration = serpy.IntField()
+    description_en = serpy.StrField(required=False)
+    description_cs = serpy.StrField(required=False)
+    icon = OptionalImageField()
+    name_en = serpy.StrField(required=False)
+    name_cs = serpy.StrField()
+    points = serpy.IntField()
+    # icon TODO
 
 
 class CommuteModeSet(viewsets.ReadOnlyModelViewSet):
@@ -1106,7 +1122,25 @@ class CommuteModeSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CampaignTypeSerializer(serializers.HyperlinkedModelSerializer):
+class CampaignTypeSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    slug = serpy.StrField()
+    name = serpy.StrField()
+    name_en = serpy.StrField(required=False)
+    name_cs = serpy.StrField()
+    web = serpy.StrField()
+    campaigns = RequestSpecificField(
+        lambda campaign_type, req: [
+            HyperlinkedField(  # noqa
+                "campaign-detail",
+            ).get_url(campaign, req)
+            for campaign in campaign_type.campaigns.all()
+        ]
+    )
+    frontend_url = serpy.StrField()
+
+
+class CampaignTypeDeserializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CampaignType
         fields = (
@@ -1132,37 +1166,43 @@ class IsAdminOrReadOnly(BasePermission):
             return request.user.is_staff
 
 
+class IsSuperuser(BasePermission):
+    def has_permission(self, request, view):
+        if (
+            request.method in SAFE_METHODS
+            and request.user.is_authenticated
+            and request.user.is_superuser
+        ):
+            return True
+
+
 class CampaignTypeSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return CampaignType.objects.all()
 
-    serializer_class = CampaignTypeSerializer
     permission_classes = [IsAdminOrReadOnly]
 
-
-class PhaseSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Phase
-        fields = (
-            "phase_type",
-            "date_from",
-            "date_to",
+    def get_serializer_class(self):
+        return (
+            CampaignTypeSerializer
+            if self.action in ["retrieve", "list"]
+            else CampaignTypeDeserializer
         )
 
 
-class CampaignSerializer(serializers.HyperlinkedModelSerializer):
-    phase_set = PhaseSerializer(many=True, read_only=True)
+class PhaseSerializer(serpy.Serializer):
+    phase_type = serpy.StrField()
+    date_from = serpy.DateField(required=False)
+    date_to = serpy.DateField(required=False)
 
-    class Meta:
-        model = Campaign
-        fields = (
-            "id",
-            "slug",
-            "days_active",
-            "year",
-            "campaign_type",
-            "phase_set",
-        )
+
+class CampaignSerializer(serpy.Serializer):
+    phase_set = PhaseSerializer(many=True)
+    id = serpy.IntField()
+    slug = serpy.StrField()
+    days_active = serpy.IntField()
+    year = serpy.StrField()
+    campaign_type = HyperlinkedField("campaigntype-detail")
 
 
 class CampaignSet(viewsets.ReadOnlyModelViewSet):
@@ -1181,7 +1221,7 @@ class ThisCampaignSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class NotificationSerializer(serializers.HyperlinkedModelSerializer):
+class NotificationSerializer(serpy.Serializer):
     mark_as_read = RequestSpecificField(
         lambda notification, req: req.build_absolute_uri(
             reverse("notifications:mark_as_read", args=(notification.slug,))
@@ -1193,20 +1233,14 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
         ),
     )
 
-    class Meta:
-        model = Notification
-        fields = (
-            "id",
-            "level",
-            "unread",
-            "deleted",
-            "verb",
-            "description",
-            "timestamp",
-            "data",
-            "mark_as_read",
-            "mark_as_unread",
-        )
+    id = serpy.IntField()
+    level = serpy.StrField()
+    unread = serpy.BoolField()
+    deleted = serpy.BoolField()
+    verb = serpy.StrField()
+    description = serpy.StrField(required=False)
+    timestamp = serpy.DateTimeField(date_format="%Y-%m-%dT%H:%M:%S.%f")
+    data = serpy.StrField(required=False)  # podezřelé
 
 
 class NotificationSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
@@ -1217,7 +1251,7 @@ class NotificationSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class PhotoSerializer(serializers.HyperlinkedModelSerializer):
+class PhotoDeserializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = photologue.models.Photo
         fields = (
@@ -1250,29 +1284,32 @@ class PhotoSet(UserAttendanceMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         return self.ua().team.subsidiary.company.get_gallery().photos.all()
 
-    serializer_class = PhotoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
-class PhotoSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = photologue.models.Photo
-        fields = (
-            "id",
-            "caption",
-            "image",
+    def get_serializer_class(self):
+        return (
+            PhotoSerializer
+            if self.action in ["retrieve", "list"]
+            else PhotoDeserializer
         )
 
 
-class GallerySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = photologue.models.Gallery
-        fields = (
-            "title",
-            "slug",
-            "description",
-            "photos",
-        )
+class PhotoSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    caption = serpy.StrField()
+    image = serpy.ImageField()
+
+
+class GallerySerializer(serpy.Serializer):
+    title = serpy.StrField()
+    slug = serpy.StrField()
+    description = serpy.StrField()
+    photos = RequestSpecificField(
+        lambda gallery, req: [
+            HyperlinkedField("photo-detail").get_url(photo, req)
+            for photo in gallery.photos.all()
+        ]
+    )
 
 
 class GallerySet(
@@ -1285,16 +1322,12 @@ class GallerySet(
     permission_classes = [permissions.IsAuthenticated]
 
 
-class StravaAccountSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = StravaAccount
-        fields = (
-            "strava_username",
-            "first_name",
-            "last_name",
-            "user_sync_count",
-            "errors",
-        )
+class StravaAccountSerializer(serpy.Serializer):
+    strava_username = serpy.StrField()
+    first_name = serpy.StrField()
+    last_name = serpy.StrField()
+    user_sync_count = serpy.IntField()
+    errors = serpy.StrField()
 
 
 class StravaAccountSet(viewsets.ReadOnlyModelViewSet):
@@ -1305,15 +1338,13 @@ class StravaAccountSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class LandingPageIconSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LandingPageIcon
-        fields = (
-            "file",
-            "role",
-            "min_frequency",
-            "max_frequency",
-        )
+class LandingPageIconSerializer(serpy.Serializer):
+    file = RequestSpecificField(
+        lambda obj, req: req.build_absolute_uri(obj.file.url) if obj.file else None
+    )
+    role = serpy.StrField()
+    min_frequency = serpy.FloatField(required=False)
+    max_frequency = serpy.FloatField(required=False)
 
 
 class LandingPageIconSet(viewsets.ReadOnlyModelViewSet):
@@ -1342,6 +1373,18 @@ class PhotoURLGet(APIView):
     def get(self, request, photo_url=None):
         photo = get_object_or_404(Photo, image=photo_url)
         return Response(photo.get_display_url())
+
+
+class LoggedInUsersListSerializer(serpy.Serializer):
+    username = serpy.StrField()
+
+
+class LoggedInUsersListGet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsSuperuser]
+    serializer_class = LoggedInUsersListSerializer
+
+    def get_queryset(self):
+        return get_all_logged_in_users()
 
 
 router = routers.DefaultRouter()
@@ -1376,3 +1419,6 @@ router.register(r"landing_page_icon", LandingPageIconSet, basename="landing_page
 
 
 router.register(r"coordinators/city", CoordinatedCitySet, basename="coordinated-city")
+router.register(
+    r"logged-in-user-list", LoggedInUsersListGet, basename="logged_in_user_list"
+)

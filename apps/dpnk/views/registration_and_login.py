@@ -826,19 +826,50 @@ class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
 
 
 class DataReportView(LoginRequiredMixin, TemplateView):
-    """Incorporate Metabase app individual, organization, city data report
-    dashboard
+    """Incorporate Metabase app may, september/january competition data
+    report dashboard
     """
 
     template_name = "dpnk/datareport.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        base_url = settings.METABASE_DPNK_INDIVIDUAL_DATA_REPORT_URL
-        if "organization" == kwargs["unit"]:
-            base_url = settings.METABASE_DPNK_ORGANIZATION_DATA_REPORT_URL
-        if "city" == kwargs["unit"]:
-            base_url = settings.METABASE_DPNK_CITY_DATA_REPORT_URL
+        if "may" == kwargs["challenge"]:
+            base_url = settings.METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL
+        elif "september-january" == kwargs["challenge"]:
+            base_url = (
+                settings.METABASE_DPNK_SEPTEMBER_JANUARY_CHALLENGE_DATA_REPORT_URL
+            )
+        context["base_url"] = base_url
+        return context
+
+
+class DataReportResultsView(LoginRequiredMixin, TemplateView):
+    """Incorporate Metabase app
+
+    1. organization regulariry (Company/City organizator),
+    2. organization/city performance (Company/City organizator),
+    3. orgaznization review
+
+    results data report dashboard.
+    """
+
+    template_name = "dpnk/datareport_results.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "regularity" == kwargs["type"]:
+            base_url = settings.METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL
+        elif "performance-organization" == kwargs["type"]:
+            base_url = (
+                settings.METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL
+            )
+        elif "performance-city" == kwargs["type"]:
+            base_url = settings.METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL
+        elif "organizations-review" == kwargs["type"]:
+            base_url = (
+                settings.METABASE_DPNK_ORGANIZATION_REVIEW_RESULTS_DATA_REPORT_URL
+            )
         context["base_url"] = base_url
         return context
 

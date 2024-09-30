@@ -96,15 +96,38 @@
 			                           {% endif %}
 			                        {% endblock %}
 
-									{% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
+									{% if user.is_authenticated and user_attendance.entered_competition %}
+										 {% sitetree_menu from "data_report_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+									{% endif %}
+
+                  {# Organization admin Metabase results data report sitetree menu #}
+									{% if user.is_authenticated and user_attendance.related_company_admin.is_approved and not user_attendance.userprofile.administrated_cities.all and user_attendance.entered_competition %}
+                     {% sitetree_menu from "datareport_organization_coordinator_results" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+									{% endif %}
+
+                  {# City admin Metabase results data report sitetree menu #}
+									{% if user.is_authenticated and user_attendance.userprofile.administrated_cities.all and not user_attendance.related_company_admin.is_approved and user_attendance.entered_competition %}
+                     {% sitetree_menu from "datareport_city_coordinator_results" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+									{% endif %}
+
+
+                  {# Organization == City admin Metabase results data report sitetree menu #}
+									{% if user.is_authenticated and user_attendance.userprofile.administrated_cities.all and user_attendance.related_company_admin.is_approved and user_attendance.entered_competition %}
+                     {% sitetree_menu from "datareport_organization_city_coordinator_results" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+                     {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+									{% endif %}
+
+                  {# Organization admin #}
+									{% if user.is_authenticated and user_attendance.related_company_admin.is_approved and not user_attendance.userprofile.administrated_cities.all %}
 										 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 									{% endif %}
 
+					                       <div class="dynamic-menu">
+					                       </div>
 									{% if user.is_staff %}
 										 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 									{% endif %}
-					                       <div class="dynamic-menu">
-					                       </div>
+
 	                {% if user_attendance.helpdesk_iframe_url %}
 			            <li>
 			                <a href="#" class="helpdesk-shower" style="display: list-item;">  {% trans "Pomoc" %}  <i class="fa fa-question-circle"></i></a>

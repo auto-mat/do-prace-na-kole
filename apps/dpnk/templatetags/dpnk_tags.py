@@ -30,6 +30,8 @@ import requests
 
 import slumber
 
+from dpnk.util import get_all_logged_in_users
+
 register = template.Library()
 logger = logging.getLogger(__name__)
 
@@ -204,3 +206,35 @@ def round_number(value, decimal_places=1):
         return round(value, decimal_places)
     except TypeError:
         return value
+
+
+@register.inclusion_tag("templatetags/logged_in_user_list.html")
+def render_logged_in_user_list():
+    users = get_all_logged_in_users()
+    return {
+        "users": ",<br> ".join(list(users.values_list("username", flat=True))),
+        "users_count": users.count,
+    }
+
+
+@register.simple_tag
+def concat_all(*args):
+    """Concatenate all args"""
+    return "".join(map(str, args))
+
+
+@register.simple_tag
+def concat_cities_into_url_param(user_profile):
+    """Concatenate cities into URL city param value
+
+    :param Object user_profile: UseProfile model instance
+
+    :return str: URL city param with value &city=Praha&city=Brno...
+    """
+    cities = [
+        f"&city={city}"
+        for city in set(
+            user_profile.administrated_cities.all().values_list("name", flat=True)
+        )
+    ]
+    return "".join(cities)
