@@ -36,6 +36,8 @@ from celery.schedules import crontab
 
 from model_utils import Choices
 
+from django.apps import AppConfig
+
 
 def normpath(*args):
     return os.path.normpath(os.path.abspath(os.path.join(*args)))
@@ -275,6 +277,13 @@ TEMPLATES = [
         },
     },
 ]
+
+
+class DjRESTAuthRegistrationConfig(AppConfig):
+    name = "dj_rest_auth.registration"
+    label = "dj_rest_auth_registration"
+
+
 INSTALLED_APPS = [
     "modeltranslation",
     "admin_tools_stats",
@@ -294,6 +303,10 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "django.contrib.gis",
     "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "project.settings.DjRESTAuthRegistrationConfig",
     "photologue",
     "registration",
     "price_level",
