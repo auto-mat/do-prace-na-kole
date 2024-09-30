@@ -12,6 +12,7 @@ __all__ = (
     # base
     UserAttendanceView,
     LandingView,
+    LoggedInUsersListView,
     SwitchLang,
     status,
     test_errors,
@@ -35,6 +36,8 @@ __all__ = (
     TripView,
     TripGeoJsonView,
     # registration and login
+    DataReportView,
+    DataReportResultsView,
     DPNKLoginView,
     ChangeTeamView,
     RegisterTeamView,

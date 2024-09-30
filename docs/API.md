@@ -8,56 +8,171 @@ Authentification
 
 For mobile apps authentification is done via an auth token. Auth tokens can be aquired by one of two methods:
 
-1) Username and password
+1) Username and password (JWT auth)
 2) OAuth2 3rd party authentification
 
-Tokens must be included in the `Token` field of the HTTP header on all requests. Here is an example of how to use a token.
+Here is an example of requesting an auth token at URL endpoint rest/auth/login/ by providing a username and password:
+
+Request:
 
 ```
-http https://test2019.dopracenakole.cz/rest/trips/?end=2020-12-14\;start=2020-12-11 Authorization:'Token 392efcd9f387aff9f829aa8b7ff48661'
+curl -i \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"username": "foo@bar.org", "password": "foobar"}' \
+    http://test.lvh.me:8021/rest/auth/login/
 ```
 
-Here is an example of requesting an auth token by providing a username and password:
+Response:
 
 ```
-$ http post http://test.lvh.me:8021/dj-rest-auth/login/ username=foo@bar.cz password=foobarbaz
 HTTP/1.1 200 OK
-Allow: POST, OPTIONS
-Content-Language: cs
-Content-Length: 50
+Date: Mon, 16 Sep 2024 09:34:56 GMT
+Server: WSGIServer/0.2 CPython/3.9.19
 Content-Type: application/json
-Date: Sat, 06 Feb 2021 20:13:51 GMT
-Server: WSGIServer/0.2 CPython/3.6.10
-Set-Cookie: sessionid=s3602x5r282j0hs8g9d3c4ietsajyd2g; expires=Sat, 20 Feb 2021 20:13:51 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
-Set-Cookie: csrftoken=m9qkhibUmL4F3S38SGmFd6oclybeRR0BYK3lNRhOZVZjtNhImiqorrcLMHW7RMio; expires=Sat, 05 Feb 2022 20:13:51 GMT; Max-Age=31449600; Path=/; SameSite=Lax
 Vary: Accept, Accept-Language, Cookie, Origin
-X-Content-Type-Options: nosniff
+Allow: POST, OPTIONS
+Content-Length: 540
+Content-Language: cs
 X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
+Set-Cookie:  sessionid=bdrhssn6ygjrxvhiu250k18iu0dvs8le; expires=Mon, 30 Sep 2024 09:34:56 GMT; HttpOnly; Max-Age=1209600; Path=/
+Set-Cookie:  csrftoken=tIYxxVwbgF1WUbAXP2hUrAJUpF7qqfaOFi0MqnZ829gGrm9VCLlORhSY4jOJnTnk; expires=Mon, 15 Sep 2025 09:34:56 GMT; Max-Age=31449600; Path=/; SameSite=Lax
 
 {
-    "key": "6188eb97e96b118c074bb30d13c6300f5809466a"
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NDc5NTk2LCJqdGkiOiJlZWM5ODZhYTc1Mjk0MjA4YWRkNWE0NzI4ZDk0N2E2OCIsInVzZXJfaWQiOjF9.t1rO4HSOXhPGb81jP7zAdoiiVMT5nGj7Ic0DDfiQynE",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNjU2NTY5NiwianRpIjoiOTJhMzI0ODY4NThkNDI5YWI5YzBiMzllNzk4M2M4OWIiLCJ1c2VyX2lkIjoxfQ.iARxyUr3hiWBgg4t8GgF6Xdi0LnL3J1CCeMdgrNO2pg",
+  "user": {
+    "pk": 1,
+    "username": "foobar",
+    "email": "foo@bar.org",
+    "first_name": "Foo",
+    "last_name": "Bar"
+  }
 }
 ```
 
-You can invalidate a token by using the `dj-rest-auth/logout/` endpoint.
+You can refresh a token by using the rest/auth/refresh/tokens/ URL endpoint.
+
+Request:
 
 ```
-http POST http://test.lvh.me:8021/dj-rest-auth/logout/ Authorization:'Token 6188eb97e96b118c074bb30d13c6300f5809466a'
+curl -i \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNjU2NTY5NiwianRpIjoiOTJhMzI0ODY4NThkNDI5YWI5YzBiMzllNzk4M2M4OWIiLCJ1c2VyX2lkIjoxfQ.iARxyUr3hiWBgg4t8GgF6Xdi0LnL3J1CCeMdgrNO2pg"}' \
+    http://test.lvh.me:8021/rest/auth/token/refresh/
+```
+
+Response:
+
+```
 HTTP/1.1 200 OK
-Allow: GET, POST, HEAD, OPTIONS
-Content-Language: cs
-Content-Length: 47
+Date: Mon, 16 Sep 2024 09:41:48 GMT
+Server: WSGIServer/0.2 CPython/3.9.19
 Content-Type: application/json
-Date: Sat, 06 Feb 2021 20:17:30 GMT
-Server: WSGIServer/0.2 CPython/3.6.10
 Vary: Accept, Accept-Language, Cookie, Origin
-X-Content-Type-Options: nosniff
+Allow: POST, OPTIONS
+Content-Length: 273
+Content-Language: cs
 X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 
 {
-    "detail": "Byli jste úspěšně odhlášeni."
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NDgwMDA4LCJqdGkiOiIzYjg5MjlhZTFkMDM0YmYwYmRmNTBiNWYxNTEyYzMwNSIsInVzZXJfaWQiOjF9.EchyE6QVe-DUyYbtpY2wo3vVqXckC3f60_ntAZtD9VQ",
+  "access_token_expiration": "2024-09-16T11:46:48.551800"
+}
+```
+
+Tokens authorization parameter must be included in the Bearer authorization scheme of the HTTP authorization header on all requests.
+
+HTTP authorization header:
+
+```
+Authorization: Bearer <TOKEN>
+```
+
+Here is an example of how to use a token.
+
+Request:
+
+```
+curl -i \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NDgwMDA4LCJqdGkiOiIzYjg5MjlhZTFkMDM0YmYwYmRmNTBiNWYxNTEyYzMwNSIsInVzZXJfaWQiOjF9.EchyE6QVe-DUyYbtpY2wo3vVqXckC3f60_ntAZtD9VQ" \
+    http://test.lvh.me:8021/rest/gpx/
+```
+
+Response:
+
+```
+HTTP/1.1 200 OK
+Date: Mon, 16 Sep 2024 10:06:27 GMT
+Server: WSGIServer/0.2 CPython/3.9.19
+Content-Type: application/json
+Vary: Accept, Accept-Language, Cookie, Origin
+Allow: GET, POST, HEAD, OPTIONS
+Content-Length: 3583
+Content-Language: cs
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+
+{
+  "count": 16,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "distanceMeters": 1250,
+      "durationSeconds": 0,
+      "commuteMode": "by_other_vehicle",
+      "sourceApplication": null,
+      "trip_date": "2023-05-16",
+      "sourceId": null,
+      "file": null,
+      "description": "",
+      "id": 15,
+      "direction": "trip_to",
+      "track": null
+    },
+    {
+      "distanceMeters": 997650,
+      "durationSeconds": 0,
+      "commuteMode": "bicycle",
+      "sourceApplication": null,
+      "trip_date": "2023-05-23",
+      "sourceId": null,
+      "file": null,
+      "description": "",
+      "id": 1,
+      "direction": "trip_to",
+      "track": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              14.07589,
+              50.234799
+            ],
+            [
+              14.084558,
+              50.230736
+            ],
+            [
+              14.089193,
+              50.230352
+            ],
+            [
+              14.091253,
+              50.230407
+            ]
+          ]
+        ]
+      }
+    }
+  ]
 }
 ```
 
@@ -95,4 +210,4 @@ Loading web views
 
 Parts of mobile apps may be implemented via webviews to the main webpage. If the user logged into the app via an OAuth2 redirect webview, then the session will cary over to the webview without requiring the user to log in again. However, if an auth token was aquired via password authentification, the user may not be logged in in the webview. You can pass a session on to a webview by passing a sesame_token as a query arg (named `sesame`) in any URL. Sesame tokens can be aquired via the rest endpint `https://test2019.dopracenakole.cz/rest/userattendance/`. Keep in mind that sesame tokens have a life span of just 10 minutes. Here is an example of passing such a query arg: `https://test2019.dopracenakole.cz/strava/?sesame=AACC2QH04ezT_NHsst2hrfHK`.
 
-Sesame will automatically redirect to remove the queryarg token from the URL. This is for secuirity reasons. Removing the query arg from the url prevents users from accidentally sharing session tokens when copying URLs. This security problem isn't an issue, however, when accessing the site programatically, and it can be convinient to prevent the redirect. For this reason, you can append another query arg `sesame-no-redirect=true` to prevent the redirect. Here is an example url accessing a page with a sesame token but no redirect: `test.lvh.me:8021/?sesame=AAAAAQIJcnmpWDBTcpksSr5X;sesame-no-redirect=true` 
+Sesame will automatically redirect to remove the queryarg token from the URL. This is for secuirity reasons. Removing the query arg from the url prevents users from accidentally sharing session tokens when copying URLs. This security problem isn't an issue, however, when accessing the site programatically, and it can be convinient to prevent the redirect. For this reason, you can append another query arg `sesame-no-redirect=true` to prevent the redirect. Here is an example url accessing a page with a sesame token but no redirect: `test.lvh.me:8021/?sesame=AAAAAQIJcnmpWDBTcpksSr5X;sesame-no-redirect=true`

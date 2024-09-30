@@ -316,6 +316,8 @@ CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_ge
                             city.city.slug + ".shp",
                             "-h",
                             db_settings["HOST"],
+                            "-p",
+                            db_settings["PORT"],
                             "-u",
                             db_settings["USER"],
                             "-P",

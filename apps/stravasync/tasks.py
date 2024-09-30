@@ -170,9 +170,7 @@ def get_activity_as_rest_trip(activity):
     return {
         "commuteMode": get_commute_mode_slug(activity.type),
         "durationSeconds": activity.elapsed_time.total_seconds(),
-        "distanceMeters": round(
-            stravalib.unithelper.meters(activity.distance).get_num(), 0
-        ),
+        "distanceMeters": round(stravalib.unithelper.meters(activity.distance), 0),
         "trip_date": str(activity.start_date.date()),
         "sourceApplication": "strava",
         "sourceId": activity.id,
@@ -219,9 +217,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
             "direction": direction,
             "user_attendance": user_attendance.id,
             "commute_mode": commute_mode,
-            "distance": round(
-                stravalib.unithelper.kilometers(activity.distance).get_num(), 2
-            ),
+            "distance": round(stravalib.unithelper.kilometers(activity.distance), 2),
             "duration": activity.elapsed_time.total_seconds(),
             "source_application": "strava",
             "source_id": activity.id,
@@ -250,7 +246,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
 
 
 @shared_task(bind=False)
-def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=300):
+def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=700):
     """
     Syncs any accounts which have not been synced for at least min_time_between_syncs seconds.
     Will sync at most max_batch_size accounts.

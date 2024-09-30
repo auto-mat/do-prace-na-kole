@@ -2,7 +2,7 @@ from python:3.9-bullseye
 
 maintainer Automat
 
-run apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
    autossh \
    binutils \
    gdal-bin \
@@ -31,13 +31,23 @@ run apt-get update && apt-get install -y \
    pdftk-java \
    postgis \
    fuse3 \
-   s3fs
+   s3fs \
+   libev-dev \
+   python3-dev
 
-run mkdir /home/aplikace -p
+# Packages required for Bjoern WSGI server compilation
+# libev-dev, python3-dev
+
+RUN mkdir /home/aplikace -p \
+    && cd /usr/local/src/ \
+    && git clone --recurse-submodules -j8 https://github.com/jonashaag/bjoern.git \
+    && cd /usr/local/src/bjoern \
+    && sed -i "s/python2/python/g" Makefile \
+    && WANT_STATSD=yes WANT_STATSD_TAGS=yes make all
 WORKDIR "/home/aplikace"
 
-run pip3 install poetry
-copy poetry.lock .
-copy pyproject.toml .
-env POETRY_HOME=/opt/poetry
-run poetry install --no-dev
+RUN pip3 install poetry
+COPY poetry.lock .
+COPY pyproject.toml .
+ENV POETRY_HOME=/opt/poetry
+RUN poetry install --no-dev

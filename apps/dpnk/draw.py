@@ -21,7 +21,7 @@
 import itertools
 import random
 
-from django.db.models import F, Q
+from django.db.models import Q
 
 from .models import Competition, CompetitionResult, Team
 
@@ -43,7 +43,7 @@ def draw(competition_slug, limit=10):
             Q(
                 id__in=results.distinct().values_list("team_id", flat=True),
                 users__userprofile__user__is_active=True,
-                paid_member_count=F("member_count"),
+                paid_member_count__gt=1,
                 campaign=competition.campaign,
             )
         )
@@ -55,21 +55,9 @@ def draw(competition_slug, limit=10):
         competition.competition_type == "frequency"
         and competition.competitor_type == "team"
     ):
-        qs = []
-        for i in (
-            results.order_by("id")
-            .distinct("id")
-            .values("team__id", "team__member_count")
-        ):
-            qs.extend(
-                itertools.repeat(
-                    results.filter(team_id=i["team__id"]),
-                    i["team__member_count"],
-                )
-            )
-        first_qs = qs.pop(0)
-        # Union querysets with allowing duplicates
-        results = list(first_qs.union(*qs, all=True).order_by("result"))
+        results.order_by("id", "team_id").distinct("id", "team_id").values(
+            "team__id", "team__member_count"
+        )
         return sorted(results, key=lambda x: random.random())
 
     results = sorted(results[:limit], key=lambda x: random.random())

@@ -77,3 +77,9 @@ def test_errors(request):
     logger.exception("Testing exception message", extra={"test": "foobar"})
     logger.error("Testing error message", extra={"test": "foobar"})
     return HttpResponse("Errors send")
+
+
+class LoggedInUsersListView(LoginRequiredMixin, TemplateView):
+    """Logged in users list/count"""
+
+    template_name = "admin/logged_in_user_list.html"

@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.urls import path
 from django.contrib.auth import views as django_views
 from django.utils.translation import ugettext_lazy as _
@@ -31,6 +31,11 @@ from .autocomplete_views import (
     TeamAutocomplete,
 )
 from .views import answers, questionnaire_answers, questionnaire_results, questions
+
+from django.urls import path, re_path
+
+from apps.dpnk.rest_registration import CustomRegisterView
+from allauth.account.views import confirm_email
 
 urlpatterns = [
     url(
@@ -362,10 +367,31 @@ urlpatterns = [
         name="switch_rides_view",
     ),
     path(
-        "datareport/<unit>/",
+        "datareport/<challenge>/",
         views.DataReportView.as_view(),
         name="datareport",
     ),
+    path(
+        "datareport-results/<type>/",
+        views.DataReportResultsView.as_view(),
+        name="datareport-results",
+    ),
+    path(
+        "rest/auth/",
+        include("dj_rest_auth.urls"),
+    ),
+    path(
+        "rest/auth/registration/",
+        CustomRegisterView.as_view(),
+        name="custom_register",
+    ),
+    re_path(
+        r"^rest/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$",
+        confirm_email,
+        name="account_confirm_email",
+    ),
+    url(r"^account/", include("allauth.urls")),
+    path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
     # company admin:
     url(
         r"^spolecnost/oficialni_souteze/$",
@@ -533,5 +559,10 @@ urlpatterns = [
         r"^admin/losovani/(?P<competition_slug>[^&/]+)/$",
         views.DrawResultsView.as_view(),
         name="admin_draw_results",
+    ),
+    url(
+        r"^admin/logged-in-user-list/$",
+        views.LoggedInUsersListView.as_view(),
+        name="logged_in_user_list",
     ),
 ]

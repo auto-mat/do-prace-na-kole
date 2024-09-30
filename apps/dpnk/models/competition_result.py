@@ -28,6 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from .company import Company
 from .team import Team
 from .user_attendance import UserAttendance
+from .util import disable_for_loaddata
 
 
 class CompetitionResult(models.Model):
@@ -142,11 +143,12 @@ class CompetitionResult(models.Model):
     def get_team(self):
         if self.competition.competitor_type in ["liberos", "single_user"]:
             return self.user_attendance.team
-        if self.competition.competitor_type == "team":
+        elif self.competition.competitor_type == "team":
             return self.team
 
     def get_team_name(self):
-        return self.get_team().name or ""
+        team = self.get_team()
+        return team.name if team else ""
 
     def get_company(self):
         if self.competition.competitor_type == "company":
@@ -243,6 +245,7 @@ class CompetitionResult(models.Model):
 
 
 @receiver(pre_save, sender=CompetitionResult)
+# @disable_for_loaddata
 def calculate_general_results(sender, instance, *args, **kwargs):
     from .. import results
 
