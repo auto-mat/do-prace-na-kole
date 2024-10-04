@@ -45,6 +45,11 @@ import re
 import os
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+from django.core import mail
+from allauth.account.models import EmailAddress
+from allauth.account.utils import has_verified_email
+import requests
+
 
 @freeze_time("2016-01-14")
 @override_settings(
@@ -2047,6 +2052,63 @@ class GalleryTest(TestCase):
                 "photos": ["http://testing-campaign.testserver/rest/photo/1/"],
             },
         )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class RegistrationTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+    def test_registration_and_confirmation_email(self):
+        # Simulate registration request
+        registration_data = {
+            "email": "newuser@test.com",
+            "password1": "securepassword123",
+            "password2": "securepassword123",
+        }
+
+        response = self.client.post(reverse("custom_register"), registration_data)
+        self.assertEqual(response.status_code, 201)
+
+        user = User.objects.get(email=registration_data["email"])
+        self.assertFalse(has_verified_email(user, registration_data["email"]))
+
+        # Verify that an email was sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        # Validate email content
+        confirmation_email = mail.outbox[0]
+        self.assertEqual(confirmation_email.recipients(), [registration_data["email"]])
+        self.assertIn(
+            "[testserver] Potvrďte prosím svou e-mailovou adresu",
+            confirmation_email.subject,
+        )
+        self.assertRegex(
+            confirmation_email.body,
+            "^Hello from testserver!\n\nYou're receiving this e-mail because user newuser@4 has given your e-mail address to register an account on testserver.\n\nTo confirm this is correct, go to http://testing-campaign.testserver/rest/auth/registration/account-confirm-email/([A-Za-z0-9:_-]+)/\n\nDěkujeme, že používáte testserver!\ntestserver$",
+        )
+
+        # Extract confirmation link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", confirmation_email.body)
+        self.assertIsNotNone(match, "No confirmation link found in email")
+        confirmation_link = match.group(1)
+
+        # Simulate clicking the confirmation link
+        response = self.client.post(confirmation_link)
+        self.assertEqual(response.status_code, 302)
+
+        user = User.objects.get(email=registration_data["email"])
+        self.assertTrue(has_verified_email(user, registration_data["email"]))
 
 
 # @override_settings(
