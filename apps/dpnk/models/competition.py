@@ -41,6 +41,8 @@ from .company import Company
 from .user_profile import UserProfile
 from .. import util
 
+from .util import disable_for_loaddata
+
 
 def default_commute_modes():
     return CommuteMode.objects.filter(slug__in=("bicycle", "by_foot"))
@@ -582,6 +584,7 @@ class CompetitionForm(forms.ModelForm):
 
 
 @receiver(post_save, sender=Competition)
+@disable_for_loaddata
 def competition_post_save(sender, instance, **kwargs):
     from .. import tasks
 
