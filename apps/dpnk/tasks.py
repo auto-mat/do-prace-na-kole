@@ -367,3 +367,15 @@ def check_celerybeat_liveness(set_key=True):
         )
     else:
         return redis_instance.get(settings.CELERYBEAT_LIVENESS_REDIS_UNIQ_KEY)
+
+
+@shared_task(bind=True)
+def refresh_materialized_view(materialized_view):
+    from django.db import connection
+
+    with connection.cursor() as cursor:
+        if isinstance(materialized_view, (list, tuple, set)):
+            for view in materialized_view:
+                cursor.execute("REFRESH MATERIALIZED VIEW %s", [view])
+        else:
+            cursor.execute("REFRESH MATERIALIZED VIEW %s", [materialized_view])
