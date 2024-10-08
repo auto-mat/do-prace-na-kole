@@ -31,6 +31,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 
+from allauth.account.utils import has_verified_email
 from donation_chooser.rest import organization_router
 
 from drf_extra_fields.geo_fields import PointField
@@ -41,6 +42,7 @@ from notifications.models import Notification
 import photologue
 
 from rest_framework import mixins, permissions, routers, serializers, viewsets
+
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -1385,6 +1387,17 @@ class LoggedInUsersListGet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return get_all_logged_in_users()
+
+
+class HasUserVerifiedEmailAddress(APIView):
+    """Has user verified email address"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response(
+            {"has_user_verified_email_address": has_verified_email(request.user)}
+        )
 
 
 router = routers.DefaultRouter()

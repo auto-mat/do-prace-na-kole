@@ -37,6 +37,9 @@ from django.urls import path, re_path
 from apps.dpnk.rest_registration import CustomRegisterView
 from allauth.account.views import confirm_email
 
+from .rest import HasUserVerifiedEmailAddress
+
+
 urlpatterns = [
     url(
         r"^tym/$",
@@ -389,6 +392,11 @@ urlpatterns = [
         r"^rest/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$",
         confirm_email,
         name="account_confirm_email",
+    ),
+    path(
+        "rest/auth/registration/has-user-verified-email-address/",
+        HasUserVerifiedEmailAddress.as_view(),
+        name="has-user-verified-email-address",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
