@@ -56,6 +56,8 @@ __all__ = (
     UpdateProfileView,
     TeamApprovalRequest,
     InviteView,
+    FacebookLogin,
+    GoogleLogin,
     # results and competitions
     DiplomasView,
     FrequencyView,

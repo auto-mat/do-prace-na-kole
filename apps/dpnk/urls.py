@@ -30,7 +30,14 @@ from .autocomplete_views import (
     SubsidiaryAutocomplete,
     TeamAutocomplete,
 )
-from .views import answers, questionnaire_answers, questionnaire_results, questions
+from .views import (
+    answers,
+    questionnaire_answers,
+    questionnaire_results,
+    questions,
+    GoogleLogin,
+    FacebookLogin,
+)
 
 from django.urls import path, re_path
 
@@ -382,6 +389,16 @@ urlpatterns = [
     path(
         "rest/auth/",
         include("dj_rest_auth.urls"),
+    ),
+    path(
+        "rest/auth/facebook/",
+        FacebookLogin.as_view(),
+        name="fb_login",
+    ),
+    path(
+        "rest/auth/google/",
+        GoogleLogin.as_view(),
+        name="gg_login",
     ),
     path(
         "rest/auth/registration/",
