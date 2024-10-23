@@ -37,6 +37,11 @@ from registration.backends.default.views import (
 
 from unidecode import unidecode
 
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+
 from t_shirt_delivery.models import TShirtSize
 
 # Local imports
@@ -1045,14 +1050,11 @@ class OpenApplicationWithRestTokenView(View):
         )
 
 
-from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from dj_rest_auth.registration.views import SocialLoginView
-
-
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
 
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
+    callback_url = settings.GOOGLE_SOCIAL_MEDIA_LOGIN_CALLBACK_URL
+    client_class = OAuth2Client

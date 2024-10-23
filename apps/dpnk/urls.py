@@ -391,12 +391,12 @@ urlpatterns = [
         include("dj_rest_auth.urls"),
     ),
     path(
-        "rest/auth/facebook/",
+        "rest/auth/facebook/login/",
         FacebookLogin.as_view(),
         name="fb_login",
     ),
     path(
-        "rest/auth/google/",
+        "rest/auth/google/login/",
         GoogleLogin.as_view(),
         name="gg_login",
     ),

@@ -306,6 +306,8 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.google",
     "project.settings.DjRESTAuthRegistrationConfig",
     "photologue",
     "registration",
@@ -949,4 +951,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(
 )
 FILE_UPLOAD_MAX_MEMORY_SIZE = int(
     os.getenv("DPNK_FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
+)
+
+GOOGLE_SOCIAL_MEDIA_LOGIN_CALLBACK_URL = os.getenv(
+    "GOOGLE_SOCIAL_MEDIA_LOGIN_CALLBACK_URL"
 )
