@@ -2111,6 +2111,349 @@ class RegistrationTest(TestCase):
         self.assertTrue(has_verified_email(user, registration_data["email"]))
 
 
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class CitiesSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        address = reverse("cities-list")
+        response = self.client.get(address)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 2,
+                "next": None,
+                "previous": None,
+                "results": [{"id": 2, "name": "Brno"}, {"id": 1, "name": "Praha"}],
+            },
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class CompaniesSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        address = reverse("organizations-list")
+        response = self.client.get(address)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 2,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {"id": 1, "name": "Organizace1"},
+                    {"id": 2, "name": "Organizace2"},
+                ],
+            },
+        )
+
+    def test_post(self):
+        post_data = {
+            "name": "Společnost1",
+            "address": {
+                "street": "Staroměstká",
+                "street_number": "18",
+                "city": "Praha",
+                "psc": "11000",
+            },
+        }
+        response = self.client.post(
+            "/rest/organizations/", post_data, format="json", follow=True
+        )
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.content.decode())
+        company = models.Company.objects.get(pk=response_data["id"])
+        self.assertEqual(company.name, "Společnost1")
+        self.assertEqual(company.address.street, "Staroměstká")
+        self.assertEqual(company.address.city, "Praha")
+
+    def test_post_dup(self):
+        post_data = {
+            "name": "Organizace1",
+            "address": {
+                "street": "Staroměstká",
+                "street_number": "18",
+                "city": "Praha",
+                "psc": "11000",
+            },
+        }
+        response = self.client.post(
+            "/rest/organizations/", post_data, format="json", follow=True
+        )
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode())
+        self.assertEqual(
+            response_data["name"],
+            [
+                "Položka Organizace s touto hodnotou v poli Název společnosti již existuje."
+            ],
+        )
+
+    def test_post_missing_field(self):
+        post_data = {
+            "name": "Společnost1",
+            "address": {
+                "street": "Staroměstká",
+                "street_number": "18",
+                "psc": "11000",
+            },
+        }
+        response = self.client.post(
+            "/rest/organizations/", post_data, format="json", follow=True
+        )
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode())
+        self.assertEqual(
+            response_data["address_city"], ["Toto pole nesmí být prázdné (null)."]
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class SubsidiariesSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        sub = reverse("organization-subsidiaries-list", kwargs={"organization_id": 1})
+        response = self.client.get(sub)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 2,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": 3,
+                        "address": {
+                            "street": "Křemílkova",
+                            "street_number": "1458/54",
+                            "recipient": None,
+                            "psc": "11000",
+                            "city": "Praha",
+                        },
+                        "teams": [],
+                    },
+                    {
+                        "id": 1,
+                        "address": {
+                            "street": "Jindřišská",
+                            "street_number": "4",
+                            "recipient": None,
+                            "psc": "11000",
+                            "city": "Praha",
+                        },
+                        "teams": [
+                            {
+                                "distance": 80.15,
+                                "frequency": 0.000650618087182824,
+                                "emissions": {
+                                    "co2": 10339.4,
+                                    "co": 58060.7,
+                                    "nox": 13601.5,
+                                    "n2o": 2003.8,
+                                    "voc": 6644.4,
+                                    "ch4": 617.2,
+                                    "so2": 392.7,
+                                    "solid": 2805.2,
+                                    "pb": 0.9,
+                                },
+                                "eco_trip_count": 1,
+                                "working_rides_base_count": 1537,
+                                "name": "Tým1",
+                                "id": 1,
+                                "icon_url": "/media/upload/photologue/photos/frj337AJ0AD47aLGBgIFt8rsDSC00002.JPG",
+                                "rest_url": "http://testing-campaign.testserver/rest/team/1/",
+                            }
+                        ],
+                    },
+                ],
+            },
+        )
+
+    def test_post(self):
+        post_data = {
+            "address": {
+                "street": "Dejvická",
+                "street_number": "67",
+                "city": "Praha",
+                "psc": "16000",
+                "recipient": "",
+            },
+            "active": False,
+            "box_addressee_name": "Josef Novák",
+            "box_addressee_telephone": "123456789",
+            "box_addressee_email": "novak@seznam.cz",
+            "city_id": 1,
+        }
+        sub = reverse("organization-subsidiaries-list", kwargs={"organization_id": 1})
+        response = self.client.post(sub, post_data, format="json", follow=True)
+
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.content.decode())
+        subsidiary = models.Subsidiary.objects.get(pk=response_data["id"])
+        self.assertEqual(subsidiary.address.street, "Dejvická")
+        self.assertEqual(subsidiary.box_addressee_name, "Josef Novák")
+        self.assertEqual(subsidiary.address.city, "Praha")
+
+    def test_post_missing_field(self):
+        post_data = {
+            "id": 4,
+            "address": {
+                "street": "Křemílkova",
+                "street_number": "1458/54",
+                "recipient": None,
+                "psc": "11000",
+            },
+            "teams": [],
+        }
+        sub = reverse("organization-subsidiaries-list", kwargs={"organization_id": 1})
+        response = self.client.post(sub, post_data, format="json", follow=True)
+
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode())
+        self.assertEqual(
+            response_data["address_city"], ["Toto pole nesmí být prázdné (null)."]
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class TeamsSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        sub = reverse("subsidiary-teams-list", kwargs={"subsidiary_id": 1})
+        response = self.client.get(sub)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Tým1",
+                        "members": [
+                            {
+                                "distance": 80.15,
+                                "emissions": {
+                                    "co2": 10339.4,
+                                    "co": 58060.7,
+                                    "nox": 13601.5,
+                                    "n2o": 2003.8,
+                                    "voc": 6644.4,
+                                    "ch4": 617.2,
+                                    "so2": 392.7,
+                                    "solid": 2805.2,
+                                    "pb": 0.9,
+                                },
+                                "working_rides_base_count": 1537,
+                                "id": 1,
+                                "name": "test",
+                                "frequency": 0.000650618087182824,
+                                "avatar_url": "",
+                                "eco_trip_count": 1,
+                                "rest_url": "http://testing-campaign.testserver/rest/all_userattendance/1/",
+                                "is_me": True,
+                            }
+                        ],
+                    }
+                ],
+            },
+        )
+
+    def test_post(self):
+        post_data = {"name": "Tým100"}
+
+        t = reverse("subsidiary-teams-list", kwargs={"subsidiary_id": 1})
+        response = self.client.post(t, post_data, format="json", follow=True)
+
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.content.decode())
+        team = models.Team.objects.get(pk=response_data["id"])
+        self.assertEqual(team.name, "Tým100")
+
+    def test_post_dup(self):
+        post_data = {
+            "name": "Tým1",
+        }
+        t = reverse("subsidiary-teams-list", kwargs={"subsidiary_id": 1})
+        response = self.client.post(t, post_data, format="json", follow=True)
+
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode())
+        self.assertEqual(
+            response_data["non_field_errors"],
+            ["Položka name, campaign_id musí tvořit unikátní množinu."],
+        )
+
+
 # @override_settings(
 #     SITE_ID=2,
 #     FAKE_DATE=datetime.date(year=2010, month=11, day=20),

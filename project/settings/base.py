@@ -380,6 +380,7 @@ INSTALLED_APPS = [
     "reversion",
     "inline_static",
     "notifications",
+    "drf_yasg",
 ]
 
 # DBTEMPLATES_USE_REVERSION = True
