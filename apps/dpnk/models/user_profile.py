@@ -52,7 +52,6 @@ class UserProfile(WithGalleryMixin, models.Model):
         ("male", _("Muž")),
         ("female", _("Žena")),
     ]
-
     LANGUAGE = [
         ("cs", _("Čeština")),
         ("en", _("Angličtna")),
@@ -60,6 +59,11 @@ class UserProfile(WithGalleryMixin, models.Model):
     RIDES_VIEWS = [
         ("calendar", _("Kalendář")),
         ("table", _("Tabulka")),
+    ]
+    NEWSLETTER = [
+        ("challenge", _("Výzva")),
+        ("events", _("Události")),
+        ("mobility", _("Mobilita")),
     ]
 
     user = models.OneToOneField(
@@ -196,6 +200,14 @@ class UserProfile(WithGalleryMixin, models.Model):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
+    )
+    newsletter = models.CharField(
+        verbose_name=_("Odběr zpráv prostřednictvím e-mailů"),
+        help_text=_("Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
+        max_length=30,
+        choices=NEWSLETTER,
+        null=True,
+        blank=True,
     )
 
     @denormalized(models.IntegerField, default=0)
