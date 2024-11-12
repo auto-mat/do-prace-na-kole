@@ -49,6 +49,7 @@ from rest_framework.views import APIView
 
 from .middleware import get_or_create_userattendance
 from .models import (
+    Address,
     Campaign,
     CampaignType,
     City,
@@ -77,6 +78,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.utils.encoding import smart_str
 
 import json
+from rest_framework import status
 
 
 class OptionalImageField(serpy.ImageField):
@@ -1400,6 +1402,261 @@ class HasUserVerifiedEmailAddress(APIView):
         )
 
 
+class CitiesSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField()
+
+
+class CitiesSet(viewsets.ReadOnlyModelViewSet):
+    # fetch all available cities (for campaign)
+    def get_queryset(self):
+        city_ids = CityInCampaign.objects.filter(
+            campaign__slug=self.request.subdomain
+        ).values_list("city", flat=True)
+        return City.objects.filter(id__in=city_ids)
+
+    serializer_class = CitiesSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class AddressSerializer(serpy.Serializer):
+    street = serpy.StrField()
+    street_number = serpy.StrField()
+    recipient = serpy.StrField(required=False)
+    psc = serpy.StrField(required=False)
+    city = serpy.StrField()
+
+
+class OptionalAddressSerializer(serpy.Serializer):
+    street = serpy.StrField(required=False)
+    street_number = serpy.StrField(required=False)
+    recipient = serpy.StrField(required=False)
+    psc = serpy.StrField(required=False)
+    city = serpy.StrField(required=False)
+
+
+class CompaniesListSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField()
+
+
+class CompaniesSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField()
+    ico = serpy.StrField(required=False)
+    dic = serpy.StrField(required=False)
+    note = serpy.StrField(required=False)
+    address = AddressSerializer()
+
+
+class CompaniesDeserializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Company
+        fields = (
+            "id",
+            "name",
+            "ico",
+            "dic",
+            "note",
+            "address_street",
+            "address_street_number",
+            "address_psc",
+            "address_city",
+            "address_recipient",
+        )
+
+    def to_internal_value(self, data):
+        address_data = data.pop("address")
+        data["address_street"] = address_data.get("street")
+        data["address_street_number"] = address_data.get("street_number")
+        data["address_recipient"] = address_data.get("recipient")
+        data["address_psc"] = address_data.get("psc")
+        data["address_city"] = address_data.get("city")
+        return super().to_internal_value(data)
+
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        data["address"] = {
+            "street": data.pop("address_street"),
+            "street_number": data.pop("address_street_number"),
+            "recipient": data.pop("address_recipient"),
+            "psc": data.pop("address_psc"),
+            "city": data.pop("address_city"),
+        }
+        return data
+
+
+class CompaniesSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return Company.objects.all()
+
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return CompaniesSerializer
+        if self.action == "list":
+            return CompaniesListSerializer
+        else:
+            return CompaniesDeserializer
+
+
+class SubsidiariesSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    # street
+    address = AddressSerializer()
+
+    teams = SubsidiaryInCampaignField(
+        lambda sic, req: [
+            MinimalTeamSerializer(team, context={"request": req}).data
+            for team in sic.teams
+        ]
+    )
+
+
+class SubsidiariesDeserializer(serializers.HyperlinkedModelSerializer):
+
+    city_id = serializers.PrimaryKeyRelatedField(
+        queryset=City.objects.all(), source="city"
+    )
+    organization_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source="company"
+    )
+
+    class Meta:
+        model = Subsidiary
+        fields = (
+            "id",
+            "address_street",
+            "address_street_number",
+            "address_psc",
+            "address_city",
+            "address_recipient",
+            "organization_id",
+            "city_id",
+            "active",
+            "box_addressee_name",
+            "box_addressee_telephone",
+            "box_addressee_email",
+        )
+
+    def to_internal_value(self, data):
+        address_data = data.pop("address")
+        data["address_street"] = address_data.get("street")
+        data["address_street_number"] = address_data.get("street_number")
+        data["address_recipient"] = address_data.get("recipient")
+        data["address_psc"] = address_data.get("psc")
+        data["address_city"] = address_data.get("city")
+        return super().to_internal_value(data)
+
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        del data["organization_id"]
+        data["address"] = {
+            "street": data.pop("address_street"),
+            "street_number": data.pop("address_street_number"),
+            "recipient": data.pop("address_recipient"),
+            "psc": data.pop("address_psc"),
+            "city": data.pop("address_city"),
+        }
+        return data
+
+
+class SubsidiariesSet(viewsets.ModelViewSet):
+    # fetches all subsidiaries from a given organization
+    def get_queryset(self):
+        organization_id = self.kwargs["organization_id"]
+        return Subsidiary.objects.filter(company_id=organization_id)
+
+    def create(self, request, *args, **kwargs):
+
+        request_data = request.data.copy()
+        request_data["organization_id"] = self.kwargs["organization_id"]
+
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return SubsidiariesSerializer
+        else:
+            return SubsidiariesDeserializer
+
+
+class TeamsSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField(required=False)
+
+    members = RequestSpecificField(
+        lambda team, req: MinimalUserAttendanceSerializer(
+            team.members, context={"request": req}, many=True
+        ).data
+    )
+
+
+class TeamsDeserializer(serializers.HyperlinkedModelSerializer):
+    campaign_id = serializers.PrimaryKeyRelatedField(
+        queryset=Campaign.objects.all(), source="campaign"
+    )
+    subsidiary_id = serializers.PrimaryKeyRelatedField(
+        queryset=Subsidiary.objects.all(), source="subsidiary"
+    )
+    members = RequestSpecificField(
+        lambda team, req: MinimalUserAttendanceSerializer(
+            team.members, context={"request": req}, many=True
+        ).data
+    )
+
+    class Meta:
+        model = Team
+        fields = ("id", "name", "campaign_id", "subsidiary_id")
+
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        del data["campaign_id"]
+        del data["subsidiary_id"]
+        return data
+
+
+class TeamsSet(viewsets.ModelViewSet):
+    # fetches all teams from a given subsidiary
+    def get_queryset(self):
+        subsidiary_id = self.kwargs["subsidiary_id"]
+        return Team.objects.filter(
+            subsidiary_id=subsidiary_id,
+            campaign_id=self.request.campaign.id,
+        )
+
+    def create(self, request, *args, **kwargs):
+
+        request_data = request.data.copy()
+        request_data["subsidiary_id"] = self.kwargs["subsidiary_id"]
+        request_data["campaign_id"] = self.request.campaign.id
+
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return TeamsSerializer
+        else:
+            return TeamsDeserializer
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1434,4 +1691,15 @@ router.register(r"landing_page_icon", LandingPageIconSet, basename="landing_page
 router.register(r"coordinators/city", CoordinatedCitySet, basename="coordinated-city")
 router.register(
     r"logged-in-user-list", LoggedInUsersListGet, basename="logged_in_user_list"
+)
+
+router.register(r"cities", CitiesSet, basename="cities")
+router.register(r"organizations", CompaniesSet, basename="organizations")
+router.register(
+    r"organizations/(?P<organization_id>\d+)/subsidiaries",
+    SubsidiariesSet,
+    basename="organization-subsidiaries",
+)
+router.register(
+    r"subsidiaries/(?P<subsidiary_id>\d+)/teams", TeamsSet, basename="subsidiary-teams"
 )
