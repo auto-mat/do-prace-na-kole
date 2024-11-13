@@ -55,6 +55,12 @@ class Company(WithGalleryMixin, models.Model):
         verbose_name_plural = _("Organizace")
         ordering = ("name",)
 
+    ORGANIZATION_TYPE = [
+        ("company", _("Organizace")),
+        ("family", _("Rodina")),
+        ("school", _("Škola")),
+    ]
+
     name = models.CharField(
         unique=True,
         verbose_name=_("Název společnosti"),
@@ -117,6 +123,14 @@ class Company(WithGalleryMixin, models.Model):
         verbose_name=_("Poznámka"),
         null=True,
         blank=True,
+    )
+    organization_type = models.CharField(
+        verbose_name=_("Typ organizace"),
+        choices=ORGANIZATION_TYPE,
+        max_length=20,
+        null=False,
+        blank=True,
+        default=ORGANIZATION_TYPE[0][0],
     )
 
     def has_filled_contact_information(self):
