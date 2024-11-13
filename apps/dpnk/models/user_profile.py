@@ -64,6 +64,10 @@ class UserProfile(WithGalleryMixin, models.Model):
         ("challenge", _("Výzva")),
         ("events", _("Události")),
         ("mobility", _("Mobilita")),
+        ("challenge-events", _("Výzva a události")),
+        ("challenge-mobility", _("Výzva a mobilita")),
+        ("events-mobility", _("Události a mobilita")),
+        ("challenge-events-mobility", _("Výzva, události a mobilita")),
     ]
 
     user = models.OneToOneField(
