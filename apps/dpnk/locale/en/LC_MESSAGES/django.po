@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-13 06:37+0100\n"
+"POT-Creation-Date: 2024-11-13 10:51+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -412,7 +412,7 @@ msgid "Zajistím, aby společnost uhradila startovné za náš zaměstnanecký t
 msgstr ""
 "I will ensure that our company will pay the start fee for approved employees."
 
-#: apps/dpnk/company_admin_forms.py:222 apps/dpnk/models/company.py:60
+#: apps/dpnk/company_admin_forms.py:222 apps/dpnk/models/company.py:66
 msgid "Název společnosti"
 msgstr "Company name"
 
@@ -663,7 +663,7 @@ msgstr "Duplicate"
 msgid "Prázdný"
 msgstr "Empty"
 
-#: apps/dpnk/filters.py:164 apps/dpnk/models/company.py:96
+#: apps/dpnk/filters.py:164 apps/dpnk/models/company.py:102
 msgid "IČO"
 msgstr "Company registration number (IČO)"
 
@@ -920,7 +920,7 @@ msgstr "Customer's username"
 msgid "Uživatelské jméno, které Vám sdělí zákazník"
 msgstr "Username, that will tell you the customer"
 
-#: apps/dpnk/forms.py:939 apps/dpnk/models/company.py:117
+#: apps/dpnk/forms.py:939 apps/dpnk/models/company.py:123
 msgid "Poznámka"
 msgstr "Note"
 
@@ -1511,43 +1511,56 @@ msgstr ""
 "must be two letter country code (e.g. CZ)"
 
 #: apps/dpnk/models/company.py:54 apps/dpnk/models/company.py:55
-#: apps/dpnk/models/invoice.py:131 apps/dpnk/resources.py:373
+#: apps/dpnk/models/company.py:59 apps/dpnk/models/invoice.py:131
+#: apps/dpnk/resources.py:373
 msgid "Organizace"
 msgstr "Organization"
 
-#: apps/dpnk/models/company.py:66
+#: apps/dpnk/models/company.py:60
+msgid "Rodina"
+msgstr "Family"
+
+#: apps/dpnk/models/company.py:61
+msgid "Škola"
+msgstr "School"
+
+#: apps/dpnk/models/company.py:72
 msgid "Company type"
 msgstr ""
 
-#: apps/dpnk/models/company.py:75
+#: apps/dpnk/models/company.py:81
 msgid "DIČ"
 msgstr "VAT ID"
 
-#: apps/dpnk/models/company.py:81
+#: apps/dpnk/models/company.py:87
 msgid "DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu."
 msgstr "DIČ must be prepend with two-letter country identifier."
 
-#: apps/dpnk/models/company.py:89 apps/dpnk/models/subsidiary.py:62
+#: apps/dpnk/models/company.py:95 apps/dpnk/models/subsidiary.py:62
 msgid "Aktivní"
 msgstr "Active"
 
-#: apps/dpnk/models/company.py:97
+#: apps/dpnk/models/company.py:103
 msgid "IČO musí být číslo"
 msgstr "Company registration number must be number"
 
-#: apps/dpnk/models/company.py:104 apps/dpnk/models/subsidiary.py:89
+#: apps/dpnk/models/company.py:110 apps/dpnk/models/subsidiary.py:89
 #: apps/dpnk/models/trip.py:218 apps/dpnk/models/user_profile.py:203
 #, fuzzy
 #| msgid "Galerie týmových fotek"
 msgid "Galerie fotek"
 msgstr "Gallery of team photos"
 
-#: apps/dpnk/models/company.py:111 apps/dpnk/models/subsidiary.py:96
+#: apps/dpnk/models/company.py:117 apps/dpnk/models/subsidiary.py:96
 #: apps/dpnk/models/team.py:97
 msgid "Ikona"
 msgstr ""
 
-#: apps/dpnk/models/company.py:158
+#: apps/dpnk/models/company.py:128
+msgid "Typ organizace"
+msgstr "Organization type"
+
+#: apps/dpnk/models/company.py:172
 msgid ""
 "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, "
 "vyberte tu stávající."
@@ -1555,19 +1568,19 @@ msgstr ""
 "Organisation with this name already exists. Don't create new organisation, "
 "choose one from the list."
 
-#: apps/dpnk/models/company.py:253
+#: apps/dpnk/models/company.py:267
 #, fuzzy
 #| msgid "Název společnosti"
 msgid "Typ společnosti"
 msgstr "Company type"
 
-#: apps/dpnk/models/company.py:254
+#: apps/dpnk/models/company.py:268
 #, fuzzy
 #| msgid "Společnost"
 msgid "Typy společností"
 msgstr "Types of companies"
 
-#: apps/dpnk/models/company.py:257 apps/dpnk/models/competition.py:117
+#: apps/dpnk/models/company.py:271 apps/dpnk/models/competition.py:117
 #: apps/dpnk/models/questionnaire.py:124
 msgid "Typ"
 msgstr "Type"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-13 06:37+0100\n"
+"POT-Creation-Date: 2024-11-13 10:51+0100\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -401,7 +401,7 @@ msgstr ""
 msgid "Zajistím, aby společnost uhradila startovné za náš zaměstnanecký tým."
 msgstr ""
 
-#: apps/dpnk/company_admin_forms.py:222 apps/dpnk/models/company.py:60
+#: apps/dpnk/company_admin_forms.py:222 apps/dpnk/models/company.py:66
 msgid "Název společnosti"
 msgstr ""
 
@@ -649,7 +649,7 @@ msgstr ""
 msgid "Prázdný"
 msgstr ""
 
-#: apps/dpnk/filters.py:164 apps/dpnk/models/company.py:96
+#: apps/dpnk/filters.py:164 apps/dpnk/models/company.py:102
 msgid "IČO"
 msgstr ""
 
@@ -887,7 +887,7 @@ msgstr ""
 msgid "Uživatelské jméno, které Vám sdělí zákazník"
 msgstr ""
 
-#: apps/dpnk/forms.py:939 apps/dpnk/models/company.py:117
+#: apps/dpnk/forms.py:939 apps/dpnk/models/company.py:123
 msgid "Poznámka"
 msgstr ""
 
@@ -1455,55 +1455,68 @@ msgid ""
 msgstr ""
 
 #: apps/dpnk/models/company.py:54 apps/dpnk/models/company.py:55
-#: apps/dpnk/models/invoice.py:131 apps/dpnk/resources.py:373
+#: apps/dpnk/models/company.py:59 apps/dpnk/models/invoice.py:131
+#: apps/dpnk/resources.py:373
 msgid "Organizace"
 msgstr ""
 
-#: apps/dpnk/models/company.py:66
+#: apps/dpnk/models/company.py:60
+msgid "Rodina"
+msgstr ""
+
+#: apps/dpnk/models/company.py:61
+msgid "Škola"
+msgstr ""
+
+#: apps/dpnk/models/company.py:72
 msgid "Company type"
 msgstr ""
 
-#: apps/dpnk/models/company.py:75
+#: apps/dpnk/models/company.py:81
 msgid "DIČ"
 msgstr ""
 
-#: apps/dpnk/models/company.py:81
+#: apps/dpnk/models/company.py:87
 msgid "DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu."
 msgstr ""
 
-#: apps/dpnk/models/company.py:89 apps/dpnk/models/subsidiary.py:62
+#: apps/dpnk/models/company.py:95 apps/dpnk/models/subsidiary.py:62
 msgid "Aktivní"
 msgstr ""
 
-#: apps/dpnk/models/company.py:97
+#: apps/dpnk/models/company.py:103
 msgid "IČO musí být číslo"
 msgstr ""
 
-#: apps/dpnk/models/company.py:104 apps/dpnk/models/subsidiary.py:89
+#: apps/dpnk/models/company.py:110 apps/dpnk/models/subsidiary.py:89
 #: apps/dpnk/models/trip.py:218 apps/dpnk/models/user_profile.py:203
 msgid "Galerie fotek"
 msgstr ""
 
-#: apps/dpnk/models/company.py:111 apps/dpnk/models/subsidiary.py:96
+#: apps/dpnk/models/company.py:117 apps/dpnk/models/subsidiary.py:96
 #: apps/dpnk/models/team.py:97
 msgid "Ikona"
 msgstr ""
 
-#: apps/dpnk/models/company.py:158
+#: apps/dpnk/models/company.py:128
+msgid "Typ organizace"
+msgstr ""
+
+#: apps/dpnk/models/company.py:172
 msgid ""
 "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, "
 "vyberte tu stávající."
 msgstr ""
 
-#: apps/dpnk/models/company.py:253
+#: apps/dpnk/models/company.py:267
 msgid "Typ společnosti"
 msgstr ""
 
-#: apps/dpnk/models/company.py:254
+#: apps/dpnk/models/company.py:268
 msgid "Typy společností"
 msgstr ""
 
-#: apps/dpnk/models/company.py:257 apps/dpnk/models/competition.py:117
+#: apps/dpnk/models/company.py:271 apps/dpnk/models/competition.py:117
 #: apps/dpnk/models/questionnaire.py:124
 msgid "Typ"
 msgstr ""
