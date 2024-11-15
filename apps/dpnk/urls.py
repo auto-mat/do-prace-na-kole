@@ -30,6 +30,7 @@ from .autocomplete_views import (
     SubsidiaryAutocomplete,
     TeamAutocomplete,
 )
+from .rest import router
 from .views import (
     answers,
     questionnaire_answers,
@@ -590,4 +591,6 @@ urlpatterns = [
         views.LoggedInUsersListView.as_view(),
         name="logged_in_user_list",
     ),
+    # REST API
+    path("rest/", include(router.urls), name="rest_api"),
 ]
