@@ -592,5 +592,5 @@ urlpatterns = [
         name="logged_in_user_list",
     ),
     # REST API
-    path('rest/', include(router.urls), name="rest_api"),
+    path("rest/", include(router.urls), name="rest_api"),
 ]
