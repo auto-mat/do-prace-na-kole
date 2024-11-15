@@ -176,6 +176,14 @@ X-XSS-Protection: 1; mode=block
 }
 ```
 
+**REST API localization**
+
+If you want use REST API with different lang as default **Czech** lang
+(localization) e.g http://test.lvh.me:8021/rest/gpx/ you must inject URL
+endpoint with another localization lang code, e.g. English lang
+http://test.lvh.me:8021/**en**/rest/gpx/
+
+
 The OAuth2 workflow is slightly more complex, but it is still simple. It has three steps:
 
 1. The mobile app opens a webview with a special URL which is meant for authenticating that app.
