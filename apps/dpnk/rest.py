@@ -1490,7 +1490,7 @@ class CompaniesSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Company.objects.all()
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -1581,7 +1581,7 @@ class SubsidiariesSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action in ["retrieve", "list"]:
@@ -1648,7 +1648,7 @@ class TeamsSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action in ["retrieve", "list"]:
