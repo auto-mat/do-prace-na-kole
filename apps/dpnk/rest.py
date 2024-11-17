@@ -65,7 +65,7 @@ from .models import (
     Trip,
     UserAttendance,
 )
-from .models.company import CompanyInCampaign
+from .models.company import Company, CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 from .util import get_all_logged_in_users
 
@@ -79,6 +79,8 @@ from django.utils.encoding import smart_str
 
 import json
 from rest_framework import status
+
+organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
 
 
 class OptionalImageField(serpy.ImageField):
@@ -1447,6 +1449,7 @@ class CompaniesSerializer(serpy.Serializer):
     dic = serpy.StrField(required=False)
     note = serpy.StrField(required=False)
     address = AddressSerializer()
+    organization_type = serpy.StrField()
 
 
 class CompaniesDeserializer(serializers.HyperlinkedModelSerializer):
@@ -1463,15 +1466,17 @@ class CompaniesDeserializer(serializers.HyperlinkedModelSerializer):
             "address_psc",
             "address_city",
             "address_recipient",
+            "organization_type",
         )
 
     def to_internal_value(self, data):
-        address_data = data.pop("address")
-        data["address_street"] = address_data.get("street")
-        data["address_street_number"] = address_data.get("street_number")
-        data["address_recipient"] = address_data.get("recipient")
-        data["address_psc"] = address_data.get("psc")
-        data["address_city"] = address_data.get("city")
+        if data.get("address"):
+            address_data = data.pop("address")
+            data["address_street"] = address_data.get("street")
+            data["address_street_number"] = address_data.get("street_number")
+            data["address_recipient"] = address_data.get("recipient")
+            data["address_psc"] = address_data.get("psc")
+            data["address_city"] = address_data.get("city")
         return super().to_internal_value(data)
 
     def to_representation(self, value):
@@ -1488,6 +1493,9 @@ class CompaniesDeserializer(serializers.HyperlinkedModelSerializer):
 
 class CompaniesSet(viewsets.ModelViewSet):
     def get_queryset(self):
+        organization_type = self.kwargs.get("organization_type")
+        if organization_type:
+            return Company.objects.filter(organization_type=organization_type)
         return Company.objects.all()
 
     permission_classes = [permissions.IsAuthenticated]
@@ -1692,8 +1700,12 @@ router.register(r"coordinators/city", CoordinatedCitySet, basename="coordinated-
 router.register(
     r"logged-in-user-list", LoggedInUsersListGet, basename="logged_in_user_list"
 )
-
 router.register(r"cities", CitiesSet, basename="cities")
+router.register(
+    rf"organizations/(?P<organization_type>({'|'.join(organization_types)}))",
+    CompaniesSet,
+    basename="organizations-by-type",
+)
 router.register(r"organizations", CompaniesSet, basename="organizations")
 router.register(
     r"organizations/(?P<organization_id>\d+)/subsidiaries",

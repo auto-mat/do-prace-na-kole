@@ -36,6 +36,7 @@ from model_mommy import mommy
 from rest_framework.test import APIClient
 
 from .mommy_recipes import UserAttendanceRecipe
+from dpnk.models.company import Company
 
 import photologue
 from django.core.files import File
@@ -2181,7 +2182,26 @@ class CompaniesSetTest(TestCase):
             },
         )
 
+    def test_get_filter_by_organization_type(self):
+        address = reverse(
+            "organizations-by-type-list", kwargs={"organization_type": "company"}
+        )
+        response = self.client.get(address)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {"id": 1, "name": "Organizace1"},
+                ],
+            },
+        )
+
     def test_post(self):
+        company = Company.ORGANIZATION_TYPE[0][0]
         post_data = {
             "name": "Společnost1",
             "address": {
@@ -2190,6 +2210,7 @@ class CompaniesSetTest(TestCase):
                 "city": "Praha",
                 "psc": "11000",
             },
+            "organization_type": company,
         }
         response = self.client.post(
             "/rest/organizations/", post_data, format="json", follow=True
