@@ -1267,7 +1267,8 @@
          "name" : "Organizace1",
          "note" : "",
          "type" : null,
-         "updated_by" : 1
+         "updated_by" : 1,
+         "organization_type": "company"
       },
       "model" : "dpnk.company",
       "pk" : 1
@@ -1288,7 +1289,8 @@
          "name" : "Organizace2",
          "note" : "",
          "type" : 1,
-         "updated_by" : 1
+         "updated_by" : 1,
+         "organization_type": "school"
       },
       "model" : "dpnk.company",
       "pk" : 2
