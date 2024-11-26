@@ -210,6 +210,9 @@ class Payment(Transaction):
         ("kbs", _("Komerční banka")),
         ("mons", _("MONETA Money Bank")),
         ("dpcz", _("Pay later with Twisto - Czech")),
+        ("PBL", _("online nebo standardní převod")), # PAYU REST API
+        ("CARD_TOKEN", _("platba kartou (včetně MasterPass a Visa checkout)")), # PAYU REST API
+        ("INSTALLMENTS", _("platba cez  Payu | Installments řešení")), # PAYU REST API
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 
