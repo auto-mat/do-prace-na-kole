@@ -2676,15 +2676,15 @@ msgstr ""
 
 #: apps/dpnk/models/transactions.py:213
 msgid "online nebo standardní převod"
-msgstr ""
+msgstr "online or standard transfer"
 
 #: apps/dpnk/models/transactions.py:214
 msgid "platba kartou (včetně MasterPass a Visa checkout)"
-msgstr ""
+msgstr "card payment (incl. Masterpass and Visa Checkout)"
 
 #: apps/dpnk/models/transactions.py:215
 msgid "platba cez  Payu | Installments řešení"
-msgstr ""
+msgstr "payment via PayU | Installments solution"
 
 #: apps/dpnk/models/transactions.py:246 apps/dpnk/models/transactions.py:247
 msgid "Platební transakce"
