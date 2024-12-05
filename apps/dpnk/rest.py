@@ -1224,7 +1224,6 @@ class ThisCampaignSet(viewsets.ReadOnlyModelViewSet):
         return Campaign.objects.filter(slug=self.request.subdomain)
 
     serializer_class = CampaignSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class NotificationSerializer(serpy.Serializer):
