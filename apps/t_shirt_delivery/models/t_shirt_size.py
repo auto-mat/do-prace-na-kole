@@ -28,6 +28,12 @@ from dpnk.models import Campaign
 class TShirtSize(models.Model):
     """Velikost trička"""
 
+    GENDER = [
+        ("male", _("Muž")),
+        ("female", _("Žena")),
+        ("unisex", _("Vhodné pro obě pohlaví")),
+    ]
+
     name = models.CharField(
         verbose_name=_("Velikost trička"),
         max_length=40,
@@ -75,6 +81,61 @@ class TShirtSize(models.Model):
         default=0,
         blank=False,
         null=False,
+    )
+    # Required for RTWBB frontend app
+    name1 = models.CharField(
+        verbose_name=_("Název trička"),
+        help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
+        max_length=40,
+        null=False,
+        blank=False,
+        default="",
+    )
+    # Required for new RTWBB frontend app
+    sex = models.CharField(
+        verbose_name=_("Pohlaví"),
+        help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
+        choices=GENDER,
+        max_length=10,
+        null=True,
+        blank=True,
+        default="",
+    )
+    # Required for new RTWBB frontend app
+    size = models.CharField(
+        verbose_name=_("Velikost"),
+        help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
+        max_length=20,
+        null=True,
+        blank=True,
+        default="",
+    )
+    # Required for new RTWBB frontend app
+    author = models.CharField(
+        verbose_name=_("Autor"),
+        help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
+        max_length=30,
+        null=True,
+        blank=True,
+        default="",
+    )
+    # Required for new RTWBB frontend app
+    material = models.CharField(
+        verbose_name=_("Materiál"),
+        help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
+        max_length=40,
+        null=True,
+        blank=True,
+        default="",
+    )
+    # Required for new RTWBB frontend app
+    description = models.TextField(
+        verbose_name=_("Popis"),
+        help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
+        max_length=512,
+        null=True,
+        blank=True,
+        default="",
     )
 
     class Meta:
