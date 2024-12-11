@@ -26,7 +26,7 @@ from t_shirt_delivery.models import TShirtSize
 
 @register(TShirtSize)
 class TShirtSizeTranslationOptions(TranslationOptions):
-    fields = ("name", "name1", "material", "description")
+    fields = ("name", "name1")
     empty_values = {
         "name": None,
         "name1": None,
