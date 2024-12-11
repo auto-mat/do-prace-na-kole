@@ -33,3 +33,4 @@ class TShirtSizeTranslationOptions(TranslationOptions):
         "material": None,
         "description": None,
     }
+    required_languages = ("en",)

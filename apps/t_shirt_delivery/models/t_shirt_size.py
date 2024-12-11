@@ -29,6 +29,7 @@ class TShirtSize(models.Model):
     """Velikost trička"""
 
     GENDER = [
+        ("", _("---------")),
         ("male", _("Muž")),
         ("female", _("Žena")),
         ("unisex", _("Vhodné pro obě pohlaví")),
@@ -97,7 +98,7 @@ class TShirtSize(models.Model):
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         choices=GENDER,
         max_length=10,
-        null=True,
+        null=False,
         blank=True,
         default="",
     )
@@ -106,7 +107,7 @@ class TShirtSize(models.Model):
         verbose_name=_("Velikost"),
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=20,
-        null=True,
+        null=False,
         blank=True,
         default="",
     )
@@ -115,8 +116,8 @@ class TShirtSize(models.Model):
         verbose_name=_("Autor"),
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=30,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         default="",
     )
     # Required for new RTWBB frontend app
@@ -124,8 +125,8 @@ class TShirtSize(models.Model):
         verbose_name=_("Materiál"),
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=40,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         default="",
     )
     # Required for new RTWBB frontend app
@@ -133,8 +134,8 @@ class TShirtSize(models.Model):
         verbose_name=_("Popis"),
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=512,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         default="",
     )
 
