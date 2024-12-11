@@ -67,6 +67,7 @@ from .models import (
 )
 from .models.company import Company, CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
+from t_shirt_delivery.models import TShirtSize
 from .util import get_all_logged_in_users
 
 from photologue.models import Photo
@@ -1664,6 +1665,41 @@ class TeamsSet(viewsets.ModelViewSet):
             return TeamsDeserializer
 
 
+class MerchandiseSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField(attr="name1")
+    sex = serpy.StrField()
+    size = serpy.StrField()
+    author = serpy.StrField()
+    material = serpy.StrField()
+    description = serpy.StrField()
+    t_shirt_preview = OptionalImageField()
+
+
+class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        code = self.kwargs.get("code")
+        queryset = {
+            "campaign__slug": self.request.subdomain,
+            "available": True,
+        }
+        if code:
+            queryset.update({"code": code})
+        return TShirtSize.objects.filter(**queryset).only(
+            "id",
+            "name1",
+            "sex",
+            "size",
+            "author",
+            "material",
+            "description",
+            "t_shirt_preview",
+        )
+
+    serializer_class = MerchandiseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1714,3 +1750,7 @@ router.register(
 router.register(
     r"subsidiaries/(?P<subsidiary_id>\d+)/teams", TeamsSet, basename="subsidiary-teams"
 )
+router.register(
+    r"merchandise/(?P<code>[\w\-]+)", MerchandiseSet, basename="merchandise-code"
+)
+router.register(r"merchandise", MerchandiseSet, basename="merchandise")
