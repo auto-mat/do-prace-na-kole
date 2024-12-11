@@ -117,7 +117,7 @@ class TShirtSize(models.Model):
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=30,
         null=False,
-        blank=False,
+        blank=True,
         default="",
     )
     # Required for new RTWBB frontend app
@@ -126,7 +126,7 @@ class TShirtSize(models.Model):
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=40,
         null=False,
-        blank=False,
+        blank=True,
         default="",
     )
     # Required for new RTWBB frontend app
@@ -135,7 +135,7 @@ class TShirtSize(models.Model):
         help_text=_("Požadováno pro novou RTWBB frontend aplikaci"),
         max_length=512,
         null=False,
-        blank=False,
+        blank=True,
         default="",
     )
 
