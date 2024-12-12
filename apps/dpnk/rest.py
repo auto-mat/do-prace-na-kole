@@ -1682,9 +1682,13 @@ class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
         queryset = {
             "campaign__slug": self.request.subdomain,
             "available": True,
+            "ship": True,
         }
         if code:
             queryset.update({"code": code})
+            if code == "nic":
+                queryset.update({"code": code, "ship": False})
+
         return TShirtSize.objects.filter(**queryset).only(
             "id",
             "name1",
