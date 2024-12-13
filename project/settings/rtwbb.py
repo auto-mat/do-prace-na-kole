@@ -1,7 +1,6 @@
 from .base import *  # noqa
 
-DEBUG = True
 
-CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOW_ALL_ORIGINS = True
 
 LOGIN_REDIRECT_URL = "https://rtwbb-test.dopracenakole.net/#/"
