@@ -2,4 +2,4 @@ from .base import *  # noqa
 
 DEBUG = True
 
-CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ALLOW_ALL_ORIGINS = DEBUG
