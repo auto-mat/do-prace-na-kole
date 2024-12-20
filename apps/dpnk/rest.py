@@ -18,10 +18,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import time
+import hashlib
+
+from enum import Enum
 
 # TODO re-enable or fix denorm
 # import denorm
 
+from django.conf import settings
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -30,6 +35,7 @@ from django.db.models.functions import DenseRank
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
+from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.utils import has_verified_email
 from donation_chooser.rest import organization_router
@@ -59,17 +65,23 @@ from .models import (
     Competition,
     CompetitionResult,
     LandingPageIcon,
+    Payment,
+    PAYMENT_STATUSES,
     Phase,
+    Status,
     Subsidiary,
     Team,
     Trip,
     UserAttendance,
+    UserProfile,
 )
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 from t_shirt_delivery.models import TShirtSize
 from coupons.models import DiscountCoupon
 from .util import today, get_all_logged_in_users
+from .util import get_all_logged_in_users
+from .payu import PayU
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -80,6 +92,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.utils.encoding import smart_str
 
 import json
+import requests
 from rest_framework import status
 
 organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
@@ -1734,6 +1747,192 @@ class DiscountCouponSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = DiscountCouponSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class PayCreateOrderDeserializer(serializers.Serializer):
+    amount = serializers.IntegerField(required=True)
+    client_ip = serializers.IPAddressField(required=True)
+
+
+class PayUCreateOrderPost(APIView):
+    """Create new PayU order, save it as new Payment mode  and
+    return response data with redirectUri for redirection client to
+    PayU payment web page"""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PayCreateOrderDeserializer
+
+    def post(self, request):
+        deserialized_data = PayCreateOrderDeserializer(data=request.data)
+        if not deserialized_data.is_valid():
+            return Response({"error": deserialized_data.errors})
+
+        if not request.user_attendance:
+            return Response(
+                {
+                    "error": _(
+                        "Chýbajúci UserAtendance model instance pre užívatela"
+                        " s emailovou adresou <%(user_email)s>, vytvorte tento"
+                        " model, prosím."
+                    )
+                    % {"user_email": request.user.email}
+                }
+            )
+        # PayU authorization (get access token)
+        payu = PayU(payu_conf=settings.PAYU_CONF)
+        response_data = payu.authorize()
+        access_token = response_data.get("access_token")
+        if not access_token:
+            return Response(response_data)
+
+        # Pay create new order
+        user_profile = UserProfile.objects.get(
+            user__email=request.user.email,
+        )
+        order_ids = set(
+            Payment.objects.filter(
+                order_id__contains=f"{request.user.id}-"
+            ).values_list("order_id", flat=True)
+        )
+        if order_ids:
+            order_ids = [int(i.split("-")[-1]) for i in order_ids]
+            order_id = (f"{request.user.id}-{max(order_ids) + 1}",)
+        else:
+            order_id = (f"{request.user.id}-0",)
+        client_ip = self.request.COOKIES.get("client_ip")
+
+        data = {
+            "notifyUrl": f"{request.scheme}://{request.get_host()}{reverse('payu-notify-order-status')}",
+            "amount": deserialized_data.data["amount"],
+            "customerIp": client_ip if client_ip else "127.0.0.1",
+            "extOrderId": order_id,
+            "userAttendance": request.user_attendance,
+            "buyer": {
+                "email": request.user.email,
+                "phone": user_profile.telephone if user_profile.telephone else "",
+                "firstName": request.user.first_name,
+                "lastName": request.user.last_name,
+                "language": user_profile.language
+                if user_profile.language
+                else settings.LANGUAGE_CODE,
+            },
+        }
+        return Response(payu.create_order(access_token, data))
+
+
+class PayUPaymentNotifyPost(APIView):
+    """After new PayU order was successfully created and payment was made,
+    notification data is sended from PayU system to this URL endpoint.
+    To update Payment model status (pay_type, status field) according
+    order ID.
+
+    PayU notifications:
+
+    https://developers.payu.com/europe/docs/payment-flows/lifecycle/#notifications
+
+    Pay signature verification:
+
+    https://developers.payu.com/europe/docs/payment-flows/lifecycle/#signature-verification
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    class PAYU_TO_PAYMENT_ORDER_STATUS(Enum):
+        PENDING = Status.COMMENCED
+        WAITING_FOR_CONFIRMATION = Status.WAITING_CONFIRMATION
+        COMPLETED = Status.DONE
+        CANCELED = Status.CANCELED
+
+    def post(self, request):
+        payu_signature_header = request.headers.get("OpenPayu-Signature")
+        if not payu_signature_header:
+            return Response(
+                {"error": _("Chybějící OpenPayu-Signature záhlaví request objektu.")}
+            )
+        payu_signature_header = payu_signature_header.split(";")
+        signature = [i for i in payu_signature_header if "signature" in i][0]
+        request_body_payu_second_key = (
+            request.body.decode("utf-8")
+            + settings.PAYU_CONF["PAYU_REST_API_SECOND_KEY_MD5"]
+        )
+        expected_signature = hashlib.md5(
+            request_body_payu_second_key.encode("utf-8")
+        ).hexdigest()
+        # Verify request object signature
+        if signature != expected_signature:
+            Response(
+                {
+                    "error": _(
+                        "Proces ověření podpisu request objektu selhal,"
+                        " nesprávny podpis <%(signature)s>."
+                    )
+                    % {"signature": signature}
+                }
+            )
+        data = request.data
+        order = data.get("order")
+        order_status = order.get("status")
+        pay_completed_order_status = "COMPLETED"
+        pay_canceled_order_status = "CANCELED"
+
+        # Update Payment model status
+        if order:
+            payment = Payment.objects.filter(order_id=order.get("extOrderId"))
+            if payment:
+                payment = payment[0]
+                payment_status_text = [
+                    i[1] for i in PAYMENT_STATUSES if i[0] == payment.status
+                ][0]
+                # Payment status is COMPLETED or CANCELED, we don't need change it
+                if payment.status in (
+                    self.PAYU_TO_PAYMENT_ORDER_STATUS[pay_completed_order_status].value,
+                    self.PAYU_TO_PAYMENT_ORDER_STATUS[pay_canceled_order_status].value,
+                ):
+                    return Response(
+                        {
+                            "status": _(
+                                "Platobní stav pre objednávku ID <%(order_id)s>"
+                                " se nezměnil pre platobní stav objednávky"
+                                " <%(order_status)s>."
+                            )
+                            % {
+                                "order_id": order.get("extOrderId"),
+                                "order_status": payment_status_text,
+                            }
+                        }
+                    )
+                # Save order new status as payment status
+                payment.status = self.PAYU_TO_PAYMENT_ORDER_STATUS[order_status].value
+                payment_status_text = [
+                    i[1] for i in PAYMENT_STATUSES if i[0] == payment.status
+                ][0]
+                # If order status is COMPLETED save payment method type PBL, CARD_TOKEN, INSTALLMENTS
+                if order_status == pay_completed_order_status:
+                    payment.pay_type = order["payMethod"]["type"]
+                    payment.save(update_fields=["pay_type", "status"])
+                else:
+                    payment.save(update_fields=["status"])
+                return Response(
+                    {
+                        "status": _(
+                            "Platobní stav pre objednávku ID <%(order_id)s> byl změněn"
+                            " na stav <%(order_status)s>."
+                        )
+                        % {
+                            "order_id": order.get("extOrderId"),
+                            "order_status": payment_status_text,
+                        }
+                    }
+                )
+            else:
+                return Response(
+                    {
+                        "error": _(
+                            "Neexistující platba s ID objednávky <%(order_id)s>."
+                        )
+                        % {"order_id": order.get("extOrderId")}
+                    }
+                )
 
 
 router = routers.DefaultRouter()

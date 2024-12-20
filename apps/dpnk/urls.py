@@ -30,7 +30,7 @@ from .autocomplete_views import (
     SubsidiaryAutocomplete,
     TeamAutocomplete,
 )
-from .rest import router
+from .rest import router, PayUCreateOrderPost, PayUPaymentNotifyPost
 from .views import (
     answers,
     questionnaire_answers,
@@ -415,6 +415,16 @@ urlpatterns = [
         "rest/auth/registration/has-user-verified-email-address/",
         HasUserVerifiedEmailAddress.as_view(),
         name="has-user-verified-email-address",
+    ),
+    path(
+        "rest/payu-create-order/",
+        PayUCreateOrderPost.as_view(),
+        name="payu-create-order",
+    ),
+    path(
+        "rest/payu-notify-order-status/",
+        PayUPaymentNotifyPost.as_view(),
+        name="payu-notify-order-status",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
