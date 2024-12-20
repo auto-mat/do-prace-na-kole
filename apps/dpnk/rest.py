@@ -65,10 +65,11 @@ from .models import (
     Trip,
     UserAttendance,
 )
-from .models.company import Company, CompanyInCampaign
+from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 from t_shirt_delivery.models import TShirtSize
-from .util import get_all_logged_in_users
+from coupons.models import DiscountCoupon
+from .util import today, get_all_logged_in_users
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -1704,6 +1705,37 @@ class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class DiscountCouponSerializer(serpy.Serializer):
+    name = serpy.StrField(call="name")
+    discount = serpy.IntField()
+    available = serpy.BoolField(call="available")
+
+
+class DiscountCouponSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        code = self.kwargs.get("code")
+        splitChar = "-"
+        if code and splitChar in code:
+            prefix, base_code = code.upper().split(splitChar)
+            return (
+                DiscountCoupon.objects.exclude(
+                    coupon_type__valid_until__isnull=False,
+                    coupon_type__valid_until__lt=today(),
+                )
+                .filter(
+                    coupon_type__prefix=prefix,
+                    token=base_code,
+                )
+                .only(
+                    "discount",
+                )
+            )
+        return DiscountCoupon.objects.none()
+
+    serializer_class = DiscountCouponSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1758,3 +1790,8 @@ router.register(
     r"merchandise/(?P<code>[\w\-]+)", MerchandiseSet, basename="merchandise-code"
 )
 router.register(r"merchandise", MerchandiseSet, basename="merchandise")
+router.register(
+    "discount-coupon/(?P<code>[\w\-]+)",
+    DiscountCouponSet,
+    basename="discount-coupon-by-code",
+)
