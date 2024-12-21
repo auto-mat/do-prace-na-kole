@@ -1755,7 +1755,7 @@ class PayCreateOrderDeserializer(serializers.Serializer):
     client_ip = serializers.IPAddressField(required=True)
 
 
-class PayUCreateOrderPost(APIView):
+class PayUCreateOrderPost(UserAttendanceMixin, APIView):
     """Create new PayU order, save it as new Payment mode  and
     return response data with redirectUri for redirection client to
     PayU payment web page"""
@@ -1768,17 +1768,8 @@ class PayUCreateOrderPost(APIView):
         if not deserialized_data.is_valid():
             return Response({"error": deserialized_data.errors})
 
-        if not request.user_attendance:
-            return Response(
-                {
-                    "error": _(
-                        "Chýbajúci UserAtendance model instance pre užívatela"
-                        " s emailovou adresou <%(user_email)s>, vytvorte tento"
-                        " model, prosím."
-                    )
-                    % {"user_email": request.user.email}
-                }
-            )
+        ua = self.ua()
+
         # PayU authorization (get access token)
         payu = PayU(payu_conf=settings.PAYU_CONF)
         response_data = payu.authorize()
@@ -1787,9 +1778,6 @@ class PayUCreateOrderPost(APIView):
             return Response(response_data)
 
         # Pay create new order
-        user_profile = UserProfile.objects.get(
-            user__email=request.user.email,
-        )
         order_ids = set(
             Payment.objects.filter(
                 order_id__contains=f"{request.user.id}-"
@@ -1807,14 +1795,14 @@ class PayUCreateOrderPost(APIView):
             "amount": deserialized_data.data["amount"],
             "customerIp": client_ip if client_ip else "127.0.0.1",
             "extOrderId": order_id,
-            "userAttendance": request.user_attendance,
+            "userAttendance": ua,
             "buyer": {
                 "email": request.user.email,
-                "phone": user_profile.telephone if user_profile.telephone else "",
+                "phone": ua.userprofile.telephone if ua.userprofile.telephone else "",
                 "firstName": request.user.first_name,
                 "lastName": request.user.last_name,
-                "language": user_profile.language
-                if user_profile.language
+                "language": ua.userprofile.language
+                if ua.userprofile.language
                 else settings.LANGUAGE_CODE,
             },
         }
