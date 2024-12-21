@@ -1293,6 +1293,7 @@ class ThisCampaignTest(TestCase):
                         "days_active": 8,
                         "year": "2021",
                         "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/",
+                        "max_team_members": 5,
                         "phase_set": [
                             {
                                 "phase_type": "registration",
