@@ -1224,6 +1224,7 @@ class CampaignSerializer(serpy.Serializer):
     days_active = serpy.IntField()
     year = serpy.StrField()
     campaign_type = HyperlinkedField("campaigntype-detail")
+    max_team_members = serpy.IntField()
 
 
 class CampaignSet(viewsets.ReadOnlyModelViewSet):
