@@ -1720,9 +1720,9 @@ class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
 
 
 class DiscountCouponSerializer(serpy.Serializer):
-    name = serpy.StrField(call="name")
+    name = serpy.StrField(call=True)
     discount = serpy.IntField()
-    available = serpy.BoolField(call="available")
+    available = serpy.BoolField(call=True)
 
 
 class DiscountCouponSet(viewsets.ReadOnlyModelViewSet):
