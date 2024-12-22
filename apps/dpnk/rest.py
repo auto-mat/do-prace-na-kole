@@ -95,6 +95,8 @@ import json
 import requests
 from rest_framework import status
 
+import copy
+
 organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
 
 
@@ -1924,6 +1926,204 @@ class PayUPaymentNotifyPost(APIView):
                 )
 
 
+class UserAttendanceDeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAttendance
+        fields = (
+            "terms",
+            "teamId",
+            "merchId",
+        )
+        extra_kwargs = {
+            "terms": {"source": "personal_data_opt_in"},
+            "teamId": {"source": "team"},
+            "merchId": {"source": "t_shirt_size"},
+        }
+
+
+class UserDeserializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "email",
+            "firstName",
+            "lastName",
+        )
+        extra_kwargs = {
+            "firstName": {"source": "first_name"},
+            "lastName": {"source": "last_name"},
+        }
+
+
+class UserProfileDeserializer(serializers.HyperlinkedModelSerializer):
+
+    user_attendance = UserAttendanceDeserializer(required=False)
+    user = UserDeserializer(required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ["user_attendance", "user", "nickname", "gender", "newsletter"]
+        extra_kwargs = {
+            "gender": {"source": "sex"},
+        }
+
+    def _get_or_create_user_attendance(self):
+        request = self.context["request"]
+        user_attendance = request.user_attendance
+        if not user_attendance:
+            user_attendance = get_or_create_userattendance(request, request.subdomain)
+
+        return user_attendance
+
+    def create(self, validated_data):
+        user_attendance = self._get_or_create_user_attendance()
+        return self.update(user_attendance.userprofile, validated_data)
+
+    def update(self, instance, validated_data):
+        user_attendance_data = validated_data.pop("user_attendance", {})
+        user_data = validated_data.pop("user", {})
+        self._handle_user_attendance(user_attendance_data)
+        self._handle_user(user_data)
+        validated_data["user"] = self._get_user()
+        instance = super().update(instance, validated_data)
+        return instance
+
+    def _handle_user_attendance(self, data):
+        user_attendance = self._get_or_create_user_attendance()
+        if "personal_data_opt_in" in data:
+            user_attendance.personal_data_opt_in = data["personal_data_opt_in"]
+        if "team" in data:
+            user_attendance.team = data["team"]
+        if "t_shirt_size" in data:
+            user_attendance.t_shirt_size = data["t_shirt_size"]
+        user_attendance.save()
+
+    def _get_user(self):
+        user = self.context["request"].user
+        return user
+
+    def _handle_user(self, data):
+        user = self._get_user()
+        print(data)
+        if "email" in data:
+            user.email = data["email"]
+        if "first_name" in data:
+            user.first_name = data["first_name"]
+        if "last_name" in data:
+            user.last_name = data["last_name"]
+        user.save()
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        user_attendance = self._get_or_create_user_attendance()
+
+        user_attendance_data = UserAttendanceDeserializer(user_attendance).data
+        user_data = representation.pop("user")
+
+        representation["email"] = user_data["email"]
+        representation["personalDetails"] = {
+            "firstName": user_data["firstName"],
+            "lastName": user_data["lastName"],
+            "nickname": representation.pop("nickname"),
+            "gender": representation.pop("gender"),
+            "newsletter": representation.pop("newsletter"),
+            "terms": user_attendance_data["terms"],
+        }
+        representation["teamId"] = user_attendance_data["teamId"]
+        representation["merchId"] = user_attendance_data["merchId"]
+
+        return representation
+
+    def to_internal_value(self, data):
+        data["user"] = {}
+        data["user_attendance"] = {}
+
+        if "personalDetails" in data:
+            personal_details = data.pop("personalDetails")
+            if "email" in personal_details:
+                data["user"]["email"] = personal_details["email"]
+            if "firstName" in personal_details:
+                data["user"]["firstName"] = personal_details["firstName"]
+            if "lastName" in personal_details:
+                data["user"]["lastName"] = personal_details["lastName"]
+            if "nickname" in personal_details:
+                data["nickname"] = personal_details["nickname"]
+            if "gender" in personal_details:
+                data["gender"] = personal_details["gender"]
+            if "newsletter" in personal_details:
+                data["newsletter"] = personal_details["newsletter"]
+            if "terms" in personal_details:
+                data["user_attendance"]["terms"] = personal_details["terms"]
+        if "teamId" in data:
+            team_id = data.pop("teamId")
+            data["user_attendance"]["teamId"] = team_id
+        if "merchId" in data:
+            merch_id = data.pop("merchId")
+            data["user_attendance"]["merchId"] = merch_id
+
+        return super().to_internal_value(data)
+
+
+class UserSerializer(serpy.Serializer):
+    email = serpy.StrField()
+    firstName = serpy.StrField(attr="first_name", required=False)
+    lastName = serpy.StrField(attr="last_name", required=False)
+
+
+class UserProfileSerializer(serpy.Serializer):
+    user = UserSerializer()
+    user_attendance = RequestSpecificField(
+        lambda _, req: UserAttendanceSerializer(req.user_attendance).data
+    )
+    nickname = serpy.StrField(required=False)
+    gender = serpy.StrField(attr="sex", required=False)
+    newsletter = serpy.StrField(required=False)
+
+    def to_value(self, instance):
+        representation = super().to_value(instance)
+
+        for item in representation:
+            user_original = item.pop("user")
+            user_attendance_original = item.pop("user_attendance")
+
+            user_data_email = user_original["email"]
+            user_data_firstName = user_original["firstName"]
+            user_data_lastName = user_original["lastName"]
+
+            item["email"] = user_data_email
+            item["personalDetails"] = {
+                "firstName": user_data_firstName,
+                "lastName": user_data_lastName,
+                "nickname": item.pop("nickname"),
+                "gender": item.pop("gender"),
+                "newsletter": item.pop("newsletter"),
+                "terms": user_attendance_original["terms"],
+            }
+            item["teamId"] = user_attendance_original["teamId"]
+            item["merchId"] = user_attendance_original["merchId"]
+
+        return representation
+
+
+class UserAttendanceSerializer(serpy.Serializer):
+    terms = serpy.BoolField(attr="personal_data_opt_in", required=False)
+    teamId = serpy.IntField(attr="team_id", required=False)
+    merchId = serpy.IntField(attr="t_shirt_size", required=False)
+
+
+class UserProfileSet(viewsets.ModelViewSet, UserAttendanceMixin):
+    def get_queryset(self):
+        return UserProfile.objects.filter(pk=self.ua().userprofile.pk)
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return UserProfileSerializer
+        else:
+            return UserProfileDeserializer
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1983,3 +2183,4 @@ router.register(
     DiscountCouponSet,
     basename="discount-coupon-by-code",
 )
+router.register(r"my_profile", UserProfileSet, basename="myprofile")
