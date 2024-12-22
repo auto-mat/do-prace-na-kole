@@ -42,7 +42,7 @@ from .views import (
 
 from django.urls import path, re_path
 
-from apps.dpnk.rest_registration import CustomRegisterView
+from .rest_registration import BasicRegisterView, RegisterCoordinatorView
 from allauth.account.views import confirm_email
 
 from .rest import HasUserVerifiedEmailAddress
@@ -403,8 +403,8 @@ urlpatterns = [
     ),
     path(
         "rest/auth/registration/",
-        CustomRegisterView.as_view(),
-        name="custom_register",
+        BasicRegisterView.as_view(),
+        name="basic_register",
     ),
     re_path(
         r"^rest/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$",
@@ -425,6 +425,11 @@ urlpatterns = [
         "rest/payu-notify-order-status/",
         PayUPaymentNotifyPost.as_view(),
         name="payu-notify-order-status",
+    ),
+    path(
+        "rest/auth/registration/coordinator/",
+        RegisterCoordinatorView.as_view(),
+        name="register_coordinator",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),

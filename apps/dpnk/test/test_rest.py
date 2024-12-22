@@ -26,7 +26,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk import models, util
-from dpnk.models import Team, UserAttendance
+from dpnk.models import Team, UserAttendance, UserProfile, CompanyAdmin
 from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
@@ -50,6 +50,7 @@ from django.core import mail
 from allauth.account.models import EmailAddress
 from allauth.account.utils import has_verified_email
 import requests
+import time
 
 
 @freeze_time("2016-01-14")
@@ -2079,11 +2080,17 @@ class RegistrationTest(TestCase):
             "password2": "securepassword123",
         }
 
-        response = self.client.post(reverse("custom_register"), registration_data)
+        response = self.client.post(reverse("basic_register"), registration_data)
         self.assertEqual(response.status_code, 201)
 
         user = User.objects.get(email=registration_data["email"])
         self.assertFalse(has_verified_email(user, registration_data["email"]))
+
+        # !!!
+        for attempt in range(10):
+            if len(mail.outbox) == 1:
+                break
+            time.sleep(0.1)
 
         # Verify that an email was sent
         self.assertEqual(len(mail.outbox), 1)
@@ -2474,6 +2481,224 @@ class TeamsSetTest(TestCase):
             response_data["non_field_errors"],
             ["Položka name, campaign_id musí tvořit unikátní množinu."],
         )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class RegistrationCoordinatorTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+    def test_registration_and_confirmation_email(self):
+        # Simulate registration request
+        registration_data = {
+            "email": "newuser@test.com",
+            "password1": "securepassword123",
+            "password2": "securepassword123",
+            "firstName": "Josef",
+            "lastName": "Novák",
+            "organizationId": 1,
+            "jobTitle": "zaměstnanec",
+            "email": "jn@seznam.cz",
+            "phone": "123584715",
+            "responsibility": False,
+            "newsletter": "challenge",
+            "terms": True,
+        }
+
+        response = self.client.post(reverse("register_coordinator"), registration_data)
+        self.assertEqual(response.status_code, 201)
+
+        user = User.objects.get(email=registration_data["email"])
+        self.assertFalse(has_verified_email(user, registration_data["email"]))
+
+        # !!!
+        for attempt in range(10):
+            if len(mail.outbox) == 2:
+                break
+            time.sleep(0.1)
+
+        # Verify that emails were sent
+        self.assertEqual(len(mail.outbox), 2)
+        sorted_outbox = sorted(mail.outbox, key=lambda x: x.subject)
+
+        # Validate contents
+        coordinator_email = sorted_outbox[0]
+        self.assertEqual(coordinator_email.recipients(), [registration_data["email"]])
+        self.assertIn(
+            "[Do práce na kole 2019] Jste firemní koordinátor",
+            coordinator_email.subject,
+        )
+
+        confirmation_email = sorted_outbox[1]
+        self.assertEqual(confirmation_email.recipients(), [registration_data["email"]])
+        self.assertIn(
+            "[testserver] Potvrďte prosím svou e-mailovou adresu",
+            confirmation_email.subject,
+        )
+        self.assertRegex(
+            confirmation_email.body,
+            "^Hello from testserver!\n\nYou're receiving this e-mail because user jn@4 has given your e-mail address to register an account on testserver.\n\nTo confirm this is correct, go to http://testing-campaign.testserver/rest/auth/registration/account-confirm-email/([A-Za-z0-9:_-]+)/\n\nDěkujeme, že používáte testserver!\ntestserver$",
+        )
+
+        # Extract confirmation link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", confirmation_email.body)
+        self.assertIsNotNone(match, "No confirmation link found in email")
+        confirmation_link = match.group(1)
+
+        # Simulate clicking the confirmation link
+        response = self.client.post(confirmation_link)
+        self.assertEqual(response.status_code, 302)
+
+        user = User.objects.get(email=registration_data["email"])
+        self.assertTrue(has_verified_email(user, registration_data["email"]))
+
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.first_name(), "Josef")
+        self.assertEqual(user_profile.last_name(), "Novák")
+        self.assertEqual(user_profile.telephone, "123584715")
+        self.assertEqual(user_profile.newsletter, "challenge")
+
+        company_admin = CompanyAdmin.objects.get(userprofile=user_profile)
+        self.assertEqual(company_admin.administrated_company.id, 1)
+        self.assertEqual(company_admin.motivation_company_admin, "zaměstnanec")
+        self.assertEqual(company_admin.will_pay_opt_in, False)
+
+        user_attendance = UserAttendance.objects.get(userprofile=user_profile)
+        self.assertEqual(user_attendance.personal_data_opt_in, True)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class MyUserProfileTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+    def test_get(self):
+
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        profile = reverse("myprofile-list")
+        response = self.client.get(profile)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "email": "a@seznam.cz",
+                        "merchId": None,
+                        "personalDetails": {
+                            "firstName": "test",
+                            "gender": "male",
+                            "lastName": "test",
+                            "newsletter": None,
+                            "nickname": "test",
+                            "terms": True,
+                        },
+                        "teamId": 1,
+                    }
+                ],
+            },
+        )
+
+    def _register_user(self, email):
+        registration_data = {
+            "email": email,
+            "password1": "securepassword123",
+            "password2": "securepassword123",
+        }
+
+        response = self.client.post(reverse("basic_register"), registration_data)
+        self.assertEqual(response.status_code, 201)
+
+        # !!!
+        for attempt in range(10):
+            if len(mail.outbox) == 1:
+                break
+            time.sleep(0.1)
+
+        # Verify that an email was sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        confirmation_email = mail.outbox[0]
+        # Extract confirmation link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", confirmation_email.body)
+        self.assertIsNotNone(match, "No confirmation link found in email")
+        confirmation_link = match.group(1)
+
+        # Simulate clicking the confirmation link
+        response = self.client.post(confirmation_link)
+        self.assertEqual(response.status_code, 302)
+
+    def test_my_profile(self):
+        self._register_user("a@c.cz")
+        post_data = {
+            "email": "a@c.cz",
+            "personalDetails": {
+                "firstName": "Petr",
+                "lastName": "Novák",
+                "nickname": "prezdivka",
+                "newsletter": "challenge",
+                "terms": False,
+            },
+            "teamId": 1,
+        }
+        response = self.client.post(
+            "/rest/my_profile/", post_data, format="json", follow=True
+        )
+        self.assertEqual(response.status_code, 201)
+
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "email": "a@c.cz",
+                "merchId": None,
+                "personalDetails": {
+                    "firstName": "Petr",
+                    "gender": None,
+                    "lastName": "Novák",
+                    "newsletter": "challenge",
+                    "nickname": "prezdivka",
+                    "terms": False,
+                },
+                "teamId": 1,
+            },
+        )
+
+        user = User.objects.get(email=post_data["email"])
+        self.assertEqual(user.first_name, "Petr")
+        self.assertEqual(user.last_name, "Novák")
+
+        user_profile = UserProfile.objects.get(user=user)
+        user_attendance = UserAttendance.objects.get(userprofile=user_profile)
+        self.assertEqual(user_profile.nickname, "prezdivka")
+        self.assertEqual(user_profile.newsletter, "challenge")
+
+        self.assertEqual(user_attendance.personal_data_opt_in, False)
+        self.assertEqual(user_attendance.team_id, 1)
 
 
 # @override_settings(
