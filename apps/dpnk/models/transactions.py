@@ -245,6 +245,13 @@ class Payment(Transaction):
         "t",
     ]
 
+    PAYMENT_SUBJECT = [
+        ("individual", _("Jednotlivec")),
+        ("voucher", _("Slevový kupón")),
+        ("company", _("Organizace")),
+        ("school", _("Škola")),
+    ]
+
     class Meta:
         verbose_name = _("Platební transakce")
         verbose_name_plural = _("Platební transakce")
@@ -294,7 +301,13 @@ class Payment(Transaction):
         on_delete=models.SET_NULL,
         related_name=("payment_set"),
     )
-
+    pay_subject = models.CharField(
+        verbose_name=_("Platobní subjekt"),
+        choices=PAYMENT_SUBJECT,
+        max_length=20,
+        null=True,
+        blank=True,
+    )
     # TODO: This is a hack which allows making denorms dependend only on Payment and not on any other type of transaction.
     # Better would be to add some kind of conditions to denorms
     @denormalized(
