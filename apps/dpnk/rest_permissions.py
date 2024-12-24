@@ -13,7 +13,7 @@ class IsOwner(permissions.BasePermission):
         ):
             return True
 
-        if view.action in ("retrieve", "list", "partial_update", "update"):
+        if view.action in ("retrieve", "list", "partial_update", "update", "destroy"):
             return obj.user == request.user
 
         return True

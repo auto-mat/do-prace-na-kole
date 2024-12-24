@@ -2513,14 +2513,12 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             headers=headers,
         )
 
-    def update(self, request, *args, **kwargs):
-        userprofile = get_object_or_404(
-            UserProfile.objects.all(), pk=self.kwargs.get("pk")
-        )
+    def update(self, request, pk=None):
+        userprofile = get_object_or_404(UserProfile.objects.all(), pk=pk)
         self.check_object_permissions(request, userprofile)
         request_data = request.data.copy()
         serializer = self.get_serializer(
-            UserProfile.objects.get(id=kwargs["pk"]),
+            UserProfile.objects.get(id=pk),
             data=request_data,
         )
         serializer.is_valid(raise_exception=True)
@@ -2531,6 +2529,14 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers,
         )
+
+    def destroy(self, request, pk=None):
+        userprofile = get_object_or_404(
+            UserProfile.objects.all(),
+            pk=pk,
+        )
+        self.check_object_permissions(request, userprofile)
+        return super().destroy(request, pk)
 
     def get_serializer_class(self):
         if self.action == "retrieve":
