@@ -2465,7 +2465,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     def validate_discount_coupon(self, discount_coupon):
         if not DiscountCoupon.objects.filter(token=discount_coupon.split("-")[-1]):
             raise serializers.ValidationError(
-                _("Discount coupon <%(coupon)s> does not exists.")
+                _("Slevový kupón <%(coupon)s> neexistuje.")
                 % {"coupon": discount_coupon},
             )
         return discount_coupon

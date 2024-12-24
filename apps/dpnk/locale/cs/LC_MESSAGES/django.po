@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-24 17:00+0100\n"
+"POT-Creation-Date: 2024-12-24 20:20+0100\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -2959,7 +2959,7 @@ msgstr ""
 
 #: dpnk/rest.py:2468
 #, python-format
-msgid "Discount coupon <%(coupon)s> does not exists."
+msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
 #: dpnk/tasks.py:225
