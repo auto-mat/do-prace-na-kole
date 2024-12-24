@@ -1947,7 +1947,7 @@ class EmptyIntField(serpy.Field):
 
 class UserAttendanceSerializer(serpy.Serializer):
     personal_data_opt_in = serpy.BoolField()
-    discount_coupon = EmptyStrField
+    discount_coupon = EmptyStrField()
     payment_subject = EmptyStrField(call=True)
     payment_type = EmptyStrField(call=True)
     payment_status = EmptyStrField()
