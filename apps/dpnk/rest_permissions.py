@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
 
-class IsOwner(permissions.BasePermission):
+class IsOwnerOrSuperuser(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit it.
     """
@@ -14,6 +14,6 @@ class IsOwner(permissions.BasePermission):
             return True
 
         if view.action in ("retrieve", "list", "partial_update", "update", "destroy"):
-            return obj.user == request.user
+            return obj.user == request.user or request.user.is_superuser
 
         return True

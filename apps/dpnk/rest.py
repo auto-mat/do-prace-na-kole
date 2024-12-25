@@ -84,7 +84,7 @@ from t_shirt_delivery.models import TShirtSize
 from coupons.models import DiscountCoupon
 from .util import attrgetter_def_val, get_all_logged_in_users, today
 from .payu import PayU
-from .rest_permissions import IsOwner
+from .rest_permissions import IsOwnerOrSuperuser
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -2546,7 +2546,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         else:
             return RegisterChallengeDeserializer
 
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrSuperuser]
 
 
 router = routers.DefaultRouter()
