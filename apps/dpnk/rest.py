@@ -2571,6 +2571,25 @@ class IsUserOrganizationAdmin(APIView):
         )
 
 
+class HasOrganizationAdmin(APIView):
+    """Has organization admin"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, organization_id):
+
+        return Response(
+            {
+                "has_organization_admin": True
+                if Company.objects.filter(
+                    id=organization_id,
+                    company_admin__isnull=False,
+                )
+                else False
+            }
+        )
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
