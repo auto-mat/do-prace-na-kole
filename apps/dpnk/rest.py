@@ -26,7 +26,9 @@ from enum import Enum
 # import denorm
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -65,6 +67,7 @@ from .models import (
     Competition,
     CompetitionResult,
     LandingPageIcon,
+    Occupation,
     Payment,
     PAYMENT_STATUSES,
     Phase,
@@ -79,9 +82,9 @@ from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 from t_shirt_delivery.models import TShirtSize
 from coupons.models import DiscountCoupon
-from .util import today, get_all_logged_in_users
-from .util import get_all_logged_in_users
+from .util import attrgetter_def_val, get_all_logged_in_users, today
 from .payu import PayU
+from .rest_permissions import IsOwnerOrSuperuser
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -1924,6 +1927,628 @@ class PayUPaymentNotifyPost(APIView):
                 )
 
 
+class EmptyStrField(serpy.Field):
+    """Replace None value with empty string '' value"""
+
+    def to_value(self, value):
+        if value is None:
+            return ""
+        return str(value)
+
+
+class EmptyIntField(serpy.Field):
+    """Replace None value with empty string '' value"""
+
+    def to_value(self, value):
+        if value is None:
+            return ""
+        return int(value)
+
+
+class UserAttendanceSerializer(serpy.Serializer):
+    personal_data_opt_in = serpy.BoolField()
+    discount_coupon = EmptyStrField()
+    payment_subject = EmptyStrField(call=True)
+    payment_type = EmptyStrField(call=True)
+    payment_status = EmptyStrField()
+    payment_amount = EmptyIntField(call=True)
+
+
+class PersonalDetailsUserSerializer(serpy.Serializer):
+    first_name = EmptyStrField()
+    last_name = EmptyStrField()
+
+
+class PersonalDetailsUserProfileSerializer(serpy.Serializer):
+    nickname = EmptyStrField()
+    sex = EmptyStrField()
+    telephone = EmptyStrField()
+    telephone_opt_in = serpy.BoolField()
+    language = EmptyStrField()
+    occupation = EmptyStrField()
+    age_group = EmptyStrField()
+    newsletter = EmptyStrField()
+
+
+class RegisterChallengeSerializer(serpy.Serializer):
+    personal_details = RequestSpecificField(
+        lambda userprofile, req: PersonalDetailsUserSerializer(userprofile.user).data
+        | PersonalDetailsUserProfileSerializer(userprofile).data
+        | UserAttendanceSerializer(
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain)
+        ).data
+    )
+    team_id = RequestSpecificField(
+        lambda userprofile, req: userprofile.userattendance_set.get(
+            campaign__slug=req.subdomain
+        ).team_id
+    )
+    organization_id = RequestSpecificField(
+        lambda userprofile, req: attrgetter_def_val(
+            "team.subsidiary.company_id",
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+        )
+    )
+    subsidiary_id = RequestSpecificField(
+        lambda userprofile, req: attrgetter_def_val(
+            "team.subsidiary_id",
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+        )
+    )
+    t_shirt_size_id = RequestSpecificField(
+        lambda userprofile, req: userprofile.userattendance_set.get(
+            campaign__slug=req.subdomain
+        ).t_shirt_size_id
+    )
+
+
+class RegisterChallengeDeserializer(serializers.ModelSerializer):
+    PAYMENT_SUBJECT = Payment.PAYMENT_SUBJECT[2:]
+
+    first_name = serializers.CharField(
+        required=False,
+    )
+    last_name = serializers.CharField(
+        required=False,
+    )
+    nickname = serializers.CharField(
+        required=False,
+    )
+    sex = serializers.ChoiceField(
+        choices=UserProfile.GENDER,
+        required=False,
+    )
+    telephone = serializers.CharField(
+        required=False,
+    )
+    telephone_opt_in = serializers.BooleanField(
+        required=False,
+    )
+    language = serializers.ChoiceField(
+        choices=UserProfile.LANGUAGE,
+        required=False,
+    )
+    occupation_id = serializers.ChoiceField(
+        choices=[],
+        required=False,
+    )
+    age_group = serializers.ChoiceField(
+        choices=UserProfile.AGE_GROUP,
+        required=False,
+    )
+    newsletter = serializers.ChoiceField(
+        choices=UserProfile.NEWSLETTER,
+        required=False,
+    )
+    personal_data_opt_in = serializers.BooleanField(
+        required=False,
+    )
+    discount_coupon = serializers.CharField(
+        required=False,
+    )
+    payment_subject = serializers.ChoiceField(
+        choices=PAYMENT_SUBJECT,
+        required=False,
+    )
+    payment_amount = serializers.IntegerField(
+        required=False,
+    )
+    payment_type = serializers.SerializerMethodField()
+    payment_status = serializers.SerializerMethodField()
+    team_id = serializers.ChoiceField(
+        choices=[],
+        required=False,
+    )
+    organization_id = serializers.ChoiceField(
+        choices=[],
+        required=False,
+    )
+    subsidiary_id = serializers.ChoiceField(
+        choices=[],
+        required=False,
+    )
+    t_shirt_size_id = serializers.ChoiceField(
+        choices=[],
+        required=False,
+    )
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            "first_name",
+            "last_name",
+            "nickname",
+            "sex",
+            "telephone",
+            "telephone_opt_in",
+            "language",
+            "occupation_id",
+            "age_group",
+            "newsletter",
+            "personal_data_opt_in",
+            "discount_coupon",
+            "payment_subject",
+            "payment_amount",
+            "payment_status",
+            "payment_type",
+            "team_id",
+            "organization_id",
+            "subsidiary_id",
+            "t_shirt_size_id",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Dynamically set the choices for the fields
+        self.fields["occupation_id"].choices = Occupation.objects.all().values_list(
+            "id", "name"
+        )
+        self.fields["team_id"].choices = Team.objects.all().values_list("id", "name")
+        self.fields["organization_id"].choices = Company.objects.filter(
+            active=True
+        ).values_list("id", "name")
+        self.fields["organization_id"].choices = Company.objects.filter(
+            active=True
+        ).values_list("id", "name")
+        self.fields["subsidiary_id"].choices = [
+            (s.id, s.name()) for s in Subsidiary.objects.filter(company__active=True)
+        ]
+        self.fields["t_shirt_size_id"].choices = TShirtSize.objects.filter(
+            campaign__slug=kwargs["context"]["request"].subdomain,
+            available=True,
+            ship=True,
+        ).values_list("id", "name")
+
+    def _update_model(self, validated_data, instance=None):
+        """Update UserProfile model
+
+        :param dict validated_data: input validated data
+        :param UserProfile instance: UserProfile model instance with default None value
+
+        :return None
+        """
+        none = None
+        personal_data_opt_in = validated_data.pop("personal_data_opt_in", none)
+        discount_coupon = validated_data.pop("discount_coupon", none)
+        payment_subject = validated_data.pop("payment_subject", none)
+        payment_amount = validated_data.pop("payment_amount", none)
+
+        team_id = validated_data.pop("team_id", none)
+        organization_id = validated_data.pop("organization_id", none)
+        subsidiary_id = validated_data.pop("subsidiary_id", none)
+        t_shirt_size_id = validated_data.pop("t_shirt_size_id", none)
+
+        self._get_or_create_user_attendance_model(instance)
+        user, user_data = self._update_user_model(validated_data)
+        user_profile, user_profile_fields = self._update_user_profile_model(
+            validated_data
+        )
+        (
+            user_attendance_update_fields,
+            subsidiary_id,
+            organization_id,
+        ) = self._update_user_attendance_model(
+            personal_data_opt_in,
+            team_id,
+            organization_id,
+            subsidiary_id,
+            t_shirt_size_id,
+            discount_coupon,
+        )
+        payment_update_fields = self._create_organization_coordinator_payment_model(
+            payment_subject,
+            payment_amount,
+        )
+
+        self._save_user_attendance_model(user_attendance_update_fields)
+
+        result = {}
+        if subsidiary_id:
+            user_attendance_update_fields[
+                "subsidiary_id"
+            ] = self.user_attendance.team.subsidiary_id
+
+        if organization_id:
+            user_attendance_update_fields[
+                "organization_id"
+            ] = self.user_attendance.team.subsidiary.company_id
+
+        # Del unnecessary discount_coupon_used field
+        discount_coupon_used_field = "discount_coupon_used"
+        if discount_coupon_used_field in user_attendance_update_fields.keys():
+            del user_attendance_update_fields[discount_coupon_used_field]
+
+        if user_data.keys():
+            result.update(user.values(*user_data.keys())[0])
+        if user_attendance_update_fields:
+            result.update(user_attendance_update_fields)
+        if user_profile_fields:
+            result.update(user_profile.values(*user_profile_fields)[0])
+        if payment_update_fields.keys():
+            result.update(payment_update_fields)
+
+        return result
+
+    def _get_or_create_user_attendance_model(self, instance):
+        """Get or create UserAttendance model
+
+        :param instance: UserProfile model instance
+
+        :return None
+        """
+        request = self.context["request"]
+        if instance:
+            self.user_attendance = instance.userattendance_set.get(
+                campaign__slug=request.subdomain
+            )
+        else:
+            self.user_attendance = request.user_attendance
+            if not self.user_attendance:
+                self.user_attendance = get_or_create_userattendance(
+                    request, request.subdomain
+                )
+
+    def _update_user_model(self, validated_data, none=None):
+        """Update User model
+
+        :param dict validated_data: input validated data
+        :param none none: None value
+
+        :return User user: User model instance
+               dict user_data: user data required for updating User model
+        """
+        # Update User model
+        user_model_class = get_user_model()
+        user_data = {
+            "first_name": validated_data.pop("first_name", none),
+            "last_name": validated_data.pop("last_name", none),
+        }
+        user_data = {key: val for key, val in user_data.items() if val is not None}
+        user = user_model_class.objects.filter(
+            id=self.user_attendance.userprofile.user.id
+        )
+        user.update(**user_data)
+        return user, user_data
+
+    def _update_user_profile_model(self, validated_data):
+        """Update UserProfile model
+
+        :param dict validated_data: input validated data
+
+        :return UserProfile user_profile: UserProfile model instance
+               list user_profile_fields: UserProfile update fields list
+        """
+        # Update UserProfile model
+        user_profile = UserProfile.objects.filter(
+            id=self.user_attendance.userprofile.id
+        )
+        user_profile_fields = validated_data.keys()
+        user_profile.update(**validated_data)
+        return user_profile, user_profile_fields
+
+    def _update_user_attendance_model(
+        self,
+        personal_data_opt_in,
+        team_id,
+        organization_id,
+        subsidiary_id,
+        t_shirt_size_id,
+        discount_coupon,
+    ):
+        """
+        Update UserAttendance model
+
+        :param boolean|none personal_data_opt_in: UserAttendance model personal_data_opt_in
+                                                  field value
+        :param int|none team_id: UserAttendance model team_id field value
+        :param int|none organization_id: UserAttendance model team.subsidiary.organization_id field value
+        :param int|none subsidiary_id: UserAttendance model team.subsidiary_id field value
+        :param int|none t_shirt_size_id: UserAttendance model t_shirt_size_id field value
+        :param str|none discount_coupon: UserAttendance model discount_coupon field value
+
+        :return dict user_attendance_update_fields: UserAttendance model updated fields
+                                                    with value
+                str|none subsidiary_id: UserAttendance model team.subsidiary_id field value
+                str|none organization_id: UserAttendance model team.subsidiary.organization_id field value
+        """
+        # Update UserAttendance model
+        user_attendance_update_fields = {}
+        if personal_data_opt_in:
+            self.user_attendance.personal_data_opt_in = personal_data_opt_in
+            user_attendance_update_fields[
+                "personal_data_opt_in"
+            ] = self.user_attendance.personal_data_opt_in
+
+        if team_id:
+            self.user_attendance.team_id = team_id
+            user_attendance_update_fields["team_id"] = self.user_attendance.team_id
+
+        if subsidiary_id:
+            if not attrgetter_def_val("team.subsidiary_id", self.user_attendance):
+                # If team_id field value is None is not possible update team.subsidary field
+                if team_id:
+                    self.user_attendance.save(update_fields=["team_id"])
+                    self.user_attendance.refresh_from_db()
+                else:
+                    subsidiary_id = None
+            if subsidiary_id:
+                self.user_attendance.team.subsidiary_id = subsidiary_id
+                user_attendance_update_fields[
+                    "subsidiary_id"
+                ] = self.user_attendance.team.subsidiary_id
+
+        if organization_id:
+            if not attrgetter_def_val(
+                "team.subsidiary.company_id", self.user_attendance
+            ):
+                # If subsiriary_id field value is None is not possible update team.subsidiary.company field
+                if subsidiary_id:
+                    self.user_attendance.team.save(update_fields=["subsidiary_id"])
+                    self.user_attendance.refresh_from_db()
+                else:
+                    organization_id = None
+            if organization_id:
+                self.user_attendance.team.subsidiary.company_id = organization_id
+                user_attendance_update_fields[
+                    "company_id"
+                ] = self.user_attendance.team.subsidiary.company_id
+
+        if t_shirt_size_id:
+            self.user_attendance.t_shirt_size_id = t_shirt_size_id
+            user_attendance_update_fields[
+                "t_shirt_size_id"
+            ] = self.user_attendance.t_shirt_size_id
+
+        if discount_coupon:
+            self.user_attendance.discount_coupon = DiscountCoupon.objects.get(
+                token=discount_coupon.split("-")[-1]
+            )
+            user_attendance_update_fields[
+                "discount_coupon"
+            ] = self.user_attendance.discount_coupon
+            self.user_attendance.discount_coupon_used = timezone.now()
+            user_attendance_update_fields[
+                "discount_coupon_used"
+            ] = self.user_attendance.discount_coupon_used
+        return user_attendance_update_fields, subsidiary_id, organization_id
+
+    def _create_organization_coordinator_payment_model(
+        self,
+        payment_subject,
+        payment_amount,
+    ):
+        """
+        Create Payment model if payment subject is Company or School
+
+        1. Individual payment subject create Payment model by PayU REST
+           API URL endpoint
+        2. Voucher payment subject create Payment model in the case when
+           additional payment amount was choosed, created by PayU REST
+           API URL endpoint
+        3. School/Company payment subject create Payment model
+
+        :param int|none payment_subject: Payment model payment subject field value
+                                         see PAYMENT_SUBJECT const
+        :param int|none payment_amount: Payment model payment amount field value
+
+        :return dict payment_update_fields: Payment model update fields dict
+        """
+
+        payment_update_fields = {}
+        # Create Payment model for Company/School organization type
+        if (
+            payment_subject
+            and payment_subject in ("school", "company")
+            and payment_amount
+        ):
+            # Create Payment model only for Company/School coordinator (fc)
+            Payment(
+                user_attendance=self.user_attendance,
+                amount=payment_amount,
+                pay_type="fc",  # "fc" is company coordinator
+                pay_subject=payment_subject,
+                status=Status.NEW,
+            ).save()
+            payment_update_fields = {
+                "payment_subject": payment_subject,
+                "payment_amount": payment_amount,
+            }
+        return payment_update_fields
+
+    def _save_user_attendance_model(self, user_attendance_update_fields):
+        update_fields = user_attendance_update_fields.keys()
+        if update_fields:
+            company_id_field_name = "company_id"
+            subsidiary_id_field_name = "subsidiary_id"
+            if (
+                company_id_field_name in update_fields
+                and user_attendance_update_fields[company_id_field_name]
+            ):
+                self.user_attendance.team.subsidiary.save(
+                    update_fields=[company_id_field_name],
+                )
+                del user_attendance_update_fields[company_id_field_name]
+            if (
+                subsidiary_id_field_name in update_fields
+                and user_attendance_update_fields[subsidiary_id_field_name]
+            ):
+                self.user_attendance.team.save(
+                    update_fields=[subsidiary_id_field_name],
+                )
+                del user_attendance_update_fields[subsidiary_id_field_name]
+
+            self.user_attendance.save(
+                update_fields=update_fields,
+            )
+            self.user_attendance.refresh_from_db()
+
+    def update(self, instance, validated_data):
+        return self._update_model(validated_data, instance=instance)
+
+    def create(self, validated_data):
+        return self._update_model(validated_data=validated_data)
+
+    def to_internal_value(self, data):
+        if data.get("personal_details"):
+            personal_details_data = data.pop("personal_details")
+            data["first_name"]: personal_details_data.pop("first_name")
+            data["last_name"]: personal_details_data.pop("last_name")
+            data["nickname"]: personal_details_data.pop("nickname")
+            data["sex"]: personal_details_data.pop("sex")
+            data["telephone"]: personal_details_data.pop("telephone")
+            data["telephone_opt_in"]: personal_details_data.pop("telephone_opt_in")
+            data["language"]: personal_details_data.pop("language")
+            data["occupation_id"]: personal_details_data.pop("occupation_id")
+            data["age_group"]: personal_details_data.pop("age_group")
+            data["newsletter"]: personal_details_data.pop("newsletter")
+            data["personal_data_opt_in"]: personal_details_data.pop(
+                "personal_data_opt_in"
+            )
+            data["discount_coupon"]: personal_details_data.pop("discount_coupon")
+            data["payment_subject"]: personal_details_data.pop("payment_subject")
+            data["payment_amount"]: personal_details_data.pop("payment_amount")
+            data["payment_status"]: personal_details_data.pop("payment_status")
+            data["payment_type"]: personal_details_data.pop("payment_type")
+
+        return super().to_internal_value(data)
+
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        personal_details_fields = (
+            "first_name",
+            "last_name",
+            "nickname",
+            "sex",
+            "telephone",
+            "telephone_opt_in",
+            "language",
+            "occupation_id",
+            "age_group",
+            "newsletter",
+            "personal_data_opt_in",
+            "discount_coupon",
+            "payment_subject",
+            "payment_amount",
+            "payment_status",
+            "payment_type",
+        )
+        data["personal_details"] = {}
+        for field in personal_details_fields:
+            if field in data:
+                data["personal_details"][field] = data.pop(field)
+        # Reorder dict keys (personal_details key as first key)
+        pos = list(data.keys()).index("personal_details")
+        items = list(data.items())
+        items.insert(0, items.pop(pos))
+        return dict(items)
+
+    def validate_discount_coupon(self, discount_coupon):
+        if not DiscountCoupon.objects.filter(token=discount_coupon.split("-")[-1]):
+            raise serializers.ValidationError(
+                _("Slevový kupón <%(coupon)s> neexistuje.")
+                % {"coupon": discount_coupon},
+            )
+        return discount_coupon
+
+    def get_payment_status(self, obj):
+        obj = self.user_attendance.userprofile if self.user_attendance else obj
+        payment_status = obj.userattendance_set.get(
+            campaign__slug=self.context["request"].subdomain
+        ).payment_status
+        return "" if not payment_status else payment_status
+
+    def get_payment_type(self, obj):
+        obj = self.user_attendance.userprofile if self.user_attendance else obj
+        payment_type = obj.userattendance_set.get(
+            campaign__slug=self.context["request"].subdomain
+        ).payment_type()
+        return "" if not payment_type else payment_type
+
+
+class RegisterChallengeSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        if pk:
+            return UserProfile.objects.filter(pk=pk)
+        ua = self.request.user_attendance
+        return [ua.userprofile] if ua else []
+
+    def retrieve(self, request, pk=None):
+        userprofile = get_object_or_404(
+            UserProfile.objects.all(),
+            pk=pk,
+        )
+        self.check_object_permissions(request, userprofile)
+        return super().retrieve(request, pk)
+
+    def create(self, request, *args, **kwargs):
+        request_data = request.data.copy()
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
+    def update(self, request, pk=None):
+        userprofile = get_object_or_404(UserProfile.objects.all(), pk=pk)
+        self.check_object_permissions(request, userprofile)
+        request_data = request.data.copy()
+        serializer = self.get_serializer(
+            UserProfile.objects.get(id=pk),
+            data=request_data,
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+            headers=headers,
+        )
+
+    def destroy(self, request, pk=None):
+        userprofile = get_object_or_404(
+            UserProfile.objects.all(),
+            pk=pk,
+        )
+        self.check_object_permissions(request, userprofile)
+        return super().destroy(request, pk)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return RegisterChallengeSerializer
+        if self.action == "list":
+            return RegisterChallengeSerializer
+        else:
+            return RegisterChallengeDeserializer
+
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrSuperuser]
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -1982,4 +2607,9 @@ router.register(
     "discount-coupon/(?P<code>[\w\-]+)",
     DiscountCouponSet,
     basename="discount-coupon-by-code",
+)
+router.register(
+    "register-challenge",
+    RegisterChallengeSet,
+    basename="register-challenge",
 )

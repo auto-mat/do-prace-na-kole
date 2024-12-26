@@ -20,6 +20,7 @@
 
 import datetime
 import logging
+from operator import attrgetter
 from itertools import tee
 
 import denorm
@@ -238,3 +239,10 @@ def get_all_logged_in_users():
 
     # Query all logged in users based on id list
     return User.objects.filter(id__in=uid_list)
+
+
+def attrgetter_def_val(attrs, instance, def_val=None):
+    try:
+        return attrgetter(attrs)(instance)
+    except AttributeError:
+        return def_val

@@ -69,7 +69,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         ("events-mobility", _("Události a mobilita")),
         ("challenge-events-mobility", _("Výzva, události a mobilita")),
     ]
-
+    AGE_GROUP = [(i, i) for i in range(util.today().year, util.today().year - 100, -1)]
     user = models.OneToOneField(
         User,
         related_name="userprofile",
@@ -179,7 +179,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         verbose_name=_("Ročník narození"),
         null=True,
         blank=True,
-        choices=[(i, i) for i in range(util.today().year, util.today().year - 100, -1)],
+        choices=AGE_GROUP,
     )
     ecc_email = models.CharField(
         verbose_name=_("E-mail v ECC"),

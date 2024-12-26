@@ -324,6 +324,33 @@ class UserAttendance(StaleSyncMixin, models.Model):
                 return Payment.PAY_TYPES_DICT[pay_type]
         return _("žádná platba")
 
+    def payment_type(self):
+        if self.representative_payment:
+            return self.representative_payment.pay_type
+
+    def payment_subject(self):
+        company = "company"
+        school = "school"
+        company_coordinator_pay_type = "fc"
+        if self.discount_coupon:
+            return "voucher"
+        if self.representative_payment:
+            if (
+                self.representative_payment.pay_type == company_coordinator_pay_type
+                and self.representative_payment.pay_subject == company
+            ):
+                return company
+            elif (
+                self.representative_payment.pay_type == company_coordinator_pay_type
+                and self.representative_payment.pay_subject == school
+            ):
+                return school
+            return "individual"
+
+    def payment_amount(self):
+        if self.representative_payment:
+            return self.representative_payment.amount
+
     def get_competitions(self, competition_types=None):
         from .. import results
 
