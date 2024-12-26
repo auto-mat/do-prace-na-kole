@@ -2564,6 +2564,7 @@ class IsUserOrganizationAdmin(APIView):
                     userprofile=request.user.userprofile,
                     company_admin_approved="approved",
                     campaign__slug=request.subdomain,
+                    administrated_company__isnull=False,
                 )
                 else False
             }
