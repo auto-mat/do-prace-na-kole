@@ -64,6 +64,7 @@ from .models import (
     CityInCampaign,
     CommuteMode,
     Company,
+    CompanyAdmin,
     Competition,
     CompetitionResult,
     LandingPageIcon,
@@ -2547,6 +2548,26 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             return RegisterChallengeDeserializer
 
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrSuperuser]
+
+
+class IsUserOrganizationAdmin(APIView):
+    """Is user organization admin"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+
+        return Response(
+            {
+                "is_user_organization_admin": True
+                if CompanyAdmin.objects.filter(
+                    userprofile=request.user.userprofile,
+                    company_admin_approved="approved",
+                    campaign__slug=request.subdomain,
+                )
+                else False
+            }
+        )
 
 
 router = routers.DefaultRouter()

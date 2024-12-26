@@ -30,7 +30,13 @@ from .autocomplete_views import (
     SubsidiaryAutocomplete,
     TeamAutocomplete,
 )
-from .rest import router, PayUCreateOrderPost, PayUPaymentNotifyPost
+from .rest import (
+    HasUserVerifiedEmailAddress,
+    IsUserOrganizationAdmin,
+    PayUCreateOrderPost,
+    PayUPaymentNotifyPost,
+    router,
+)
 from .views import (
     answers,
     questionnaire_answers,
@@ -44,8 +50,6 @@ from django.urls import path, re_path
 
 from apps.dpnk.rest_registration import CustomRegisterView
 from allauth.account.views import confirm_email
-
-from .rest import HasUserVerifiedEmailAddress
 
 
 urlpatterns = [
@@ -425,6 +429,11 @@ urlpatterns = [
         "rest/payu-notify-order-status/",
         PayUPaymentNotifyPost.as_view(),
         name="payu-notify-order-status",
+    ),
+    path(
+        "rest/is-user-organization-admin/",
+        IsUserOrganizationAdmin.as_view(),
+        name="is-user-organization-admin",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
