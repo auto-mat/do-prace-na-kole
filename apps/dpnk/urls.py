@@ -31,6 +31,7 @@ from .autocomplete_views import (
     TeamAutocomplete,
 )
 from .rest import (
+    HasOrganizationAdmin,
     HasUserVerifiedEmailAddress,
     IsUserOrganizationAdmin,
     PayUCreateOrderPost,
@@ -434,6 +435,11 @@ urlpatterns = [
         "rest/is-user-organization-admin/",
         IsUserOrganizationAdmin.as_view(),
         name="is-user-organization-admin",
+    ),
+    path(
+        "rest/has-organization-admin/<int:organization_id>/",
+        HasOrganizationAdmin.as_view(),
+        name="has-organization-admin",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
