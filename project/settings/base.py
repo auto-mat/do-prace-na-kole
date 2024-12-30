@@ -523,6 +523,8 @@ PAYU_POS_AUTH_KEY = os.environ.get("DPNK_PAYU_POS_AUTH_KEY", "")
 PAYU_POS_ID = os.environ.get("DPNK_PAYU_POS_ID", "")
 
 ACCOUNT_ACTIVATION_DAYS = 5
+ACCOUNT_EMAIL_CONFIRMATION_URL = "https://rtwbb-test.dopracenakole.net/#/confirm-email"
+ACCOUNT_ADAPTER = "dpnk.allauth.AccountAdapter"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

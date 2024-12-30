@@ -90,8 +90,8 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ORIGIN_REGEX += [
-    r"^(https?://)?(\w+\.)?localhost$",
-    r"^(https?://)?(\w+\.)?lvh.me$",
+    r"^(https?://)?(\w+\.)?localhost(:\d+)?$",
+    r"^(https?://)?(\w+\.)?lvh\.me(:\d+)?$",
 ]
 
 MIDDLEWARE += [
