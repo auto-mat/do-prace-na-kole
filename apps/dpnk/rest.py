@@ -2001,6 +2001,12 @@ class RegisterChallengeSerializer(serpy.Serializer):
             campaign__slug=req.subdomain
         ).t_shirt_size_id
     )
+    organization_type = RequestSpecificField(
+        lambda userprofile, req: attrgetter_def_val(
+            "team.subsidiary.company.organization_type",
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+        )
+    )
 
 
 class RegisterChallengeDeserializer(serializers.ModelSerializer):
@@ -2072,6 +2078,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         choices=[],
         required=False,
     )
+    organization_type = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
@@ -2096,6 +2103,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "organization_id",
             "subsidiary_id",
             "t_shirt_size_id",
+            "organization_type",
         )
 
     def __init__(self, *args, **kwargs):
@@ -2484,6 +2492,22 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             campaign__slug=self.context["request"].subdomain
         ).payment_type()
         return "" if not payment_type else payment_type
+
+    def get_organization_type(self, obj):
+        empty_str = ""
+        obj = self.user_attendance.userprofile if self.user_attendance else obj
+        ua = obj.userattendance_set.filter(
+            campaign__slug=self.context["request"].subdomain
+        ).select_related("team__subsidiary__company")
+        return (
+            empty_str
+            if not ua
+            else attrgetter_def_val(
+                attrs="team.subsidiary.company.organization_type",
+                instance=ua[0],
+                def_val=empty_str,
+            )
+        )
 
 
 class RegisterChallengeSet(viewsets.ModelViewSet):
