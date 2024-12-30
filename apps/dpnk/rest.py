@@ -54,6 +54,7 @@ from rest_framework import mixins, permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from price_level import models as price_level_models
 
 from .middleware import get_or_create_userattendance
 from .models import (
@@ -1221,8 +1222,24 @@ class PhaseSerializer(serpy.Serializer):
     date_to = serpy.DateField(required=False)
 
 
+class PriceLevelSerializer(serpy.Serializer):
+    name = serpy.StrField()
+    price = serpy.FloatField()
+    category = serpy.StrField()
+    takes_effect_on = serpy.DateField()
+
+
 class CampaignSerializer(serpy.Serializer):
     phase_set = PhaseSerializer(many=True)
+    price_level = RequestSpecificField(
+        lambda campaign, req: [
+            PriceLevelSerializer(price_level).data
+            for price_level in price_level_models.PriceLevel.objects.filter(
+                pricable=req.campaign
+            ).only("name", "price", "category", "takes_effect_on")
+        ]
+    )
+
     id = serpy.IntField()
     slug = serpy.StrField()
     days_active = serpy.IntField()
