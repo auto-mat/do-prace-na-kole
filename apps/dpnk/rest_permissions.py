@@ -14,6 +14,10 @@ class IsOwnerOrSuperuser(permissions.BasePermission):
             return True
 
         if view.action in ("retrieve", "list", "partial_update", "update", "destroy"):
-            return obj.user == request.user or request.user.is_superuser
+            if isinstance(obj, dict):
+                user = obj["user_attendance"].userprofile.user
+            else:
+                user = obj.user
+            return user == request.user or request.user.is_superuser
 
         return True

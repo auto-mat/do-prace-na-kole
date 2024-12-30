@@ -1946,6 +1946,14 @@ class EmptyIntField(serpy.Field):
         return int(value)
 
 
+class RequestSpecificFieldEmptyStrVal(RequestSpecificField):
+    """Replace None value with empty string '' value"""
+
+    def to_value(self, value):
+        value = super().to_value(value)
+        return value if value else ""
+
+
 class UserAttendanceSerializer(serpy.Serializer):
     personal_data_opt_in = serpy.BoolField()
     discount_coupon = EmptyStrField()
@@ -2001,7 +2009,7 @@ class RegisterChallengeSerializer(serpy.Serializer):
             campaign__slug=req.subdomain
         ).t_shirt_size_id
     )
-    organization_type = RequestSpecificField(
+    organization_type = RequestSpecificFieldEmptyStrVal(
         lambda userprofile, req: attrgetter_def_val(
             "team.subsidiary.company.organization_type",
             userprofile.userattendance_set.get(campaign__slug=req.subdomain),
@@ -2066,14 +2074,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         choices=[],
         required=False,
     )
-    organization_id = serializers.ChoiceField(
-        choices=[],
-        required=False,
-    )
-    subsidiary_id = serializers.ChoiceField(
-        choices=[],
-        required=False,
-    )
+    organization_id = serializers.SerializerMethodField()
+    subsidiary_id = serializers.SerializerMethodField()
     t_shirt_size_id = serializers.ChoiceField(
         choices=[],
         required=False,
@@ -2108,20 +2110,12 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._empty_string = ""
         # Dynamically set the choices for the fields
         self.fields["occupation_id"].choices = Occupation.objects.all().values_list(
             "id", "name"
         )
         self.fields["team_id"].choices = Team.objects.all().values_list("id", "name")
-        self.fields["organization_id"].choices = Company.objects.filter(
-            active=True
-        ).values_list("id", "name")
-        self.fields["organization_id"].choices = Company.objects.filter(
-            active=True
-        ).values_list("id", "name")
-        self.fields["subsidiary_id"].choices = [
-            (s.id, s.name()) for s in Subsidiary.objects.filter(company__active=True)
-        ]
         self.fields["t_shirt_size_id"].choices = TShirtSize.objects.filter(
             campaign__slug=kwargs["context"]["request"].subdomain,
             available=True,
@@ -2143,8 +2137,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         payment_amount = validated_data.pop("payment_amount", none)
 
         team_id = validated_data.pop("team_id", none)
-        organization_id = validated_data.pop("organization_id", none)
-        subsidiary_id = validated_data.pop("subsidiary_id", none)
         t_shirt_size_id = validated_data.pop("t_shirt_size_id", none)
 
         self._get_or_create_user_attendance_model(instance)
@@ -2152,15 +2144,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         user_profile, user_profile_fields = self._update_user_profile_model(
             validated_data
         )
-        (
-            user_attendance_update_fields,
-            subsidiary_id,
-            organization_id,
-        ) = self._update_user_attendance_model(
+        user_attendance_update_fields = self._update_user_attendance_model(
             personal_data_opt_in,
             team_id,
-            organization_id,
-            subsidiary_id,
             t_shirt_size_id,
             discount_coupon,
         )
@@ -2171,16 +2157,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
         self._save_user_attendance_model(user_attendance_update_fields)
 
-        result = {}
-        if subsidiary_id:
-            user_attendance_update_fields[
-                "subsidiary_id"
-            ] = self.user_attendance.team.subsidiary_id
-
-        if organization_id:
-            user_attendance_update_fields[
-                "organization_id"
-            ] = self.user_attendance.team.subsidiary.company_id
+        result = {"user_attendance": self.user_attendance}
 
         # Del unnecessary discount_coupon_used field
         discount_coupon_used_field = "discount_coupon_used"
@@ -2259,8 +2236,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         self,
         personal_data_opt_in,
         team_id,
-        organization_id,
-        subsidiary_id,
         t_shirt_size_id,
         discount_coupon,
     ):
@@ -2270,15 +2245,11 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         :param boolean|none personal_data_opt_in: UserAttendance model personal_data_opt_in
                                                   field value
         :param int|none team_id: UserAttendance model team_id field value
-        :param int|none organization_id: UserAttendance model team.subsidiary.organization_id field value
-        :param int|none subsidiary_id: UserAttendance model team.subsidiary_id field value
         :param int|none t_shirt_size_id: UserAttendance model t_shirt_size_id field value
         :param str|none discount_coupon: UserAttendance model discount_coupon field value
 
         :return dict user_attendance_update_fields: UserAttendance model updated fields
                                                     with value
-                str|none subsidiary_id: UserAttendance model team.subsidiary_id field value
-                str|none organization_id: UserAttendance model team.subsidiary.organization_id field value
         """
         # Update UserAttendance model
         user_attendance_update_fields = {}
@@ -2291,36 +2262,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         if team_id:
             self.user_attendance.team_id = team_id
             user_attendance_update_fields["team_id"] = self.user_attendance.team_id
-
-        if subsidiary_id:
-            if not attrgetter_def_val("team.subsidiary_id", self.user_attendance):
-                # If team_id field value is None is not possible update team.subsidary field
-                if team_id:
-                    self.user_attendance.save(update_fields=["team_id"])
-                    self.user_attendance.refresh_from_db()
-                else:
-                    subsidiary_id = None
-            if subsidiary_id:
-                self.user_attendance.team.subsidiary_id = subsidiary_id
-                user_attendance_update_fields[
-                    "subsidiary_id"
-                ] = self.user_attendance.team.subsidiary_id
-
-        if organization_id:
-            if not attrgetter_def_val(
-                "team.subsidiary.company_id", self.user_attendance
-            ):
-                # If subsiriary_id field value is None is not possible update team.subsidiary.company field
-                if subsidiary_id:
-                    self.user_attendance.team.save(update_fields=["subsidiary_id"])
-                    self.user_attendance.refresh_from_db()
-                else:
-                    organization_id = None
-            if organization_id:
-                self.user_attendance.team.subsidiary.company_id = organization_id
-                user_attendance_update_fields[
-                    "company_id"
-                ] = self.user_attendance.team.subsidiary.company_id
 
         if t_shirt_size_id:
             self.user_attendance.t_shirt_size_id = t_shirt_size_id
@@ -2339,7 +2280,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             user_attendance_update_fields[
                 "discount_coupon_used"
             ] = self.user_attendance.discount_coupon_used
-        return user_attendance_update_fields, subsidiary_id, organization_id
+        return user_attendance_update_fields
 
     def _create_organization_coordinator_payment_model(
         self,
@@ -2387,25 +2328,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     def _save_user_attendance_model(self, user_attendance_update_fields):
         update_fields = user_attendance_update_fields.keys()
         if update_fields:
-            company_id_field_name = "company_id"
-            subsidiary_id_field_name = "subsidiary_id"
-            if (
-                company_id_field_name in update_fields
-                and user_attendance_update_fields[company_id_field_name]
-            ):
-                self.user_attendance.team.subsidiary.save(
-                    update_fields=[company_id_field_name],
-                )
-                del user_attendance_update_fields[company_id_field_name]
-            if (
-                subsidiary_id_field_name in update_fields
-                and user_attendance_update_fields[subsidiary_id_field_name]
-            ):
-                self.user_attendance.team.save(
-                    update_fields=[subsidiary_id_field_name],
-                )
-                del user_attendance_update_fields[subsidiary_id_field_name]
-
             self.user_attendance.save(
                 update_fields=update_fields,
             )
@@ -2472,7 +2394,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         return dict(items)
 
     def validate_discount_coupon(self, discount_coupon):
-        if not DiscountCoupon.objects.filter(token=discount_coupon.split("-")[-1]):
+        if not DiscountCoupon.objects.filter(token=discount_coupon.split("-")[-1]).only(
+            "token"
+        ):
             raise serializers.ValidationError(
                 _("Slevový kupón <%(coupon)s> neexistuje.")
                 % {"coupon": discount_coupon},
@@ -2480,32 +2404,47 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         return discount_coupon
 
     def get_payment_status(self, obj):
-        obj = self.user_attendance.userprofile if self.user_attendance else obj
-        payment_status = obj.userattendance_set.get(
-            campaign__slug=self.context["request"].subdomain
-        ).payment_status
-        return "" if not payment_status else payment_status
+        ua = obj.get("user_attendance")
+        return self._empty_string if not ua else ua.payment_status
 
     def get_payment_type(self, obj):
-        obj = self.user_attendance.userprofile if self.user_attendance else obj
-        payment_type = obj.userattendance_set.get(
-            campaign__slug=self.context["request"].subdomain
-        ).payment_type()
-        return "" if not payment_type else payment_type
+        ua = obj.get("user_attendance")
+        payment_type = self._empty_string
+        if ua:
+            payment_type = ua.payment_type()
+            payment_type = payment_type if payment_type else self._empty_string
+        return payment_type
 
     def get_organization_type(self, obj):
-        empty_str = ""
-        obj = self.user_attendance.userprofile if self.user_attendance else obj
-        ua = obj.userattendance_set.filter(
-            campaign__slug=self.context["request"].subdomain
-        ).select_related("team__subsidiary__company")
+        ua = obj.get("user_attendance")
         return (
-            empty_str
+            None
             if not ua
             else attrgetter_def_val(
                 attrs="team.subsidiary.company.organization_type",
-                instance=ua[0],
-                def_val=empty_str,
+                instance=ua,
+            )
+        )
+
+    def get_organization_id(self, obj):
+        ua = obj.get("user_attendance")
+        return (
+            None
+            if not ua
+            else attrgetter_def_val(
+                attrs="team.subsidiary.company_id",
+                instance=ua,
+            )
+        )
+
+    def get_subsidiary_id(self, obj):
+        ua = obj.get("user_attendance")
+        return (
+            None
+            if not ua
+            else attrgetter_def_val(
+                attrs="team.subsidiary_id",
+                instance=ua,
             )
         )
 
@@ -2516,7 +2455,12 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         if pk:
             return UserProfile.objects.filter(pk=pk)
         ua = self.request.user_attendance
-        return [ua.userprofile] if ua else []
+        if not ua:
+            ua = UserAttendance.objects.filter(
+                userprofile__user=self.request.user,
+                campaign__slug=self.request.subdomain,
+            )
+        return [ua[0].userprofile] if ua else []
 
     def retrieve(self, request, pk=None):
         userprofile = get_object_or_404(
