@@ -2477,7 +2477,9 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
                 userprofile__user=self.request.user,
                 campaign__slug=self.request.subdomain,
             )
-        return [ua[0].userprofile] if ua else []
+            if ua:
+                ua = ua[0]
+        return [ua.userprofile] if ua else []
 
     def retrieve(self, request, pk=None):
         userprofile = get_object_or_404(
