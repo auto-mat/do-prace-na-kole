@@ -1992,7 +1992,7 @@ class PersonalDetailsUserProfileSerializer(serpy.Serializer):
     telephone_opt_in = serpy.BoolField()
     language = EmptyStrField()
     occupation = EmptyStrField()
-    age_group = EmptyStrField()
+    age_group = NullIntField()
     newsletter = EmptyStrField()
 
 
