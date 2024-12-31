@@ -1954,12 +1954,12 @@ class EmptyStrField(serpy.Field):
         return str(value)
 
 
-class EmptyIntField(serpy.Field):
-    """Replace None value with empty string '' value"""
+class NullIntField(serpy.Field):
+    """Return int value or None (null)"""
 
     def to_value(self, value):
         if value is None:
-            return ""
+            return None
         return int(value)
 
 
@@ -1977,7 +1977,7 @@ class UserAttendanceSerializer(serpy.Serializer):
     payment_subject = EmptyStrField(call=True)
     payment_type = EmptyStrField(call=True)
     payment_status = EmptyStrField()
-    payment_amount = EmptyIntField(call=True)
+    payment_amount = NullIntField(call=True)
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
