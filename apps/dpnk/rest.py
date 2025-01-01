@@ -2133,11 +2133,16 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "id", "name"
         )
         self.fields["team_id"].choices = Team.objects.all().values_list("id", "name")
-        self.fields["t_shirt_size_id"].choices = TShirtSize.objects.filter(
+        t_shirts_queryset = TShirtSize.objects.filter(
             campaign__slug=kwargs["context"]["request"].subdomain,
             available=True,
             ship=True,
-        ).values_list("id", "name")
+        ) | TShirtSize.objects.filter(
+            code="nic",
+        )
+        self.fields["t_shirt_size_id"].choices = t_shirts_queryset.values_list(
+            "id", "name"
+        )
 
     def _update_model(self, validated_data, instance=None):
         """Update UserProfile model
