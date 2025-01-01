@@ -2117,6 +2117,83 @@ class RegistrationTest(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
+class PasswordResetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+    def test_password_reset(self):
+        # Simulate registration request
+        test_data = {
+            "email": "a@seznam.cz",
+        }
+
+        response = self.client.post(reverse("rest_password_reset"), test_data)
+        self.assertEqual(response.status_code, 200)
+
+        # !!!
+        for attempt in range(10):
+            if len(mail.outbox) == 1:
+                break
+            time.sleep(0.1)
+
+        # Verify that an email was sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        # Validate email content
+        reset_password_email = mail.outbox[0]
+        self.assertEqual(reset_password_email.recipients(), [test_data["email"]])
+        self.assertIn(
+            "[testserver] E-mail pro reset hesla",
+            reset_password_email.subject,
+        )
+        self.assertRegex(
+            reset_password_email.body,
+            "^Hello from testserver!\n\nYou're receiving this e-mail because you or someone else has requested a password for your user account.\nIt can be safely ignored if you did not request a password reset. Click the link below to reset your password.\n\nhttp://testing-campaign.testserver/zapomenute_heslo/zmena/(\d+)-([a-zA-Z0-9-]+)/\n\nPro případ, že byste zapomněli, vaše uživatelské jméno je test.\n\nDěkujeme, že používáte testserver!\ntestserver$",
+        )
+
+        # Extract password reset link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", reset_password_email.body)
+        self.assertIsNotNone(match, "No password reset link found in email")
+        confirmation_link = match.group(1)
+
+        # Extract Uid and token from the link
+        pattern = r"/zapomenute_heslo/zmena/(\d+)-([a-zA-Z0-9-]+)/"
+        match = re.search(pattern, confirmation_link)
+        self.assertIsNotNone(match, "Uid and token not found.")
+        uid = match.group(1)
+        token = match.group(2)
+
+        # Reset password
+        reset_data = {
+            "uid": uid,
+            "token": token,
+            "new_password1": "noveheslo",
+            "new_password2": "noveheslo",
+        }
+
+        response = self.client.post(reverse("rest_password_reset_confirm"), reset_data)
+        self.assertEqual(response.status_code, 200)
+
+        # Test login using new password
+        login_data = {
+            "username": "a@seznam.cz",
+            "password": "noveheslo",
+        }
+        response = self.client.post(reverse("rest_login"), login_data)
+        self.assertEqual(response.status_code, 200)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class CitiesSetTest(TestCase):
     fixtures = [
         "dump",
