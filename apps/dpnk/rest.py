@@ -1859,7 +1859,7 @@ class PayUPaymentNotifyPost(APIView):
         if http_authorization in request.META:
             logger.info(
                 "PayU request Authorization header <%s>",
-                request.META(http_authorization),
+                request.META[http_authorization],
             )
             request.META.pop(http_authorization)
         return super().perform_authentication(request)
