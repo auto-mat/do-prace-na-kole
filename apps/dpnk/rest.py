@@ -1849,7 +1849,7 @@ class PayUPaymentNotifyPost(APIView):
     https://developers.payu.com/europe/docs/payment-flows/lifecycle/#signature-verification
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = []
 
     class PAYU_TO_PAYMENT_ORDER_STATUS(Enum):
         PENDING = Status.COMMENCED
