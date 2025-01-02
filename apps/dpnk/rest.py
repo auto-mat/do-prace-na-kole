@@ -1859,7 +1859,9 @@ class PayUPaymentNotifyPost(APIView):
 
     def post(self, request):
         payu_signature_header = request.headers.get("OpenPayu-Signature")
+        logger.info("Receive posted PayU notification order data <%s>.", request.data)
         if not payu_signature_header:
+            logger.error("Missing OpenPayu-Signature request header.")
             return Response(
                 {"error": _("Chybějící OpenPayu-Signature záhlaví request objektu.")}
             )
