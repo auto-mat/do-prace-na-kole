@@ -1851,6 +1851,15 @@ class PayUPaymentNotifyPost(APIView):
 
     permission_classes = [permissions.AllowAny]
 
+    def perform_authentication(self, request):
+        """PayU send request with Authorization Basic header, we don't
+        need authenticate user
+        """
+        http_authorization = "HTTP_AUTHORIZATION"
+        if http_authorization in request.META:
+            request.META.pop(http_authorization)
+        return super().perform_authentication(request)
+
     class PAYU_TO_PAYMENT_ORDER_STATUS(Enum):
         PENDING = Status.COMMENCED
         WAITING_FOR_CONFIRMATION = Status.WAITING_CONFIRMATION
