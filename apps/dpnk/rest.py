@@ -1863,7 +1863,8 @@ class PayUPaymentNotifyPost(APIView):
         if not payu_signature_header:
             logger.error("Missing OpenPayu-Signature request header.")
             return Response(
-                {"error": _("Chybějící OpenPayu-Signature záhlaví request objektu.")}
+                {"error": _("Chybějící OpenPayu-Signature záhlaví request objektu.")},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         payu_signature_header = payu_signature_header.split(";")
         signature = [i for i in payu_signature_header if "signature" in i][0]
@@ -1888,7 +1889,8 @@ class PayUPaymentNotifyPost(APIView):
                         " nesprávny podpis <%(signature)s>."
                     )
                     % {"signature": signature}
-                }
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         data = request.data
         order = data.get("order")
@@ -1964,7 +1966,8 @@ class PayUPaymentNotifyPost(APIView):
                             "Neexistující platba s ID objednávky <%(order_id)s>."
                         )
                         % {"order_id": order.get("extOrderId")}
-                    }
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
 
