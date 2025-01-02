@@ -1809,7 +1809,8 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
             order_id = (f"{request.user.id}-{max(order_ids) + 1}",)
         else:
             order_id = (f"{request.user.id}-0",)
-        client_ip = self.request.COOKIES.get("client_ip")
+
+        client_ip = deserialized_data.data["client_ip"]
 
         data = {
             "notifyUrl": f"{request.scheme}://{request.get_host()}{reverse('payu-notify-order-status')}",
@@ -1827,6 +1828,7 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
                 else settings.LANGUAGE_CODE,
             },
         }
+
         return Response(payu.create_order(access_token, data))
 
 
