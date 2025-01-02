@@ -1,11 +1,14 @@
 """PayU payment system"""
 
 import requests
+import logging
 
 from django.conf import time
 
 from . import models
 from .models import Payment
+
+logger = logging.getLogger(__name__)
 
 
 class PayU:
@@ -176,6 +179,7 @@ class PayU:
                 }
             ],
         }
+        logger.info("PayU create order data <%s>.", order_data)
         try:
             # Disable allow redirects fix returning JSON response data instead of HTML content
             response = requests.post(

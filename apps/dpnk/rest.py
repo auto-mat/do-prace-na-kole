@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import time
 import hashlib
+import logging
 
 from enum import Enum
 
@@ -99,6 +100,8 @@ from django.utils.encoding import smart_str
 import json
 import requests
 from rest_framework import status
+
+logger = logging.getLogger(__name__)
 
 organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
 
@@ -1828,7 +1831,6 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
                 else settings.LANGUAGE_CODE,
             },
         }
-
         return Response(payu.create_order(access_token, data))
 
 
@@ -1872,6 +1874,11 @@ class PayUPaymentNotifyPost(APIView):
         ).hexdigest()
         # Verify request object signature
         if signature != expected_signature:
+            logger.error(
+                "Process of verification of PayU notification request header"
+                " failed, incorrect signature <%s>.",
+                signature,
+            )
             Response(
                 {
                     "error": _(
@@ -1922,6 +1929,18 @@ class PayUPaymentNotifyPost(APIView):
                 if order_status == pay_completed_order_status:
                     payment.pay_type = order["payMethod"]["type"]
                     payment.save(update_fields=["pay_type", "status"])
+                    logger.info(
+                        "PayU order ID <%s> status changed to <%s>.",
+                        order.get("extOrderId"),
+                        order_status,
+                    )
+                    logger.info(
+                        "Update payment model with order_id <%s>, status <%s>, and pay_type <%s>.",
+                        payment.order_id,
+                        payment.status,
+                        payment.pay_type,
+                    )
+
                 else:
                     payment.save(update_fields=["status"])
                 return Response(
