@@ -1806,9 +1806,9 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
         )
         if order_ids:
             order_ids = [int(i.split("-")[-1]) for i in order_ids]
-            order_id = (f"{request.user.id}-{max(order_ids) + 1}",)
+            order_id = f"{request.user.id}-{max(order_ids) + 1}"
         else:
-            order_id = (f"{request.user.id}-0",)
+            order_id = f"{request.user.id}-0"
 
         client_ip = deserialized_data.data["client_ip"]
 
