@@ -88,6 +88,7 @@ from coupons.models import DiscountCoupon
 from .util import attrgetter_def_val, get_all_logged_in_users, today
 from .payu import PayU
 from .rest_permissions import IsOwnerOrSuperuser
+from .rest_auth import PayUNotifyOrderRequestAuthentification
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -1849,20 +1850,7 @@ class PayUPaymentNotifyPost(APIView):
     https://developers.payu.com/europe/docs/payment-flows/lifecycle/#signature-verification
     """
 
-    permission_classes = [permissions.AllowAny]
-
-    def perform_authentication(self, request):
-        """PayU send request with Authorization Basic header, we don't
-        need authenticate user
-        """
-        http_authorization = "HTTP_AUTHORIZATION"
-        if http_authorization in request.META:
-            logger.info(
-                "PayU request Authorization header <%s>",
-                request.META[http_authorization],
-            )
-            request.META.pop(http_authorization)
-        return super().perform_authentication(request)
+    authentication_classes = [PayUNotifyOrderRequestAuthentification]
 
     class PAYU_TO_PAYMENT_ORDER_STATUS(Enum):
         PENDING = Status.COMMENCED
