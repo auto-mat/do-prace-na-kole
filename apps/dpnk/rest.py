@@ -1867,7 +1867,9 @@ class PayUPaymentNotifyPost(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         payu_signature_header = payu_signature_header.split(";")
-        signature = [i for i in payu_signature_header if "signature" in i][0]
+        signature = [
+            i.split("=")[-1] for i in payu_signature_header if "signature" in i
+        ][0]
         request_body_payu_second_key = (
             request.body.decode("utf-8")
             + settings.PAYU_CONF["PAYU_REST_API_SECOND_KEY_MD5"]
@@ -1882,7 +1884,7 @@ class PayUPaymentNotifyPost(APIView):
                 " failed, incorrect signature <%s>.",
                 signature,
             )
-            Response(
+            return Response(
                 {
                     "error": _(
                         "Proces ověření podpisu request objektu selhal,"
