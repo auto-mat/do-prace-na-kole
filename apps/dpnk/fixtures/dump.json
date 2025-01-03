@@ -55,6 +55,32 @@
    },
    {
       "fields" : {
+         "date_joined" : "2025-01-02T16:59:16.593",
+         "email" : "b@centrum.cz",
+         "first_name" : "",
+         "groups" : [],
+         "is_active" : false,
+         "is_staff" : false,
+         "is_superuser" : false,
+         "last_login" : null,
+         "last_name" : "",
+         "password" : "pbkdf2_sha256$150000$Kz8xM1t7EOUg$YZHgzNLZKGDehD+NI9YjLAZUhReOHnKG12PN1DZP6LQ=",
+         "user_permissions" : [],
+         "username" : "b3"
+      },
+      "model" : "auth.user",
+      "pk" : 4
+   },
+   {
+      "fields" : {
+         "expire_date" : "2025-01-16T16:28:15.224",
+         "session_data" : "MGEwZWJjMzU1OTUxYWQzMGEzODY4NDBmOWI3Y2UyNzZiYzNiYzU0ZDp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJiZjQ4N2IzYmU2NmYxYWM1NmUyZjZmZTBkYjVmZWJlNGZmZmM4NGVjIn0="
+      },
+      "model" : "sessions.session",
+      "pk" : "efby7no12mzwedvsizastc830e71393c"
+   },
+   {
+      "fields" : {
          "expire_date" : "2024-08-21T01:30:00.700",
          "session_data" : "MGEwZWJjMzU1OTUxYWQzMGEzODY4NDBmOWI3Y2UyNzZiYzNiYzU0ZDp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJiZjQ4N2IzYmU2NmYxYWM1NmUyZjZmZTBkYjVmZWJlNGZmZmM4NGVjIn0="
       },
@@ -68,6 +94,14 @@
       },
       "model" : "sessions.session",
       "pk" : "juessq16gr2odbmb9ss4hatid6mfh94b"
+   },
+   {
+      "fields" : {
+         "expire_date" : "2025-01-16T17:00:13.126",
+         "session_data" : "ZWVlZjNhOGVjODljMzY1NmY3NTMyMzA1YmFlN2FjMmNmMzQ2ZmFkMDp7InRlc3Rjb29raWUiOiJ3b3JrZWQiLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYmY0ODdiM2JlNjZmMWFjNTZlMmY2ZmUwZGI1ZmViZTRmZmZjODRlYyJ9"
+      },
+      "model" : "sessions.session",
+      "pk" : "rdw4jfykhubxc0016sm9lc0q5ewtqw2y"
    },
    {
       "fields" : {
@@ -243,6 +277,52 @@
       },
       "model" : "photologue.photosize",
       "pk" : 3
+   },
+   {
+      "fields" : {
+         "activated" : false,
+         "activation_key" : "9a0496ffa809dc1491d2a86852ece314ed0f84015503b849b6522fa1503775dd",
+         "user" : 4
+      },
+      "model" : "registration.registrationprofile",
+      "pk" : 1
+   },
+   {
+      "fields" : {
+         "campaign" : 21,
+         "name" : "dárkový poukaz",
+         "prefix" : "DP",
+         "sandwich_type" : 1,
+         "valid_until" : null
+      },
+      "model" : "coupons.discountcoupontype",
+      "pk" : 1
+   },
+   {
+      "fields" : {
+         "obj" : 1
+      },
+      "model" : "coupons.couponsandwich",
+      "pk" : 1
+   },
+   {
+      "fields" : {
+         "author" : 1,
+         "coupon_pdf" : "",
+         "coupon_type" : 1,
+         "created" : "2025-01-02T17:13:55.971",
+         "discount" : 100,
+         "note" : null,
+         "receiver" : null,
+         "recipient_name" : null,
+         "sent" : false,
+         "token" : "SXQEFH",
+         "updated" : "2025-01-02T17:13:55.971",
+         "updated_by" : 1,
+         "user_attendance_number" : 1
+      },
+      "model" : "coupons.discountcoupon",
+      "pk" : 1
    },
    {
       "fields" : {
@@ -643,6 +723,7 @@
          "mailing_hash" : "",
          "mailing_id" : null,
          "mailing_opt_in" : false,
+         "newsletter" : null,
          "nickname" : "test",
          "note" : "",
          "occupation" : null,
@@ -669,6 +750,7 @@
          "mailing_hash" : "",
          "mailing_id" : null,
          "mailing_opt_in" : null,
+         "newsletter" : null,
          "nickname" : null,
          "note" : "",
          "occupation" : null,
@@ -695,6 +777,7 @@
          "mailing_hash" : "",
          "mailing_id" : null,
          "mailing_opt_in" : null,
+         "newsletter" : null,
          "nickname" : null,
          "note" : "",
          "occupation" : null,
@@ -705,6 +788,45 @@
       },
       "model" : "dpnk.userprofile",
       "pk" : 3
+   },
+   {
+      "fields" : {
+         "administrated_cities" : [],
+         "age_group" : null,
+         "company_admin_count" : 0,
+         "default_rides_view" : null,
+         "ecc_email" : "cBUd3PTBq7@dopracenakole.cz",
+         "ecc_password" : "Q5SxtQPm36",
+         "gallery" : null,
+         "language" : "cs",
+         "mailing_hash" : null,
+         "mailing_id" : null,
+         "mailing_opt_in" : null,
+         "newsletter" : null,
+         "nickname" : null,
+         "note" : null,
+         "occupation" : null,
+         "sex" : null,
+         "telephone" : "",
+         "telephone_opt_in" : null,
+         "user" : 4
+      },
+      "model" : "dpnk.userprofile",
+      "pk" : 4
+   },
+   {
+      "fields" : {
+         "administrated_company" : 2,
+         "campaign" : 21,
+         "can_confirm_payments" : true,
+         "company_admin_approved" : "approved",
+         "motivation_company_admin" : "",
+         "note" : "",
+         "userprofile" : 3,
+         "will_pay_opt_in" : false
+      },
+      "model" : "dpnk.companyadmin",
+      "pk" : 1
    },
    {
       "fields" : {
@@ -854,6 +976,36 @@
    },
    {
       "fields" : {
+         "approved_for_team" : "undecided",
+         "campaign" : 20,
+         "created" : "2025-01-02T16:59:16.439",
+         "discount_coupon" : null,
+         "discount_coupon_used" : null,
+         "distance" : null,
+         "dont_want_insert_track" : false,
+         "frequency" : 0,
+         "get_rides_count_denorm" : 0,
+         "has_unanswered_questionnaires" : false,
+         "last_sync_time" : null,
+         "payment_status" : "done",
+         "personal_data_opt_in" : false,
+         "related_company_admin" : null,
+         "representative_payment" : null,
+         "t_shirt_size" : null,
+         "team" : null,
+         "total_trip_length_including_recreational" : 0,
+         "track" : null,
+         "trip_length_total" : 0,
+         "trip_points_total" : 0,
+         "updated" : "2025-01-02T16:59:16.439",
+         "userprofile" : 4,
+         "working_rides_base_count" : 1736
+      },
+      "model" : "dpnk.userattendance",
+      "pk" : 4
+   },
+   {
+      "fields" : {
          "benefitial_admission_fee" : 500,
          "benefitial_admission_fee_company" : 500,
          "campaign_type" : 1,
@@ -873,7 +1025,7 @@
          "free_entry_cases_html_cs" : "",
          "free_entry_cases_html_dsnkcs" : null,
          "free_entry_cases_html_en" : null,
-         "has_any_tshirt" : false,
+         "has_any_tshirt" : true,
          "invoice_sequence_number_first" : 276,
          "invoice_sequence_number_last" : 999999999,
          "language_prefixes" : "dpnk",
@@ -1266,9 +1418,9 @@
          "icon" : null,
          "name" : "Organizace1",
          "note" : "",
+         "organization_type" : "company",
          "type" : null,
-         "updated_by" : 1,
-         "organization_type": "company"
+         "updated_by" : 1
       },
       "model" : "dpnk.company",
       "pk" : 1
@@ -1288,9 +1440,9 @@
          "icon" : null,
          "name" : "Organizace2",
          "note" : "",
+         "organization_type" : "school",
          "type" : 1,
-         "updated_by" : 1,
-         "organization_type": "school"
+         "updated_by" : 1
       },
       "model" : "dpnk.company",
       "pk" : 2
@@ -1438,6 +1590,70 @@
       },
       "model" : "dpnk.question",
       "pk" : 1
+   },
+   {
+      "fields" : {
+         "author" : "",
+         "available" : true,
+         "campaign" : 20,
+         "code" : "mikina-l",
+         "description" : "",
+         "description_cs" : null,
+         "description_dsnkcs" : null,
+         "description_en" : null,
+         "material" : "",
+         "material_cs" : null,
+         "material_dsnkcs" : null,
+         "material_en" : null,
+         "name" : "L",
+         "name1" : "Mikina",
+         "name1_cs" : "Mikina",
+         "name1_dsnkcs" : null,
+         "name1_en" : null,
+         "name_cs" : "L",
+         "name_dsnkcs" : null,
+         "name_en" : null,
+         "order" : 1,
+         "price" : 500,
+         "sex" : "",
+         "ship" : true,
+         "size" : "",
+         "t_shirt_preview" : ""
+      },
+      "model" : "t_shirt_delivery.tshirtsize",
+      "pk" : 1
+   },
+   {
+      "fields" : {
+         "author" : "",
+         "available" : true,
+         "campaign" : 20,
+         "code" : "tricko-xl",
+         "description" : "",
+         "description_cs" : null,
+         "description_dsnkcs" : null,
+         "description_en" : null,
+         "material" : "",
+         "material_cs" : null,
+         "material_dsnkcs" : null,
+         "material_en" : null,
+         "name" : "XL",
+         "name1" : "Tričko",
+         "name1_cs" : "Tričko",
+         "name1_dsnkcs" : null,
+         "name1_en" : null,
+         "name_cs" : "XL",
+         "name_dsnkcs" : null,
+         "name_en" : null,
+         "order" : 2,
+         "price" : 200,
+         "sex" : "",
+         "ship" : true,
+         "size" : "",
+         "t_shirt_preview" : ""
+      },
+      "model" : "t_shirt_delivery.tshirtsize",
+      "pk" : 2
    },
    {
       "fields" : {
@@ -41074,6 +41290,26 @@
    },
    {
       "fields" : {
+         "height" : 210,
+         "name" : "šablona",
+         "template_pdf" : "pdfsandwich_types/sablona.pdf",
+         "width" : 297
+      },
+      "model" : "smmapdfs.pdfsandwichtype",
+      "pk" : 1
+   },
+   {
+      "fields" : {
+         "pdf" : "pdfsandwichs/šablona/pdfsandwich_5401c993-12da-419a-bc90-91325b06be0e.pdf",
+         "pdfsandwich_type" : 1,
+         "sent_time" : null,
+         "status" : "\nNo fields rendered.\n"
+      },
+      "model" : "smmapdfs.pdfsandwichabc",
+      "pk" : 1
+   },
+   {
+      "fields" : {
          "alias" : "maintree",
          "title" : "Hlavní menu"
       },
@@ -42592,7 +42828,7 @@
       "fields" : {
          "action_object_content_type" : null,
          "action_object_object_id" : null,
-         "actor_content_type" : 38,
+         "actor_content_type" : 47,
          "actor_object_id" : "1",
          "data" : "{\"url\": \"/pozvanky/\", \"icon\": \"/static/img/dpnk_logo.svg\"}",
          "deleted" : false,
@@ -42614,7 +42850,7 @@
       "fields" : {
          "action_object_content_type" : 56,
          "action_object_object_id" : "2",
-         "actor_content_type" : 38,
+         "actor_content_type" : 47,
          "actor_object_id" : "1",
          "data" : "{\"url\": \"/pozvanky/\", \"icon\": \"\"}",
          "deleted" : false,
@@ -43203,5 +43439,83 @@
       },
       "model" : "admin.logentry",
       "pk" : 44
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-01-02T16:31:33.562",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 34,
+         "object_id" : "1",
+         "object_repr" : "",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 45
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-01-02T16:55:49.022",
+         "change_message" : "[{\"added\": {\"name\": \"Velikost tri\\u010dka\", \"object\": \"L (test2, 500 K\\u010d nav\\u00edc)\"}}]",
+         "content_type" : 44,
+         "object_id" : "21",
+         "object_repr" : "Do práce na kole 2024",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 46
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-01-02T16:56:58.514",
+         "change_message" : "[{\"added\": {\"name\": \"Velikost tri\\u010dka\", \"object\": \"XL (test2, 200 K\\u010d nav\\u00edc)\"}}]",
+         "content_type" : 44,
+         "object_id" : "21",
+         "object_repr" : "Do práce na kole 2024",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 47
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-01-02T17:13:02.469",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 107,
+         "object_id" : "1",
+         "object_repr" : "šablona",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 48
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-01-02T17:13:08.433",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 27,
+         "object_id" : "1",
+         "object_repr" : "dárkový poukaz",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 49
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-01-02T17:13:55.975",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 30,
+         "object_id" : "1",
+         "object_repr" : "DP-SXQEFH",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 50
    }
 ]
