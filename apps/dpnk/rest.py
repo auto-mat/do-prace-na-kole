@@ -1777,6 +1777,8 @@ class DiscountCouponSet(viewsets.ReadOnlyModelViewSet):
 
 class PayCreateOrderDeserializer(serializers.Serializer):
     amount = serializers.IntegerField(required=True)
+    products = serializers.JSONField()
+    payment_subject = serializers.ChoiceField(choices=Payment.PAYMENT_SUBJECT)
     client_ip = serializers.IPAddressField(required=True)
 
 
@@ -1819,9 +1821,11 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
         data = {
             "notifyUrl": f"{request.scheme}://{request.get_host()}{reverse('payu-notify-order-status')}",
             "amount": deserialized_data.data["amount"],
+            "products": deserialized_data.data["products"],
             "customerIp": client_ip if client_ip else "127.0.0.1",
             "extOrderId": order_id,
             "userAttendance": ua,
+            "paymentSubject": deserialized_data.data["payment_subject"],
             "buyer": {
                 "email": request.user.email,
                 "phone": ua.userprofile.telephone if ua.userprofile.telephone else "",

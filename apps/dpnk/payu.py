@@ -42,12 +42,16 @@ class PayU:
             status=models.Status.CANCELED,
         ).delete()
 
-    def _save_payment(self, amount, order_id, product_name, user_attendance):
+    def _save_payment(
+        self, amount, order_id, product_name, payment_subject, user_attendance
+    ):
         """Save PayU new order into DB as new Payment model
 
         :param int amount: Order PayU amount
         :param str order_id: Unique RTWBB internal app order id
-        :param str product_name: Product name which you buy
+        :param str product_name: Product name(s) which you buy
+        :param str product_subject: Payment subject, see Payment model
+                                    PAYMENT_SUBJECT constant
         :param UserAttendance user_attendance: UserAttendace model instance
 
         :return None
@@ -57,6 +61,7 @@ class PayU:
             user_attendance=user_attendance,
             order_id=order_id,
             amount=amount,
+            payment_subject=payment_subject,
             status=models.Status.NEW,
             description=product_name,
         ).save()
@@ -113,16 +118,28 @@ class PayU:
         :param dict data: Input data dict required for creation new Pay
                           order
         {
-          'amount': 300,
-          'customerIp': '127.0.0.1',
-          'extOrderId': '1-10',
-          'userAttendance': <UserAttendance: Test Test>,
-          'buyer': {
-                     'email': 'test@test.org',
-                     'phone': '0000000000',
-                     'firstName': 'Test',
-                     'lastName': 'Test',
-                     'language': 'cs'
+          "amount": 300,
+          "products": [
+            {
+              "name": "RTWBB challenge entry fee",
+              "unitPrice": 400,
+              "quantity": 1,
+            },
+            {
+              "name": "RTWBB donation",
+              "unitPrice": 500,
+              "quantity": 1,
+            }
+          ]
+          "customerIp": "127.0.0.1",
+          "extOrderId": "1-10",
+          "userAttendance": <UserAttendance: Test Test>,
+          "buyer": {
+                     "email": "test@test.org",
+                     "phone": "0000000000",
+                     "firstName": "Test",
+                     "lastName": "Test",
+                     "language": "cs"
           }
         }
         :param str product_name: PayU order product name, with default value
@@ -171,13 +188,7 @@ class PayU:
             "currencyCode": self._payu_conf["PAYU_REST_API_CREATE_ORDER_CURRENCY_CODE"],
             "totalAmount": data["amount"],
             "buyer": data["buyer"],
-            "products": [
-                {
-                    "name": product_name,
-                    "unitPrice": data["amount"],
-                    "quantity": "1",
-                }
-            ],
+            "products": data["products"],
         }
         logger.info("PayU create order data <%s>.", order_data)
         try:
@@ -199,7 +210,10 @@ class PayU:
         ):
             self._save_payment(
                 order_id=data["extOrderId"],
-                product_name=product_name,
+                product_name=" + ".join(
+                    [product["name"] for product in data["products"]]
+                ),
+                payment_subject=data["paymentSubject"],
                 amount=data["amount"],
                 user_attendance=data["userAttendance"],
             )
