@@ -6,7 +6,7 @@ import logging
 from django.conf import time
 
 from . import models
-from .models import Payment
+from .models import Payment, PayUOrderedProduct
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +47,7 @@ class PayU:
         amount,
         order_id,
         product_name,
+        products,
         payment_subject,
         payment_category,
         user_attendance,
@@ -56,6 +57,19 @@ class PayU:
         :param int amount: Order PayU amount
         :param str order_id: Unique RTWBB internal app order id
         :param str product_name: Product name(s) which you buy
+        :param list products: PayU ordered products
+                              [
+                                {
+                                  "name": "RTWBB challenge entry fee",
+                                  "unitPrice": 400,
+                                  "quantity": 1,
+                                },
+                                {
+                                  "name": "RTWBB donation",
+                                  "unitPrice": 500,
+                                  "quantity": 1,
+                                }
+                              ]
         :param str payment_subject: Payment subject, see Payment model
                                     PAYMENT_SUBJECT constant
         :param str payment_category: Payment category, see Payment model
@@ -64,7 +78,16 @@ class PayU:
 
         :return None
         """
-        Payment(
+        payu_ordered_products = []
+        for product in products:
+            payu_ordered_product, created = PayUOrderedProduct.objects.get_or_create(
+                name=product["name"],
+                unit_price=product["unitPrice"],
+                quantity=product["quantity"],
+            )
+            payu_ordered_products.append(payu_ordered_product)
+
+        payment = Payment(
             session_id=f"{order_id}J{int(time.time())}",
             user_attendance=user_attendance,
             order_id=order_id,
@@ -74,6 +97,11 @@ class PayU:
             status=models.Status.NEW,
             description=product_name,
         ).save()
+        payment.payu_ordered_product.set(payu_ordered_products)
+        logger.info(
+            "PayU create order, save new payment model order_id <%s>",
+            order_id,
+        )
 
     def authorize(self):
         """Get PayU authorization Bearer token
@@ -222,6 +250,7 @@ class PayU:
                 product_name=" + ".join(
                     [product["name"] for product in data["products"]]
                 ),
+                products=data["products"],
                 payment_subject=data["paymentSubject"],
                 payment_category=data["paymentCategory"],
                 amount=data["amount"],
