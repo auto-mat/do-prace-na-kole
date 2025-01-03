@@ -32,6 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from polymorphic.models import PolymorphicModel
 
+from .payu_ordered_product import PayUOrderedProduct
 from .. import mailing
 from ..email import payment_confirmation_company_mail, payment_confirmation_mail
 
@@ -319,6 +320,12 @@ class Payment(Transaction):
         choices=PAYMENT_CATEGORY,
         max_length=20,
         null=True,
+        blank=True,
+    )
+    payu_ordered_product = models.ManyToManyField(
+        PayUOrderedProduct,
+        verbose_name=_("PayU objednávaný produkt"),
+        help_text=_("PayU objednávaný produkt(y) - RTWBB startovné, RTWBB dar"),
         blank=True,
     )
     # TODO: This is a hack which allows making denorms dependend only on Payment and not on any other type of transaction.

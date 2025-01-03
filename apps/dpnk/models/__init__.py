@@ -53,6 +53,7 @@ from .questionnaire import (
     QuestionForm,
     questionnaire_filename,
 )
+from .payu_ordered_product import PayUOrderedProduct
 from .subsidiary import Subsidiary
 from .team import Team, post_user_team_changed, pre_user_team_changed
 from .team_diploma import TeamDiploma, TeamDiplomaField
@@ -96,6 +97,7 @@ __all__ = (
     Occupation,
     Phase,
     PHASE_TYPE_DICT,
+    PayUOrderedProduct,
     ChoiceType,
     QuestionForm,
     Question,
