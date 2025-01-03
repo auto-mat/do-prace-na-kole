@@ -252,6 +252,12 @@ class Payment(Transaction):
         ("school", _("Škola")),
     ]
 
+    PAYMENT_CATEGORY = [
+        ("entry_fee", _("Štartovné")),
+        ("donation", _("Dar")),
+        ("entry_fee-donation", _("Štartovné a dar")),
+    ]
+
     class Meta:
         verbose_name = _("Platební transakce")
         verbose_name_plural = _("Platební transakce")
@@ -304,6 +310,13 @@ class Payment(Transaction):
     pay_subject = models.CharField(
         verbose_name=_("Platobní subjekt"),
         choices=PAYMENT_SUBJECT,
+        max_length=20,
+        null=True,
+        blank=True,
+    )
+    pay_category = models.CharField(
+        verbose_name=_("Platobní kategorie"),
+        choices=PAYMENT_CATEGORY,
         max_length=20,
         null=True,
         blank=True,
