@@ -1794,7 +1794,10 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
     def post(self, request):
         deserialized_data = PayCreateOrderDeserializer(data=request.data)
         if not deserialized_data.is_valid():
-            return Response({"error": deserialized_data.errors})
+            return Response(
+                {"error": deserialized_data.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         ua = self.ua()
 
