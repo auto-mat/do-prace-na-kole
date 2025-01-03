@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-24 20:20+0100\n"
+"POT-Creation-Date: 2025-01-03 05:40+0100\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -334,7 +334,7 @@ msgstr ""
 msgid "Ceny jsou uváděny bez DPH"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:61 dpnk/models/transactions.py:281
+#: dpnk/company_admin_forms.py:61 dpnk/models/transactions.py:287
 #: dpnk/templates/company_admin/create_invoice.html:53
 #: dpnk/templates/company_admin/select_users_pay_for.html:25
 msgid "Částka"
@@ -1873,7 +1873,7 @@ msgstr "Datum začátku kategorie musí být menší, než datum konce kategorie
 msgid "Výsledek soutěže"
 msgstr "Výsledek kategorie výzvy"
 
-#: dpnk/models/competition_result.py:39 dpnk/urls.py:213
+#: dpnk/models/competition_result.py:39 dpnk/urls.py:218
 #: dpnk/views/results_and_competitions.py:109
 msgid "Výsledky soutěží"
 msgstr "Výsledky kategorií výzvy"
@@ -2583,21 +2583,39 @@ msgstr ""
 msgid "Slevový kupón"
 msgstr ""
 
-#: dpnk/models/transactions.py:256 dpnk/models/transactions.py:257
+#: dpnk/models/transactions.py:256
+msgid "Štartovné"
+msgstr ""
+
+#: dpnk/models/transactions.py:257
+msgid "Dar"
+msgstr ""
+
+#: dpnk/models/transactions.py:258
+msgid "Štartovné a dar"
+msgstr ""
+
+#: dpnk/models/transactions.py:262 dpnk/models/transactions.py:263
 msgid "Platební transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:285
+#: dpnk/models/transactions.py:291
 msgid "Typ platby"
 msgstr ""
 
-#: dpnk/models/transactions.py:292
+#: dpnk/models/transactions.py:298
 msgid "Chyba"
 msgstr ""
 
-#: dpnk/models/transactions.py:305
+#: dpnk/models/transactions.py:311
 msgid "Platobní subjekt"
 msgstr ""
+
+#: dpnk/models/transactions.py:318
+#, fuzzy
+#| msgid "Soutěžní kategorie"
+msgid "Platobní kategorie"
+msgstr "Kategorie výzvy"
 
 #: dpnk/models/trip.py:108 dpnk/templates/widgets/leaflet.html:49
 msgid "Výlet"
@@ -2927,39 +2945,59 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1842
+#: dpnk/rest.py:1873
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: dpnk/rest.py:1858
+#: dpnk/rest.py:1897
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
 "%(signature)s>."
 msgstr ""
 
-#: dpnk/rest.py:1886
+#: dpnk/rest.py:1926
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:1910
+#: dpnk/rest.py:1962
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
 "%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:1923
+#: dpnk/rest.py:1975
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:2468
+#: dpnk/rest.py:2458
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
+msgstr ""
+
+#: dpnk/rest_auth.py:23
+msgid "Request objekt má chybějící <Authorization: Basic> záhlaví."
+msgstr ""
+
+#: dpnk/rest_auth.py:32
+#, python-format
+msgid ""
+"Dekódovanie Authorization Basic header <%(auth_header)s> záhlaví selhalo."
+msgstr ""
+
+#: dpnk/rest_auth.py:39
+msgid ""
+"Nesprávný formát Authorization Basic záhlaví. Použijte <username:password> "
+"formát."
+msgstr ""
+
+#: dpnk/rest_auth.py:55
+msgid "Neplatné uživatelské jméno nebo heslo."
 msgstr ""
 
 #: dpnk/tasks.py:225
@@ -4089,7 +4127,7 @@ msgstr ""
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr ""
 
-#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:349
+#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:354
 msgid "Emisní kalkulačka"
 msgstr ""
 
@@ -4432,11 +4470,11 @@ msgstr ""
 msgid "novinka"
 msgstr ""
 
-#: dpnk/urls.py:357
+#: dpnk/urls.py:362
 msgid "Nápověda"
 msgstr ""
 
-#: dpnk/urls.py:569
+#: dpnk/urls.py:584
 msgid "Města které koordinujete"
 msgstr ""
 
@@ -4504,6 +4542,18 @@ msgstr ""
 
 #: dpnk/views/registration_and_login.py:348
 msgid "Děkujeme, že s námi chcete jezdit Do práce na kole!"
+msgstr ""
+
+#: dpnk/views/registration_and_login.py:354
+msgid "Vaši platbu jsme úspěšně přijali."
+msgstr ""
+
+#: dpnk/views/registration_and_login.py:356
+msgid "Startovné se neplatí."
+msgstr ""
+
+#: dpnk/views/registration_and_login.py:360
+msgid "Děkujeme!"
 msgstr ""
 
 #: dpnk/views/registration_and_login.py:370

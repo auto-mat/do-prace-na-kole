@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-24 20:20+0100\n"
+"POT-Creation-Date: 2025-01-03 05:40+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -344,7 +344,7 @@ msgstr ""
 msgid "Ceny jsou uváděny bez DPH"
 msgstr "Prices are without VAT"
 
-#: dpnk/company_admin_forms.py:61 dpnk/models/transactions.py:281
+#: dpnk/company_admin_forms.py:61 dpnk/models/transactions.py:287
 #: dpnk/templates/company_admin/create_invoice.html:53
 #: dpnk/templates/company_admin/select_users_pay_for.html:25
 msgid "Částka"
@@ -1948,7 +1948,7 @@ msgstr ""
 msgid "Výsledek soutěže"
 msgstr "Competition result"
 
-#: dpnk/models/competition_result.py:39 dpnk/urls.py:213
+#: dpnk/models/competition_result.py:39 dpnk/urls.py:218
 #: dpnk/views/results_and_competitions.py:109
 msgid "Výsledky soutěží"
 msgstr "Competition results"
@@ -2673,21 +2673,43 @@ msgstr "for individuals"
 msgid "Slevový kupón"
 msgstr "Discount voucher"
 
-#: dpnk/models/transactions.py:256 dpnk/models/transactions.py:257
+#: dpnk/models/transactions.py:256
+#, fuzzy
+#| msgid "Startovné"
+msgid "Štartovné"
+msgstr "Participation Fee"
+
+#: dpnk/models/transactions.py:257
+msgid "Dar"
+msgstr ""
+
+#: dpnk/models/transactions.py:258
+#, fuzzy
+#| msgid "Startovné"
+msgid "Štartovné a dar"
+msgstr "Participation Fee"
+
+#: dpnk/models/transactions.py:262 dpnk/models/transactions.py:263
 msgid "Platební transakce"
 msgstr "Payment transaction"
 
-#: dpnk/models/transactions.py:285
+#: dpnk/models/transactions.py:291
 msgid "Typ platby"
 msgstr "Payment type"
 
-#: dpnk/models/transactions.py:292
+#: dpnk/models/transactions.py:298
 msgid "Chyba"
 msgstr "Error"
 
-#: dpnk/models/transactions.py:305
+#: dpnk/models/transactions.py:311
 msgid "Platobní subjekt"
 msgstr "Payment subject"
+
+#: dpnk/models/transactions.py:318
+#, fuzzy
+#| msgid "Soutěžní kategorie"
+msgid "Platobní kategorie"
+msgstr "Competition category"
 
 #: dpnk/models/trip.py:108 dpnk/templates/widgets/leaflet.html:49
 msgid "Výlet"
@@ -3039,11 +3061,11 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1842
+#: dpnk/rest.py:1873
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr "Missing OpenPayu-Signature request object header."
 
-#: dpnk/rest.py:1858
+#: dpnk/rest.py:1897
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
@@ -3052,7 +3074,7 @@ msgstr ""
 "Signature request object verification process failed, incorrect signature <"
 "%(signature)s>."
 
-#: dpnk/rest.py:1886
+#: dpnk/rest.py:1926
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
@@ -3061,7 +3083,7 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> does not change it, as a result "
 "of payment orderstatus <%(order_status)s>."
 
-#: dpnk/rest.py:1910
+#: dpnk/rest.py:1962
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
@@ -3070,15 +3092,37 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> was changed to status <"
 "%(order_status)s>."
 
-#: dpnk/rest.py:1923
+#: dpnk/rest.py:1975
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr "Non-existent payment with order id <%(order_id)s>."
 
-#: dpnk/rest.py:2468
+#: dpnk/rest.py:2458
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr "Discount voucher <%(coupon)s> does not exists."
+
+#: dpnk/rest_auth.py:23
+msgid "Request objekt má chybějící <Authorization: Basic> záhlaví."
+msgstr "Request object has missing <Authorization: Basic> header."
+
+#: dpnk/rest_auth.py:32
+#, python-format
+msgid ""
+"Dekódovanie Authorization Basic header <%(auth_header)s> záhlaví selhalo."
+msgstr "Decode Authorization Basic header <%(auth_header)s> header failed."
+
+#: dpnk/rest_auth.py:39
+msgid ""
+"Nesprávný formát Authorization Basic záhlaví. Použijte <username:password> "
+"formát, prosím."
+msgstr ""
+"Incorrect format of Authorization Basic header. Please use <username:password> "
+"formát."
+
+#: dpnk/rest_auth.py:55
+msgid "Neplatné uživatelské jméno nebo heslo."
+msgstr "Invalid username or password."
 
 #: dpnk/tasks.py:225
 #, python-brace-format
@@ -4407,7 +4451,7 @@ msgstr "Your team overview"
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr "Spared carbon dioxide amount"
 
-#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:349
+#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:354
 msgid "Emisní kalkulačka"
 msgstr "Emission calculator"
 
@@ -4777,11 +4821,11 @@ msgstr "Prizes"
 msgid "novinka"
 msgstr "news"
 
-#: dpnk/urls.py:357
+#: dpnk/urls.py:362
 msgid "Nápověda"
 msgstr "Help"
 
-#: dpnk/urls.py:569
+#: dpnk/urls.py:584
 msgid "Města které koordinujete"
 msgstr ""
 
@@ -4856,6 +4900,18 @@ msgstr ""
 #: dpnk/views/registration_and_login.py:348
 msgid "Děkujeme, že s námi chcete jezdit Do práce na kole!"
 msgstr "Thank You for choosing the Bike to work every day!"
+
+#: dpnk/views/registration_and_login.py:354
+msgid "Vaši platbu jsme úspěšně přijali."
+msgstr "Your payment was successfully accepted."
+
+#: dpnk/views/registration_and_login.py:356
+msgid "Startovné se neplatí."
+msgstr "Participation Fee is not payed"
+
+#: dpnk/views/registration_and_login.py:360
+msgid "Děkujeme!"
+msgstr "Thank You!"
 
 #: dpnk/views/registration_and_login.py:370
 #, python-brace-format
@@ -5376,15 +5432,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Missing UserAtendance model instance for user with email address <"
 #~ "%(user_email)s>, create this model first, please."
-
-#~ msgid "Vaši platbu jsme úspěšně přijali."
-#~ msgstr "Your payment was successfully accepted."
-
-#~ msgid "Startovné se neplatí."
-#~ msgstr "Participation Fee is not payed"
-
-#~ msgid "Děkujeme!"
-#~ msgstr "Thank You!"
 
 #~ msgid ""
 #~ "Zadejte pokud potřebujete mít na faktuře jiného adresáta, než název "
@@ -6021,9 +6068,6 @@ msgstr ""
 
 #~ msgid "Registrujte se do soutěže %s"
 #~ msgstr "Register now to competition %s"
-
-#~ msgid "E-mail (uživatelské jméno)"
-#~ msgstr "E-mail (username)"
 
 #~ msgid ""
 #~ "Napište několik začátečních písmen celého názvu svého zaměstnavatele a "

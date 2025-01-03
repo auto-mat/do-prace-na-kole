@@ -20,7 +20,7 @@ class PayUNotifyOrderRequestAuthentification(authentication.BaseAuthentication):
         authorization_header = request.META.get("HTTP_AUTHORIZATION")
         if not authorization_header:
             raise exceptions.AuthenticationFailed(
-                _("Request has missing <Authorization: Basic> header.")
+                _("Request objekt má chybějící <Authorization: Basic> záhlaví.")
             )
         try:
             decoded_auth_header = base64.b64decode(
@@ -28,13 +28,15 @@ class PayUNotifyOrderRequestAuthentification(authentication.BaseAuthentication):
             ).decode()
         except base64.binascii.Error:
             raise exceptions.AuthenticationFailed(
-                _("Decode Authorization Basic header <%(auth_header)s> failed.")
+                _(
+                    "Dekódovanie Authorization Basic header <%(auth_header)s> záhlaví selhalo."
+                )
                 % {"auth_header": authorization_header.replace("Basic ", "")}
             )
         if (":") not in decoded_auth_header:
             raise exceptions.AuthenticationFailed(
                 _(
-                    "Incorrect format of Authorization Basic header. Use <username:password> format."
+                    "Nesprávný formát Authorization Basic záhlaví. Prosím použijte <username:password> formát."
                 )
             )
         payu_client_id, payu_rest_api_second_key_md5 = decoded_auth_header.split(":")
@@ -49,4 +51,6 @@ class PayUNotifyOrderRequestAuthentification(authentication.BaseAuthentication):
             "PayU order notify request was authentificate unsucessfully."
             " Invalid username or password."
         )
-        raise exceptions.AuthenticationFailed(_("Invalid username or password."))
+        raise exceptions.AuthenticationFailed(
+            _("Neplatné uživatelské jméno nebo heslo.")
+        )
