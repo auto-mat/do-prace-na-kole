@@ -96,7 +96,8 @@ class PayU:
             pay_category=payment_category,
             status=models.Status.NEW,
             description=product_name,
-        ).save()
+        )
+        payment.save()
         payment.payu_ordered_product.set(payu_ordered_products)
         logger.info(
             "PayU create order, save new payment model order_id <%s>",
