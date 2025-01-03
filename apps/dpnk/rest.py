@@ -2223,7 +2223,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         self._save_user_attendance_model(user_attendance_update_fields)
 
         result = {"user_attendance": self.user_attendance}
-        result.update({"id": self.user_attendance.userprofile.id })
+        result.update({"id": self.user_attendance.userprofile.id})
 
         # Del unnecessary discount_coupon_used field
         discount_coupon_used_field = "discount_coupon_used"
