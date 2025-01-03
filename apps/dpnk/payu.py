@@ -69,8 +69,8 @@ class PayU:
             user_attendance=user_attendance,
             order_id=order_id,
             amount=amount,
-            payment_subject=payment_subject,
-            payment_category=payment_category,
+            pay_subject=payment_subject,
+            pay_category=payment_category,
             status=models.Status.NEW,
             description=product_name,
         ).save()
