@@ -253,9 +253,9 @@ class Payment(Transaction):
     ]
 
     PAYMENT_CATEGORY = [
-        ("entry_fee", _("Štartovné")),
+        ("entry_fee", _("Startovné")),
         ("donation", _("Dar")),
-        ("entry_fee-donation", _("Štartovné a dar")),
+        ("entry_fee-donation", _("Startovné a dar")),
     ]
 
     class Meta:
