@@ -2698,10 +2698,8 @@ msgid "Platobní subjekt"
 msgstr "Payment subject"
 
 #: dpnk/models/transactions.py:318
-#, fuzzy
-#| msgid "Soutěžní kategorie"
 msgid "Platobní kategorie"
-msgstr "Competition category"
+msgstr "Payment category"
 
 #: dpnk/models/trip.py:108 dpnk/templates/widgets/leaflet.html:49
 msgid "Výlet"
