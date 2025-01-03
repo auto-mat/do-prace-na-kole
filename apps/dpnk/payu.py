@@ -43,15 +43,23 @@ class PayU:
         ).delete()
 
     def _save_payment(
-        self, amount, order_id, product_name, payment_subject, user_attendance
+        self,
+        amount,
+        order_id,
+        product_name,
+        payment_subject,
+        payment_category,
+        user_attendance,
     ):
         """Save PayU new order into DB as new Payment model
 
         :param int amount: Order PayU amount
         :param str order_id: Unique RTWBB internal app order id
         :param str product_name: Product name(s) which you buy
-        :param str product_subject: Payment subject, see Payment model
+        :param str payment_subject: Payment subject, see Payment model
                                     PAYMENT_SUBJECT constant
+        :param str payment_category: Payment category, see Payment model
+                                     PAYMENT_CATEGORY constant
         :param UserAttendance user_attendance: UserAttendace model instance
 
         :return None
@@ -62,6 +70,7 @@ class PayU:
             order_id=order_id,
             amount=amount,
             payment_subject=payment_subject,
+            payment_category=payment_category,
             status=models.Status.NEW,
             description=product_name,
         ).save()
@@ -214,6 +223,7 @@ class PayU:
                     [product["name"] for product in data["products"]]
                 ),
                 payment_subject=data["paymentSubject"],
+                payment_category=data["paymentCategory"],
                 amount=data["amount"],
                 user_attendance=data["userAttendance"],
             )

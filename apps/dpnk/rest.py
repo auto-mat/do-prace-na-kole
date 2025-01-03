@@ -1779,6 +1779,7 @@ class PayCreateOrderDeserializer(serializers.Serializer):
     amount = serializers.IntegerField(required=True)
     products = serializers.JSONField()
     payment_subject = serializers.ChoiceField(choices=Payment.PAYMENT_SUBJECT)
+    payment_category = serializers.ChoiceField(choices=Payment.PAYMENT_CATEGORY)
     client_ip = serializers.IPAddressField(required=True)
 
 
@@ -1826,6 +1827,7 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
             "extOrderId": order_id,
             "userAttendance": ua,
             "paymentSubject": deserialized_data.data["payment_subject"],
+            "paymentCategory": deserialized_data.data["payment_category"],
             "buyer": {
                 "email": request.user.email,
                 "phone": ua.userprofile.telephone if ua.userprofile.telephone else "",
