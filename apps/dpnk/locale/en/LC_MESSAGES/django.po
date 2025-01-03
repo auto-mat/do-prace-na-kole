@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-03 05:40+0100\n"
+"POT-Creation-Date: 2025-01-03 05:55+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -468,7 +468,7 @@ msgstr "Official challenges"
 msgid "Od teď mohou schválení hráči soutěžit."
 msgstr "Selected team members can compete starting now."
 
-#: dpnk/company_admin_views.py:149
+#: dpnk/company_admin_views.py:149 dpnk/models/transactions.py:256
 msgid "Startovné"
 msgstr "Participation Fee"
 
@@ -2673,21 +2673,13 @@ msgstr "for individuals"
 msgid "Slevový kupón"
 msgstr "Discount voucher"
 
-#: dpnk/models/transactions.py:256
-#, fuzzy
-#| msgid "Startovné"
-msgid "Štartovné"
-msgstr "Participation Fee"
-
 #: dpnk/models/transactions.py:257
 msgid "Dar"
-msgstr ""
+msgstr "Donation"
 
 #: dpnk/models/transactions.py:258
-#, fuzzy
-#| msgid "Startovné"
-msgid "Štartovné a dar"
-msgstr "Participation Fee"
+msgid "Startovné a dar"
+msgstr "Participation fee and donation"
 
 #: dpnk/models/transactions.py:262 dpnk/models/transactions.py:263
 msgid "Platební transakce"
@@ -3113,12 +3105,16 @@ msgid ""
 msgstr "Decode Authorization Basic header <%(auth_header)s> header failed."
 
 #: dpnk/rest_auth.py:39
+#, fuzzy
+#| msgid ""
+#| "Nesprávný formát Authorization Basic záhlaví. Použijte <username:"
+#| "password> formát, prosím."
 msgid ""
-"Nesprávný formát Authorization Basic záhlaví. Použijte <username:password> "
-"formát, prosím."
+"Nesprávný formát Authorization Basic záhlaví. Prosím použijte <username:"
+"password> formát."
 msgstr ""
-"Incorrect format of Authorization Basic header. Please use <username:password> "
-"formát."
+"Incorrect format of Authorization Basic header. Please use <username:"
+"password> formát."
 
 #: dpnk/rest_auth.py:55
 msgid "Neplatné uživatelské jméno nebo heslo."
@@ -5424,6 +5420,11 @@ msgstr ""
 "approval and you feel it has taken too long, please contact support at <a "
 "href='mailto:{contact_email}?subject=Company coordinator "
 "approval'>{contact_email}</a>."
+
+#, fuzzy
+#~| msgid "Startovné"
+#~ msgid "Štartovné"
+#~ msgstr "Participation Fee"
 
 #, python-format
 #~ msgid ""

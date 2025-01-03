@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-03 05:40+0100\n"
+"POT-Creation-Date: 2025-01-03 05:55+0100\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -456,7 +456,7 @@ msgstr "Oficiální kategorie výzvy"
 msgid "Od teď mohou schválení hráči soutěžit."
 msgstr "Od teď to mohou schválení účastníci rozjet."
 
-#: dpnk/company_admin_views.py:149
+#: dpnk/company_admin_views.py:149 dpnk/models/transactions.py:256
 msgid "Startovné"
 msgstr ""
 
@@ -2583,16 +2583,12 @@ msgstr ""
 msgid "Slevový kupón"
 msgstr ""
 
-#: dpnk/models/transactions.py:256
-msgid "Štartovné"
-msgstr ""
-
 #: dpnk/models/transactions.py:257
 msgid "Dar"
 msgstr ""
 
 #: dpnk/models/transactions.py:258
-msgid "Štartovné a dar"
+msgid "Startovné a dar"
 msgstr ""
 
 #: dpnk/models/transactions.py:262 dpnk/models/transactions.py:263
@@ -2992,8 +2988,8 @@ msgstr ""
 
 #: dpnk/rest_auth.py:39
 msgid ""
-"Nesprávný formát Authorization Basic záhlaví. Použijte <username:password> "
-"formát."
+"Nesprávný formát Authorization Basic záhlaví. Prosím použijte <username:"
+"password> formát."
 msgstr ""
 
 #: dpnk/rest_auth.py:55
