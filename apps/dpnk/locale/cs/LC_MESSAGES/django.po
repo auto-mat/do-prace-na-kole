@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-03 05:55+0100\n"
+"POT-Creation-Date: 2025-01-03 09:11+0100\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -334,7 +334,7 @@ msgstr ""
 msgid "Ceny jsou uváděny bez DPH"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:61 dpnk/models/transactions.py:287
+#: dpnk/company_admin_forms.py:61 dpnk/models/transactions.py:288
 #: dpnk/templates/company_admin/create_invoice.html:53
 #: dpnk/templates/company_admin/select_users_pay_for.html:25
 msgid "Částka"
@@ -456,7 +456,7 @@ msgstr "Oficiální kategorie výzvy"
 msgid "Od teď mohou schválení hráči soutěžit."
 msgstr "Od teď to mohou schválení účastníci rozjet."
 
-#: dpnk/company_admin_views.py:149 dpnk/models/transactions.py:256
+#: dpnk/company_admin_views.py:149 dpnk/models/transactions.py:257
 msgid "Startovné"
 msgstr ""
 
@@ -1443,7 +1443,7 @@ msgstr ""
 
 #: dpnk/models/company.py:54 dpnk/models/company.py:55
 #: dpnk/models/company.py:59 dpnk/models/invoice.py:131
-#: dpnk/models/transactions.py:251 dpnk/resources.py:373
+#: dpnk/models/transactions.py:252 dpnk/resources.py:373
 msgid "Organizace"
 msgstr ""
 
@@ -1451,7 +1451,7 @@ msgstr ""
 msgid "Rodina"
 msgstr ""
 
-#: dpnk/models/company.py:61 dpnk/models/transactions.py:252
+#: dpnk/models/company.py:61 dpnk/models/transactions.py:253
 msgid "Škola"
 msgstr ""
 
@@ -2130,6 +2130,26 @@ msgstr ""
 msgid "Povolání"
 msgstr ""
 
+#: dpnk/models/payu_ordered_product.py:17
+msgid "Objednávaný produkt"
+msgstr ""
+
+#: dpnk/models/payu_ordered_product.py:18
+msgid "Objednávané produkty"
+msgstr ""
+
+#: dpnk/models/payu_ordered_product.py:21
+msgid "Jméno objednávaného produktu"
+msgstr ""
+
+#: dpnk/models/payu_ordered_product.py:27
+msgid "Jednotková cena"
+msgstr ""
+
+#: dpnk/models/payu_ordered_product.py:32
+msgid "Množství"
+msgstr ""
+
 #: dpnk/models/phase.py:30
 msgid "registrační"
 msgstr ""
@@ -2339,279 +2359,287 @@ msgstr ""
 msgid "Újetych kilometrů"
 msgstr ""
 
-#: dpnk/models/transactions.py:69
+#: dpnk/models/transactions.py:70
 msgid "Nový"
 msgstr ""
 
-#: dpnk/models/transactions.py:70
+#: dpnk/models/transactions.py:71
 msgid "Přijat k sestavení"
 msgstr ""
 
-#: dpnk/models/transactions.py:71
+#: dpnk/models/transactions.py:72
 msgid "Sestaven"
 msgstr ""
 
-#: dpnk/models/transactions.py:72
+#: dpnk/models/transactions.py:73
 msgid "Odeslán"
 msgstr ""
 
-#: dpnk/models/transactions.py:73
+#: dpnk/models/transactions.py:74
 msgid "Doručení potvrzeno"
 msgstr ""
 
-#: dpnk/models/transactions.py:74
+#: dpnk/models/transactions.py:75
 msgid "Dosud nedoručeno"
 msgstr ""
 
-#: dpnk/models/transactions.py:75
+#: dpnk/models/transactions.py:76
 msgid "Reklamován (zaviněná)"
 msgstr ""
 
-#: dpnk/models/transactions.py:76
+#: dpnk/models/transactions.py:77
 msgid "Reklamován (nezaviněná)"
 msgstr ""
 
-#: dpnk/models/transactions.py:80
+#: dpnk/models/transactions.py:81
 msgid "Nová"
 msgstr ""
 
-#: dpnk/models/transactions.py:81
+#: dpnk/models/transactions.py:82
 msgid "Zrušena"
 msgstr ""
 
-#: dpnk/models/transactions.py:82
+#: dpnk/models/transactions.py:83
 msgid "Odmítnuta"
 msgstr ""
 
-#: dpnk/models/transactions.py:83
+#: dpnk/models/transactions.py:84
 msgid "Zahájena"
 msgstr ""
 
-#: dpnk/models/transactions.py:84
+#: dpnk/models/transactions.py:85
 msgid "Očekává potvrzení"
 msgstr ""
 
-#: dpnk/models/transactions.py:85
+#: dpnk/models/transactions.py:86
 msgid "Platba zamítnuta, prostředky nemožno vrátit, řeší PayU"
 msgstr ""
 
-#: dpnk/models/transactions.py:86
+#: dpnk/models/transactions.py:87
 msgid "Platba přijata"
 msgstr ""
 
-#: dpnk/models/transactions.py:87
+#: dpnk/models/transactions.py:88
 msgid "Nesprávný status -- kontaktovat PayU"
 msgstr ""
 
-#: dpnk/models/transactions.py:88
+#: dpnk/models/transactions.py:89
 msgid "Platba akceptována organizací"
 msgstr ""
 
-#: dpnk/models/transactions.py:89
+#: dpnk/models/transactions.py:90
 msgid "Partner má startovné zdarma"
 msgstr ""
 
-#: dpnk/models/transactions.py:90
+#: dpnk/models/transactions.py:91
 msgid "Faktura vystavena"
 msgstr ""
 
-#: dpnk/models/transactions.py:91
+#: dpnk/models/transactions.py:92
 msgid "Faktura zaplacena"
 msgstr ""
 
-#: dpnk/models/transactions.py:112
+#: dpnk/models/transactions.py:113
 msgid "Status"
 msgstr ""
 
-#: dpnk/models/transactions.py:127
+#: dpnk/models/transactions.py:128
 msgid "Vytvoření"
 msgstr ""
 
-#: dpnk/models/transactions.py:132
+#: dpnk/models/transactions.py:133
 msgid "Popis"
 msgstr ""
 
-#: dpnk/models/transactions.py:138
+#: dpnk/models/transactions.py:139
 msgid "Realizace"
 msgstr ""
 
-#: dpnk/models/transactions.py:144 dpnk/models/transactions.py:145
+#: dpnk/models/transactions.py:145 dpnk/models/transactions.py:146
 msgid "Transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:152
+#: dpnk/models/transactions.py:153
 msgid "Obecná transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:153
+#: dpnk/models/transactions.py:154
 msgid "Obecné transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:160
+#: dpnk/models/transactions.py:161
 msgid "Uživatelská akce"
 msgstr ""
 
-#: dpnk/models/transactions.py:161
+#: dpnk/models/transactions.py:162
 msgid "Uživatelské akce"
 msgstr ""
 
-#: dpnk/models/transactions.py:181 dpnk/models/transactions.py:182
+#: dpnk/models/transactions.py:182 dpnk/models/transactions.py:183
 msgid "mPenize - mBank"
 msgstr ""
 
-#: dpnk/models/transactions.py:183
+#: dpnk/models/transactions.py:184
 msgid "MojePlatba"
 msgstr ""
 
-#: dpnk/models/transactions.py:184
+#: dpnk/models/transactions.py:185
 msgid "ePlatby pro eKonto"
 msgstr ""
 
-#: dpnk/models/transactions.py:185
+#: dpnk/models/transactions.py:186
 msgid "GE Money Bank"
 msgstr ""
 
-#: dpnk/models/transactions.py:186
+#: dpnk/models/transactions.py:187
 msgid "Sberbank (Volksbank)"
 msgstr ""
 
-#: dpnk/models/transactions.py:187 dpnk/models/transactions.py:188
+#: dpnk/models/transactions.py:188 dpnk/models/transactions.py:189
 msgid "Fio banka"
 msgstr ""
 
-#: dpnk/models/transactions.py:189 dpnk/models/transactions.py:190
+#: dpnk/models/transactions.py:190 dpnk/models/transactions.py:191
 msgid "Česká spořitelna"
 msgstr ""
 
-#: dpnk/models/transactions.py:191
+#: dpnk/models/transactions.py:192
 msgid "Era - Poštovní spořitelna"
 msgstr ""
 
-#: dpnk/models/transactions.py:192
+#: dpnk/models/transactions.py:193
 msgid "ČSOB"
 msgstr ""
 
-#: dpnk/models/transactions.py:193
+#: dpnk/models/transactions.py:194
 msgid "Kreditní karta přes GPE"
 msgstr ""
 
-#: dpnk/models/transactions.py:194
+#: dpnk/models/transactions.py:195
 msgid "bankovní převod"
 msgstr ""
 
-#: dpnk/models/transactions.py:195
+#: dpnk/models/transactions.py:196
 msgid "převod přes poštu"
 msgstr ""
 
-#: dpnk/models/transactions.py:196
+#: dpnk/models/transactions.py:197
 msgid "superCASH"
 msgstr ""
 
-#: dpnk/models/transactions.py:197
+#: dpnk/models/transactions.py:198
 msgid "PaySec"
 msgstr ""
 
-#: dpnk/models/transactions.py:198
+#: dpnk/models/transactions.py:199
 msgid "Mobito"
 msgstr ""
 
-#: dpnk/models/transactions.py:199
+#: dpnk/models/transactions.py:200
 msgid "UniCredit"
 msgstr ""
 
-#: dpnk/models/transactions.py:200
+#: dpnk/models/transactions.py:201
 msgid "testovací platba"
 msgstr ""
 
-#: dpnk/models/transactions.py:201
+#: dpnk/models/transactions.py:202
 msgid "faktura mimo PayU"
 msgstr ""
 
-#: dpnk/models/transactions.py:202
+#: dpnk/models/transactions.py:203
 msgid "platba přes firemního koordinátora"
 msgstr ""
 
-#: dpnk/models/transactions.py:203
+#: dpnk/models/transactions.py:204
 msgid "člen Klubu přátel AutoMatu"
 msgstr ""
 
-#: dpnk/models/transactions.py:204
+#: dpnk/models/transactions.py:205
 msgid "kandidát na členství v Klubu přátel AutoMatu"
 msgstr ""
 
-#: dpnk/models/transactions.py:205
+#: dpnk/models/transactions.py:206
 msgid "neplatí startovné"
 msgstr ""
 
-#: dpnk/models/transactions.py:206 dpnk/models/transactions.py:207
+#: dpnk/models/transactions.py:207 dpnk/models/transactions.py:208
 msgid "Raiffeisen Bank"
 msgstr ""
 
-#: dpnk/models/transactions.py:208
+#: dpnk/models/transactions.py:209
 msgid "Československá obchodní banka"
 msgstr ""
 
-#: dpnk/models/transactions.py:209 dpnk/models/transactions.py:210
+#: dpnk/models/transactions.py:210 dpnk/models/transactions.py:211
 msgid "Komerční banka"
 msgstr ""
 
-#: dpnk/models/transactions.py:211
+#: dpnk/models/transactions.py:212
 msgid "MONETA Money Bank"
 msgstr ""
 
-#: dpnk/models/transactions.py:212
+#: dpnk/models/transactions.py:213
 msgid "Pay later with Twisto - Czech"
 msgstr ""
 
-#: dpnk/models/transactions.py:213
+#: dpnk/models/transactions.py:214
 msgid "online nebo standardní převod"
 msgstr ""
 
-#: dpnk/models/transactions.py:216
+#: dpnk/models/transactions.py:217
 msgid "platba kartou (včetně MasterPass a Visa checkout)"
 msgstr ""
 
-#: dpnk/models/transactions.py:218
+#: dpnk/models/transactions.py:219
 msgid "platba cez  Payu | Installments řešení"
 msgstr ""
 
-#: dpnk/models/transactions.py:249
+#: dpnk/models/transactions.py:250
 msgid "Jednotlivec"
 msgstr ""
 
-#: dpnk/models/transactions.py:250 dpnk/models/user_attendance.py:138
+#: dpnk/models/transactions.py:251 dpnk/models/user_attendance.py:138
 msgid "Slevový kupón"
 msgstr ""
 
-#: dpnk/models/transactions.py:257
+#: dpnk/models/transactions.py:258
 msgid "Dar"
 msgstr ""
 
-#: dpnk/models/transactions.py:258
+#: dpnk/models/transactions.py:259
 msgid "Startovné a dar"
 msgstr ""
 
-#: dpnk/models/transactions.py:262 dpnk/models/transactions.py:263
+#: dpnk/models/transactions.py:263 dpnk/models/transactions.py:264
 msgid "Platební transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:291
+#: dpnk/models/transactions.py:292
 msgid "Typ platby"
 msgstr ""
 
-#: dpnk/models/transactions.py:298
+#: dpnk/models/transactions.py:299
 msgid "Chyba"
 msgstr ""
 
-#: dpnk/models/transactions.py:311
+#: dpnk/models/transactions.py:312
 msgid "Platobní subjekt"
 msgstr ""
 
-#: dpnk/models/transactions.py:318
+#: dpnk/models/transactions.py:319
 #, fuzzy
 #| msgid "Soutěžní kategorie"
 msgid "Platobní kategorie"
 msgstr "Kategorie výzvy"
+
+#: dpnk/models/transactions.py:327
+msgid "PayU objednávaný produkt"
+msgstr ""
+
+#: dpnk/models/transactions.py:328
+msgid "PayU objednávaný produkt(y) - RTWBB startovné, RTWBB dar"
+msgstr ""
 
 #: dpnk/models/trip.py:108 dpnk/templates/widgets/leaflet.html:49
 msgid "Výlet"
@@ -2941,37 +2969,37 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1873
+#: dpnk/rest.py:1876
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: dpnk/rest.py:1897
+#: dpnk/rest.py:1900
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
 "%(signature)s>."
 msgstr ""
 
-#: dpnk/rest.py:1926
+#: dpnk/rest.py:1929
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:1962
+#: dpnk/rest.py:1965
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
 "%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:1975
+#: dpnk/rest.py:1978
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:2458
+#: dpnk/rest.py:2461
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
