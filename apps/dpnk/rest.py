@@ -2024,6 +2024,7 @@ class PersonalDetailsUserSerializer(serpy.Serializer):
 
 
 class PersonalDetailsUserProfileSerializer(serpy.Serializer):
+    id = serpy.IntField()
     nickname = EmptyStrField()
     sex = EmptyStrField()
     telephone = EmptyStrField()
@@ -2075,6 +2076,9 @@ class RegisterChallengeSerializer(serpy.Serializer):
 class RegisterChallengeDeserializer(serializers.ModelSerializer):
     PAYMENT_SUBJECT = Payment.PAYMENT_SUBJECT[2:]
 
+    id = serializers.IntegerField(
+        read_only=True,
+    )
     first_name = serializers.CharField(
         required=False,
     )
@@ -2140,6 +2144,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = (
+            "id",
             "first_name",
             "last_name",
             "nickname",
@@ -2218,6 +2223,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         self._save_user_attendance_model(user_attendance_update_fields)
 
         result = {"user_attendance": self.user_attendance}
+        result.update({"id": self.user_attendance.userprofile.id })
 
         # Del unnecessary discount_coupon_used field
         discount_coupon_used_field = "discount_coupon_used"
@@ -2402,6 +2408,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         if data.get("personal_details"):
             personal_details_data = data.pop("personal_details")
+            data["id"]: personal_details_data.pop("id")
             data["first_name"]: personal_details_data.pop("first_name")
             data["last_name"]: personal_details_data.pop("last_name")
             data["nickname"]: personal_details_data.pop("nickname")
@@ -2426,6 +2433,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     def to_representation(self, value):
         data = super().to_representation(value)
         personal_details_fields = (
+            "id",
             "first_name",
             "last_name",
             "nickname",
