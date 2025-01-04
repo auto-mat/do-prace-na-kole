@@ -812,9 +812,7 @@ class UserAttendanceSerializer(BaseUserAttendanceSerializer):
         lambda ua, req: ua.entered_competition(),
     )
     gallery = RequestSpecificField(
-        lambda ua, req: HyperlinkedField(
-            "gallery-detail",
-        ).get_url(
+        lambda ua, req: HyperlinkedField("gallery-detail",).get_url(
             ua.userprofile.get_gallery(),
             req,
         ),
@@ -2334,9 +2332,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         user_attendance_update_fields = {}
         if personal_data_opt_in:
             self.user_attendance.personal_data_opt_in = personal_data_opt_in
-            user_attendance_update_fields["personal_data_opt_in"] = (
-                self.user_attendance.personal_data_opt_in
-            )
+            user_attendance_update_fields[
+                "personal_data_opt_in"
+            ] = self.user_attendance.personal_data_opt_in
 
         if team_id:
             self.user_attendance.team_id = team_id
@@ -2344,21 +2342,21 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
         if t_shirt_size_id:
             self.user_attendance.t_shirt_size_id = t_shirt_size_id
-            user_attendance_update_fields["t_shirt_size_id"] = (
-                self.user_attendance.t_shirt_size_id
-            )
+            user_attendance_update_fields[
+                "t_shirt_size_id"
+            ] = self.user_attendance.t_shirt_size_id
 
         if discount_coupon:
             self.user_attendance.discount_coupon = DiscountCoupon.objects.get(
                 token=discount_coupon.split("-")[-1]
             )
-            user_attendance_update_fields["discount_coupon"] = (
-                self.user_attendance.discount_coupon
-            )
+            user_attendance_update_fields[
+                "discount_coupon"
+            ] = self.user_attendance.discount_coupon
             self.user_attendance.discount_coupon_used = timezone.now()
-            user_attendance_update_fields["discount_coupon_used"] = (
-                self.user_attendance.discount_coupon_used
-            )
+            user_attendance_update_fields[
+                "discount_coupon_used"
+            ] = self.user_attendance.discount_coupon_used
         return user_attendance_update_fields
 
     def _create_organization_coordinator_payment_model(
