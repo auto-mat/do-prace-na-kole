@@ -2678,6 +2678,85 @@ class TeamsSetTest(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
+class RegisterCoordinatorSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+    def test_get(self):
+        self.client.force_login(
+            User.objects.get(pk=3), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-coordinator-list")
+        response = self.client.get(rc)
+        print(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "firstName": "",
+                        "jobTitle": "",
+                        "lastName": "",
+                        "newsletter": None,
+                        "organizationId": 2,
+                        "phone": "",
+                        "responsibility": False,
+                        "terms": False,
+                    }
+                ],
+            },
+        )
+
+    def test_post(self):
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        test_data = {
+            "firstName": "Josef",
+            "lastName": "Novák",
+            "newsletter": "challenge",
+            "phone": "123456789",
+            "terms": False,
+            "organizationId": 1,
+            "jobTitle": "zaměstnanec",
+            "responsibility": False,
+        }
+
+        response = self.client.post(
+            reverse("register-coordinator-list"), test_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(response.content.decode(), test_data)
+
+        user = User.objects.get(pk=2)
+        user_profile = self.UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.first_name(), "Josef")
+        self.assertEqual(user_profile.last_name(), "Novák")
+        self.assertEqual(user_profile.telephone, "123584715")
+        self.assertEqual(user_profile.newsletter, "challenge")
+        company_admin = self.CompanyAdmin.objects.get(userprofile=user_profile)
+        self.assertEqual(company_admin.administrated_company.id, 1)
+        self.assertEqual(company_admin.motivation_company_admin, "zaměstnanec")
+        self.assertEqual(company_admin.will_pay_opt_in, False)
+        user_attendance = UserAttendance.objects.get(userprofile=user_profile)
+        self.assertEqual(user_attendance.personal_data_opt_in, True)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class MerchandiseSetTest(TestCase):
     fixtures = [
         "dump",

@@ -102,6 +102,8 @@ import json
 import requests
 from rest_framework import status
 
+from django.db import transaction
+
 logger = logging.getLogger(__name__)
 
 organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
@@ -413,9 +415,9 @@ class TripSerializer(MinimalTripSerializer):
     )
 
     file = RequestSpecificField(
-        lambda trip, req: req.build_absolute_uri(trip.gpx_file.file.url)
-        if trip.gpx_file
-        else None,
+        lambda trip, req: (
+            req.build_absolute_uri(trip.gpx_file.file.url) if trip.gpx_file else None
+        ),
         required=False,
         # attr="gpx_file",
         # help_text="GPX file with the track",
@@ -789,32 +791,40 @@ class MinimalUserAttendanceSerializer(BaseUserAttendanceSerializer):
 class UserAttendanceSerializer(BaseUserAttendanceSerializer):
     remaining_rides_count = serpy.IntField(
         attr="get_remaining_rides_count",
-        call=True
+        call=True,
         # help_text="Remaining number of possible trips",
     )
     sesame_token = RequestSpecificField(
-        lambda ua, req: ua.userprofile.get_sesame_token()
-        if ua.userprofile.user.pk == req.user.pk
-        else None,
+        lambda ua, req: (
+            ua.userprofile.get_sesame_token()
+            if ua.userprofile.user.pk == req.user.pk
+            else None
+        ),
     )
     is_coordinator = RequestSpecificField(
-        lambda ua, req: ua.userprofile.administrated_cities.exists()
-        if ua.userprofile.user.pk == req.user.pk
-        else None,
+        lambda ua, req: (
+            ua.userprofile.administrated_cities.exists()
+            if ua.userprofile.user.pk == req.user.pk
+            else None
+        ),
     )
     registration_complete = RequestSpecificField(
         lambda ua, req: ua.entered_competition(),
     )
     gallery = RequestSpecificField(
-        lambda ua, req: HyperlinkedField("gallery-detail",).get_url(
+        lambda ua, req: HyperlinkedField(
+            "gallery-detail",
+        ).get_url(
             ua.userprofile.get_gallery(),
             req,
         ),
     )
     unread_notification_count = RequestSpecificField(
-        lambda ua, req: ua.notifications().filter(unread=True).count()
-        if ua.userprofile.user.pk == req.user.pk
-        else None,
+        lambda ua, req: (
+            ua.notifications().filter(unread=True).count()
+            if ua.userprofile.user.pk == req.user.pk
+            else None
+        ),
     )
 
     points = serpy.IntField()
@@ -1186,6 +1196,7 @@ class CampaignTypeDeserializer(serializers.HyperlinkedModelSerializer):
 
 
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+
 
 # https://gist.github.com/andreagrandi/14e07afd293fafaea770f69cf66cac14
 class IsAdminOrReadOnly(BasePermission):
@@ -1836,9 +1847,11 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
                 "phone": ua.userprofile.telephone if ua.userprofile.telephone else "",
                 "firstName": request.user.first_name,
                 "lastName": request.user.last_name,
-                "language": ua.userprofile.language
-                if ua.userprofile.language
-                else settings.LANGUAGE_CODE,
+                "language": (
+                    ua.userprofile.language
+                    if ua.userprofile.language
+                    else settings.LANGUAGE_CODE
+                ),
             },
         }
         return Response(payu.create_order(access_token, data))
@@ -2321,9 +2334,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         user_attendance_update_fields = {}
         if personal_data_opt_in:
             self.user_attendance.personal_data_opt_in = personal_data_opt_in
-            user_attendance_update_fields[
-                "personal_data_opt_in"
-            ] = self.user_attendance.personal_data_opt_in
+            user_attendance_update_fields["personal_data_opt_in"] = (
+                self.user_attendance.personal_data_opt_in
+            )
 
         if team_id:
             self.user_attendance.team_id = team_id
@@ -2331,21 +2344,21 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
         if t_shirt_size_id:
             self.user_attendance.t_shirt_size_id = t_shirt_size_id
-            user_attendance_update_fields[
-                "t_shirt_size_id"
-            ] = self.user_attendance.t_shirt_size_id
+            user_attendance_update_fields["t_shirt_size_id"] = (
+                self.user_attendance.t_shirt_size_id
+            )
 
         if discount_coupon:
             self.user_attendance.discount_coupon = DiscountCoupon.objects.get(
                 token=discount_coupon.split("-")[-1]
             )
-            user_attendance_update_fields[
-                "discount_coupon"
-            ] = self.user_attendance.discount_coupon
+            user_attendance_update_fields["discount_coupon"] = (
+                self.user_attendance.discount_coupon
+            )
             self.user_attendance.discount_coupon_used = timezone.now()
-            user_attendance_update_fields[
-                "discount_coupon_used"
-            ] = self.user_attendance.discount_coupon_used
+            user_attendance_update_fields["discount_coupon_used"] = (
+                self.user_attendance.discount_coupon_used
+            )
         return user_attendance_update_fields
 
     def _create_organization_coordinator_payment_model(
@@ -2589,6 +2602,202 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrSuperuser]
 
 
+class UserDeserializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ["firstName", "lastName"]
+        extra_kwargs = {
+            "firstName": {"source": "first_name"},
+            "lastName": {"source": "last_name"},
+        }
+
+
+class UserSerializer(serpy.Serializer):
+    firstName = serpy.StrField(attr="first_name")
+    lastName = serpy.StrField(attr="last_name")
+
+
+class UserAttendanceDeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAttendance
+        fields = ["terms"]
+        extra_kwargs = {
+            "terms": {"source": "personal_data_opt_in"},
+        }
+
+
+class RegisterCoordinatorUserAttendanceSerializer(serpy.Serializer):
+    terms = serpy.BoolField(attr="personal_data_opt_in")
+
+
+class UserProfileDeserializer(serializers.HyperlinkedModelSerializer):
+    user = UserDeserializer()
+
+    class Meta:
+        model = UserProfile
+        fields = ["user", "newsletter", "phone"]
+        extra_kwargs = {
+            "phone": {"source": "telephone"},
+        }
+
+
+class UserProfileSerializer(serpy.Serializer):
+    user = UserSerializer()
+    newsletter = serpy.Field()
+    phone = serpy.StrField(attr="telephone")
+
+
+class RegisterCoordinatorDeserializer(serializers.HyperlinkedModelSerializer):
+
+    user_profile = UserProfileDeserializer(source="userprofile")
+    user_attendance = UserAttendanceDeserializer(required=False)
+
+    organizationId = serializers.IntegerField(source="administrated_company_id")
+
+    class Meta:
+        model = CompanyAdmin
+        fields = (
+            "user_profile",
+            "user_attendance",
+            "organizationId",
+            "jobTitle",
+            "responsibility",
+        )
+        extra_kwargs = {
+            "jobTitle": {"source": "motivation_company_admin"},
+            "responsibility": {"source": "will_pay_opt_in"},
+        }
+
+    def _update_user_attendance(self, obj, data):
+        if "personal_data_opt_in" in data:
+            obj.personal_data_opt_in = data["personal_data_opt_in"]
+        obj.save()
+
+    def _update_user_profile(self, obj, data):
+
+        if "telephone" in data:
+            obj.telephone = data["telephone"]
+        if "newsletter" in data:
+            obj.newsletter = data["newsletter"]
+        obj.save()
+
+    def _update_user(self, obj, data):
+        if "first_name" in data:
+            obj.first_name = data["first_name"]
+        if "last_name" in data:
+            obj.last_name = data["last_name"]
+        obj.save()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        user_attendance = self.context.get("request").user_attendance
+        user_profile = user_attendance.userprofile
+        user = user_profile.user
+
+        user_attendance_values = validated_data.pop("user_attendance", {})
+        self._update_user_attendance(user_attendance, user_attendance_values)
+        user_profile_values = validated_data.pop("userprofile", {})
+        self._update_user_profile(user_profile, user_profile_values)
+        user_values = user_profile_values.pop("user", {})
+        self._update_user(user, user_values)
+
+        company_admin, _ = CompanyAdmin.objects.update_or_create(
+            campaign=user_attendance.campaign,
+            userprofile=user_attendance.userprofile,
+            defaults=validated_data,
+        )
+        return company_admin
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        user_attendance = self.context.get("request").user_attendance
+        user_profile = user_attendance.userprofile
+        user = user_profile.user
+
+        user_attendance_values = validated_data.pop("user_attendance", {})
+        self._update_user_attendance(user_attendance, user_attendance_values)
+        user_profile_values = validated_data.pop("userprofile", {})
+        self._update_user_profile(user_profile, user_profile_values)
+        user_values = user_profile_values.pop("user", {})
+        self._update_user(user, user_values)
+
+        return super().update(instance, validated_data)
+
+    def to_internal_value(self, data):
+        data["user_attendance"] = {}
+        data["user_profile"] = {}
+        data["user_profile"]["user"] = {}
+
+        if "firstName" in data:
+            data["user_profile"]["user"]["firstName"] = data.pop("firstName")
+        if "lastName" in data:
+            data["user_profile"]["user"]["lastName"] = data.pop("lastName")
+        if "newsletter" in data:
+            data["user_profile"]["newsletter"] = data.pop("newsletter")
+        if "phone" in data:
+            data["user_profile"]["phone"] = data.pop("phone")
+        if "terms" in data:
+            data["user_attendance"]["terms"] = data.pop("terms")
+
+        return super().to_internal_value(data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        user_attendance_data = representation.pop("user_attendance")
+        user_profile_data = representation.pop("user_profile")
+
+        representation["firstName"] = user_profile_data["user"]["firstName"]
+        representation["lastName"] = user_profile_data["user"]["lastName"]
+        representation["phone"] = user_profile_data["phone"]
+        representation["newsletter"] = user_profile_data["newsletter"]
+        representation["terms"] = user_attendance_data["terms"]
+
+        return representation
+
+
+class RegisterCoordinatorSerializer(serpy.Serializer):
+    user_profile = UserProfileSerializer(attr="userprofile")
+    user_attendance = RequestSpecificField(
+        lambda _, req: RegisterCoordinatorUserAttendanceSerializer(
+            req.user_attendance
+        ).data
+    )
+    organizationId = NullIntField(attr="administrated_company_id")
+    jobTitle = serpy.Field(attr="motivation_company_admin")
+    responsibility = serpy.BoolField(attr="will_pay_opt_in")
+
+    def to_value(self, instance):
+        representation = super().to_value(instance)
+
+        for item in representation:
+            user_profile = item.pop("user_profile")
+            user_attendance = item.pop("user_attendance")
+
+            item["firstName"] = user_profile["user"]["firstName"]
+            item["lastName"] = user_profile["user"]["lastName"]
+            item["phone"] = user_profile["phone"]
+            item["newsletter"] = user_profile["newsletter"]
+            item["terms"] = user_attendance["terms"]
+
+        return representation
+
+
+class RegisterCoordinatorSet(viewsets.ModelViewSet, UserAttendanceMixin):
+    def get_queryset(self):
+        return CompanyAdmin.objects.filter(
+            userprofile=self.ua().userprofile.pk, campaign__slug=self.request.subdomain
+        )
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return RegisterCoordinatorSerializer
+        else:
+            return RegisterCoordinatorDeserializer
+
+
 class IsUserOrganizationAdmin(APIView):
     """Is user organization admin"""
 
@@ -2598,14 +2807,16 @@ class IsUserOrganizationAdmin(APIView):
 
         return Response(
             {
-                "is_user_organization_admin": True
-                if CompanyAdmin.objects.filter(
-                    userprofile=request.user.userprofile,
-                    company_admin_approved="approved",
-                    campaign__slug=request.subdomain,
-                    administrated_company__isnull=False,
+                "is_user_organization_admin": (
+                    True
+                    if CompanyAdmin.objects.filter(
+                        userprofile=request.user.userprofile,
+                        company_admin_approved="approved",
+                        campaign__slug=request.subdomain,
+                        administrated_company__isnull=False,
+                    )
+                    else False
                 )
-                else False
             }
         )
 
@@ -2619,12 +2830,14 @@ class HasOrganizationAdmin(APIView):
 
         return Response(
             {
-                "has_organization_admin": True
-                if Company.objects.filter(
-                    id=organization_id,
-                    company_admin__isnull=False,
+                "has_organization_admin": (
+                    True
+                    if Company.objects.filter(
+                        id=organization_id,
+                        company_admin__isnull=False,
+                    )
+                    else False
                 )
-                else False
             }
         )
 
@@ -2692,4 +2905,9 @@ router.register(
     "register-challenge",
     RegisterChallengeSet,
     basename="register-challenge",
+)
+router.register(
+    "register-coordinator",
+    RegisterCoordinatorSet,
+    basename="register-coordinator",
 )
