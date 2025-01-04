@@ -817,7 +817,7 @@
    {
       "fields" : {
          "administrated_company" : 2,
-         "campaign" : 21,
+         "campaign" : 20,
          "can_confirm_payments" : true,
          "company_admin_approved" : "approved",
          "motivation_company_admin" : "",
