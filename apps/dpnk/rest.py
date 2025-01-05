@@ -812,7 +812,9 @@ class UserAttendanceSerializer(BaseUserAttendanceSerializer):
         lambda ua, req: ua.entered_competition(),
     )
     gallery = RequestSpecificField(
-        lambda ua, req: HyperlinkedField("gallery-detail",).get_url(
+        lambda ua, req: HyperlinkedField(
+            "gallery-detail",
+        ).get_url(
             ua.userprofile.get_gallery(),
             req,
         ),
@@ -2332,9 +2334,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         user_attendance_update_fields = {}
         if personal_data_opt_in:
             self.user_attendance.personal_data_opt_in = personal_data_opt_in
-            user_attendance_update_fields[
-                "personal_data_opt_in"
-            ] = self.user_attendance.personal_data_opt_in
+            user_attendance_update_fields["personal_data_opt_in"] = (
+                self.user_attendance.personal_data_opt_in
+            )
 
         if team_id:
             self.user_attendance.team_id = team_id
@@ -2342,21 +2344,21 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
         if t_shirt_size_id:
             self.user_attendance.t_shirt_size_id = t_shirt_size_id
-            user_attendance_update_fields[
-                "t_shirt_size_id"
-            ] = self.user_attendance.t_shirt_size_id
+            user_attendance_update_fields["t_shirt_size_id"] = (
+                self.user_attendance.t_shirt_size_id
+            )
 
         if discount_coupon:
             self.user_attendance.discount_coupon = DiscountCoupon.objects.get(
                 token=discount_coupon.split("-")[-1]
             )
-            user_attendance_update_fields[
-                "discount_coupon"
-            ] = self.user_attendance.discount_coupon
+            user_attendance_update_fields["discount_coupon"] = (
+                self.user_attendance.discount_coupon
+            )
             self.user_attendance.discount_coupon_used = timezone.now()
-            user_attendance_update_fields[
-                "discount_coupon_used"
-            ] = self.user_attendance.discount_coupon_used
+            user_attendance_update_fields["discount_coupon_used"] = (
+                self.user_attendance.discount_coupon_used
+            )
         return user_attendance_update_fields
 
     def _create_organization_coordinator_payment_model(
@@ -2722,6 +2724,7 @@ class RegisterCoordinatorDeserializer(serializers.HyperlinkedModelSerializer):
         return super().update(instance, validated_data)
 
     def to_internal_value(self, data):
+        data = data.copy()
         data["user_attendance"] = {}
         data["user_profile"] = {}
         data["user_profile"]["user"] = {}
@@ -2736,7 +2739,6 @@ class RegisterCoordinatorDeserializer(serializers.HyperlinkedModelSerializer):
             data["user_profile"]["phone"] = data.pop("phone")
         if "terms" in data:
             data["user_attendance"]["terms"] = data.pop("terms")
-
         return super().to_internal_value(data)
 
     def to_representation(self, instance):
@@ -2765,29 +2767,43 @@ class RegisterCoordinatorSerializer(serpy.Serializer):
     jobTitle = serpy.Field(attr="motivation_company_admin")
     responsibility = serpy.BoolField(attr="will_pay_opt_in")
 
+    def _transform(self, item):
+
+        user_profile = item.pop("user_profile")
+        user_attendance = item.pop("user_attendance")
+
+        item["firstName"] = user_profile["user"]["firstName"]
+        item["lastName"] = user_profile["user"]["lastName"]
+        item["phone"] = user_profile["phone"]
+        item["newsletter"] = user_profile["newsletter"]
+        item["terms"] = user_attendance["terms"]
+
+        return item
+
     def to_value(self, instance):
         representation = super().to_value(instance)
 
-        for item in representation:
-            user_profile = item.pop("user_profile")
-            user_attendance = item.pop("user_attendance")
-
-            item["firstName"] = user_profile["user"]["firstName"]
-            item["lastName"] = user_profile["user"]["lastName"]
-            item["phone"] = user_profile["phone"]
-            item["newsletter"] = user_profile["newsletter"]
-            item["terms"] = user_attendance["terms"]
+        representation = (
+            [self._transform(item) for item in representation]
+            if self.many
+            else self._transform(representation)
+        )
 
         return representation
 
 
 class RegisterCoordinatorSet(viewsets.ModelViewSet, UserAttendanceMixin):
     def get_queryset(self):
-        return CompanyAdmin.objects.filter(
-            userprofile=self.ua().userprofile.pk, campaign__slug=self.request.subdomain
-        )
+        pk = self.kwargs.get("pk")
+        if pk:
+            return CompanyAdmin.objects.filter(pk=pk)
+        else:
+            return CompanyAdmin.objects.filter(
+                userprofile=self.ua().userprofile.pk,
+                campaign__slug=self.request.subdomain,
+            )
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrSuperuser]
 
     def get_serializer_class(self):
         if self.action in ["retrieve", "list"]:

@@ -26,7 +26,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk import models, util
-from dpnk.models import Team, UserAttendance, UserProfile
+from dpnk.models import Team, UserAttendance, UserProfile, CompanyAdmin
 from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
@@ -2695,7 +2695,6 @@ class RegisterCoordinatorSetTest(TestCase):
         )
         rc = reverse("register-coordinator-list")
         response = self.client.get(rc)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode(),
@@ -2726,7 +2725,7 @@ class RegisterCoordinatorSetTest(TestCase):
             "firstName": "Josef",
             "lastName": "Novák",
             "newsletter": "challenge",
-            "phone": "123456789",
+            "phone": "123584715",
             "terms": False,
             "organizationId": 1,
             "jobTitle": "zaměstnanec",
@@ -2740,17 +2739,98 @@ class RegisterCoordinatorSetTest(TestCase):
         self.assertJSONEqual(response.content.decode(), test_data)
 
         user = User.objects.get(pk=2)
-        user_profile = self.UserProfile.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user=user)
         self.assertEqual(user_profile.first_name(), "Josef")
         self.assertEqual(user_profile.last_name(), "Novák")
         self.assertEqual(user_profile.telephone, "123584715")
         self.assertEqual(user_profile.newsletter, "challenge")
-        company_admin = self.CompanyAdmin.objects.get(userprofile=user_profile)
+        company_admin = CompanyAdmin.objects.get(userprofile=user_profile)
         self.assertEqual(company_admin.administrated_company.id, 1)
         self.assertEqual(company_admin.motivation_company_admin, "zaměstnanec")
         self.assertEqual(company_admin.will_pay_opt_in, False)
         user_attendance = UserAttendance.objects.get(userprofile=user_profile)
-        self.assertEqual(user_attendance.personal_data_opt_in, True)
+        self.assertEqual(user_attendance.personal_data_opt_in, False)
+
+    def test_permissions(self):
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-coordinator-detail", kwargs={"pk": 1})
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 403)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "detail": "K této akci nemáte oprávnění.",
+            },
+        )
+
+    def test_change_coordinator(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        test_data = {
+            "firstName": "Petr",
+            "lastName": "Nový",
+            "newsletter": "challenge",
+            "phone": "123584111",
+            "terms": False,
+            "organizationId": 2,
+            "jobTitle": "zaměstnanec",
+            "responsibility": False,
+        }
+
+        response = self.client.post(
+            reverse("register-coordinator-list"), test_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(response.content.decode(), test_data)
+
+        user = User.objects.get(pk=1)
+        user_profile = UserProfile.objects.get(user=user)
+        company_admin = CompanyAdmin.objects.get(userprofile=user_profile)
+        self.assertEqual(company_admin.administrated_company.id, 2)
+
+        company_admins = CompanyAdmin.objects.filter(administrated_company=2)
+        self.assertEqual(company_admins.count(), 2)
+
+        # delete
+        rc = reverse("register-coordinator-detail", kwargs={"pk": 1})
+        response = self.client.delete(rc)
+
+        self.assertEqual(response.status_code, 204)
+        company_admins = CompanyAdmin.objects.filter(administrated_company=2)
+        self.assertEqual(company_admins.count(), 1)
+
+    def test_change_coordinator_data(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        test_data = {
+            "firstName": "Josef",
+            "lastName": "Novák",
+            "newsletter": "challenge",
+            "phone": "987654321",
+            "terms": False,
+            "organizationId": 2,
+            "jobTitle": "zaměstnanec",
+            "responsibility": False,
+        }
+
+        response = self.client.post(
+            reverse("register-coordinator-list"), test_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(response.content.decode(), test_data)
+
+        user = User.objects.get(pk=1)
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.first_name(), "Josef")
+        self.assertEqual(user_profile.last_name(), "Novák")
+        self.assertEqual(user_profile.telephone, "987654321")
+        self.assertEqual(user_profile.newsletter, "challenge")
 
 
 @override_settings(
