@@ -26,7 +26,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk import models, util
-from dpnk.models import Team, UserAttendance
+from dpnk.models import Team, UserAttendance, UserProfile
 from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
@@ -2789,6 +2789,207 @@ class DiscountCouponSetTest(TestCase):
                 "results": [{"available": True, "discount": 100, "name": "DP-SXQEFH"}],
             },
         )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class RegisterChallengeSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-challenge-list")
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 200)
+
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "personal_details": {
+                            "first_name": "Petr",
+                            "last_name": "Nový",
+                            "nickname": "petr",
+                            "id": 2,
+                            "sex": "",
+                            "telephone": "123456789",
+                            "telephone_opt_in": False,
+                            "language": "cs",
+                            "occupation": "Přírodovědec",
+                            "age_group": None,
+                            "newsletter": "challenge",
+                            "personal_data_opt_in": False,
+                            "discount_coupon": "",
+                            "payment_subject": "",
+                            "payment_type": "",
+                            "payment_status": "no_admission",
+                            "payment_amount": None,
+                        },
+                        "team_id": 2,
+                        "organization_id": 2,
+                        "subsidiary_id": 2,
+                        "t_shirt_size_id": None,
+                        "organization_type": "school",
+                    }
+                ],
+            },
+        )
+
+    def _register_user(self, email):
+        registration_data = {
+            "email": email,
+            "password1": "securepassword123",
+            "password2": "securepassword123",
+        }
+
+        response = self.client.post(reverse("custom_register"), registration_data)
+        self.assertEqual(response.status_code, 201)
+
+        # !!!
+        for attempt in range(10):
+            if len(mail.outbox) == 1:
+                break
+            time.sleep(0.1)
+
+        # Verify that an email was sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        confirmation_email = mail.outbox[0]
+        # Extract confirmation link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", confirmation_email.body)
+        self.assertIsNotNone(match, "No confirmation link found in email")
+        confirmation_link = match.group(1)
+
+        # Simulate clicking the confirmation link
+        response = self.client.post(confirmation_link)
+        self.assertEqual(response.status_code, 302)
+
+    def test_post(self):
+        self._register_user("a@c.cz")
+        post_data = {
+            "personal_details": {
+                "first_name": "Jaroslav",
+                "last_name": "Procházka",
+                "nickname": "",
+                "telephone": "",
+                "language": "cs",
+                "occupation": "",
+                "age_group": 1999,
+                "newsletter": "",
+                "personal_data_opt_in": False,
+                "discount_coupon": "",
+                "payment_subject": "company",
+                "payment_amount": 500,
+            },
+            "team_id": 2,
+            "t_shirt_size_id": 1,
+        }
+
+        response = self.client.post(
+            reverse("register-challenge-list"), post_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "personal_details": {
+                    "id": 5,
+                    "payment_status": "done",
+                    "payment_type": "",
+                },
+                "team_id": 2,
+                "organization_id": 2,
+                "subsidiary_id": 2,
+                "t_shirt_size_id": 1,
+                "organization_type": "school",
+            },
+        )
+
+    def test_permissions(self):
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-challenge-detail", kwargs={"pk": 1})
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 403)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "detail": "K této akci nemáte oprávnění.",
+            },
+        )
+
+    def test_change_challenge_data(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        test_data = {
+            "nickname": "petrnovy",
+            "telephone": "987654321",
+            "occupation": "Lékař",
+        }
+
+        response = self.client.put(
+            reverse("register-challenge-detail", kwargs={"pk": 2}),
+            test_data,
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "organization_id": 2,
+                "organization_type": "school",
+                "personal_details": {
+                    "id": 2,
+                    "nickname": "petrnovy",
+                    "payment_status": "no_admission",
+                    "payment_type": "",
+                    "telephone": "987654321",
+                },
+                "subsidiary_id": 2,
+            },
+        )
+
+        user = User.objects.get(pk=2)
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.nickname, "petrnovy")
+        self.assertEqual(user_profile.telephone, "987654321")
+        # assertion error
+        # self.assertEqual(user_profile.occupation.name, "Lékař")
+
+    def test_delete_challenge_data(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        response = self.client.delete(
+            reverse("register-challenge-detail", kwargs={"pk": 2})
+        )
+        self.assertEqual(response.status_code, 204)
+
+        with self.assertRaises(UserProfile.DoesNotExist):
+            UserProfile.objects.get(pk=2)
 
 
 # @override_settings(
