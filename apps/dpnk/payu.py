@@ -222,7 +222,9 @@ class PayU:
             "extOrderId": data["extOrderId"],
             "customerIp": data["customerIp"],
             "merchantPosId": self._payu_conf["PAYU_REST_API_CLIENT_ID"],
-            "description": product_name,
+            "description": " + ".join(
+                [product["name"] for product in data["products"]]
+            ),
             "currencyCode": self._payu_conf["PAYU_REST_API_CREATE_ORDER_CURRENCY_CODE"],
             "totalAmount": data["amount"],
             "buyer": data["buyer"],
@@ -248,9 +250,7 @@ class PayU:
         ):
             self._save_payment(
                 order_id=data["extOrderId"],
-                product_name=" + ".join(
-                    [product["name"] for product in data["products"]]
-                ),
+                product_name=order_data["description"],
                 products=data["products"],
                 payment_subject=data["paymentSubject"],
                 payment_category=data["paymentCategory"],
