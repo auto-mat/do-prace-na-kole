@@ -249,7 +249,7 @@ def assign_voucher(self, voucher_pk, userattendance_pk):
 
 @shared_task
 def flush_denorm():
-    denorm.flush
+    denorm.flush()
 
 
 @shared_task
