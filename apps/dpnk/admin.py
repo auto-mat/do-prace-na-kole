@@ -128,6 +128,7 @@ class PaymentInline(admin.TabularInline):
         "author",
         "updated_by",
     ]
+    filter_horizontal = ("payu_ordered_product",)
     raw_id_fields = [
         # black
         "invoice",
