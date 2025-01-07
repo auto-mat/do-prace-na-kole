@@ -2519,6 +2519,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
 class RegisterChallengeSet(viewsets.ModelViewSet):
     def get_queryset(self):
+
         pk = self.kwargs.get("pk")
         if pk:
             return UserProfile.objects.filter(pk=pk)

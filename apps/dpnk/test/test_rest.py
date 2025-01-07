@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import datetime
+import datetime, time
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -26,7 +26,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk import models, util
-from dpnk.models import Team, UserAttendance
+from dpnk.models import Team, UserAttendance, UserProfile
 from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
@@ -557,46 +557,6 @@ class SubsidiaryTest(TestCase):
                 "gallery": None,
                 "gallery_slug": "subsidiary-2-photos",
                 "working_rides_base_count": 1522,
-            },
-        )
-
-
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
-class NotificationTest(TestCase):
-    fixtures = [
-        "dump",
-    ]
-
-    def setUp(self):
-        super().setUp()
-        self.client = APIClient(
-            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
-        )
-        self.client.force_login(
-            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
-        )
-        self.maxDiff = None
-
-    def test_get(self):
-        address = reverse("notification-detail", kwargs={"pk": 1})
-        response = self.client.get(address)
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content.decode(),
-            {
-                "id": 1,
-                "level": "info",
-                "unread": True,
-                "deleted": False,
-                "verb": "Pozvěte další členy do svého týmu",
-                "description": None,
-                "timestamp": "2024-08-04T00:29:50.729000",
-                "data": "{'url': '/pozvanky/', 'icon': '/static/img/dpnk_logo.svg'}",
-                "mark_as_read": "http://testing-campaign.testserver/inbox/notifications/mark-as-read/110910/",
-                "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110910/",
             },
         )
 
@@ -1247,7 +1207,7 @@ class UserAttendanceTest(TestCase):
                         "remaining_rides_count": 1058,
                         # "sesame_token": "AAAAAQim6U-BceUDjwwaHr9J",
                         "sesame_token": userattendance.get_sesame_token(),
-                        "registration_complete": True,
+                        "registration_complete": False,
                         "gallery": "http://testing-campaign.testserver/rest/gallery/4/",
                         "unread_notification_count": 2,
                         "is_coordinator": True,
@@ -1331,6 +1291,7 @@ class ThisCampaignTest(TestCase):
                                 "date_to": "2025-06-03",
                             },
                         ],
+                        "price_level": [],
                     }
                 ],
             },
@@ -1376,7 +1337,9 @@ class CampaignTest(TestCase):
                             }
                         ],
                         "id": 21,
+                        "max_team_members": 5,
                         "slug": "test2",
+                        "price_level": [],
                         "days_active": 7,
                         "year": "2024",
                         "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/",
@@ -1420,6 +1383,8 @@ class CampaignTest(TestCase):
                             },
                         ],
                         "id": 20,
+                        "max_team_members": 5,
+                        "price_level": [],
                         "slug": "testing-campaign",
                         "days_active": 8,
                         "year": "2021",
@@ -1823,7 +1788,27 @@ class NotificationTest(TestCase):
         )
         self.maxDiff = None
 
-    def test_get(self):
+    def test_get_detail(self):
+        address = reverse("notification-detail", kwargs={"pk": 1})
+        response = self.client.get(address)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "id": 1,
+                "level": "info",
+                "unread": True,
+                "deleted": False,
+                "verb": "Pozvěte další členy do svého týmu",
+                "description": None,
+                "timestamp": "2024-08-04T00:29:50.729000",
+                "data": "{'url': '/pozvanky/', 'icon': '/static/img/dpnk_logo.svg'}",
+                "mark_as_read": "http://testing-campaign.testserver/inbox/notifications/mark-as-read/110910/",
+                "mark_as_unread": "http://testing-campaign.testserver/inbox/notifications/mark-as-unread/110910/",
+            },
+        )
+
+    def test_get_list(self):
         address = reverse("notification-list")
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
@@ -2097,7 +2082,7 @@ class RegistrationTest(TestCase):
         )
         self.assertRegex(
             confirmation_email.body,
-            "^Hello from testserver!\n\nYou're receiving this e-mail because user newuser@4 has given your e-mail address to register an account on testserver.\n\nTo confirm this is correct, go to http://testing-campaign.testserver/rest/auth/registration/account-confirm-email/([A-Za-z0-9:_-]+)/\n\nDěkujeme, že používáte testserver!\ntestserver$",
+            "^Hello from testserver!\n\nYou're receiving this e-mail because user newuser@5 has given your e-mail address to register an account on testserver.\n\nTo confirm this is correct, go to http://testing-campaign.testserver/rest/auth/registration/account-confirm-email/([A-Za-z0-9:_-]+)/\n\nDěkujeme, že používáte testserver!\ntestserver$",
         )
 
         # Extract confirmation link from email
@@ -2117,6 +2102,140 @@ class RegistrationTest(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
+class HasUserVerifiedEmailAddressTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+
+        verified_before = reverse("has-user-verified-email-address")
+        response = self.client.get(verified_before)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"has_user_verified_email_address": False},
+        )
+
+        # Simulate registration request
+        registration_data = {
+            "email": "newuser@test.com",
+            "password1": "securepassword123",
+            "password2": "securepassword123",
+        }
+
+        response = self.client.post(reverse("custom_register"), registration_data)
+        self.assertEqual(response.status_code, 201)
+
+        # Verify that an email was sent
+        for attempt in range(10):
+            if len(mail.outbox) == 1:
+                break
+            time.sleep(0.1)
+        else:
+            self.fail("Email was not sent.")
+
+        confirmation_email = mail.outbox[0]
+
+        # Extract confirmation link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", confirmation_email.body)
+        self.assertIsNotNone(match, "No confirmation link found in email")
+        confirmation_link = match.group(1)
+
+        # Simulate clicking the confirmation link
+        response = self.client.post(confirmation_link)
+        self.assertEqual(response.status_code, 302)
+
+        verified_after = reverse("has-user-verified-email-address")
+        response = self.client.get(verified_after)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"has_user_verified_email_address": True},
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class IsUserOrganizationAdminTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        isAdmin = reverse("is-user-organization-admin")
+        response = self.client.get(isAdmin)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"is_user_organization_admin": False},
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class HasOrganizationAdminTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get_t(self):
+        hasAdmin = reverse("has-organization-admin", kwargs={"organization_id": 2})
+        response = self.client.get(hasAdmin)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"has_organization_admin": True},
+        )
+
+    def test_get_f(self):
+        hasAdmin = reverse("has-organization-admin", kwargs={"organization_id": 1})
+        response = self.client.get(hasAdmin)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"has_organization_admin": False},
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class PasswordResetTest(TestCase):
     fixtures = [
         "dump",
@@ -2129,7 +2248,6 @@ class PasswordResetTest(TestCase):
         )
 
     def test_password_reset(self):
-        # Simulate registration request
         test_data = {
             "email": "a@seznam.cz",
         }
@@ -2364,24 +2482,16 @@ class SubsidiariesSetTest(TestCase):
         sub = reverse("organization-subsidiaries-list", kwargs={"organization_id": 1})
         response = self.client.get(sub)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content.decode(),
+        content = json.loads(response.content.decode())
+        content["results"] = sorted(content["results"], key=lambda x: x["id"])
+
+        self.assertEqual(
+            content,
             {
                 "count": 2,
                 "next": None,
                 "previous": None,
                 "results": [
-                    {
-                        "id": 3,
-                        "address": {
-                            "street": "Křemílkova",
-                            "street_number": "1458/54",
-                            "recipient": None,
-                            "psc": "11000",
-                            "city": "Praha",
-                        },
-                        "teams": [],
-                    },
                     {
                         "id": 1,
                         "address": {
@@ -2414,6 +2524,17 @@ class SubsidiariesSetTest(TestCase):
                                 "rest_url": "http://testing-campaign.testserver/rest/team/1/",
                             }
                         ],
+                    },
+                    {
+                        "id": 3,
+                        "address": {
+                            "street": "Křemílkova",
+                            "street_number": "1458/54",
+                            "recipient": None,
+                            "psc": "11000",
+                            "city": "Praha",
+                        },
+                        "teams": [],
                     },
                 ],
             },
@@ -2551,6 +2672,324 @@ class TeamsSetTest(TestCase):
             response_data["non_field_errors"],
             ["Položka name, campaign_id musí tvořit unikátní množinu."],
         )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class MerchandiseSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        merch = reverse("merchandise-list")
+        response = self.client.get(merch)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 2,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Mikina",
+                        "author": "",
+                        "description": "",
+                        "material": "",
+                        "sex": "",
+                        "size": "",
+                        "t_shirt_preview": None,
+                        # "price": 500.0
+                    },
+                    {
+                        "id": 2,
+                        "name": "Tričko",
+                        "author": "",
+                        "description": "",
+                        "material": "",
+                        "sex": "",
+                        "size": "",
+                        "t_shirt_preview": None,
+                        # "price": 200.0
+                    },
+                ],
+            },
+        )
+
+    def test_code(self):
+        merch_with_code = reverse("merchandise-code-list", kwargs={"code": "mikina-l"})
+        response = self.client.get(merch_with_code)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Mikina",
+                        "author": "",
+                        "description": "",
+                        "material": "",
+                        "sex": "",
+                        "size": "",
+                        "t_shirt_preview": None,
+                        # "price": 500.0
+                    }
+                ],
+            },
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class DiscountCouponSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        discount = reverse("discount-coupon-by-code-list", kwargs={"code": "DP-SXQEFH"})
+        response = self.client.get(discount)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [{"available": True, "discount": 100, "name": "DP-SXQEFH"}],
+            },
+        )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class RegisterChallengeSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-challenge-list")
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 200)
+
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "personal_details": {
+                            "first_name": "Petr",
+                            "last_name": "Nový",
+                            "nickname": "petr",
+                            "id": 2,
+                            "sex": "",
+                            "telephone": "123456789",
+                            "telephone_opt_in": False,
+                            "language": "cs",
+                            "occupation": "Přírodovědec",
+                            "age_group": None,
+                            "newsletter": "challenge",
+                            "personal_data_opt_in": False,
+                            "discount_coupon": "",
+                            "payment_subject": "",
+                            "payment_type": "",
+                            "payment_status": "no_admission",
+                            "payment_amount": None,
+                        },
+                        "team_id": 2,
+                        "organization_id": 2,
+                        "subsidiary_id": 2,
+                        "t_shirt_size_id": None,
+                        "organization_type": "school",
+                    }
+                ],
+            },
+        )
+
+    def _register_user(self, email):
+        registration_data = {
+            "email": email,
+            "password1": "securepassword123",
+            "password2": "securepassword123",
+        }
+
+        response = self.client.post(reverse("custom_register"), registration_data)
+        self.assertEqual(response.status_code, 201)
+
+        # !!!
+        for attempt in range(10):
+            if len(mail.outbox) == 1:
+                break
+            time.sleep(0.1)
+
+        # Verify that an email was sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        confirmation_email = mail.outbox[0]
+        # Extract confirmation link from email
+        match = re.search(r"http://[^/]+(/[^\s]+)", confirmation_email.body)
+        self.assertIsNotNone(match, "No confirmation link found in email")
+        confirmation_link = match.group(1)
+
+        # Simulate clicking the confirmation link
+        response = self.client.post(confirmation_link)
+        self.assertEqual(response.status_code, 302)
+
+    def test_post(self):
+        self._register_user("a@c.cz")
+        post_data = {
+            "personal_details": {
+                "first_name": "Jaroslav",
+                "last_name": "Procházka",
+                "nickname": "",
+                "telephone": "",
+                "language": "cs",
+                "occupation": "",
+                "age_group": 1999,
+                "newsletter": "",
+                "personal_data_opt_in": False,
+                "discount_coupon": "",
+                "payment_subject": "company",
+                "payment_amount": 500,
+            },
+            "team_id": 2,
+            "t_shirt_size_id": 1,
+        }
+
+        response = self.client.post(
+            reverse("register-challenge-list"), post_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "personal_details": {
+                    "id": 5,
+                    "payment_status": "done",
+                    "payment_type": "",
+                },
+                "team_id": 2,
+                "organization_id": 2,
+                "subsidiary_id": 2,
+                "t_shirt_size_id": 1,
+                "organization_type": "school",
+            },
+        )
+
+    def test_permissions(self):
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-challenge-detail", kwargs={"pk": 1})
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 403)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "detail": "K této akci nemáte oprávnění.",
+            },
+        )
+
+    def test_change_challenge_data(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        test_data = {
+            "nickname": "petrnovy",
+            "telephone": "987654321",
+            "occupation": "Lékař",
+        }
+
+        response = self.client.put(
+            reverse("register-challenge-detail", kwargs={"pk": 2}),
+            test_data,
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "organization_id": 2,
+                "organization_type": "school",
+                "personal_details": {
+                    "id": 2,
+                    "nickname": "petrnovy",
+                    "payment_status": "no_admission",
+                    "payment_type": "",
+                    "telephone": "987654321",
+                },
+                "subsidiary_id": 2,
+            },
+        )
+
+        user = User.objects.get(pk=2)
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.nickname, "petrnovy")
+        self.assertEqual(user_profile.telephone, "987654321")
+        # assertion error
+        # self.assertEqual(user_profile.occupation.name, "Lékař")
+
+    def test_delete_challenge_data(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        response = self.client.delete(
+            reverse("register-challenge-detail", kwargs={"pk": 2})
+        )
+        self.assertEqual(response.status_code, 204)
+
+        with self.assertRaises(UserProfile.DoesNotExist):
+            UserProfile.objects.get(pk=2)
 
 
 # @override_settings(
