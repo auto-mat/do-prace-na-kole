@@ -26,7 +26,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from dpnk import models, util
-from dpnk.models import Team, UserAttendance, UserProfile
+from dpnk.models import Team, UserAttendance, UserProfile, CompanyAdmin
 from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
@@ -2672,6 +2672,165 @@ class TeamsSetTest(TestCase):
             response_data["non_field_errors"],
             ["Položka name, campaign_id musí tvořit unikátní množinu."],
         )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class RegisterCoordinatorSetTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+    def test_get(self):
+        self.client.force_login(
+            User.objects.get(pk=3), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-coordinator-list")
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "firstName": "",
+                        "jobTitle": "",
+                        "lastName": "",
+                        "newsletter": None,
+                        "organizationId": 2,
+                        "phone": "",
+                        "responsibility": False,
+                        "terms": False,
+                    }
+                ],
+            },
+        )
+
+    def test_post(self):
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        test_data = {
+            "firstName": "Josef",
+            "lastName": "Novák",
+            "newsletter": "challenge",
+            "phone": "123584715",
+            "terms": False,
+            "organizationId": 1,
+            "jobTitle": "zaměstnanec",
+            "responsibility": False,
+        }
+
+        response = self.client.post(
+            reverse("register-coordinator-list"), test_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(response.content.decode(), test_data)
+
+        user = User.objects.get(pk=2)
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.first_name(), "Josef")
+        self.assertEqual(user_profile.last_name(), "Novák")
+        self.assertEqual(user_profile.telephone, "123584715")
+        self.assertEqual(user_profile.newsletter, "challenge")
+        company_admin = CompanyAdmin.objects.get(userprofile=user_profile)
+        self.assertEqual(company_admin.administrated_company.id, 1)
+        self.assertEqual(company_admin.motivation_company_admin, "zaměstnanec")
+        self.assertEqual(company_admin.will_pay_opt_in, False)
+        user_attendance = UserAttendance.objects.get(userprofile=user_profile)
+        self.assertEqual(user_attendance.personal_data_opt_in, False)
+
+    def test_permissions(self):
+        self.client.force_login(
+            User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        rc = reverse("register-coordinator-detail", kwargs={"pk": 1})
+        response = self.client.get(rc)
+        self.assertEqual(response.status_code, 403)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "detail": "K této akci nemáte oprávnění.",
+            },
+        )
+
+    def test_change_coordinator(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        test_data = {
+            "firstName": "Petr",
+            "lastName": "Nový",
+            "newsletter": "challenge",
+            "phone": "123584111",
+            "terms": False,
+            "organizationId": 2,
+            "jobTitle": "zaměstnanec",
+            "responsibility": False,
+        }
+
+        response = self.client.post(
+            reverse("register-coordinator-list"), test_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(response.content.decode(), test_data)
+
+        user = User.objects.get(pk=1)
+        user_profile = UserProfile.objects.get(user=user)
+        company_admin = CompanyAdmin.objects.get(userprofile=user_profile)
+        self.assertEqual(company_admin.administrated_company.id, 2)
+
+        company_admins = CompanyAdmin.objects.filter(administrated_company=2)
+        self.assertEqual(company_admins.count(), 2)
+
+        # delete
+        rc = reverse("register-coordinator-detail", kwargs={"pk": 1})
+        response = self.client.delete(rc)
+
+        self.assertEqual(response.status_code, 204)
+        company_admins = CompanyAdmin.objects.filter(administrated_company=2)
+        self.assertEqual(company_admins.count(), 1)
+
+    def test_change_coordinator_data(self):
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        test_data = {
+            "firstName": "Josef",
+            "lastName": "Novák",
+            "newsletter": "challenge",
+            "phone": "987654321",
+            "terms": False,
+            "organizationId": 2,
+            "jobTitle": "zaměstnanec",
+            "responsibility": False,
+        }
+
+        response = self.client.post(
+            reverse("register-coordinator-list"), test_data, format="json"
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(response.content.decode(), test_data)
+
+        user = User.objects.get(pk=1)
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.first_name(), "Josef")
+        self.assertEqual(user_profile.last_name(), "Novák")
+        self.assertEqual(user_profile.telephone, "987654321")
+        self.assertEqual(user_profile.newsletter, "challenge")
 
 
 @override_settings(

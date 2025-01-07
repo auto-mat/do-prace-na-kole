@@ -4,6 +4,7 @@ from .models import CharitativeOrganization
 
 import drf_serpy as serpy
 
+
 # dup
 class OptionalImageField(serpy.ImageField):
     def to_value(self, value):
