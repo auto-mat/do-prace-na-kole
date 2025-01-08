@@ -2688,7 +2688,13 @@ class RegisterCoordinatorDeserializer(serializers.HyperlinkedModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        user_attendance = self.context.get("request").user_attendance
+        request = self.context.get("request")
+        user_attendance = request.user_attendance
+        if not user_attendance:
+            user_attendance = get_or_create_userattendance(
+                request,
+                request.subdomain,
+            )
         user_profile = user_attendance.userprofile
         user = user_profile.user
 
