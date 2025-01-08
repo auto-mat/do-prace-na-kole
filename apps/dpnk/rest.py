@@ -1818,17 +1818,6 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
             return Response(response_data)
 
         # Pay create new order
-        order_ids = set(
-            Payment.objects.filter(
-                order_id__contains=f"{request.user.id}-"
-            ).values_list("order_id", flat=True)
-        )
-        if order_ids:
-            order_ids = [int(i.split("-")[-1]) for i in order_ids]
-            order_id = f"{request.user.id}-{max(order_ids) + 1}"
-        else:
-            order_id = f"{request.user.id}-0"
-
         client_ip = deserialized_data.data["client_ip"]
 
         data = {
@@ -1836,7 +1825,7 @@ class PayUCreateOrderPost(UserAttendanceMixin, APIView):
             "amount": deserialized_data.data["amount"],
             "products": deserialized_data.data["products"],
             "customerIp": client_ip if client_ip else "127.0.0.1",
-            "extOrderId": order_id,
+            "extOrderId": f"{request.user.id}-{int(timezone.now().timestamp())}",
             "userAttendance": ua,
             "paymentSubject": deserialized_data.data["payment_subject"],
             "paymentCategory": deserialized_data.data["payment_category"],
