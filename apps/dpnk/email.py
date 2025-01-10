@@ -113,11 +113,16 @@ def invitation_mail(user_attendance, email, invited=None):
 
 
 def payment_confirmation_mail(user_attendance):
-    campaign_mail(
-        user_attendance,
-        _("Startovné je uhrazeno"),
-        "payment_confirmation_%s.html",
-    )
+    payment = user_attendance.representative_payment
+    if not payment.pay_category or payment.pay_category in (
+        "entry_fee",
+        "entry_fee-donation",
+    ):
+        campaign_mail(
+            user_attendance,
+            _("Startovné je uhrazeno"),
+            "payment_confirmation_%s.html",
+        )
 
 
 def payment_confirmation_company_mail(user_attendance):
