@@ -2016,6 +2016,7 @@ class UserAttendanceSerializer(serpy.Serializer):
     payment_type = EmptyStrField(call=True)
     payment_status = EmptyStrField()
     payment_amount = NullIntField(call=True)
+    payment_category = EmptyStrField(call=True)
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
@@ -2129,6 +2130,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     payment_type = serializers.SerializerMethodField()
     payment_status = serializers.SerializerMethodField()
+    payment_category = serializers.SerializerMethodField()
     team_id = serializers.ChoiceField(
         choices=[],
         required=False,
@@ -2161,6 +2163,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "payment_amount",
             "payment_status",
             "payment_type",
+            "payment_category",
             "team_id",
             "organization_id",
             "subsidiary_id",
@@ -2427,6 +2430,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             data["payment_amount"]: personal_details_data.pop("payment_amount")
             data["payment_status"]: personal_details_data.pop("payment_status")
             data["payment_type"]: personal_details_data.pop("payment_type")
+            data["payment_category"]: personal_details_data.pop("payment_category")
 
         return super().to_internal_value(data)
 
@@ -2450,6 +2454,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "payment_amount",
             "payment_status",
             "payment_type",
+            "payment_category",
         )
         data["personal_details"] = {}
         for field in personal_details_fields:
@@ -2482,6 +2487,16 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             payment_type = ua.payment_type()
             payment_type = payment_type if payment_type else self._empty_string
         return payment_type
+
+    def get_payment_category(self, obj):
+        ua = obj.get("user_attendance")
+        payment_category = self._empty_string
+        if ua:
+            payment_category = ua.payment_category()
+            payment_category = (
+                payment_category if payment_category else self._empty_string
+            )
+        return payment_category
 
     def get_organization_type(self, obj):
         ua = obj.get("user_attendance")
