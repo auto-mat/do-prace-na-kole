@@ -351,6 +351,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if self.representative_payment:
             return self.representative_payment.amount
 
+    def payment_category(self):
+        if self.representative_payment:
+            return self.representative_payment.pay_category
+
     def get_competitions(self, competition_types=None):
         from .. import results
 
