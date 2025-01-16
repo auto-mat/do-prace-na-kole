@@ -73,6 +73,7 @@ from .models import (
     Occupation,
     Payment,
     PAYMENT_STATUSES,
+    PayUOrderedProduct,
     Phase,
     Status,
     Subsidiary,
@@ -2130,7 +2131,10 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     payment_type = serializers.SerializerMethodField()
     payment_status = serializers.SerializerMethodField()
-    payment_category = serializers.SerializerMethodField()
+    payment_category = serializers.ChoiceField(
+        choices=Payment.PAYMENT_CATEGORY,
+        required=False,
+    )
     team_id = serializers.ChoiceField(
         choices=[],
         required=False,
@@ -2142,6 +2146,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         required=False,
     )
     organization_type = serializers.SerializerMethodField()
+    products = serializers.JSONField(required=False)
 
     class Meta:
         model = UserProfile
@@ -2169,6 +2174,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "subsidiary_id",
             "t_shirt_size_id",
             "organization_type",
+            "products",
         )
 
     def __init__(self, *args, **kwargs):
@@ -2202,7 +2208,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         personal_data_opt_in = validated_data.pop("personal_data_opt_in", none)
         discount_coupon = validated_data.pop("discount_coupon", none)
         payment_subject = validated_data.pop("payment_subject", none)
+        payment_category = validated_data.pop("payment_category", none)
         payment_amount = validated_data.pop("payment_amount", none)
+        products = validated_data.pop("products", none)
 
         team_id = validated_data.pop("team_id", none)
         t_shirt_size_id = validated_data.pop("t_shirt_size_id", none)
@@ -2221,6 +2229,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         payment_update_fields = self._create_organization_coordinator_payment_model(
             payment_subject,
             payment_amount,
+            payment_category,
+            products,
+            instance,
         )
 
         self._save_user_attendance_model(user_attendance_update_fields)
@@ -2355,6 +2366,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         self,
         payment_subject,
         payment_amount,
+        payment_category,
+        products,
+        instance,
     ):
         """
         Create Payment model if payment subject is Company or School
@@ -2369,6 +2383,22 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         :param int|none payment_subject: Payment model payment subject field value
                                          see PAYMENT_SUBJECT const
         :param int|none payment_amount: Payment model payment amount field value
+        :param str payment_category: Payment category, see Payment model
+                                     PAYMENT_CATEGORY constant
+        :param list products: PayU ordered products, list of dicts
+                              [
+                                {
+                                  "name": "RTWBB challenge entry fee",
+                                  "unitPrice": 400,
+                                  "quantity": 1,
+                                },
+                                {
+                                  "name": "RTWBB donation",
+                                  "unitPrice": 500,
+                                  "quantity": 1,
+                                }
+                              ]
+        :param UserProfile instance: UserProfile model instance
 
         :return dict payment_update_fields: Payment model update fields dict
         """
@@ -2378,18 +2408,56 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         if (
             payment_subject
             and payment_subject in ("school", "company")
+            and payment_category
             and payment_amount
+            and products
         ):
-            # Create Payment model only for Company/School coordinator (fc)
-            Payment(
-                user_attendance=self.user_attendance,
-                amount=payment_amount,
-                pay_type="fc",  # "fc" is company coordinator
-                pay_subject=payment_subject,
-                status=Status.NEW,
-            ).save()
+            payu_ordered_products = []
+            for product in products:
+                (
+                    payu_ordered_product,
+                    created,
+                ) = PayUOrderedProduct.objects.get_or_create(
+                    name=product["name"],
+                    unit_price=product["unitPrice"],
+                    quantity=product["quantity"],
+                )
+                payu_ordered_products.append(payu_ordered_product)
+
+            payment = None
+            if instance:
+                payment = Payment.objects.filter(
+                    user_attendance=self.user_attendance,
+                    pay_type="fc",
+                ).last()
+
+            if not payment:
+                # Create Payment model only for Company/School coordinator (fc)
+                payment = Payment(
+                    user_attendance=self.user_attendance,
+                    amount=payment_amount,
+                    pay_type="fc",  # "fc" is company coordinator
+                    pay_subject=payment_subject,
+                    pay_category=payment_category,
+                    status=Status.NEW,
+                )
+                payment.save()
+            else:
+                payment.amount = payment_amount
+                payment.pay_subject = payment_subject
+                payment.pay_category = payment_category
+                payment.save(
+                    update_fields=[
+                        "amount",
+                        "pay_subject",
+                        "pay_category",
+                    ]
+                )
+
+            payment.payu_ordered_product.set(payu_ordered_products)
             payment_update_fields = {
                 "payment_subject": payment_subject,
+                "payment_category": payment_category,
                 "payment_amount": payment_amount,
             }
         return payment_update_fields
@@ -2431,6 +2499,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             data["payment_status"]: personal_details_data.pop("payment_status")
             data["payment_type"]: personal_details_data.pop("payment_type")
             data["payment_category"]: personal_details_data.pop("payment_category")
+            data["products"]: personal_details_data.pop("products")
 
         return super().to_internal_value(data)
 
@@ -2487,16 +2556,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             payment_type = ua.payment_type()
             payment_type = payment_type if payment_type else self._empty_string
         return payment_type
-
-    def get_payment_category(self, obj):
-        ua = obj.get("user_attendance")
-        payment_category = self._empty_string
-        if ua:
-            payment_category = ua.payment_category()
-            payment_category = (
-                payment_category if payment_category else self._empty_string
-            )
-        return payment_category
 
     def get_organization_type(self, obj):
         ua = obj.get("user_attendance")
