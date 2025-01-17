@@ -470,7 +470,7 @@ class SubsidiaryTest(TestCase):
                     {
                         "name": "Tým1",
                         "id": 1,
-                        "frequency": 0.000650618087182824,
+                        "frequency": 0.00056980056980057,
                         "distance": 80.15,
                         "icon_url": "/media/upload/photologue/photos/frj337AJ0AD47aLGBgIFt8rsDSC00002.JPG",
                         "rest_url": "http://testing-campaign.testserver/rest/team/1/",
@@ -486,12 +486,12 @@ class SubsidiaryTest(TestCase):
                             "solid": 2805.2,
                             "pb": 0.9,
                         },
-                        "working_rides_base_count": 1537,
+                        "working_rides_base_count": 1755,
                     }
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/1/",
                 "eco_trip_count": 1,
-                "frequency": 0.000650618087182824,
+                "frequency": 0.00056980056980057,
                 "emissions": {
                     "co2": 10339.4,
                     "co": 58060.7,
@@ -508,7 +508,7 @@ class SubsidiaryTest(TestCase):
                 "icon_url": None,
                 "gallery": "http://testing-campaign.testserver/rest/gallery/3/",
                 "gallery_slug": "subsidiary-1-photos",
-                "working_rides_base_count": 1537,
+                "working_rides_base_count": 1755,
             },
             {
                 "id": 2,
@@ -656,11 +656,11 @@ class MyTeamTest(TestCase):
                         "id": 1,
                         "rest_url": "http://testing-campaign.testserver/rest/all_userattendance/1/",
                         "name": "test",
-                        "frequency": 0.000650618087182824,
+                        "frequency": 0.00056980056980057,
                         "distance": 80.15,
                         "avatar_url": "",
                         "eco_trip_count": 1,
-                        "working_rides_base_count": 1537,
+                        "working_rides_base_count": 1755,
                         "emissions": {
                             "co2": 10339.4,
                             "co": 58060.7,
@@ -675,10 +675,10 @@ class MyTeamTest(TestCase):
                         "is_me": True,
                     }
                 ],
-                "frequency": 0.000650618087182824,
+                "frequency": 0.00056980056980057,
                 "distance": 80.15,
                 "eco_trip_count": 1,
-                "working_rides_base_count": 1537,
+                "working_rides_base_count": 1755,
                 "emissions": {
                     "co2": 10339.4,
                     "co": 58060.7,
@@ -1185,7 +1185,7 @@ class UserAttendanceTest(TestCase):
                     {
                         "id": 1,
                         "name": "test",
-                        "frequency": 0.000650618087182824,
+                        "frequency": 0.00056980056980057,
                         "distance": 80.15,
                         "points": 0,
                         "points_display": "0 bodů",
@@ -1203,7 +1203,7 @@ class UserAttendanceTest(TestCase):
                             "pb": 0.9,
                         },
                         "avatar_url": "",
-                        "working_rides_base_count": 1537,
+                        "working_rides_base_count": 1755,
                         "remaining_rides_count": 1058,
                         # "sesame_token": "AAAAAQim6U-BceUDjwwaHr9J",
                         "sesame_token": userattendance.get_sesame_token(),
@@ -1291,7 +1291,14 @@ class ThisCampaignTest(TestCase):
                                 "date_to": "2025-06-03",
                             },
                         ],
-                        "price_level": [],
+                        "price_level": [
+                            {
+                                "category": "company",
+                                "name": "pro firmy",
+                                "price": 100.0,
+                                "takes_effect_on": "2025-01-08",
+                            }
+                        ],
                     }
                 ],
             },
@@ -1339,7 +1346,14 @@ class CampaignTest(TestCase):
                         "id": 21,
                         "max_team_members": 5,
                         "slug": "test2",
-                        "price_level": [],
+                        "price_level": [
+                            {
+                                "category": "company",
+                                "name": "pro firmy",
+                                "price": 100.0,
+                                "takes_effect_on": "2025-01-08",
+                            }
+                        ],
                         "days_active": 7,
                         "year": "2024",
                         "campaign_type": "http://testing-campaign.testserver/rest/campaign_type/1/",
@@ -1384,7 +1398,14 @@ class CampaignTest(TestCase):
                         ],
                         "id": 20,
                         "max_team_members": 5,
-                        "price_level": [],
+                        "price_level": [
+                            {
+                                "category": "company",
+                                "name": "pro firmy",
+                                "price": 100.0,
+                                "takes_effect_on": "2025-01-08",
+                            }
+                        ],
                         "slug": "testing-campaign",
                         "days_active": 8,
                         "year": "2021",
@@ -1651,7 +1672,7 @@ class MySubsidiaryTest(TestCase):
                     {
                         "name": "Tým1",
                         "id": 1,
-                        "frequency": 0.000650618087182824,
+                        "frequency": 0.00056980056980057,
                         "distance": 80.15,
                         "icon_url": "/media/upload/photologue/photos/frj337AJ0AD47aLGBgIFt8rsDSC00002.JPG",
                         "rest_url": "http://testing-campaign.testserver/rest/team/1/",
@@ -1667,12 +1688,12 @@ class MySubsidiaryTest(TestCase):
                             "solid": 2805.2,
                             "pb": 0.9,
                         },
-                        "working_rides_base_count": 1537,
+                        "working_rides_base_count": 1755,
                     }
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/1/",
                 "eco_trip_count": 1,
-                "frequency": 0.000650618087182824,
+                "frequency": 0.00056980056980057,
                 "emissions": {
                     "co2": 10339.4,
                     "co": 58060.7,
@@ -1689,7 +1710,7 @@ class MySubsidiaryTest(TestCase):
                 "icon_url": None,
                 "gallery": "http://testing-campaign.testserver/rest/gallery/3/",
                 "gallery_slug": "subsidiary-1-photos",
-                "working_rides_base_count": 1537,
+                "working_rides_base_count": 1755,
             },
         )
 
@@ -1727,7 +1748,7 @@ class MyCompanyTest(TestCase):
                         "id": 1,
                         "address_street": "Jindřišská",
                         "city": "http://testing-campaign.testserver/rest/city/1/",
-                        "frequency": 0.000650618087182824,
+                        "frequency": 0.00056980056980057,
                         "distance": 80.15,
                         "icon_url": None,
                         "rest_url": "http://testing-campaign.testserver/rest/subsidiary/1/",
@@ -1743,11 +1764,11 @@ class MyCompanyTest(TestCase):
                             "pb": 0.9,
                         },
                         "eco_trip_count": 1,
-                        "working_rides_base_count": 1537,
+                        "working_rides_base_count": 1755,
                     }
                 ],
                 "eco_trip_count": 1,
-                "frequency": 0.000325309043591412,
+                "frequency": 0.000284900284900285,
                 "emissions": {
                     "co2": 10339.4,
                     "co": 58060.7,
@@ -1764,7 +1785,7 @@ class MyCompanyTest(TestCase):
                 "icon_url": None,
                 "gallery": "http://testing-campaign.testserver/rest/gallery/1/",
                 "gallery_slug": "company-1-photos",
-                "working_rides_base_count": 1537,
+                "working_rides_base_count": 1755,
             },
         )
 
@@ -2504,7 +2525,7 @@ class SubsidiariesSetTest(TestCase):
                         "teams": [
                             {
                                 "distance": 80.15,
-                                "frequency": 0.000650618087182824,
+                                "frequency": 0.00056980056980057,
                                 "emissions": {
                                     "co2": 10339.4,
                                     "co": 58060.7,
@@ -2517,7 +2538,7 @@ class SubsidiariesSetTest(TestCase):
                                     "pb": 0.9,
                                 },
                                 "eco_trip_count": 1,
-                                "working_rides_base_count": 1537,
+                                "working_rides_base_count": 1755,
                                 "name": "Tým1",
                                 "id": 1,
                                 "icon_url": "/media/upload/photologue/photos/frj337AJ0AD47aLGBgIFt8rsDSC00002.JPG",
@@ -2633,10 +2654,10 @@ class TeamsSetTest(TestCase):
                                     "solid": 2805.2,
                                     "pb": 0.9,
                                 },
-                                "working_rides_base_count": 1537,
+                                "working_rides_base_count": 1755,
                                 "id": 1,
                                 "name": "test",
-                                "frequency": 0.000650618087182824,
+                                "frequency": 0.00056980056980057,
                                 "avatar_url": "",
                                 "eco_trip_count": 1,
                                 "rest_url": "http://testing-campaign.testserver/rest/all_userattendance/1/",
@@ -2952,7 +2973,7 @@ class DiscountCouponSetTest(TestCase):
 
 @override_settings(
     SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    FAKE_DATE=datetime.date(year=2025, month=1, day=10),
 )
 class RegisterChallengeSetTest(TestCase):
     fixtures = [
@@ -2999,7 +3020,8 @@ class RegisterChallengeSetTest(TestCase):
                             "discount_coupon": "",
                             "payment_subject": "",
                             "payment_type": "",
-                            "payment_status": "no_admission",
+                            "payment_status": "done",
+                            "payment_category": "",
                             "payment_amount": None,
                         },
                         "team_id": 2,
@@ -3047,16 +3069,29 @@ class RegisterChallengeSetTest(TestCase):
             "personal_details": {
                 "first_name": "Jaroslav",
                 "last_name": "Procházka",
-                "nickname": "",
-                "telephone": "",
+                "nickname": "prochazka",
+                "telephone": "123987456",
                 "language": "cs",
-                "occupation": "",
+                "occupation_id": 147,
                 "age_group": 1999,
-                "newsletter": "",
+                "newsletter": "challenge",
                 "personal_data_opt_in": False,
-                "discount_coupon": "",
+                "discount_coupon": "DP-SXQEFH",
+                "payment_category": "entry_fee-donation",
                 "payment_subject": "company",
                 "payment_amount": 500,
+                "products": [
+                    {
+                        "name": "RTWBB challenge entry fee",
+                        "unitPrice": 400,
+                        "quantity": 1,
+                    },
+                    {
+                        "name": "RTWBB donation",
+                        "unitPrice": 500,
+                        "quantity": 1,
+                    },
+                ],
             },
             "team_id": 2,
             "t_shirt_size_id": 1,
@@ -3071,8 +3106,20 @@ class RegisterChallengeSetTest(TestCase):
             response.content.decode(),
             {
                 "personal_details": {
-                    "id": 5,
+                    "discount_coupon": "DP-SXQEFH",
+                    "first_name": "Jaroslav",
+                    "id": 6,
+                    "language": "cs",
+                    "last_name": "Procházka",
+                    "nickname": "prochazka",
+                    "newsletter": "challenge",
+                    "telephone": "123987456",
+                    "payment_amount": 500,
+                    "age_group": 1999,
+                    "occupation_id": 147,
+                    "payment_category": "entry_fee-donation",
                     "payment_status": "done",
+                    "payment_subject": "company",
                     "payment_type": "",
                 },
                 "team_id": 2,
@@ -3082,6 +3129,24 @@ class RegisterChallengeSetTest(TestCase):
                 "organization_type": "school",
             },
         )
+        from dpnk.models.transactions import Payment
+
+        user = User.objects.get(pk=6)
+        user_profile = UserProfile.objects.get(user=user)
+        self.assertEqual(user_profile.first_name(), "Jaroslav")
+        self.assertEqual(user_profile.last_name(), "Procházka")
+        self.assertEqual(user_profile.telephone, "123987456")
+        self.assertEqual(user_profile.newsletter, "challenge")
+        self.assertEqual(user_profile.nickname, "prochazka")
+        self.assertEqual(user_profile.occupation.name, "Přírodovědec")
+        self.assertEqual(user_profile.age_group, 1999)
+        self.assertEqual(user_profile.language, "cs")
+        user_attendance = UserAttendance.objects.get(userprofile=user_profile)
+        payment = user_attendance.payments().get()
+        self.assertEqual(user_attendance.personal_data_opt_in, False)
+        self.assertEqual(user_attendance.discount_coupon.name(), "DP-SXQEFH")
+        self.assertEqual(payment.pay_subject, "company")
+        self.assertEqual(payment.amount, 500)
 
     def test_permissions(self):
         self.client.force_login(
@@ -3122,7 +3187,7 @@ class RegisterChallengeSetTest(TestCase):
                 "personal_details": {
                     "id": 2,
                     "nickname": "petrnovy",
-                    "payment_status": "no_admission",
+                    "payment_status": "done",
                     "payment_type": "",
                     "telephone": "987654321",
                 },
