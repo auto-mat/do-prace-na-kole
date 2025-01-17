@@ -2089,6 +2089,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     nickname = serializers.CharField(
         required=False,
+        allow_blank=True,
     )
     sex = serializers.ChoiceField(
         choices=UserProfile.GENDER,
