@@ -40,6 +40,7 @@ from .rest import (
     router,
     SendRegistrationConfirmationEmail,
 )
+from .rest_coordinator import router as coordinator_router
 from .views import (
     answers,
     questionnaire_answers,
@@ -630,4 +631,9 @@ urlpatterns = [
     ),
     # REST API
     path("rest/", include(router.urls), name="rest_api"),
+    path(
+        "rest/coordinator/",
+        include(coordinator_router.urls),
+        name="coordinator_rest_api",
+    ),
 ]
