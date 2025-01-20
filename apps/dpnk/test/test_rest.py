@@ -3129,7 +3129,6 @@ class RegisterChallengeSetTest(TestCase):
                 "organization_type": "school",
             },
         )
-        from dpnk.models.transactions import Payment
 
         user = User.objects.get(pk=6)
         user_profile = UserProfile.objects.get(user=user)
