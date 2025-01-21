@@ -349,8 +349,8 @@ CREATE INDEX dpnk_trip_anonymized_idx ON dpnk_trip_anonymized USING GIST (the_ge
             city.save()
 
 
-@shared_task()
-def check_celerybeat_liveness(set_key=True):
+@shared_task(bind=True)
+def check_celerybeat_liveness(self, set_key=True):
     """Check Celery Beat liveness with setting Redis key"""
     parsed_redis_url = urlparse(settings.BROKER_URL)
     redis_instance = redis.StrictRedis(
@@ -369,7 +369,7 @@ def check_celerybeat_liveness(set_key=True):
 
 
 @shared_task(bind=True)
-def refresh_materialized_view(materialized_view):
+def refresh_materialized_view(self, materialized_view):
     from django.db import connection
 
     with connection.cursor() as cursor:
