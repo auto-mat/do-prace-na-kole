@@ -196,7 +196,6 @@ def create_invoice_if_needed(self, pks=[], campaign_slug=""):
         logger.info(f"Campaign: {campaign}")
         payments = payments_to_invoice(company, campaign)
         logger.info(f"Number of payments: {payments.count()}")
-        print("INSIDE", company, campaign)
         if payments:
             Invoice.objects.create(
                 company=company,
