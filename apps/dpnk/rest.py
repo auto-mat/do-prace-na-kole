@@ -2116,6 +2116,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     newsletter = serializers.ChoiceField(
         choices=UserProfile.NEWSLETTER,
         required=False,
+        allow_blank=True,
     )
     personal_data_opt_in = serializers.BooleanField(
         required=False,
