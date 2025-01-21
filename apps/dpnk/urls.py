@@ -37,6 +37,7 @@ from .rest import (
     PayUCreateOrderPost,
     PayUPaymentNotifyPost,
     router,
+    SendRegistrationConfirmationEmail,
 )
 from .views import (
     answers,
@@ -440,6 +441,11 @@ urlpatterns = [
         "rest/has-organization-admin/<int:organization_id>/",
         HasOrganizationAdmin.as_view(),
         name="has-organization-admin",
+    ),
+    path(
+        "rest/send-registration-confirmation-email/",
+        SendRegistrationConfirmationEmail.as_view(),
+        name="send-registration-confirmation-email",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),

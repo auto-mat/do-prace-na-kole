@@ -40,7 +40,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.utils.translation import ugettext_lazy as _
 
-from allauth.account.utils import has_verified_email
+from allauth.account.utils import has_verified_email, send_email_confirmation
 from donation_chooser.rest import organization_router
 
 from drf_extra_fields.geo_fields import PointField
@@ -2921,6 +2921,24 @@ class HasOrganizationAdmin(APIView):
                     )
                     else False
                 )
+            }
+        )
+
+
+class SendRegistrationConfirmationEmail(APIView):
+    """Manually send confirmation email in case it hasn't been received"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        send_email = False
+        if not has_verified_email(request.user):
+            send_email_confirmation(request, request.user, request.user.email)
+            send_email = True
+
+        return Response(
+            {
+                "send_registration_confirmation_email": send_email,
             }
         )
 
