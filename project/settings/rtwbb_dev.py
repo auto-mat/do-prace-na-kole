@@ -1,11 +1,9 @@
-from .base import *  # noqa
+from .dev import *  # noqa
 
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 RTWBB_FRONTEND_APP_BASE_URL = os.getenv(
     "RTWBB_FRONTEND_APP_BASE_URL",
-    "https://rtwbb-test.dopracenakole.net/#/",
+    "http://localhost:9000/#/",
 )
 
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = RTWBB_FRONTEND_APP_BASE_URL
