@@ -423,6 +423,11 @@ urlpatterns = [
         name="has-user-verified-email-address",
     ),
     path(
+        "rest/auth/registration/send-confirmation-email/",
+        SendRegistrationConfirmationEmail.as_view(),
+        name="send-registration-confirmation-email",
+    ),
+    path(
         "rest/payu-create-order/",
         PayUCreateOrderPost.as_view(),
         name="payu-create-order",
@@ -441,11 +446,6 @@ urlpatterns = [
         "rest/has-organization-admin/<int:organization_id>/",
         HasOrganizationAdmin.as_view(),
         name="has-organization-admin",
-    ),
-    path(
-        "rest/send-registration-confirmation-email/",
-        SendRegistrationConfirmationEmail.as_view(),
-        name="send-registration-confirmation-email",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
