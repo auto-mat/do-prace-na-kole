@@ -2441,7 +2441,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                     pay_type="fc",  # "fc" is company coordinator
                     pay_subject=payment_subject,
                     pay_category=payment_category,
-                    status=Status.NEW,
+                    status=Status.WAITING_CONFIRMATION,
                 )
                 payment.save()
             else:
