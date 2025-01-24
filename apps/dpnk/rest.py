@@ -2887,21 +2887,16 @@ class IsUserOrganizationAdmin(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-
-        return Response(
-            {
-                "is_user_organization_admin": (
-                    True
-                    if CompanyAdmin.objects.filter(
-                        userprofile=request.user.userprofile,
-                        company_admin_approved="approved",
-                        campaign__slug=request.subdomain,
-                        administrated_company__isnull=False,
-                    )
-                    else False
-                )
-            }
-        )
+        is_user_organization_admin = False
+        if hasattr(request.user, "userprofile"):
+            if CompanyAdmin.objects.filter(
+                userprofile=request.user.userprofile,
+                company_admin_approved="approved",
+                campaign__slug=request.subdomain,
+                administrated_company__isnull=False,
+            ):
+                is_user_organization_admin = True
+        return Response({"is_user_organization_admin": is_user_organization_admin})
 
 
 class HasOrganizationAdmin(APIView):
