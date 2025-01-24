@@ -210,6 +210,12 @@ def get_custom_fields(user_attendance):
                 team_member_count if team_member_count is not None else 0,
             ),
             ("Povoleni_odesilat_emaily", mailing_approval),
+            (
+                "Newsletter",
+                user.userprofile.newsletter
+                if user.userprofile.newsletter
+                else none_str,
+            ),
         ]
     )
     return custom_fields
@@ -355,6 +361,10 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
         if (
             user.is_active
             and userprofile.mailing_opt_in
+            and user_attendance.personal_data_opt_in
+        ) or (
+            user.is_active
+            and userprofile.newsletter
             and user_attendance.personal_data_opt_in
         ):
             if user_attendance.get_userprofile().mailing_id:
