@@ -55,6 +55,7 @@ class UserProfile(WithGalleryMixin, models.Model):
     LANGUAGE = [
         ("cs", _("Čeština")),
         ("en", _("Angličtna")),
+        ("sk", _("Slovenština")),
     ]
     RIDES_VIEWS = [
         ("calendar", _("Kalendář")),
