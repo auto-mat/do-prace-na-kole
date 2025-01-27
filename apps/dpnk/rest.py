@@ -2362,9 +2362,11 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             else:
                 # discount coupon is empty string ""
                 self.user_attendance.discount_coupon = None
-            user_attendance_update_fields[
-                "discount_coupon"
-            ] = self.user_attendance.discount_coupon
+            user_attendance_update_fields["discount_coupon"] = (
+                ""
+                if self.user_attendance.discount_coupon is None
+                else self.user_attendance.discount_coupon
+            )
             self.user_attendance.discount_coupon_used = timezone.now()
             user_attendance_update_fields[
                 "discount_coupon_used"
