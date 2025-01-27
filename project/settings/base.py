@@ -109,6 +109,7 @@ LANGUAGES = (
     ("dsnkcs", _("Do školy na kole - czech")),
     ("cs", _("Czech")),
     ("en", _("English")),
+    ("sk", _("Slovak")),
 )
 LANGUAGE_CODE = "cs"
 MODELTRANSLATION_DEFAULT_LANGUAGE = "cs"
