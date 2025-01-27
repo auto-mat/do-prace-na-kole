@@ -2636,6 +2636,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         self.check_object_permissions(request, userprofile)
         return super().retrieve(request, pk)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         request_data = request.data.copy()
         serializer = self.get_serializer(data=request_data)
@@ -2648,6 +2649,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             headers=headers,
         )
 
+    @transaction.atomic
     def update(self, request, pk=None):
         userprofile = get_object_or_404(UserProfile.objects.all(), pk=pk)
         self.check_object_permissions(request, userprofile)
@@ -2665,6 +2667,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             headers=headers,
         )
 
+    @transaction.atomic
     def destroy(self, request, pk=None):
         userprofile = get_object_or_404(
             UserProfile.objects.all(),
