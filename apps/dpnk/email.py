@@ -114,14 +114,36 @@ def invitation_mail(user_attendance, email, invited=None):
 
 def payment_confirmation_mail(user_attendance):
     payment = user_attendance.representative_payment
-    if not payment.pay_category or payment.pay_category in (
-        "entry_fee",
-        "entry_fee-donation",
-    ):
+    email_payment_donation_subject = _(
+        "Děkujeme za podporu udržitelné mobility. Společně máme na víc."
+    )
+    email_payment_entry_fee_subject = _("Startovné je uhrazeno.")
+    if not payment.pay_category or payment.pay_category == "entry_fee":
+        # Entry fee confirmation email
         campaign_mail(
             user_attendance,
-            _("Startovné je uhrazeno"),
+            email_payment_entry_fee_subject,
             "payment_confirmation_%s.html",
+        )
+    elif payment.pay_category == "donation":
+        # Donation confirmation email
+        campaign_mail(
+            user_attendance,
+            email_payment_donation_subject,
+            "payment_donation_confirmation_%s.html",
+        )
+    elif payment.pay_category == "entry_fee-donation":
+        # Entry fee confirmation email
+        campaign_mail(
+            user_attendance,
+            email_payment_entry_fee_subject,
+            "payment_confirmation_%s.html",
+        )
+        # Donation confirmation email
+        campaign_mail(
+            user_attendance,
+            email_payment_donation_subject,
+            "payment_donation_confirmation_%s.html",
         )
 
 

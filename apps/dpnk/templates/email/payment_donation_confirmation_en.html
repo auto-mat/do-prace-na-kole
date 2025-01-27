@@ -1,0 +1,20 @@
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Hello, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+we very much appreciate your decision to make an extra donation to AutoMat,
+the organisers of the Bike to Work Challenge. Thank you, it means a lot to us.
+/p><p>
+We will use your donation to further our efforts to promote sustainable
+mobility and healthy cities. Our dream is a better environment for quality
+city life. We support public transport, walking and cycling as well as
+the sensible use of cars. We bring inspiration from European metropolises
+and activate people to positively transform streets and public spaces.
+We oversee policies and the efficient use of public money. Together with
+you, we create the city we want to live in.
+</p><p>
+You can find out more about what we are doing to make this happen on
+<a href="https://auto-mat.cz/">our website</a> or social media.
+</p>
+{% endblock %}
