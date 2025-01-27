@@ -2236,7 +2236,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             instance,
         )
 
-        self._save_user_attendance_model(user_attendance_update_fields)
+        self._save_user_attendance_model(
+            user_attendance_update_fields, payment_update_fields
+        )
 
         result = {"user_attendance": self.user_attendance}
         result.update({"id": self.user_attendance.userprofile.id})
@@ -2464,13 +2466,30 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             }
         return payment_update_fields
 
-    def _save_user_attendance_model(self, user_attendance_update_fields):
-        update_fields = user_attendance_update_fields.keys()
+    def _save_user_attendance_model(
+        self, user_attendance_update_fields, payment_update_fields
+    ):
+        """Update UserAttendance model fields
+
+        :param dict user_attendance_update_fields: UserAttendance model
+                                                   update fields with value
+        :param dict payment_update_fields: Payment model update fields dict
+        """
+        update_fields = list(user_attendance_update_fields.keys())
         if update_fields:
+            if payment_update_fields:
+                # Denorm fields
+                denorm_fields = [
+                    "representative_payment",
+                    "payment_status",
+                ]
+                update_fields = [
+                    *update_fields,
+                    *denorm_fields,
+                ]
             self.user_attendance.save(
                 update_fields=update_fields,
             )
-            self.user_attendance.refresh_from_db()
 
     def update(self, instance, validated_data):
         return self._update_model(validated_data, instance=instance)
