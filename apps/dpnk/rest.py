@@ -2123,6 +2123,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     discount_coupon = serializers.CharField(
         required=False,
+        allow_blank=True,
     )
     payment_subject = serializers.ChoiceField(
         choices=PAYMENT_SUBJECT,
@@ -2353,10 +2354,14 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                 "t_shirt_size_id"
             ] = self.user_attendance.t_shirt_size_id
 
-        if discount_coupon:
-            self.user_attendance.discount_coupon = DiscountCoupon.objects.get(
-                token=discount_coupon.split("-")[-1]
-            )
+        if discount_coupon is not None:
+            if discount_coupon:
+                self.user_attendance.discount_coupon = DiscountCoupon.objects.get(
+                    token=discount_coupon.split("-")[-1]
+                )
+            else:
+                # discount coupon is empty string ""
+                self.user_attendance.discount_coupon = None
             user_attendance_update_fields[
                 "discount_coupon"
             ] = self.user_attendance.discount_coupon
@@ -2557,9 +2562,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         return dict(items)
 
     def validate_discount_coupon(self, discount_coupon):
-        if not DiscountCoupon.objects.filter(token=discount_coupon.split("-")[-1]).only(
-            "token"
-        ):
+        if discount_coupon and not DiscountCoupon.objects.filter(
+            token=discount_coupon.split("-")[-1]
+        ).only("token"):
             raise serializers.ValidationError(
                 _("Slevový kupón <%(coupon)s> neexistuje.")
                 % {"coupon": discount_coupon},
