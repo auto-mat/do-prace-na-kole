@@ -152,6 +152,11 @@ class PayU:
     ):
         """Create new PayU order and save it as new Payment model
 
+
+        In the case of PLN (Polish Złoty), the lowest currency unit is
+        the penny, which equals 1/100 PLN. Therefore, if the price is
+        1000 in the lowest currency unit, it would be equivalent to 10 PLN.
+
         :param str access_token: PayU Bearer authorization access token
         :param dict data: Input data dict required for creation new Pay
                           order
@@ -217,6 +222,13 @@ class PayU:
         headers = {
             "Authorization": f"Bearer {access_token}",
         }
+
+        # PLN Polich 1 Zloty = 100 penny
+        amount_multiplier = 100
+
+        for index, product in enumerate(data["products"]):
+            data["products"][index]["unitPrice"] = product["unitPrice"] * amount_multiplier
+
         order_data = {
             "notifyUrl": data["notifyUrl"],
             "extOrderId": data["extOrderId"],
@@ -226,7 +238,7 @@ class PayU:
                 [product["name"] for product in data["products"]]
             ),
             "currencyCode": self._payu_conf["PAYU_REST_API_CREATE_ORDER_CURRENCY_CODE"],
-            "totalAmount": data["amount"],
+            "totalAmount": data["amount"] * amount_multiplier,
             "buyer": data["buyer"],
             "products": data["products"],
         }
