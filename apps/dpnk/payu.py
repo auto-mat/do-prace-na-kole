@@ -227,7 +227,9 @@ class PayU:
         amount_multiplier = 100
 
         for index, product in enumerate(data["products"]):
-            data["products"][index]["unitPrice"] = product["unitPrice"] * amount_multiplier
+            data["products"][index]["unitPrice"] = (
+                product["unitPrice"] * amount_multiplier
+            )
 
         order_data = {
             "notifyUrl": data["notifyUrl"],
