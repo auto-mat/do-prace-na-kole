@@ -29,6 +29,8 @@ class PayU:
         }
         """
         self._payu_conf = payu_conf
+        # PLN Polich 1 Zloty = 100 penny
+        self._amount_multiplier = 100
 
     def _delete_payment(self, order_id):
         """Delete PayU order from DB Payment model
@@ -41,6 +43,25 @@ class PayU:
             order_id=order_id,
             status=models.Status.CANCELED,
         ).delete()
+
+    def _update_products_unit_price(self, data, math_operator="multiplication"):
+        """Update PayU create order product unit price
+
+        In the case of PLN (Polish Złoty), the lowest currency unit is
+        the penny, which equals 1/100 PLN. Therefore, if the price is
+        1000 in the lowest currency unit, it would be equivalent to 10 PLN.
+
+        :param dict data: Input PayU create order data dict
+        :param str math_operator: Math operator string mulitiplication or
+                                  division, with default multiplication
+                                  string value
+
+        """
+        for index, product in enumerate(data["products"]):
+            if math_operator == "multiplication":
+                data["products"][index]["unitPrice"] *= self._amount_multiplier
+            elif math_operator == "division":
+                data["products"][index]["unitPrice"] //= self._amount_multiplier
 
     def _save_payment(
         self,
@@ -223,13 +244,7 @@ class PayU:
             "Authorization": f"Bearer {access_token}",
         }
 
-        # PLN Polich 1 Zloty = 100 penny
-        amount_multiplier = 100
-
-        for index, product in enumerate(data["products"]):
-            data["products"][index]["unitPrice"] = (
-                product["unitPrice"] * amount_multiplier
-            )
+        self._update_products_unit_price(data)
 
         order_data = {
             "notifyUrl": data["notifyUrl"],
@@ -240,7 +255,7 @@ class PayU:
                 [product["name"] for product in data["products"]]
             ),
             "currencyCode": self._payu_conf["PAYU_REST_API_CREATE_ORDER_CURRENCY_CODE"],
-            "totalAmount": data["amount"] * amount_multiplier,
+            "totalAmount": data["amount"] * self._amount_multiplier,
             "buyer": data["buyer"],
             "products": data["products"],
         }
@@ -262,6 +277,7 @@ class PayU:
             response_data.get("status")
             and response_data["status"].get("statusCode") == sucess_status
         ):
+            self._update_products_unit_price(data, math_operator="division")
             self._save_payment(
                 order_id=data["extOrderId"],
                 product_name=order_data["description"],
