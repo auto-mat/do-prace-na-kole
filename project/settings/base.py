@@ -500,7 +500,6 @@ LEAFLET_CONFIG = {
 
 CORS_ORIGIN_REGEX = [
     r"^(https?://)?(\w+\.)?dopracenakole\.(cz|net)$",
-    "https://rtwbb-test.dopracenakole.net",
 ]
 
 CORS_ORIGIN_REGEX_WHITELIST = CORS_ORIGIN_REGEX
@@ -992,3 +991,10 @@ PAYU_CONF = (
     if os.getenv("USE_PAYU_TEST_CONF") == "True"
     else PAYU_PRODUCTION_CONF
 )
+
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = (
+    "http://localhost:9000"
+)
+
+ACCOUNT_EMAIL_CONFIRMATION_URL = "http://localhost:9000/#/confirm-email"
+ACCOUNT_ADAPTER = "dpnk.allauth.AccountAdapter"

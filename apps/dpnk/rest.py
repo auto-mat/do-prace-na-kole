@@ -2425,14 +2425,17 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         ):
             payu_ordered_products = []
             for product in products:
-                (
-                    payu_ordered_product,
-                    created,
-                ) = PayUOrderedProduct.objects.get_or_create(
-                    name=product["name"],
-                    unit_price=product["unitPrice"],
-                    quantity=product["quantity"],
-                )
+                query = {
+                    "name": product["name"],
+                    "unit_price": product["unitPrice"],
+                    "quantity": product["quantity"],
+                }
+                payu_ordered_product = PayUOrderedProduct.objects.filter(**query)
+                if not payu_ordered_product:
+                    payu_ordered_product = PayUOrderedProduct(**query)
+                    payu_ordered_product.save()
+                else:
+                    payu_ordered_product = payu_ordered_product[0]
                 payu_ordered_products.append(payu_ordered_product)
 
             payment = None

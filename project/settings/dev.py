@@ -114,3 +114,13 @@ CSRF_COOKIE_SECURE = False
 
 HELPDESK_IFRAME_URL = "http://localhost:8000/desk/kb_iframe/foo/"
 HELPDESK_QUEUE = 1
+
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = (
+    "https://rtwbb-test.dopracenakole.net/#/"
+)
+
+ACCOUNT_EMAIL_CONFIRMATION_URL = "https://rtwbb-test.dopracenakole.net/#/confirm-email"
+ACCOUNT_RESET_PASSWORD_CONFIRMATION_URL = "https://rtwbb-test.dopracenakole.net/#/reset-password"
+ACCOUNT_ADAPTER = "dpnk.allauth.AccountAdapter"
+
+REST_AUTH["PASSWORD_RESET_SERIALIZER"] =  "dpnk.allauth.UserPasswordResetSerializer"
