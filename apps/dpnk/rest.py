@@ -2945,6 +2945,7 @@ class HasOrganizationAdmin(APIView):
                     if Company.objects.filter(
                         id=organization_id,
                         company_admin__isnull=False,
+                        company_admin__campaign__slug=self.request.subdomain,
                     )
                     else False
                 )
