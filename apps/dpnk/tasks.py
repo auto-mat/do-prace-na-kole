@@ -375,6 +375,6 @@ def refresh_materialized_view(self, materialized_view):
     with connection.cursor() as cursor:
         if isinstance(materialized_view, (list, tuple, set)):
             for view in materialized_view:
-                cursor.execute("REFRESH MATERIALIZED VIEW %s", [view])
+                cursor.execute(f"REFRESH MATERIALIZED VIEW {view}")
         else:
-            cursor.execute("REFRESH MATERIALIZED VIEW %s", [materialized_view])
+            cursor.execute(f"REFRESH MATERIALIZED VIEW {materialized_view}")
