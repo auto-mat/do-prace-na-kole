@@ -13,8 +13,6 @@ ACCOUNT_ADAPTER = "dpnk.allauth.AccountAdapter"
 
 REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializer"
 
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = (
-    True
-    if os.getenv("SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT", False) == "True"
-    else False
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = (
+    True if os.getenv("SOCIALACCOUNT_EMAIL_AUTHENTICATION", "False") == "True" else False
 )
