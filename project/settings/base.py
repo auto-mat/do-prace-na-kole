@@ -500,7 +500,6 @@ LEAFLET_CONFIG = {
 
 CORS_ORIGIN_REGEX = [
     r"^(https?://)?(\w+\.)?dopracenakole\.(cz|net)$",
-    "https://rtwbb-test.dopracenakole.net",
 ]
 
 CORS_ORIGIN_REGEX_WHITELIST = CORS_ORIGIN_REGEX

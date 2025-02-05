@@ -21,3 +21,5 @@ SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = (
     if os.getenv("SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT", False) == "True"
     else False
 )
+
+CORS_ORIGIN_REGEX.append("https://rtwbb-test.dopracenakole.net")
