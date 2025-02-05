@@ -1,6 +1,5 @@
 [
-
-   {
+      {
       "fields" : {
          "date_joined" : "2024-08-03T03:58:51.134",
          "email" : "a@seznam.cz",
@@ -9,7 +8,7 @@
          "is_active" : true,
          "is_staff" : true,
          "is_superuser" : true,
-         "last_login" : "2025-01-15T20:28:16.532",
+         "last_login" : "2025-02-01T23:34:07.658",
          "last_name" : "test",
          "password" : "pbkdf2_sha256$150000$PYsC9ZVLoxd1$6MvUJKsVZh4ne3NWUSVhSx4AAF0R/ZDLjoPao1mznhc=",
          "user_permissions" : [],
@@ -45,7 +44,7 @@
          "is_active" : true,
          "is_staff" : false,
          "is_superuser" : false,
-         "last_login" : "2025-01-15T20:41:09.645",
+         "last_login" : "2025-02-01T23:32:47.244",
          "last_name" : "",
          "password" : "pbkdf2_sha256$150000$Ht5xZ2q0ygYb$EYHRdpMZpLUCvXOE5xxCoFFyITdP0YFFW+Kjp93YYxg=",
          "user_permissions" : [],
@@ -89,6 +88,86 @@
       },
       "model" : "auth.user",
       "pk" : 5
+   },
+   {
+      "fields" : {
+         "date_joined" : "2025-02-01T22:54:07.966",
+         "email" : "",
+         "first_name" : "",
+         "groups" : [],
+         "is_active" : true,
+         "is_staff" : false,
+         "is_superuser" : false,
+         "last_login" : null,
+         "last_name" : "",
+         "password" : "pbkdf2_sha256$150000$po7AN6URExYH$uqVxRzUjf7kCRzI7leiXcvk0npLY1Ob2o7B0qsX/gWk=",
+         "user_permissions" : [],
+         "username" : "u1"
+      },
+      "model" : "auth.user",
+      "pk" : 6
+   },
+   {
+      "fields" : {
+         "date_joined" : "2025-02-01T22:55:05.218",
+         "email" : "",
+         "first_name" : "",
+         "groups" : [],
+         "is_active" : true,
+         "is_staff" : false,
+         "is_superuser" : false,
+         "last_login" : null,
+         "last_name" : "",
+         "password" : "pbkdf2_sha256$150000$9f5aVrBebGx9$APIGo5tVAYnjiCERvHRvfQt8wfUyGZrvwS/cUdUUKtM=",
+         "user_permissions" : [],
+         "username" : "u2"
+      },
+      "model" : "auth.user",
+      "pk" : 7
+   },
+   {
+      "fields" : {
+         "date_joined" : "2025-02-01T22:55:46.692",
+         "email" : "",
+         "first_name" : "",
+         "groups" : [],
+         "is_active" : true,
+         "is_staff" : false,
+         "is_superuser" : false,
+         "last_login" : null,
+         "last_name" : "",
+         "password" : "pbkdf2_sha256$150000$9UjKC6YKsu2k$7svipRIy3OxmK57epz2sC/6djqxU4rstLqRkEUMTAF0=",
+         "user_permissions" : [],
+         "username" : "u3"
+      },
+      "model" : "auth.user",
+      "pk" : 8
+   },
+   {
+      "fields" : {
+         "date_joined" : "2025-02-01T22:56:18.755",
+         "email" : "",
+         "first_name" : "",
+         "groups" : [],
+         "is_active" : true,
+         "is_staff" : false,
+         "is_superuser" : false,
+         "last_login" : null,
+         "last_name" : "",
+         "password" : "pbkdf2_sha256$150000$AorKX4BIizbJ$uV1wot+uHfrz9r7/X6PgpFR4T1EEK3FZQiYquzp85BI=",
+         "user_permissions" : [],
+         "username" : "u4"
+      },
+      "model" : "auth.user",
+      "pk" : 9
+   },
+   {
+      "fields" : {
+         "expire_date" : "2025-02-15T23:34:07.680",
+         "session_data" : "MGEwZWJjMzU1OTUxYWQzMGEzODY4NDBmOWI3Y2UyNzZiYzNiYzU0ZDp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJiZjQ4N2IzYmU2NmYxYWM1NmUyZjZmZTBkYjVmZWJlNGZmZmM4NGVjIn0="
+      },
+      "model" : "sessions.session",
+      "pk" : "oro6yfx9k33lomfqt4vktzjrpg4klt9k"
    },
    {
       "fields" : {
@@ -780,7 +859,7 @@
             1
          ],
          "age_group" : null,
-         "company_admin_count" : 0,
+         "company_admin_count" : 1,
          "default_rides_view" : null,
          "ecc_email" : "vbYMqV2CJt@dopracenakole.cz",
          "ecc_password" : "hN7FY8d2LM",
@@ -853,6 +932,106 @@
    },
    {
       "fields" : {
+         "administrated_cities" : [],
+         "age_group" : null,
+         "company_admin_count" : 0,
+         "default_rides_view" : null,
+         "ecc_email" : "7X2TwsVvx2@dopracenakole.cz",
+         "ecc_password" : "xRfEtXX8NF",
+         "gallery" : null,
+         "language" : "cs",
+         "mailing_hash" : "",
+         "mailing_id" : null,
+         "mailing_opt_in" : null,
+         "newsletter" : null,
+         "nickname" : null,
+         "note" : "",
+         "occupation" : 144,
+         "sex" : null,
+         "telephone" : "",
+         "telephone_opt_in" : null,
+         "user" : 6
+      },
+      "model" : "dpnk.userprofile",
+      "pk" : 6
+   },
+   {
+      "fields" : {
+         "administrated_cities" : [],
+         "age_group" : null,
+         "company_admin_count" : 0,
+         "default_rides_view" : null,
+         "ecc_email" : "74kYwtsWCc@dopracenakole.cz",
+         "ecc_password" : "qXAFhgm955",
+         "gallery" : null,
+         "language" : "cs",
+         "mailing_hash" : "",
+         "mailing_id" : null,
+         "mailing_opt_in" : null,
+         "newsletter" : null,
+         "nickname" : null,
+         "note" : "",
+         "occupation" : 156,
+         "sex" : null,
+         "telephone" : "",
+         "telephone_opt_in" : null,
+         "user" : 7
+      },
+      "model" : "dpnk.userprofile",
+      "pk" : 7
+   },
+   {
+      "fields" : {
+         "administrated_cities" : [],
+         "age_group" : null,
+         "company_admin_count" : 0,
+         "default_rides_view" : null,
+         "ecc_email" : "z78JVKX6rc@dopracenakole.cz",
+         "ecc_password" : "gkYbSNfxxB",
+         "gallery" : null,
+         "language" : "cs",
+         "mailing_hash" : "",
+         "mailing_id" : null,
+         "mailing_opt_in" : null,
+         "newsletter" : null,
+         "nickname" : null,
+         "note" : "",
+         "occupation" : 134,
+         "sex" : null,
+         "telephone" : "",
+         "telephone_opt_in" : null,
+         "user" : 8
+      },
+      "model" : "dpnk.userprofile",
+      "pk" : 8
+   },
+   {
+      "fields" : {
+         "administrated_cities" : [],
+         "age_group" : null,
+         "company_admin_count" : 0,
+         "default_rides_view" : null,
+         "ecc_email" : "k7a5KL8UBJ@dopracenakole.cz",
+         "ecc_password" : "awrjyJeADC",
+         "gallery" : null,
+         "language" : "cs",
+         "mailing_hash" : "",
+         "mailing_id" : null,
+         "mailing_opt_in" : null,
+         "newsletter" : null,
+         "nickname" : null,
+         "note" : "",
+         "occupation" : 161,
+         "sex" : null,
+         "telephone" : "",
+         "telephone_opt_in" : null,
+         "user" : 9
+      },
+      "model" : "dpnk.userprofile",
+      "pk" : 9
+   },
+   {
+      "fields" : {
          "administrated_company" : 2,
          "campaign" : 20,
          "can_confirm_payments" : true,
@@ -878,12 +1057,12 @@
    {
       "fields" : {
          "author" : 5,
-         "created" : "2025-01-15T19:51:26.802",
+         "created" : "2025-01-15T19:51:26",
          "description" : "",
          "polymorphic_ctype": ["dpnk", "payment"],
          "realized" : null,
          "status" : 1,
-         "updated_by" : 5,
+         "updated_by" : 1,
          "user_attendance" : 5
       },
       "model" : "dpnk.transaction",
@@ -892,12 +1071,12 @@
    {
       "fields" : {
          "author" : 5,
-         "created" : "2025-01-15T19:51:26.804",
+         "created" : "2025-01-15T19:51:26",
          "description" : "",
          "polymorphic_ctype": ["dpnk", "payment"],
          "realized" : null,
          "status" : 1,
-         "updated_by" : 5,
+         "updated_by" : 1,
          "user_attendance" : 5
       },
       "model" : "dpnk.transaction",
@@ -906,12 +1085,12 @@
    {
       "fields" : {
          "author" : 5,
-         "created" : "2025-01-15T19:51:26.807",
+         "created" : "2025-01-15T19:51:26",
          "description" : "",
          "polymorphic_ctype": ["dpnk", "payment"],
          "realized" : null,
          "status" : 1,
-         "updated_by" : 5,
+         "updated_by" : 1,
          "user_attendance" : 5
       },
       "model" : "dpnk.transaction",
@@ -920,12 +1099,12 @@
    {
       "fields" : {
          "author" : 5,
-         "created" : "2025-01-15T19:51:26.814",
+         "created" : "2025-01-15T19:51:26",
          "description" : "",
          "polymorphic_ctype": ["dpnk", "payment"],
          "realized" : null,
          "status" : 1,
-         "updated_by" : 5,
+         "updated_by" : 1,
          "user_attendance" : 5
       },
       "model" : "dpnk.transaction",
@@ -934,12 +1113,12 @@
    {
       "fields" : {
          "author" : 5,
-         "created" : "2025-01-15T19:51:36.367",
+         "created" : "2025-01-15T19:51:36",
          "description" : "",
          "polymorphic_ctype": ["dpnk", "payment"],
          "realized" : null,
          "status" : 1,
-         "updated_by" : 5,
+         "updated_by" : 1,
          "user_attendance" : 5
       },
       "model" : "dpnk.transaction",
@@ -1090,7 +1269,7 @@
          "discount_coupon_used" : null,
          "distance" : null,
          "dont_want_insert_track" : false,
-         "frequency" : 0.00056980056980057,
+         "frequency" : 0.000562113546936481,
          "get_rides_count_denorm" : 1,
          "has_unanswered_questionnaires" : false,
          "last_sync_time" : null,
@@ -1098,15 +1277,15 @@
          "personal_data_opt_in" : true,
          "related_company_admin" : null,
          "representative_payment" : null,
-         "t_shirt_size" : null,
+         "t_shirt_size" : 2,
          "team" : 1,
          "total_trip_length_including_recreational" : 80.15,
          "track" : null,
          "trip_length_total" : 80.15,
          "trip_points_total" : 0,
-         "updated" : "2025-01-15T23:48:50.989",
+         "updated" : "2025-02-01T23:16:00.609",
          "userprofile" : 1,
-         "working_rides_base_count" : 1755
+         "working_rides_base_count" : 1779
       },
       "model" : "dpnk.userattendance",
       "pk" : 1
@@ -1134,23 +1313,23 @@
          "track" : null,
          "trip_length_total" : 0,
          "trip_points_total" : 0,
-         "updated" : "2025-01-15T23:48:51.099",
+         "updated" : "2025-02-01T23:16:00.800",
          "userprofile" : 2,
-         "working_rides_base_count" : 1754
+         "working_rides_base_count" : 1778
       },
       "model" : "dpnk.userattendance",
       "pk" : 2
    },
    {
       "fields" : {
-         "approved_for_team" : "undecided",
+         "approved_for_team" : "approved",
          "campaign" : 20,
          "created" : "2024-08-06T02:53:45.761",
          "discount_coupon" : null,
          "discount_coupon_used" : null,
          "distance" : null,
          "dont_want_insert_track" : false,
-         "frequency" : 0.000570125427594071,
+         "frequency" : 0.000562429696287964,
          "get_rides_count_denorm" : 1,
          "has_unanswered_questionnaires" : false,
          "last_sync_time" : null,
@@ -1164,16 +1343,16 @@
          "track" : null,
          "trip_length_total" : 57.75,
          "trip_points_total" : 0,
-         "updated" : "2025-01-15T23:48:51.208",
+         "updated" : "2025-02-01T23:16:00.968",
          "userprofile" : 3,
-         "working_rides_base_count" : 1754
+         "working_rides_base_count" : 1778
       },
       "model" : "dpnk.userattendance",
       "pk" : 3
    },
    {
       "fields" : {
-         "approved_for_team" : "undecided",
+         "approved_for_team" : "approved",
          "campaign" : 20,
          "created" : "2025-01-02T16:59:16.439",
          "discount_coupon" : null,
@@ -1189,21 +1368,21 @@
          "related_company_admin" : null,
          "representative_payment" : null,
          "t_shirt_size" : null,
-         "team" : null,
+         "team" : 3,
          "total_trip_length_including_recreational" : 0,
          "track" : null,
          "trip_length_total" : 0,
          "trip_points_total" : 0,
-         "updated" : "2025-01-15T23:48:51.310",
+         "updated" : "2025-02-02T00:48:55.256",
          "userprofile" : 4,
-         "working_rides_base_count" : 1754
+         "working_rides_base_count" : 1778
       },
       "model" : "dpnk.userattendance",
       "pk" : 4
    },
    {
       "fields" : {
-         "approved_for_team" : "undecided",
+         "approved_for_team" : "approved",
          "campaign" : 20,
          "created" : "2025-01-15T18:24:19.594",
          "discount_coupon" : null,
@@ -1224,12 +1403,132 @@
          "track" : null,
          "trip_length_total" : 0,
          "trip_points_total" : 0,
-         "updated" : "2025-01-15T23:48:51.412",
+         "updated" : "2025-02-01T23:16:01.290",
          "userprofile" : 5,
-         "working_rides_base_count" : 1754
+         "working_rides_base_count" : 1778
       },
       "model" : "dpnk.userattendance",
       "pk" : 5
+   },
+   {
+      "fields" : {
+         "approved_for_team" : "approved",
+         "campaign" : 20,
+         "created" : "2025-02-01T22:54:08.194",
+         "discount_coupon" : null,
+         "discount_coupon_used" : null,
+         "distance" : null,
+         "dont_want_insert_track" : false,
+         "frequency" : 0,
+         "get_rides_count_denorm" : 0,
+         "has_unanswered_questionnaires" : false,
+         "last_sync_time" : null,
+         "payment_status" : "done",
+         "personal_data_opt_in" : false,
+         "related_company_admin" : null,
+         "representative_payment" : null,
+         "t_shirt_size" : null,
+         "team" : 3,
+         "total_trip_length_including_recreational" : 0,
+         "track" : null,
+         "trip_length_total" : 0,
+         "trip_points_total" : 0,
+         "updated" : "2025-02-02T00:45:34.826",
+         "userprofile" : 6,
+         "working_rides_base_count" : 1778
+      },
+      "model" : "dpnk.userattendance",
+      "pk" : 6
+   },
+   {
+      "fields" : {
+         "approved_for_team" : "approved",
+         "campaign" : 20,
+         "created" : "2025-02-01T22:55:05.650",
+         "discount_coupon" : null,
+         "discount_coupon_used" : null,
+         "distance" : null,
+         "dont_want_insert_track" : false,
+         "frequency" : 0,
+         "get_rides_count_denorm" : 0,
+         "has_unanswered_questionnaires" : false,
+         "last_sync_time" : null,
+         "payment_status" : "none",
+         "personal_data_opt_in" : false,
+         "related_company_admin" : null,
+         "representative_payment" : null,
+         "t_shirt_size" : 1,
+         "team" : 3,
+         "total_trip_length_including_recreational" : 0,
+         "track" : null,
+         "trip_length_total" : 0,
+         "trip_points_total" : 0,
+         "updated" : "2025-02-02T00:47:22.436",
+         "userprofile" : 7,
+         "working_rides_base_count" : 1778
+      },
+      "model" : "dpnk.userattendance",
+      "pk" : 7
+   },
+   {
+      "fields" : {
+         "approved_for_team" : "approved",
+         "campaign" : 20,
+         "created" : "2025-02-01T22:55:46.917",
+         "discount_coupon" : null,
+         "discount_coupon_used" : null,
+         "distance" : null,
+         "dont_want_insert_track" : false,
+         "frequency" : 0,
+         "get_rides_count_denorm" : 0,
+         "has_unanswered_questionnaires" : false,
+         "last_sync_time" : null,
+         "payment_status" : "done",
+         "personal_data_opt_in" : false,
+         "related_company_admin" : null,
+         "representative_payment" : null,
+         "t_shirt_size" : null,
+         "team" : 3,
+         "total_trip_length_including_recreational" : 0,
+         "track" : null,
+         "trip_length_total" : 0,
+         "trip_points_total" : 0,
+         "updated" : "2025-02-02T00:47:11.779",
+         "userprofile" : 8,
+         "working_rides_base_count" : 1778
+      },
+      "model" : "dpnk.userattendance",
+      "pk" : 8
+   },
+   {
+      "fields" : {
+         "approved_for_team" : "approved",
+         "campaign" : 20,
+         "created" : "2025-02-01T22:56:18.959",
+         "discount_coupon" : null,
+         "discount_coupon_used" : null,
+         "distance" : null,
+         "dont_want_insert_track" : false,
+         "frequency" : 0,
+         "get_rides_count_denorm" : 0,
+         "has_unanswered_questionnaires" : false,
+         "last_sync_time" : null,
+         "payment_status" : "done",
+         "personal_data_opt_in" : false,
+         "related_company_admin" : null,
+         "representative_payment" : null,
+         "t_shirt_size" : null,
+         "team" : 3,
+         "total_trip_length_including_recreational" : 0,
+         "track" : null,
+         "trip_length_total" : 0,
+         "trip_points_total" : 0,
+         "updated" : "2025-02-02T00:46:55.714",
+         "userprofile" : 9,
+         "working_rides_base_count" : 1778
+      },
+      "model" : "dpnk.userattendance",
+      "pk" : 9
    },
    {
       "fields" : {
@@ -1394,6 +1693,17 @@
       },
       "model" : "dpnk.city",
       "pk" : 2
+   },
+   {
+      "fields" : {
+         "cyklistesobe_slug" : "hradec-kralove",
+         "location" : "SRID=4326;POINT (15.831814 50.211219)",
+         "name" : "Hradec Králové",
+         "slug" : "hradec-kralove",
+         "wp_slug" : null
+      },
+      "model" : "dpnk.city",
+      "pk" : 3
    },
    {
       "fields" : {
@@ -1633,6 +1943,25 @@
    {
       "fields" : {
          "active" : true,
+         "address_city" : "Hradec Králové",
+         "address_psc" : 50301,
+         "address_recipient" : null,
+         "address_street" : "Pobřežní",
+         "address_street_number" : "1785",
+         "box_addressee_email" : null,
+         "box_addressee_name" : null,
+         "box_addressee_telephone" : null,
+         "city" : 3,
+         "company" : 2,
+         "gallery" : null,
+         "icon" : null
+      },
+      "model" : "dpnk.subsidiary",
+      "pk" : 4
+   },
+   {
+      "fields" : {
+         "active" : true,
          "address_city" : "",
          "address_psc" : null,
          "address_recipient" : null,
@@ -1717,17 +2046,17 @@
       "fields" : {
          "author" : 1,
          "campaign" : 20,
-         "frequency" : 0.000650618087182824,
+         "frequency" : 0.000562271621612222,
          "gallery" : 2,
-         "get_rides_count_denorm" : 1,
+         "get_rides_count_denorm" : 2,
          "icon" : null,
          "invitation_token" : "R8CLV91Y1ME29B7KFQ95ISZPJN3743",
-         "member_count" : 1,
+         "member_count" : 2,
          "name" : "Tým1",
-         "name_with_members" : "Tým1 (test)",
-         "paid_member_count" : 1,
+         "name_with_members" : "Tým1 (test, test3)",
+         "paid_member_count" : 2,
          "subsidiary" : 1,
-         "unapproved_member_count" : 1,
+         "unapproved_member_count" : 0,
          "updated_by" : 1
       },
       "model" : "dpnk.team",
@@ -1742,12 +2071,12 @@
          "get_rides_count_denorm" : 0,
          "icon" : null,
          "invitation_token" : "5E69N0R5STP0GRNC8DLRJSOC8FXA37",
-         "member_count" : 1,
+         "member_count" : 2,
          "name" : "Tým2",
-         "name_with_members" : "Tým2 (petr)",
+         "name_with_members" : "Tým2 (petr, uzivatel@test.cz)",
          "paid_member_count" : 1,
          "subsidiary" : 2,
-         "unapproved_member_count" : 1,
+         "unapproved_member_count" : 0,
          "updated_by" : 1
       },
       "model" : "dpnk.team",
@@ -1755,20 +2084,23 @@
    },
    {
       "fields" : {
-         "company" : null,
-         "competition" : 1,
-         "created" : "2024-08-07T03:09:39.625",
-         "distance" : 0,
+         "author" : 1,
+         "campaign" : 20,
          "frequency" : 0,
-         "result" : "0.000000",
-         "result_divident" : 0,
-         "result_divisor" : 22,
-         "team" : null,
-         "updated" : "2024-08-07T03:09:39.632",
-         "user_attendance" : 1
+         "gallery" : null,
+         "get_rides_count_denorm" : 0,
+         "icon" : null,
+         "invitation_token" : "WUYZ5BMA0EBQ9IJ7O77QR3TR7LG194",
+         "member_count" : 4,
+         "name" : "Tým3",
+         "name_with_members" : "Tým3 (u1, u2, u3, u4)",
+         "paid_member_count" : 3,
+         "subsidiary" : 4,
+         "unapproved_member_count" : 0,
+         "updated_by" : 1
       },
-      "model" : "dpnk.competitionresult",
-      "pk" : 23
+      "model" : "dpnk.team",
+      "pk" : 3
    },
    {
       "fields" : {
@@ -43757,5 +44089,291 @@
       },
       "model" : "admin.logentry",
       "pk" : 51
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-01T22:54:08.355",
+         "change_message" : "[{\"added\": {}}, {\"added\": {\"name\": \"U\\u017eivatelsk\\u00fd profil\", \"object\": \"u1\"}}, {\"added\": {\"name\": \"\\u00da\\u010dastn\\u00edk kampan\\u011b\", \"object\": \"u1\"}}]",
+         "content_type" : 9,
+         "object_id" : "6",
+         "object_repr" : "u1",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 52
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-01T22:55:05.821",
+         "change_message" : "[{\"added\": {}}, {\"added\": {\"name\": \"U\\u017eivatelsk\\u00fd profil\", \"object\": \"u2\"}}, {\"added\": {\"name\": \"\\u00da\\u010dastn\\u00edk kampan\\u011b\", \"object\": \"u2\"}}]",
+         "content_type" : 9,
+         "object_id" : "7",
+         "object_repr" : "u2",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 53
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-01T22:55:47.071",
+         "change_message" : "[{\"added\": {}}, {\"added\": {\"name\": \"U\\u017eivatelsk\\u00fd profil\", \"object\": \"u3\"}}, {\"added\": {\"name\": \"\\u00da\\u010dastn\\u00edk kampan\\u011b\", \"object\": \"u3\"}}]",
+         "content_type" : 9,
+         "object_id" : "8",
+         "object_repr" : "u3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 54
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-01T22:56:19.113",
+         "change_message" : "[{\"added\": {}}, {\"added\": {\"name\": \"U\\u017eivatelsk\\u00fd profil\", \"object\": \"u4\"}}, {\"added\": {\"name\": \"\\u00da\\u010dastn\\u00edk kampan\\u011b\", \"object\": \"u4\"}}]",
+         "content_type" : 9,
+         "object_id" : "9",
+         "object_repr" : "u4",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 55
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-01T22:59:44.869",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "3",
+         "object_repr" : "test3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 56
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-01T23:00:41.386",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "6",
+         "object_repr" : "u1",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 57
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-01T23:01:27.858",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "7",
+         "object_repr" : "u2",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 58
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-01T23:01:41.366",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "8",
+         "object_repr" : "u3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 59
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-01T23:02:33.415",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}, {\"changed\": {\"name\": \"Platebn\\u00ed transakce\", \"object\": \"Payment object (1)\", \"fields\": [\"status\"]}}, {\"changed\": {\"name\": \"Platebn\\u00ed transakce\", \"object\": \"Payment object (2)\", \"fields\": [\"status\"]}}, {\"changed\": {\"name\": \"Platebn\\u00ed transakce\", \"object\": \"Payment object (3)\", \"fields\": [\"status\"]}}, {\"changed\": {\"name\": \"Platebn\\u00ed transakce\", \"object\": \"Payment object (4)\", \"fields\": [\"status\"]}}, {\"changed\": {\"name\": \"Platebn\\u00ed transakce\", \"object\": \"Payment object (5)\", \"fields\": [\"status\"]}}]",
+         "content_type" : 44,
+         "object_id" : "5",
+         "object_repr" : "uzivatel@test.cz",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 60
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-02T00:37:49.587",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 47,
+         "object_id" : "3",
+         "object_repr" : "Hradec Králové",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 61
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-02T00:37:56.183",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 52,
+         "object_id" : "4",
+         "object_repr" : "Pobřežní 1785, 503 01 Hradec Králové - Hradec Králové",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 62
+   },
+   {
+      "fields" : {
+         "action_flag" : 1,
+         "action_time" : "2025-02-02T00:40:50.155",
+         "change_message" : "[{\"added\": {}}]",
+         "content_type" : 58,
+         "object_id" : "3",
+         "object_repr" : "Tým3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 63
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:43:44.878",
+         "change_message" : "[{\"changed\": {\"fields\": [\"subsidiary\"]}}]",
+         "content_type" : 58,
+         "object_id" : "3",
+         "object_repr" : "Tým3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 64
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:45:35.038",
+         "change_message" : "[{\"changed\": {\"fields\": [\"team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "6",
+         "object_repr" : "u1",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 65
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:45:55.713",
+         "change_message" : "[{\"changed\": {\"fields\": [\"team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "7",
+         "object_repr" : "u2",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 66
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:46:09.556",
+         "change_message" : "[{\"changed\": {\"fields\": [\"team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "8",
+         "object_repr" : "u3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 67
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:46:26.425",
+         "change_message" : "[{\"changed\": {\"fields\": [\"team\", \"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "9",
+         "object_repr" : "u4",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 68
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:46:55.893",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "9",
+         "object_repr" : "u4",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 69
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:47:11.963",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "8",
+         "object_repr" : "u3",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 70
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:47:22.627",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "7",
+         "object_repr" : "u2",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 71
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:48:35.938",
+         "change_message" : "[{\"changed\": {\"fields\": [\"team\", \"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "4",
+         "object_repr" : "b@centrum.cz",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 72
+   },
+   {
+      "fields" : {
+         "action_flag" : 2,
+         "action_time" : "2025-02-02T00:48:55.432",
+         "change_message" : "[{\"changed\": {\"fields\": [\"approved_for_team\"]}}]",
+         "content_type" : 44,
+         "object_id" : "4",
+         "object_repr" : "b@centrum.cz",
+         "user" : 1
+      },
+      "model" : "admin.logentry",
+      "pk" : 73
    }
 ]
