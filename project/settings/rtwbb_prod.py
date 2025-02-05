@@ -12,9 +12,3 @@ ACCOUNT_RESET_PASSWORD_CONFIRMATION_URL = f"{RTWBB_FRONTEND_APP_BASE_URL}reset-p
 ACCOUNT_ADAPTER = "dpnk.allauth.AccountAdapter"
 
 REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializer"
-
-SOCIALACCOUNT_EMAIL_AUTHENTICATION = (
-    True
-    if os.getenv("SOCIALACCOUNT_EMAIL_AUTHENTICATION", "False") == "True"
-    else False
-)
