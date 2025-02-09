@@ -16,6 +16,6 @@ SOCIALACCOUNT_ADAPTER = "dpnk.allauth.SocialAccountAdapter"
 REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializer"
 
 if "localhost" in RTWBB_FRONTEND_APP_BASE_URL:
-    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ORIGIN_ALLOW_ALL = True
 else:
     CORS_ORIGIN_REGEX.append(RTWBB_FRONTEND_APP_BASE_URL)
