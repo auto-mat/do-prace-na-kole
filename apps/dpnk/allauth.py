@@ -37,7 +37,11 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
     """Allow login existed user account (login with email/password) with
     social media login with same email address
 
-    https://github.com/pennersr/django-allauth/issues/418#issuecomment-107880925
+    Allow connect Google social accounts created via old DPNK frontend
+    app (Python social-auth-app-django lib) with Google social accounts
+    created with new RTWBB frontend app (Python dj-rest-auth, allauth lib).
+
+    https://github.com/pennersr/django-allauth/issues/418#issuecomment-137259550
     """
 
     def pre_social_login(self, request, sociallogin):
