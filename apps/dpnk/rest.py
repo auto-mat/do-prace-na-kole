@@ -2023,6 +2023,8 @@ class UserAttendanceSerializer(serpy.Serializer):
 class PersonalDetailsUserSerializer(serpy.Serializer):
     first_name = EmptyStrField()
     last_name = EmptyStrField()
+    email = EmptyStrField()
+    is_staff = serpy.BoolField()
 
 
 class PersonalDetailsUserProfileSerializer(serpy.Serializer):
@@ -2086,6 +2088,12 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     last_name = serializers.CharField(
         required=False,
+    )
+    email = serializers.EmailField(
+        required=False,
+    )
+    is_staff = serializers.BooleanField(
+        read_only=True,
     )
     nickname = serializers.CharField(
         required=False,
@@ -2157,6 +2165,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "id",
             "first_name",
             "last_name",
+            "email",
+            "is_staff",
             "nickname",
             "sex",
             "telephone",
@@ -2293,6 +2303,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         user_data = {
             "first_name": validated_data.pop("first_name", none),
             "last_name": validated_data.pop("last_name", none),
+            "email": validated_data.pop("email", none),
         }
         user_data = {key: val for key, val in user_data.items() if val is not None}
         user = user_model_class.objects.filter(
@@ -2513,6 +2524,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             data["id"]: personal_details_data.pop("id")
             data["first_name"]: personal_details_data.pop("first_name")
             data["last_name"]: personal_details_data.pop("last_name")
+            data["email"]: personal_details_data.pop("email")
+            data["is_staff"]: personal_details_data.pop("is_staff")
             data["nickname"]: personal_details_data.pop("nickname")
             data["sex"]: personal_details_data.pop("sex")
             data["telephone"]: personal_details_data.pop("telephone")
@@ -2540,6 +2553,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "id",
             "first_name",
             "last_name",
+            "email",
+            "is_staff",
             "nickname",
             "sex",
             "telephone",
@@ -2575,6 +2590,19 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                 % {"coupon": discount_coupon},
             )
         return discount_coupon
+
+    def validate_email(self, email):
+        if email and email in get_user_model().objects.exclude(
+            email=self.context["request"].user.email
+        ).values_list("email", flat=True):
+            raise serializers.ValidationError(
+                _(
+                    "E-mail adresa <%(email)s> existuje."
+                    " Použijte jinou e-mailovou adresu."
+                )
+                % {"email": email},
+            )
+        return email
 
     def get_payment_status(self, obj):
         ua = obj.get("user_attendance")
