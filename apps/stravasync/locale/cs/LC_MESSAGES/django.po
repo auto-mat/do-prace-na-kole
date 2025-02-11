@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 10:14+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: apps/stravasync/models.py:16
+#: stravasync/models.py:16
 msgid "Účet Strava"
 msgstr ""
 
-#: apps/stravasync/models.py:17
+#: stravasync/models.py:17
 msgid "Účty Strava"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:9
+#: stravasync/templates/stravasync/about.html:9
 msgid "Jste propojeni s účtem "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:18
+#: stravasync/templates/stravasync/about.html:18
 #, python-format
 msgid ""
 "\n"
@@ -40,7 +40,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:24
+#: stravasync/templates/stravasync/about.html:24
 #, python-format
 msgid ""
 "\n"
@@ -50,7 +50,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:27
+#: stravasync/templates/stravasync/about.html:27
 msgid ""
 "\n"
 "    Pokud jste při připojení se Stravou nevybral/a \"Synchronizovat i "
@@ -59,23 +59,23 @@ msgid ""
 "    "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:33
+#: stravasync/templates/stravasync/about.html:33
 msgid "Našli jsme následující aktivity:"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:40
+#: stravasync/templates/stravasync/about.html:40
 msgid "Synchronizace selhala"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:43
+#: stravasync/templates/stravasync/about.html:43
 msgid "Poslední synchronizace proběhla "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:45
+#: stravasync/templates/stravasync/about.html:45
 msgid "Nastala chyba, synchronizace neproběhla."
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:51
+#: stravasync/templates/stravasync/about.html:51
 msgid ""
 "\n"
 "    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
@@ -83,23 +83,23 @@ msgid ""
 "    "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:59
+#: stravasync/templates/stravasync/about.html:59
 msgid "Synchronizovat"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:65
+#: stravasync/templates/stravasync/about.html:65
 msgid "Odpojit"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:68
+#: stravasync/templates/stravasync/about.html:68
 msgid "Ještě nejste propojeni se Stravou "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:71
+#: stravasync/templates/stravasync/about.html:71
 msgid "Synchronizovat i soukromé jízdy a zóny"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:72
+#: stravasync/templates/stravasync/about.html:72
 msgid ""
 "\n"
 "        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href=\"https://"
@@ -109,15 +109,15 @@ msgid ""
 "        "
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:76
+#: stravasync/templates/stravasync/about.html:76
 msgid "Propojit se Stravou"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:80
+#: stravasync/templates/stravasync/about.html:80
 msgid "Jak to funguje"
 msgstr ""
 
-#: apps/stravasync/templates/stravasync/about.html:81
+#: stravasync/templates/stravasync/about.html:81
 msgid ""
 "\n"
 "V aplikaci Strava napište do názvu (nikoliv do popisu) svých aktivit hashtag "
@@ -129,14 +129,14 @@ msgid ""
 "dopracenakole.cz/o-vyzve/faq\">Často kladené otázky (FAQ)</a>\n"
 msgstr ""
 
-#: apps/stravasync/views.py:26
+#: stravasync/views.py:26
 msgid "Propojení se Stravou"
 msgstr ""
 
-#: apps/stravasync/views.py:59
+#: stravasync/views.py:59
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: apps/stravasync/views.py:61
+#: stravasync/views.py:61
 msgid "API limit vyčerpan."
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 10:14+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Petr Dlouhý <petr.dlouhy@email.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,94 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: apps/stale_notifications/model_mixins.py:9
+#: stale_notifications/model_mixins.py:9
 msgid "Poslední synchronizace"
-msgstr ""
-
-#: project/settings/base.py:102
-msgid "Do školy na kole - czech"
-msgstr ""
-
-#: project/settings/base.py:103
-msgid "Czech"
-msgstr ""
-
-#: project/settings/base.py:104
-msgid "English"
-msgstr ""
-
-#: project/settings/base.py:445
-msgid "Všeobecná mapa"
-msgstr ""
-
-#: project/settings/base.py:652
-msgid "Základní"
-msgstr ""
-
-#: project/settings/base.py:652
-msgid "Pro firmy"
-msgstr ""
-
-#: registration-templates/registration/activation_complete.html:4
-msgid "Účet aktivován"
-msgstr ""
-
-#: registration-templates/registration/activation_complete.html:8
-msgid ""
-"\n"
-"    Malý krok pro člověka, velká jízda pro cyklistu, běžce, koloběžce či "
-"chodce právě začíná.\n"
-"    Vítejte ve svém soutěžním profilu!\n"
-"    "
-msgstr ""
-
-#: registration-templates/registration/activation_complete.html:13
-msgid ""
-"\n"
-"    A teď alou dokončit registraci. Tedy až si vychutnáte sklenku "
-"šampaňského na oslavu podpory udržitelného rozvoje svého města.\n"
-"    "
-msgstr ""
-
-#: registration-templates/registration/activation_email_subject.txt:1
-msgid "Potvrzení e-mailové adresy"
-msgstr ""
-
-#: registration-templates/registration/registration_complete.html:4
-msgid "Pozvánka odeslána"
-msgstr ""
-
-#: registration-templates/registration/registration_complete.html:7
-msgid ""
-"Pozvánka k dokončení registrace odeslána. Prosím, zkontrolujte svůj e-mail. "
-"Pokud jste ji nenašli, radši prozkoumejte i složku hromadné korespondence či "
-"spamu."
-msgstr ""
-
-#: registration-templates/registration/resend_activation_complete.html:4
-msgid "Aktivační e-mail odeslán"
-msgstr ""
-
-#: registration-templates/registration/resend_activation_complete.html:8
-#, python-format
-msgid ""
-"\n"
-"  E-mail s aktivačními instrukcemi byl odeslán na %(email)s.\n"
-"  "
-msgstr ""
-
-#: registration-templates/registration/resend_activation_form.html:5
-msgid "Znovu poslat aktivační e-mail"
-msgstr ""
-
-#: registration-templates/registration/resend_activation_form.html:9
-msgid ""
-"\n"
-"Pro znovuodeslání aktivačního e-mailu zadejte adresu.\n"
-msgstr ""
-
-#: registration-templates/registration/resend_activation_form.html:20
-msgid "Submit"
 msgstr ""
 
 #~ msgid "Your current avatar: "

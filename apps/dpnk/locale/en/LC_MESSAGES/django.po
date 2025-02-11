@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-27 19:22+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -368,7 +368,7 @@ msgid "Příjmení"
 msgstr "Surname"
 
 #: dpnk/company_admin_forms.py:64 dpnk/models/diploma.py:14
-#: dpnk/models/user_profile.py:82 dpnk/resources.py:368
+#: dpnk/models/user_profile.py:83 dpnk/resources.py:368
 #: dpnk/templates/company_admin/select_users_pay_for.html:28
 msgid "Přezdívka"
 msgstr "Nickname"
@@ -588,7 +588,8 @@ msgstr "Invitation"
 
 #: dpnk/email.py:118
 msgid "Děkujeme za podporu udržitelné mobility. Společně máme na víc."
-msgstr "Thank you for your support for sustainable mobility. Together we have more."
+msgstr ""
+"Thank you for your support for sustainable mobility. Together we have more."
 
 #: dpnk/email.py:120
 msgid "Startovné je uhrazeno."
@@ -1536,7 +1537,7 @@ msgid "IČO musí být číslo"
 msgstr "Company registration number must be number"
 
 #: dpnk/models/company.py:110 dpnk/models/subsidiary.py:89
-#: dpnk/models/trip.py:218 dpnk/models/user_profile.py:203
+#: dpnk/models/trip.py:218 dpnk/models/user_profile.py:204
 #, fuzzy
 #| msgid "Galerie týmových fotek"
 msgid "Galerie fotek"
@@ -1618,7 +1619,7 @@ msgid "Koordinovaná organizace"
 msgstr "Coordinated company"
 
 #: dpnk/models/company_admin.py:88 dpnk/models/invoice.py:198
-#: dpnk/models/user_profile.py:157
+#: dpnk/models/user_profile.py:158
 msgid "Interní poznámka"
 msgstr "Internal note"
 
@@ -2209,7 +2210,7 @@ msgid "Název povolání"
 msgstr "Profession name"
 
 #: dpnk/models/occupation.py:40 dpnk/models/occupation.py:41
-#: dpnk/models/user_profile.py:173
+#: dpnk/models/user_profile.py:174
 msgid "Povolání"
 msgstr "Occupation"
 
@@ -2880,45 +2881,51 @@ msgstr "Czech"
 msgid "Angličtna"
 msgstr "English"
 
-#: dpnk/models/user_profile.py:60
+#: dpnk/models/user_profile.py:58
+#, fuzzy
+#| msgid "Čeština"
+msgid "Slovenština"
+msgstr "Czech"
+
+#: dpnk/models/user_profile.py:61
 #: dpnk/templates/dpnk/rides_view_switcher.html:5
 msgid "Kalendář"
 msgstr "Calendar"
 
-#: dpnk/models/user_profile.py:61
+#: dpnk/models/user_profile.py:62
 #: dpnk/templates/dpnk/rides_view_switcher.html:8
 msgid "Tabulka"
 msgstr "Table"
 
-#: dpnk/models/user_profile.py:64
+#: dpnk/models/user_profile.py:65
 msgid "Výzva"
 msgstr "Challenge"
 
-#: dpnk/models/user_profile.py:65
+#: dpnk/models/user_profile.py:66
 msgid "Události"
 msgstr "Events"
 
-#: dpnk/models/user_profile.py:66
+#: dpnk/models/user_profile.py:67
 msgid "Mobilita"
 msgstr "Mobility"
 
-#: dpnk/models/user_profile.py:67
+#: dpnk/models/user_profile.py:68
 msgid "Výzva a události"
 msgstr "Challenge and events"
 
-#: dpnk/models/user_profile.py:68
+#: dpnk/models/user_profile.py:69
 msgid "Výzva a mobilita"
 msgstr "Challenge and mobility"
 
-#: dpnk/models/user_profile.py:69
+#: dpnk/models/user_profile.py:70
 msgid "Události a mobilita"
 msgstr "Events and mobility"
 
-#: dpnk/models/user_profile.py:70
+#: dpnk/models/user_profile.py:71
 msgid "Výzva, události a mobilita"
 msgstr "Challenge, events and mobility"
 
-#: dpnk/models/user_profile.py:84
+#: dpnk/models/user_profile.py:85
 msgid ""
 "Chcete zůstat inkognito? Soutěžní přezdívka se zobrazuje ve veřejných "
 "výsledcích místo Vašeho jména."
@@ -2926,75 +2933,75 @@ msgstr ""
 "Do You want to stay anonymous? Select a nickname that will represent You "
 "during the competition."
 
-#: dpnk/models/user_profile.py:91
+#: dpnk/models/user_profile.py:92
 msgid "Telefonní číslo"
 msgstr "Telephone number"
 
-#: dpnk/models/user_profile.py:98
+#: dpnk/models/user_profile.py:99
 msgid ""
 "Jak se do lesa volá, když nemáme správné číslo? Zkontrolujte si prosím "
 "vyplněný telefon."
 msgstr "Please check that your telephone number is correct."
 
-#: dpnk/models/user_profile.py:105
+#: dpnk/models/user_profile.py:106
 msgid "Ozveme se, až bude balíček nachystaný."
 msgstr "We will contact you when your package is ready."
 
-#: dpnk/models/user_profile.py:108
+#: dpnk/models/user_profile.py:109
 msgid "Povolení telefonovat"
 msgstr "Permission to phone"
 
-#: dpnk/models/user_profile.py:112
+#: dpnk/models/user_profile.py:113
 msgid "Jazyk e-mailové komunikace"
 msgstr "E-mail communication language"
 
-#: dpnk/models/user_profile.py:114
+#: dpnk/models/user_profile.py:115
 msgid "V tomto jazyce Vám budou přicházet e-maily z registračního systému"
 msgstr "Language, in which will be delivered e-mails from registration system"
 
-#: dpnk/models/user_profile.py:122
+#: dpnk/models/user_profile.py:123
 msgid "Defaultní předvolba vyplňování jízd"
 msgstr "Default view for entering trips"
 
-#: dpnk/models/user_profile.py:130
+#: dpnk/models/user_profile.py:131
 msgid "ID uživatele v mailing listu"
 msgstr "Mailing list ID"
 
-#: dpnk/models/user_profile.py:140
+#: dpnk/models/user_profile.py:141
 msgid "Hash poslední synchronizace s mailingem"
 msgstr "Hash of last synchronization with mailing list"
 
-#: dpnk/models/user_profile.py:146
+#: dpnk/models/user_profile.py:147
 #: dpnk/templates/company_admin/competitions.html:10
 msgid "Pohlaví"
 msgstr "Gender"
 
-#: dpnk/models/user_profile.py:148
+#: dpnk/models/user_profile.py:149
 msgid ""
 "Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií."
 msgstr "We need this information for distinguishing in performance categories."
 
-#: dpnk/models/user_profile.py:167
+#: dpnk/models/user_profile.py:168
 msgid "Soutěžní e-maily"
 msgstr "Competition e-mails"
 
-#: dpnk/models/user_profile.py:168 dpnk/models/user_profile.py:210
+#: dpnk/models/user_profile.py:169 dpnk/models/user_profile.py:211
 msgid "Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."
 msgstr "You can cancel receiving e-mails any time during the competition."
 
-#: dpnk/models/user_profile.py:179
+#: dpnk/models/user_profile.py:180
 msgid "Ročník narození"
 msgstr "Year of birth"
 
-#: dpnk/models/user_profile.py:185
+#: dpnk/models/user_profile.py:186
 msgid "E-mail v ECC"
 msgstr "E-mail in ECC"
 
-#: dpnk/models/user_profile.py:194
+#: dpnk/models/user_profile.py:195
 msgid "Heslo v ECC"
 msgstr "Password in ECC"
 
-#: dpnk/models/user_profile.py:209
+#: dpnk/models/user_profile.py:210
 msgid "Odběr zpráv prostřednictvím e-mailů"
 msgstr "Subscribe news by email"
 
@@ -3119,10 +3126,15 @@ msgstr ""
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr "Non-existent payment with order id <%(order_id)s>."
 
-#: dpnk/rest.py:2571
+#: dpnk/rest.py:2589
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr "Discount voucher <%(coupon)s> does not exists."
+
+#: dpnk/rest.py:2600
+#, python-format
+msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
+msgstr "Email address <%(email)s> exists. Use another email address, please."
 
 #: dpnk/rest_auth.py:23
 msgid "Request objekt má chybějící <Authorization: Basic> záhlaví."

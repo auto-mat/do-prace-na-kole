@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 10:14+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,39 +19,39 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
 "<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
-#: apps/psc/models/psc.py:31
+#: psc/models/psc.py:31
 msgid "ZIP code"
 msgstr "Poštovní směrovací číslo"
 
-#: apps/psc/models/psc.py:32
+#: psc/models/psc.py:32
 msgid "ZIP codes"
 msgstr "Poštovní směrovací čísla"
 
-#: apps/psc/models/psc.py:35
+#: psc/models/psc.py:35
 msgid "Municipality name"
 msgstr "Název obce"
 
-#: apps/psc/models/psc.py:41
+#: psc/models/psc.py:41
 msgid "Municipality part name"
 msgstr "Název části obce"
 
-#: apps/psc/models/psc.py:47
+#: psc/models/psc.py:47
 msgid "District name"
 msgstr "Název okresu"
 
-#: apps/psc/models/psc.py:53
+#: psc/models/psc.py:53
 msgctxt "psc field ctxt"
 msgid "ZIP code"
 msgstr "PSČ"
 
-#: apps/psc/models/psc.py:54
+#: psc/models/psc.py:54
 msgid "e.g. „130 00“"
 msgstr "Např.: „130 00“"
 
-#: apps/psc/models/psc.py:61
+#: psc/models/psc.py:61
 msgid "Post office name"
 msgstr "Název pošty"
 
-#: apps/psc/models/psc.py:67
+#: psc/models/psc.py:67
 msgid "Code"
 msgstr "Kód"

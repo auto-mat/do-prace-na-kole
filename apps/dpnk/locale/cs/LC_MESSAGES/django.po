@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-27 19:22+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -358,7 +358,7 @@ msgid "Příjmení"
 msgstr ""
 
 #: dpnk/company_admin_forms.py:64 dpnk/models/diploma.py:14
-#: dpnk/models/user_profile.py:82 dpnk/resources.py:368
+#: dpnk/models/user_profile.py:83 dpnk/resources.py:368
 #: dpnk/templates/company_admin/select_users_pay_for.html:28
 msgid "Přezdívka"
 msgstr ""
@@ -1480,7 +1480,7 @@ msgid "IČO musí být číslo"
 msgstr ""
 
 #: dpnk/models/company.py:110 dpnk/models/subsidiary.py:89
-#: dpnk/models/trip.py:218 dpnk/models/user_profile.py:203
+#: dpnk/models/trip.py:218 dpnk/models/user_profile.py:204
 msgid "Galerie fotek"
 msgstr ""
 
@@ -1554,7 +1554,7 @@ msgid "Koordinovaná organizace"
 msgstr ""
 
 #: dpnk/models/company_admin.py:88 dpnk/models/invoice.py:198
-#: dpnk/models/user_profile.py:157
+#: dpnk/models/user_profile.py:158
 msgid "Interní poznámka"
 msgstr ""
 
@@ -2130,7 +2130,7 @@ msgid "Název povolání"
 msgstr ""
 
 #: dpnk/models/occupation.py:40 dpnk/models/occupation.py:41
-#: dpnk/models/user_profile.py:173
+#: dpnk/models/user_profile.py:174
 msgid "Povolání"
 msgstr ""
 
@@ -2788,45 +2788,49 @@ msgstr ""
 msgid "Angličtna"
 msgstr ""
 
-#: dpnk/models/user_profile.py:60
+#: dpnk/models/user_profile.py:58
+msgid "Slovenština"
+msgstr ""
+
+#: dpnk/models/user_profile.py:61
 #: dpnk/templates/dpnk/rides_view_switcher.html:5
 msgid "Kalendář"
 msgstr ""
 
-#: dpnk/models/user_profile.py:61
+#: dpnk/models/user_profile.py:62
 #: dpnk/templates/dpnk/rides_view_switcher.html:8
 msgid "Tabulka"
 msgstr ""
 
-#: dpnk/models/user_profile.py:64
+#: dpnk/models/user_profile.py:65
 msgid "Výzva"
 msgstr ""
 
-#: dpnk/models/user_profile.py:65
+#: dpnk/models/user_profile.py:66
 msgid "Události"
 msgstr ""
 
-#: dpnk/models/user_profile.py:66
+#: dpnk/models/user_profile.py:67
 msgid "Mobilita"
 msgstr ""
 
-#: dpnk/models/user_profile.py:67
+#: dpnk/models/user_profile.py:68
 msgid "Výzva a události"
 msgstr ""
 
-#: dpnk/models/user_profile.py:68
+#: dpnk/models/user_profile.py:69
 msgid "Výzva a mobilita"
 msgstr ""
 
-#: dpnk/models/user_profile.py:69
+#: dpnk/models/user_profile.py:70
 msgid "Události a mobilita"
 msgstr ""
 
-#: dpnk/models/user_profile.py:70
+#: dpnk/models/user_profile.py:71
 msgid "Výzva, události a mobilita"
 msgstr ""
 
-#: dpnk/models/user_profile.py:84
+#: dpnk/models/user_profile.py:85
 msgid ""
 "Chcete zůstat inkognito? Soutěžní přezdívka se zobrazuje ve veřejných "
 "výsledcích místo Vašeho jména."
@@ -2834,75 +2838,75 @@ msgstr ""
 "Chcete zůstat inkognito? Přezdívka se zobrazuje ve veřejných výsledcích "
 "místo Vašeho jména."
 
-#: dpnk/models/user_profile.py:91
+#: dpnk/models/user_profile.py:92
 msgid "Telefonní číslo"
 msgstr ""
 
-#: dpnk/models/user_profile.py:98
+#: dpnk/models/user_profile.py:99
 msgid ""
 "Jak se do lesa volá, když nemáme správné číslo? Zkontrolujte si prosím "
 "vyplněný telefon."
 msgstr ""
 
-#: dpnk/models/user_profile.py:105
+#: dpnk/models/user_profile.py:106
 msgid "Ozveme se, až bude balíček nachystaný."
 msgstr ""
 
-#: dpnk/models/user_profile.py:108
+#: dpnk/models/user_profile.py:109
 msgid "Povolení telefonovat"
 msgstr ""
 
-#: dpnk/models/user_profile.py:112
+#: dpnk/models/user_profile.py:113
 msgid "Jazyk e-mailové komunikace"
 msgstr ""
 
-#: dpnk/models/user_profile.py:114
+#: dpnk/models/user_profile.py:115
 msgid "V tomto jazyce Vám budou přicházet e-maily z registračního systému"
 msgstr ""
 
-#: dpnk/models/user_profile.py:122
+#: dpnk/models/user_profile.py:123
 msgid "Defaultní předvolba vyplňování jízd"
 msgstr ""
 
-#: dpnk/models/user_profile.py:130
+#: dpnk/models/user_profile.py:131
 msgid "ID uživatele v mailing listu"
 msgstr ""
 
-#: dpnk/models/user_profile.py:140
+#: dpnk/models/user_profile.py:141
 msgid "Hash poslední synchronizace s mailingem"
 msgstr ""
 
-#: dpnk/models/user_profile.py:146
+#: dpnk/models/user_profile.py:147
 #: dpnk/templates/company_admin/competitions.html:10
 msgid "Pohlaví"
 msgstr ""
 
-#: dpnk/models/user_profile.py:148
+#: dpnk/models/user_profile.py:149
 msgid ""
 "Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií."
 msgstr ""
 
-#: dpnk/models/user_profile.py:167
+#: dpnk/models/user_profile.py:168
 msgid "Soutěžní e-maily"
 msgstr "E-maily k výzvě"
 
-#: dpnk/models/user_profile.py:168 dpnk/models/user_profile.py:210
+#: dpnk/models/user_profile.py:169 dpnk/models/user_profile.py:211
 msgid "Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."
 msgstr "Odběr e-mailů můžete kdykoliv v průběhu výzvy zrušit."
 
-#: dpnk/models/user_profile.py:179
+#: dpnk/models/user_profile.py:180
 msgid "Ročník narození"
 msgstr ""
 
-#: dpnk/models/user_profile.py:185
+#: dpnk/models/user_profile.py:186
 msgid "E-mail v ECC"
 msgstr ""
 
-#: dpnk/models/user_profile.py:194
+#: dpnk/models/user_profile.py:195
 msgid "Heslo v ECC"
 msgstr ""
 
-#: dpnk/models/user_profile.py:209
+#: dpnk/models/user_profile.py:210
 msgid "Odběr zpráv prostřednictvím e-mailů"
 msgstr ""
 
@@ -3003,9 +3007,14 @@ msgstr ""
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:2571
+#: dpnk/rest.py:2589
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
+msgstr ""
+
+#: dpnk/rest.py:2600
+#, python-format
+msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
 
 #: dpnk/rest_auth.py:23

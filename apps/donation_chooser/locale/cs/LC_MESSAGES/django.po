@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 10:14+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,40 +19,40 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
 "<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
-#: apps/donation_chooser/admin.py:10 apps/donation_chooser/apps.py:7
-#: apps/donation_chooser/models.py:76 apps/donation_chooser/models.py:77
-#: apps/donation_chooser/models.py:104
+#: donation_chooser/admin.py:10 donation_chooser/apps.py:7
+#: donation_chooser/models.py:76 donation_chooser/models.py:77
+#: donation_chooser/models.py:104
 msgid "Charitativní organizace"
 msgstr ""
 
-#: apps/donation_chooser/admin.py:19 apps/donation_chooser/models.py:111
+#: donation_chooser/admin.py:19 donation_chooser/models.py:111
 msgid "Uživatelská volba"
 msgstr ""
 
-#: apps/donation_chooser/models.py:32
+#: donation_chooser/models.py:32
 msgid "Jméno"
 msgstr ""
 
-#: apps/donation_chooser/models.py:35
+#: donation_chooser/models.py:35
 msgid "Popis"
 msgstr ""
 
-#: apps/donation_chooser/models.py:39
+#: donation_chooser/models.py:39
 msgid "Kampaň"
 msgstr ""
 
-#: apps/donation_chooser/models.py:46
+#: donation_chooser/models.py:46
 msgid "Obrázek"
 msgstr ""
 
-#: apps/donation_chooser/models.py:53
+#: donation_chooser/models.py:53
 msgid "Ikona"
 msgstr ""
 
-#: apps/donation_chooser/models.py:112
+#: donation_chooser/models.py:112
 msgid "Uživatelské volby"
 msgstr ""
 
-#: apps/donation_chooser/views.py:28
+#: donation_chooser/views.py:28
 msgid "Vyberte charitativní organizaci"
 msgstr ""

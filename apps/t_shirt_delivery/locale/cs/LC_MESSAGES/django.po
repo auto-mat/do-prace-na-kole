@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-11 10:59+0100\n"
+"POT-Creation-Date: 2025-02-11 10:37+0100\n"
 "PO-Revision-Date: 2023-04-13 17:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -191,7 +191,7 @@ msgstr ""
 
 #: t_shirt_delivery/models/delivery_batch.py:55
 #: t_shirt_delivery/models/delivery_batch_deadline.py:31
-#: t_shirt_delivery/models/t_shirt_size.py:51
+#: t_shirt_delivery/models/t_shirt_size.py:52
 msgid "Kampaň"
 msgstr ""
 
@@ -246,8 +246,8 @@ msgid "Deadline dáveky objednávek"
 msgstr ""
 
 #: t_shirt_delivery/models/package_transaction.py:32
-#: t_shirt_delivery/models/t_shirt_size.py:38
-#: t_shirt_delivery/models/t_shirt_size.py:142
+#: t_shirt_delivery/models/t_shirt_size.py:39
+#: t_shirt_delivery/models/t_shirt_size.py:143
 msgid "Velikost trička"
 msgstr ""
 
@@ -298,75 +298,79 @@ msgid "Přegenerovat PDF"
 msgstr ""
 
 #: t_shirt_delivery/models/t_shirt_size.py:32
-msgid "Muž"
+msgid "---------"
 msgstr ""
 
 #: t_shirt_delivery/models/t_shirt_size.py:33
-msgid "Žena"
+msgid "Muž"
 msgstr ""
 
 #: t_shirt_delivery/models/t_shirt_size.py:34
+msgid "Žena"
+msgstr ""
+
+#: t_shirt_delivery/models/t_shirt_size.py:35
 msgid "Vhodné pro obě pohlaví"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:43
+#: t_shirt_delivery/models/t_shirt_size.py:44
 msgid "Kód v skladu"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:62
+#: t_shirt_delivery/models/t_shirt_size.py:63
 msgid "Posílá se?"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:67
+#: t_shirt_delivery/models/t_shirt_size.py:68
 msgid "Je dostupné?"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:68
+#: t_shirt_delivery/models/t_shirt_size.py:69
 msgid "Zobrazuje se v nabídce trik"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:73
+#: t_shirt_delivery/models/t_shirt_size.py:74
 msgid "Náhled trika"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:80
+#: t_shirt_delivery/models/t_shirt_size.py:81
 msgid "Cena"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:87
+#: t_shirt_delivery/models/t_shirt_size.py:88
 msgid "Název trička"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:88
-#: t_shirt_delivery/models/t_shirt_size.py:97
-#: t_shirt_delivery/models/t_shirt_size.py:107
-#: t_shirt_delivery/models/t_shirt_size.py:116
-#: t_shirt_delivery/models/t_shirt_size.py:125
-#: t_shirt_delivery/models/t_shirt_size.py:134
+#: t_shirt_delivery/models/t_shirt_size.py:89
+#: t_shirt_delivery/models/t_shirt_size.py:98
+#: t_shirt_delivery/models/t_shirt_size.py:108
+#: t_shirt_delivery/models/t_shirt_size.py:117
+#: t_shirt_delivery/models/t_shirt_size.py:126
+#: t_shirt_delivery/models/t_shirt_size.py:135
 msgid "Požadováno pro novou RTWBB frontend aplikaci"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:96
+#: t_shirt_delivery/models/t_shirt_size.py:97
 msgid "Pohlaví"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:106
+#: t_shirt_delivery/models/t_shirt_size.py:107
 msgid "Velikost"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:115
+#: t_shirt_delivery/models/t_shirt_size.py:116
 msgid "Autor"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:124
+#: t_shirt_delivery/models/t_shirt_size.py:125
 msgid "Materiál"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:133
+#: t_shirt_delivery/models/t_shirt_size.py:134
 msgid "Popis"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:143
+#: t_shirt_delivery/models/t_shirt_size.py:144
 msgid "Velikosti trička"
 msgstr ""
 

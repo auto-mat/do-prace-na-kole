@@ -89,10 +89,13 @@ ALLOWED_HOSTS = [
     ".lvh.me",
 ]
 
+
 CORS_ORIGIN_REGEX += [
-    r"^(https?://)?(\w+\.)?localhost(:\d+)?$",
+    # r"^(https?://)?(\w+\.)?localhost(:\d+)?$",
     r"^(https?://)?(\w+\.)?lvh\.me(:\d+)?$",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE += [
     "livereload.middleware.LiveReloadScript",
