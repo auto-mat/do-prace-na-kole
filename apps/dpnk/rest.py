@@ -2705,13 +2705,13 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             headers=headers,
         )
 
-    @transaction.atomic
     def destroy(self, request, pk=None):
         userprofile = get_object_or_404(
             UserProfile.objects.all(),
             pk=pk,
         )
         self.check_object_permissions(request, userprofile)
+        userprofile.user.delete()
         return super().destroy(request, pk)
 
     def get_serializer_class(self):
