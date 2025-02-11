@@ -209,7 +209,10 @@ def get_custom_fields(user_attendance):
                 "Pocet_lidi_v_tymu",
                 team_member_count if team_member_count is not None else 0,
             ),
-            ("Povoleni_odesilat_emaily", mailing_approval),
+            (
+                "Povoleni_odesilat_emaily",
+                mailing_approval if mailing_approval is not None else none_str,
+            ),
             (
                 "Newsletter",
                 user.userprofile.newsletter
