@@ -2105,6 +2105,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     telephone = serializers.CharField(
         required=False,
+        allow_blank=True,
     )
     telephone_opt_in = serializers.BooleanField(
         required=False,
