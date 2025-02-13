@@ -81,6 +81,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
                 campaign=company_admin.campaign,
                 userprofile__user__is_active=True,
                 representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
             )
             .exclude(
                 payment_status="done",

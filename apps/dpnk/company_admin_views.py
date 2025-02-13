@@ -183,6 +183,7 @@ class SelectUsersPayView(
                 user_attendance__team__subsidiary__company=company_admin.administrated_company,
                 user_attendance__campaign=company_admin.campaign,
                 user_attendance__userprofile__user__is_active=True,
+                user_attendance__discount_coupon__isnull=True,
                 pay_type="fc",
                 payment_status=Status.COMPANY_ACCEPTS,
             )
