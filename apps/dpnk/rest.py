@@ -940,7 +940,7 @@ class MyTeamSet(
     viewsets.GenericViewSet,
 ):
     def get_queryset(self):
-        return Team.objects.filter(pk=self.ua().team.pk)
+        return Team.objects.filter(id=self.ua().team_id)
 
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated]
