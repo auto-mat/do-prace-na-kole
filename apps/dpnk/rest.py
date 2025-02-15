@@ -777,6 +777,7 @@ class BaseUserAttendanceSerializer(serpy.Serializer):
     frequency = serpy.FloatField()
     avatar_url = serpy.Field(call=True)
     eco_trip_count = serpy.IntField(call=True)
+    approved_for_team = serpy.StrField()
 
 
 class MinimalUserAttendanceSerializer(BaseUserAttendanceSerializer):
@@ -901,6 +902,9 @@ class TeamSerializer(BaseTeamSerializer):
     campaign = HyperlinkedField("campaign-detail")
     gallery = HyperlinkedField("gallery-detail")
     gallery_slug = serpy.Field(call=True)
+    member_count = serpy.IntField()
+    is_full = serpy.Field(call=True)
+    unapproved_member_count = serpy.IntField()
 
     """read_only_fields = (
             "id",
