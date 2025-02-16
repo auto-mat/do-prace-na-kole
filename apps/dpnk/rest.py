@@ -891,6 +891,8 @@ class MinimalTeamSerializer(BaseTeamSerializer):
 
 
 class TeamSerializer(BaseTeamSerializer):
+    """Only approved team members"""
+
     members = RequestSpecificField(
         lambda team, req: MinimalUserAttendanceSerializer(
             team.members, context={"request": req}, many=True
@@ -921,6 +923,16 @@ class TeamSerializer(BaseTeamSerializer):
     )"""
 
 
+class TeamWithAllMembersSerializer(TeamSerializer):
+    """All team members"""
+
+    members = RequestSpecificField(
+        lambda team, req: MinimalUserAttendanceSerializer(
+            team.all_members(), context={"request": req}, many=True
+        ).data
+    )
+
+
 class TeamSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         return Team.objects.filter(
@@ -936,18 +948,113 @@ class TeamSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         return super().dispatch(request, *args, **kwargs)
 
 
-class MyTeamSet(
-    UserAttendanceMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet,
-):
-    def get_queryset(self):
-        return Team.objects.filter(id=self.ua().team_id)
+class TeamMembersDeserializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    approved_for_team = serializers.ChoiceField(choices=UserAttendance.TEAMAPPROVAL)
 
-    serializer_class = TeamSerializer
+    class Meta:
+        model = UserAttendance
+        fields = ["id", "approved_for_team"]
+
+
+class MyTeamMemebersDeserializer(serializers.ModelSerializer):
+    members = TeamMembersDeserializer(many=True)
+
+    class Meta:
+        model = Team
+        fields = ["members"]
+
+    def update(self, instance, validated_data):
+        update_models = []
+        for user_attendance in validated_data["members"]:
+            user_attendance_model_instance = instance.users.get(
+                id=user_attendance["id"]
+            )
+            user_attendance_model_instance.approved_for_team = user_attendance[
+                "approved_for_team"
+            ]
+            update_models.append(user_attendance_model_instance)
+        UserAttendance.objects.bulk_update(update_models, ["approved_for_team"])
+        # Update team denorm fields
+        instance.save(
+            update_fields=[
+                "member_count",
+                "unapproved_member_count",
+            ]
+        )
+        return {"members": update_models}
+
+    def validate(self, data):
+        id_field_name = "id"
+        validated_data = super().validate(data)
+        self.user_attendance = get_or_create_userattendance(
+            self.context["request"],
+            self.context["request"].subdomain,
+        )
+
+        if not self.user_attendance.team_id:
+            raise serializers.ValidationError(
+                _("Účastník kampaně <%(email)s> nemá přiřazený tým.")
+                % {"email": self.user_attendance.userprofile.user.email},
+            )
+        request = self.context["request"]
+        api_version = request.META.get("HTTP_ACCEPT_VERSION", "v1")
+        team_members = self.user_attendance.team.members
+        if api_version == "v1":
+            team_members = self.user_attendance.team.members
+        elif api_version == "v2":
+            team_members = self.user_attendance.team.all_members()
+
+        is_not_members_ids = [
+            user_attendance[id_field_name]
+            for user_attendance in validated_data["members"]
+            if user_attendance[id_field_name]
+            not in team_members.values_list(id_field_name, flat=True)
+        ]
+        if is_not_members_ids:
+            raise serializers.ValidationError(
+                _(
+                    "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>,"
+                    " účastník s ID <%(user_attendance_id)s> není členem vašeho týmu."
+                )
+                % {
+                    "team_members": [
+                        {
+                            "id": user[id_field_name],
+                            "email": user["userprofile__user__email"],
+                        }
+                        for user in list(
+                            team_members.values(
+                                id_field_name, "userprofile__user__email"
+                            )
+                        )
+                    ],
+                    "user_attendance_id": ", ".join(list(map(str, is_not_members_ids))),
+                },
+            )
+        return validated_data
+
+
+class MyTeamSet(UserAttendanceMixin, viewsets.ModelViewSet):
+    http_method_names = ["head", "get", "put"]
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        return Team.objects.filter(id=self.ua().team_id if not pk else pk)
+
+    def get_serializer_class(self):
+        api_version = self.request.META.get(
+            "HTTP_ACCEPT_VERSION",
+            "v1",
+        )
+        if self.action in ["retrieve", "list"]:
+            if api_version == "v1":
+                return TeamSerializer
+            elif api_version == "v2":
+                return TeamWithAllMembersSerializer
+        else:
+            return MyTeamMemebersDeserializer
 
 
 class CompetitionResultSerializer(serpy.Serializer):
