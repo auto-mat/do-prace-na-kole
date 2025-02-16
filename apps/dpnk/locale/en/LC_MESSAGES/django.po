@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-11 10:37+0100\n"
+"POT-Creation-Date: 2025-02-16 08:26+0100\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -350,7 +350,7 @@ msgstr "Prices are without VAT"
 msgid "Částka"
 msgstr "Amount"
 
-#: dpnk/company_admin_forms.py:62 dpnk/company_admin_forms.py:239
+#: dpnk/company_admin_forms.py:62 dpnk/company_admin_forms.py:240
 #: dpnk/forms.py:338 dpnk/forms.py:1053 dpnk/models/city.py:35
 #: dpnk/models/diploma.py:11 dpnk/models/questionnaire.py:52
 #: dpnk/models/questionnaire.py:108 dpnk/models/user_attendance.py:188
@@ -361,7 +361,7 @@ msgstr "Amount"
 msgid "Jméno"
 msgstr "Name"
 
-#: dpnk/company_admin_forms.py:63 dpnk/company_admin_forms.py:244
+#: dpnk/company_admin_forms.py:63 dpnk/company_admin_forms.py:245
 #: dpnk/models/diploma.py:13 dpnk/resources.py:370
 #: dpnk/templates/company_admin/select_users_pay_for.html:27
 msgid "Příjmení"
@@ -385,71 +385,71 @@ msgstr "Town"
 msgid "Čas registrace"
 msgstr "Time of registration"
 
-#: dpnk/company_admin_forms.py:108
+#: dpnk/company_admin_forms.py:109
 msgid "Tip: Použijte shift pro výběr rozsahu položek."
 msgstr "Tip: Use shift for range selection."
 
-#: dpnk/company_admin_forms.py:124 dpnk/forms.py:118 dpnk/forms.py:1212
+#: dpnk/company_admin_forms.py:125 dpnk/forms.py:118 dpnk/forms.py:1212
 msgid "Hotovo"
 msgstr "Done"
 
-#: dpnk/company_admin_forms.py:188
+#: dpnk/company_admin_forms.py:189
 msgid "S kým máme tu čest?"
 msgstr "Who are you?"
 
-#: dpnk/company_admin_forms.py:189
+#: dpnk/company_admin_forms.py:190
 msgid "Řekněte nám něco o pozici, kterou ve společnosti zastupujete."
 msgstr "Please describe your position in the company."
 
-#: dpnk/company_admin_forms.py:195
+#: dpnk/company_admin_forms.py:196
 msgid "Zajistím, aby společnost uhradila startovné za náš zaměstnanecký tým."
 msgstr ""
 "I will ensure that our company will pay the start fee for approved employees."
 
-#: dpnk/company_admin_forms.py:222 dpnk/models/company.py:66
+#: dpnk/company_admin_forms.py:223 dpnk/models/company.py:66
 msgid "Název společnosti"
 msgstr "Company name"
 
-#: dpnk/company_admin_forms.py:232
+#: dpnk/company_admin_forms.py:233
 msgid "Začnete psát název organizace a vyberte si z nabídky."
 msgstr "Write part of organization name and choose it from list below."
 
-#: dpnk/company_admin_forms.py:255
+#: dpnk/company_admin_forms.py:256
 msgid "Chci všechny informace o výzvě do e-mailu (důrazně doporučujeme)"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:271
+#: dpnk/company_admin_forms.py:272
 msgid "Tato organizace již má svého firemního koordinátora."
 msgstr "This organisation already has its company coordinator."
 
-#: dpnk/company_admin_forms.py:310
+#: dpnk/company_admin_forms.py:311
 msgid "Vypsat"
 msgstr "Enter"
 
-#: dpnk/company_admin_forms.py:312
+#: dpnk/company_admin_forms.py:313
 #: dpnk/templates/company_admin/competitions.html:8
 #: dpnk/templates/company_admin/related_competitions.html:10
 msgid "Typ soutěže"
 msgstr "Competition type"
 
-#: dpnk/company_admin_forms.py:318
+#: dpnk/company_admin_forms.py:319
 msgid "Typ soutěžícího"
 msgstr "Competitor type"
 
-#: dpnk/company_admin_forms.py:337
+#: dpnk/company_admin_forms.py:338
 #, python-format
 msgid "%(model_name)s with this %(field_label)s already exists."
 msgstr "%(model_name)s s tímto %(field_label)s již existuje."
 
-#: dpnk/company_admin_forms.py:349
+#: dpnk/company_admin_forms.py:350
 msgid "Vystavit fakturu"
 msgstr "Create invoice"
 
-#: dpnk/company_admin_forms.py:352
+#: dpnk/company_admin_forms.py:353
 msgid "Údaje jsou správné. Chci vytvořit fakturu"
 msgstr "Data are correct. I want to create invoice."
 
-#: dpnk/company_admin_forms.py:359
+#: dpnk/company_admin_forms.py:360
 #, python-brace-format
 msgid "Benefiční startovné je {amount} Kč za osobu bez DPH."
 msgstr ""
@@ -472,93 +472,93 @@ msgstr "Selected team members can compete starting now."
 msgid "Startovné"
 msgstr "Participation Fee"
 
-#: dpnk/company_admin_views.py:222
+#: dpnk/company_admin_views.py:223
 msgid "Potvrzování plateb nemáte povoleno"
 msgstr "Payment confirmation is not active for your account"
 
-#: dpnk/company_admin_views.py:228
+#: dpnk/company_admin_views.py:229
 #, python-format
 msgid "Než schválíte startovné za Vaše zaměstnance, %s."
 msgstr "Before you approve the start fee for your employee %s."
 
-#: dpnk/company_admin_views.py:232
+#: dpnk/company_admin_views.py:233
 msgid "vyplňte prosím IČO společnosti"
 msgstr "Please fill in your company's Identification number (IČO)."
 
-#: dpnk/company_admin_views.py:236
+#: dpnk/company_admin_views.py:237
 msgid "Podělíte se o firemní IČO?"
 msgstr "Share a company IČO?"
 
-#: dpnk/company_admin_views.py:251
+#: dpnk/company_admin_views.py:252
 msgid "Adresa společnosti"
 msgstr "Company address"
 
-#: dpnk/company_admin_views.py:264
+#: dpnk/company_admin_views.py:265
 msgid "Registrace nesoutěžícího firemního koordinátora"
 msgstr "I want to be the Company Coordinator for my organization."
 
-#: dpnk/company_admin_views.py:314
+#: dpnk/company_admin_views.py:315
 #: dpnk/templates/dpnk/profile_update_detailed.html:9
 msgid "Chci se stát firemním koordinátorem"
 msgstr "I want to become a Company Coordinator"
 
-#: dpnk/company_admin_views.py:327
+#: dpnk/company_admin_views.py:328
 #, python-format
 msgid "Vaše organizce již svého koordinátora má: %s."
 msgstr "Your company already has its coordinator: %s."
 
-#: dpnk/company_admin_views.py:330
+#: dpnk/company_admin_views.py:331
 msgid "Organizace firemního koordinátora má"
 msgstr "Company coordinator position is already taken"
 
-#: dpnk/company_admin_views.py:363
+#: dpnk/company_admin_views.py:364
 msgid "Upravit adresu pobočky"
 msgstr "Edit subsidiary details"
 
-#: dpnk/company_admin_views.py:389
+#: dpnk/company_admin_views.py:390
 msgid "Vypsat firemní soutěž"
 msgstr "Enroll company competition"
 
-#: dpnk/company_admin_views.py:409
+#: dpnk/company_admin_views.py:410
 msgid "K editování této soutěže nemáte oprávnění."
 msgstr ""
 "<div class='text-warning'>You don't have permission to edit this challenge</"
 "div>"
 
-#: dpnk/company_admin_views.py:410
+#: dpnk/company_admin_views.py:411
 msgid "Nedostatečné oprávnění"
 msgstr "Not sufficient permissions"
 
-#: dpnk/company_admin_views.py:418
+#: dpnk/company_admin_views.py:419
 msgid "Překročen maximální počet soutěží pro organizaci."
 msgstr "Maximum number of competitions per company exceeded."
 
-#: dpnk/company_admin_views.py:419
+#: dpnk/company_admin_views.py:420
 msgid "Dosažen maximální počet soutěží"
 msgstr "Maximum number of competitions per company exceeded."
 
-#: dpnk/company_admin_views.py:439
+#: dpnk/company_admin_views.py:440
 msgid "Firemní soutěže"
 msgstr "Company competitions"
 
-#: dpnk/company_admin_views.py:461 dpnk/models/invoice.py:59
+#: dpnk/company_admin_views.py:462 dpnk/models/invoice.py:59
 msgid "Faktury"
 msgstr "Invoices"
 
-#: dpnk/company_admin_views.py:502
+#: dpnk/company_admin_views.py:503
 #, python-format
 msgid "Před vystavením faktury %s."
 msgstr "Before creating invoice %s."
 
-#: dpnk/company_admin_views.py:506
+#: dpnk/company_admin_views.py:507
 msgid "prosím vyplňte údaje o Vaší společnosti"
 msgstr "please fill in billing info of your company"
 
-#: dpnk/company_admin_views.py:510
+#: dpnk/company_admin_views.py:511
 msgid "Řekněte nám něco o sobě"
 msgstr "Tell us something about yourself"
 
-#: dpnk/company_admin_views.py:514
+#: dpnk/company_admin_views.py:515
 msgid "Vystavování faktur nemáte povoleno"
 msgstr "Making invoices not permitted "
 
@@ -3090,11 +3090,25 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1877
+#: dpnk/rest.py:997
+#, python-format
+msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
+msgstr "The campaign attendee <%(email)s> does not have assigned a team."
+
+#: dpnk/rest.py:1017
+#, python-format
+msgid ""
+"Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
+"ID <%(user_attendance_id)s> není členem vašeho týmu."
+msgstr ""
+"Only your team members can be allowed <%(team_members)s>, attendee with "
+"ID <%(user_attendance_id)s> is not a member of your team."
+
+#: dpnk/rest.py:1988
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr "Missing OpenPayu-Signature request object header."
 
-#: dpnk/rest.py:1901
+#: dpnk/rest.py:2012
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
@@ -3103,7 +3117,7 @@ msgstr ""
 "Signature request object verification process failed, incorrect signature <"
 "%(signature)s>."
 
-#: dpnk/rest.py:1930
+#: dpnk/rest.py:2041
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
@@ -3112,7 +3126,7 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> does not change it, as a result "
 "of payment orderstatus <%(order_status)s>."
 
-#: dpnk/rest.py:1966
+#: dpnk/rest.py:2077
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
@@ -3121,17 +3135,17 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> was changed to status <"
 "%(order_status)s>."
 
-#: dpnk/rest.py:1979
+#: dpnk/rest.py:2090
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr "Non-existent payment with order id <%(order_id)s>."
 
-#: dpnk/rest.py:2589
+#: dpnk/rest.py:2701
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr "Discount voucher <%(coupon)s> does not exists."
 
-#: dpnk/rest.py:2600
+#: dpnk/rest.py:2712
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr "Email address <%(email)s> exists. Use another email address, please."
