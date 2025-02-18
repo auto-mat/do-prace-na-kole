@@ -22,6 +22,7 @@ import datetime
 import logging
 from operator import attrgetter
 from itertools import tee
+import re
 
 import denorm
 
@@ -246,3 +247,16 @@ def attrgetter_def_val(attrs, instance, def_val=None):
         return attrgetter(attrs)(instance)
     except AttributeError:
         return def_val
+
+
+def get_api_version_from_request(request, defautl_api_version="v1"):
+    """Get REST API version from request object
+
+    :param HttpRequest request: Django request object
+    :param str defautl_api_version: Default REST API version if request
+                                    object doesn't contain any API version
+
+    :return str: REST API version e.g. v1
+    """
+    api_version = re.search(r"version=(v[1-9])", request.META.get("HTTP_ACCEPT", ""))
+    return api_version.group(1) if api_version else defautl_api_version

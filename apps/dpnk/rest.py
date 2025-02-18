@@ -86,7 +86,12 @@ from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 from t_shirt_delivery.models import TShirtSize
 from coupons.models import DiscountCoupon
-from .util import attrgetter_def_val, get_all_logged_in_users, today
+from .util import (
+    attrgetter_def_val,
+    get_all_logged_in_users,
+    get_api_version_from_request,
+    today,
+)
 from .payu import PayU
 from .rest_permissions import IsOwnerOrSuperuser
 from .rest_auth import PayUNotifyOrderRequestAuthentification
@@ -997,8 +1002,7 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
                 _("Účastník kampaně <%(email)s> nemá přiřazený tým.")
                 % {"email": self.user_attendance.userprofile.user.email},
             )
-        request = self.context["request"]
-        api_version = request.META.get("HTTP_ACCEPT_VERSION", "v1")
+        api_version = get_api_version_from_request(request=self.context["request"])
         team_members = self.user_attendance.team.members
         if api_version == "v1":
             team_members = self.user_attendance.team.members
@@ -1044,10 +1048,7 @@ class MyTeamSet(UserAttendanceMixin, viewsets.ModelViewSet):
         return Team.objects.filter(id=self.ua().team_id if not pk else pk)
 
     def get_serializer_class(self):
-        api_version = self.request.META.get(
-            "HTTP_ACCEPT_VERSION",
-            "v1",
-        )
+        api_version = get_api_version_from_request(request=self.request)
         if self.action in ["retrieve", "list"]:
             if api_version == "v1":
                 return TeamSerializer
