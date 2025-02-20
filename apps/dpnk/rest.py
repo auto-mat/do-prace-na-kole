@@ -33,8 +33,8 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import F, Window
-from django.db.models.functions import DenseRank
+from django.db.models import ExpressionWrapper, F, CharField, Value, Window
+from django.db.models.functions import Concat, DenseRank
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
@@ -3108,6 +3108,39 @@ class SendRegistrationConfirmationEmail(APIView):
         return Response(
             {
                 "send_registration_confirmation_email": send_email,
+            }
+        )
+
+
+class MyOrganizationAdmin(APIView):
+    """My organization admin"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+
+        return Response(
+            {
+                "organization_admin": Company.objects.filter(
+                    id=attrgetter_def_val(
+                        attrs="team.subsidiary.company_id",
+                        instance=self.request.user_attendance,
+                    ),
+                    company_admin__isnull=False,
+                    company_admin__campaign__slug=self.request.subdomain,
+                )
+                .annotate(
+                    admin_name=ExpressionWrapper(
+                        Concat(
+                            F("company_admin__userprofile__user__first_name"),
+                            Value(" "),
+                            F("company_admin__userprofile__user__last_name"),
+                        ),
+                        output_field=CharField(),
+                    ),
+                    admin_email=F("company_admin__userprofile__user__email"),
+                )
+                .values("admin_name", "admin_email")
             }
         )
 
