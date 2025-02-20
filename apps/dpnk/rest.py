@@ -2130,6 +2130,7 @@ class UserAttendanceSerializer(serpy.Serializer):
     payment_status = EmptyStrField()
     payment_amount = NullIntField(call=True)
     payment_category = EmptyStrField(call=True)
+    approved_for_team = EmptyStrField()
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
@@ -2246,6 +2247,10 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         required=False,
         allow_blank=True,
     )
+    approved_for_team = serializers.ChoiceField(
+        choices=UserAttendance.TEAMAPPROVAL,
+        required=False,
+    )
     payment_subject = serializers.ChoiceField(
         choices=PAYMENT_SUBJECT,
         required=False,
@@ -2291,6 +2296,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "newsletter",
             "personal_data_opt_in",
             "discount_coupon",
+            "approved_for_team",
             "payment_subject",
             "payment_amount",
             "payment_status",
@@ -2334,6 +2340,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         none = None
         personal_data_opt_in = validated_data.pop("personal_data_opt_in", none)
         discount_coupon = validated_data.pop("discount_coupon", none)
+        approved_for_team = validated_data.pop("approved_for_team", none)
         payment_subject = validated_data.pop("payment_subject", none)
         payment_category = validated_data.pop("payment_category", none)
         payment_amount = validated_data.pop("payment_amount", none)
@@ -2357,6 +2364,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             team_id,
             t_shirt_size_id,
             discount_coupon,
+            approved_for_team,
         )
         payment_update_fields = self._create_organization_coordinator_payment_model(
             payment_subject,
@@ -2453,6 +2461,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         team_id,
         t_shirt_size_id,
         discount_coupon,
+        approved_for_team,
     ):
         """
         Update UserAttendance model
@@ -2462,6 +2471,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         :param int|none team_id: UserAttendance model team_id field value
         :param int|none t_shirt_size_id: UserAttendance model t_shirt_size_id field value
         :param str|none discount_coupon: UserAttendance model discount_coupon field value
+        :param str|none approved_for_team: UserAttendance model approved_for_team field value
 
         :return dict user_attendance_update_fields: UserAttendance model updated fields
                                                     with value
@@ -2503,6 +2513,13 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             user_attendance_update_fields[
                 "discount_coupon_used"
             ] = self.user_attendance.discount_coupon_used
+
+        if approved_for_team:
+            self.user_attendance.approved_for_team = approved_for_team
+            user_attendance_update_fields[
+                "approved_for_team"
+            ] = self.user_attendance.approved_for_team
+
         return user_attendance_update_fields
 
     def _create_organization_coordinator_payment_model(
@@ -2659,6 +2676,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                 "personal_data_opt_in"
             )
             data["discount_coupon"]: personal_details_data.pop("discount_coupon")
+            data["approved_for_team"]: personal_details_data.pop("approved_for_team")
             data["payment_subject"]: personal_details_data.pop("payment_subject")
             data["payment_amount"]: personal_details_data.pop("payment_amount")
             data["payment_status"]: personal_details_data.pop("payment_status")
@@ -2686,6 +2704,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "newsletter",
             "personal_data_opt_in",
             "discount_coupon",
+            "approved_for_team",
             "payment_subject",
             "payment_amount",
             "payment_status",
