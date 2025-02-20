@@ -2262,6 +2262,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     team_id = serializers.ChoiceField(
         choices=[],
         required=False,
+        allow_null=True,
     )
     organization_id = serializers.SerializerMethodField()
     subsidiary_id = serializers.SerializerMethodField()
@@ -2338,7 +2339,12 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         payment_amount = validated_data.pop("payment_amount", none)
         products = validated_data.pop("products", none)
 
-        team_id = validated_data.pop("team_id", none)
+        if "team_id" in validated_data:
+            team_id = validated_data.pop("team_id")
+            if team_id is None:
+                team_id = "null"
+        else:
+            team_id = none
         t_shirt_size_id = validated_data.pop("t_shirt_size_id", none)
 
         self._get_or_create_user_attendance_model(instance)
@@ -2469,6 +2475,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             ] = self.user_attendance.personal_data_opt_in
 
         if team_id:
+            if team_id == "null":
+                team_id = None
             self.user_attendance.team_id = team_id
             user_attendance_update_fields["team_id"] = self.user_attendance.team_id
 
