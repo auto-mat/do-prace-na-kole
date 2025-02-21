@@ -956,10 +956,14 @@ class TeamSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 class TeamMembersDeserializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     approved_for_team = serializers.ChoiceField(choices=UserAttendance.TEAMAPPROVAL)
+    team = serializers.CharField(
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = UserAttendance
-        fields = ["id", "approved_for_team"]
+        fields = ["id", "approved_for_team", "team"]
 
 
 class MyTeamMemebersDeserializer(serializers.ModelSerializer):
@@ -970,16 +974,30 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
         fields = ["members"]
 
     def update(self, instance, validated_data):
+        approved_for_team = "approved_for_team"
+        team = "team"
+        members = "members"
         update_models = []
-        for user_attendance in validated_data["members"]:
+        update_fields = [approved_for_team]
+
+        if [member for member in validated_data[members] if team in member]:
+            update_fields.append(team)
+
+        for user_attendance in validated_data[members]:
             user_attendance_model_instance = instance.users.get(
                 id=user_attendance["id"]
             )
             user_attendance_model_instance.approved_for_team = user_attendance[
-                "approved_for_team"
+                approved_for_team
             ]
+            if team in user_attendance:
+                user_attendance_model_instance.team = user_attendance[team]
             update_models.append(user_attendance_model_instance)
-        UserAttendance.objects.bulk_update(update_models, ["approved_for_team"])
+
+        UserAttendance.objects.bulk_update(
+            update_models,
+            update_fields,
+        )
         # Update team denorm fields
         instance.save(
             update_fields=[
@@ -1002,6 +1020,19 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
                 _("Účastník kampaně <%(email)s> nemá přiřazený tým.")
                 % {"email": self.user_attendance.userprofile.user.email},
             )
+        for member in validated_data["members"]:
+            if (
+                member["id"] == self.user_attendance.id
+                and "team" in member
+                and member["team"] is None
+            ):
+                raise serializers.ValidationError(
+                    _(
+                        "Sám sobě účastníkový kamapane s ID <%(id)s>"
+                        " není možné odstranit přiřazený tým."
+                    )
+                    % {"id": self.user_attendance.id},
+                )
         api_version = get_api_version_from_request(request=self.context["request"])
         team_members = self.user_attendance.team.members
         if api_version == "v1":
@@ -1037,6 +1068,24 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
                 },
             )
         return validated_data
+
+    def validate_members(self, members):
+        team = "team"
+        self.user_attendance = get_or_create_userattendance(
+            self.context["request"],
+            self.context["request"].subdomain,
+        )
+        for member in members:
+            if team in member and member[team] is not None:
+                raise serializers.ValidationError(
+                    _(
+                        "Pro odstranení týmu účastníka kampane s"
+                        " ID <%(id)s> je povolena pouze hodnota <null>."
+                        " Změnit tým není povoleno."
+                    )
+                    % {"id": self.user_attendance.id},
+                )
+        return members
 
 
 class MyTeamSet(UserAttendanceMixin, viewsets.ModelViewSet):
