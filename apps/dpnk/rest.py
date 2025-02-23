@@ -92,6 +92,7 @@ from .util import (
     get_api_version_from_request,
     today,
 )
+from .tasks import team_membership_approval_mail, team_membership_denial_mail
 from .payu import PayU
 from .rest_permissions import IsOwnerOrSuperuser
 from .rest_auth import PayUNotifyOrderRequestAuthentification
@@ -960,10 +961,11 @@ class TeamMembersDeserializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    reason = serializers.CharField(required=False)
 
     class Meta:
         model = UserAttendance
-        fields = ["id", "approved_for_team", "team"]
+        fields = ["id", "approved_for_team", "reason", "team"]
 
 
 class MyTeamMemebersDeserializer(serializers.ModelSerializer):
@@ -977,7 +979,9 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
         approved_for_team = "approved_for_team"
         team = "team"
         members = "members"
-        update_models = []
+        reason = "reason"
+        update_models_approved = []
+        update_models_denied = []
         update_fields = [approved_for_team]
 
         if [member for member in validated_data[members] if team in member]:
@@ -992,8 +996,25 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
             ]
             if team in user_attendance:
                 user_attendance_model_instance.team = user_attendance[team]
-            update_models.append(user_attendance_model_instance)
 
+            if user_attendance.get(approved_for_team) == "approved":
+                update_models_approved.append(
+                    {
+                        "user_attendance": user_attendance_model_instance,
+                        "reason": user_attendance.get(reason),
+                    }
+                )
+            elif user_attendance.get(approved_for_team) == "denied":
+                update_models_denied.append(
+                    {
+                        "user_attendance": user_attendance_model_instance,
+                        "reason": user_attendance.get(reason),
+                    }
+                )
+        update_models = [
+            *[model["user_attendance"] for model in update_models_approved],
+            *[model["user_attendance"] for model in update_models_denied],
+        ]
         UserAttendance.objects.bulk_update(
             update_models,
             update_fields,
@@ -1005,6 +1026,23 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
                 "unapproved_member_count",
             ]
         )
+        # Send email
+        team_membership_approval_mail.delay(
+            user_attendance_ids=[
+                model["user_attendance"].id for model in update_models_approved
+            ],
+        )
+        team_membership_denial_mail.delay(
+            team_members=[
+                {
+                    "user_attendance_id": model["user_attendance"].id,
+                    "denier_id": self.context["request"].user.id,
+                    "reason": model["reason"],
+                }
+                for model in update_models_denied
+            ]
+        )
+
         return {"members": update_models}
 
     def validate(self, data):

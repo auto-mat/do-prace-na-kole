@@ -31,6 +31,7 @@ from dj_fiobank_payments.statement import parse
 
 from django.conf import settings
 from django.contrib import contenttypes
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import ugettext as _
@@ -378,3 +379,38 @@ def refresh_materialized_view(self, materialized_view):
                 cursor.execute(f"REFRESH MATERIALIZED VIEW {view}")
         else:
             cursor.execute(f"REFRESH MATERIALIZED VIEW {materialized_view}")
+
+
+@shared_task(bind=True)
+def team_membership_approval_mail(self, user_attendance_ids):
+    """Send team membership approval mail
+
+    :param list user_attendance_ids: list of UserAttendance models ids
+    """
+    for user_attendance_id in user_attendance_ids:
+        email.team_membership_approval_mail(
+            user_attendance=UserAttendance.objects.get(id=user_attendance_id),
+        )
+
+
+@shared_task(bind=True)
+def team_membership_denial_mail(self, team_members):
+    """Send team membership denial mail
+
+    :param dict team_members: list of team member dicts with following
+                              structure
+                              {
+                                "user_attendance_id": UserAttendance model id,
+                                "denier_id": User model id,
+                                "reason": Reason string,
+                              }
+    """
+    User = get_user_model()
+    for team_member in team_members:
+        email.team_membership_denial_mail(
+            user_attendance=UserAttendance.objects.get(
+                id=team_member["user_attendance_id"],
+            ),
+            denier=User.objects.get(id=team_member["denier_id"]),
+            reason=team_member["reason"],
+        )

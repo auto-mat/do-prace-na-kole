@@ -21,7 +21,8 @@ import html.parser
 import logging
 
 from django import template
-from django.urls import translate_url
+from django.conf import settings
+from django.urls import reverse, translate_url
 from django.utils.formats import get_format
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
@@ -238,3 +239,20 @@ def concat_cities_into_url_param(user_profile):
         )
     ]
     return "".join(cities)
+
+
+@register.simple_tag(takes_context=True)
+def get_app_base_url(context, url=None):
+    """Get app base URL
+
+    :param dict context: Django context
+    :param str url: Django old frontend app router URL name for reverse func
+
+    :return str: app base URL
+    """
+    rtwbb_frontend_app_base_url = getattr(settings, "RTWBB_FRONTEND_APP_BASE_URL", None)
+    if rtwbb_frontend_app_base_url:
+        return rtwbb_frontend_app_base_url
+    if url:
+        return f"{context['absolute_uri']}{reverse(url)}"
+    return context["absolute_uri"]
