@@ -32,6 +32,12 @@ class AccountAdapter(DefaultAccountAdapter):
             context["current_site"] = CurrentSite
         return super().render_mail(template_prefix, email, context, headers)
 
+    def format_email_subject(self, subject):
+        rtwbb_app_base_url = getattr(settings, "RTWBB_FRONTEND_APP_BASE_URL")
+        if rtwbb_app_base_url:
+            return f"[{urlparse(rtwbb_app_base_url).netloc}] {subject}"
+        return super().format_email_subject(subject)
+
 
 class UserPasswordResetSerializer(PasswordResetSerializer):
     """
