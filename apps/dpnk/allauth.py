@@ -1,5 +1,8 @@
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.utils.http import urlencode
+from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.models import EmailAddress
@@ -16,6 +19,18 @@ class AccountAdapter(DefaultAccountAdapter):
             return f"{settings.ACCOUNT_EMAIL_CONFIRMATION_URL}?{urlencode({'key': key, 'email': email})}"
         else:
             return super().get_email_confirmation_url(request, emailconfirmation)
+
+    def render_mail(self, template_prefix, email, context, headers=None):
+        rtwbb_app_base_url = getattr(settings, "RTWBB_FRONTEND_APP_BASE_URL")
+        if rtwbb_app_base_url:
+
+            class CurrentSite:
+                name = _("Do práce na kole")
+                domain = urlparse(rtwbb_app_base_url).netloc
+
+            # Override context current site
+            context["current_site"] = CurrentSite
+        return super().render_mail(template_prefix, email, context, headers)
 
 
 class UserPasswordResetSerializer(PasswordResetSerializer):

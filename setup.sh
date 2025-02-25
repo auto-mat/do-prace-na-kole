@@ -9,4 +9,5 @@ poetry run python3 manage.py loaddata apps/dpnk/fixtures/sites.json
 poetry run python3 manage.py loaddata apps/dpnk/fixtures/occupation.json
 poetry run python3 manage.py loaddata apps/dpnk/fixtures/test-campaign.json
 cd apps/ && poetry run python3 ../manage.py compilemessages && cd ../
+cd registration-templates/ && poetry run python3 ../manage.py compilemessages && cd ../
 poetry run python3 manage.py createsuperuser
