@@ -982,7 +982,7 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
         reason = "reason"
         update_models_approved = []
         update_models_denied = []
-        update_fields = [approved_for_team]
+        update_fields = []
 
         if [member for member in validated_data[members] if team in member]:
             update_fields.append(team)
@@ -991,13 +991,22 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
             user_attendance_model_instance = instance.users.get(
                 id=user_attendance["id"]
             )
-            user_attendance_model_instance.approved_for_team = user_attendance[
-                approved_for_team
-            ]
             if team in user_attendance:
                 user_attendance_model_instance.team = user_attendance[team]
-
+            """
+            Update UserAttendance model approved_for_team field value
+            only if value is approved, beacuse if you erase team
+            approved_for_team field value is automatically updated by
+            pre_user_team_changed() func by pre_save signal
+            """
             if user_attendance.get(approved_for_team) == "approved":
+                user_attendance_model_instance.approved_for_team = user_attendance[
+                    approved_for_team
+                ]
+
+                if approved_for_team not in update_fields:
+                    update_fields.append(approved_for_team)
+
                 update_models_approved.append(
                     {
                         "user_attendance": user_attendance_model_instance,
