@@ -2658,7 +2658,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             payment_subject
             and payment_subject in ("school", "company")
             and payment_category
-            and payment_amount
+            and payment_amount is not None
             and products
         ):
             payu_ordered_products = []
@@ -2705,7 +2705,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                         "pay_category",
                     ]
                 )
-
             payment.payu_ordered_product.set(payu_ordered_products)
             payment_update_fields = {
                 "payment_subject": payment_subject,
