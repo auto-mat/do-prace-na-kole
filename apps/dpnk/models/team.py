@@ -337,10 +337,15 @@ class TeamAdminForm(forms.ModelForm):
 
 
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
+    team_model_denorm_fields = ["member_count", "unapproved_member_count"]
     field, (old, new) = next(iter(changed_fields.items()))
-    new_team = Team.objects.get(pk=new) if new else None
+    if old:
+        Team.objects.get(pk=old).save(update_fields=team_model_denorm_fields)
+    if new:
+        new_team = Team.objects.get(pk=new)
+        new_team.save(update_fields=team_model_denorm_fields)
     # TODO: rewrite this as a UserAttendance.is_approved() function
-    if instance.team and new_team.member_count == 0:
+    if (instance.team or instance.team_id) and new_team.member_count == 0:
         instance.approved_for_team = "approved"
     else:
         instance.approved_for_team = "undecided"

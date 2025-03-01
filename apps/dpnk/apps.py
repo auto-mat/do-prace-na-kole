@@ -43,10 +43,10 @@ class DPNKConfig(AppConfig):
         pre_save_changed.connect(
             dpnk_models.pre_user_team_changed,
             sender=dpnk_models.UserAttendance,
-            fields=["team"],
+            fields=["team", "team_id"],
         )
         post_save_changed.connect(
             dpnk_models.post_user_team_changed,
             sender=dpnk_models.UserAttendance,
-            fields=["team"],
+            fields=["team", "team_id"],
         )

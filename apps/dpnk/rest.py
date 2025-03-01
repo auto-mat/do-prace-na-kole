@@ -1028,13 +1028,6 @@ class MyTeamMemebersDeserializer(serializers.ModelSerializer):
             update_models,
             update_fields,
         )
-        # Update team denorm fields
-        instance.save(
-            update_fields=[
-                "member_count",
-                "unapproved_member_count",
-            ]
-        )
         # Send email
         team_membership_approval_mail.delay(
             user_attendance_ids=[
@@ -2730,6 +2723,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                                                    update fields with value
         :param dict payment_update_fields: Payment model update fields dict
         """
+        approved_for_team = "approved_for_team"
         update_fields = list(user_attendance_update_fields.keys())
         if update_fields:
             if payment_update_fields:
@@ -2742,6 +2736,19 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                     *update_fields,
                     *denorm_fields,
                 ]
+            """
+            When UserAttendance model changed, pre_save signal is triggered
+            and handled by pre_user_team_changed() func, if save() method is
+            called with update_fields param argument ["team"|"team_id"]
+            approved_for_team field is not saved automatically inside
+            pre_save signal callback func. And therefore we need explicitly
+            add "approved_for_team" field name into save() method
+            update_fields param arg if we update team or team_id field.
+            """
+            if not approved_for_team in update_fields and (
+                "team" in update_fields or "team_id" in update_fields
+            ):
+                update_fields.append(approved_for_team)
             self.user_attendance.save(
                 update_fields=update_fields,
             )
