@@ -3216,6 +3216,7 @@ class HasOrganizationAdmin(APIView):
                         id=organization_id,
                         company_admin__isnull=False,
                         company_admin__campaign__slug=self.request.subdomain,
+                        company_admin__company_admin_approved="approved",
                     )
                     else False
                 )
@@ -3257,6 +3258,7 @@ class MyOrganizationAdmin(APIView):
                     ),
                     company_admin__isnull=False,
                     company_admin__campaign__slug=self.request.subdomain,
+                    company_admin__company_admin_approved="approved",
                 )
                 .annotate(
                     admin_name=ExpressionWrapper(
