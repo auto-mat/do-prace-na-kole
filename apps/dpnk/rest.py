@@ -3242,7 +3242,7 @@ class SendRegistrationConfirmationEmail(APIView):
         )
 
 
-class MyOrganizationAdmin(APIView):
+class MyOrganizationAdmin(APIView, UserAttendanceMixin):
     """My organization admin"""
 
     permission_classes = [permissions.IsAuthenticated]
@@ -3254,7 +3254,7 @@ class MyOrganizationAdmin(APIView):
                 "organization_admin": Company.objects.filter(
                     id=attrgetter_def_val(
                         attrs="team.subsidiary.company_id",
-                        instance=self.request.user_attendance,
+                        instance=self.ua(),
                     ),
                     company_admin__isnull=False,
                     company_admin__campaign__slug=self.request.subdomain,
