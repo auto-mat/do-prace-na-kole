@@ -828,18 +828,19 @@ class UserAttendance(StaleSyncMixin, models.Model):
             raise ValidationError({"team": message, "campaign": message})
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            previous_user_attendance = self.previous_user_attendance()
-            if previous_user_attendance:
-                if previous_user_attendance.t_shirt_size:
-                    t_shirt_size = self.campaign.tshirtsize_set.filter(
-                        name=previous_user_attendance.t_shirt_size.name
-                    )
-                    if t_shirt_size.count() == 1:
-                        self.t_shirt_size = t_shirt_size.first()
+        # Automatically saving previous campaign user attendance choosed merch
+        # if self.pk is None:
+        #     previous_user_attendance = self.previous_user_attendance()
+        #     if previous_user_attendance:
+        #         if previous_user_attendance.t_shirt_size:
+        #             t_shirt_size = self.campaign.tshirtsize_set.filter(
+        #                 name=previous_user_attendance.t_shirt_size.name
+        #             )
+        #             if t_shirt_size.count() == 1:
+        #                 self.t_shirt_size = t_shirt_size.first()
 
-            # if self.userprofile.user.is_active:
-            #     register_mail(self)
+        #     if self.userprofile.user.is_active:
+        #         register_mail(self)
         if self.team and self.team.campaign != self.campaign:
             logger.error(
                 "UserAttendance campaign doesn't match team campaign",
