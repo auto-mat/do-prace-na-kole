@@ -780,6 +780,8 @@ class BaseUserAttendanceSerializer(serpy.Serializer):
 
     id = serpy.IntField()
     name = serpy.StrField(call=True)
+    email = RequestSpecificField(lambda ua, req: ua.userprofile.user.email)
+    sex = RequestSpecificField(lambda ua, req: ua.userprofile.sex)
     frequency = serpy.FloatField()
     avatar_url = serpy.Field(call=True)
     eco_trip_count = serpy.IntField(call=True)
