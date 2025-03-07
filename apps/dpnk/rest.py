@@ -2279,6 +2279,29 @@ class RegisterChallengeSerializer(serpy.Serializer):
             userprofile.userattendance_set.get(campaign__slug=req.subdomain),
         )
     )
+    city_id = RequestSpecificField(
+        lambda userprofile, req: attrgetter_def_val(
+            "team.subsidiary.city_id",
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+        )
+    )
+
+
+class RequestSpecificFieldDeserializer(serializers.Field):
+    """Request specific field for deserializer class"""
+
+    def get_attribute(self, instance):
+        return instance
+
+    def to_representation(self, instance):
+        return attrgetter_def_val(self.source, instance)
+
+
+class RequestSpecificUserAttendanceFieldDeserializer(RequestSpecificFieldDeserializer):
+    """Request specific UserAttendance model instance field for deserializer class"""
+
+    def to_representation(self, instance):
+        return attrgetter_def_val(self.source, instance.get("user_attendance"))
 
 
 class RegisterChallengeDeserializer(serializers.ModelSerializer):
@@ -2360,13 +2383,26 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
-    organization_id = serializers.SerializerMethodField()
-    subsidiary_id = serializers.SerializerMethodField()
+    organization_id = RequestSpecificUserAttendanceFieldDeserializer(
+        source="team.subsidiary.company_id",
+        read_only=True,
+    )
+    subsidiary_id = RequestSpecificUserAttendanceFieldDeserializer(
+        source="team.subsidiary_id",
+        read_only=True,
+    )
     t_shirt_size_id = serializers.ChoiceField(
         choices=[],
         required=False,
     )
-    organization_type = serializers.SerializerMethodField()
+    organization_type = RequestSpecificUserAttendanceFieldDeserializer(
+        source="team.subsidiary.company.organization_type",
+        read_only=True,
+    )
+    city_id = RequestSpecificUserAttendanceFieldDeserializer(
+        source="team.subsidiary.city_id",
+        read_only=True,
+    )
     products = serializers.JSONField(required=False)
 
     class Meta:
@@ -2398,6 +2434,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "subsidiary_id",
             "t_shirt_size_id",
             "organization_type",
+            "city_id",
             "products",
         )
 
@@ -2753,6 +2790,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             self.user_attendance.save(
                 update_fields=update_fields,
             )
+            self.user_attendance.refresh_from_db()
 
     def update(self, instance, validated_data):
         return self._update_model(validated_data, instance=instance)
@@ -2859,39 +2897,6 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             payment_type = ua.payment_type()
             payment_type = payment_type if payment_type else self._empty_string
         return payment_type
-
-    def get_organization_type(self, obj):
-        ua = obj.get("user_attendance")
-        return (
-            None
-            if not ua
-            else attrgetter_def_val(
-                attrs="team.subsidiary.company.organization_type",
-                instance=ua,
-            )
-        )
-
-    def get_organization_id(self, obj):
-        ua = obj.get("user_attendance")
-        return (
-            None
-            if not ua
-            else attrgetter_def_val(
-                attrs="team.subsidiary.company_id",
-                instance=ua,
-            )
-        )
-
-    def get_subsidiary_id(self, obj):
-        ua = obj.get("user_attendance")
-        return (
-            None
-            if not ua
-            else attrgetter_def_val(
-                attrs="team.subsidiary_id",
-                instance=ua,
-            )
-        )
 
 
 class RegisterChallengeSet(viewsets.ModelViewSet):
