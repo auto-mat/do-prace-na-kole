@@ -1660,6 +1660,7 @@ class HasUserVerifiedEmailAddress(APIView):
 class CitiesSerializer(serpy.Serializer):
     id = serpy.IntField()
     name = serpy.StrField()
+    slug = serpy.StrField()
 
 
 class CitiesSet(viewsets.ReadOnlyModelViewSet):
