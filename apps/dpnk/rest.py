@@ -2279,9 +2279,9 @@ class RegisterChallengeSerializer(serpy.Serializer):
             userprofile.userattendance_set.get(campaign__slug=req.subdomain),
         )
     )
-    city_id = RequestSpecificField(
+    city_slug = RequestSpecificField(
         lambda userprofile, req: attrgetter_def_val(
-            "team.subsidiary.city_id",
+            "team.subsidiary.city.slug",
             userprofile.userattendance_set.get(campaign__slug=req.subdomain),
         )
     )
@@ -2399,8 +2399,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         source="team.subsidiary.company.organization_type",
         read_only=True,
     )
-    city_id = RequestSpecificUserAttendanceFieldDeserializer(
-        source="team.subsidiary.city_id",
+    city_slug = RequestSpecificUserAttendanceFieldDeserializer(
+        source="team.subsidiary.city.slug",
         read_only=True,
     )
     products = serializers.JSONField(required=False)
@@ -2434,7 +2434,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "subsidiary_id",
             "t_shirt_size_id",
             "organization_type",
-            "city_id",
+            "city_slug",
             "products",
         )
 
