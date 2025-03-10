@@ -1282,6 +1282,7 @@ class CitySerializer(serpy.Serializer):
 
     id = serpy.IntField()
     name = serpy.StrField()
+    slug = serpy.StrField()
     location = PointField(format="coords")
     # 'frequency', TODO
 
