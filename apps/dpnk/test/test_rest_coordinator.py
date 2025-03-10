@@ -17,6 +17,10 @@ from dpnk.models import (
     Team,
 )
 
+from t_shirt_delivery.models import (
+    BoxRequest,
+)
+
 import json
 
 
@@ -773,3 +777,67 @@ class MemberViewTest(TestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 204)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2025, month=1, day=10),
+)
+class BoxRequestViewTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+
+        self.maxDiff = None
+        util.rebuild_denorm_models(UserAttendance.objects.filter())
+
+    def test_post_get(self):
+
+        self.client.force_login(
+            User.objects.get(pk=3), settings.AUTHENTICATION_BACKENDS[0]
+        )
+
+        # post
+        post_data = {"subsidiary_ids": [2]}
+        response = self.client.post(
+            reverse("package-request"), post_data, format="json", follow=True
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"message": "Created 1 box requests", "added_subsidiary_ids": [2]},
+        )
+
+        self.assertFalse(BoxRequest.objects.filter(pk=2).exists())
+
+        # get
+        pkg = reverse("package-request")
+        response = self.client.get(pkg)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"subsidiary_ids": [2]},
+        )
+
+        # delete
+
+        post_data = {"subsidiary_ids": [2]}
+        response = self.client.post(
+            reverse("package-request-remove"), post_data, format="json", follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"message": "Deleted 1 box requests", "deleted_subsidiary_ids": [2]},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFalse(BoxRequest.objects.filter(pk=2).exists())

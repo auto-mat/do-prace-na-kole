@@ -15,6 +15,9 @@ from .models import (
     Team,
     Campaign,
 )
+from t_shirt_delivery.models import (
+    BoxRequest,
+)
 
 from .models.company import CompanyInCampaign
 from .rest import (
@@ -39,6 +42,21 @@ class UserAttendanceMixin:
         return ua
 
 
+class CompanyAdminMixin(UserAttendanceMixin):
+    def ca(self):
+
+        if not hasattr(self, "_company_admin") or self._company_admin is None:
+            try:
+                self._company_admin = CompanyAdmin.objects.get(
+                    userprofile=self.ua().userprofile.pk,
+                    campaign__slug=self.request.subdomain,
+                    company_admin_approved="approved",
+                )
+            except CompanyAdmin.DoesNotExist:
+                raise CompanyAdminDoesNotExist
+        return self._company_admin
+
+
 class FeeApprovalSerializer(serpy.Serializer):
     id = serpy.IntField()
     company_admission_fee = serpy.IntField(call=True)
@@ -61,17 +79,10 @@ class TeamNotEmpty(APIException):
     default_code = "team_not_empty"
 
 
-class FeeApprovalSet(viewsets.ReadOnlyModelViewSet, UserAttendanceMixin):
+class FeeApprovalSet(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
     def get_queryset(self):
 
-        try:
-            company_admin = CompanyAdmin.objects.get(
-                userprofile=self.ua().userprofile.pk,
-                campaign__slug=self.request.subdomain,
-                company_admin_approved="approved",
-            )
-        except CompanyAdmin.DoesNotExist:
-            raise CompanyAdminDoesNotExist
+        company_admin = self.ca()
 
         queryset = (
             UserAttendance.objects.filter(
@@ -110,20 +121,13 @@ class ApprovePaymentsDeserializer(serializers.Serializer):
     )
 
 
-class ApprovePaymentsView(APIView, UserAttendanceMixin):
+class ApprovePaymentsView(APIView, CompanyAdminMixin):
     def post(self, request):
         serializer = ApprovePaymentsDeserializer(data=request.data)
         if serializer.is_valid():
             ids = serializer.validated_data["ids"]
 
-            try:
-                company_admin = CompanyAdmin.objects.get(
-                    userprofile=self.ua().userprofile.pk,
-                    campaign__slug=self.request.subdomain,
-                    company_admin_approved="approved",
-                )
-            except CompanyAdmin.DoesNotExist:
-                raise CompanyAdminDoesNotExist
+            company_admin = self.ca()
 
             users = UserAttendance.objects.filter(
                 id__in=ids,
@@ -188,17 +192,10 @@ class GetAttendanceSerializer(serpy.Serializer):
     subsidiaries = SubsidiaryInCampaignSerializer(many=True)
 
 
-class GetAttendanceView(APIView, UserAttendanceMixin):
+class GetAttendanceView(APIView, CompanyAdminMixin):
     def get(self, request):
 
-        try:
-            company_admin = CompanyAdmin.objects.get(
-                userprofile=self.ua().userprofile.pk,
-                campaign__slug=self.request.subdomain,
-                company_admin_approved="approved",
-            )
-        except CompanyAdmin.DoesNotExist:
-            raise CompanyAdminDoesNotExist
+        company_admin = self.ca()
 
         company = Company.objects.get(
             pk=company_admin.administrated_company_id,
@@ -241,17 +238,10 @@ class SubsidiaryTeamSerializer(serpy.Serializer):
     members = UserAttendanceSerializer(many=True)
 
 
-class SubsidiaryView(viewsets.ReadOnlyModelViewSet, UserAttendanceMixin):
+class SubsidiaryView(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
     def get_queryset(self):
 
-        try:
-            company_admin = CompanyAdmin.objects.get(
-                userprofile=self.ua().userprofile.pk,
-                campaign__slug=self.request.subdomain,
-                company_admin_approved="approved",
-            )
-        except CompanyAdmin.DoesNotExist:
-            raise CompanyAdminDoesNotExist
+        company_admin = self.ca()
 
         queryset = Subsidiary.objects.filter(
             company=company_admin.administrated_company,
@@ -282,17 +272,10 @@ class SubsidiaryTeamDeserializer(serializers.HyperlinkedModelSerializer):
         return data
 
 
-class TeamView(viewsets.ModelViewSet, UserAttendanceMixin):
+class TeamView(viewsets.ModelViewSet, CompanyAdminMixin):
     def get_queryset(self):
 
-        try:
-            company_admin = CompanyAdmin.objects.get(
-                userprofile=self.ua().userprofile.pk,
-                campaign__slug=self.request.subdomain,
-                company_admin_approved="approved",
-            )
-        except CompanyAdmin.DoesNotExist:
-            raise CompanyAdminDoesNotExist
+        company_admin = self.ca()
 
         queryset = Team.objects.filter(
             subsidiary__company=company_admin.administrated_company,
@@ -357,17 +340,10 @@ class MemberDeserializer(serializers.HyperlinkedModelSerializer):
         return data
 
 
-class MemberView(viewsets.ModelViewSet, UserAttendanceMixin):
+class MemberView(viewsets.ModelViewSet, CompanyAdminMixin):
     def get_queryset(self):
 
-        try:
-            company_admin = CompanyAdmin.objects.get(
-                userprofile=self.ua().userprofile.pk,
-                campaign__slug=self.request.subdomain,
-                company_admin_approved="approved",
-            )
-        except CompanyAdmin.DoesNotExist:
-            raise CompanyAdminDoesNotExist
+        company_admin = self.ca()
 
         queryset = UserAttendance.objects.filter(
             team__subsidiary__company=company_admin.administrated_company,
@@ -389,6 +365,76 @@ class MemberView(viewsets.ModelViewSet, UserAttendanceMixin):
     def perform_destroy(self, instance):
         instance.team = None
         instance.save()
+
+
+class BoxRequestView(APIView, CompanyAdminMixin):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """List subsidiaries with active box requests"""
+        company_admin = self.ca()
+
+        subsidiary_ids = list(
+            Subsidiary.objects.filter(
+                box_requests__company_admin=company_admin
+            ).values_list("id", flat=True)
+        )
+
+        return Response({"subsidiary_ids": subsidiary_ids})
+
+    @transaction.atomic
+    def post(self, request):
+        """Bulk create box requests for subsidiaries"""
+        company_admin = self.ca()
+
+        created_ids = []
+        for sub_id in request.data["subsidiary_ids"]:
+            subsidiary = get_object_or_404(
+                Subsidiary, id=sub_id, company=company_admin.administrated_company
+            )
+
+            _, created = BoxRequest.objects.get_or_create(
+                company_admin=company_admin, subsidiary=subsidiary
+            )
+            if created:
+                created_ids.append(sub_id)
+
+        return Response(
+            {
+                "message": f"Created {len(created_ids)} box requests",
+                "added_subsidiary_ids": created_ids,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class BoxRequestRemoveView(APIView, CompanyAdminMixin):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        """Bulk delete box requests by subsidiary IDs"""
+        company_admin = self.ca()
+
+        # Get actual deleted subsidiary IDs from the box requests
+        deleted_subsidiaries = list(
+            BoxRequest.objects.filter(
+                company_admin=company_admin,
+                subsidiary_id__in=request.data["subsidiary_ids"],
+            ).values_list("subsidiary_id", flat=True)
+        )
+
+        deleted_count, _ = BoxRequest.objects.filter(
+            subsidiary_id__in=deleted_subsidiaries
+        ).delete()
+
+        return Response(
+            {
+                "message": f"Deleted {deleted_count} box requests",
+                "deleted_subsidiary_ids": deleted_subsidiaries,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 router = routers.DefaultRouter()

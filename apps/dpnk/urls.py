@@ -44,6 +44,8 @@ from .rest import (
 from .rest_coordinator import (
     ApprovePaymentsView,
     GetAttendanceView,
+    BoxRequestView,
+    BoxRequestRemoveView,
     router as coordinator_router,
 )
 
@@ -651,5 +653,15 @@ urlpatterns = [
         "rest/coordinator/get-attendance/",
         GetAttendanceView.as_view(),
         name="get-attendance",
+    ),
+    path(
+        "rest/coordinator/package-request/",
+        BoxRequestView.as_view(),
+        name="package-request",
+    ),
+    path(
+        "rest/coordinator/package-request/remove",
+        BoxRequestRemoveView.as_view(),
+        name="package-request-remove",
     ),
 ]

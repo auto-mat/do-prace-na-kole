@@ -25,6 +25,7 @@ from .package_transaction import PackageTransaction
 from .subsidiary_box import SubsidiaryBox
 from .t_shirt_size import TShirtSize
 from .team_package import TeamPackage
+from .box_request import BoxRequest
 
 __all__ = (
     DeliveryBatch,
@@ -33,4 +34,5 @@ __all__ = (
     SubsidiaryBox,
     TShirtSize,
     TeamPackage,
+    BoxRequest,
 )
