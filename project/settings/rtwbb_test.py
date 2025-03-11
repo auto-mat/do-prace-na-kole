@@ -18,4 +18,4 @@ REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializ
 if "localhost" in RTWBB_FRONTEND_APP_BASE_URL:
     CORS_ORIGIN_ALLOW_ALL = True
 else:
-    CORS_ORIGIN_REGEX.append(RTWBB_FRONTEND_APP_BASE_URL)
+    CORS_ORIGIN_REGEX.append(RTWBB_FRONTEND_APP_BASE_URL.rstrip("/#/"))
