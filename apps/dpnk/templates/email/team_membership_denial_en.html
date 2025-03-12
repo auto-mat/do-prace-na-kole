@@ -9,7 +9,7 @@ Hello, {{ user_attendance.userprofile.first_name_vokativ }}
 </p> <p>
 We have sad news. Your team membership {{user_attendance.team.name} has just been rejected by a member of the team {{ denier }} because {{ reaseon }}
 </p> <p>
-ut for one team, the sun is not shining. Sign in to your profile and <a href = "{ % get_app_base_url 'zmenit_tym' %}"> choose another team </a>. Or create your own!
+ut for one team, the sun is not shining. Sign in to your profile and <a href = "{% get_app_base_url 'zmenit_tym' %}"> choose another team </a>. Or create your own!
 </p>
 
 {% url 'zmenit_tym' as button_link %}
