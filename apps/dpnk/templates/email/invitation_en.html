@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 
 {% block header %}
 Invitation to the challenge
@@ -8,15 +9,15 @@ Invitation to the challenge
 {% block content %}
 {% language lang_code %}
 <p>
-Good news{% if invited %} {{ invited.userprofile.first_name }}{% endif %}!
+Good news{% if invited %} {{ invited.userprofile.first_name_vokativ }}{% endif %}!
 </p><p>
 Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with you in the {{inviting.team.name}} team.
 </p>
 
 {% if not invited %}
-{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% get_app_base_url 'registrace' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
 {% else %}
-{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% get_app_base_url 'change_team_invitation' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
 {% endif %}
 {% include "./button.html" with button_text="Let's Ride" %}
 

@@ -1,4 +1,5 @@
 {% extends "email/base.html" %}
+{% load get_app_base_url from dpnk_tags %}
 {% block content %}
 <p>
 Good news, {{ user_attendance.userprofile.first_name }}
@@ -6,7 +7,7 @@ Good news, {{ user_attendance.userprofile.first_name }}
 you are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
 </p>
 
-{% url 'login' as button_link %}
+{% get_app_base_url 'login' as button_link %}
 {% include "./button.html" with button_text="Sign up as a team member" %}
 
 <p>

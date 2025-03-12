@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 
 {% block content %}
 {% language lang_code %}
@@ -10,7 +11,7 @@ vámi vybraná předchozí velikost trika {{ user_attendance.t_shirt_size.name }
 již není dostupná. Vyberte jinou velikost.
 </p><p>
 
-{% url 'zmenit_triko' as button_link %}
+{% get_app_base_url 'zmenit_triko' as button_link %}
 {% include "./button.html" with button_text="Změnit triko" %}
 
 {% endlanguage %}

@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 
 {% block content %}
 {% language lang_code %}
@@ -12,14 +13,14 @@ Before you head off, there are still some stuff you need to do.
 Check the profile, there you can track your courses every day.
 </p>
 
-{% url 'upravit_profil' as button_link %}
+{% get_app_base_url 'upravit_profil' as button_link %}
 {% include "./button.html" with button_text="Complete my profile" %}
 
 <p>
 That could be much more interesting if you compare your results with fellow coworkers. Send them an invitation to your team.
 </p>
 
-{% url 'pozvanky' as button_link %}
+{% get_app_base_url 'pozvanky' as button_link %}
 {% include "./button.html" with button_text="Invite people" %}
 
 <p>

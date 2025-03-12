@@ -1,5 +1,7 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+
 {% block content %}
 {% language lang_code %}
 <p>
@@ -11,7 +13,7 @@ Your competitors are already ahead of you. Hurry up, you can fill in the rides o
 Don't forget. Every day is a new challenge.
 </p>
 
-{% url 'profil' as button_link %}
+{% get_app_base_url 'profil' as button_link %}
 {% include "./button.html" with button_text="Get back on track" %}
 {% endlanguage %}
 {% endblock %}

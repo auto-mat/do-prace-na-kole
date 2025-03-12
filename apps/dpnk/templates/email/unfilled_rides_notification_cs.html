@@ -1,5 +1,7 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+
 {% block content %}
 {% language lang_code %}
 <p>
@@ -8,10 +10,10 @@
 Už je to {{ days_unfilled }} dní a žádná nová cesta.
 Vaši kolegové si zatím brousí řídítka na vítězství.
 <br/>
-Nezapomeňte: s pravidelností nejdál dojedeš.
+Nezapomeňte: s pravidelností nejdál dojedeš.
 </p>
 
-{% url 'profil' as button_link %}
+{% get_app_base_url 'profil' as button_link %}
 {% include "./button.html" with button_text="Vyplnit cesty" %}
 
 <p>
