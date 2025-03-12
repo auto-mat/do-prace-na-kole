@@ -1,6 +1,10 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
+{% block header %}
+Invitation to the challenge
+{% endblock %}
+
 {% block content %}
 {% language lang_code %}
 <p>
@@ -18,6 +22,9 @@ Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with you i
 
 <p>
 Need more information? Respond directly to your fellow colleague at <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
+</p>
+<p>
+You can learn more about the challenge on <a href="{{ inviting.campaign.campaign_type.web }}">our website</a> or from your new teammates.
 </p>
 {% endlanguage %}
 {% endblock %}

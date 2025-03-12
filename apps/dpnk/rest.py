@@ -27,6 +27,7 @@ from enum import Enum
 # import denorm
 
 from django.conf import settings
+from django.core.validators import validate_email
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.utils import timezone
@@ -92,7 +93,11 @@ from .util import (
     get_api_version_from_request,
     today,
 )
-from .tasks import team_membership_approval_mail, team_membership_denial_mail
+from .tasks import (
+    team_membership_approval_mail,
+    team_membership_denial_mail,
+    team_membership_invitation_mail,
+)
 from .payu import PayU
 from .rest_permissions import IsOwnerOrSuperuser
 from .rest_auth import PayUNotifyOrderRequestAuthentification
@@ -3282,6 +3287,54 @@ class MyOrganizationAdmin(APIView, UserAttendanceMixin):
                 )
                 .values("admin_name", "admin_email")
             }
+        )
+
+
+class EmailsField(serializers.Field):
+    """Emails field
+
+    Emails strings are separated by "," separator e.g.
+
+    "test0@test.org,test1@test.org"
+    """
+
+    def to_representation(self, emails):
+        return emails
+
+    def to_internal_value(self, emails):
+        emails = [email.strip() for email in emails.split(",")]
+        for email in emails:
+            validate_email(email)
+        return emails
+
+
+class SendChallengeTeamInvitationEmailDeserializer(serializers.Serializer):
+    email = EmailsField(required=True)
+
+
+class SendChallengeTeamInvitationEmailPost(UserAttendanceMixin, APIView):
+    """Send challenge team invitation email"""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SendChallengeTeamInvitationEmailDeserializer
+
+    def post(self, request):
+        deserialized_data = SendChallengeTeamInvitationEmailDeserializer(
+            data=request.data
+        )
+        if not deserialized_data.is_valid():
+            return Response(
+                {"error": deserialized_data.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ua = self.ua()
+        team_membership_invitation_mail.delay(
+            user_attendance_id=ua.id,
+            emails=deserialized_data.data["email"],
+        )
+        return Response(
+            {"team_membership_invitation_email_sended": deserialized_data.data["email"]}
         )
 
 

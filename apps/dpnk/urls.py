@@ -38,6 +38,7 @@ from .rest import (
     PayUCreateOrderPost,
     PayUPaymentNotifyPost,
     router,
+    SendChallengeTeamInvitationEmailPost,
     SendRegistrationConfirmationEmail,
 )
 from .views import (
@@ -452,6 +453,11 @@ urlpatterns = [
         "rest/my-organization-admin/",
         MyOrganizationAdmin.as_view(),
         name="my-organization-admin",
+    ),
+    path(
+        "rest/send-team-membership-invitation-email/",
+        SendChallengeTeamInvitationEmailPost.as_view(),
+        name="send-team-membership-invitation-email",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),

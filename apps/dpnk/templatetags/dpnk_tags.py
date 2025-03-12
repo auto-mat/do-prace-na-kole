@@ -242,11 +242,14 @@ def concat_cities_into_url_param(user_profile):
 
 
 @register.simple_tag(takes_context=True)
-def get_app_base_url(context, url=None):
+def get_app_base_url(context, url=None, url_params=None):
     """Get app base URL
 
     :param dict context: Django context
     :param str url: Django old frontend app router URL name for reverse func
+    :param str url_params: Django old frontend app router URL params for reverse func
+                           with following format e.g."token=X4NW6O067Z3THBYY91SFMZJ1D9EG4V,
+                                                      initial_email=test@test.org"
 
     :return str: app base URL
     """
@@ -254,5 +257,11 @@ def get_app_base_url(context, url=None):
     if rtwbb_frontend_app_base_url:
         return rtwbb_frontend_app_base_url
     if url:
-        return f"{context['absolute_uri']}{reverse(url)}"
+        params = {}
+        if url_params:
+            params = {
+                k: v
+                for k, v in (item.strip().split("=") for item in url_params.split(","))
+            }
+        return f"{context['absolute_uri']}{reverse(url, kwargs=params)}"
     return context["absolute_uri"]

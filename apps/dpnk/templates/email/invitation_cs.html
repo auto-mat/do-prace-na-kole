@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load dpnk_tags %}
 
 {% block header %}
 Pozvánka do výzvy
@@ -16,12 +17,15 @@ Proto vám posílá pozvánku do svého týmu {{inviting.team.name}} ve výzvě 
 </p>
 
 {% if not invited %}
-{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% get_app_base_url 'registrace' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
 {% else %}
-{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% get_app_base_url 'change_team_invitation' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
 {% endif %}
 {% include "./button.html" with button_text="Chci šlápnout do pedálů" %}
 
+<p>
+Potřebujete více informací? Odpovězte přímo svému kolegovi na adresu <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
+</p>
 <p>
 Více o výzvě se dozvíte na <a href="{{ inviting.campaign.campaign_type.web }}">našem webu</a> nebo od svých nových týmových parťáků.
 </p>

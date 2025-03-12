@@ -414,3 +414,18 @@ def team_membership_denial_mail(self, team_members):
             denier=User.objects.get(id=team_member["denier_id"]),
             reason=team_member["reason"],
         )
+
+
+@shared_task(bind=True)
+def team_membership_invitation_mail(self, user_attendance_id, emails):
+    """Send team membership invitation mail
+
+    :param int user_attendance_id: UserAttendance model ID
+    :param list emails: Emails addresses where team membership invitation
+                        email will be sended
+    """
+    for email_address in emails:
+        email.invitation_mail(
+            user_attendance=UserAttendance.objects.get(id=user_attendance_id),
+            email=email_address,
+        )
