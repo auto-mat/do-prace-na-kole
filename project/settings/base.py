@@ -905,6 +905,7 @@ FAKTUROID = {
     ),
     "base_rest_api_url": os.getenv(
         "FAKTUROID_BASE_REST_API_URL",
+        "https://app.fakturoid.cz/api/v3",
     ),
     "production": {
         "user_account": os.getenv(

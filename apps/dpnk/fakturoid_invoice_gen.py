@@ -352,7 +352,7 @@ def obtain_access_token(client_id, client_secret):
     json_headers['Content-Type'] = 'application/json'
 
     response = requests.post(
-        'https://app.fakturoid.cz/api/v3/oauth/token',
+        settings.FAKTUROID["base_rest_api_url"] + '/oauth/token',
         json=data,
         headers=json_headers
     )
@@ -403,7 +403,8 @@ def create_api_session(account):
         })
 
         slug = settings.FAKTUROID[account]["user_account"]
-        base_url = f"https://app.fakturoid.cz/api/v3/accounts/{slug}"
+        fa_base_url = settings.FAKTUROID["base_rest_api_url"]
+        base_url = f"{fa_base_url}/accounts/{slug}"
 
         # Test the connection
         response = session.get(f"{base_url}/account.json")

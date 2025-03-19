@@ -91,7 +91,7 @@ jobs:
                --env DPNK_DB_PASSWORD=password \
                --env DPNK_BROKER_URL="amqp://rabbit" \
                --env FAKTUROID_INVOICE_NUMBER_WIDTH=4 \
-               --env FAKTUROID_BASE_REST_API_URL="https://app.fakturoid.cz/api/v2" \
+               --env FAKTUROID_BASE_REST_API_URL="https://app.fakturoid.cz/api/v3" \
                --env FAKTUROID_TEST_USER_ACCOUNT=$FAKTUROID_TEST_USER_ACCOUNT \
                --env FAKTUROID_TEST_USER_EMAIL="$FAKTUROID_TEST_USER_EMAIL" \
                --env FAKTUROID_TEST_API_KEY=$FAKTUROID_TEST_API_KEY \
