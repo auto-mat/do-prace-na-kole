@@ -92,6 +92,7 @@ def delete_invoice(session, base_url, invoice_id):
         )
         return False
 
+
 def delete_subject(session, base_url, subject_id):
     """Delete Fakturoid subject by ID using API V3
 
@@ -115,7 +116,7 @@ def delete_subject(session, base_url, subject_id):
         if response.status_code == 204:
             return True
 
-        # If subject cannot be deleted because it contains documents, 
+        # If subject cannot be deleted because it contains documents,
         # the server will respond with status 403 Forbidden
         if response.status_code == 403:
             logger.error(
@@ -183,7 +184,9 @@ def create_or_update_subject(session, base_url, invoice):
 
     # Check if subject exists
     try:
-        response = session.get(f"{base_url}/subjects.json", params={"custom_id": invoice.company.id})
+        response = session.get(
+            f"{base_url}/subjects.json", params={"custom_id": invoice.company.id}
+        )
         response.raise_for_status()
         subjects = response.json()
 
@@ -193,8 +196,7 @@ def create_or_update_subject(session, base_url, invoice):
             state = "Update"
             subject_custom_id = f"with custom_id = {invoice.company.id}"
             response = session.patch(
-                f"{base_url}/subjects/{subject_id}.json",
-                json=fa_subject_data
+                f"{base_url}/subjects/{subject_id}.json", json=fa_subject_data
             )
             response.raise_for_status()
             return response.json()
@@ -202,10 +204,7 @@ def create_or_update_subject(session, base_url, invoice):
             # Create new subject
             state = "Create"
             subject_custom_id = ""
-            response = session.post(
-                f"{base_url}/subjects.json",
-                json=fa_subject_data
-            )
+            response = session.post(f"{base_url}/subjects.json", json=fa_subject_data)
             response.raise_for_status()
             return response.json()
     except requests.RequestException as error:
@@ -240,12 +239,14 @@ def create_invoice_lines(invoice):
             "" if invoice.anonymize else payment.user_attendance.name_for_trusted()
         )
         description = f"Platba za soutěžící/ho {user_name}"
-        lines.append({
-            "name": description,
-            "quantity": 1,
-            "unit_price": str(decimal.Decimal(amount)),
-            "vat_rate": 0
-        })
+        lines.append(
+            {
+                "name": description,
+                "quantity": 1,
+                "unit_price": str(decimal.Decimal(amount)),
+                "vat_rate": 0,
+            }
+        )
     return lines
 
 
@@ -267,7 +268,9 @@ def create_or_update_invoice(session, base_url, subject, invoice):
 
     # Check if invoice exists
     try:
-        response = session.get(f"{base_url}/invoices.json", params={"custom_id": invoice.id})
+        response = session.get(
+            f"{base_url}/invoices.json", params={"custom_id": invoice.id}
+        )
         response.raise_for_status()
         invoices = response.json()
 
@@ -275,7 +278,7 @@ def create_or_update_invoice(session, base_url, subject, invoice):
             "custom_id": str(invoice.id),
             "subject_id": subject["id"],
             "order_number": invoice.order_number,
-            "lines": create_invoice_lines(invoice=invoice)
+            "lines": create_invoice_lines(invoice=invoice),
         }
 
         if invoices:
@@ -286,15 +289,13 @@ def create_or_update_invoice(session, base_url, subject, invoice):
 
             # First, clear existing lines
             response = session.patch(
-                f"{base_url}/invoices/{invoice_id}.json",
-                json={"lines": []}
+                f"{base_url}/invoices/{invoice_id}.json", json={"lines": []}
             )
             response.raise_for_status()
 
             # Then update with new data
             response = session.patch(
-                f"{base_url}/invoices/{invoice_id}.json",
-                json=fa_invoice_data
+                f"{base_url}/invoices/{invoice_id}.json", json=fa_invoice_data
             )
             response.raise_for_status()
             return response.json()
@@ -302,10 +303,7 @@ def create_or_update_invoice(session, base_url, subject, invoice):
             # Create new invoice
             state = "Create"
             invoice_custom_id = ""
-            response = session.post(
-                f"{base_url}/invoices.json",
-                json=fa_invoice_data
-            )
+            response = session.post(f"{base_url}/invoices.json", json=fa_invoice_data)
             response.raise_for_status()
             return response.json()
     except requests.RequestException as error:
@@ -334,43 +332,35 @@ def obtain_access_token(client_id, client_secret):
 
     # Create the authorization header using HTTP Basic auth
     auth_string = f"{client_id}:{client_secret}"
-    auth_bytes = auth_string.encode('ascii')
-    auth_b64 = base64.b64encode(auth_bytes).decode('ascii')
+    auth_bytes = auth_string.encode("ascii")
+    auth_b64 = base64.b64encode(auth_bytes).decode("ascii")
 
     # Common headers for all requests
-    headers = {
-        'Accept': 'application/json',
-        'Authorization': f'Basic {auth_b64}'
-    }
+    headers = {"Accept": "application/json", "Authorization": f"Basic {auth_b64}"}
 
     data = {
-        'grant_type': "client_credentials",
+        "grant_type": "client_credentials",
     }
 
     # Try with JSON content type first
     json_headers = headers.copy()
-    json_headers['Content-Type'] = 'application/json'
+    json_headers["Content-Type"] = "application/json"
 
     response = requests.post(
-        settings.FAKTUROID["base_rest_api_url"] + '/oauth/token',
+        settings.FAKTUROID["base_rest_api_url"] + "/oauth/token",
         json=data,
-        headers=json_headers
+        headers=json_headers,
     )
 
     try:
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        logger.error(
-            error_message.format(
-                client_id=client_id,
-                error=str(e)
-            )
-        )
+        logger.error(error_message.format(client_id=client_id, error=str(e)))
         return None
 
     token_data = response.json()
 
-    return token_data['access_token']
+    return token_data["access_token"]
 
 
 def create_api_session(account):
@@ -391,16 +381,18 @@ def create_api_session(account):
             client_id=settings.FAKTUROID[account]["client_id"],
             client_secret=settings.FAKTUROID[account]["client_secret"],
         )
-        
+
         if not access_token:
             return None, None
 
         # Create session with OAuth Bearer token
         session = requests.Session()
-        session.headers.update({
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {access_token}"
-        })
+        session.headers.update(
+            {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {access_token}",
+            }
+        )
 
         slug = settings.FAKTUROID[account]["user_account"]
         fa_base_url = settings.FAKTUROID["base_rest_api_url"]
@@ -441,8 +433,7 @@ def send_invoice_by_email(session, base_url, invoice_data, fakturoid_account):
             data = {"email": settings.FAKTUROID[fakturoid_account]["user_email"]}
 
         response = session.post(
-            f"{base_url}/invoices/{invoice_data['id']}/message.json",
-            json=data
+            f"{base_url}/invoices/{invoice_data['id']}/message.json", json=data
         )
         response.raise_for_status()
     except requests.RequestException as error:
@@ -478,9 +469,7 @@ def generate_invoice(invoice, fakturoid_account=None):
         if session and base_url:
             # Subject
             fa_subject = create_or_update_subject(
-                session=session, 
-                base_url=base_url, 
-                invoice=invoice
+                session=session, base_url=base_url, invoice=invoice
             )
 
             if fa_subject:

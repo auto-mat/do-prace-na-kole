@@ -7,7 +7,13 @@ from model_mommy import mommy
 
 from .mommy_recipes import testing_campaign
 
-from ..fakturoid_invoice_gen import generate_invoice, create_api_session, delete_invoice, get_invoice, delete_subject
+from ..fakturoid_invoice_gen import (
+    generate_invoice,
+    create_api_session,
+    delete_invoice,
+    get_invoice,
+    delete_subject,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,34 +42,36 @@ class TestGenerateFakturoidInvoice(TestCase):
 
     def tearDown(self):
         if self.fa_invoice:
-          error_message = (
-              "Delete Fakturoid '{model}' with id = {model_id}"
-              " wasn't succesfull with Fakturoid account"
-              " '{fakturoid_user_account_slug}' due error: '{error}'"
-          )
-          try:
-              model = "Invoice"
-              model_id = self.fa_invoice["custom_id"]
-              delete_invoice(self.session, self.base_url, model_id)
-              model = "Subject"
-              model_id = self.fa_invoice["subject_id"]
-              delete_subject(self.session, self.base_url, self.fa_invoice["subject_id"])
-          except (
-              requests.RequestException,
-              requests.ConnectionError,
-              requests.HTTPError,
-              requests.URLRequired,
-              requests.TooManyRedirects,
-              requests.Timeout,
-          ) as error:
-              logger.error(
-                  error_message.format(
-                      model_id=model_id,
-                      model=model,
-                      fakturoid_user_account_slug=fa.slug,
-                      error=error,
-                  )
-              )
+            error_message = (
+                "Delete Fakturoid '{model}' with id = {model_id}"
+                " wasn't succesfull with Fakturoid account"
+                " '{fakturoid_user_account_slug}' due error: '{error}'"
+            )
+            try:
+                model = "Invoice"
+                model_id = self.fa_invoice["custom_id"]
+                delete_invoice(self.session, self.base_url, model_id)
+                model = "Subject"
+                model_id = self.fa_invoice["subject_id"]
+                delete_subject(
+                    self.session, self.base_url, self.fa_invoice["subject_id"]
+                )
+            except (
+                requests.RequestException,
+                requests.ConnectionError,
+                requests.HTTPError,
+                requests.URLRequired,
+                requests.TooManyRedirects,
+                requests.Timeout,
+            ) as error:
+                logger.error(
+                    error_message.format(
+                        model_id=model_id,
+                        model=model,
+                        fakturoid_user_account_slug=fa.slug,
+                        error=error,
+                    )
+                )
 
     def test_generate_fakturoid_invoice(self):
         fa_invoice = generate_invoice(
