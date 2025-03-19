@@ -244,7 +244,10 @@ def get_all_logged_in_users():
 
 def attrgetter_def_val(attrs, instance, def_val=None):
     try:
-        return attrgetter(attrs)(instance)
+        attr = attrgetter(attrs)(instance)
+        if callable(attr):
+            return attr()
+        return attr
     except AttributeError:
         return def_val
 

@@ -1201,6 +1201,8 @@ class CityInCampaignSerializer(serpy.Serializer):
     city__name = serpy.StrField(attr="city.name")
     city__location = PointField(attr="city.location", format="latlon", required=False)
     city__wp_url = serpy.StrField(attr="city.get_wp_url", call=True)
+    city__slug = serpy.StrField(attr="city.slug")
+    city__wp_slug = serpy.StrField(attr="city.get_wp_slug", call=True)
 
     id = serpy.IntField()
     competitor_count = serpy.IntField(call=True)
@@ -1288,6 +1290,7 @@ class CitySerializer(serpy.Serializer):
     id = serpy.IntField()
     name = serpy.StrField()
     slug = serpy.StrField()
+    wp_slug = serpy.StrField(attr="get_wp_slug", call=True)
     location = PointField(format="coords")
     # 'frequency', TODO
 
@@ -1667,6 +1670,7 @@ class CitiesSerializer(serpy.Serializer):
     id = serpy.IntField()
     name = serpy.StrField()
     slug = serpy.StrField()
+    wp_slug = serpy.StrField(attr="get_wp_slug", call=True)
 
 
 class CitiesSet(viewsets.ReadOnlyModelViewSet):
@@ -2292,6 +2296,12 @@ class RegisterChallengeSerializer(serpy.Serializer):
             userprofile.userattendance_set.get(campaign__slug=req.subdomain),
         )
     )
+    city_wp_slug = RequestSpecificField(
+        lambda userprofile, req: attrgetter_def_val(
+            "team.subsidiary.city.get_wp_slug",
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+        )
+    )
 
 
 class RequestSpecificFieldDeserializer(serializers.Field):
@@ -2410,6 +2420,10 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         source="team.subsidiary.city.slug",
         read_only=True,
     )
+    city_wp_slug = RequestSpecificUserAttendanceFieldDeserializer(
+        source="team.subsidiary.city.get_wp_slug",
+        read_only=True,
+    )
     products = serializers.JSONField(required=False)
 
     class Meta:
@@ -2442,6 +2456,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "t_shirt_size_id",
             "organization_type",
             "city_slug",
+            "city_wp_slug",
             "products",
         )
 
