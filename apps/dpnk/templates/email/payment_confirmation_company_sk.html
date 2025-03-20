@@ -1,0 +1,15 @@
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+vítejte na trase!
+</p><p>
+Firemní koordinátor společnosti {{ company }} potvrzuje vaši účast ve výzvě {{ user_attendance.campaign }} svolením k zaplacení startovného.
+</p>
+{% if user_attendance.campaign.has_any_tshirt %}
+<p>
+A my jdeme připravit váš účastnický balíček a triko (či nákrčník).
+</p>
+{% endif %}
+{% endblock %}

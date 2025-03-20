@@ -1,0 +1,9 @@
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Dobré zprávy, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+potvrzujeme vaše členství v týmu {{user_attendance.team.name}}.
+Můžete do toho společně šlápnout.
+</p>
+{% endblock %}

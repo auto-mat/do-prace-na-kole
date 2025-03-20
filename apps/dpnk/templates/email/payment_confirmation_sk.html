@@ -1,0 +1,27 @@
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+vaše startovné ve výzvě {{ user_attendance.campaign }} je oficiálně zaplaceno!
+</p><p>
+Jestli ještě nemáte kompletní tým, směle do toho - určitě kolem sebe
+najdete lidi, které by možná udržitelné dojíždění za prací zajímalo.
+Tak koho do svého týmu pozvete?
+</p><p>
+A samozřejmě i mimo výzvu doporučujeme pohybovat se po světě udržitelně,
+vaše okolí i příroda vám za to určitě budou děkovat.
+</p>
+{% comment %}
+<p>
+Je načase začít s přípravami:
+</p>
+<ul>
+   <li>
+      Nemáte v týmu plný počet členů? <a href="{{ absolute_uri }}{% url 'pozvanky' %}">Pozvěte své kolegy</a>.
+   </li><li>
+      Chcete si hlídat kilometry pomocí mobilního telefonu? Stáhněte si vhodnou <a href="{{user_attendance.campaign.campaign_type.web}}/aplikace">aplikaci</a>
+   </li>
+</ul>
+{% endcomment %}
+{% endblock %}

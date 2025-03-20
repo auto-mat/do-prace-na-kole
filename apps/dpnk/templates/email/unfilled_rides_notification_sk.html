@@ -1,0 +1,24 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+
+{% block content %}
+{% language lang_code %}
+<p>
+{{ user_attendance.userprofile.first_name_vokativ }}, vyrazte do vedení!
+</p><p>
+Už je to {{ days_unfilled }} dní a žádná nová cesta.
+Vaši kolegové si zatím brousí řídítka na vítězství.
+<br/>
+Nezapomeňte: s pravidelností nejdál dojedeš.
+</p>
+
+{% get_app_base_url 'profil' as button_link %}
+{% include "./button.html" with button_text="Vyplnit cesty" %}
+
+<p>
+Jízdy můžete vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpětně, tak hurá do kalendáře.
+</p>
+
+{% endlanguage %}
+{% endblock %}

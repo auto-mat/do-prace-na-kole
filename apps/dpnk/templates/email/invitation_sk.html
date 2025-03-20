@@ -1,0 +1,33 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+
+{% block header %}
+Pozvánka do výzvy
+{% endblock %}
+
+{% block content %}
+{% language lang_code %}
+<p>
+Hezký den{% if invited %} {{ invited.userprofile.first_name_vokativ }}{% endif %},
+</p>
+<p>
+{{ inviting.userprofile.name }} si myslí, že je dnes perfektní den pro jízdu na kole.
+Proto vám posílá pozvánku do svého týmu {{inviting.team.name}} ve výzvě {{ inviting.campaign }}.
+</p>
+
+{% if not invited %}
+{% get_app_base_url 'registrace' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
+{% else %}
+{% get_app_base_url 'change_team_invitation' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
+{% endif %}
+{% include "./button.html" with button_text="Chci šlápnout do pedálů" %}
+
+<p>
+Potřebujete více informací? Odpovězte přímo svému kolegovi na adresu <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
+</p>
+<p>
+Více o výzvě se dozvíte na <a href="{{ inviting.campaign.campaign_type.web }}">našem webu</a> nebo od svých nových týmových parťáků.
+</p>
+{% endlanguage %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+
+{% block content %}
+{% language lang_code %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+přišla nám zpráva, že se chcete stát firemním koordinátorem organizace {{ company }}.
+<br/>
+Radostí nám spadl řetěz.
+</p><p>
+Teď chvilku posečkejte. Mrkneme se, jestli vás někdo se žádostí nepředběhl a dáme vědět e-mailem další informace co nejdříve.
+</p>
+{% endlanguage %}
+{% endblock %}

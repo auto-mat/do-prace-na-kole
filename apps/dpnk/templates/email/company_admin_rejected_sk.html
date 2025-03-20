@@ -1,0 +1,14 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+{% language lang_code %}
+
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+sesedněte z kola, máme pro vás důležitou zprávu. Nemohli jsme potvrdit vaši přihlášku na funkci firemního koordinátora.
+</p><p>
+Nikdo vás nekontaktoval s vysvětlením? To není správné. Ozvěte se nám prosím co nejdříve na <a href="{{user_attendance.campaign.campaign_type.contact_email}}">{{user_attendance.campaign.campaign_type.contact_email}}</a>.
+</p>
+{% endblock %}
+{% endlanguage %}
