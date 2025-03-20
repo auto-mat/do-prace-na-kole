@@ -399,7 +399,7 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
         fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=instance)
         if fa_invoice:
-            instance.fakturoid_invoice_url = fa_invoice.public_html_url
+            instance.fakturoid_invoice_url = fa_invoice["public_html_url"]
             instance.save(update_fields=["fakturoid_invoice_url"])
 
 
