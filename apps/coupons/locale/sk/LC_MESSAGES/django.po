@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-20 09:49+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
+">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+
+#: coupons/admin.py:51
+msgid "Účastník kampaně"
+msgstr ""
+
+#: coupons/admin.py:58
+msgid "Přiřazen"
+msgstr ""
+
+#: coupons/admin.py:62
+msgid "Nepřiřazen"
+msgstr ""
+
+#: coupons/apps.py:7
+msgid "Kupóny"
+msgstr ""
+
+#: coupons/forms.py:37
+msgid "Kód voucheru"
+msgstr ""
+
+#: coupons/forms.py:43
+msgid "Nesprávný formát voucheru"
+msgstr ""
+
+#: coupons/forms.py:63
+msgid "Tento slevový kupón již byl použit"
+msgstr ""
+
+#: coupons/forms.py:67
+msgid "Tento slevový kupón neexistuje, nebo již byl použit"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:79
+msgid "typ voucheru"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:87
+msgid "token"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:93
+msgid "sleva (v procentech)"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:100
+msgid "Počet možných využití"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:101
+msgid "Pokud se nevyplní, bude počet využití neomezený"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:108
+msgid "poznámka"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:115
+msgid "příjemce"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:122
+msgid "jméno příjemce"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:129
+msgid "Datum vytvoření"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:135
+msgid "Datum poslední změny"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:141 coupons/models/discount_coupon.py:147
+msgid "DEPRECATED"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:162
+msgid "PDF file"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:166
+msgid "PDF"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:178
+msgid "Slevový kupón"
+msgstr ""
+
+#: coupons/models/discount_coupon.py:179
+msgid "Slevové kupóny"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:31
+msgid "Prefix musí mít aspon dva pismena"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:37
+msgid "jméno typu voucheru"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:44
+msgid "Kampaň"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:51
+msgid "Platný do"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:60
+msgid "Prefix musí sestávat pouze z velkých písmen"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:65
+msgid "prefix"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:84
+msgid "Typ slevového kupónu"
+msgstr ""
+
+#: coupons/models/discount_coupon_type.py:85
+msgid "Typy slevového kupónu"
+msgstr ""
+
+#: coupons/views.py:51
+msgid "Uplatnit slevový voucher"
+msgstr ""

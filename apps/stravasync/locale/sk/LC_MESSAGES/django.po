@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-20 09:49+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
+">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+
+#: stravasync/models.py:16
+msgid "Účet Strava"
+msgstr ""
+
+#: stravasync/models.py:17
+msgid "Účty Strava"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:9
+msgid "Jste propojeni s účtem "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:18
+#, python-format
+msgid ""
+"\n"
+"        Synchronizace proběhla úspěšně.<br/>\n"
+"        Bylo přidáno %(new_trips)s\n"
+"        z celkem %(synced_trips)s cest.\n"
+"        "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:24
+#, python-format
+msgid ""
+"\n"
+"        Ve Stravě máte  %(synced_activities)s aktivit a žadné nejsou "
+"označené hashtagem. Přidejte hashtagy %(hashtag_to)s nebo %(hashtag_from)s "
+"do názvu aktivit aby se počítaly jako jízdy do práce a z práce.\n"
+"        "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:27
+msgid ""
+"\n"
+"    Pokud jste při připojení se Stravou nevybral/a \"Synchronizovat i "
+"soukromé jízdy a zóny\", soukromé jízdy synchronizované nebudou. Pokud "
+"chcete změnit tohle nastavení, odpojte a připojte znovu.\n"
+"    "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:33
+msgid "Našli jsme následující aktivity:"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:40
+msgid "Synchronizace selhala"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:43
+msgid "Poslední synchronizace proběhla "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:45
+msgid "Nastala chyba, synchronizace neproběhla."
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:51
+msgid ""
+"\n"
+"    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
+"dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
+"    "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:59
+msgid "Synchronizovat"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:65
+msgid "Odpojit"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:68
+msgid "Ještě nejste propojeni se Stravou "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:71
+msgid "Synchronizovat i soukromé jízdy a zóny"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:72
+msgid ""
+"\n"
+"        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href=\"https://"
+"support.strava.com/hc/en-us/articles/115000173384-Privacy-Zones\">používat "
+"privátní zóny</a> ve Stravě, aby nedocházelo ke zveřejnění vašeho místa "
+"bydliště.\n"
+"        "
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:76
+msgid "Propojit se Stravou"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:80
+msgid "Jak to funguje"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:81
+msgid ""
+"\n"
+"V aplikaci Strava napište do názvu (nikoliv do popisu) svých aktivit hashtag "
+"#dpnktam nebo #dpnkzpět. Poté se jízdy budou automaticky synchronizovat. "
+"Bohužel vás ale musíme informovat o možné komplikaci s přenosem dat ze "
+"Stravy - žádost o zvýšení limitu připojení stále nebyla na straně Stravy "
+"schválena a je tak možné, že se vám nějaké jízdy v systému neobjeví hned. "
+"Pro radu, jak postupovat dále, prosíme navštivte <a href=\"https://www."
+"dopracenakole.cz/o-vyzve/faq\">Často kladené otázky (FAQ)</a>\n"
+msgstr ""
+
+#: stravasync/views.py:26
+msgid "Propojení se Stravou"
+msgstr ""
+
+#: stravasync/views.py:59
+msgid "Aplikace Strava není dostupná."
+msgstr ""
+
+#: stravasync/views.py:61
+msgid "API limit vyčerpan."
+msgstr ""
