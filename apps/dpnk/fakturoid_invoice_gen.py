@@ -37,7 +37,7 @@ def get_invoice(session, base_url, invoice_id):
         logger.error(
             error_message.format(
                 invoice_id=invoice_id,
-                fakturoid_account=base_url.split("/")[-2],
+                fakturoid_account=base_url.split("/")[-1],
                 error=error,
             )
         )
@@ -86,7 +86,7 @@ def delete_invoice(session, base_url, invoice_id):
         logger.error(
             error_message.format(
                 invoice_id=invoice_id,
-                fakturoid_account=base_url.split("/")[-2],
+                fakturoid_account=base_url.split("/")[-1],
                 error=error,
             )
         )
@@ -133,7 +133,7 @@ def delete_subject(session, base_url, subject_id):
         logger.error(
             error_message.format(
                 subject_id=subject_id,
-                fakturoid_account=base_url.split("/")[-2],
+                fakturoid_account=base_url.split("/")[-1],
                 error=error,
             )
         )
@@ -212,7 +212,7 @@ def create_or_update_subject(session, base_url, invoice):
             error_message.format(
                 state=state,
                 subject_custom_id=subject_custom_id,
-                fakturoid_account=base_url.split("/")[-2],
+                fakturoid_account=base_url.split("/")[-1],
                 error=error,
             )
         )
@@ -311,7 +311,7 @@ def create_or_update_invoice(session, base_url, subject, invoice):
             error_message.format(
                 state=state,
                 invoice_custom_id=invoice_custom_id,
-                fakturoid_account=base_url.split("/")[-2],
+                fakturoid_account=base_url.split("/")[-1],
                 error=error,
             )
         )
@@ -441,7 +441,7 @@ def send_invoice_by_email(session, base_url, invoice_data, fakturoid_account):
         logger.error(
             error_message.format(
                 invoice_id=invoice_data["id"],
-                fakturoid_account=base_url.split("/")[-2],
+                fakturoid_account=base_url.split("/")[-1],
                 error=error,
             )
         )
