@@ -18,9 +18,9 @@ def get_invoice(session, base_url, invoice_id):
 
     :param session: requests session with authentication
     :param str base_url: Base URL for API calls
-    :param str/int invoice_id: ID of the invoice to retrieve
+    :param str|int invoice_id: ID of the invoice to retrieve
 
-    :return dict/None: Fakturoid Invoice data or None
+    :return dict|None: Fakturoid Invoice data or None
     """
     error_message = (
         "Getting Fakturoid invoice with ID {invoice_id}"
@@ -49,7 +49,7 @@ def delete_invoice(session, base_url, invoice_id):
 
     :param session: requests session with authentication
     :param str base_url: Base URL for API calls
-    :param str/int invoice_id: ID of the invoice to delete
+    :param str|int invoice_id: ID of the invoice to delete
 
     :return bool: True if successful, False otherwise
     """
@@ -71,10 +71,10 @@ def delete_invoice(session, base_url, invoice_id):
         # If invoice cannot be deleted, the server will respond with status 422 Unprocessable Entity
         if response.status_code == 422:
             logger.error(
-                f"Invoice with ID {invoice_id} cannot be deleted. "
-                "This may be because it's a proforma with connected paid invoice, "
-                "an invoice with correction invoice, a proforma with tax documents, "
-                "a tax document with connected invoice, or the document is locked."
+                f"Invoice with ID {invoice_id} cannot be deleted."
+                " This may be because it's a proforma with connected paid invoice,"
+                " an invoice with correction invoice, a proforma with tax documents,"
+                " a tax document with connected invoice, or the document is locked."
             )
             return False
 
@@ -98,7 +98,7 @@ def delete_subject(session, base_url, subject_id):
 
     :param session: requests session with authentication
     :param str base_url: Base URL for API calls
-    :param str/int subject_id: ID of the subject to delete
+    :param str|int subject_id: ID of the subject to delete
 
     :return bool: True if successful, False otherwise
     """
@@ -120,8 +120,8 @@ def delete_subject(session, base_url, subject_id):
         # the server will respond with status 403 Forbidden
         if response.status_code == 403:
             logger.error(
-                f"Subject with ID {subject_id} cannot be deleted. "
-                "This is likely because the subject contains documents."
+                f"Subject with ID {subject_id} cannot be deleted."
+                " This is likely because the subject contains documents."
             )
             return False
 
@@ -147,7 +147,7 @@ def create_or_update_subject(session, base_url, invoice):
     :param str base_url: Base URL for API calls
     :param class instance invoice: Invoice model class instance
 
-    :return dict/None: Fakturoid Subject data or None
+    :return dict|None: Fakturoid Subject data or None
     """
     error_message = (
         "{state} Fakturoid subject {subject_custom_id}"
@@ -258,7 +258,7 @@ def create_or_update_invoice(session, base_url, subject, invoice):
     :param dict subject: Fakturoid subject data
     :param class instance invoice: Invoice model class instance
 
-    :return dict/None: Fakturoid Invoice data or None
+    :return dict|None: Fakturoid Invoice data or None
     """
     error_message = (
         "{state} Fakturoid invoice {invoice_custom_id}"
@@ -323,7 +323,7 @@ def obtain_access_token(client_id, client_secret):
 
     :param str account: Fakturoid account type "production" or "test"
 
-    :return str/None: Access token or None if failed
+    :return str|None: Access token or None if failed
     """
     error_message = (
         "Obtaining access token wasn't successful with Fakturoid"
@@ -368,7 +368,8 @@ def create_api_session(account):
 
     :param str account: Fakturoid account type "production" or "test"
 
-    :return tuple: (session, base_url) or (None, None)
+    :return tuple: (requests session with authentication, base URL for API calls)
+                   or (None, None)
     """
     error_message = (
         "Creating Fakturoid API session wasn't successful with Fakturoid"
@@ -452,7 +453,7 @@ def generate_invoice(invoice, fakturoid_account=None):
     :param class instance invoice: Invoice model class instance
     :param str fakturoid_account: Fakturoid account type "production" or "test"
 
-    :return dict/None: Fakturoid Invoice data or None
+    :return dict|None: Fakturoid Invoice data or None
     """
     fa_invoice = None
     date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
