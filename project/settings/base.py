@@ -692,7 +692,9 @@ FAVICON_PATH = STATIC_URL + "img/favicon/favicon.ico"
 
 PRICE_LEVEL_MODEL = "dpnk.Campaign"
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(
-    ("basic", _("Základní")), ("company", _("Pro firmy"))
+    ("basic", _("Základní")),
+    ("company", _("Pro firmy")),
+    ("school", _("Pro školy")),
 )
 PRICE_LEVEL_CATEGORY_DEFAULT = "basic"
 
