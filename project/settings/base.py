@@ -909,6 +909,7 @@ FAKTUROID = {
     ),
     "base_rest_api_url": os.getenv(
         "FAKTUROID_BASE_REST_API_URL",
+        "https://app.fakturoid.cz/api/v3",
     ),
     "production": {
         "user_account": os.getenv(
@@ -917,8 +918,11 @@ FAKTUROID = {
         "user_email": os.getenv(
             "FAKTUROID_PRODUCTION_USER_EMAIL",
         ),
-        "api_key": os.getenv(
-            "FAKTUROID_PRODUCTION_API_KEY",
+        "client_id": os.getenv(
+            "FAKTUROID_PRODUCTION_CLIENT_ID",
+        ),
+        "client_secret": os.getenv(
+            "FAKTUROID_PRODUCTION_CLIENT_SECRET",
         ),
         "user_agent_header": os.getenv(
             "FAKTUROID_PRODUCTION_USER_AGENT_HEADER",
@@ -931,8 +935,11 @@ FAKTUROID = {
         "user_email": os.getenv(
             "FAKTUROID_TEST_USER_EMAIL",
         ),
-        "api_key": os.getenv(
-            "FAKTUROID_TEST_API_KEY",
+        "client_id": os.getenv(
+            "FAKTUROID_TEST_CLIENT_ID",
+        ),
+        "client_secret": os.getenv(
+            "FAKTUROID_TEST_CLIENT_SECRET",
         ),
         "user_agent_header": os.getenv(
             "FAKTUROID_TEST_USER_AGENT_HEADER",
