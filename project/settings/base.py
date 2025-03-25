@@ -104,6 +104,7 @@ LOCALE_PATHS = (
     normpath(PROJECT_ROOT, "t_shirt_delivery/locale"),
     normpath(PROJECT_ROOT, "stravasync/locale"),
     normpath(PROJECT_ROOT, "registration-templates/account/email/locale"),
+    normpath(PROJECT_ROOT, "project/settings/locale"),
 )
 TIME_ZONE = "Europe/Prague"
 LANGUAGES = (
