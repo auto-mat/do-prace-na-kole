@@ -345,7 +345,7 @@ class MinimalTripSerializer(serpy.Serializer):
     )
 
 
-class TripDeserializer(MinimalTripDeserializer):
+class TripBaseDeserializer(MinimalTripDeserializer):
     sourceId = serializers.CharField(
         required=False,
         source="source_id",
@@ -360,6 +360,33 @@ class TripDeserializer(MinimalTripDeserializer):
         required=False, help_text="Description of the trip as input by user"
     )
 
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "trip_date",
+            "direction",
+            "file",
+            "track",
+            "commuteMode",
+            "durationSeconds",
+            "distanceMeters",
+            "sourceApplication",
+            "sourceId",
+            "description",
+        )
+        extra_kwargs = {
+            "track": {
+                "write_only": True,
+                "help_text": "Track in GeoJSON MultiLineString format",
+            },
+            "direction": {
+                "help_text": 'Direction of the trip "trip_to" for trip to work, "trip_from" for trip from work'
+            },
+        }
+
+
+class TripDeserializer(TripBaseDeserializer):
     def is_valid(self, *args, **kwargs):
         request = self.context["request"]
         self.user_attendance = request.user_attendance
@@ -393,30 +420,48 @@ class TripDeserializer(MinimalTripDeserializer):
             raise TripAlreadyExists
         return instance
 
-    class Meta:
-        model = Trip
-        fields = (
-            "id",
-            "trip_date",
-            "direction",
-            "file",
-            "track",
-            "commuteMode",
-            "durationSeconds",
-            "distanceMeters",
-            "sourceApplication",
-            "sourceId",
-            "description",
-        )
-        extra_kwargs = {
-            "track": {
-                "write_only": True,
-                "help_text": "Track in GeoJSON MultiLineString format",
-            },
-            "direction": {
-                "help_text": 'Direction of the trip "trip_to" for trip to work, "trip_from" for trip from work'
-            },
-        }
+
+class TripsDeserializer(serializers.Serializer):
+    trips = TripBaseDeserializer(many=True)
+
+    def is_valid(self, *args, **kwargs):
+        request = self.context["request"]
+        self.user_attendance = request.user_attendance
+        if not self.user_attendance:
+            self.user_attendance = get_or_create_userattendance(
+                request, request.subdomain
+            )
+        return super().is_valid(*args, **kwargs)
+
+    def validate(self, data):
+        validated_data = super().validate(data)
+        for trip in validated_data["trips"]:
+            if (
+                "date" in validated_data
+                and not self.user_attendance.campaign.day_recent(validated_data["date"])
+            ):
+                raise InactiveDayGPX
+        return validated_data
+
+    def create(self, validated_data):
+        instances = {"trips": []}
+        try:
+            for trip in validated_data["trips"]:
+                Trip.objects.filter(
+                    user_attendance=self.user_attendance,
+                    date=trip["date"],
+                    direction=trip["direction"],
+                ).delete()
+                trip["user_attendance"] = self.user_attendance
+                trip["from_application"] = True
+                instance = Trip.objects.create(**trip)
+                instances["trips"].append(instance)
+        except ValidationError:
+            raise GPXParsingFail
+        except IntegrityError:
+            raise TripAlreadyExists
+
+        return instances
 
 
 class TripSerializer(MinimalTripSerializer):
@@ -512,12 +557,16 @@ class TripSet(UserAttendanceMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
+        api_version = get_api_version_from_request(request=self.request)
         if self.action in ["list", "retrieve"]:
             return TripSerializer
         elif self.action in ["update", "partial_update"]:
             return TripUpdateDeserializer
         else:
-            return TripDeserializer
+            if api_version == "v1":
+                return TripDeserializer
+            elif api_version == "v2":
+                return TripsDeserializer
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -554,12 +603,16 @@ class TripRangeSet(UserAttendanceMixin, viewsets.ModelViewSet):
         return qs
 
     def get_serializer_class(self):
+        api_version = get_api_version_from_request(request=self.request)
         if self.action in ["list", "retrieve"]:
             return TripSerializer
         elif self.action in ["update", "partial_update"]:
             return TripUpdateDeserializer
         else:
-            return TripDeserializer
+            if api_version == "v1":
+                return TripDeserializer
+            elif api_version == "v2":
+                return TripsDeserializer
 
     permission_classes = [permissions.IsAuthenticated]
 
