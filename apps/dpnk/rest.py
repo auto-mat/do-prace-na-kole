@@ -447,14 +447,14 @@ class TripsDeserializer(serializers.Serializer):
         instances = {"trips": []}
         try:
             for trip in validated_data["trips"]:
-                Trip.objects.filter(
+                trip["user_attendance"] = self.user_attendance
+                trip["from_application"] = True
+                instance, _ = Trip.objects.update_or_create(
                     user_attendance=self.user_attendance,
                     date=trip["date"],
                     direction=trip["direction"],
-                ).delete()
-                trip["user_attendance"] = self.user_attendance
-                trip["from_application"] = True
-                instance = Trip.objects.create(**trip)
+                    defaults=trip,
+                )
                 instances["trips"].append(instance)
         except ValidationError:
             raise GPXParsingFail
