@@ -443,6 +443,7 @@ class TripsDeserializer(serializers.Serializer):
                 raise InactiveDayGPX
         return validated_data
 
+    @transaction.atomic
     def create(self, validated_data):
         instances = {"trips": []}
         try:
