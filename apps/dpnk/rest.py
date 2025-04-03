@@ -2036,11 +2036,11 @@ class DiscountCouponSet(viewsets.ReadOnlyModelViewSet):
             prefix, base_code = code.upper().split(splitChar)
             return (
                 DiscountCoupon.objects.exclude(
-                    coupon_type__campaign__slug=self.request.subdomain,
                     coupon_type__valid_until__isnull=False,
                     coupon_type__valid_until__lt=today(),
                 )
                 .filter(
+                    coupon_type__campaign__slug=self.request.subdomain,
                     coupon_type__prefix=prefix,
                     token=base_code,
                 )
