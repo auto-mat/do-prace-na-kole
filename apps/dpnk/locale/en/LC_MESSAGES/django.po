@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-21 09:41+0100\n"
+"POT-Creation-Date: 2025-04-03 13:05+0200\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -246,6 +246,11 @@ msgstr "Fakturoid invoice"
 msgid "Nemá účast v kampani"
 msgstr "Hasn't user attendance?"
 
+#: dpnk/allauth.py:28 dpnk/models/campaign.py:481
+#: dpnk/models/campaign_type.py:37
+msgid "Do práce na kole"
+msgstr "Bike to work"
+
 #: dpnk/auth.py:68
 msgid "Problém na trase! Sesedněte z kola a nejprve svůj účet {}."
 msgstr "Bump ahead! Get off your bike and first {} your account."
@@ -308,7 +313,7 @@ msgid "Registrovat firemního koordinátora"
 msgstr "Register company coordinator"
 
 #: dpnk/auth.py:166 dpnk/company_admin_forms.py:65 dpnk/filters.py:156
-#: dpnk/forms.py:1056 dpnk/models/invoice.py:182
+#: dpnk/forms.py:1055 dpnk/models/invoice.py:182
 #: dpnk/templates/company_admin/select_users_pay_for.html:29
 #: dpnk/templates/dpnk/team_member_card.html:35
 msgid "E-mail"
@@ -351,7 +356,7 @@ msgid "Částka"
 msgstr "Amount"
 
 #: dpnk/company_admin_forms.py:62 dpnk/company_admin_forms.py:240
-#: dpnk/forms.py:338 dpnk/forms.py:1054 dpnk/models/city.py:35
+#: dpnk/forms.py:338 dpnk/forms.py:1053 dpnk/models/city.py:35
 #: dpnk/models/diploma.py:11 dpnk/models/questionnaire.py:52
 #: dpnk/models/questionnaire.py:108 dpnk/models/user_attendance.py:188
 #: dpnk/models/user_attendance.py:194 dpnk/models/voucher.py:126
@@ -389,7 +394,7 @@ msgstr "Time of registration"
 msgid "Tip: Použijte shift pro výběr rozsahu položek."
 msgstr "Tip: Use shift for range selection."
 
-#: dpnk/company_admin_forms.py:125 dpnk/forms.py:118 dpnk/forms.py:1213
+#: dpnk/company_admin_forms.py:125 dpnk/forms.py:118 dpnk/forms.py:1212
 msgid "Hotovo"
 msgstr "Done"
 
@@ -836,7 +841,7 @@ msgid ""
 "login_redirection_button'>Obnovit heslo</a>"
 msgstr ""
 
-#: dpnk/forms.py:680 dpnk/views/registration_and_login.py:282
+#: dpnk/forms.py:679 dpnk/views/registration_and_login.py:282
 msgid ""
 "Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo "
 "vytvořit jiný tým."
@@ -844,23 +849,23 @@ msgstr ""
 "The team, you have selected, is already full. You have to choose or create "
 "different one."
 
-#: dpnk/forms.py:714
+#: dpnk/forms.py:713
 msgid "E-mail kolegy"
 msgstr "Colleague E-mail"
 
-#: dpnk/forms.py:724
+#: dpnk/forms.py:723
 msgid "Přeskočit"
 msgstr "Skip"
 
-#: dpnk/forms.py:729
+#: dpnk/forms.py:728
 msgid "Odeslat pozvánku"
 msgstr "Send invitations"
 
-#: dpnk/forms.py:765 dpnk/templates/dpnk/payment_type.html:133
+#: dpnk/forms.py:764 dpnk/templates/dpnk/payment_type.html:133
 msgid "Zaplatit"
 msgstr "Pay"
 
-#: dpnk/forms.py:780
+#: dpnk/forms.py:779
 #, python-brace-format
 msgid ""
 "Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo "
@@ -874,58 +879,58 @@ msgstr ""
 "<ul><li><a href='{url}'>I want to be the Coordinator of my company</a></li></"
 "ul>"
 
-#: dpnk/forms.py:814
+#: dpnk/forms.py:813
 msgid "Podpořím výzvu základním darem."
 msgstr ""
 
-#: dpnk/forms.py:822
+#: dpnk/forms.py:821
 #, fuzzy
 msgid "Podpořím výzvu benefičním darem."
 msgstr ""
 "I want to support this challenge and with beneficiary participant fee %s Kč. "
 "<i class='fa fa-heart'></i>"
 
-#: dpnk/forms.py:829
+#: dpnk/forms.py:828
 #, fuzzy
 #| msgid "Startovné mi platí zaměstnavatel."
 msgid "Příspěvek za mě platí zaměstnavatel."
 msgstr "Participation fee will be paid by my employer."
 
-#: dpnk/forms.py:840
+#: dpnk/forms.py:839
 msgid ""
 "Chci pravidelně podporovat spolek AutoMat a rozvoj udržitelné mobility, a "
 "mít tak účast ve výzvách vždy zdarma."
 msgstr ""
 
-#: dpnk/forms.py:853
+#: dpnk/forms.py:852
 msgid "Chci uplatnit voucher."
 msgstr "I want to apply a voucher."
 
-#: dpnk/forms.py:874
+#: dpnk/forms.py:873
 msgid "Adresa URL včetně úvodního http:// nebo https://"
 msgstr "URL address including leading http:// or https://"
 
-#: dpnk/forms.py:925
+#: dpnk/forms.py:924
 msgid "Chci být zařazen do nového týmu"
 msgstr "I want to be put into a new team"
 
-#: dpnk/forms.py:935
+#: dpnk/forms.py:934
 msgid "Uživatelské jméno zákazníka"
 msgstr "Customer's username"
 
-#: dpnk/forms.py:936
+#: dpnk/forms.py:935
 msgid "Uživatelské jméno, které Vám sdělí zákazník"
 msgstr "Username, that will tell you the customer"
 
-#: dpnk/forms.py:940 dpnk/models/company.py:123
+#: dpnk/forms.py:939 dpnk/models/company.py:123
 msgid "Poznámka"
 msgstr "Note"
 
-#: dpnk/forms.py:955
+#: dpnk/forms.py:954
 msgid "Takový uživatel neexistuje"
 msgstr "Such a participant does not exist"
 
-#: dpnk/forms.py:961
+#: dpnk/forms.py:960
 #, python-format
 msgid ""
 "Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s"
@@ -933,7 +938,7 @@ msgstr ""
 "This participant is not a newcomer, he or she took part last year in the "
 "following campaigns: %s"
 
-#: dpnk/forms.py:984
+#: dpnk/forms.py:983
 #, python-format
 msgid ""
 "Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: "
@@ -942,47 +947,47 @@ msgstr ""
 "This user has already been %(time)s in the bike shop %(bike_shop)s (poznámka:"
 "%(note)s)."
 
-#: dpnk/forms.py:1020 dpnk/models/gpxfile.py:184 dpnk/models/trip.py:277
+#: dpnk/forms.py:1019 dpnk/models/gpxfile.py:184 dpnk/models/trip.py:277
 msgid "Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?"
 msgstr "GPX upload error. Are you sure, that the file was in GPX format?"
 
-#: dpnk/forms.py:1046
+#: dpnk/forms.py:1045
 msgid "Tento e-mail již je v našem systému zanesen."
 msgstr "This e-mail is already registered in our system"
 
-#: dpnk/forms.py:1071
+#: dpnk/forms.py:1070
 msgid "E-mail slouží jako přihlašovací jméno."
 msgstr "E-mail serves as username."
 
-#: dpnk/forms.py:1106
+#: dpnk/forms.py:1105
 msgid "Zvolte jednu možnost"
 msgstr "Choose one"
 
-#: dpnk/forms.py:1121
+#: dpnk/forms.py:1120
 msgid ""
 "Ano, zajímají mě akce na triko, slevové kódy i výhry a také dění v oblasti "
 "udržitelné mobility."
 msgstr ""
 
-#: dpnk/forms.py:1127
+#: dpnk/forms.py:1126
 msgid ""
 "Ne, kromě upozornění nestojím o žádné informace (a nevadí mi, že přijdu o "
 "spoustu výhod)."
 msgstr ""
 
-#: dpnk/forms.py:1132
+#: dpnk/forms.py:1131
 #, fuzzy
 #| msgid "Přejete si dostávat náš newsletter?"
 msgid "Přejete si od nás dostávat zprávy?"
 msgstr "Do You want to receive our newsletter?"
 
-#: dpnk/forms.py:1164
+#: dpnk/forms.py:1163
 msgid ""
 "Zajímají mě akce na triko, slevové kódy i výhry a také dění v oblasti "
 "udržitelné mobility."
 msgstr ""
 
-#: dpnk/forms.py:1180
+#: dpnk/forms.py:1179
 #, python-brace-format
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
@@ -997,25 +1002,25 @@ msgstr ""
 "target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'> "
 "{campaign} Terms and Conditions</a>. {extra_agreement_text}"
 
-#: dpnk/forms.py:1236
+#: dpnk/forms.py:1235
 msgid "Vzdálenost (km)"
 msgstr "Distance (km)"
 
-#: dpnk/forms.py:1240
+#: dpnk/forms.py:1239
 msgid "Doba (min)"
 msgstr ""
 
-#: dpnk/forms.py:1274
+#: dpnk/forms.py:1273
 msgid "Musíte vyplnit vzdálenost"
 msgstr "You have to fill in distance"
 
-#: dpnk/forms.py:1282
+#: dpnk/forms.py:1281
 #, fuzzy, python-brace-format
 #| msgid "Pěší cesta musí mít minimálně jeden a půl kilometru"
 msgid "Cesta musí mít minimálně {km} kilometrů"
 msgstr "Pedestrian trip has to be at least one and half kilometer long"
 
-#: dpnk/forms.py:1291
+#: dpnk/forms.py:1290
 #, python-format
 msgid "Činnost musí trvat minimálně %(min)d minuta"
 msgid_plural "Činnost musí trvat minimálně %(min)d minut"
@@ -1279,10 +1284,6 @@ msgstr "Contact e-mail"
 #: dpnk/models/campaign.py:473
 msgid "Deprecated: Postfix pro menu"
 msgstr "Posfix for menu"
-
-#: dpnk/models/campaign.py:481 dpnk/models/campaign_type.py:37
-msgid "Do práce na kole"
-msgstr "Bike to work"
 
 #: dpnk/models/campaign.py:482 dpnk/models/campaign_type.py:38
 msgid "Do školy na kole"
@@ -1953,7 +1954,7 @@ msgstr ""
 msgid "Výsledek soutěže"
 msgstr "Competition result"
 
-#: dpnk/models/competition_result.py:39 dpnk/urls.py:220
+#: dpnk/models/competition_result.py:39 dpnk/urls.py:221
 #: dpnk/views/results_and_competitions.py:109
 msgid "Výsledky soutěží"
 msgstr "Competition results"
@@ -3090,43 +3091,43 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1020
+#: dpnk/rest.py:1121
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr "The campaign attendee <%(email)s> does not have assigned a team."
 
-#: dpnk/rest.py:1031
+#: dpnk/rest.py:1132
+#, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
 "tým."
 msgstr ""
-"The self campaign attendee with ID <%(id)s> is not possible to remove a assigned "
-"team."
+"The self campaign attendee with ID <%(id)s> is not possible to remove a "
+"assigned team."
 
-#: dpnk/rest.py:1052
+#: dpnk/rest.py:1153
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
 "ID <%(user_attendance_id)s> není členem vašeho týmu."
 msgstr ""
-"Only your team members can be allowed <%(team_members)s>, attendee with ID "
-"<%(user_attendance_id)s> is not a member of your team."
+"Only your team members can be allowed <%(team_members)s>, attendee with ID <"
+"%(user_attendance_id)s> is not a member of your team."
 
-#: dpnk/rest.py:1082
+#: dpnk/rest.py:1183
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
 "hodnota <null>. Změnit tým není povoleno."
 msgstr ""
-"Only the value <null> is allowed to remove the campaign attendee with ID <%(id)s>. "
-"Changing the team is not allowed."
+"Only the value <null> is allowed to remove the campaign attendee with ID <"
+"%(id)s>. Changing the team is not allowed."
 
-
-#: dpnk/rest.py:2038
+#: dpnk/rest.py:2146
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr "Missing OpenPayu-Signature request object header."
 
-#: dpnk/rest.py:2062
+#: dpnk/rest.py:2170
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
@@ -3135,7 +3136,7 @@ msgstr ""
 "Signature request object verification process failed, incorrect signature <"
 "%(signature)s>."
 
-#: dpnk/rest.py:2091
+#: dpnk/rest.py:2199
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
@@ -3144,7 +3145,7 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> does not change it, as a result "
 "of payment orderstatus <%(order_status)s>."
 
-#: dpnk/rest.py:2127
+#: dpnk/rest.py:2235
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
@@ -3153,17 +3154,21 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> was changed to status <"
 "%(order_status)s>."
 
-#: dpnk/rest.py:2140
+#: dpnk/rest.py:2248
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr "Non-existent payment with order id <%(order_id)s>."
 
-#: dpnk/rest.py:2778
+#: dpnk/rest.py:2951
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr "Discount voucher <%(coupon)s> does not exists."
 
-#: dpnk/rest.py:2789
+#: dpnk/rest.py:2957
+msgid "Slevový kupón <%(coupon)s> je neplatný."
+msgstr "Discount voucher <%(coupon)s> is invalid."
+
+#: dpnk/rest.py:2969
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr "Email address <%(email)s> exists. Use another email address, please."
@@ -3194,7 +3199,7 @@ msgstr ""
 msgid "Neplatné uživatelské jméno nebo heslo."
 msgstr "Invalid username or password."
 
-#: dpnk/tasks.py:224
+#: dpnk/tasks.py:225
 #, python-brace-format
 msgid "{name}: Byl vám přiřazen nový voucher s kódem {token}"
 msgstr "{name}: A new voucher ({token}) has been assigned to you"
@@ -4521,7 +4526,7 @@ msgstr "Your team overview"
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr "Spared carbon dioxide amount"
 
-#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:356
+#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:357
 msgid "Emisní kalkulačka"
 msgstr "Emission calculator"
 
@@ -4867,35 +4872,35 @@ msgstr "Clear"
 msgid "Vyberte z předchozích tras"
 msgstr "Choose a previous route"
 
-#: dpnk/templatetags/dpnk_tags.py:77
+#: dpnk/templatetags/dpnk_tags.py:78
 msgid "Novinky"
 msgstr "News"
 
-#: dpnk/templatetags/dpnk_tags.py:88
+#: dpnk/templatetags/dpnk_tags.py:89
 msgid "akce"
 msgstr "event"
 
-#: dpnk/templatetags/dpnk_tags.py:95
+#: dpnk/templatetags/dpnk_tags.py:96
 msgid "Akce"
 msgstr "Action"
 
-#: dpnk/templatetags/dpnk_tags.py:105
+#: dpnk/templatetags/dpnk_tags.py:106
 msgid "cena"
 msgstr "price"
 
-#: dpnk/templatetags/dpnk_tags.py:114
+#: dpnk/templatetags/dpnk_tags.py:115
 msgid "Ceny"
 msgstr "Prizes"
 
-#: dpnk/templatetags/dpnk_tags.py:122
+#: dpnk/templatetags/dpnk_tags.py:123
 msgid "novinka"
 msgstr "news"
 
-#: dpnk/urls.py:364
+#: dpnk/urls.py:365
 msgid "Nápověda"
 msgstr "Help"
 
-#: dpnk/urls.py:596
+#: dpnk/urls.py:602
 msgid "Města které koordinujete"
 msgstr ""
 
