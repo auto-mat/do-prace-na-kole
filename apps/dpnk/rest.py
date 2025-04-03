@@ -2036,6 +2036,7 @@ class DiscountCouponSet(viewsets.ReadOnlyModelViewSet):
             prefix, base_code = code.upper().split(splitChar)
             return (
                 DiscountCoupon.objects.exclude(
+                    coupon_type__campaign__slug=self.request.subdomain,
                     coupon_type__valid_until__isnull=False,
                     coupon_type__valid_until__lt=today(),
                 )
@@ -2941,6 +2942,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
     def validate_discount_coupon(self, discount_coupon):
         if discount_coupon and not DiscountCoupon.objects.filter(
+
             token=discount_coupon.split("-")[-1]
         ).only("token"):
             raise serializers.ValidationError(
