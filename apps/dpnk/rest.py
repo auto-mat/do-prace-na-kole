@@ -2941,14 +2941,23 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         return dict(items)
 
     def validate_discount_coupon(self, discount_coupon):
-        if discount_coupon and not DiscountCoupon.objects.filter(
+        if discount_coupon:
+            discount_coupon_exist = DiscountCoupon.objects.filter(
+                coupon_type__campaign__slug=self.context["request"].subdomain,
+                token=discount_coupon.split("-")[-1],
+            ).only("token")
+            if not discount_coupon_exist:
+                raise serializers.ValidationError(
+                    _("Slevový kupón <%(coupon)s> neexistuje.")
+                    % {"coupon": discount_coupon},
+                )
+            else:
+                if not discount_coupon_exist[0].available():
+                    raise serializers.ValidationError(
+                        _("Slevový kupón <%(coupon)s> je neplatný.")
+                        % {"coupon": discount_coupon},
+                    )
 
-            token=discount_coupon.split("-")[-1]
-        ).only("token"):
-            raise serializers.ValidationError(
-                _("Slevový kupón <%(coupon)s> neexistuje.")
-                % {"coupon": discount_coupon},
-            )
         return discount_coupon
 
     def validate_email(self, email):
