@@ -474,7 +474,7 @@ class TripSerializer(MinimalTripSerializer):
 
     file = RequestSpecificField(
         lambda trip, req: (
-            req.build_absolute_uri(trip.gpx_file.file.url) if trip.gpx_file else None
+            req.build_absolute_uri(trip.gpx_file.url) if trip.gpx_file else None
         ),
         required=False,
         # attr="gpx_file",
