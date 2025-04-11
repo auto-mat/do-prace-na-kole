@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import base64
 import time
 import hashlib
 import logging
@@ -27,6 +28,7 @@ from enum import Enum
 # import denorm
 
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.validators import validate_email
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
@@ -356,6 +358,10 @@ class TripBaseDeserializer(MinimalTripDeserializer):
         source="gpx_file",
         help_text="GPX file with the track",
     )
+    file_encoded_string = serializers.CharField(
+        required=False,
+        help_text="GPX file with the track as base64 encoded string",
+    )
     description = serializers.CharField(
         required=False, help_text="Description of the trip as input by user"
     )
@@ -367,6 +373,7 @@ class TripBaseDeserializer(MinimalTripDeserializer):
             "trip_date",
             "direction",
             "file",
+            "file_encoded_string",
             "track",
             "commuteMode",
             "durationSeconds",
@@ -448,6 +455,12 @@ class TripsDeserializer(serializers.Serializer):
         instances = {"trips": []}
         try:
             for trip in validated_data["trips"]:
+                file_encoded_string = trip.pop("file_encoded_string", None)
+                if file_encoded_string:
+                    format, filestr = file_encoded_string.split(";base64,")
+                    ext = format.split("/")[-1]
+                    data = ContentFile(base64.b64decode(filestr), name=f"temp.{ext}")
+                    trip["gpx_file"] = data
                 trip["user_attendance"] = self.user_attendance
                 trip["from_application"] = True
                 instance, _ = Trip.objects.update_or_create(
