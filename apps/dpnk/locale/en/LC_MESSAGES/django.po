@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-03 13:05+0200\n"
+"POT-Creation-Date: 2025-04-12 09:44+0200\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -1954,7 +1954,7 @@ msgstr ""
 msgid "Výsledek soutěže"
 msgstr "Competition result"
 
-#: dpnk/models/competition_result.py:39 dpnk/urls.py:221
+#: dpnk/models/competition_result.py:39 dpnk/urls.py:222
 #: dpnk/views/results_and_competitions.py:109
 msgid "Výsledky soutěží"
 msgstr "Competition results"
@@ -3091,12 +3091,12 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1121
+#: dpnk/rest.py:1134
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr "The campaign attendee <%(email)s> does not have assigned a team."
 
-#: dpnk/rest.py:1132
+#: dpnk/rest.py:1145
 #, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
@@ -3105,7 +3105,7 @@ msgstr ""
 "The self campaign attendee with ID <%(id)s> is not possible to remove a "
 "assigned team."
 
-#: dpnk/rest.py:1153
+#: dpnk/rest.py:1166
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
@@ -3114,7 +3114,7 @@ msgstr ""
 "Only your team members can be allowed <%(team_members)s>, attendee with ID <"
 "%(user_attendance_id)s> is not a member of your team."
 
-#: dpnk/rest.py:1183
+#: dpnk/rest.py:1196
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
@@ -3123,11 +3123,11 @@ msgstr ""
 "Only the value <null> is allowed to remove the campaign attendee with ID <"
 "%(id)s>. Changing the team is not allowed."
 
-#: dpnk/rest.py:2146
+#: dpnk/rest.py:2159
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr "Missing OpenPayu-Signature request object header."
 
-#: dpnk/rest.py:2170
+#: dpnk/rest.py:2183
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
@@ -3136,7 +3136,7 @@ msgstr ""
 "Signature request object verification process failed, incorrect signature <"
 "%(signature)s>."
 
-#: dpnk/rest.py:2199
+#: dpnk/rest.py:2212
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
@@ -3145,7 +3145,7 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> does not change it, as a result "
 "of payment orderstatus <%(order_status)s>."
 
-#: dpnk/rest.py:2235
+#: dpnk/rest.py:2248
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
@@ -3154,36 +3154,42 @@ msgstr ""
 "Payment status for order ID <%(order_id)s> was changed to status <"
 "%(order_status)s>."
 
-#: dpnk/rest.py:2248
+#: dpnk/rest.py:2261
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr "Non-existent payment with order id <%(order_id)s>."
 
-#: dpnk/rest.py:2951
+#: dpnk/rest.py:2964
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr "Discount voucher <%(coupon)s> does not exists."
 
-#: dpnk/rest.py:2957
+#: dpnk/rest.py:2970
+#, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr "Discount voucher <%(coupon)s> is invalid."
 
-#: dpnk/rest.py:2969
+#: dpnk/rest.py:2982
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr "Email address <%(email)s> exists. Use another email address, please."
 
-#: dpnk/rest_auth.py:23
+#: dpnk/rest.py:3447
+#, python-format
+msgid "ID aplikace <%(app_id)s> neexistuje."
+msgstr "Application ID <%(app_id)s> does not exist."
+
+#: dpnk/rest_auth.py:25
 msgid "Request objekt má chybějící <Authorization: Basic> záhlaví."
 msgstr "Request object has missing <Authorization: Basic> header."
 
-#: dpnk/rest_auth.py:32
+#: dpnk/rest_auth.py:34
 #, python-format
 msgid ""
 "Dekódovanie Authorization Basic header <%(auth_header)s> záhlaví selhalo."
 msgstr "Decode Authorization Basic header <%(auth_header)s> header failed."
 
-#: dpnk/rest_auth.py:39
+#: dpnk/rest_auth.py:41
 #, fuzzy
 #| msgid ""
 #| "Nesprávný formát Authorization Basic záhlaví. Použijte <username:"
@@ -3195,7 +3201,7 @@ msgstr ""
 "Incorrect format of Authorization Basic header. Please use <username:"
 "password> formát."
 
-#: dpnk/rest_auth.py:55
+#: dpnk/rest_auth.py:57
 msgid "Neplatné uživatelské jméno nebo heslo."
 msgstr "Invalid username or password."
 
@@ -4526,7 +4532,7 @@ msgstr "Your team overview"
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr "Spared carbon dioxide amount"
 
-#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:357
+#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:358
 msgid "Emisní kalkulačka"
 msgstr "Emission calculator"
 
@@ -4896,11 +4902,11 @@ msgstr "Prizes"
 msgid "novinka"
 msgstr "news"
 
-#: dpnk/urls.py:365
+#: dpnk/urls.py:366
 msgid "Nápověda"
 msgstr "Help"
 
-#: dpnk/urls.py:602
+#: dpnk/urls.py:608
 msgid "Města které koordinujete"
 msgstr ""
 
