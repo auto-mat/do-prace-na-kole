@@ -2,10 +2,12 @@ import base64
 import logging
 
 from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import authentication
 from rest_framework import exceptions
+from rest_framework_simplejwt.tokens import RefreshToken
 
 logger = logging.getLogger(__name__)
 
@@ -54,3 +56,46 @@ class PayUNotifyOrderRequestAuthentification(authentication.BaseAuthentication):
         raise exceptions.AuthenticationFailed(
             _("Neplatné uživatelské jméno nebo heslo.")
         )
+
+
+def get_tokens_for_user(user, lifetime=1, lifetime_unit="days"):
+    """Manualy generate simple JWT tokens with defined lifetime
+
+    :param User user: User model instance
+    :param int lifetime: Access token lifetime value with default value
+                         1 day
+    :param str lifetime_unit: Access token lifetime unit with default
+                              value days
+
+    :return dict: With refresh/access (key) token string and expiration
+                  date time string with timezone offset
+                  {
+                    "refresh" : {
+                        "token": "<TOKEN>"
+                        "expiration": "<EXPIRATION DATE TIME>"
+                    },
+                    "access" : {
+                        "token": "<TOKEN>"
+                        "expiration": "<EXPIRATION DATE TIME>"
+                    },
+                }
+    """
+    refresh = RefreshToken.for_user(user)
+    access_token = refresh.access_token
+    lifetime = {lifetime_unit: lifetime}
+    access_token.set_exp(lifetime=timezone.timedelta(**lifetime))
+
+    return {
+        "refresh": {
+            "token": str(refresh),
+            "expiration": timezone.datetime.fromtimestamp(refresh["exp"])
+            .astimezone()
+            .isoformat(),
+        },
+        "access": {
+            "token": str(access_token),
+            "expiration": timezone.datetime.fromtimestamp(access_token["exp"])
+            .astimezone()
+            .isoformat(),
+        },
+    }

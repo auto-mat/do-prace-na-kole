@@ -102,7 +102,7 @@ from .tasks import (
 )
 from .payu import PayU
 from .rest_permissions import IsOwnerOrSuperuser
-from .rest_auth import PayUNotifyOrderRequestAuthentification
+from .rest_auth import get_tokens_for_user, PayUNotifyOrderRequestAuthentification
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -3428,6 +3428,43 @@ class SendChallengeTeamInvitationEmailPost(UserAttendanceMixin, APIView):
         )
         return Response(
             {"team_membership_invitation_email_sended": deserialized_data.data["email"]}
+        )
+
+
+class OpenApplicationWithRestToken(APIView):
+    """Open application with REST API simple JWT token with customized
+    lifetime
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, app_id):
+        try:
+            rough_url = settings.DPNK_MOBILE_APP_URLS[app_id]
+        except IndexError:
+            return Response(
+                {
+                    "error": _("Aplikace s ID <%(app_id)s> neexistuje.")
+                    % {"app_id": app_id},
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        campaign_slug_identifier = self.request.subdomain
+        tokens = get_tokens_for_user(
+            user=request.user,
+            lifetime=settings.DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_CONFIG["lifetime"],
+            lifetime_unit=settings.DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_CONFIG[
+                "lifetime_unit"
+            ],
+        )
+        return Response(
+            {
+                "app_url": rough_url.format(
+                    auth_token=tokens["access"]["token"],
+                    campaign_slug_identifier=campaign_slug_identifier,
+                ),
+                "token_expiration": tokens["access"]["expiration"],
+            }
         )
 
 
