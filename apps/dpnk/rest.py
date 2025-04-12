@@ -3444,7 +3444,7 @@ class OpenApplicationWithRestToken(APIView):
         except IndexError:
             return Response(
                 {
-                    "error": _("Aplikace s ID <%(app_id)s> neexistuje.")
+                    "error": _("ID aplikace <%(app_id)s> neexistuje.")
                     % {"app_id": app_id},
                 },
                 status=status.HTTP_404_NOT_FOUND,
