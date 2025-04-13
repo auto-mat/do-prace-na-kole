@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.conf.urls import url, include
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth import views as django_views
 from django.utils.translation import ugettext_lazy as _
 
@@ -41,6 +41,9 @@ from .rest import (
     router,
     SendChallengeTeamInvitationEmailPost,
     SendRegistrationConfirmationEmail,
+    StravaAuth,
+    StravaConnect,
+    StravaDisconnect,
 )
 from .views import (
     answers,
@@ -50,8 +53,6 @@ from .views import (
     GoogleLogin,
     FacebookLogin,
 )
-
-from django.urls import path, re_path
 
 from apps.dpnk.rest_registration import CustomRegisterView
 from allauth.account.views import confirm_email
@@ -464,6 +465,21 @@ urlpatterns = [
         "rest/open-app-with-rest-token/<int:app_id>/",
         OpenApplicationWithRestToken.as_view(),
         name="open-app-with-rest-token",
+    ),
+    re_path(
+        "rest/strava-connect/(?P<scope>(read|read_all))/",
+        StravaConnect.as_view(),
+        name="strava-connect",
+    ),
+    path(
+        "rest/strava-disconnect/",
+        StravaDisconnect.as_view(),
+        name="strava-disconnect",
+    ),
+    path(
+        "rest/strava-auth/<str:code>/",
+        StravaAuth.as_view(),
+        name="strava-auth",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),

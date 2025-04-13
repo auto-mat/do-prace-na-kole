@@ -24,6 +24,9 @@ import logging
 
 from enum import Enum
 
+import stravalib
+from stravalib.exc import AccessUnauthorized, RateLimitExceeded
+
 # TODO re-enable or fix denorm
 # import denorm
 
@@ -89,6 +92,7 @@ from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
 from t_shirt_delivery.models import TShirtSize
 from coupons.models import DiscountCoupon
+
 from .util import (
     attrgetter_def_val,
     get_all_logged_in_users,
@@ -106,6 +110,8 @@ from .rest_auth import get_tokens_for_user, PayUNotifyOrderRequestAuthentificati
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
+
+from stravasync import hashtags
 
 import drf_serpy as serpy
 
@@ -1663,6 +1669,60 @@ class StravaAccountSerializer(serpy.Serializer):
     last_name = serpy.StrField()
     user_sync_count = serpy.IntField()
     errors = serpy.StrField()
+    warn_user_sync_count = serpy.MethodField()
+    max_user_sync_count = serpy.MethodField()
+    hashtag_from = serpy.MethodField()
+    hashtag_to = serpy.MethodField()
+    sync_outcome = serpy.MethodField()
+    last_sync_time = serpy.MethodField()
+
+    def _get_lang_code(self, lang_code):
+        return "cs" if lang_code == "sk" else lang_code
+
+    def get_warn_user_sync_count(self, obj):
+        return settings.STRAVA_MAX_USER_SYNC_COUNT // 2
+
+    def get_max_user_sync_count(self, obj):
+        return settings.STRAVA_MAX_USER_SYNC_COUNT
+
+    def get_hashtag_from(self, obj):
+        return hashtags.get_hashtag_from(
+            campaign_slug=self.context["request"].subdomain,
+            lang=self._get_lang_code(
+                lang_code=self.context["request"].LANGUAGE_CODE,
+            ),
+        )
+
+    def get_hashtag_to(self, obj):
+        return hashtags.get_hashtag_to(
+            campaign_slug=self.context["request"].subdomain,
+            lang=self._get_lang_code(
+                lang_code=self.context["request"].LANGUAGE_CODE,
+            ),
+        )
+
+    def get_sync_outcome(self, obj):
+        from stravasync import tasks
+
+        result, error = None, None
+        if (
+            obj.last_sync_time is None
+            and obj.user_sync_count < settings.STRAVA_MAX_USER_SYNC_COUNT
+        ):
+            try:
+                result = tasks.sync(obj.id)
+            except requests.exceptions.ConnectionError:
+                error = _("Aplikace Strava není dostupná.")
+            except RateLimitExceeded:
+                error = _("API limit vyčerpan.")
+        if error:
+            return {"result": result, "error": error}
+        return {"result": result}
+
+    def get_last_sync_time(self, obj):
+        if obj.last_sync_time:
+            return obj.last_sync_time.astimezone().isoformat()
+        return None
 
 
 class StravaAccountSet(viewsets.ReadOnlyModelViewSet):
@@ -3464,6 +3524,100 @@ class OpenApplicationWithRestToken(APIView):
                     campaign_slug_identifier=campaign_slug_identifier,
                 ),
                 "token_expiration": tokens["access"]["expiration"],
+            }
+        )
+
+
+class StravaConnect(APIView):
+    """Connect to Strava account"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, scope=None):
+        sclient = stravalib.Client()
+        return Response(
+            {
+                "auth_url": sclient.authorization_url(
+                    client_id=settings.STRAVA_CLIENT_ID,
+                    redirect_uri=settings.STRAVA_APP_REDIRECT_URL,
+                    scope="activity:read_all"
+                    if scope == "read_all"
+                    else "activity:read",
+                )
+            }
+        )
+
+
+class StravaAuth(APIView):
+    """Auth to Strava account and create/update StravaAccount DB model"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, code=None):
+        if code is None:
+            Response(
+                {
+                    "error": _("Chybějící Strava API autorizační kód <%(code)s>.")
+                    % {"code": code},
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        sclient = stravalib.Client()
+        try:
+            token_response = sclient.exchange_code_for_token(
+                client_id=settings.STRAVA_CLIENT_ID,
+                client_secret=settings.STRAVA_CLIENT_SECRET,
+                code=code,
+            )
+        except stravalib.exc.Fault as e:
+            Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+        acct, created = StravaAccount.objects.get_or_create(
+            user_id=request.user.id,
+        )
+        acct.strava_username = sclient.get_athlete().username or ""
+        acct.first_name = sclient.get_athlete().firstname or ""
+        acct.last_name = sclient.get_athlete().lastname or ""
+        acct.access_token = token_response["access_token"]
+        acct.refresh_token = token_response["refresh_token"]
+        acct.save()
+        strava_account = StravaAccountSet.as_view({"get": "list"})(
+            request._request
+        ).data["results"]
+        response = {
+            "account_status": "created" if created else "updated",
+            "account": strava_account,
+        }
+        return Response(response)
+
+
+class StravaDisconnect(APIView):
+    """Disconnect Strava account"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            strava_account = request.user.stravaaccount
+        except StravaAccount.DoesNotExist:
+            return Response(
+                {
+                    "error": _("Strava užívateľský účet <%(user)s> neexistuje.")
+                    % {"user": request.user}
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        sclient = stravalib.Client(access_token=strava_account.access_token)
+        try:
+            sclient.deauthorize()
+        except AccessUnauthorized:
+            pass
+        strava_account.delete()
+        return Response(
+            {
+                "success": _(
+                    "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
+                )
+                % {"user": request.user}
             }
         )
 
