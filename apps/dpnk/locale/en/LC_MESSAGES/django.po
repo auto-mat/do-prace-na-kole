@@ -3200,7 +3200,7 @@ msgstr "Strava user account <%(user)s> does not exist."
 #: dpnk/rest.py:3618
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
-msgstr ""The user account <%(user)s> has been successfully deleted."
+msgstr "The user account <%(user)s> has been successfully deleted."
 
 #: dpnk/rest_auth.py:25
 msgid "Request objekt má chybějící <Authorization: Basic> záhlaví."
