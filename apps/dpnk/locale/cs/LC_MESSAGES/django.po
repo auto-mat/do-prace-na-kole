@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-12 09:44+0200\n"
+"POT-Creation-Date: 2025-04-13 12:36+0200\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -1878,7 +1878,7 @@ msgstr "Datum začátku kategorie musí být menší, než datum konce kategorie
 msgid "Výsledek soutěže"
 msgstr "Výsledek kategorie výzvy"
 
-#: dpnk/models/competition_result.py:39 dpnk/urls.py:222
+#: dpnk/models/competition_result.py:39 dpnk/urls.py:223
 #: dpnk/views/results_and_competitions.py:109
 msgid "Výsledky soutěží"
 msgstr "Výsledky kategorií výzvy"
@@ -2978,80 +2978,103 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1134
+#: dpnk/rest.py:1140
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr ""
 
-#: dpnk/rest.py:1145
+#: dpnk/rest.py:1151
 #, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
 "tým."
 msgstr ""
 
-#: dpnk/rest.py:1166
+#: dpnk/rest.py:1172
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
 "ID <%(user_attendance_id)s> není členem vašeho týmu."
 msgstr ""
 
-#: dpnk/rest.py:1196
+#: dpnk/rest.py:1202
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
 "hodnota <null>. Změnit tým není povoleno."
 msgstr ""
 
-#: dpnk/rest.py:2159
+#: dpnk/rest.py:1715
+msgid "Aplikace Strava není dostupná."
+msgstr ""
+
+#: dpnk/rest.py:1717
+msgid "API limit vyčerpan."
+msgstr ""
+
+#: dpnk/rest.py:2219
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: dpnk/rest.py:2183
+#: dpnk/rest.py:2243
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
 "%(signature)s>."
 msgstr ""
 
-#: dpnk/rest.py:2212
+#: dpnk/rest.py:2272
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2248
+#: dpnk/rest.py:2308
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
 "%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2261
+#: dpnk/rest.py:2321
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:2964
+#: dpnk/rest.py:3024
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:2970
+#: dpnk/rest.py:3030
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr ""
 
-#: dpnk/rest.py:2982
+#: dpnk/rest.py:3042
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
 
-#: dpnk/rest.py:3447
+#: dpnk/rest.py:3507
 #, python-format
 msgid "ID aplikace <%(app_id)s> neexistuje."
+msgstr ""
+
+#: dpnk/rest.py:3560
+#, python-format
+msgid "Chybějící Strava API autorizační kód <%(code)s>."
+msgstr ""
+
+#: dpnk/rest.py:3604
+#, python-format
+msgid "Strava užívateľský účet <%(user)s> neexistuje."
+msgstr ""
+
+#: dpnk/rest.py:3618
+#, python-format
+msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
 msgstr ""
 
 #: dpnk/rest_auth.py:25
@@ -4201,7 +4224,7 @@ msgstr ""
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr ""
 
-#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:358
+#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:359
 msgid "Emisní kalkulačka"
 msgstr ""
 
@@ -4544,11 +4567,11 @@ msgstr ""
 msgid "novinka"
 msgstr ""
 
-#: dpnk/urls.py:366
+#: dpnk/urls.py:367
 msgid "Nápověda"
 msgstr ""
 
-#: dpnk/urls.py:608
+#: dpnk/urls.py:624
 msgid "Města které koordinujete"
 msgstr ""
 
