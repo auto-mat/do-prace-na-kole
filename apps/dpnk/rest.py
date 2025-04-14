@@ -1706,11 +1706,11 @@ class StravaAccountSerializer(serpy.Serializer):
 
         result, error = None, None
         if (
-            obj.last_sync_time is None
-            and obj.user_sync_count < settings.STRAVA_MAX_USER_SYNC_COUNT
-        ):
+            self.context["sync"] or obj.last_sync_time is None
+        ) and obj.user_sync_count < settings.STRAVA_MAX_USER_SYNC_COUNT:
             try:
                 result = tasks.sync(obj.id)
+                result.pop("client")
             except requests.exceptions.ConnectionError:
                 error = _("Aplikace Strava není dostupná.")
             except RateLimitExceeded:
@@ -1726,8 +1726,17 @@ class StravaAccountSerializer(serpy.Serializer):
 
 
 class StravaAccountSet(viewsets.ReadOnlyModelViewSet):
+    sync = None
+
     def get_queryset(self):
+        if self.sync is None:
+            self.sync = self.kwargs.get("sync", None) == "sync"
         return StravaAccount.objects.filter(user=self.request.user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"sync": self.sync})
+        return context
 
     serializer_class = StravaAccountSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -3580,7 +3589,7 @@ class StravaAuth(APIView):
         acct.access_token = token_response["access_token"]
         acct.refresh_token = token_response["refresh_token"]
         acct.save()
-        strava_account = StravaAccountSet.as_view({"get": "list"})(
+        strava_account = StravaAccountSet.as_view({"get": "list"}, sync="sync")(
             request._request
         ).data["results"]
         response = {
@@ -3649,6 +3658,9 @@ router.register(
 )
 router.register(r"photo", PhotoSet, basename="photo")
 router.register(r"gallery", GallerySet, basename="gallery")
+router.register(
+    r"strava_account/(?P<sync>(sync))", StravaAccountSet, basename="strava-account-sync"
+)
 router.register(r"strava_account", StravaAccountSet, basename="strava_account")
 router.register(r"landing_page_icon", LandingPageIconSet, basename="landing_page_icon")
 
