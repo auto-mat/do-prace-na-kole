@@ -264,7 +264,9 @@ class Trip(WithGalleryMixin, models.Model):
 @receiver(pre_save, sender=Trip)
 def trip_pre_save(sender, instance, **kwargs):
     if instance.gpx_file and not instance.track:
-        if instance.gpx_file.name.endswith(".gz"):
+        if instance.gpx_file.name.endswith(".gz") or instance.gpx_file.name.endswith(
+            ".gzip"
+        ):
             track_file = gzip.open(instance.gpx_file)
         else:
             track_file = instance.gpx_file
