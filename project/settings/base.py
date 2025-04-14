@@ -1004,7 +1004,7 @@ PAYU_CONF = (
 )
 
 DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_CONFIG = {
-    "lifetime": os.getenv("DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_LIFETIME", 60),
+    "lifetime": int(os.getenv("DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_LIFETIME", 60)),
     "lifetime_unit": os.getenv(
         "DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_LIFETIME_UNIT", "days"
     ),
