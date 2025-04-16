@@ -76,7 +76,25 @@ DATABASES = {
         ),
         "CONN_MAX_AGE": 60,
     },
+    "read_replica": {
+        "ENGINE": os.environ.get(
+            "DPNK_DB_ENGINE", "django.contrib.gis.db.backends.postgis"
+        ),
+        "NAME": os.environ.get("DPNK_READ_REPLICA_DB_NAME", ""),
+        "USER": os.environ.get("DPNK_READ_REPLICA_DB_USER", ""),
+        "PASSWORD": os.environ.get("DPNK_READ_REPLICA_DB_PASSWORD", ""),
+        "HOST": os.environ.get("DPNK_READ_REPLICA_DB_HOST", "localhost"),
+        "PORT": os.environ.get("DPNK_READ_REPLICA_DB_PORT", ""),
+        "DISABLE_SERVER_SIDE_CURSORS": os.environ.get(
+            "DISABLE_SERVER_SIDE_CURSORS",
+            False,
+        ),
+        "CONN_MAX_AGE": 60,
+    },
+
 }
+
+DATABASE_ROUTERS = ["project.db_router.ReadWriteDbRouter"]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
