@@ -91,7 +91,6 @@ DATABASES = {
         ),
         "CONN_MAX_AGE": 60,
     },
-
 }
 
 DATABASE_ROUTERS = ["project.db_router.ReadWriteDbRouter"]
