@@ -47,6 +47,8 @@ DATABASES = {
     },
 }
 
+DATABASE_ROUTERS = []
+
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
 UNUSED_MIDDLEWARES = [

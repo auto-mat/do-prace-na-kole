@@ -54,6 +54,8 @@ DATABASES = {
     },
 }
 
+DATABASE_ROUTERS = []
+
 CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".format(
     user=db_user,
     password=db_password,
