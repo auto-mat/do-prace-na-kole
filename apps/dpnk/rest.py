@@ -1559,6 +1559,10 @@ class ThisCampaignSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Campaign.objects.filter(slug=self.request.subdomain)
 
+    @method_decorator(cache_page(60 * 60 * 8))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
     serializer_class = CampaignSerializer
 
 
