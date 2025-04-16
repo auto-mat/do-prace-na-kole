@@ -45,7 +45,7 @@ DATABASES = {
             "NAME": os.environ.get("DB", "circle_test"),
         },
     },
-    "read_ replica": {
+    "read_replica": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": os.environ.get("DPNK_READ_REPLICA_DB_NAME", "circle_test"),
         "USER": os.environ.get("DPNK_READ_REPLICA_DB_USER", "ubuntu"),
