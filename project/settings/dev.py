@@ -52,15 +52,6 @@ DATABASES = {
         "PORT": db_port,
         "CONN_MAX_AGE": 0,
     },
-    "read_replica" : {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": db_name,
-        "USER": db_user,
-        "PASSWORD": db_password,
-        "HOST": db_host,
-        "PORT": db_port,
-        "CONN_MAX_AGE": 0,
-    },
 }
 
 CELERY_RESULT_BACKEND = "db+postgresql://{user}:{password}@{host}/{db_name}".format(
