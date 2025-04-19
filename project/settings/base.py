@@ -844,9 +844,9 @@ if SILK:
 DPNK_MOBILE_APP_URLS = os.environ.get(
     "DPNK_MOBILE_APP_URLS",
     "https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.ucpraha&utm_source={campaign_slug_identifier}&amv=202&isi=1213867293&ibi=com.umotional.ucpraha&at={campaign_slug_identifier} "  # noqa
-    "https://p29ek.app.goo.gl/?link=http://cyclers.app/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.bikeapp&utm_source={campaign_slug_identifier}&amv=202&isi=1213867271&ibi=com.umotional.bikeapp&at={campaign_slug_identifier} "  # noqa
+    "https://cyclers.app/competitions.php?c={campaign_slug_identifier}&u={auth_token} "  # noqa
     "dpnk://social_login?access_token={auth_token} "
-    "https://ucpraha.page.link/?link=http://nakoleprahou.cz/competitions.php?c%3D{campaign_slug_identifier}%26u%3D{auth_token}&apn=com.umotional.ucpraha&utm_source={campaign_slug_identifier}&amv=202&isi=1213867293&ibi=com.umotional.ucpraha&at={campaign_slug_identifier}",
+    "https://nakoleprahou.cz/competitions.php?c={campaign_slug_identifier}&u={auth_token}",
 ).split(
     " "
 )  # noqa
