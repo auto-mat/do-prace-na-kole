@@ -31,6 +31,8 @@ from .autocomplete_views import (
     TeamAutocomplete,
 )
 from .rest import (
+    DataReportResults,
+    DataReportResultsByChallenge,
     HasOrganizationAdmin,
     HasUserVerifiedEmailAddress,
     IsUserOrganizationAdmin,
@@ -480,6 +482,17 @@ urlpatterns = [
         "rest/strava-auth/<str:code>/",
         StravaAuth.as_view(),
         name="strava-auth",
+    ),
+    re_path(
+        "rest/datareport-results/(?P<report_type>("
+        "regularity|performance-organization|performance-city|organizations-review))/",
+        DataReportResults.as_view(),
+        name="datareport-results-rest",
+    ),
+    re_path(
+        "rest/datareport-results-by-challenge/(?P<challenge>(may|september-january))/",
+        DataReportResultsByChallenge.as_view(),
+        name="datareport-results-by-challenge",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
