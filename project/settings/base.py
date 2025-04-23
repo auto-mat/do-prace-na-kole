@@ -93,7 +93,7 @@ DATABASES = {
     },
 }
 
-# DATABASE_ROUTERS = ["project.db_router.ReadWriteDbRouter"]
+DATABASE_ROUTERS = ["project.db_router.ReadWriteDbRouter"]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
