@@ -383,10 +383,10 @@ class Payment(Transaction):
         ):
             payment_confirmation_company_mail(self.user_attendance)
 
-        logger.info(
-            "Saving payment (after):  %s"
-            % Payment.objects.get(pk=self.id).full_string()
-        )
+        if self.id:
+            payment = Payment.objects.filter(pk=self.id)
+            if payment:
+                logger.info("Saving payment (after): %s" % payment[0].full_string())
 
     def full_string(self):
         if self.user_attendance:
