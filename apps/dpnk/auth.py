@@ -21,6 +21,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Layout, Submit
 
 from django import forms
+
+from django.conf import settings
 from django.contrib.auth import views as django_views
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import (
@@ -30,6 +32,7 @@ from django.contrib.auth.forms import (
     SetPasswordForm,
 )
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.urls import NoReverseMatch, reverse, reverse_lazy
 from django.utils import timezone
@@ -39,6 +42,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from .forms import CampaignMixin, SubmitMixin, social_html
 from .string_lazy import format_html_lazy
+from .util import attrgetter_def_val
 
 
 class EmailModelBackend(ModelBackend):
@@ -92,7 +96,31 @@ def clean_email(email):
         raise forms.ValidationError(error_text)
 
 
-class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
+class EnableCompanyCityAdminUsersAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        is_superuser = user.is_superuser
+        is_city_admin = user.is_staff
+        is_company_admin = None
+        user_attendance = user.userprofile.userattendance_set.filter(
+            campaign__slug=self.campaign.slug
+        )
+        if user_attendance:
+            is_company_admin = attrgetter_def_val(
+                attrs="related_company_admin.is_approved", instance=user_attendance[0]
+            )
+        if not is_city_admin or not is_company_admin or not is_superuser:
+            raise ValidationError(
+                _(
+                    "Přihlášení zamítnuto. Uživatel námá roli městkého,"
+                    " firemního organizátora nebo super uživatele."
+                ),
+                code="is_not_city_company_admin_or_superuser",
+            )
+
+
+class AuthenticationFormDPNK(
+    CampaignMixin, EnableCompanyCityAdminUsersAuthenticationForm
+):
     error_messages = {
         "invalid_login": {
             "password": format_html_lazy(
@@ -123,6 +151,8 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             campaign_registration_date_to = campaign.phase("registration").date_to
             if campaign_registration_date_to <= timezone.now().date():
                 disable_registration_btn = True
+        # Disable new registration
+        disable_registration_btn = True
         ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
@@ -144,23 +174,38 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
                     btn_txt=_("Registrovat"),
                     warning_txt="<p>{}</p>".format(
                         _(
-                            "Registrace není možná, protože je"
-                            " ukončena dne {campaign_registration_date_to}.",
-                        ).format(
-                            campaign_registration_date_to=date_format(
-                                campaign_registration_date_to,
-                                format="SHORT_DATE_FORMAT",
-                                use_l10n=True,
-                            )
+                            "Registrace do starého systému není povolena,"
+                            ' použijte nový systém <a href="%(url)s">Do Práce Na Kole</a>.'
                         )
+                        % {
+                            "url": getattr(
+                                settings,
+                                "RTWBB_FRONTEND_APP_BASE_URL",
+                                None,
+                            )
+                        }
                     )
-                    if disable_registration_btn
-                    else "",
+                    # warning_txt="<p>{}</p>".format(
+                    #     _(
+                    #         "Registrace není možná, protože je"
+                    #         " ukončena dne {campaign_registration_date_to}.",
+                    #     ).format(
+                    #         campaign_registration_date_to=date_format(
+                    #             campaign_registration_date_to,
+                    #             format="SHORT_DATE_FORMAT",
+                    #             use_l10n=True,
+                    #         )
+                    #     )
+                    # )
+                    if disable_registration_btn else "",
                 ),
             ),
             HTML(
-                '<a class="register_coordinator" href="{%% url "register_admin" %%}">%s</a>'
-                % _("Registrovat firemního koordinátora")
+                '<a class="register_coordinator" style="%s" href="{%% url "register_admin" %%}">%s</a>'
+                % (
+                    "pointer-events: none;" if disable_registration_btn else "",
+                    _("Registrovat firemního koordinátora"),
+                ),
             ),
         )
         self.fields["username"].label = _("E-mail")
