@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-13 12:36+0200\n"
+"POT-Creation-Date: 2025-04-23 13:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -251,75 +251,81 @@ msgstr ""
 msgid "Do práce na kole"
 msgstr ""
 
-#: dpnk/auth.py:68
+#: dpnk/auth.py:72
 msgid "Problém na trase! Sesedněte z kola a nejprve svůj účet {}."
 msgstr ""
 
-#: dpnk/auth.py:72
+#: dpnk/auth.py:76
 msgid "aktivujte"
 msgstr ""
 
-#: dpnk/auth.py:81
+#: dpnk/auth.py:85
 msgid "Neplatný email"
 msgstr ""
 
-#: dpnk/auth.py:88
+#: dpnk/auth.py:92
 msgid "Tento e-mail neznáme. "
 msgstr ""
 
-#: dpnk/auth.py:90 dpnk/auth.py:144 dpnk/forms.py:608 dpnk/forms.py:664
+#: dpnk/auth.py:94 dpnk/auth.py:174 dpnk/forms.py:608 dpnk/forms.py:664
 msgid "Registrovat"
 msgstr ""
 
-#: dpnk/auth.py:102
+#: dpnk/auth.py:114
+msgid ""
+"Přihlášení zamítnuto. Uživatel námá roli městkého, firemního organizátora "
+"nebo super uživatele."
+msgstr ""
+
+#: dpnk/auth.py:130
 msgid ""
 "Problém na trase! Sesedněte z kola a zkontrolujte si heslo. Dejte pozor na "
 "malá a velká písmena."
 msgstr ""
 
-#: dpnk/auth.py:106
+#: dpnk/auth.py:134
 msgid "Nepamatujete si heslo?"
 msgstr ""
 
-#: dpnk/auth.py:109
+#: dpnk/auth.py:137
 msgid "This account is inactive."
 msgstr ""
 
-#: dpnk/auth.py:133 dpnk/templates/registration/logged_out.html:14
+#: dpnk/auth.py:163 dpnk/templates/registration/logged_out.html:14
 msgid "Přihlásit"
 msgstr ""
 
-#: dpnk/auth.py:136 dpnk/auth.py:171
+#: dpnk/auth.py:166 dpnk/auth.py:216
 msgid "Obnovit heslo"
 msgstr ""
 
-#: dpnk/auth.py:147 dpnk/forms.py:211
-#, python-brace-format
+#: dpnk/auth.py:177
+#, python-format
 msgid ""
-"Registrace není možná, protože je ukončena dne "
-"{campaign_registration_date_to}."
+"Registrace do starého systému není povolena, použijte nový systém <a href="
+"\"%(url)s\">Do Práce Na Kole</a>."
 msgstr ""
 
-#: dpnk/auth.py:163
+#: dpnk/auth.py:207
 msgid "Registrovat firemního koordinátora"
 msgstr ""
 
-#: dpnk/auth.py:166 dpnk/company_admin_forms.py:65 dpnk/filters.py:156
+#: dpnk/auth.py:211 dpnk/company_admin_forms.py:65 dpnk/filters.py:156
 #: dpnk/forms.py:1055 dpnk/models/invoice.py:182
 #: dpnk/templates/company_admin/select_users_pay_for.html:29
 #: dpnk/templates/dpnk/team_member_card.html:35
 msgid "E-mail"
 msgstr ""
 
-#: dpnk/auth.py:186
+#: dpnk/auth.py:231
 msgid "Zadejte e-mail"
 msgstr ""
 
-#: dpnk/auth.py:199
+#: dpnk/auth.py:244
 msgid "V případě registrace přes sociální sítě nechte pole prázdné."
 msgstr ""
 
-#: dpnk/auth.py:202 dpnk/forms.py:631
+#: dpnk/auth.py:247 dpnk/forms.py:631
 msgid "Heslo musí mít minimálně 6 znaků a obsahovat alespoň jedno písmeno."
 msgstr ""
 
@@ -715,6 +721,13 @@ msgstr ""
 msgid "Zaregistrovat se přes"
 msgstr ""
 
+#: dpnk/forms.py:211
+#, python-brace-format
+msgid ""
+"Registrace není možná, protože je ukončena dne "
+"{campaign_registration_date_to}."
+msgstr ""
+
 #: dpnk/forms.py:255 dpnk/forms.py:257
 msgid "PSČ musí být pěticiferné číslo."
 msgstr ""
@@ -907,7 +920,7 @@ msgid ""
 "%(note)s)."
 msgstr ""
 
-#: dpnk/forms.py:1019 dpnk/models/gpxfile.py:184 dpnk/models/trip.py:277
+#: dpnk/forms.py:1019 dpnk/models/gpxfile.py:184 dpnk/models/trip.py:279
 msgid "Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?"
 msgstr ""
 
@@ -1857,7 +1870,7 @@ msgstr ""
 msgid "Výsledek soutěže"
 msgstr ""
 
-#: dpnk/models/competition_result.py:39 dpnk/urls.py:223
+#: dpnk/models/competition_result.py:39 dpnk/urls.py:225
 #: dpnk/views/results_and_competitions.py:109
 msgid "Výsledky soutěží"
 msgstr ""
@@ -2951,101 +2964,101 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1140
+#: dpnk/rest.py:1141
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr ""
 
-#: dpnk/rest.py:1151
+#: dpnk/rest.py:1152
 #, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
 "tým."
 msgstr ""
 
-#: dpnk/rest.py:1172
+#: dpnk/rest.py:1173
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
 "ID <%(user_attendance_id)s> není členem vašeho týmu."
 msgstr ""
 
-#: dpnk/rest.py:1202
+#: dpnk/rest.py:1203
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
 "hodnota <null>. Změnit tým není povoleno."
 msgstr ""
 
-#: dpnk/rest.py:1715
+#: dpnk/rest.py:1720
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: dpnk/rest.py:1717
+#: dpnk/rest.py:1722
 msgid "API limit vyčerpan."
 msgstr ""
 
-#: dpnk/rest.py:2219
+#: dpnk/rest.py:2233
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: dpnk/rest.py:2243
+#: dpnk/rest.py:2257
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis <"
 "%(signature)s>."
 msgstr ""
 
-#: dpnk/rest.py:2272
+#: dpnk/rest.py:2286
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2308
+#: dpnk/rest.py:2322
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav <"
 "%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2321
+#: dpnk/rest.py:2335
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:3024
+#: dpnk/rest.py:3038
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3030
+#: dpnk/rest.py:3044
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr ""
 
-#: dpnk/rest.py:3042
+#: dpnk/rest.py:3056
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
 
-#: dpnk/rest.py:3507
+#: dpnk/rest.py:3521
 #, python-format
 msgid "ID aplikace <%(app_id)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3560
+#: dpnk/rest.py:3573
 #, python-format
 msgid "Chybějící Strava API autorizační kód <%(code)s>."
 msgstr ""
 
-#: dpnk/rest.py:3604
+#: dpnk/rest.py:3617
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3618
+#: dpnk/rest.py:3631
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
 msgstr ""
@@ -4105,7 +4118,7 @@ msgstr ""
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr ""
 
-#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:359
+#: dpnk/templates/dpnk/rides.html:74 dpnk/urls.py:361
 msgid "Emisní kalkulačka"
 msgstr ""
 
@@ -4435,11 +4448,11 @@ msgstr ""
 msgid "novinka"
 msgstr ""
 
-#: dpnk/urls.py:367
+#: dpnk/urls.py:369
 msgid "Nápověda"
 msgstr ""
 
-#: dpnk/urls.py:624
+#: dpnk/urls.py:637
 msgid "Města které koordinujete"
 msgstr ""
 
