@@ -3523,7 +3523,6 @@ class OpenApplicationWithRestToken(APIView):
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
-        campaign_slug_identifier = self.request.subdomain
         tokens = get_tokens_for_user(
             user=request.user,
             lifetime=settings.DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_CONFIG["lifetime"],
@@ -3535,7 +3534,7 @@ class OpenApplicationWithRestToken(APIView):
             {
                 "app_url": rough_url.format(
                     auth_token=tokens["access"]["token"],
-                    campaign_slug_identifier=campaign_slug_identifier,
+                    campaign_slug_identifier=self.request.campaign.slug_identifier,
                 ),
                 "token_expiration": tokens["access"]["expiration"],
             }
