@@ -2954,7 +2954,10 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             self.user_attendance.save(
                 update_fields=update_fields,
             )
-            self.user_attendance.refresh_from_db()
+            try:
+                self.user_attendance.refresh_from_db()
+            except UserAttendance.DoesNotExist:
+                pass
 
     def update(self, instance, validated_data):
         return self._update_model(validated_data, instance=instance)
