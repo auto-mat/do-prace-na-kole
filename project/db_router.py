@@ -1,10 +1,14 @@
 """DB router"""
 
+from dpnk.models import Payment
+
 
 class ReadWriteDbRouter:
     """Read write operations DB router"""
 
     def db_for_read(self, model, **hints):
+        if model is Payment:
+            return "default"
         return "read_replica"
 
     def db_for_write(self, model, **hints):

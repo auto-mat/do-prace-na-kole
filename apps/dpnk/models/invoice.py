@@ -287,11 +287,12 @@ class Invoice(StaleSyncMixin, AbstractOrder):
     def add_payments(self):
         assert len(self.payment_set.all()) == 0
         payments = self.payments_to_add()
+        self.payment_set.set(payments)
         for payment in payments:
             payment.status = Status.INVOICE_MADE
             payment.save()
             denorm.flush()
-        self.payment_set.set(payments)
+
 
     def fill_company_details(self):
         if not self.company_name:  # set invoice parameters from company
