@@ -17,5 +17,3 @@ ACCOUNT_ADAPTER = "dpnk.allauth.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "dpnk.allauth.SocialAccountAdapter"
 
 REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializer"
-
-DATABASE_ROUTERS = ["project.db_router.ReadWriteDbRouter"]

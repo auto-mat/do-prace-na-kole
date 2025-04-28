@@ -1,5 +1,6 @@
 from .base import *  # noqa
 
+
 RTWBB_FRONTEND_APP_BASE_URL = os.getenv(
     "RTWBB_FRONTEND_APP_BASE_URL",
     "https://rtwbb-test.dopracenakole.net/#/",

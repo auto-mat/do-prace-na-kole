@@ -19,5 +19,3 @@ SOCIALACCOUNT_ADAPTER = "dpnk.allauth.SocialAccountAdapter"
 REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializer"
 
 CORS_ORIGIN_REGEX.append(RTWBB_FRONTEND_APP_BASE_URL.rstrip("/#/"))
-
-DATABASE_ROUTERS = ["project.db_router.ReadWriteDbRouter"]
