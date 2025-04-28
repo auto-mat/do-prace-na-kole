@@ -108,7 +108,7 @@ class EnableCompanyCityAdminUsersAuthenticationForm(AuthenticationForm):
             is_company_admin = attrgetter_def_val(
                 attrs="related_company_admin.is_approved", instance=user_attendance[0]
             )
-        if not is_city_admin or not is_company_admin or not is_superuser:
+        if not is_city_admin and not is_company_admin and not is_superuser:
             raise ValidationError(
                 _(
                     "Přihlášení zamítnuto. Uživatel námá roli městkého,"
