@@ -293,7 +293,6 @@ class Invoice(StaleSyncMixin, AbstractOrder):
             payment.save()
             denorm.flush()
 
-
     def fill_company_details(self):
         if not self.company_name:  # set invoice parameters from company
             self.company_name = self.company.name
