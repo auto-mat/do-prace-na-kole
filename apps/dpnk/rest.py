@@ -3196,9 +3196,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             pk=pk,
         )
         self.check_object_permissions(request, userprofile)
-        cache = Cache(
-            key=f"{register_challenge_serializer_base_cache_key_name}{pk}"
-        )
+        cache = Cache(key=f"{register_challenge_serializer_base_cache_key_name}{pk}")
         if cache.data:
             del cache.data
         userprofile.user.delete()
