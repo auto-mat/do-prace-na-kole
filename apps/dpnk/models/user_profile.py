@@ -301,6 +301,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         if self.pk is None:
             self.ecc_password = User.objects.make_random_password()
             self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
+
         super().save(force_insert, force_update, *args, **kwargs)
 
 
@@ -312,3 +313,17 @@ def update_mailing_userprofile(sender, instance, created, **kwargs):
         for user_attendance in instance.userattendance_set.all():
             if not kwargs.get("raw", False) and user_attendance.campaign:
                 mailing.add_or_update_user(user_attendance)
+
+
+@receiver(post_save, sender=UserProfile)
+def clean_cache(sender, instance, created, **kwargs):
+    print(kwargs)
+    if instance and kwargs.get("update_fields"):
+        # Delete REST API cache
+        cache = util.Cache(
+            key=f"{util.register_challenge_serializer_base_cache_key_name}"
+            f"{instance.id}"
+        )
+        if cache.data:
+            print("DELETE", kwargs)
+            del cache.data

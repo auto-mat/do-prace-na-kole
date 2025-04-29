@@ -27,6 +27,7 @@ import re
 import denorm
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import contenttypes
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -263,3 +264,28 @@ def get_api_version_from_request(request, defautl_api_version="v1"):
     """
     api_version = re.search(r"version=(v[1-9])", request.META.get("HTTP_ACCEPT", ""))
     return api_version.group(1) if api_version else defautl_api_version
+
+
+class Cache:
+    def __init__(self, key=None, timeout=None):
+        self._data = None
+        self._key = key
+        self._timeout = timeout
+
+    @property
+    def data(self):
+        self._data = cache.get(self._key)
+        return self._data
+
+    @data.setter
+    def data(self, data):
+        cache.set(self._key, data, self._timeout)
+        self._data = data
+
+    @data.deleter
+    def data(self, key=None):
+        if self._data or self.data:
+            cache.delete(key if key else self._key)
+
+
+register_challenge_serializer_base_cache_key_name = "register-challenge:serializer:"

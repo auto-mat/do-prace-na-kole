@@ -95,8 +95,10 @@ from coupons.models import DiscountCoupon
 
 from .util import (
     attrgetter_def_val,
+    Cache,
     get_all_logged_in_users,
     get_api_version_from_request,
+    register_challenge_serializer_base_cache_key_name,
     today,
 )
 from .tasks import (
@@ -3077,8 +3079,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
 
 class RegisterChallengeSet(viewsets.ModelViewSet):
-    def get_queryset(self):
+    _cache_timeout = 60 * 60 * 24 * 7
 
+    def get_queryset(self):
         pk = self.kwargs.get("pk")
         if pk:
             return UserProfile.objects.filter(pk=pk)
@@ -3092,16 +3095,66 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
                 ua = ua[0]
         return [ua.userprofile] if ua else []
 
+    def list(self, request, *args, **kwargs):
+        cache = None
+        cached_data = None
+        if hasattr(request.user, "userprofile"):
+            cache = Cache(
+                key=f"{register_challenge_serializer_base_cache_key_name}"
+                f"{request.user.userprofile.id}",
+                timeout=self._cache_timeout,
+            )
+            cached_data = cache.data
+        if not cached_data:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            cached_data = serializer.data
+            if cache:
+                cache.data = cached_data
+        return Response(
+            {
+                "count": len(cached_data),
+                "next": None,
+                "previous": None,
+                "results": cached_data,
+            }
+        )
+
     def retrieve(self, request, pk=None):
         userprofile = get_object_or_404(
             UserProfile.objects.all(),
             pk=pk,
         )
         self.check_object_permissions(request, userprofile)
-        return super().retrieve(request, pk)
+        cache = Cache(
+            key=f"{register_challenge_serializer_base_cache_key_name}"
+            f"{userprofile.id}",
+            timeout=self._cache_timeout,
+        )
+        cached_data = cache.data
+        if not cached_data:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            cached_data = serializer.data
+            cache.data = cached_data
+        return Response(
+            {
+                "count": len(cached_data),
+                "next": None,
+                "previous": None,
+                "results": cached_data,
+            }
+        )
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        if hasattr(request.user, "userprofile"):
+            cache = Cache(
+                key=f"{register_challenge_serializer_base_cache_key_name}"
+                f"{request.user.userprofile.id}"
+            )
+            if cache.data:
+                del cache.data
         request_data = request.data.copy()
         serializer = self.get_serializer(data=request_data)
         serializer.is_valid(raise_exception=True)
@@ -3115,6 +3168,12 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def update(self, request, pk=None):
+        if hasattr(request.user, "userprofile"):
+            cache = Cache(
+                key=f"{register_challenge_serializer_base_cache_key_name}{pk}"
+            )
+            if cache.data:
+                del cache.data
         userprofile = get_object_or_404(UserProfile.objects.all(), pk=pk)
         self.check_object_permissions(request, userprofile)
         request_data = request.data.copy()
@@ -3137,6 +3196,11 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             pk=pk,
         )
         self.check_object_permissions(request, userprofile)
+        cache = Cache(
+            key=f"{register_challenge_serializer_base_cache_key_name}{pk}"
+        )
+        if cache.data:
+            del cache.data
         userprofile.user.delete()
         return super().destroy(request, pk)
 

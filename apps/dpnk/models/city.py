@@ -22,6 +22,8 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from .. import util
+
 
 class City(models.Model):
     """Město"""
@@ -72,3 +74,18 @@ class City(models.Model):
     def get_wp_url(self):
         # TODO
         return "https://dopracenakole.cz/mesta/" + self.get_wp_slug()
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.pk:
+            for subsidiary in self.subsidiary_set.all():
+                for team in subsidiary.teams.all():
+                    for user in team.users.all():
+                        if hasattr(user, "userprofile"):
+                            # Delete REST API cache
+                            cache = util.Cache(
+                                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                                f"{user.userprofile.id}"
+                            )
+                            if cache.data:
+                                del cache.data
+        super().save(force_insert, force_update, *args, **kwargs)

@@ -851,6 +851,15 @@ class UserAttendance(StaleSyncMixin, models.Model):
                     "team_campaign": self.team.campaign,
                 },
             )
+        if self.pk:
+            # Delete REST API cache
+            cache = util.Cache(
+                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                f"{self.userprofile.id}"
+            )
+            if cache.data:
+                del cache.data
+
         return super().save(*args, **kwargs)
 
     @classmethod

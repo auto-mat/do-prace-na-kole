@@ -216,6 +216,21 @@ class Company(WithGalleryMixin, models.Model):
     def company_in_campaign(self, campaign):
         return CompanyInCampaign(self, campaign)
 
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.pk:
+            for subsidiary in self.subsidiaries.all():
+                for team in subsidiary.teams.all():
+                    for user in team.users.all():
+                        if hasattr(user, "userprofile"):
+                            # Delete REST API cache
+                            cache = util.Cache(
+                                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                                f"{user.userprofile.id}"
+                            )
+                            if cache.data:
+                                del cache.data
+        super().save(force_insert, force_update, *args, **kwargs)
+
 
 class CompanyInCampaign:
     def __init__(self, company, campaign):

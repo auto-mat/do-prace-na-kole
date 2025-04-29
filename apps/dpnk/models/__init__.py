@@ -73,6 +73,7 @@ from .user_attendance import UserAttendance
 from .user_profile import UserProfile
 from .voucher import Voucher, VoucherPDF, VoucherPDFField, VoucherType
 from .. import mailing
+from .. import util
 
 __all__ = (
     Address,
@@ -142,6 +143,24 @@ def update_mailing_user(sender, instance, created, **kwargs):
                 mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def clean_cache(sender, instance=None, created=False, **kwargs):
+    if (
+        instance
+        and hasattr(instance, "userprofile")
+        and "last_login" not in kwargs.get("update_fields")
+        if kwargs.get("update_fields")
+        else []
+    ):
+        # Delete REST API cache
+        cache = util.Cache(
+            key=f"{util.register_challenge_serializer_base_cache_key_name}"
+            f"{instance.userprofile.pk}"
+        )
+        if cache.data:
+            del cache.data
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
