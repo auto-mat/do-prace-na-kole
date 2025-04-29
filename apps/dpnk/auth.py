@@ -40,6 +40,7 @@ from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
+from .models import CompanyAdmin
 from .forms import CampaignMixin, SubmitMixin, social_html
 from .string_lazy import format_html_lazy
 from .util import attrgetter_def_val
@@ -107,6 +108,12 @@ class EnableCompanyCityAdminUsersAuthenticationForm(AuthenticationForm):
         if user_attendance:
             is_company_admin = attrgetter_def_val(
                 attrs="related_company_admin.is_approved", instance=user_attendance[0]
+            )
+        if not is_company_admin:
+            is_company_admin = CompanyAdmin.objects.filter(
+                userprofile__user=user,
+                campaign__slug=self.campaign.slug,
+                company_admin_approved="approved",
             )
         if not is_city_admin and not is_company_admin and not is_superuser:
             raise ValidationError(
