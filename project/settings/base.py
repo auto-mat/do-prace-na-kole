@@ -1026,3 +1026,7 @@ DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_CONFIG = {
         "DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_LIFETIME_UNIT", "days"
     ),
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timezone.timedelta(hours=8),
+}
