@@ -317,7 +317,6 @@ def update_mailing_userprofile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=UserProfile)
 def clean_cache(sender, instance, created, **kwargs):
-    print(kwargs)
     if instance and kwargs.get("update_fields"):
         # Delete REST API cache
         cache = util.Cache(
@@ -325,5 +324,4 @@ def clean_cache(sender, instance, created, **kwargs):
             f"{instance.id}"
         )
         if cache.data:
-            print("DELETE", kwargs)
             del cache.data
