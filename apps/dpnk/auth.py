@@ -115,7 +115,7 @@ class EnableCompanyCityAdminUsersAuthenticationForm(AuthenticationForm):
                 campaign__slug=self.campaign.slug,
                 company_admin_approved="approved",
             )
-        if not is_city_admin and not is_company_admin and not is_superuser:
+        if not is_superuser:
             raise ValidationError(
                 _(
                     "Přihlášení zamítnuto. Uživatel námá roli městkého,"
