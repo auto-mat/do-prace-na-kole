@@ -661,8 +661,8 @@ class RegistrationFormDPNK(RegistrationBaseForm):
         ret_val = super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             *self._meta.fields,
-            Submit("submit", _("Registrovat")),
-            social_html(False),
+            Submit("submit", _("Registrovat"), disabled=True),
+            social_html(False, disable_social_login_btns=True),
         )
         return ret_val
 

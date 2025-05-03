@@ -172,7 +172,7 @@ class AuthenticationFormDPNK(
                 '<a class="remindme" href="{%% url "password_reset" %%}">%s</a>'
                 % _("Obnovit heslo")
             ),
-            social_html(True),
+            social_html(True, disable_social_login_btns=True),
             HTML(
                 '<a class="registerme btn {disable_btn}"'
                 ' href="{{% url "registration_access" %}}">{btn_txt}</a>'
