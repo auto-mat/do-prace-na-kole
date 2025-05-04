@@ -47,6 +47,15 @@ from .rest import (
     StravaConnect,
     StravaDisconnect,
 )
+
+from .rest_coordinator import (
+    ApprovePaymentsView,
+    GetAttendanceView,
+    BoxRequestView,
+    BoxRequestRemoveView,
+    router as coordinator_router,
+)
+
 from .views import (
     answers,
     questionnaire_answers,
@@ -671,4 +680,29 @@ urlpatterns = [
     ),
     # REST API
     path("rest/", include(router.urls), name="rest_api"),
+    path(
+        "rest/coordinator/",
+        include(coordinator_router.urls),
+        name="coordinator_rest_api",
+    ),
+    path(
+        "rest/coordinator/approve-payments/",
+        ApprovePaymentsView.as_view(),
+        name="approve-payments",
+    ),
+    path(
+        "rest/coordinator/get-attendance/",
+        GetAttendanceView.as_view(),
+        name="get-attendance",
+    ),
+    path(
+        "rest/coordinator/package-request/",
+        BoxRequestView.as_view(),
+        name="package-request",
+    ),
+    path(
+        "rest/coordinator/package-request/remove",
+        BoxRequestRemoveView.as_view(),
+        name="package-request-remove",
+    ),
 ]
