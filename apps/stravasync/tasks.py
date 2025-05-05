@@ -52,6 +52,7 @@ def refresh_tokens(strava_account, sclient):
         )
         strava_account.access_token = token_response["access_token"]
         strava_account.refresh_token = token_response["refresh_token"]
+        strava_account.save(update_fields=["access_token", "refresh_token"])
         sclient.refresh_token = strava_account.refresh_token
 
     sclient.access_token = strava_account.access_token
