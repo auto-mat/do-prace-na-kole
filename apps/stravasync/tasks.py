@@ -53,6 +53,7 @@ def refresh_tokens(strava_account, sclient):
         strava_account.access_token = token_response["access_token"]
         strava_account.refresh_token = token_response["refresh_token"]
         sclient.refresh_token = strava_account.refresh_token
+
     sclient.access_token = strava_account.access_token
 
 
@@ -120,7 +121,8 @@ def sync(strava_account_id, manual_sync=True):
                     )
                 except Exception:
                     pass
-    except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault):
+    except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault) as e:
+        stats["error"] = str(e)
         destroy_account_and_notify(strava_account, sclient)
         return stats
     # except Exception:

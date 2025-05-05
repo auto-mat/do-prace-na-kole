@@ -3647,7 +3647,7 @@ class StravaAuth(APIView):
                 client_secret=settings.STRAVA_CLIENT_SECRET,
                 code=code,
             )
-        except stravalib.exc.Fault as e:
+        except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault) as e:
             Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
         acct, created = StravaAccount.objects.get_or_create(
             user_id=request.user.id,
