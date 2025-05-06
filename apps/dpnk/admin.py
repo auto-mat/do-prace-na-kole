@@ -22,7 +22,6 @@
 import pprint
 
 from django.conf import settings
-from django.contrib import admin
 
 from admin_views.admin import AdminViews
 
@@ -1814,11 +1813,3 @@ class TeamDiplomaFieldAdmin(PdfSandwichFieldAdmin):
 @admin.register(models.CompanyType)
 class CompanyTypeAdmin(admin.ModelAdmin):
     pass
-
-
-def has_superuser_permission(request):
-    return request.user.is_active and request.user.is_superuser
-
-
-# Only active superuser can access root admin site (default)
-admin.site.has_permission = has_superuser_permission
