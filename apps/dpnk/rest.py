@@ -3657,7 +3657,7 @@ class StravaAuth(APIView):
             acct.refresh_token = token_response["refresh_token"]
             acct.save()
         except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault) as e:
-            Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
         strava_account = StravaAccountSet.as_view({"get": "list"}, sync="sync")(
             request._request
         ).data["results"]
