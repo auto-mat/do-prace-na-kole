@@ -115,7 +115,11 @@
 									{% if user.is_authenticated and user_attendance.userprofile.administrated_cities.all and user_attendance.related_company_admin.is_approved and user_attendance.entered_competition %}
                      {% sitetree_menu from "datareport_organization_city_coordinator_results" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
                      {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
-									{% endif %}
+
+                  {% elif user.is_authenticated and user_attendance.userprofile.administrated_cities.all and user_attendance.related_company_admin.is_approved and not user_attendance.entered_competition %}
+
+                     {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
+                  {% endif %}
 
                   {# Organization admin #}
 									{% if user.is_authenticated and user_attendance.related_company_admin.is_approved and not user_attendance.userprofile.administrated_cities.all %}
