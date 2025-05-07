@@ -3647,17 +3647,17 @@ class StravaAuth(APIView):
                 client_secret=settings.STRAVA_CLIENT_SECRET,
                 code=code,
             )
+            acct, created = StravaAccount.objects.get_or_create(
+                user_id=request.user.id,
+            )
+            acct.strava_username = sclient.get_athlete().username or ""
+            acct.first_name = sclient.get_athlete().firstname or ""
+            acct.last_name = sclient.get_athlete().lastname or ""
+            acct.access_token = token_response["access_token"]
+            acct.refresh_token = token_response["refresh_token"]
+            acct.save()
         except (stravalib.exc.AccessUnauthorized, stravalib.exc.Fault) as e:
             Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
-        acct, created = StravaAccount.objects.get_or_create(
-            user_id=request.user.id,
-        )
-        acct.strava_username = sclient.get_athlete().username or ""
-        acct.first_name = sclient.get_athlete().firstname or ""
-        acct.last_name = sclient.get_athlete().lastname or ""
-        acct.access_token = token_response["access_token"]
-        acct.refresh_token = token_response["refresh_token"]
-        acct.save()
         strava_account = StravaAccountSet.as_view({"get": "list"}, sync="sync")(
             request._request
         ).data["results"]
