@@ -2360,6 +2360,15 @@ class NullIntField(serpy.Field):
         return int(value)
 
 
+class NullStrField(serpy.Field):
+    """Return None (null)"""
+
+    def to_value(self, value):
+        if value is None:
+            return None
+        return value
+
+
 class RequestSpecificFieldEmptyStrVal(RequestSpecificField):
     """Replace None value with empty string '' value"""
 
@@ -2388,7 +2397,7 @@ class PersonalDetailsUserSerializer(serpy.Serializer):
 
 class PersonalDetailsUserProfileSerializer(serpy.Serializer):
     id = serpy.IntField()
-    nickname = EmptyStrField()
+    nickname = NullStrField()
     sex = EmptyStrField()
     telephone = EmptyStrField()
     telephone_opt_in = serpy.BoolField()
@@ -2485,7 +2494,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     )
     nickname = serializers.CharField(
         required=False,
-        allow_blank=True,
+        allow_null=True,
     )
     sex = serializers.ChoiceField(
         choices=UserProfile.GENDER,
