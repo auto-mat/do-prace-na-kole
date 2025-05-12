@@ -2081,6 +2081,7 @@ class MerchandiseSerializer(serpy.Serializer):
     material = serpy.StrField()
     description = serpy.StrField()
     t_shirt_preview = OptionalImageField()
+    available = serpy.BoolField()
 
 
 class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
@@ -2088,7 +2089,6 @@ class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
         code = self.kwargs.get("code")
         queryset = {
             "campaign__slug": self.request.subdomain,
-            "available": True,
             "ship": True,
         }
         if code:
@@ -2105,6 +2105,7 @@ class MerchandiseSet(viewsets.ReadOnlyModelViewSet):
             "material",
             "description",
             "t_shirt_preview",
+            "available",
         )
 
     serializer_class = MerchandiseSerializer
