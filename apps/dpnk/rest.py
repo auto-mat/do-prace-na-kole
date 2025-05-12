@@ -3751,7 +3751,6 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     self.user_attendance.campaign.year,
                     concat_cities_into_url_param(self.user_attendance.userprofile),
                 )
-
             # Organization admin == City admin
             elif (
                 self.user_attendance.userprofile.administrated_cities.all()
@@ -3767,11 +3766,18 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     "&campaign_year=",
                     self.user_attendance.campaign.year,
                 )
+            # Basic challenge member
+            else:
+                url = concat_all(
+                    base_url,
+                    "?campaign_year=",
+                    self.user_attendance.campaign.year,
+                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                )
         elif "performance-organization" == report_type:
             base_url = (
                 settings.METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL
             )
-            # Organization admin
             url = concat_all(
                 base_url,
                 "?organizace=",
