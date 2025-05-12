@@ -3734,7 +3734,7 @@ class DataReportResults(UserAttendanceMixin, APIView):
                 url = concat_all(
                     base_url,
                     "?organizace=",
-                    self.user_attendance.company,
+                    self.user_attendance.company(),
                     "&campaign_year=",
                     self.user_attendance.campaign.year,
                 )
@@ -3761,7 +3761,7 @@ class DataReportResults(UserAttendanceMixin, APIView):
                 url = concat_all(
                     base_url,
                     "?organizace=",
-                    self.user_attendance.company,
+                    self.user_attendance.company(),
                     concat_cities_into_url_param(self.user_attendance.userprofile),
                     "&campaign_year=",
                     self.user_attendance.campaign.year,
