@@ -168,8 +168,8 @@ class DiscountCoupon(models.Model):
 
     def available(self):
         # Checking lifetime
-        if self.counpon_type.valid_until:
-            return self.counpon_type.valid_until > timezone.now().date()
+        if self.coupon_type.valid_until:
+            return self.coupon_type.valid_until > timezone.now().date()
         # Checking number of usage
         if self.user_attendance_number is None:
             return True
