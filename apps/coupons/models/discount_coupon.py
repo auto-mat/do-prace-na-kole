@@ -28,6 +28,7 @@ from django.core.validators import MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 import smmapdfs
@@ -166,6 +167,10 @@ class DiscountCoupon(models.Model):
     get_pdf.short_description = _("PDF")
 
     def available(self):
+        # Checking lifetime
+        if self.counpon_type.valid_until:
+            return self.counpon_type.valid_until > timezone.now().date()
+        # Checking number of usage
         if self.user_attendance_number is None:
             return True
         user_count = self.userattendance_set.count()
