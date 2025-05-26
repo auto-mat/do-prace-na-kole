@@ -294,6 +294,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         "Payment", foreign_key="payment_user_attendance", skip={"updated", "created"}
     )
     def payment_status(self):
+        if self.discount_coupon and self.discount_coupon.discount == 100:
+            return "done"
         payment = self.representative_payment
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return "no_admission"
