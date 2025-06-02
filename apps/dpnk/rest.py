@@ -3707,8 +3707,9 @@ class DataReportResults(UserAttendanceMixin, APIView):
     """Metabase data resuls report URL
 
     1. Organization regulariry (Company/City organizator),
-    2. Organization/city performance (Company/City organizator),
-    3. Orgaznizations review
+    2. Team regularity in the cities (Company/City organizator),
+    3. Organization/city performance (Company/City organizator),
+    4. Orgaznizations review
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -3727,7 +3728,7 @@ class DataReportResults(UserAttendanceMixin, APIView):
             ):
                 url = concat_all(
                     base_url,
-                    "?organizace=",
+                    "?org=",
                     self.user_attendance.company(),
                     "&campaign_year=",
                     self.user_attendance.campaign.year,
@@ -3754,7 +3755,7 @@ class DataReportResults(UserAttendanceMixin, APIView):
             ):
                 url = concat_all(
                     base_url,
-                    "?organizace=",
+                    "?org=",
                     self.user_attendance.company(),
                     concat_cities_into_url_param(self.user_attendance.userprofile),
                     "&campaign_year=",
@@ -3768,13 +3769,46 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     self.user_attendance.campaign.year,
                     concat_cities_into_url_param(self.user_attendance.userprofile),
                 )
+        elif "team-regularity-city" == report_type:
+            base_url = (
+                settings.METABASE_DPNK_TEAM_REGULARITY_CITY_RESULTS_DATA_REPORT_URL
+            )
+            # City admin
+            if (
+                self.user_attendance.userprofile.administrated_cities.all()
+                and not attrgetter_def_val(
+                    "related_company_admin.is_approved", self.user_attendance
+                )
+            ):
+                url = concat_all(
+                    base_url,
+                    "?campaign_year=",
+                    self.user_attendance.campaign.year,
+                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                )
+            # Organization admin == City admin
+            elif (
+                self.user_attendance.userprofile.administrated_cities.all()
+                and attrgetter_def_val(
+                    "related_company_admin.is_approved", self.user_attendance
+                )
+            ):
+                url = concat_all(
+                    base_url,
+                    "?org=",
+                    self.user_attendance.company(),
+                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                    "&campaign_year=",
+                    self.user_attendance.campaign.year,
+                )
+
         elif "performance-organization" == report_type:
             base_url = (
                 settings.METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL
             )
             url = concat_all(
                 base_url,
-                "?organizace=",
+                "?org=",
                 self.user_attendance.company(),
                 "&campaign_year=",
                 self.user_attendance.campaign.year,
