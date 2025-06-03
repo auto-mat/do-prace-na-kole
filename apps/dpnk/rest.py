@@ -3792,7 +3792,7 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     base_url,
                     "?campaign_year=",
                     self.user_attendance.campaign.year,
-                    f"?city={self.user_attendance.team.subsidiary.city.name}",
+                    f"&city={self.user_attendance.team.subsidiary.city.name}",
                 )
         elif "performance-organization" == report_type:
             base_url = (
