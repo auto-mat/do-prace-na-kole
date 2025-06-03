@@ -3773,7 +3773,7 @@ class DataReportResults(UserAttendanceMixin, APIView):
             base_url = (
                 settings.METABASE_DPNK_TEAM_REGULARITY_CITY_RESULTS_DATA_REPORT_URL
             )
-            # City admin
+            # City admin, Organization admin == City admin
             if (
                 self.user_attendance.userprofile.administrated_cities.all()
                 and not attrgetter_def_val(
@@ -3786,22 +3786,14 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     self.user_attendance.campaign.year,
                     concat_cities_into_url_param(self.user_attendance.userprofile),
                 )
-            # Organization admin == City admin
-            elif (
-                self.user_attendance.userprofile.administrated_cities.all()
-                and attrgetter_def_val(
-                    "related_company_admin.is_approved", self.user_attendance
-                )
-            ):
+            # Basic challenge member
+            else:
                 url = concat_all(
                     base_url,
-                    "?org=",
-                    self.user_attendance.company(),
-                    concat_cities_into_url_param(self.user_attendance.userprofile),
-                    "&campaign_year=",
+                    "?campaign_year=",
                     self.user_attendance.campaign.year,
+                    f"?city={self.user_attendance.team.subsidiary.city.name}",
                 )
-
         elif "performance-organization" == report_type:
             base_url = (
                 settings.METABASE_DPNK_PERFORMANCE_ORGANIZATION_RESULTS_DATA_REPORT_URL
