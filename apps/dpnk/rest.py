@@ -3724,8 +3724,10 @@ class DataReportResults(UserAttendanceMixin, APIView):
                 attrgetter_def_val(
                     "related_company_admin.is_approved", self.user_attendance
                 )
-                and not self.user_attendance.userprofile.administrated_cities.all()
-            ):
+                or CompanyAdmin.objects.filter(
+                    userprofile=self.user_attendance.userprofile
+                )
+            ) and not self.user_attendance.userprofile.administrated_cities.all():
                 url = concat_all(
                     base_url,
                     "?org=",
@@ -3734,10 +3736,12 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     self.user_attendance.campaign.year,
                 )
             # City admin
-            elif (
-                self.user_attendance.userprofile.administrated_cities.all()
-                and not attrgetter_def_val(
+            elif self.user_attendance.userprofile.administrated_cities.all() and not (
+                attrgetter_def_val(
                     "related_company_admin.is_approved", self.user_attendance
+                )
+                or CompanyAdmin.objects.filter(
+                    userprofile=self.user_attendance.userprofile
                 )
             ):
                 url = concat_all(
@@ -3746,11 +3750,13 @@ class DataReportResults(UserAttendanceMixin, APIView):
                     self.user_attendance.campaign.year,
                     concat_cities_into_url_param(self.user_attendance.userprofile),
                 )
-            # Organization admin == City admin
-            elif (
-                self.user_attendance.userprofile.administrated_cities.all()
-                and attrgetter_def_val(
+            # Organization admin (registered/unregistered into challenge) or City admin
+            elif self.user_attendance.userprofile.administrated_cities.all() and (
+                attrgetter_def_val(
                     "related_company_admin.is_approved", self.user_attendance
+                )
+                or CompanyAdmin.objects.filter(
+                    userprofile=self.user_attendance.userprofile
                 )
             ):
                 url = concat_all(
@@ -3773,11 +3779,13 @@ class DataReportResults(UserAttendanceMixin, APIView):
             base_url = (
                 settings.METABASE_DPNK_TEAM_REGULARITY_CITY_RESULTS_DATA_REPORT_URL
             )
-            # City admin, Organization admin == City admin
-            if (
-                self.user_attendance.userprofile.administrated_cities.all()
-                and not attrgetter_def_val(
+            # Organization admin (registered/unregistered into challenge) or City admin
+            if self.user_attendance.userprofile.administrated_cities.all() or (
+                attrgetter_def_val(
                     "related_company_admin.is_approved", self.user_attendance
+                )
+                or CompanyAdmin.objects.filter(
+                    userprofile=self.user_attendance.userprofile
                 )
             ):
                 url = concat_all(
