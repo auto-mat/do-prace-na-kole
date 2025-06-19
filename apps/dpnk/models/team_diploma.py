@@ -22,3 +22,6 @@ class TeamDiploma(PdfSandwichABC):
         default="",
         on_delete=models.CASCADE,
     )
+
+    def get_email(self):
+        return *self.obj.users.all().values_list("userprofile__user__email", flat=True)
