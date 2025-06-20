@@ -47,7 +47,7 @@ RUN mkdir /home/aplikace -p \
 WORKDIR "/home/aplikace"
 
 RUN pip3 install poetry
-COPY ./monorepo/docker-base-image/poetry.lock .
-COPY ./monorepo/docker-base-image/pyproject.toml .
+COPY poetry.lock .
+COPY pyproject.toml .
 ENV POETRY_HOME=/opt/poetry
 RUN poetry install --without dev
