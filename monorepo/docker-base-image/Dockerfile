@@ -1,4 +1,4 @@
-from python:3.9-bullseye
+from python:3.9-bookworm
 
 maintainer Automat
 
@@ -47,7 +47,7 @@ RUN mkdir /home/aplikace -p \
 WORKDIR "/home/aplikace"
 
 RUN pip3 install poetry
-COPY poetry.lock .
-COPY pyproject.toml .
+COPY ./monorepo/docker-base-image/poetry.lock .
+COPY ./monorepo/docker-base-image/pyproject.toml .
 ENV POETRY_HOME=/opt/poetry
-RUN poetry install --no-dev
+RUN poetry install --without dev
