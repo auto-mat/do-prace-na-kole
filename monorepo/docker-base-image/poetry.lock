@@ -2126,12 +2126,17 @@ version = "1.2.0"
 description = "Generate PDFs from django models by overlaying text onto an existing pdf"
 optional = false
 python-versions = "*"
-files = [
-    {file = "django_smmapdfs-1.2.0-py3-none-any.whl", hash = "sha256:c7a05e8467ca88f6dfb8de9575776546bd2091ff8f254b54e62ee45972df9f14"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 django-colorfield = "*"
+
+[package.source]
+type = "git"
+url = "https://git@github.com/auto-mat/smmapdfs.git"
+reference = "master"
+resolved_reference = "8efe34b9e1b615c1c1bfcf2026c85eb60245cb91"
 
 [[package]]
 name = "django-softhyphen"
@@ -3410,9 +3415,10 @@ name = "markuppy"
 version = "1.14"
 description = "An HTML/XML generator"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7"
 files = [
     {file = "MarkupPy-1.14.tar.gz", hash = "sha256:1adee2c0a542af378fe84548ff6f6b0168f3cb7f426b46961038a2bcfaad0d5f"},
+    {file = "markuppy-1.14-py3-none-any.whl", hash = "sha256:dc893880c5551d8388b688eef1d425dd48bb0b7d5bc74414fae86764ff4660ee"},
 ]
 
 [[package]]
@@ -5667,4 +5673,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "58c4164f7348bda3d9b205b26147e63579f41ebeb2d64568fa68414650e8e331"
+content-hash = "1a4791679a48f18caed454d27ecb75286aee4b51a685157c1470afd8bb7ae24a"

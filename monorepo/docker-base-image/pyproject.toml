@@ -1,9 +1,11 @@
 [tool.poetry]
+package-mode = false
 name = "do-prace-na-kole"
 version = "0.1.0"
 description = ""
 authors = ["AutoMat"]
 license = "GPL-3.0-or-later"
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -56,7 +58,7 @@ raven = "*"
 celery = "<=4.4.5"
 flower = "*"
 django-daterange-filter = "*"
-django-smmapdfs = "*"
+django-smmapdfs = {git = "https://git@github.com/auto-mat/smmapdfs.git", rev = "master"}
 django-storages = "*"
 django-model-utils = "*"
 django-price-level = "*"
