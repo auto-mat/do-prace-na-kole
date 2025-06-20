@@ -46,7 +46,7 @@ class VoucherPDF(PdfSandwichABC):
     )
 
     def get_email(self):
-        return self.obj.user_attendance.userprofile.user.email
+        return [self.obj.user_attendance.userprofile.user.email]
 
     def get_context(self, base_url):
         context = super().get_context(base_url)

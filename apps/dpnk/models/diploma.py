@@ -49,7 +49,7 @@ class Diploma(PdfSandwichABC):
     )
 
     def get_email(self):
-        return self.obj.userprofile.user.email
+        return [self.obj.userprofile.user.email]
 
     def get_context(self, base_url=""):
         return {
