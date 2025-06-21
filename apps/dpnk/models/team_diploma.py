@@ -24,6 +24,4 @@ class TeamDiploma(PdfSandwichABC):
     )
 
     def get_email(self):
-        return list(
-            self.obj.users.all().values_list("userprofile__user__email", flat=True)
-        )
+        return list(self.obj.members.values_list("userprofile__user__email", flat=True))
