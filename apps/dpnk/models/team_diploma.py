@@ -28,5 +28,4 @@ class TeamDiploma(PdfSandwichABC):
 
     def get_language(self):
         langs = list(self.obj.members.values_list("userprofile__language", flat=True))
-        lang = max(set(langs), key=langs.count)
-        return "cs" if lang == "sk" else lang
+        return max(set(langs), key=langs.count)
