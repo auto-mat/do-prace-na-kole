@@ -2136,7 +2136,7 @@ django-colorfield = "*"
 type = "git"
 url = "https://git@github.com/auto-mat/smmapdfs.git"
 reference = "master"
-resolved_reference = "8efe34b9e1b615c1c1bfcf2026c85eb60245cb91"
+resolved_reference = "a14d52b0ea5ca5ffb9cbc426c2f2322a797685fe"
 
 [[package]]
 name = "django-softhyphen"
