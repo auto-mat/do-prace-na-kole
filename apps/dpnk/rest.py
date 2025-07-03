@@ -3827,8 +3827,6 @@ class DataReportResults(UserAttendanceMixin, APIView):
             )
             url = concat_all(
                 base_url,
-                "?city=",
-                self.user_attendance.company().address_city,
             )
         return Response({"data_report_url": url})
 
