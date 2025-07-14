@@ -784,7 +784,9 @@ def photologue_path(instance, filename):
         .decode("ascii")
     )
     return os.path.join(
-        "photologue", "photos", base64.b64encode(os.urandom(18)).decode("utf8") + fn
+        "photologue",
+        "photos",
+        base64.b64encode(os.urandom(18), b"-_").decode("utf8") + fn,
     )
 
 
