@@ -2972,32 +2972,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         if data.get("personal_details"):
-            personal_details_data = data.pop("personal_details")
-            data["id"]: personal_details_data.pop("id")
-            data["first_name"]: personal_details_data.pop("first_name")
-            data["last_name"]: personal_details_data.pop("last_name")
-            data["email"]: personal_details_data.pop("email")
-            data["is_staff"]: personal_details_data.pop("is_staff")
-            data["nickname"]: personal_details_data.pop("nickname")
-            data["sex"]: personal_details_data.pop("sex")
-            data["telephone"]: personal_details_data.pop("telephone")
-            data["telephone_opt_in"]: personal_details_data.pop("telephone_opt_in")
-            data["language"]: personal_details_data.pop("language")
-            data["occupation_id"]: personal_details_data.pop("occupation_id")
-            data["age_group"]: personal_details_data.pop("age_group")
-            data["newsletter"]: personal_details_data.pop("newsletter")
-            data["personal_data_opt_in"]: personal_details_data.pop(
-                "personal_data_opt_in"
-            )
-            data["discount_coupon"]: personal_details_data.pop("discount_coupon")
-            data["approved_for_team"]: personal_details_data.pop("approved_for_team")
-            data["payment_subject"]: personal_details_data.pop("payment_subject")
-            data["payment_amount"]: personal_details_data.pop("payment_amount")
-            data["payment_status"]: personal_details_data.pop("payment_status")
-            data["payment_type"]: personal_details_data.pop("payment_type")
-            data["payment_category"]: personal_details_data.pop("payment_category")
-            data["products"]: personal_details_data.pop("products")
-
+            personal_details = data.pop("personal_details")
+            for field in personal_details:
+                data[field] = personal_details[field]
         return super().to_internal_value(data)
 
     def to_representation(self, value):
