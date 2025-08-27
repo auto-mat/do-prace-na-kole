@@ -55,7 +55,7 @@ def normalize_gpx_filename(instance, filename):
 
 def distance_all_modes(trips, campaign=None):
     if campaign:
-        trips.filter(
+        trips = trips.filter(
             user_attendance__payment_status__in=("done", "no_admission"),
             user_attendance__campaign__slug=campaign.slug,
             date__gte=campaign.competition_phase().date_from,

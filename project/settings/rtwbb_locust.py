@@ -1,15 +1,20 @@
 from .base import *  # noqa
 
+DEBUG = True
+
+SECRET_KEY = "bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5"
 
 ALLOWED_HOSTS = [
     ".lvh.me",
 ]
 
+"""
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     },
 }
+"""
 
 RTWBB_FRONTEND_APP_BASE_URL = os.getenv(
     "RTWBB_FRONTEND_APP_BASE_URL",

@@ -3,9 +3,11 @@ import threading
 import random
 import datetime
 import random
+import time
+import base64
 
-NUMBER_OF_SUBSIDIARIES_IN_COMPANY = 3
-NUMBER_OF_TEAMS_IN_SUBSIDIARY = 25
+NUMBER_OF_SUBSIDIARIES_IN_COMPANY = 5
+NUMBER_OF_TEAMS_IN_SUBSIDIARY = 5
 NUMBER_OF_MEMBERS_IN_TEAM = 5
 number_of_teams = None
 number_of_subsidiaries = None
@@ -33,7 +35,7 @@ def on_test_start(environment, **kwargs):
     global number_of_subsidiaries
     global number_of_companies
     if environment.runner:
-        print(f"Total (target) users at start: {environment.runner.target_user_count}")
+        #print(f"Total (target) users at start: {environment.runner.target_user_count}")
         number_of_teams = ceil_div(
             environment.runner.target_user_count, NUMBER_OF_MEMBERS_IN_TEAM
         )
@@ -53,7 +55,7 @@ class ApiUserBehavior(TaskSet):
     test_data = {
         "first_name": ["Jaroslav", "Petr", "Jan", "Martin", "Jakub"],
         "last_name": ["Novák", "Svoboda", "Dvořák", "Černý", "Procházka"],
-        "payment_subject": ["company", "individual", "voucher", "school"],
+        "payment_subject": ["company", "school"],
         "personal_data_opt_in": [True, False],
         "nickname": ["user1", "user2", "user3", "user4"],
         "telephone": ["+420123456789", "+420987654321", "+420555555555"],
@@ -92,6 +94,9 @@ class ApiUserBehavior(TaskSet):
         "note": ["Note A", "Note B", "Note C"],
         "organization_type": ["company", "family", "school"],
         "photos": [],
+        "organization_teams_ids": {},
+        "teams_subsidiary_ids": {},
+        "subsidiary_organization_ids": {}
     }
 
     def get_city_ids(self):
@@ -130,27 +135,26 @@ class ApiUserBehavior(TaskSet):
         post_data = {
             "address": {
                 "street": random.choice(
-                    ApiUserBehavior.test_data.get("address_street")
+                    self.test_data.get("address_street")
                 ),
                 "street_number": random.choice(
-                    ApiUserBehavior.test_data.get("address_street_number")
+                    self.test_data.get("address_street_number")
                 ),
-                "psc": random.choice(ApiUserBehavior.test_data.get("address_psc")),
-                "city": random.choice(ApiUserBehavior.test_data.get("address_city")),
+                "psc": random.choice(self.test_data.get("address_psc")),
+                "city": random.choice(self.test_data.get("address_city")),
                 "recipient": random.choice(
-                    ApiUserBehavior.test_data.get("address_recipient")
+                    self.test_data.get("address_recipient")
                 ),
             },
             "city_id": random.choice(self.get_city_ids()),
-            "active": random.choice(ApiUserBehavior.test_data.get("active")),
             "box_addressee_name": random.choice(
-                ApiUserBehavior.test_data.get("box_addressee_name")
+                self.test_data.get("box_addressee_name")
             ),
             "box_addressee_telephone": random.choice(
-                ApiUserBehavior.test_data.get("box_addressee_telephone")
+                self.test_data.get("box_addressee_telephone")
             ),
             "box_addressee_email": random.choice(
-                ApiUserBehavior.test_data.get("box_addressee_email")
+                self.test_data.get("box_addressee_email")
             ),
         }
         response = self.client.post(
@@ -163,7 +167,7 @@ class ApiUserBehavior(TaskSet):
 
     def create_team(self, subsidiaryId):
         post_data = {
-            "name": f"{random.choice(ApiUserBehavior.test_data.get("name"))}{random.randint(1000, 9999)}",
+            "name": f"{random.choice(self.test_data.get("name"))}{random.randint(10000000, 99999999)}",
             "subsidiary_id": subsidiaryId,
         }
         response = self.client.post(
@@ -172,27 +176,28 @@ class ApiUserBehavior(TaskSet):
             name="CreateTeam",
             headers=self.headers,
         )
+
         return response.json().get("id")
 
     def create_organization(self):
         post_data = {
-            "name": f"{random.choice(ApiUserBehavior.test_data.get("organization_name"))}{random.randint(1000, 9999)}",
-            "note": random.choice(ApiUserBehavior.test_data.get("note")),
+            "name": f"{random.choice(self.test_data.get("organization_name"))}{random.randint(1000, 9999)}",
+            "note": random.choice(self.test_data.get("note")),
             "address": {
                 "street": random.choice(
-                    ApiUserBehavior.test_data.get("address_street")
+                    self.test_data.get("address_street")
                 ),
                 "street_number": random.choice(
-                    ApiUserBehavior.test_data.get("address_street_number")
+                    self.test_data.get("address_street_number")
                 ),
-                "psc": random.choice(ApiUserBehavior.test_data.get("address_psc")),
-                "city": random.choice(ApiUserBehavior.test_data.get("address_city")),
+                "psc": random.choice(self.test_data.get("address_psc")),
+                "city": random.choice(self.test_data.get("address_city")),
                 "recipient": random.choice(
-                    ApiUserBehavior.test_data.get("address_recipient")
+                    self.test_data.get("address_recipient")
                 ),
             },
             "organization_type": random.choice(
-                ApiUserBehavior.test_data.get("organization_type")
+                self.test_data.get("organization_type")
             ),
         }
         response = self.client.post(
@@ -232,61 +237,69 @@ class ApiUserBehavior(TaskSet):
         while True:
             teamIdx = random.randint(0, number_of_teams - 1)
             with ApiUserBehavior.lock:
-                if teamIdx < len(ApiUserBehavior.test_data["team_ids"]):
+                if teamIdx < len(self.test_data["team_ids"]):
                     if ApiUserBehavior.members_in_team != NUMBER_OF_MEMBERS_IN_TEAM:
                         ApiUserBehavior.members_in_team[teamIdx] += 1
-                        teamId = ApiUserBehavior.test_data["team_ids"][teamIdx]
+                        teamId = self.test_data["team_ids"][teamIdx]
                     else:
                         continue
                 else:
                     subsidiaryIdx = random.randint(0, number_of_subsidiaries - 1)
-                    if subsidiaryIdx < len(ApiUserBehavior.test_data["subsidiary_ids"]):
-                        subsidiaryId = ApiUserBehavior.test_data["subsidiary_ids"][
+                    if subsidiaryIdx < len(self.test_data["subsidiary_ids"]):
+                        subsidiaryId = self.test_data["subsidiary_ids"][
                             subsidiaryIdx
                         ]
                     else:
                         organizationIdx = random.randint(0, number_of_companies - 1)
                         if organizationIdx < len(
-                            ApiUserBehavior.test_data["organization_ids"]
+                            self.test_data["organization_ids"]
                         ):
-                            organizationId = ApiUserBehavior.test_data[
+                            organizationId = self.test_data[
                                 "organization_ids"
                             ][organizationIdx]
                         else:
                             organizationId = self.create_organization()
-                            ApiUserBehavior.test_data["organization_ids"].append(
+                            self.test_data["organization_teams_ids"][organizationId] = []
+                            self.test_data["organization_ids"].append(
                                 organizationId
                             )
                         subsidiaryId = self.create_subsidiary(organizationId)
-                        ApiUserBehavior.test_data["subsidiary_ids"].append(subsidiaryId)
+                        self.test_data["subsidiary_organization_ids"][subsidiaryId] = organizationId
+                        self.test_data["subsidiary_ids"].append(subsidiaryId)
 
                     teamId = self.create_team(subsidiaryId)
-                    ApiUserBehavior.test_data["team_ids"].append(teamId)
+
+                    organizationId = self.test_data["subsidiary_organization_ids"].get(subsidiaryId)
+                    self.test_data["organization_teams_ids"][organizationId].append(teamId)
+
+                    self.test_data["teams_subsidiary_ids"][teamId] = subsidiaryId
+
+                    self.test_data["team_ids"].append(teamId)
                     ApiUserBehavior.members_in_team.append(1)
             break
 
         post_data = {
             "personal_details": {
                 "first_name": random.choice(
-                    ApiUserBehavior.test_data.get("first_name")
+                    self.test_data.get("first_name")
                 ),
-                "last_name": random.choice(ApiUserBehavior.test_data.get("last_name")),
-                "nickname": random.choice(ApiUserBehavior.test_data.get("nickname")),
-                "telephone": random.choice(ApiUserBehavior.test_data.get("telephone")),
-                "language": random.choice(ApiUserBehavior.test_data.get("language")),
+                "last_name": random.choice(self.test_data.get("last_name")),
+                "nickname": random.choice(self.test_data.get("nickname")),
+                "telephone": random.choice(self.test_data.get("telephone")),
+                "language": random.choice(self.test_data.get("language")),
                 "occupation": random.choice(
-                    ApiUserBehavior.test_data.get("occupation")
+                    self.test_data.get("occupation")
                 ),
                 "age_group": random.randint(1950, 2000),
                 "newsletter": random.choice(
-                    ApiUserBehavior.test_data.get("newsletter")
+                    self.test_data.get("newsletter")
                 ),
                 "personal_data_opt_in": random.choice(
-                    ApiUserBehavior.test_data.get("personal_data_opt_in")
+                    self.test_data.get("personal_data_opt_in")
                 ),
                 "discount_coupon": "",
                 "payment_subject": random.choice(
-                    ApiUserBehavior.test_data.get("payment_subject")
+                    self.test_data.get("payment_subject")
                 ),
                 "payment_amount": random.randint(100, 2500),
             },
@@ -305,6 +318,7 @@ class ApiUserBehavior(TaskSet):
             and "id" in response.json()["personal_details"]
         ):
             self.user_attendance_id = response.json()["personal_details"]["id"]
+            self.teamId = teamId
 
     def _perform_login(self):
         return self.client.post(
@@ -318,6 +332,7 @@ class ApiUserBehavior(TaskSet):
         self.headers = {
             "Authorization": f"Bearer {self.auth_token}",
             "Content-Type": "application/json",
+            "Accept": "application/json; version=v2"  # Add v2 version
         }
 
         if "user" in login_response.json() and "pk" in login_response.json()["user"]:
@@ -350,31 +365,44 @@ class ApiUserBehavior(TaskSet):
 
     @task(5)
     def create_trip(self):
-        files = {"file": ("track.gpx", self.generate_gpx(), "application/gpx+xml")}
-        date_offset = random.randint(-6, 0)
-        trip_date = (
-            datetime.datetime.now() + datetime.timedelta(days=date_offset)
-        ).date()
-        data = {
-            "trip_date": trip_date.isoformat(),
-            "direction": random.choice(["trip_to", "trip_from"]),
-            "commuteMode": random.choice(["bicycle", "by_foot", "by_other_vehicle"]),
-            "sourceApplication": "load-test",
-        }
-        headers_copy = self.headers.copy()
-        del headers_copy["Content-Type"]
+        num_trips = random.randint(1, 5)
+        trips_data = []
+
+        for i in range(num_trips):
+            gpx_content = self.generate_gpx()
+
+            date_offset = random.randint(-6, 0) - i
+            trip_date = (
+                datetime.datetime.now() + datetime.timedelta(days=date_offset)
+            ).date()
+
+            encoded_gpx = base64.b64encode(gpx_content.encode('utf-8')).decode('utf-8')
+            file_encoded_string = f"data:application/gpx+xml;base64,{encoded_gpx}"
+
+            trip_data = {
+                "trip_date": trip_date.isoformat(),
+                "direction": random.choice(["trip_to", "trip_from"]),
+                "commuteMode": random.choice(["bicycle", "by_foot", "by_other_vehicle"]),
+                "sourceApplication": "load-test",
+                "file_encoded_string": file_encoded_string,
+            }
+            trips_data.append(trip_data)
+
+        data = {"trips": trips_data}
+
         with self.client.post(
             "/rest/gpx/",
-            data=data,
-            files=files,
+            json=data,
             name="CreateTripWithGPX",
-            headers=headers_copy,
+            headers=self.headers,
             catch_response=True,
         ) as response:
             if response.status_code == 201:
-                trip_id = response.json().get("id")
-                if trip_id:
-                    self.trip_ids.append(trip_id)
+                trips = response.json().get("trips", [])
+                for trip in trips:
+                    trip_id = trip.get("id")
+                    if trip_id:
+                        self.trip_ids.append(trip_id)
 
     @task(5)
     def delete_trip(self):
@@ -404,7 +432,7 @@ class ApiUserBehavior(TaskSet):
             "occupation": random.choice(self.test_data["occupation"]),
         }
         id = self.user_attendance_id
-        response = self.client.put(
+        self.client.put(
             f"/rest/register-challenge/{id}/",
             json=payload,
             name="UpdateUserProfile",
@@ -463,7 +491,7 @@ class ApiUserBehavior(TaskSet):
         )
 
         if login_response.status_code == 200:
-            self.auth_token = login_response.json().get("token")
+            self.auth_token = login_response.json().get("access")
             self.headers["Authorization"] = f"Bearer {self.auth_token}"
 
     @task(3)
@@ -492,14 +520,17 @@ class ApiUserBehavior(TaskSet):
 
     @task(5)
     def get_team(self):
-        if self.test_data["team_ids"]:
-            team_id = random.choice(self.test_data["team_ids"])
-            subsidiary_id = random.choice(self.test_data["subsidiary_ids"])
-            self.client.get(
+        current_subsidiary_id = self.test_data["teams_subsidiary_ids"].get(self.teamId)
+        organization_id = self.test_data["subsidiary_organization_ids"].get(current_subsidiary_id)
+        team_id = random.choice(self.test_data["organization_teams_ids"].get(organization_id))
+
+        subsidiary_id = self.test_data["teams_subsidiary_ids"].get(team_id)
+        self.client.get(
                 f"/rest/subsidiaries/{subsidiary_id}/teams/{team_id}",
                 name="GetTeam",
                 headers=self.headers,
             )
+
 
     @task(1)
     def get_discount_coupon(self):
@@ -594,8 +625,13 @@ class ApiUserBehavior(TaskSet):
             "/rest/colleague_trips/", name="GetColleaguesTrips", headers=self.headers
         )
 
+    @task(10)
+    def sleep(self):
+        sleep_time = random.randint(300, 600)
+        logger.info(f"Sleeping for {sleep_time} seconds")
+        time.sleep(sleep_time)
 
 class ApiUser(HttpUser):
     tasks = [ApiUserBehavior]
-    wait_time = between(10, 30)
+    wait_time = between(30, 60)
     host = "http://api:8000"
