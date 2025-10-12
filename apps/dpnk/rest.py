@@ -3869,7 +3869,8 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
     members_without_paid_entry_fee = RequestSpecificField(
         lambda team, req: [
             OrganizationAdminOrganizationUserAttendanceSerializer(
-                member, context={"request": req},
+                member,
+                context={"request": req},
             ).data
             for member in team.members.filter(
                 userprofile__user__is_active=True,
@@ -3893,7 +3894,8 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
     members_with_paid_entry_fee = RequestSpecificField(
         lambda team, req: [
             OrganizationAdminOrganizationUserAttendanceSerializer(
-                member, context={"request": req},
+                member,
+                context={"request": req},
             ).data
             for member in team.members.filter(
                 userprofile__user__is_active=True,
@@ -3921,7 +3923,9 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
 class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req: [
-            OrganizationAdminOrganizationTeamsSerializer(team, context={"request": req}).data
+            OrganizationAdminOrganizationTeamsSerializer(
+                team, context={"request": req}
+            ).data
             for team in sic.teams
         ]
     )
@@ -3938,7 +3942,9 @@ class OrganizationAdminOrganizationSerializer(serpy.Serializer):
     active = serpy.BoolField()
     subsidiaries = RequestSpecificField(
         lambda organization, req: [
-            OrganizationAdminOrganizationSubsidiariesSerializer(sub, context={"request": req}).data
+            OrganizationAdminOrganizationSubsidiariesSerializer(
+                sub, context={"request": req}
+            ).data
             for sub in organization.subsidiaries.filter(
                 teams__campaign__slug=req.subdomain, active=True
             ).distinct()
