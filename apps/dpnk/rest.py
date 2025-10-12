@@ -3848,6 +3848,118 @@ class DataReportResultsByChallenge(UserAttendanceMixin, APIView):
         return Response({"data_report_url": url})
 
 
+class OrganizationAdminOrganizationUserAttendanceSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField(call=True)
+    nickname = RequestSpecificField(lambda ua, req: ua.userprofile.nickname)
+    date_of_challenge_registration = serpy.Field(attr="created")
+    email = RequestSpecificField(lambda ua, req: ua.userprofile.user.email)
+    telephone = RequestSpecificField(lambda ua, req: ua.userprofile.telephone)
+    sex = RequestSpecificField(lambda ua, req: ua.userprofile.sex)
+    avatar_url = serpy.Field(call=True)
+    approved_for_team = serpy.StrField()
+    payment_status = serpy.StrField()
+    payment_type = serpy.StrField(call=True)
+    payment_category = serpy.StrField(call=True)
+    payment_amount = serpy.StrField(call=True)
+    user_profile_id = RequestSpecificField(lambda ua, req: ua.userprofile.id)
+
+
+class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
+    members_without_paid_entry_fee = RequestSpecificField(
+        lambda team, req: [
+            OrganizationAdminOrganizationUserAttendanceSerializer(
+                member, context={"request": req},
+            ).data
+            for member in team.members.filter(
+                userprofile__user__is_active=True,
+                representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
+            )
+            .exclude(
+                payment_status="done",
+            )
+            .select_related(
+                "userprofile__user",
+                "team__subsidiary__city",
+            )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
+            )
+        ]
+    )
+    members_with_paid_entry_fee = RequestSpecificField(
+        lambda team, req: [
+            OrganizationAdminOrganizationUserAttendanceSerializer(
+                member, context={"request": req},
+            ).data
+            for member in team.members.filter(
+                userprofile__user__is_active=True,
+                representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
+                payment_status="done",
+            )
+            .select_related(
+                "userprofile__user",
+                "team__subsidiary__city",
+            )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
+            )
+        ]
+    )
+
+    name = serpy.StrField(required=False)
+    id = serpy.IntField()
+    icon_url = serpy.Field(call=True)
+
+
+class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
+    teams = SubsidiaryInCampaignField(
+        lambda sic, req: [
+            OrganizationAdminOrganizationTeamsSerializer(team, context={"request": req}).data
+            for team in sic.teams
+        ]
+    )
+    id = serpy.IntField()
+    street = serpy.StrField(attr="address.street")
+    street_number = serpy.IntField(attr="address.street_number")
+    city = serpy.StrField()
+    icon_url = serpy.Field(call=True)
+
+
+class OrganizationAdminOrganizationSerializer(serpy.Serializer):
+    ico = NullIntField()
+    dic = EmptyStrField()
+    active = serpy.BoolField()
+    subsidiaries = RequestSpecificField(
+        lambda organization, req: [
+            OrganizationAdminOrganizationSubsidiariesSerializer(sub, context={"request": req}).data
+            for sub in organization.subsidiaries.filter(
+                teams__campaign__slug=req.subdomain, active=True
+            ).distinct()
+        ]
+    )
+
+
+class OrganizationAdminOrganizationSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Company.objects.filter(
+            id__in=CompanyAdmin.objects.filter(
+                userprofile=self.request.user.userprofile,
+                company_admin_approved="approved",
+                campaign__slug=self.request.subdomain,
+            ).values_list("administrated_company__id", flat=True)
+        )
+
+    serializer_class = OrganizationAdminOrganizationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
@@ -3919,4 +4031,9 @@ router.register(
     "register-coordinator",
     RegisterCoordinatorSet,
     basename="register-coordinator",
+)
+router.register(
+    "organization-admin-organization",
+    OrganizationAdminOrganizationSet,
+    basename="organization-admin-organization-structure",
 )
