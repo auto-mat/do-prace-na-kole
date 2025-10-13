@@ -1,7 +1,13 @@
-from rest_framework import routers, viewsets, permissions, serializers
+import datetime
+from django.db import transaction
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django.forms.models import model_to_dict
+
+from rest_framework import viewsets, permissions, serializers, status
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.decorators import action
 import drf_serpy as serpy
 
@@ -18,20 +24,17 @@ from .models import (
 from t_shirt_delivery.models import (
     BoxRequest,
 )
-
 from .models.company import CompanyInCampaign
 from .rest import (
     UserAttendanceSerializer,
     AddressSerializer,
     EmptyStrField,
+    NullIntField,
+    router,
     RequestSpecificField,
+    SubsidiaryInCampaignField,
 )
 from .middleware import get_or_create_userattendance
-import datetime
-from django.db import transaction
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import APIException
-from django.forms.models import model_to_dict
 
 
 class UserAttendanceMixin:
@@ -437,7 +440,156 @@ class BoxRequestRemoveView(APIView, CompanyAdminMixin):
         )
 
 
-router = routers.DefaultRouter()
+class OrganizationAdminOrganizationUserAttendanceSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField(call=True)
+    nickname = RequestSpecificField(lambda ua, req: ua.userprofile.nickname)
+    date_of_challenge_registration = serpy.Field(attr="created")
+    email = RequestSpecificField(lambda ua, req: ua.userprofile.user.email)
+    telephone = RequestSpecificField(lambda ua, req: ua.userprofile.telephone)
+    sex = RequestSpecificField(lambda ua, req: ua.userprofile.sex)
+    avatar_url = serpy.Field(call=True)
+    approved_for_team = serpy.StrField()
+    payment_status = serpy.StrField()
+    payment_type = serpy.StrField(call=True)
+    payment_category = serpy.StrField(call=True)
+    payment_amount = serpy.StrField(call=True)
+    discount_coupon = EmptyStrField()
+    user_profile_id = RequestSpecificField(lambda ua, req: ua.userprofile.id)
+
+
+class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
+    members_without_paid_entry_fee = RequestSpecificField(
+        lambda team, req: [
+            OrganizationAdminOrganizationUserAttendanceSerializer(
+                member,
+                context={"request": req},
+            ).data
+            for member in team.members.filter(
+                userprofile__user__is_active=True,
+                representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
+            )
+            .exclude(
+                payment_status="done",
+            )
+            .select_related(
+                "userprofile__user",
+                "team__subsidiary__city",
+            )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
+            )
+        ]
+    )
+    members_with_paid_entry_fee = RequestSpecificField(
+        lambda team, req: [
+            OrganizationAdminOrganizationUserAttendanceSerializer(
+                member,
+                context={"request": req},
+            ).data
+            for member in team.members.filter(
+                userprofile__user__is_active=True,
+                representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
+                payment_status="done",
+            )
+            .select_related(
+                "userprofile__user",
+                "team__subsidiary__city",
+            )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
+            )
+        ]
+    )
+    other_members = RequestSpecificField(
+        lambda team, req: [
+            OrganizationAdminOrganizationUserAttendanceSerializer(
+                member,
+                context={"request": req},
+            ).data
+            for member in team.members.filter(
+                userprofile__user__is_active=True,
+            )
+            .exclude(
+                Q(payment_status="done") | Q(payment_status="waiting"),
+                representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
+            )
+            .select_related(
+                "userprofile__user",
+                "team__subsidiary__city",
+            )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
+            )
+        ]
+    )
+
+    name = serpy.StrField(required=False)
+    id = serpy.IntField()
+    icon_url = serpy.Field(call=True)
+
+
+class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
+    teams = SubsidiaryInCampaignField(
+        lambda sic, req: [
+            OrganizationAdminOrganizationTeamsSerializer(
+                team, context={"request": req}
+            ).data
+            for team in sic.teams
+        ]
+    )
+    id = serpy.IntField()
+    street = serpy.StrField(attr="address.street")
+    street_number = serpy.IntField(attr="address.street_number")
+    city = serpy.StrField()
+    icon_url = serpy.Field(call=True)
+
+
+class OrganizationAdminOrganizationSerializer(serpy.Serializer):
+    name = serpy.StrField()
+    psc = NullIntField(attr="address.psc")
+    street = EmptyStrField(attr="address.street")
+    street_number = EmptyStrField(attr="address.street_number")
+    recipient = EmptyStrField(attr="address.recipient")
+    city = EmptyStrField(attr="address.city")
+    ico = NullIntField()
+    dic = EmptyStrField()
+    active = serpy.BoolField()
+    subsidiaries = RequestSpecificField(
+        lambda organization, req: [
+            OrganizationAdminOrganizationSubsidiariesSerializer(
+                sub, context={"request": req}
+            ).data
+            for sub in organization.subsidiaries.filter(
+                teams__campaign__slug=req.subdomain, active=True
+            ).distinct()
+        ]
+    )
+
+
+class OrganizationAdminOrganizationSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Company.objects.filter(
+            id__in=CompanyAdmin.objects.filter(
+                userprofile=self.request.user.userprofile,
+                company_admin_approved="approved",
+                campaign__slug=self.request.subdomain,
+            ).values_list("administrated_company__id", flat=True)
+        )
+
+    serializer_class = OrganizationAdminOrganizationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router.register(r"fee-approval", FeeApprovalSet, basename="fee-approval")
 # router.register(r"approve-payments", ApprovePaymentsView, basename="approve-payments")
 # router.register(r"get-attendance", GetAttendanceView, basename="get-attendance")
@@ -449,4 +601,9 @@ router.register(
     r"subsidiary/(?P<subsidiary_id>\d+)/team/(?P<team_id>\d+)/member",
     MemberView,
     basename="subsidiary-team-member",
+)
+router.register(
+    "organization-admin-organization-structure",
+    OrganizationAdminOrganizationSet,
+    basename="organization-admin-organization-structure",
 )
