@@ -39,7 +39,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import ExpressionWrapper, F, CharField, Value, Window
+from django.db.models import ExpressionWrapper, F, CharField, Q, Value, Window
 from django.db.models.functions import Concat, DenseRank
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
@@ -3862,6 +3862,7 @@ class OrganizationAdminOrganizationUserAttendanceSerializer(serpy.Serializer):
     payment_type = serpy.StrField(call=True)
     payment_category = serpy.StrField(call=True)
     payment_amount = serpy.StrField(call=True)
+    discount_coupon = EmptyStrField()
     user_profile_id = RequestSpecificField(lambda ua, req: ua.userprofile.id)
 
 
@@ -3902,6 +3903,31 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 representative_payment__pay_type="fc",
                 discount_coupon__isnull=True,
                 payment_status="done",
+            )
+            .select_related(
+                "userprofile__user",
+                "team__subsidiary__city",
+            )
+            .order_by(
+                "team__subsidiary__city",
+                "userprofile__user__last_name",
+                "userprofile__user__first_name",
+            )
+        ]
+    )
+    other_members = RequestSpecificField(
+        lambda team, req: [
+            OrganizationAdminOrganizationUserAttendanceSerializer(
+                member,
+                context={"request": req},
+            ).data
+            for member in team.members.filter(
+                userprofile__user__is_active=True,
+            )
+            .exclude(
+                Q(payment_status="done") | Q(payment_status="waiting"),
+                representative_payment__pay_type="fc",
+                discount_coupon__isnull=True,
             )
             .select_related(
                 "userprofile__user",
