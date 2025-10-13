@@ -459,7 +459,7 @@ class OrganizationAdminOrganizationUserAttendanceSerializer(serpy.Serializer):
 
 
 class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
-    members_without_paid_entry_fee = RequestSpecificField(
+    members_without_paid_entry_fee_by_org_coord = RequestSpecificField(
         lambda team, req: [
             OrganizationAdminOrganizationUserAttendanceSerializer(
                 member,
@@ -484,7 +484,7 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
             )
         ]
     )
-    members_with_paid_entry_fee = RequestSpecificField(
+    members_with_paid_entry_fee_by_org_coord = RequestSpecificField(
         lambda team, req: [
             OrganizationAdminOrganizationUserAttendanceSerializer(
                 member,
