@@ -18,4 +18,19 @@ SOCIALACCOUNT_ADAPTER = "dpnk.allauth.SocialAccountAdapter"
 
 REST_AUTH["PASSWORD_RESET_SERIALIZER"] = "dpnk.allauth.UserPasswordResetSerializer"
 
-CORS_ORIGIN_REGEX.append(RTWBB_FRONTEND_APP_BASE_URL.rstrip("/#/"))
+
+rtwbb_frontend_app_base_url_split_char = ","
+rtwbb_frontend_app_base_url_fragment_identifier = "/#/"
+if rtwbb_frontend_app_base_url_split_char in RTWBB_FRONTEND_APP_BASE_URL:
+    for url in RTWBB_FRONTEND_APP_BASE_URL.split(
+        rtwbb_frontend_app_base_url_split_char
+    ):
+        CORS_ORIGIN_REGEX.append(
+            url.rstrip(rtwbb_frontend_app_base_url_fragment_identifier)
+        )
+else:
+    CORS_ORIGIN_REGEX.append(
+        RTWBB_FRONTEND_APP_BASE_URL.rstrip(
+            rtwbb_frontend_app_base_url_fragment_identifier
+        )
+    )
