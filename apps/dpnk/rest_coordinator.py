@@ -603,7 +603,7 @@ router.register(
     basename="subsidiary-team-member",
 )
 router.register(
-    "organization-admin-organization-structure",
+    "organization-coordinator-organization-structure",
     OrganizationAdminOrganizationSet,
-    basename="organization-admin-organization-structure",
+    basename="organization-coordinator-organization-structure",
 )
