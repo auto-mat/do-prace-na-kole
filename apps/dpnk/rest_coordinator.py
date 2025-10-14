@@ -548,6 +548,7 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
         ]
     )
     id = serpy.IntField()
+    psc = NullIntField(attr="address.psc")
     street = serpy.StrField(attr="address.street")
     street_number = NullIntField(attr="address.street_number")
     city = serpy.StrField()
