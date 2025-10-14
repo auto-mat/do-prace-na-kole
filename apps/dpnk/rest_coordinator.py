@@ -549,7 +549,7 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
     )
     id = serpy.IntField()
     street = serpy.StrField(attr="address.street")
-    street_number = serpy.IntField(attr="address.street_number")
+    street_number = NullIntField(attr="address.street_number")
     city = serpy.StrField()
     icon_url = serpy.Field(call=True)
 
@@ -558,7 +558,7 @@ class OrganizationAdminOrganizationSerializer(serpy.Serializer):
     name = serpy.StrField()
     psc = NullIntField(attr="address.psc")
     street = EmptyStrField(attr="address.street")
-    street_number = EmptyStrField(attr="address.street_number")
+    street_number = NullIntField(attr="address.street_number")
     recipient = EmptyStrField(attr="address.recipient")
     city = EmptyStrField(attr="address.city")
     ico = NullIntField()
