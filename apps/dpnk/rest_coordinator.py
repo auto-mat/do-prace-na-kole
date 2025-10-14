@@ -584,6 +584,8 @@ class OrganizationAdminOrganizationSet(viewsets.ReadOnlyModelViewSet):
                 userprofile=self.request.user.userprofile,
                 company_admin_approved="approved",
                 campaign__slug=self.request.subdomain,
+                can_confirm_payments=True,
+                administrated_company__active=True,
             ).values_list("administrated_company__id", flat=True)
         )
 
