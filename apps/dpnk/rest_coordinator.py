@@ -726,7 +726,7 @@ router.register(
     basename="subsidiary-team-member",
 )
 router.register(
-    "organization-coordinator-organization-structure",
+    "coordinator/organization-structure",
     OrganizationAdminOrganizationSet,
     basename="organization-coordinator-organization-structure",
 )
