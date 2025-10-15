@@ -14,6 +14,7 @@ import drf_serpy as serpy
 from .models import (
     UserAttendance,
     CompanyAdmin,
+    Invoice,
     Payment,
     Status,
     Company,
@@ -668,6 +669,48 @@ class OrganizationAdminInvoiceSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = OrganizationAdminInvoicesSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class MakeInvoiceDeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = ["order_number", "client_note", "company_pais_benefitial_fee"]
+        extra_kwargs = {
+            "order_number": {"required": False},
+            "client_note": {"required": False},
+            "company_pais_benefitial_fee": {"required": False},
+        }
+
+
+class MakeInvoiceVew(APIView, CompanyAdminMixin):
+    def post(self, request):
+        serializer = MakeInvoiceDeserializer(data=request.data)
+        if serializer.is_valid():
+            order_number = serializer.validated_data.get("order_number")
+            client_note = serializer.validated_data.get("client_note")
+            company_pais_benefitial_fee = serializer.validated_data.get(
+                "company_pais_benefitial_fee"
+            )
+            company_admin = self.ca()
+            queryset = {
+                "campaign": company_admin.campaign,
+                "company": company_admin.administrated_company,
+            }
+            if order_number:
+                queryset["order_number"] = order_number
+            if client_note:
+                queryset["client_note"] = client_note
+            if company_pais_benefitial_fee:
+                queryset["company_pais_benefitial_fee"] = company_pais_benefitial_fee
+            invoice = Invoice(**queryset)
+            invoice.save()
+            return Response(
+                {
+                    "invoice_id": invoice.id,
+                },
+            )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 router.register(r"fee-approval", FeeApprovalSet, basename="fee-approval")

@@ -53,6 +53,7 @@ from .rest_coordinator import (
     GetAttendanceView,
     BoxRequestView,
     BoxRequestRemoveView,
+    MakeInvoiceVew,
     router as coordinator_router,
 )
 
@@ -704,5 +705,10 @@ urlpatterns = [
         "rest/coordinator/package-request/remove",
         BoxRequestRemoveView.as_view(),
         name="package-request-remove",
+    ),
+    path(
+        "rest/coordinator/make-invoice",
+        MakeInvoiceVew.as_view(),
+        name="coordinator-make-invoice",
     ),
 ]
