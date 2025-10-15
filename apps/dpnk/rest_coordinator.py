@@ -593,6 +593,78 @@ class OrganizationAdminOrganizationSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class OrganizationAdminPaymentSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    amount = serpy.IntField()
+    userprofile_id = RequestSpecificField(
+        lambda payment, req: payment.payment_user_attendance.userprofile.id
+    )
+    payment_status = serpy.StrField()
+    pay_type = serpy.StrField()
+    pay_category = serpy.StrField()
+
+
+class OrganizationAdminInvoiceSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    order_number = EmptyStrField()
+    total_amount = NullIntField()
+    fakturoid_invoice_url = EmptyStrField()
+    exposure_date = EmptyStrField()
+    paid_date = EmptyStrField()
+    company_pais_benefitial_fee = serpy.BoolField()
+    client_note = EmptyStrField()
+    payments = RequestSpecificField(
+        lambda invoice, req: [
+            OrganizationAdminPaymentSerializer(payment, context={"request": req}).data
+            for payment in invoice.payment_set.all()
+        ]
+    )
+
+
+class OrganizationAdminInvoicesSerializer(serpy.Serializer):
+    payments_to_invoice = RequestSpecificField(
+        lambda organization, req: [
+            OrganizationAdminPaymentSerializer(payment, context={"request": req}).data
+            for payment in Payment.objects.filter(
+                pay_type="fc",
+                status=Status.COMPANY_ACCEPTS,
+                user_attendance__team__subsidiary__company=organization,
+                user_attendance__campaign__slug=req.subdomain,
+            )
+        ]
+    )
+    invoices = RequestSpecificField(
+        lambda organization, req: [
+            OrganizationAdminInvoiceSerializer(
+                payment.invoice, context={"request": req}
+            ).data
+            for payment in Payment.objects.filter(
+                Q(status=Status.INVOICE_MADE) | Q(status=Status.INVOICE_PAID),
+                pay_type="fc",
+                user_attendance__team__subsidiary__company=organization,
+                user_attendance__campaign__slug=req.subdomain,
+                invoice__isnull=False,
+            )
+        ]
+    )
+
+
+class OrganizationAdminInvoiceSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Company.objects.filter(
+            id__in=CompanyAdmin.objects.filter(
+                userprofile=self.request.user.userprofile,
+                company_admin_approved="approved",
+                campaign__slug=self.request.subdomain,
+                can_confirm_payments=True,
+                administrated_company__active=True,
+            ).values_list("administrated_company__id", flat=True)
+        )
+
+    serializer_class = OrganizationAdminInvoicesSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router.register(r"fee-approval", FeeApprovalSet, basename="fee-approval")
 # router.register(r"approve-payments", ApprovePaymentsView, basename="approve-payments")
 # router.register(r"get-attendance", GetAttendanceView, basename="get-attendance")
@@ -609,4 +681,9 @@ router.register(
     "organization-coordinator-organization-structure",
     OrganizationAdminOrganizationSet,
     basename="organization-coordinator-organization-structure",
+)
+router.register(
+    "organization-coordinator-invoices",
+    OrganizationAdminInvoiceSet,
+    basename="organization-coordinator-invoices",
 )
