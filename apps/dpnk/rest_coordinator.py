@@ -566,6 +566,10 @@ class OrganizationAdminOrganizationSerializer(serpy.Serializer):
     ico = NullIntField()
     dic = EmptyStrField()
     active = serpy.BoolField()
+    has_filled_contact_information = serpy.BoolField(
+        attr="has_filled_contact_information",
+        call=True,
+    )
     subsidiaries = RequestSpecificField(
         lambda organization, req: [
             OrganizationAdminOrganizationSubsidiariesSerializer(
