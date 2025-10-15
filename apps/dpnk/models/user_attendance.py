@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import logging
+import re
 
 from coupons.models import DiscountCoupon
 
@@ -168,6 +169,15 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return Diploma.objects.filter(obj=self).first()
         except Diploma.DoesNotExist:
             return None
+
+    def get_diploma_pdf_url(self):
+        diploma = self.diploma()
+        if diploma:
+            if re.match(r"http:|https", settings.MEDIA_URL):
+                return diploma.pdf.url
+            else:
+                return f"{setting.MEDIA_URL}{diploma.pdf.url}"
+        return diploma
 
     def get_sandwich_type(self):
         return self.campaign.sandwich_type
