@@ -709,6 +709,6 @@ urlpatterns = [
     path(
         "rest/coordinator/make-invoice",
         MakeInvoiceVew.as_view(),
-        name="coordinator-make-invoice",
+        name="organization-coordinator-make-invoice",
     ),
 ]
