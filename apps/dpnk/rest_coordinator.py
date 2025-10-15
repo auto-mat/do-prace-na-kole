@@ -731,7 +731,7 @@ router.register(
     basename="organization-coordinator-organization-structure",
 )
 router.register(
-    "organization-coordinator-invoices",
+    "coordinator/invoices",
     OrganizationAdminInvoiceSet,
     basename="organization-coordinator-invoices",
 )
