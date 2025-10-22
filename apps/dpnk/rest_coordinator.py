@@ -606,7 +606,7 @@ class OrganizationAdminPaymentSerializer(serpy.Serializer):
     userprofile_id = RequestSpecificField(
         lambda payment, req: payment.payment_user_attendance.userprofile.id
     )
-    payment_status = serpy.StrField()
+    payment_status = serpy.IntField()
     pay_type = serpy.StrField()
     pay_category = serpy.StrField()
 
