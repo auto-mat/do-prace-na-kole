@@ -457,6 +457,7 @@ class OrganizationAdminOrganizationUserAttendanceSerializer(serpy.Serializer):
     payment_amount = serpy.StrField(call=True)
     discount_coupon = EmptyStrField()
     diploma = EmptyStrField(attr="get_diploma_pdf_url", call=True)
+    t_shirt_size = EmptyStrField()
     user_profile_id = RequestSpecificField(lambda ua, req: ua.userprofile.id)
 
 
