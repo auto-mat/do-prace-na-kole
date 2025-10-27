@@ -547,8 +547,6 @@ class OrganizationAdminPackageTransactionSerializer(serpy.Serializer):
 
 
 class OrganizationAdminOrganizationTeamPackageSerializer(serpy.Serializer):
-    id = serpy.IntField()
-    name = serpy.StrField()
     package_transactions = RequestSpecificField(
         lambda team_package, req: [
             OrganizationAdminPackageTransactionSerializer(
