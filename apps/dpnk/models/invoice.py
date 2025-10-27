@@ -43,7 +43,7 @@ from stale_notifications.model_mixins import StaleSyncMixin
 from .address import InvoiceAddress
 from .company import Company
 from .transactions import Payment, Status
-from .. import fakturoid_invoice_gen, invoice_gen, util
+from .. import util
 
 
 def get_invoice_dir(instance, filename):
@@ -351,56 +351,56 @@ def fill_invoice_parameters(sender, instance, **kwargs):
 @receiver(post_save, sender=Invoice)
 def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
+        from ..tasks import create_invoice
+
         instance.add_payments()
+        create_invoice(invoice_id=instance.id)
 
-    date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
-    if (date_from_create_invoices and not instance.generate_fakturoid_invoice) or (
-        not date_from_create_invoices
-    ):
-        if not instance.invoice_pdf or not instance.invoice_xml:
-            invoice_data = invoice_gen.generate_invoice(instance)
-            instance.total_amount = invoice_data.price_tax
-            filename = slugify(
-                "invoice_%s_%s_%s_%s"
-                % (
-                    instance.sequence_number,
-                    instance.company.name[0:40],
-                    instance.exposure_date.strftime("%Y-%m-%d"),
-                    uuid.uuid4(),
-                ),
-            )
+    # DEPRECATED
+    #
+    # date_from_create_invoices = settings.FAKTUROID["date_from_create_invoices"]
+    # if (date_from_create_invoices and not instance.generate_fakturoid_invoice) or (
+    #     not date_from_create_invoices
+    # ):
+    #     if not instance.invoice_pdf or not instance.invoice_xml:
+    #         invoice_data = invoice_gen.generate_invoice(instance)
+    #         instance.total_amount = invoice_data.price_tax
+    #         filename = slugify(
+    #             "invoice_%s_%s_%s_%s"
+    #             % (
+    #                 instance.sequence_number,
+    #                 instance.company.name[0:40],
+    #                 instance.exposure_date.strftime("%Y-%m-%d"),
+    #                 uuid.uuid4(),
+    #             ),
+    #         )
 
-            if not instance.invoice_pdf:
-                temp_pdf = NamedTemporaryFile()
-                invoice_gen.make_invoice_pdf(temp_pdf, invoice_data)
-                instance.invoice_pdf.save(
-                    "%s.pdf" % filename,
-                    File(temp_pdf),
-                    save=False,
-                )
+    #         if not instance.invoice_pdf:
+    #             temp_pdf = NamedTemporaryFile()
+    #             invoice_gen.make_invoice_pdf(temp_pdf, invoice_data)
+    #             instance.invoice_pdf.save(
+    #                 "%s.pdf" % filename,
+    #                 File(temp_pdf),
+    #                 save=False,
+    #             )
 
-            if not instance.invoice_xml:
-                temp_xml = NamedTemporaryFile()
-                invoice_gen.make_invoice_xml(temp_xml, invoice_data)
-                instance.invoice_xml.save(
-                    "%s.xml" % filename,
-                    File(temp_xml),
-                    save=False,
-                )
+    #         if not instance.invoice_xml:
+    #             temp_xml = NamedTemporaryFile()
+    #             invoice_gen.make_invoice_xml(temp_xml, invoice_data)
+    #             instance.invoice_xml.save(
+    #                 "%s.xml" % filename,
+    #                 File(temp_xml),
+    #                 save=False,
+    #             )
 
-            instance.save()
+    #         instance.save()
 
-        if created:
-            from dpnk.tasks import send_new_invoice_notification
+    #     if created:
+    #         from dpnk.tasks import send_new_invoice_notification
 
-            send_new_invoice_notification.delay(
-                pks=[instance.pk], campaign_slug=instance.campaign.slug
-            )
-    if created:
-        fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=instance)
-        if fa_invoice:
-            instance.fakturoid_invoice_url = fa_invoice["public_html_url"]
-            instance.save(update_fields=["fakturoid_invoice_url"])
+    #         send_new_invoice_notification.delay(
+    #             pks=[instance.pk], campaign_slug=instance.campaign.slug
+    #         )
 
 
 @receiver(pre_delete, sender=Invoice)

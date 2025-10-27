@@ -22,20 +22,29 @@
       <td>{{ invoice.exposure_date }}</td>
       <td>
         {% if fakturoid_date_from_create_invoices and not invoice.generate_fakturoid_invoice %}
+         {% comment %}
           <a href="{{ invoice.invoice_pdf.url }}">{% trans "PDF soubor" %}</a>
           <br/>
           (<a href="{{ invoice.invoice_xml.url }}" download="faktura_{{invoice.campaign.slug_identifier}}_{{invoice.id}}_pohoda.xml">{% trans "Pohoda&nbsp;XML" %}</a>)
+         {% endcomment %}
+         DEPRECATED
         {% elif fakturoid_date_from_create_invoices and invoice.generate_fakturoid_invoice and invoice.fakturoid_invoice_url %}
           <a href="{{ invoice.fakturoid_invoice_url }}">{% trans "PDF soubor" %}</a>
         {% elif fakturoid_date_from_create_invoices and invoice.generate_fakturoid_invoice and not invoice.fakturoid_invoice_url %}
           <a href="{{ invoice.invoice_pdf.url }}">{% trans "PDF soubor" %}</a>
+          {% comment %}
+          DEPRECATED
           <br/>
           (<a href="{{ invoice.invoice_xml.url }}" download="faktura_{{invoice.campaign.slug_identifier}}_{{invoice.id}}_pohoda.xml">{% trans "Pohoda&nbsp;XML" %}</a>)
+         {% endcomment %}
         {% else %}
+          {% comment %}
+          DEPRECATED
           <a href="{{ invoice.invoice_pdf.url }}">{% trans "PDF soubor" %}</a>
           <br/>
           (<a href="{{ invoice.invoice_xml.url }}" download="faktura_{{invoice.campaign.slug_identifier}}_{{invoice.id}}_pohoda.xml">{% trans "Pohoda&nbsp;XML" %}</a>)
           <br/>
+          {% endcomment %}
           (<a href="{{ invoice.fakturoid_invoice_url }}">{% trans "Fakturoid PDF soubor" %}</a>)
         {% endif %}
       </td>

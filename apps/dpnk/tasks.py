@@ -43,7 +43,7 @@ from celery.utils.log import get_task_logger
 import smmapdfs.email
 import smmapdfs.tasks
 
-from . import email, mailing, util
+from . import email, fakturoid_invoice_gen, mailing, util
 from .models import (
     Campaign,
     CityInCampaign,
@@ -429,3 +429,17 @@ def team_membership_invitation_mail(self, user_attendance_id, emails):
             user_attendance=UserAttendance.objects.get(id=user_attendance_id),
             email=email_address,
         )
+
+
+@shared_task(bind=True)
+def create_invoice(self, invoice_id):
+    """Create invoice
+
+    :param id invoice_id: Invoice model instance ID
+    """
+    invoice = Invoice.objects.get(id=invoice_id)
+    # Create Fakturoid invoice
+    fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=invoice)
+    if fa_invoice:
+        invoice.fakturoid_invoice_url = fa_invoice["public_html_url"]
+        invoice.save(update_fields=["fakturoid_invoice_url"])
