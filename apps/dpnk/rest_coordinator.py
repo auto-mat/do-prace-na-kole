@@ -547,6 +547,7 @@ class OrganizationAdminPackageTransactionSerializer(serpy.Serializer):
 
 
 class OrganizationAdminOrganizationTeamPackageSerializer(serpy.Serializer):
+    dispatched = serpy.BoolField()
     package_transactions = RequestSpecificField(
         lambda team_package, req: [
             OrganizationAdminPackageTransactionSerializer(
