@@ -567,9 +567,9 @@ class OrganizationAdminOrganizationSubsidiaryBoxSerializer(serpy.Serializer):
     team_packages = RequestSpecificField(
         lambda subsidiary_box, req: [
             OrganizationAdminOrganizationTeamPackageSerializer(
-                subsidiary_box, context={"request": req}
+                team_package, context={"request": req}
             ).data
-            for team in subsidiary_box.team.all()
+            for team_package in subsidiary_box.teampackage_set.all()
         ]
     )
 
