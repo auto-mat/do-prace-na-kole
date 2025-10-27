@@ -9,6 +9,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
 import drf_serpy as serpy
 
 from .models import (
@@ -24,6 +25,7 @@ from .models import (
 )
 from t_shirt_delivery.models import (
     BoxRequest,
+    SubsidiaryBox,
 )
 from .models.company import CompanyInCampaign
 from .rest import (
@@ -155,7 +157,6 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                 )
                 payment.save()
                 approved_count += 1
-
             return Response(
                 {
                     "message": f"Approved {approved_count} payments successfully",
@@ -383,7 +384,6 @@ class BoxRequestView(APIView, CompanyAdminMixin):
                 box_requests__company_admin=company_admin
             ).values_list("id", flat=True)
         )
-
         return Response({"subsidiary_ids": subsidiary_ids})
 
     @transaction.atomic
@@ -541,6 +541,39 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
     icon_url = serpy.Field(call=True)
 
 
+class OrganizationAdminPackageTransactionSerializer(serpy.Serializer):
+    t_shirt_size = EmptyStrField()
+    name = serpy.StrField(attr="userattendance.name", call=True)
+
+
+class OrganizationAdminOrganizationTeamPackageSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name = serpy.StrField()
+    package_transactions = RequestSpecificField(
+        lambda team_package, req: [
+            OrganizationAdminPackageTransactionSerializer(
+                package_transaction, context={"request": req}
+            ).data
+            for package_transaction in PackageTransaction.objects.filter(
+                team_package=team_package, user_attendance__campaign=req.campaign
+            )
+        ]
+    )
+
+
+class OrganizationAdminOrganizationSubsidiaryBoxSerializer(serpy.Serializer):
+    dispatched = serpy.BoolField()
+    tracking_link = EmptyStrField(call=True)
+    team_packages = RequestSpecificField(
+        lambda subsidiary_box, req: [
+            OrganizationAdminOrganizationTeamPackageSerializer(
+                subsidiary_box, context={"request": req}
+            ).data
+            for team in subsidiary_box.team.all()
+        ]
+    )
+
+
 class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
     teams = SubsidiaryInCampaignField(
         lambda sic, req: [
@@ -548,6 +581,17 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
                 team, context={"request": req}
             ).data
             for team in sic.teams
+        ]
+    )
+    boxes = SubsidiaryInCampaignField(
+        lambda sic, req: [
+            OrganizationAdminOrganizationSubsidiaryBoxSerializer(
+                subsidiary_box, context={"request": req}
+            ).data
+            for subsidiary_box in SubsidiaryBox.objects.filter(
+                subsidiary=sic.subsidiary,
+                delivery_batch__campaign=req.campaign,
+            )
         ]
     )
     id = serpy.IntField()
