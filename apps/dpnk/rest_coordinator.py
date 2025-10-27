@@ -563,6 +563,7 @@ class OrganizationAdminOrganizationTeamPackageSerializer(serpy.Serializer):
 
 class OrganizationAdminOrganizationSubsidiaryBoxSerializer(serpy.Serializer):
     dispatched = serpy.BoolField()
+    carrier_identification = EmptyStrField()
     tracking_link = EmptyStrField(call=True)
     team_packages = RequestSpecificField(
         lambda subsidiary_box, req: [
