@@ -544,7 +544,7 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
 
 class OrganizationAdminPackageTransactionSerializer(serpy.Serializer):
     t_shirt_size = EmptyStrField()
-    name = serpy.StrField(attr="userattendance.name", call=True)
+    name = serpy.StrField(attr="user_attendance.name", call=True)
 
 
 class OrganizationAdminOrganizationTeamPackageSerializer(serpy.Serializer):
