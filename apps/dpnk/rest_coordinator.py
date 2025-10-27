@@ -25,6 +25,7 @@ from .models import (
 )
 from t_shirt_delivery.models import (
     BoxRequest,
+    PackageTransaction,
     SubsidiaryBox,
 )
 from .models.company import CompanyInCampaign
