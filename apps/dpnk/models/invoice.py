@@ -261,6 +261,7 @@ class Invoice(StaleSyncMixin, AbstractOrder):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        self.payment_ids = kwargs.pop("payment_ids", None)
         if not self.sequence_number:
             campaign = self.campaign
             first = campaign.invoice_sequence_number_first
@@ -279,19 +280,41 @@ class Invoice(StaleSyncMixin, AbstractOrder):
                 self.sequence_number = first
         super().save(*args, **kwargs)
 
-    def payments_to_add(self):
+    def payments_to_add(self, payment_ids=None):
+        """Payments to add
+
+        :param list payment_ids: Payment models IDs, with default
+                                 None value
+        :return <PolymorphicQuerySet
+                 [<Payment: Payment object (114)>, ...]>: List of Payment model
+                                                          instances or None
+        """
         if hasattr(self, "campaign"):
-            return payments_to_invoice(self.company, self.campaign)
+            return payments_to_invoice(
+                self.company,
+                self.campaign,
+                payment_ids,
+            )
 
     @transaction.atomic
-    def add_payments(self):
+    def add_payments(self, payment_ids):
+        """Add payments
+
+        :param list payment_ids: Payment models IDs, with default
+                                 None value
+
+        :return <PolymorphicQuerySet
+                 [<Payment: Payment object (114)>, ...]>: List of Payment model
+                                                          instances
+        """
         assert len(self.payment_set.all()) == 0
-        payments = self.payments_to_add()
+        payments = self.payments_to_add(payment_ids)
         self.payment_set.set(payments)
         for payment in payments:
             payment.status = Status.INVOICE_MADE
             payment.save()
             denorm.flush()
+        return payments
 
     def fill_company_details(self):
         if not self.company_name:  # set invoice parameters from company
@@ -322,13 +345,23 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
             denorm.flush()
 
 
-def payments_to_invoice(company, campaign):
-    return Payment.objects.filter(
-        pay_type="fc",
-        status=Status.COMPANY_ACCEPTS,
-        user_attendance__team__subsidiary__company=company,
-        user_attendance__campaign=campaign,
-    )
+def payments_to_invoice(company, campaign, payment_ids=None):
+    """Payments to invoice
+
+    :param Company company: Company model instance
+    :param Campaign company: Campaign model instance
+    :param list payment_ids: Payment models IDs, with default
+                             None value
+    """
+    query = {
+        "pay_type": "fc",
+        "status": Status.COMPANY_ACCEPTS,
+        "user_attendance__team__subsidiary__company": company,
+        "user_attendance__campaign": campaign,
+    }
+    if payment_ids:
+        query["id__in"] = payment_ids
+    return Payment.objects.filter(**query)
 
 
 @receiver(pre_save, sender=Invoice)
@@ -353,7 +386,12 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
         from ..tasks import create_invoice
 
-        instance.add_payments()
+        payment_ids = getattr(instance, "payment_ids")
+        payments = instance.add_payments(payment_ids)
+        if not payments:
+            instance.delete()
+            return
+
         create_invoice(invoice_id=instance.id)
 
     # DEPRECATED

@@ -718,9 +718,19 @@ class OrganizationAdminInvoiceSet(viewsets.ReadOnlyModelViewSet):
 
 
 class MakeInvoiceDeserializer(serializers.ModelSerializer):
+    payment_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=False,
+    )
+
     class Meta:
         model = Invoice
-        fields = ["order_number", "client_note", "company_pais_benefitial_fee"]
+        fields = [
+            "order_number",
+            "client_note",
+            "company_pais_benefitial_fee",
+            "payment_ids",
+        ]
         extra_kwargs = {
             "order_number": {"required": False},
             "client_note": {"required": False},
@@ -737,6 +747,7 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
             company_pais_benefitial_fee = serializer.validated_data.get(
                 "company_pais_benefitial_fee"
             )
+            payment_ids = serializer.validated_data.get("payment_ids")
             company_admin = self.ca()
             queryset = {
                 "campaign": company_admin.campaign,
@@ -749,10 +760,11 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
             if company_pais_benefitial_fee:
                 queryset["company_pais_benefitial_fee"] = company_pais_benefitial_fee
             invoice = Invoice(**queryset)
-            invoice.save()
+            invoice.save(payment_ids=payment_ids)
             return Response(
                 {
                     "invoice_id": invoice.id,
+                    "payment_ids": payment_ids,
                 },
             )
         else:
