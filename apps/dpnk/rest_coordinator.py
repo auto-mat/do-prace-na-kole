@@ -131,6 +131,8 @@ class ApprovePaymentsDeserializer(serializers.Serializer):
 
 
 class ApprovePaymentsView(APIView, CompanyAdminMixin):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         serializer = ApprovePaymentsDeserializer(data=request.data)
         if serializer.is_valid():
@@ -766,6 +768,8 @@ class MakeInvoiceDeserializer(serializers.ModelSerializer):
 
 
 class MakeInvoiceVew(APIView, CompanyAdminMixin):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         serializer = MakeInvoiceDeserializer(data=request.data)
         if serializer.is_valid():
