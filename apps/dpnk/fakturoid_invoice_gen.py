@@ -161,8 +161,8 @@ def create_or_update_subject(session, base_url, invoice):
         "custom_id": str(invoice.company.id),
         "name": invoice.company_name,
         "street": (
-            f"{invoice.company.address.street or ''} "
-            f"{invoice.company.address.street_number or ''}"
+            f"{invoice.company_address_street or ''} "
+            f"{invoice.company_address_street_number or ''}"
         ).strip(),
         "zip": invoice.company_address_psc,
         "country": invoice.country or "CZ",
