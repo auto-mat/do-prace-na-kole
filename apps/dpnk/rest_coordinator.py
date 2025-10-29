@@ -601,20 +601,13 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
         ]
     )
     id = serpy.IntField()
-    psc = NullIntField(attr="address.psc")
-    street = serpy.StrField(attr="address.street")
-    street_number = NullIntField(attr="address.street_number")
-    city = serpy.StrField()
+    address = AddressSerializer()
     icon_url = serpy.Field(call=True)
 
 
 class OrganizationAdminOrganizationSerializer(serpy.Serializer):
     name = serpy.StrField()
-    psc = NullIntField(attr="address.psc")
-    street = EmptyStrField(attr="address.street")
-    street_number = NullIntField(attr="address.street_number")
-    recipient = EmptyStrField(attr="address.recipient")
-    city = EmptyStrField(attr="address.city")
+    address = AddressSerializer()
     ico = NullIntField()
     dic = EmptyStrField()
     active = serpy.BoolField()
