@@ -1,4 +1,6 @@
 import datetime
+from collections import namedtuple
+
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -718,11 +720,20 @@ class OrganizationAdminInvoiceSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class CompanyAddressDeserializer(serializers.Serializer):
+    psc = serializers.CharField(required=False)
+    street = serializers.CharField(required=False)
+    street_number = serializers.CharField(required=False)
+    recipient = serializers.CharField(required=False)
+    city = serializers.CharField(required=False)
+
+
 class MakeInvoiceDeserializer(serializers.ModelSerializer):
     payment_ids = serializers.ListField(
         child=serializers.IntegerField(),
         required=False,
     )
+    company_address = CompanyAddressDeserializer()
 
     class Meta:
         model = Invoice
@@ -731,11 +742,26 @@ class MakeInvoiceDeserializer(serializers.ModelSerializer):
             "client_note",
             "company_pais_benefitial_fee",
             "payment_ids",
+            "company_ico",
+            "company_dic",
+            "telephone",
+            "email",
+            "country",
+            "company_name",
+            "anonymize",
+            "company_address",
         ]
         extra_kwargs = {
             "order_number": {"required": False},
             "client_note": {"required": False},
             "company_pais_benefitial_fee": {"required": False},
+            "company_ico": {"required": False},
+            "company_dic": {"required": False},
+            "telephone": {"required": False},
+            "email": {"required": False},
+            "country": {"required": False},
+            "company_name": {"required": False},
+            "anonymize": {"required": False},
         }
 
 
@@ -749,19 +775,85 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
                 "company_pais_benefitial_fee"
             )
             payment_ids = serializer.validated_data.get("payment_ids")
+            company_ico = serializer.validated_data.get("company_ico")
+            company_dic = serializer.validated_data.get("company_dic")
+            telephone = serializer.validated_data.get("telephone")
+            email = serializer.validated_data.get("email")
+            country = serializer.validated_data.get("country")
+            company_name = serializer.validated_data.get("company_name")
+            anonymize = serializer.validated_data.get("anonymize")
+            company_address = serializer.validated_data.get("company_address")
+
             company_admin = self.ca()
             queryset = {
                 "campaign": company_admin.campaign,
                 "company": company_admin.administrated_company,
             }
+
+            if company_address:
+                CompanyAddress = namedtuple(
+                    "CompanyAddress",
+                    [
+                        "psc",
+                        "street",
+                        "street_number",
+                        "recipient",
+                        "city",
+                    ],
+                    defaults=[
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                    ],
+                )
+                CompAddr = CompanyAddress()
+
             if order_number:
                 queryset["order_number"] = order_number
             if client_note:
                 queryset["client_note"] = client_note
             if company_pais_benefitial_fee:
                 queryset["company_pais_benefitial_fee"] = company_pais_benefitial_fee
+            if company_ico:
+                queryset["company_ico"] = company_ico
+            if company_dic:
+                queryset["company_dic"] = company_dic
+            if telephone:
+                queryset["telephone"] = telephone
+            if email:
+                queryset["email"] = email
+            if country:
+                queryset["country"] = country
+            if company_name:
+                queryset["company_name"] = company_name
+            if anonymize:
+                queryset["anonymize"] = anonymize
+
+            # Custom organization address
+            psc = company_address.get("psc")
+            if psc:
+                CompAddr = CompAddr._replace(psc=psc)
+            street = company_address.get("street")
+            if street:
+                CompAddr = CompAddr._replace(street=street)
+            street_number = company_address.get("street_number")
+            if street_number:
+                CompAddr = CompAddr._replace(street_number=street_number)
+            city = company_address.get("city")
+            if city:
+                CompAddr = CompAddr._replace(city=city)
+            recipient = company_address.get("recipient")
+            if recipient:
+                CompAddr = CompAddr._replace(recipient=recipient)
+
+            if company_address:
+                queryset["company_address"] = CompAddr._asdict()
+
             invoice = Invoice(**queryset)
             invoice.save(payment_ids=payment_ids)
+
             return Response(
                 {
                     "invoice_id": invoice.id,
