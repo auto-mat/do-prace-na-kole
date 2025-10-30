@@ -707,7 +707,7 @@ urlpatterns = [
         name="package-request-remove",
     ),
     path(
-        "rest/coordinator/make-invoice",
+        "rest/coordinator/make-invoice/",
         MakeInvoiceVew.as_view(),
         name="organization-coordinator-make-invoice",
     ),
