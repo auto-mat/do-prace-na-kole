@@ -728,7 +728,7 @@ class MakeInvoiceDeserializer(serializers.ModelSerializer):
         child=serializers.IntegerField(),
         required=False,
     )
-    company_address = CompanyAddressDeserializer()
+    company_address = CompanyAddressDeserializer(required=False)
 
     class Meta:
         model = Invoice
@@ -829,23 +829,23 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
                 queryset["anonymize"] = anonymize
 
             # Custom organization address
-            psc = company_address.get("psc")
-            if psc:
-                CompAddr = CompAddr._replace(psc=psc)
-            street = company_address.get("street")
-            if street:
-                CompAddr = CompAddr._replace(street=street)
-            street_number = company_address.get("street_number")
-            if street_number:
-                CompAddr = CompAddr._replace(street_number=street_number)
-            city = company_address.get("city")
-            if city:
-                CompAddr = CompAddr._replace(city=city)
-            recipient = company_address.get("recipient")
-            if recipient:
-                CompAddr = CompAddr._replace(recipient=recipient)
-
             if company_address:
+                psc = company_address.get("psc")
+                if psc:
+                    CompAddr = CompAddr._replace(psc=psc)
+                street = company_address.get("street")
+                if street:
+                    CompAddr = CompAddr._replace(street=street)
+                street_number = company_address.get("street_number")
+                if street_number:
+                    CompAddr = CompAddr._replace(street_number=street_number)
+                city = company_address.get("city")
+                if city:
+                    CompAddr = CompAddr._replace(city=city)
+                recipient = company_address.get("recipient")
+                if recipient:
+                    CompAddr = CompAddr._replace(recipient=recipient)
+
                 queryset["company_address"] = CompAddr._asdict()
 
             invoice = Invoice(**queryset)
