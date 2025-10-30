@@ -713,6 +713,10 @@ PRICE_LEVEL_CATEGORY_CHOICES = Choices(
     ("basic", _("Základní")),
     ("company", _("Pro firmy")),
     ("school", _("Pro školy")),
+    ("basic-with-reward", _("Základní s odměnou")),
+    ("company-with-reward", _("Pro firmy s odměnou")),
+    ("school-with-reward", _("Pro školy s odměnou")),
+
 )
 PRICE_LEVEL_CATEGORY_DEFAULT = "basic"
 
