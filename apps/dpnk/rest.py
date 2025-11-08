@@ -2379,7 +2379,37 @@ class UserAttendanceSerializer(serpy.Serializer):
     payment_status = EmptyStrField()
     payment_amount = NullIntField(call=True)
     payment_category = EmptyStrField(call=True)
+    is_payment_with_reward = serpy.MethodField()
     approved_for_team = EmptyStrField()
+
+    def get_is_payment_with_reward(self, obj):
+        payment = obj.representative_payment
+        if payment:
+            if payment.pay_category == "entry_fee-donation":
+                entry_fee = payment.payu_ordered_product.get(
+                    name__icontains="entry fee"
+                ).unit_price
+            else:
+                entry_fee = payment.amount
+            if payment.pay_subject:
+                price_levels = obj.campaign.pricelevel_set.filter(
+                    category__icontains=payment.pay_subject
+                ).values(
+                    "id",
+                    "price",
+                    "category",
+                )
+                return (
+                    True
+                    if list(
+                        filter(
+                            lambda x: x["price"] == entry_fee
+                            and "reward" in x["category"],
+                            price_levels,
+                        )
+                    )
+                    else False
+                )
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
