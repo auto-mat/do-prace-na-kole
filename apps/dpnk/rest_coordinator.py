@@ -694,7 +694,7 @@ class OrganizationAdminInvoicesSerializer(serpy.Serializer):
                 user_attendance__team__subsidiary__company=organization,
                 user_attendance__campaign__slug=req.subdomain,
                 invoice__isnull=False,
-            )
+            ).distinct("invoice_id")
         ]
     )
 
