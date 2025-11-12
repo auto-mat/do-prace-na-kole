@@ -40,6 +40,7 @@ from .rest import (
     router,
     RequestSpecificField,
     SubsidiaryInCampaignField,
+    UserAttendancePaymentWithRewardSerializer,
 )
 from .middleware import get_or_create_userattendance
 
@@ -467,7 +468,9 @@ class BoxRequestRemoveView(APIView, CompanyAdminMixin):
         )
 
 
-class OrganizationAdminOrganizationUserAttendanceSerializer(serpy.Serializer):
+class OrganizationAdminOrganizationUserAttendanceSerializer(
+    UserAttendancePaymentWithRewardSerializer
+):
     id = serpy.IntField()
     name = serpy.StrField(call=True)
     nickname = RequestSpecificField(lambda ua, req: ua.userprofile.nickname)

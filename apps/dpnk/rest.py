@@ -2371,16 +2371,8 @@ class RequestSpecificFieldEmptyStrVal(RequestSpecificField):
         return value if value else ""
 
 
-class UserAttendanceSerializer(serpy.Serializer):
-    personal_data_opt_in = serpy.BoolField()
-    discount_coupon = EmptyStrField()
-    payment_subject = EmptyStrField(call=True)
-    payment_type = EmptyStrField(call=True)
-    payment_status = EmptyStrField()
-    payment_amount = NullIntField(call=True)
-    payment_category = EmptyStrField(call=True)
+class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
     is_payment_with_reward = serpy.MethodField()
-    approved_for_team = EmptyStrField()
 
     def get_is_payment_with_reward(self, obj):
         payment = obj.representative_payment
@@ -2410,6 +2402,17 @@ class UserAttendanceSerializer(serpy.Serializer):
                     )
                     else False
                 )
+
+
+class UserAttendanceSerializer(UserAttendancePaymentWithRewardSerializer):
+    personal_data_opt_in = serpy.BoolField()
+    discount_coupon = EmptyStrField()
+    payment_subject = EmptyStrField(call=True)
+    payment_type = EmptyStrField(call=True)
+    payment_status = EmptyStrField()
+    payment_amount = NullIntField(call=True)
+    payment_category = EmptyStrField(call=True)
+    approved_for_team = EmptyStrField()
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
