@@ -19,6 +19,7 @@ from .models import (
     CompanyAdmin,
     Invoice,
     Payment,
+    PayUOrderedProduct,
     Status,
     Company,
     Subsidiary,
@@ -124,7 +125,7 @@ class FeeApprovalSet(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
 
 class ApprovePaymentsDeserializer(serializers.Serializer):
 
-    ids = serializers.ListField(
+    ids = serializers.DictField(
         child=serializers.IntegerField(),
         required=True,
     )
@@ -141,7 +142,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             company_admin = self.ca()
 
             users = UserAttendance.objects.filter(
-                id__in=ids,
+                id__in=list(map(int, ids.keys())),
                 team__subsidiary__company=company_admin.administrated_company,
                 campaign=company_admin.campaign,
                 userprofile__user__is_active=True,
@@ -151,17 +152,37 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             )
 
             approved_count = 0
+            payments = []
+            payu_ordered_products = []
             for user in users:
                 payment = user.representative_payment
                 payment.status = Status.COMPANY_ACCEPTS
-                payment.amount = user.company_admission_fee()
+                amount = ids[str(user.id)]
+                if payment.amount != amount:
+                    payment.amount = amount
+                    entry_fee = payment.payu_ordered_product.get(
+                        name__icontains="entry fee"
+                    )
+                    entry_fee.unit_price = amount
+                    payu_ordered_products.append(entry_fee)
+                else:
+                    payment.amount = user.company_admission_fee()
                 payment.description = (
                     payment.description
                     + "\nFA %s odsouhlasil dne %s"
                     % (self.request.user.username, datetime.datetime.now())
                 )
-                payment.save()
+                payments.append(payment)
                 approved_count += 1
+
+            Payment.objects.bulk_update(
+                payments,
+                ["status", "amount", "description"],
+            )
+            PayUOrderedProduct.objects.bulk_update(
+                payu_ordered_products,
+                ["unit_price"],
+            )
             return Response(
                 {
                     "message": f"Approved {approved_count} payments successfully",
