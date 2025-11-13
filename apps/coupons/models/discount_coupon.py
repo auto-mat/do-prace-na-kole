@@ -66,7 +66,7 @@ class CouponSandwich(smmapdfs.model_abcs.PdfSandwichABC):
     )
 
     def get_email(self):
-        return [self.obj.receiver]
+        return [self.obj.receiver if self.obj.receiver else "-"]
 
     def get_language(self):
         return "cs"
