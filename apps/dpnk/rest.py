@@ -44,6 +44,7 @@ from django.db.models.functions import Concat, DenseRank
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.utils import has_verified_email, send_email_confirmation
@@ -60,6 +61,7 @@ from rest_framework import mixins, permissions, routers, serializers, viewsets
 
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
+from rest_framework.validators import UniqueValidator
 from rest_framework.views import APIView
 from price_level import models as price_level_models
 
@@ -695,11 +697,46 @@ class CompetitionSerializer(serpy.Serializer):
         )
 
 
-class CompetitionSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
+class CompetitionDeserializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        validators=[UniqueValidator(queryset=Competition.objects.all())]
+    )
+    competition_type = serializers.ChoiceField(
+        choices=[x for x in Competition.CTYPES if x[0] != "questionnaire"],
+    )
+    competitor_type = serializers.ChoiceField(
+        choices=[
+            x for x in Competition.CCOMPETITORTYPES if x[0] in ["single_user", "team"]
+        ],
+    )
+
+    def validate(self, data):
+        request = self.context["request"]
+        data["campaign"] = request.campaign
+        data["slug"] = f"FA-{request.campaign.pk}-{slugify(data['name'])[0:30]}"
+        return super().validate(data)
+
+    class Meta:
+        model = Competition
+        fields = [
+            "name",
+            "url",
+            "competition_type",
+            "competitor_type",
+            "commute_modes",
+        ]
+
+
+class CompetitionSet(UserAttendanceMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         return self.ua().get_competitions()
 
-    serializer_class = CompetitionSerializer
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return CompetitionSerializer
+        else:
+            return CompetitionDeserializer
+
     permission_classes = [permissions.IsAuthenticated]
 
 
