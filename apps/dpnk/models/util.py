@@ -56,3 +56,25 @@ def disable_for_loaddata(signal_handler):
         signal_handler(*args, **kwargs)
 
     return wrapper
+
+
+def get_competition_competition_type_field_choices():
+    """Get Competition model competition_type field choices
+
+    :return dict: {"length": "Výkonnost",...}
+    """
+    from .competition import Competition
+
+    return dict([x for x in Competition.CTYPES if x[0] != "questionnaire"])
+
+
+def get_competition_competitor_type_field_choices():
+    """Get Competition model competitor_type field choices
+
+    :return dict: {"single_user": "Jednotliví účastníci",...}
+    """
+    from .competition import Competition
+
+    return dict(
+        [x for x in Competition.CCOMPETITORTYPES if x[0] in ["single_user", "team"]]
+    )

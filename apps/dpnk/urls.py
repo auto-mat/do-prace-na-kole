@@ -31,6 +31,7 @@ from .autocomplete_views import (
     TeamAutocomplete,
 )
 from .rest import (
+    CompetitionFieldsValues,
     DataReportResults,
     DataReportResultsByChallenge,
     HasOrganizationAdmin,
@@ -503,6 +504,11 @@ urlpatterns = [
         "rest/datareport-results-by-challenge/(?P<challenge>(may|september-january))/",
         DataReportResultsByChallenge.as_view(),
         name="datareport-results-by-challenge",
+    ),
+    path(
+        "rest/competition-fields-choices",
+        CompetitionFieldsValues.as_view(),
+        name="competition-fields-choices",
     ),
     url(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),

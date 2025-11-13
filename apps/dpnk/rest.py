@@ -95,6 +95,10 @@ from .models.subsidiary import SubsidiaryInCampaign
 from t_shirt_delivery.models import TShirtSize
 from coupons.models import DiscountCoupon
 
+from .models.util import (
+    get_competition_competition_type_field_choices,
+    get_competition_competitor_type_field_choices,
+)
 from .util import (
     attrgetter_def_val,
     Cache,
@@ -702,12 +706,10 @@ class CompetitionDeserializer(serializers.ModelSerializer):
         validators=[UniqueValidator(queryset=Competition.objects.all())]
     )
     competition_type = serializers.ChoiceField(
-        choices=[x for x in Competition.CTYPES if x[0] != "questionnaire"],
+        choices=list(get_competition_competition_type_field_choices().items()),
     )
     competitor_type = serializers.ChoiceField(
-        choices=[
-            x for x in Competition.CCOMPETITORTYPES if x[0] in ["single_user", "team"]
-        ],
+        choices=list(get_competition_competitor_type_field_choices().items()),
     )
 
     def validate(self, data):
@@ -738,6 +740,21 @@ class CompetitionSet(UserAttendanceMixin, viewsets.ModelViewSet):
             return CompetitionDeserializer
 
     permission_classes = [permissions.IsAuthenticated]
+
+
+class CompetitionFieldsValues(APIView):
+    """Get competition fields choices values"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response(
+            {
+                "competition_type": get_competition_competition_type_field_choices(),
+                "competitor_type": get_competition_competitor_type_field_choices(),
+                "commute_modes": CommuteMode.objects.all().values("id", "name"),
+            }
+        )
 
 
 class CompanyInCampaignField(RequestSpecificField):
