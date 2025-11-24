@@ -726,6 +726,8 @@ class CompetitionDeserializer(serializers.ModelSerializer):
             "competition_type",
             "competitor_type",
             "commute_modes",
+            "date_from",
+            "date_to",
         ]
 
 
