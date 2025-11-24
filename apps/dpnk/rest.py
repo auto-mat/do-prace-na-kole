@@ -682,6 +682,13 @@ class ColleagueTripRangeSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class CommuteModeMinimalSerializer(serpy.Serializer):
+    id = serpy.IntField()
+    name_cs = serpy.StrField()
+    name_en = serpy.StrField(required=False)
+    slug = serpy.StrField()
+
+
 class CompetitionSerializer(serpy.Serializer):
     results = serpy.MethodField()
 
@@ -692,6 +699,15 @@ class CompetitionSerializer(serpy.Serializer):
     competition_type = serpy.StrField()
     url = serpy.StrField(required=False)
     priority = serpy.IntField()
+    date_from = serpy.StrField(required=False)
+    date_to = serpy.StrField(required=False)
+    commute_modes = RequestSpecificField(
+        lambda competition, req: CommuteModeMinimalSerializer(
+            competition.commute_modes.all(),
+            context={"request": req},
+            many=True,
+        ).data
+    )
 
     def get_results(self, obj):
         return reverse(
@@ -1479,9 +1495,7 @@ class CoordinatedCitySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CommuteModeSerializer(serpy.Serializer):
-    id = serpy.IntField()
-    slug = serpy.StrField()
+class CommuteModeSerializer(CommuteModeMinimalSerializer):
     does_count = serpy.BoolField()
     eco = serpy.BoolField()
     distance_important = serpy.BoolField()
@@ -1491,8 +1505,6 @@ class CommuteModeSerializer(serpy.Serializer):
     description_en = serpy.StrField(required=False)
     description_cs = serpy.StrField(required=False)
     icon = OptionalImageField()
-    name_en = serpy.StrField(required=False)
-    name_cs = serpy.StrField()
     points = serpy.IntField()
     # icon TODO
 
