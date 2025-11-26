@@ -244,6 +244,33 @@ class RequestSpecificField(serpy.Field):
         return self.method(object, context["request"])
 
 
+class EmptyStrField(serpy.Field):
+    """Replace None value with empty string '' value"""
+
+    def to_value(self, value):
+        if value is None:
+            return ""
+        return str(value)
+
+
+class NullIntField(serpy.Field):
+    """Return int value or None (null)"""
+
+    def to_value(self, value):
+        if value is None or value == "":
+            return None
+        return int(value)
+
+
+class NullStrField(serpy.Field):
+    """Return None (null)"""
+
+    def to_value(self, value):
+        if value is None:
+            return None
+        return value
+
+
 class UserAttendanceMixin:
     def ua(self):
         ua = self.request.user_attendance
@@ -708,6 +735,7 @@ class CompetitionSerializer(serpy.Serializer):
             many=True,
         ).data
     )
+    description = EmptyStrField()
 
     def get_results(self, obj):
         return reverse(
@@ -744,6 +772,7 @@ class CompetitionDeserializer(serializers.ModelSerializer):
             "commute_modes",
             "date_from",
             "date_to",
+            "description",
         ]
 
 
@@ -2402,33 +2431,6 @@ class PayUPaymentNotifyPost(APIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-
-class EmptyStrField(serpy.Field):
-    """Replace None value with empty string '' value"""
-
-    def to_value(self, value):
-        if value is None:
-            return ""
-        return str(value)
-
-
-class NullIntField(serpy.Field):
-    """Return int value or None (null)"""
-
-    def to_value(self, value):
-        if value is None or value == "":
-            return None
-        return int(value)
-
-
-class NullStrField(serpy.Field):
-    """Return None (null)"""
-
-    def to_value(self, value):
-        if value is None:
-            return None
-        return value
 
 
 class RequestSpecificFieldEmptyStrVal(RequestSpecificField):
