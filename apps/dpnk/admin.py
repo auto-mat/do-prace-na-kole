@@ -463,6 +463,7 @@ class CompetitionAdmin(
         "name",
         "slug",
         "priority",
+        "description",
         "competition_type",
         "competitor_type",
         "is_public",

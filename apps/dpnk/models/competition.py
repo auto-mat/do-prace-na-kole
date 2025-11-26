@@ -240,6 +240,11 @@ class Competition(models.Model):
         verbose_name=_("Ukázat volbu charitativní organizace ve výsledích"),
         default=False,
     )
+    description = models.TextField(
+        verbose_name=_("Popis"),
+        blank=True,
+        null=True,
+    )
 
     def get_minimum_rides_base(self):
         return self.minimum_rides_base
