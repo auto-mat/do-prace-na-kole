@@ -76,5 +76,9 @@ def get_competition_competitor_type_field_choices():
     from .competition import Competition
 
     return dict(
-        [x for x in Competition.CCOMPETITORTYPES if x[0] in ["single_user", "team"]]
+        [
+            x
+            for x in Competition.CCOMPETITORTYPES
+            if x[0] in ["single_user", "team", "company"]
+        ]
     )
