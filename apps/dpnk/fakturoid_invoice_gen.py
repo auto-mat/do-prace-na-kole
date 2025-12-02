@@ -160,27 +160,37 @@ def create_or_update_subject(session, base_url, invoice):
     fa_subject_data = {
         "custom_id": str(invoice.company.id),
         "name": invoice.company_name,
-        "street": (
+    }
+    if invoice.company_address_street:
+        fa_subject_data["street"] = (
             f"{invoice.company_address_street or ''} "
             f"{invoice.company_address_street_number or ''}"
-        ).strip(),
-        "zip": invoice.company_address_psc,
-        "country": invoice.country or "CZ",
-        "registration_no": invoice.company_ico,
-        "vat_no": invoice.company_dic,
-        "city": invoice.company_address_city,
-        "phone": re.sub(
-            pattern,
-            "",
-            invoice.company_admin_telephones().split(",")[0],
-        ),
-        "note": invoice.client_note,
-    }
-
+        ).strip()
+    if invoice.company_address_psc:
+        fa_subject_data["zip"] = invoice.company_address_psc
+    fa_subject_data["country"] = invoice.country or "CZ"
+    if invoice.company_ico:
+        fa_subject_data["registration_no"] = invoice.company_ico
+    if invoice.company_dic:
+        fa_subject_data["vat_no"] = invoice.company_dic
+    if invoice.company_address_city:
+        fa_subject_data["city"] = invoice.company_address_city
+    telephone = invoice.company_admin_telephones()
+    if telephone:
+        fa_subject_data["phone"] = (
+            re.sub(
+                pattern,
+                "",
+                invoice.company_admin_telephones().split(",")[0],
+            ),
+        )
+    if invoice.client_note:
+        fa_subject_data["note"] = invoice.client_note
     fa_subject_emails = invoice.company_admin_emails().split(",")
-    fa_subject_data["email"] = fa_subject_emails[0]
-    if len(fa_subject_emails) == 2:
-        fa_subject_data["email_copy"] = fa_subject_emails[1]
+    if fa_subject_emails:
+        fa_subject_data["email"] = fa_subject_emails[0]
+        if len(fa_subject_emails) == 2:
+            fa_subject_data["email_copy"] = fa_subject_emails[1]
 
     # Check if subject exists
     try:
