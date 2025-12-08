@@ -485,7 +485,11 @@ class OrganizationAdminOrganizationUserAttendanceSerializer(
     payment_category = serpy.StrField(call=True)
     payment_amount = serpy.StrField(call=True)
     discount_coupon = EmptyStrField()
-    diploma = EmptyStrField(attr="get_diploma_pdf_url", call=True)
+    diploma = EmptyStrField(
+        attr="get_diploma_pdf_url",
+        call=True,
+        required=False,
+    )
     t_shirt_size = EmptyStrField()
     user_profile_id = RequestSpecificField(lambda ua, req: ua.userprofile.id)
 
@@ -568,6 +572,11 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
     name = serpy.StrField(required=False)
     id = serpy.IntField()
     icon_url = serpy.Field(call=True)
+    diploma = EmptyStrField(
+        attr="get_diploma_pdf_url",
+        call=True,
+        required=False,
+    )
 
 
 class OrganizationAdminPackageTransactionSerializer(serpy.Serializer):
