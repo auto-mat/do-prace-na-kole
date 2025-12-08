@@ -290,6 +290,15 @@ class Team(WithGalleryMixin, models.Model):
         except TeamDiploma.DoesNotExist:
             return None
 
+    def get_diploma_pdf_url(self):
+        diploma = self.diploma()
+        if diploma:
+            if re.match(r"http:|https", settings.MEDIA_URL):
+                return diploma.pdf.url
+            else:
+                return f"{setting.MEDIA_URL}{diploma.pdf.url}"
+        return diploma
+
     def __str__(self):
         return "%s" % self.name_with_members
 
