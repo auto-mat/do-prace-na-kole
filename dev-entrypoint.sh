@@ -1,2 +1,2 @@
 #!/bin/bash
-poetry shell
+eval $(poetry env activate)
