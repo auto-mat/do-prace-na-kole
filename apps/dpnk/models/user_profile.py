@@ -317,11 +317,20 @@ def update_mailing_userprofile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=UserProfile)
 def clean_cache(sender, instance, created, **kwargs):
-    if instance and kwargs.get("update_fields"):
-        # Delete REST API cache
-        cache = util.Cache(
-            key=f"{util.register_challenge_serializer_base_cache_key_name}"
-            f"{instance.id}"
+    if instance and not created:
+        campaigns = (
+            instance.userattendance_set.all()
+            .distinct("campaign__slug")
+            .values_list(
+                "campaign__slug",
+                flat=True,
+            )
         )
-        if cache.data:
-            del cache.data
+        for campaign in campaigns:
+            # Delete REST API cache
+            cache = util.Cache(
+                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                f"{instance.id}:{campaign}"
+            )
+            if cache.data:
+                del cache.data

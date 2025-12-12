@@ -154,13 +154,22 @@ def clean_cache(sender, instance=None, created=False, **kwargs):
         if kwargs.get("update_fields")
         else []
     ):
-        # Delete REST API cache
-        cache = util.Cache(
-            key=f"{util.register_challenge_serializer_base_cache_key_name}"
-            f"{instance.userprofile.pk}"
+        campaigns = (
+            instance.userprofile.userattendance_set.all()
+            .distinct("campaign__slug")
+            .values_list(
+                "campaign__slug",
+                flat=True,
+            )
         )
-        if cache.data:
-            del cache.data
+        for campaign in campaigns:
+            # Delete REST API cache
+            cache = util.Cache(
+                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                f"{instance.userprofile.pk}:{campaign}"
+            )
+            if cache.data:
+                del cache.data
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

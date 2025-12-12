@@ -225,7 +225,7 @@ class Company(WithGalleryMixin, models.Model):
                             # Delete REST API cache
                             cache = util.Cache(
                                 key=f"{util.register_challenge_serializer_base_cache_key_name}"
-                                f"{user.userprofile.id}"
+                                f"{user.userprofile.id}:{user.campaign.slug}"
                             )
                             if cache.data:
                                 del cache.data
