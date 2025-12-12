@@ -3184,7 +3184,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         if hasattr(request.user, "userprofile"):
             cache = Cache(
                 key=f"{register_challenge_serializer_base_cache_key_name}"
-                f"{request.user.userprofile.id}",
+                f"{request.user.userprofile.id}:{request.subdomain}",
                 timeout=self._cache_timeout,
             )
             cached_data = cache.data
@@ -3211,7 +3211,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         self.check_object_permissions(request, userprofile)
         cache = Cache(
             key=f"{register_challenge_serializer_base_cache_key_name}"
-            f"{userprofile.id}",
+            f"{userprofile.id}:{request.subdomain}",
             timeout=self._cache_timeout,
         )
         cached_data = cache.data
@@ -3234,7 +3234,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         if hasattr(request.user, "userprofile"):
             cache = Cache(
                 key=f"{register_challenge_serializer_base_cache_key_name}"
-                f"{request.user.userprofile.id}"
+                f"{request.user.userprofile.id}:{request.subdomain}"
             )
             if cache.data:
                 del cache.data
@@ -3253,7 +3253,8 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         if hasattr(request.user, "userprofile"):
             cache = Cache(
-                key=f"{register_challenge_serializer_base_cache_key_name}{pk}"
+                key=f"{register_challenge_serializer_base_cache_key_name}"
+                f"{pk}:{request.subdomain}"
             )
             if cache.data:
                 del cache.data
@@ -3279,7 +3280,10 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             pk=pk,
         )
         self.check_object_permissions(request, userprofile)
-        cache = Cache(key=f"{register_challenge_serializer_base_cache_key_name}{pk}")
+        cache = Cache(
+            key=f"{register_challenge_serializer_base_cache_key_name}"
+            f"{pk}:{request.subdomain}"
+        )
         if cache.data:
             del cache.data
         userprofile.user.delete()
