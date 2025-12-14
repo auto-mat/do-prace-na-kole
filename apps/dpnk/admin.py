@@ -1423,7 +1423,7 @@ class CampaignTypeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Campaign)
-class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
+class CampaignAdmin(ImportExportMixin, TranslationAdmin, admin.ModelAdmin):
     list_display = (
         "year",
         "campaign_type",
@@ -1449,6 +1449,7 @@ class CampaignAdmin(ImportExportMixin, admin.ModelAdmin):
                     "previous_campaign",
                     "sitetree_postfix",
                     "language_prefixes",
+                    "description",
                 ),
             },
         ),

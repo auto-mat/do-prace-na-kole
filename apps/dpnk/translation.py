@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
@@ -51,6 +52,7 @@ class CampaignTranslationOptions(TranslationOptions):
         "email_footer",
         "free_entry_cases_html",
         "extra_agreement_text",
+        "description",
     )
 
 

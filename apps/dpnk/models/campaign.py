@@ -19,17 +19,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import babel
 
+from babel.dates import format_date
 from cache_utils.decorators import cached
-
 from colorfield.fields import ColorField
-
 from denorm import denormalized, depend_on_related
 
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
-from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
+from django.utils.translation import get_language, ugettext_lazy as _
 
 from price_level.models import Pricable
 
@@ -493,3 +495,47 @@ class Campaign(Pricable, models.Model):
         default="#1EA04F",
         verbose_name="Deprecated: Hlavní barva kampaně",
     )
+    description = models.TextField(
+        verbose_name=_("Popis"),
+        max_length=5000,
+        help_text=escape(
+            "<h1>Chystáme pro vás Lednovou výzvu Do práce na kole, pěšky či poklusem <YEAR>.</h1>"
+            "<p>Výzva jednotlivců se uskuteční v termínu <COMPETITION_PHASE_INTERVAL_DATE>.</p>"
+            "<p>Účast je zdarma, registraci otevíráme <REGISTRATION_PHASE_START_DATE> zde.</p>"
+        ),
+        null=True,
+        blank=True,
+    )
+
+    def interpolate_description(self):
+        """Interpolate description field value"""
+        registration_phase = self.phase(phase_type="registration")
+        competition_phase = self.phase(phase_type="competition")
+        locale = get_language()[-2:]
+        competition_phase_interval_date = babel.dates.format_interval(
+            start=competition_phase.date_from,
+            end=competition_phase.date_to,
+            locale=locale,
+            skeleton="yMd",
+        )
+        registration_phase_start_date = babel.dates.format_date(
+            date=registration_phase.date_from,
+            locale=locale,
+            format="medium",
+        )
+        value = getattr(self, f"description_{locale}")
+        if value is None:
+            return ""
+        value = value.replace(
+            "<YEAR>",
+            f"{competition_phase.date_from.year}",
+        )
+        value = value.replace(
+            "<COMPETITION_PHASE_INTERVAL_DATE>",
+            competition_phase_interval_date,
+        )
+        value = value.replace(
+            "<REGISTRATION_PHASE_START_DATE>",
+            registration_phase_start_date,
+        )
+        return value
