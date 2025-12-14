@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
