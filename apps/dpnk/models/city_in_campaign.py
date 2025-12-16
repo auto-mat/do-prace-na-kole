@@ -92,16 +92,23 @@ class CityInCampaign(models.Model):
     def competitors(self):
         @cached(60)
         def actually_get_competitors(pk):
-            return UserAttendance.objects.filter(
-                campaign=self.campaign,
-                team__subsidiary__city=self.city,
-                payment_status__in=("done", "no_admission"),
-            )
+            return self.uncached_competitors()
 
         return actually_get_competitors(self.pk)
 
+    def uncached_competitors(self):
+        return UserAttendance.objects.filter(
+            campaign=self.campaign,
+            team__subsidiary__city=self.city,
+            payment_status__in=("done", "no_admission"),
+        )
+
     def competitor_count(self):
-        return len(self.competitors())
+        @cached(60)
+        def actually_get_competitor_count(pk):
+            return self.uncached_competitors().count()
+
+        return actually_get_competitor_count(self.pk)
 
     def distances(self):
         @cached(60)
@@ -109,7 +116,7 @@ class CityInCampaign(models.Model):
             competition_phase = self.campaign.competition_phase()
             return distance_all_modes(
                 Trip.objects.filter(
-                    user_attendance__in=self.competitors(),
+                    user_attendance__in=self.uncached_competitors(),
                     date__range=[
                         competition_phase.date_from,
                         competition_phase.date_to,

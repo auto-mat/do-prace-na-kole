@@ -491,7 +491,7 @@ class SubsidiaryTest(TestCase):
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/1/",
                 "eco_trip_count": 2,
-                "frequency": 0.00028113581080611123,
+                "frequency": 0.0005622716216122225,
                 "emissions": {
                     "co2": 17789.1,
                     "co": 99894.8,
@@ -1715,7 +1715,7 @@ class MySubsidiaryTest(TestCase):
                 ],
                 "city": "http://testing-campaign.testserver/rest/city/1/",
                 "eco_trip_count": 2,
-                "frequency": 0.00028113581080611123,
+                "frequency": 0.0005622716216122225,
                 "emissions": {
                     "co2": 17789.1,
                     "co": 99894.8,
@@ -1770,7 +1770,7 @@ class MyCompanyTest(TestCase):
                         "id": 1,
                         "address_street": "Jindřišská",
                         "city": "http://testing-campaign.testserver/rest/city/1/",
-                        "frequency": 0.00028113581080611123,
+                        "frequency": 0.0005622716216122225,
                         "distance": 137.9,
                         "icon_url": None,
                         "rest_url": "http://testing-campaign.testserver/rest/subsidiary/1/",
@@ -1790,7 +1790,7 @@ class MyCompanyTest(TestCase):
                     }
                 ],
                 "eco_trip_count": 2,
-                "frequency": 0.00014056790540305561,
+                "frequency": 0.000562271621612222,
                 "emissions": {
                     "co2": 17789.1,
                     "co": 99894.8,
