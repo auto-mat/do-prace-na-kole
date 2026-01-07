@@ -2456,7 +2456,9 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
                 entry_fee = payment.amount
             if payment.pay_subject:
                 price_levels = obj.campaign.pricelevel_set.filter(
-                    category__icontains=payment.pay_subject
+                    category__icontains="basic"
+                    if payment.pay_subject == "individual"
+                    else payment.pay_subject
                 ).values(
                     "id",
                     "price",
