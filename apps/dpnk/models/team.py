@@ -21,6 +21,7 @@
 import logging
 import math
 import random
+import re
 import string
 
 from author.decorators import with_author
