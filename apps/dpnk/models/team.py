@@ -31,6 +31,7 @@ from cache_utils.decorators import cached
 from denorm import denormalized, depend_on_related
 
 from django import forms
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator
 from django.utils.translation import ugettext_lazy as _
