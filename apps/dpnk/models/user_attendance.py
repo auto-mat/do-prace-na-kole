@@ -241,6 +241,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
                 date_time=util.today(), category="company"
             )
             is not None
+            or self.campaign.get_current_price_level(
+                date_time=util.today(), category="school"
+            )
+            is not None
         )
 
     def beneficiary_admission_fee(self):
