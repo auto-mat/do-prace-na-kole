@@ -1996,7 +1996,12 @@ class CompaniesDeserializer(serializers.HyperlinkedModelSerializer):
         return data
 
 
-class CompaniesSet(viewsets.ModelViewSet):
+class CompaniesSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     def get_queryset(self):
         organization_type = self.kwargs.get("organization_type")
         if organization_type:
@@ -2075,7 +2080,12 @@ class SubsidiariesDeserializer(serializers.HyperlinkedModelSerializer):
         return data
 
 
-class SubsidiariesSet(viewsets.ModelViewSet):
+class SubsidiariesSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     # fetches all subsidiaries from a given organization
     def get_queryset(self):
         organization_id = self.kwargs["organization_id"]
@@ -2138,7 +2148,12 @@ class TeamsDeserializer(serializers.HyperlinkedModelSerializer):
         return data
 
 
-class TeamsSet(viewsets.ModelViewSet):
+class TeamsSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     # fetches all teams from a given subsidiary
     def get_queryset(self):
         subsidiary_id = self.kwargs["subsidiary_id"]
