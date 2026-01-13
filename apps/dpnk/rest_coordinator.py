@@ -634,6 +634,7 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
         ]
     )
     id = serpy.IntField()
+    name = serpy.StrField(call=True)
     address = AddressSerializer()
     icon_url = serpy.Field(call=True)
 
