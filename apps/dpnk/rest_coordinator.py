@@ -925,19 +925,19 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-router.register(r"fee-approval", FeeApprovalSet, basename="fee-approval")
+router.register(r"coordinator/fee-approval", FeeApprovalSet, basename="fee-approval")
 # router.register(r"approve-payments", ApprovePaymentsView, basename="approve-payments")
 # router.register(r"get-attendance", GetAttendanceView, basename="get-attendance")
 router.register(
     r"coordinator/subsidiary", SubsidiaryView, basename="subsidiary-coordinator"
 )
 router.register(
-    r"subsidiary/(?P<subsidiary_id>\d+)/team",
+    r"coordinator/subsidiary/(?P<subsidiary_id>\d+)/team",
     TeamView,
     basename="subsidiary-team",
 )
 router.register(
-    r"subsidiary/(?P<subsidiary_id>\d+)/team/(?P<team_id>\d+)/member",
+    r"coordinator/subsidiary/(?P<subsidiary_id>\d+)/team/(?P<team_id>\d+)/member",
     MemberView,
     basename="subsidiary-team-member",
 )
