@@ -6,7 +6,13 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
 
-from rest_framework import viewsets, permissions, serializers, status
+from rest_framework import (
+    mixins,
+    permissions,
+    serializers,
+    status,
+    viewsets,
+)
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -33,6 +39,7 @@ from t_shirt_delivery.models import (
 )
 from .models.company import CompanyInCampaign
 from .rest import (
+    CompaniesDeserializer,
     UserAttendanceSerializer,
     AddressSerializer,
     EmptyStrField,
@@ -270,7 +277,26 @@ class SubsidiaryTeamSerializer(serpy.Serializer):
     members = UserAttendanceSerializer(many=True)
 
 
-class SubsidiaryView(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
+class SubsidiaryAddressDeserializer(CompaniesDeserializer):
+    class Meta:
+        model = Subsidiary
+        fields = (
+            "address_street",
+            "address_street_number",
+            "address_psc",
+            "address_city",
+            "address_recipient",
+        )
+
+
+class SubsidiaryView(
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+    CompanyAdminMixin,
+):
     def get_queryset(self):
 
         company_admin = self.ca()
@@ -278,10 +304,14 @@ class SubsidiaryView(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
         queryset = Subsidiary.objects.filter(
             company=company_admin.administrated_company,
         )
-
         return queryset
 
-    serializer_class = SubsidiarySerializer
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return SubsidiarySerializer
+        else:
+            return SubsidiaryAddressDeserializer
+
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -898,9 +928,13 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
 router.register(r"fee-approval", FeeApprovalSet, basename="fee-approval")
 # router.register(r"approve-payments", ApprovePaymentsView, basename="approve-payments")
 # router.register(r"get-attendance", GetAttendanceView, basename="get-attendance")
-router.register(r"subsidiary", SubsidiaryView, basename="subsidiary-coordinator")
 router.register(
-    r"subsidiary/(?P<subsidiary_id>\d+)/team", TeamView, basename="subsidiary-team"
+    r"coordinator/subsidiary", SubsidiaryView, basename="subsidiary-coordinator"
+)
+router.register(
+    r"subsidiary/(?P<subsidiary_id>\d+)/team",
+    TeamView,
+    basename="subsidiary-team",
 )
 router.register(
     r"subsidiary/(?P<subsidiary_id>\d+)/team/(?P<team_id>\d+)/member",
