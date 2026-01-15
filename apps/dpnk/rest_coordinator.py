@@ -180,13 +180,14 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     + "\nFA %s odsouhlasil dne %s"
                     % (self.request.user.username, datetime.datetime.now())
                 )
-                payments.append(payment)
+                payment.save()
+                # payments.append(payment)
                 approved_count += 1
 
-            Payment.objects.bulk_update(
-                payments,
-                ["status", "amount", "description"],
-            )
+            # Payment.objects.bulk_update(
+            #     payments,
+            #     ["status", "amount", "description"],
+            # )
             PayUOrderedProduct.objects.bulk_update(
                 payu_ordered_products,
                 ["unit_price"],
