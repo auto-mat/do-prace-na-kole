@@ -287,6 +287,9 @@ class SubsidiaryAddressDeserializer(CompaniesDeserializer):
             "address_psc",
             "address_city",
             "address_recipient",
+            "box_addressee_name",
+            "box_addressee_telephone",
+            "box_addressee_email",
         )
 
 
