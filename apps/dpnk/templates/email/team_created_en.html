@@ -9,14 +9,16 @@ Time to hit the road, {{ user_attendance.userprofile.first_name }}!
 </p><p>
 your team {{team_name}} is ready to go.
 </p><p>
-Check your <a href="{% get_app_base_url 'login' %}">profile</a> and invite your coworkers to join the team.
+Check your <a href="{% get_app_base_url 'profile/details' %}">profile</a> and invite your coworkers to join the team.
 </p>
 
-{% get_app_base_url 'pozvanky' as button_link %}
+{% get_app_base_url 'profile/details' as button_link %}
+{% include "./button.html" with button_text="Pozvat kolegy do týmu" %}
+
 {% include "./button.html" with button_text="Invite" %}
 
 <h4>
-Do you have a <a href="{% get_app_base_url 'company_admin_application' %}">company coordinator</a>?
+Do you have a <a href="{% get_app_base_url 'become-coordinator' %}">company coordinator</a>?
 </h4>
 <p>
 You can ask the employer to support your team by paying the starter fee or creating a company challenge so you can compare your skills to the whole company. Sounds like a moving teambuilding, right?
@@ -24,7 +26,7 @@ You can ask the employer to support your team by paying the starter fee or creat
 Became a company coordinator and get these things done for your coworkers. We let you participate in the challenge for free as a thank you note.
 </p>
 
-{% get_app_base_url 'company_admin_application' as button_link %}
+{% get_app_base_url 'become-coordinator' as button_link %}
 {% include "./button.html" with button_text="Become s company coordinator" %}
 
 {% endlanguage %}

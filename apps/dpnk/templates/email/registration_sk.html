@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 
 {% block content %}
 {% language lang_code %}
@@ -21,11 +22,11 @@ Desatero doporučení před startem:
    </li><li>
  Zapamatujte si, že výzva začíná {{ user_attendance.campaign.competition_phase.date_from }} a končí {{ user_attendance.campaign.competition_phase.date_to }}.
    </li><li>
- Své cesty si pravidelně zaznamenávejte v <a href="{{ absolute_uri }}{% url 'profil' %}">profilu</a>.
+ Své cesty si pravidelně zaznamenávejte v <a href="{% get_app_base_url 'routes/calendar' %}">profilu</a>.
    </li><li>
  Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
    </li><li>
- Nezapomeňte sledovat, jak si vede <a href="{{ absolute_uri }}{% url 'team_members' %}">Váš tým</a>.
+ Nezapomeňte sledovat, jak si vede <a href="{% get_app_base_url 'profile/details' %}">Váš tým</a>.
    </li><li>
  Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených <a href="{{user_attendance.campaign.campaign_type.web}}/aplikace">aplikací</a>.
    </li><li>

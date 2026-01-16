@@ -5,26 +5,37 @@
 {% block content %}
 {% language lang_code %}
 <p>
-Welcome to the {{user_attendance.campaign.display_name}} challenge!
+Welcome to our community!
 </p><p>
-Our ride begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
+You have successfully registered for the {{ user_attendance.campaign }} challenge. The ride of your life is just beginning.
 </p><p>
-Before you head off, there are still some stuff you need to do.
-Check the profile, there you can track your courses every day.
+Ten recommendations before starting:
 </p>
 
-{% get_app_base_url 'upravit_profil' as button_link %}
-{% include "./button.html" with button_text="Complete my profile" %}
+<ul>
+<li>
+Get your bike out of the way. Whoever lubricates the chain will ride.
+</li><li>
+Start your workout. Prepare your thighs for a regular morning ride, run or walk.
+</li><li>
+Remember your login email <b>{{ email }}</b>.
+</li><li>
+Remember that the challenge starts {{ user_attendance.campaign.competition_phase.date_from }} and ends {{ user_attendance.campaign.competition_phase.date_to }}.
+</li><li>
+Regularly record your trips in your <a href="{% get_app_base_url 'routes/calendar' %}">profile</a>.
+</li><li>
+Set up your typical route in your profile and recording will be faster than Jan Kavalír's ride.
+</li><li>
+Don't forget to follow how your <a href="{% get_app_base_url 'profile/details' %}">team</a> is doing.
+</li><li>
+Recording trips with your smartphone is a piece of cake when you download one of the recommended <a href="{{user_attendance.campaign.campaign_type.web}}/aplikace">apps</a>.
+</li><li>
+If you are a really competitive type, keep an eye on our <a href="{{user_attendance.campaign.campaign_type.web}}">website</a> for news and newly announced challenge categories from your city.
+</li>
+</ul>
 
 <p>
-That could be much more interesting if you compare your results with fellow coworkers. Send them an invitation to your team.
-</p>
-
-{% get_app_base_url 'pozvanky' as button_link %}
-{% include "./button.html" with button_text="Invite people" %}
-
-<p>
-Do you have any questions? Let us know at <a href="mailto:{{user_attendance.campaign.campaign_type.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
+We will be happy to answer any further questions by emailing <a href="mailto:{{user_attendance.campaign.campaign_type.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
 </p>
 {% endlanguage %}
 {% endblock %}

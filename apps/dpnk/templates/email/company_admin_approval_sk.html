@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 
 {% block content %}
 {% language lang_code %}
@@ -11,7 +12,7 @@ Nyní zastupujete společnost {{ company }} jako firemní koordinátor.
 Nezapomeňte, s velkou mocí přichází velká zodpovědnost. Vaši lidé na Vás spoléhají.
 </p>
 
-{% url 'company_structure' as button_link %}
+{% get_app_base_url 'coordinator/attendance' as button_link %}
 {% include "./button.html" with button_text="Chci se přihlásit jako firemní koordinátor" %}
 
 <p>
@@ -20,9 +21,9 @@ Až se přihlásíte, čekají Vás hlavní dva úkoly:
 
 <ul>
    <li>
-      <a href="{{ absolute_uri }}{% url 'edit_company' %}">Vyplnit fakturační údaje organizace.</a>
+      <a href="{% get_app_base_url 'coordinator/invoices' %}">Vyplnit fakturační údaje organizace.</a>
    </li><li>
-      <a href="{{ absolute_uri }}{% url 'company_admin_pay_for_users' %}">Schvalovat platby za soutěžící.</a>
+      <a href="{% get_app_base_url 'coordinator/fees' %}">Schvalovat platby za soutěžící.</a>
    </li>
 </ul>
 

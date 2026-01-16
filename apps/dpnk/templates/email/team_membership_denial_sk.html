@@ -9,7 +9,7 @@ Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
 máme smutné zprávy. Vaše členství v týmu {{ user_attendance.team.name }} bylo právě zamítnuto členem týmu {{ denier }} z důvodu: {{reason}}
 </p><p>
-Ale pro jeden tým slunce nesvítí. Přihlaste se do svého profilu a <a href="{% get_app_base_url 'zmenit_tym' %}">vyberte si jiný tým</a>. Nebo si založte svůj vlastní!
+Ale pro jeden tým slunce nesvítí. Přihlaste se do svého profilu a <a href="{% get_app_base_url 'profile/details' %}">vyberte si jiný tým</a>. Nebo si založte svůj vlastní!
 </p>
 {% endlanguage %}
 {% endblock %}

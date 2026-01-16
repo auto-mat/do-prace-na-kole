@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 
 {% block content %}
 {% language lang_code %}
@@ -9,15 +10,15 @@ Congratulations, {{ user_attendance.userprofile.first_name }}
 you are the {{ company }} company coordinator.
 </p>
 
-{% url 'company_admin_pay_for_users' as button_link %}
+{% get_app_base_url 'coordinator/attendance' as button_link %}
 {% include "./button.html" with button_text="Sign up" %}
 
 <p>
 However, with great power comes great responsibility.
 </p><p>
-First, please fill in the organisation <a href="{{ absolute_uri }}{% url 'edit_company' %}">billing details</a> so we can send your company an invoice after the registration.
+First, please fill in the organisation <a href="{% get_app_base_url 'coordinator/invoices' %}">billing details</a> so we can send your company an invoice after the registration.
 </p><p>
-Second, please <a href="{{ absolute_uri }}{% url 'company_admin_pay_for_users' %}" >accept payments</a> for participants from your organisation and include them in the joint <a href="{{ absolute_uri }}{% url 'invoices' %}" >invoice</a>.
+Second, please <a href="{% get_app_base_url 'coordinator/fees' %}">accept payments</a> for participants from your organisation and include them in the joint <a href="{% get_app_base_url 'coordinator/invoices' %}">invoice</a>.
 </p><p>
 These days, more and more participants will be signing in so try to check the status several times.
 </p>

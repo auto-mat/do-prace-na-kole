@@ -11,11 +11,11 @@ Hi, {{ team_member.userprofile.first_name }}
 fellow participant {{ new_user.userprofile }} would love to be a part of your dream team {{new_user.team.name}}.
 </p>
 
-{% get_app_base_url 'team_members' as button_link %}
+{% get_app_base_url 'profile/details' as button_link %}
 {% include "./button.html" with button_text="Approve" %}
 
 <p>
-Don't want any other cuckoo in your nest? You can <a href="{% get_app_base_url 'team_members' %}">decline</a>. Do not worry. It does not mean disqualification for them. Eventually, everybody will find a bird of their own flock.
+Don't want any other cuckoo in your nest? You can <a href="{% get_app_base_url 'profile/details' %}">decline</a>. Do not worry. It does not mean disqualification for them. Eventually, everybody will find a bird of their own flock.
 </p>
 {% endblock %}
 {% endlanguage %}

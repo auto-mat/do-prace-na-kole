@@ -11,11 +11,11 @@ nastal čas na malé účetní kolečko.
 Připravili jsme účastnickou fakturu pro vaši společnost {{ user_attendance.team.subsidiary.company.name }} ve výzvě {{ user_attendance.campaign.name }}.
 </p>
 
-{% get_app_base_url 'invoices' as button_link %}
+{% get_app_base_url 'coordinator/invoices' as button_link %}
 {% include "./button.html" with button_text="Stáhnout fakturu" %}
 
 <p>
-Kompletní přehled faktur najdete ve svém <a href="{% get_app_base_url 'invoices' %}">profilu</a>.
+Kompletní přehled faktur najdete ve svém <a href="{% get_app_base_url 'coordinator/invoices' %}">profilu</a>.
 </p>
 {% endlanguage %}
 {% endblock %}

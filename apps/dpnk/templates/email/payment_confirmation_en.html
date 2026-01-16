@@ -1,16 +1,30 @@
 {% extends "email/base.html" %}
 {% block content %}
+{% load get_app_base_url from dpnk_tags %}
+
+{% block content %}
 <p>
-Good news, {{ user_attendance.userprofile.first_name }}
+Hello, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
-your entry fee payment for the {{ user_attendance.campaign }} Bike to Work
-Challenge is officially paid!
+Your entry fee in the {{ user_attendance.campaign }} challenge is officially paid!
 </p><p>
-If you don't have a full team yet, go ahead - you'll find people around
-you who might be interested in a sustainable commute. So who will you
-invite to join your team?
+If you don't have a complete team yet, go ahead - you'll definitely find people around you
+who might be interested in sustainable commuting.
+So who will you invite to your team?
 </p><p>
-We encourage you to move around the world sustainably - the environment
-and people around you will be forever grateful.
+And of course, outside of the challenge, we recommend moving around the world sustainably,
+your surroundings and nature will definitely thank you for it.
 </p>
+{% comment %}
+<p>
+It's time to start preparing:
+</p>
+<ul>
+  <li>
+  Don't have a full team? <a href="{% get_app_base_url 'profile/details' %}">Invite your colleagues</a>.
+  </li><li>
+  Want to track your mileage using your mobile phone? Download the appropriate <a href="{{user_attendance.campaign.campaign_type.web}}/app">app</a>
+</li>
+</ul>
+{% endcomment %}
 {% endblock %}

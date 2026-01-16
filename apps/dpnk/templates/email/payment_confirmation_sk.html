@@ -1,4 +1,6 @@
 {% extends "email/base.html" %}
+{% load get_app_base_url from dpnk_tags %}
+
 {% block content %}
 <p>
 Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
@@ -18,7 +20,7 @@ Je načase začít s přípravami:
 </p>
 <ul>
    <li>
-      Nemáte v týmu plný počet členů? <a href="{{ absolute_uri }}{% url 'pozvanky' %}">Pozvěte své kolegy</a>.
+      Nemáte v týmu plný počet členů? <a href="{% get_app_base_url 'profile/details' %}">Pozvěte své kolegy</a>.
    </li><li>
       Chcete si hlídat kilometry pomocí mobilního telefonu? Stáhněte si vhodnou <a href="{{user_attendance.campaign.campaign_type.web}}/aplikace">aplikaci</a>
    </li>

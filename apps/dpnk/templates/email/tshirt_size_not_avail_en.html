@@ -11,7 +11,7 @@ the previous t-shirt size you selected {{ user_attendance.t_shirt_size.name }}
 is no longer available. Choose another size.
 </p><p>
 
-{% get_app_base_url 'zmenit_triko' as button_link %}
+{% get_app_base_url 'profile/details' as button_link %}
 {% include "./button.html" with button_text="Change shirt" %}
 
 {% endlanguage %}

@@ -7,7 +7,7 @@ Good news, {{ user_attendance.userprofile.first_name }}
 you are now member of the {{user_attendance.team.name}} team. It's time to hit the road together.
 </p>
 
-{% get_app_base_url 'login' as button_link %}
+{% get_app_base_url 'profile/details' as button_link %}
 {% include "./button.html" with button_text="Sign up as a team member" %}
 
 <p>

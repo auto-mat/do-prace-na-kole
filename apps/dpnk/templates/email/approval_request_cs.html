@@ -1,5 +1,6 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
 {% language new_user.userprofile.language %}
 {% block content %}
 <p>
@@ -10,11 +11,11 @@ váš tým ve výzvě {{ new_user.campaign.display_name }} začíná být velmi 
 Právě teď {{ new_user.userprofile.name }} pošilhává po volném místečku ve vašem pelotonu {{ new_user.team.name }}.
 </p>
 
-{% url 'team_members' as button_link %}
+{% get_app_base_url 'profile/details' as button_link %}
 {% include "./button.html" with button_text="Přidat člena" %}
 
 <p>
-Pokud nechcete, aby váš tým měl o dvě kolečka navíc, můžete členství nováčka <a href="{{ absolute_uri }}{% url 'team_members' %}">zamítnout</a>.
+Pokud nechcete, aby váš tým měl o dvě kolečka navíc, můžete členství nováčka <a href="{% get_app_base_url 'profile/details' %}">zamítnout</a>.
 </p>
 {% endblock %}
 {% endlanguage %}

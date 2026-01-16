@@ -1,5 +1,7 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+
 {% block content %}
 {% language lang_code %}
 <p>
@@ -8,11 +10,11 @@ Is everything OK, {{ user_attendance.userprofile.first_name }}?
 We haven't get your payment for the team invoice issued on {{ invoice.exposure_date }} with the due date {{invoice.payback_date}}.
 </p>
 
-{% url 'invoices' as button_link %}
+{% url get_app_base_url 'coordinator/invoices' as button_link %}
 {% include "./button.html" with button_text="Manage my payments" %}
 
 <p>
-You can also check all invoices in <a href="{{ absolute_uri }}{% url 'invoices' %}">your profile</a>.
+You can also check all invoices in <a href="{% get_app_base_url 'coordinator/invoices' %}">your profile</a>.
 </p>
 {% endlanguage %}
 {% endblock %}

@@ -15,9 +15,9 @@ Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with you i
 </p>
 
 {% if not invited %}
-{% get_app_base_url 'registrace' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
+{% get_app_base_url 'register' as button_link %}
 {% else %}
-{% get_app_base_url 'change_team_invitation' 'token='|add:inviting.team.invitation_token|add:',initial_email='|add:email as button_link %}
+{% get_app_base_url 'profile/details' as button_link %}
 {% endif %}
 {% include "./button.html" with button_text="Let's Ride" %}
 

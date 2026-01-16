@@ -1,5 +1,7 @@
 {% extends "email/base.html" %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+
 {% block content %}
 {% language lang_code %}
 <p>
@@ -8,11 +10,11 @@ Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 udělejte si prosím čas na zpracování faktury ze dne {{ invoice.exposure_date }}. Její splatnost je pouze do {{invoice.payback_date}}.
 </p>
 
-{% url 'invoices' as button_link %}
+{% url get_app_base_url 'coordinator/invoices' as button_link %}
 {% include "./button.html" with button_text="Vyřídit fakturu" %}
 
 <p>
-Všechny faktury můžete zkontrolovat na vašem <a href="{{ absolute_uri }}{% url 'invoices' %}">profilu</a>.
+Všechny faktury můžete zkontrolovat na vašem <a href="{% get_app_base_url 'coordinator/invoices' %}">profilu</a>.
 </p>
 {% endlanguage %}
 {% endblock %}
