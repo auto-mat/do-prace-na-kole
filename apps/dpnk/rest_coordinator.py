@@ -279,6 +279,7 @@ class SubsidiaryTeamSerializer(serpy.Serializer):
 
 
 class SubsidiaryAddressDeserializer(CompaniesDeserializer):
+
     class Meta:
         model = Subsidiary
         fields = (
@@ -674,6 +675,7 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
     recipient = EmptyStrField(attr="address.recipient")
     psc = EmptyStrField(attr="address.psc")
     city = EmptyStrField(attr="address.city")
+    challenge_city = EmptyStrField(attr="city")
     box_addressee_name = EmptyStrField()
     box_addressee_telephone = EmptyStrField()
     box_addressee_email = EmptyStrField()
