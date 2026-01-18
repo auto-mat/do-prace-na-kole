@@ -22,6 +22,7 @@ import drf_serpy as serpy
 
 from .models import (
     UserAttendance,
+    City,
     CompanyAdmin,
     Invoice,
     Payment,
@@ -279,6 +280,11 @@ class SubsidiaryTeamSerializer(serpy.Serializer):
 
 
 class SubsidiaryAddressDeserializer(CompaniesDeserializer):
+    challenge_city_id = serializers.PrimaryKeyRelatedField(
+        queryset=City.objects.all(),
+        source="city",
+        required=False,
+    )
 
     class Meta:
         model = Subsidiary
@@ -288,6 +294,7 @@ class SubsidiaryAddressDeserializer(CompaniesDeserializer):
             "address_psc",
             "address_city",
             "address_recipient",
+            "challenge_city_id",
             "box_addressee_name",
             "box_addressee_telephone",
             "box_addressee_email",
