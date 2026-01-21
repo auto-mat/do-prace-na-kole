@@ -2470,9 +2470,14 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
             else:
                 entry_fee = payment.amount
             if payment.pay_subject:
+                if payment.pay_subject == "voucher" and obj.discount_coupon:
+                    if "NOREWARD" in obj.discount_coupon.name():
+                        return False
+                    else:
+                        return True
                 price_levels = obj.campaign.pricelevel_set.filter(
                     category__icontains="basic"
-                    if payment.pay_subject in ("individual", "voucher")
+                    if payment.pay_subject == "individual"
                     else payment.pay_subject
                 ).values(
                     "id",
