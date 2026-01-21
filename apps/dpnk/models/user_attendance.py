@@ -32,9 +32,10 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db.models import Q, F, Sum
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
@@ -133,6 +134,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+    )
+    t_shirt_size_updated = models.DateTimeField(
+        verbose_name=_("Datum aktualizace velikosti trika"),
+        null=True,
+        blank=True,
     )
     discount_coupon = models.ForeignKey(
         DiscountCoupon,
@@ -875,7 +881,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
             )
             if cache.data:
                 del cache.data
-
         return super().save(*args, **kwargs)
 
     @classmethod
@@ -951,6 +956,17 @@ class UserAttendance(StaleSyncMixin, models.Model):
             ),
         )
         return notifications
+
+
+@receiver(pre_save, sender=UserAttendance)
+def field_value_changed(sender, instance, **kwargs):
+    try:
+        obj = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        instance.t_shirt_size_updated = timezone.now()
+    else:
+        if not obj.t_shirt_size == instance.t_shirt_size:
+            instance.t_shirt_size_updated = timezone.now()
 
 
 @receiver(post_save, sender=UserAttendance)

@@ -862,6 +862,7 @@ class UserAttendanceAdmin(
         "approved_for_team",
         "campaign__name",
         "t_shirt_size__name",
+        "t_shirt_size_updated",
         "payment_status",
         "representative_payment__pay_type",
         "representative_payment__status",
