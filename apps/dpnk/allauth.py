@@ -10,6 +10,8 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.account.utils import user_pk_to_url_str
 from dj_rest_auth.serializers import PasswordResetSerializer
 
+from dpnk.models import Campaign
+
 
 class AccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
@@ -30,6 +32,17 @@ class AccountAdapter(DefaultAccountAdapter):
 
             # Override context current site
             context["current_site"] = CurrentSite
+        campaign = Campaign.objects.get(slug=self.request.subdomain)
+        context["email"] = email
+        context["campaign"] = campaign
+        context[
+            "campaign_competition_phase_date_from"
+        ] = campaign.competition_phase().date_from
+        context[
+            "campaign_competition_phase_date_to"
+        ] = campaign.competition_phase().date_to
+        context["campaign_campaign_type_web"] = campaign.campaign_type.web
+        context["campaign_contact_email"] = campaign.contact_email
         return super().render_mail(template_prefix, email, context, headers)
 
     def format_email_subject(self, subject):

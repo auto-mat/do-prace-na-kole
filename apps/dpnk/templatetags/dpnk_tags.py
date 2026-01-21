@@ -267,3 +267,14 @@ def get_app_base_url(context, url=None, url_params=None):
             }
         return f"{context['absolute_uri']}{reverse(url, kwargs=params)}"
     return context["absolute_uri"]
+
+
+@register.simple_tag
+def get_var_value(value):
+    """Return Django template variable value
+
+    :param str|int|float|dict|list|set|tuple value: input template variable
+
+    :return str|int|float|dict|list|set|tuple: template variable value
+    """
+    return value

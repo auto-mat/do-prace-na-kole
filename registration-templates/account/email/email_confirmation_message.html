@@ -1,0 +1,61 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+{% load get_var_value from dpnk_tags %}
+
+{% get_var_value activate_url as button_link %}
+{% get_app_base_url 'routes/calendar' as routes_calendar_url %}
+{% get_app_base_url 'profile/details' as profile_deails_url %}
+
+
+{% block title %}
+{% blocktrans %}Confirm email address
+{% endblocktrans %}
+{% endblock %}
+
+{% block content %}
+{% blocktrans %}
+<p>
+Welcome!
+</p><p>
+Registration for the {{ campaign }} competition looks good. The ride of your life is about to begin. Are you interested? <b>Confirm!</b>
+</p>
+
+{% endblocktrans %}
+{% trans 'Confirm email address' as btn_txt %}
+{% get_var_value activate_url as button_link %}
+{% include "email/button.html" with button_text=btn_txt %}
+{% get_app_base_url 'routes/calendar' as routes_calendar_url %}
+{% get_app_base_url 'profile/details' as profile_details_url %}
+{% blocktrans %}
+<p>
+Once we confirm the address, please take a moment to listen to the Ten Recommendations Before Starting:
+</p>
+
+<ul>
+<li>
+Get your bike out of the way. Whoever lubricates the chain, goes.
+</li><li>
+Get your body going. Get your thighs ready for a regular morning ride.
+</li><li>
+Remember your login email <b>{{ email }}</b>.
+</li><li>
+Remember that the challenge starts {{ campaign_competition_phase_date_from }} and ends {{ campaign_competition_phase_date_to }}.
+</li><li>
+Regularly record your rides in your <a href="{{ routes_calendar_url }}">profile</a>.
+</li><li>
+Set your typical route in your profile and recording will be faster than Jan Kavalír's ride.
+</li><li>
+Don't forget to <a href="{{ profile_details_url }}">invite colleagues</a> to your team.
+</li><li>
+Recording rides with your smartphone is a piece of cake if you download one of the recommended <a href="{{campaign_campaign_type_web}}/apps">apps</a>.
+</li><li>
+If you are a really competitive type, keep an eye on the news and the latest competitions from your city on our <a href="{{campaign_campaign_type_web}}">website</a>.
+</li>
+</ul>
+
+<p>
+We will be happy to answer any further questions by e-mail <a href="mailto:{{campaign_campaign_type_contact_email}}">{{campaign_contact_email}}</a>.
+</p>
+{% endblocktrans %}
+{% endblock %}

@@ -1,7 +1,33 @@
 {% extends "account/email/base_message.txt" %}
 {% load account %}
 {% load i18n %}
+{% load get_app_base_url from dpnk_tags %}
+{% block title %}Email address confirmation{% endblock %}
+{% block content %}{% autoescape off %}{% get_app_base_url 'routes/calendar' as routes_calendar_url %}{% get_app_base_url 'profile/details' as profile_details_url %}{% blocktrans %}
+Welcome among us!
 
-{% block content %}{% autoescape off %}{% user_display user as user_display %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}You're receiving this e-mail because user {{ user_display }} has given your e-mail address to register an account on {{ site_domain }}.
+Registration for the {{ campaign }} competition looks good. The ride of your life is about to happen. Are you interested in it? Confirm!
 
-To confirm this is correct, go to {{ activate_url }}{% endblocktrans %}{% endautoescape %}{% endblock %}
+Confirm your email address here {{ activate_url }}.
+
+Once we confirm your address, please take a moment and listen to the Ten Recommendations before the start:
+
+- Get your bike out of the way. Whoever lubricates the chain, rides.
+
+- Start your physical training. Prepare your thighs for a regular morning ride.
+
+- Remember your login email {{ email }}.
+
+- Remember that the challenge starts {{ campaign_competition_phase_date_from }} and ends {{ campaign_competition_phase_date_to }}.
+
+- Record your rides regularly in your {{ routes_calendar_url }} profile.
+
+- Set up your typical route in your profile and logging will be faster than Jan Kavalír's ride.
+
+- Don't forget to {{ profile_details_url }} invite your colleagues to your team.
+
+- Logging your trips with your smartphone is a piece of cake when you download one of the recommended {{campaign_campaign_type_web}}/applications.
+
+- If you're really competitive, keep an eye on the news and the latest competitions from your city on our {{campaign_campaign_type_web}} website.
+
+- We'll be happy to answer any further questions at {{campaign_contact_email}}.{% endblocktrans %}{% endautoescape %}{% endblock %}
