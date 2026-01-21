@@ -162,11 +162,7 @@ msgid ""
 "%(campaign_contact_email)s."
 msgstr ""
 
-#: email_confirmation_subject.html:3
-msgid "Please Confirm Your E-mail Address"
-msgstr ""
-
-#: email_confirmation_subject.txt:3
+#: email_confirmation_subject.html:3 email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr ""
 
