@@ -58,6 +58,7 @@ from notifications.models import Notification
 import photologue
 
 from rest_framework import mixins, permissions, routers, serializers, viewsets
+from rest_framework.validators import UniqueTogetherValidator
 
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
@@ -2140,6 +2141,16 @@ class TeamsDeserializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
         fields = ("id", "name", "campaign_id", "subsidiary_id")
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Team.objects.all(),
+                fields=["campaign_id", "name"],
+                message=_(
+                    "Tým se zadaným názvem již v systému existuje, zkuste ten váš"
+                    " přejmenovat (systém umí rozeznat malá a velká písmena)."
+                ),
+            )
+        ]
 
     def to_representation(self, value):
         data = super().to_representation(value)
