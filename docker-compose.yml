@@ -78,3 +78,17 @@ services:
   volumes:
    - ./db:/var/lib/postgresql/data
   env_file: docker.env
+ locust:
+  build:
+   context: ./scripts/load_testing
+   dockerfile: Dockerfile
+  volumes:
+   - ./scripts/load_testing/locustfile.py:/app/locustfile.py
+  depends_on:
+   - web
+  entrypoint: locust -f locustfile.py --host http://testing-campaign.lvh.me:8021/
+  ports:
+   - "8089:8089"
+  working_dir: /app
+  extra_hosts:
+   - "testing-campaign.lvh.me:host-gateway"

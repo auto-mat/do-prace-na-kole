@@ -46,6 +46,11 @@ from ..model_mixins import WithGalleryMixin
 
 logger = logging.getLogger(__name__)
 
+from dpnk.cache_middleware import get_request_cache
+
+from django.db.models import Sum, Avg
+from .user_attendance import UserAttendance
+
 
 @with_author
 class Team(WithGalleryMixin, models.Model):
@@ -124,7 +129,7 @@ class Team(WithGalleryMixin, models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={"invitation_token"},
+        skip={"invitation_token", "gallery", "icon", "name", "updated"},
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def member_count(self):
@@ -140,7 +145,7 @@ class Team(WithGalleryMixin, models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={"invitation_token"},
+        skip={"invitation_token", "gallery", "updated"},
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def paid_member_count(self):
@@ -158,7 +163,7 @@ class Team(WithGalleryMixin, models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={"invitation_token"},
+        skip={"invitation_token", "gallery", "updated"},
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def unapproved_member_count(self):
@@ -194,7 +199,11 @@ class Team(WithGalleryMixin, models.Model):
             payment_status__in=("done", "no_admission"),
         )
 
-    @denormalized(models.IntegerField, null=True, skip={"invitation_token"})
+    @denormalized(
+        models.IntegerField,
+        null=True,
+        skip={"invitation_token", "gallery", "icon", "name", "updated"},
+    )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def get_rides_count_denorm(self):
         rides_count = 0
@@ -203,9 +212,8 @@ class Team(WithGalleryMixin, models.Model):
         return rides_count
 
     def get_working_trips_count(self):
-        return sum(
-            [member.get_working_rides_base_count() for member in self.paid_members()]
-        )
+
+        return self._team_metrics["working_rides_base_count"]
 
     def get_remaining_rides_count(self):
         """Return number of rides, that are remaining to the end of competition"""
@@ -251,15 +259,15 @@ class Team(WithGalleryMixin, models.Model):
         return sum([mem.frequency for mem in members]) / count, count
 
     def get_frequency(self):
-        return self.get_frequency_()[0]
+        return self._team_metrics["frequency"]
 
     def get_eco_trip_count(self):
-        return sum([member.eco_trip_count() for member in self.paid_members()])
+        return self._team_metrics["eco_trip_count"]
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_length())
 
-    @denormalized(models.FloatField, null=True, skip={"updated", "created"})
+    @denormalized(models.FloatField, null=True, skip={"updated", "created", "gallery"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def frequency(self):
         return self.get_frequency()
@@ -268,7 +276,39 @@ class Team(WithGalleryMixin, models.Model):
         return (self.frequency or 0) * 100
 
     def get_length(self):
-        return sum([member.trip_length_total for member in self.paid_members()])
+        return self._team_metrics["distance"]
+
+    @property
+    def _team_metrics(self):
+
+        cache = get_request_cache()
+        cache_key = f"team_metrics_{self.id}"
+
+        if cache_key in cache:
+            return cache[cache_key]
+
+        result = UserAttendance.objects.filter(
+            team=self.id,
+            payment_status__in=("done", "no_admission"),
+            approved_for_team="approved",
+            userprofile__user__is_active=True,
+        ).aggregate(
+            total_working_rides=Sum("working_rides_base_count"),
+            total_distance=Sum("trip_length_total"),
+            avg_frequency=Avg("frequency"),
+            eco_trip_count=Sum("get_rides_count_denorm"),
+        )
+
+        team_metrics = {
+            "working_rides_base_count": result["total_working_rides"] or 0,
+            "distance": result["total_distance"] or 0,
+            "frequency": result["avg_frequency"] or 0,
+            "eco_trip_count": result["eco_trip_count"] or 0,
+        }
+
+        cache[cache_key] = team_metrics
+
+        return team_metrics
 
     @denormalized(models.TextField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})

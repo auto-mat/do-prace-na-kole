@@ -215,7 +215,7 @@ class UserProfile(WithGalleryMixin, models.Model):
         blank=True,
     )
 
-    @denormalized(models.IntegerField, default=0)
+    @denormalized(models.IntegerField, default=0, skip={"gallery", "updated"})
     @depend_on_related("CompanyAdmin")
     # This is here to update related_admin property on UserAttendance model
     def company_admin_count(self):
