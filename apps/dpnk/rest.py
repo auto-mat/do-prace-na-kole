@@ -2472,7 +2472,7 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
             if payment.pay_subject:
                 price_levels = obj.campaign.pricelevel_set.filter(
                     category__icontains="basic"
-                    if payment.pay_subject == "individual"
+                    if payment.pay_subject in ("individual", "voucher")
                     else payment.pay_subject
                 ).values(
                     "id",
