@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 14:45+0100\n"
+"POT-Creation-Date: 2026-01-22 11:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -641,7 +641,7 @@ msgstr ""
 msgid "b"
 msgstr ""
 
-#: apps/dpnk/filters.py:31 apps/dpnk/models/competition.py:80
+#: apps/dpnk/filters.py:31 apps/dpnk/models/competition.py:81
 #: apps/dpnk/models/invoice.py:138 apps/dpnk/models/phase.py:51
 #: apps/dpnk/models/team.py:85 apps/dpnk/models/user_attendance.py:81
 #: apps/dpnk/templates/dpnk/diplomas.html:9
@@ -748,7 +748,7 @@ msgstr ""
 msgid "Adresa společnosti nebo pobočky"
 msgstr ""
 
-#: apps/dpnk/forms.py:382 apps/dpnk/models/competition.py:441
+#: apps/dpnk/forms.py:382 apps/dpnk/models/competition.py:442
 #: apps/dpnk/models/team.py:55 apps/dpnk/models/user_attendance.py:118
 #: apps/dpnk/resources.py:372 apps/dpnk/templates/dpnk/base_generic.html:70
 msgid "Tým"
@@ -1136,11 +1136,11 @@ msgstr ""
 msgid "Počet minulých dní, které jdou zapisovat"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:144 apps/dpnk/models/competition.py:173
+#: apps/dpnk/models/campaign.py:144 apps/dpnk/models/competition.py:174
 msgid "Minimální základ počtu jízd"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:146 apps/dpnk/models/competition.py:175
+#: apps/dpnk/models/campaign.py:146 apps/dpnk/models/competition.py:176
 msgid ""
 "Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout "
 "100% jízd"
@@ -1262,7 +1262,7 @@ msgstr ""
 msgid "Deprecated: Jazyková sada"
 msgstr ""
 
-#: apps/dpnk/models/campaign.py:499 apps/dpnk/models/competition.py:244
+#: apps/dpnk/models/campaign.py:499 apps/dpnk/models/competition.py:245
 #: apps/dpnk/models/transactions.py:133
 msgid "Popis"
 msgstr ""
@@ -1351,7 +1351,7 @@ msgid "Název"
 msgstr ""
 
 #: apps/dpnk/models/city_in_campaign_diploma.py:10
-#: apps/dpnk/models/competition.py:128
+#: apps/dpnk/models/competition.py:129
 #: apps/dpnk/templates/dpnk/competitor_count.html:43
 msgid "Počet soutěžících"
 msgstr ""
@@ -1530,7 +1530,7 @@ msgstr ""
 msgid "Typy společností"
 msgstr ""
 
-#: apps/dpnk/models/company.py:286 apps/dpnk/models/competition.py:117
+#: apps/dpnk/models/company.py:286 apps/dpnk/models/competition.py:118
 #: apps/dpnk/models/questionnaire.py:124
 msgid "Typ"
 msgstr ""
@@ -1615,278 +1615,286 @@ msgstr ""
 msgid "Soutěž organizací"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:68 apps/dpnk/models/competition.py:69
+#: apps/dpnk/models/competition.py:65
+msgid "Soutěž poboček"
+msgstr ""
+
+#: apps/dpnk/models/competition.py:69 apps/dpnk/models/competition.py:70
 msgid "Soutěžní kategorie"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:74
+#: apps/dpnk/models/competition.py:75
 msgid "Název soutěže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:93
+#: apps/dpnk/models/competition.py:94
 msgid "Odkaz na web soutěže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:94
+#: apps/dpnk/models/competition.py:95
 msgid "Na webu budou podrobná pravidla o soutěži."
 msgstr ""
 
-#: apps/dpnk/models/competition.py:99
+#: apps/dpnk/models/competition.py:100
 msgid "Datum začátku soutěže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:101
+#: apps/dpnk/models/competition.py:102
 msgid "Od tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:108
+#: apps/dpnk/models/competition.py:109
 msgid "Datum konce soutěže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:110
+#: apps/dpnk/models/competition.py:111
 msgid "Do tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:119
+#: apps/dpnk/models/competition.py:120
 msgid ""
 "Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost), nebo na "
 "pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže, "
 "cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."
 msgstr ""
 
-#: apps/dpnk/models/competition.py:130
+#: apps/dpnk/models/competition.py:131
 msgid ""
 "Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby "
 "vybírejte jen pokud víte, k čemu slouží."
 msgstr ""
 
-#: apps/dpnk/models/competition.py:138
+#: apps/dpnk/models/competition.py:139
 msgid "Způsoby dopravy"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:140
+#: apps/dpnk/models/competition.py:141
 msgid ""
 "Můžete vybrat víc položek pomocí klávesy control. Většina soutěží je vypsána "
 "jako kolo + pěšky"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:147
+#: apps/dpnk/models/competition.py:148
 msgid "Soutěž pouze pro města"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:149
+#: apps/dpnk/models/competition.py:150
 msgid ""
 "Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž "
 "probíhá ve všech městech."
 msgstr ""
 
-#: apps/dpnk/models/competition.py:155
+#: apps/dpnk/models/competition.py:156
 msgid "Soutěž pouze pro organizace"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:161
+#: apps/dpnk/models/competition.py:162
 msgid "Pohlaví soutěžících"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:163
+#: apps/dpnk/models/competition.py:164
 msgid ""
 "Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže "
 "- jednu pro muže a druhou pro ženy. Jinak nechte prázdné."
 msgstr ""
 
-#: apps/dpnk/models/competition.py:182
+#: apps/dpnk/models/competition.py:183
 msgid "Zveřejňovat soutěžní odpovědi"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:187
+#: apps/dpnk/models/competition.py:188
 msgid "Soutěž je veřejná"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:188
+#: apps/dpnk/models/competition.py:189
 msgid "Zobrazovat v přehledech soutěží a výsledků?"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:193
+#: apps/dpnk/models/competition.py:194
 msgid "Zobrazovat výsledky soutěže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:194
+#: apps/dpnk/models/competition.py:195
 msgid "Povolit možnost prohlížet výsledky soutěže."
 msgstr ""
 
-#: apps/dpnk/models/competition.py:199
+#: apps/dpnk/models/competition.py:200
 msgid "Povolit likování příspěvků dotazníku"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:204
+#: apps/dpnk/models/competition.py:205
 msgid "Prodloužené přihlášky"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:205
+#: apps/dpnk/models/competition.py:206
 msgid "Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:211
+#: apps/dpnk/models/competition.py:212
 msgid "Pravidla soutěže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:217
+#: apps/dpnk/models/competition.py:218
 msgid "Text u výsledek"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:223
+#: apps/dpnk/models/competition.py:224
 msgid "Povinný dotazník"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:224
+#: apps/dpnk/models/competition.py:225
 msgid "Dotazník je potřeba vyplnit před tím, než je možné zadávat jízdy"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:229
+#: apps/dpnk/models/competition.py:230
 msgid "Prorita v řazení"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:230
+#: apps/dpnk/models/competition.py:231
 msgid "Vyšší priorita -> řadí se dřív"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:236
+#: apps/dpnk/models/competition.py:237
 msgid "Započítávají se i rekreační jízdy?"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:240
+#: apps/dpnk/models/competition.py:241
 msgid "Ukázat volbu charitativní organizace ve výsledích"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:352
+#: apps/dpnk/models/competition.py:353
 msgid "Po&shy;řa&shy;dí"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:358
+#: apps/dpnk/models/competition.py:359
 msgid " prů&shy;měr&shy;ně"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:367
+#: apps/dpnk/models/competition.py:368
 #, python-format
 msgid "Ki&shy;lo&shy;me&shy;trů%s"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:372
+#: apps/dpnk/models/competition.py:373
 #, python-format
 msgid "%% jízd%s"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:377
+#: apps/dpnk/models/competition.py:378
 #, python-format
 msgid "Bo&shy;dů%s"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:387
+#: apps/dpnk/models/competition.py:388
 msgid "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:394
+#: apps/dpnk/models/competition.py:395
 msgid "Cel&shy;ko&shy;vý po&shy;čet cest"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:403
+#: apps/dpnk/models/competition.py:404
 msgid "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:410
+#: apps/dpnk/models/competition.py:411
 msgid "v&nbsp;tý&shy;mu"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:413
+#: apps/dpnk/models/competition.py:414
 msgid "ve&nbsp;fir&shy;mě"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:419
+#: apps/dpnk/models/competition.py:420
 #, python-format
 msgid "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:429
+#: apps/dpnk/models/competition.py:430
 msgid "Sou&shy;tě&shy;ží&shy;cí"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:437
+#: apps/dpnk/models/competition.py:438
 msgid "Charitativní organizace"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:444
+#: apps/dpnk/models/competition.py:445
 msgid "Spo&shy;leč&shy;nost"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:447
+#: apps/dpnk/models/competition.py:448
 msgid "Pro&shy;fe&shy;se"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:448
+#: apps/dpnk/models/competition.py:449
 msgid "Po&shy;hla&shy;ví"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:451
+#: apps/dpnk/models/competition.py:452
 msgid "Měs&shy;to"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:485
+#: apps/dpnk/models/competition.py:486
 msgid "dotazník"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:486
+#: apps/dpnk/models/competition.py:487
 msgid "soutěž na pravidelnost"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:487
+#: apps/dpnk/models/competition.py:488
 msgid "soutěž na vzdálenost"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:490
+#: apps/dpnk/models/competition.py:491
 #: apps/dpnk/templates/dpnk/competitions.html:21
 msgid "jednotlivců"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:491
+#: apps/dpnk/models/competition.py:492
 #: apps/dpnk/templates/dpnk/competitions.html:23
 msgid "liberos"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:492
+#: apps/dpnk/models/competition.py:493
 #: apps/dpnk/templates/dpnk/competitions.html:25
 msgid "týmů"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:493
+#: apps/dpnk/models/competition.py:494
 #: apps/dpnk/templates/dpnk/competitions.html:27
 msgid "organizací"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:496
+#: apps/dpnk/models/competition.py:495
+msgid "poboček"
+msgstr ""
+
+#: apps/dpnk/models/competition.py:498
 msgid "pro muže"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:497
+#: apps/dpnk/models/competition.py:499
 msgid "pro ženy"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:500
+#: apps/dpnk/models/competition.py:502
 msgid "vnitrofiremní"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:501
+#: apps/dpnk/models/competition.py:503
 #, python-format
 msgid "organizace %s"
 msgstr ""
 
-#: apps/dpnk/models/competition.py:509
+#: apps/dpnk/models/competition.py:511
 #, python-format
 msgid "ve městě %(cities)s"
 msgid_plural "ve městech %(cities)s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: apps/dpnk/models/competition.py:555
+#: apps/dpnk/models/competition.py:557
 msgid "Datum začátku soutěže musí být menší, než datum konce soutěže"
 msgstr ""
 
@@ -2992,87 +3000,87 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: apps/dpnk/rest.py:1244
+#: apps/dpnk/rest.py:1245
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr ""
 
-#: apps/dpnk/rest.py:1255
+#: apps/dpnk/rest.py:1256
 #, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
 "tým."
 msgstr ""
 
-#: apps/dpnk/rest.py:1276
+#: apps/dpnk/rest.py:1277
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
 "ID <%(user_attendance_id)s> není členem vašeho týmu."
 msgstr ""
 
-#: apps/dpnk/rest.py:1306
+#: apps/dpnk/rest.py:1307
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
 "hodnota <null>. Změnit tým není povoleno."
 msgstr ""
 
-#: apps/dpnk/rest.py:1820
+#: apps/dpnk/rest.py:1821
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: apps/dpnk/rest.py:1822
+#: apps/dpnk/rest.py:1823
 msgid "API limit vyčerpan."
 msgstr ""
 
-#: apps/dpnk/rest.py:2148
+#: apps/dpnk/rest.py:2149
 msgid ""
 "Tým se zadaným názvem již v systému existuje, zkuste ten váš přejmenovat "
 "(systém umí rozeznat malá a velká písmena)."
 msgstr ""
 
-#: apps/dpnk/rest.py:2352
+#: apps/dpnk/rest.py:2353
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: apps/dpnk/rest.py:2376
+#: apps/dpnk/rest.py:2377
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis "
 "<%(signature)s>."
 msgstr ""
 
-#: apps/dpnk/rest.py:2405
+#: apps/dpnk/rest.py:2406
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: apps/dpnk/rest.py:2441
+#: apps/dpnk/rest.py:2442
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav "
 "<%(order_status)s>."
 msgstr ""
 
-#: apps/dpnk/rest.py:2454
+#: apps/dpnk/rest.py:2455
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: apps/dpnk/rest.py:3159
+#: apps/dpnk/rest.py:3160
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
-#: apps/dpnk/rest.py:3165
+#: apps/dpnk/rest.py:3166
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr ""
 
-#: apps/dpnk/rest.py:3177
+#: apps/dpnk/rest.py:3178
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
