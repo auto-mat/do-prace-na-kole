@@ -5,7 +5,7 @@
 {% block content %}
 {% language lang_code %}
 <p>
-Dobrý den, {{ user_attendance.userprofile.name }}
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
 máme smutné zprávy. Vaše členství v týmu {{ user_attendance.team.name }} bylo právě zamítnuto členem týmu {{ denier }} z důvodu: {{reason}}
 </p><p>
