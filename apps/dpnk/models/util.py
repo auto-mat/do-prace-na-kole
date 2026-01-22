@@ -79,6 +79,12 @@ def get_competition_competitor_type_field_choices():
         [
             x
             for x in Competition.CCOMPETITORTYPES
-            if x[0] in ["single_user", "team", "company"]
+            if x[0]
+            in [
+                "single_user",
+                "team",
+                "company",
+                "subsidiary",
+            ]
         ]
     )

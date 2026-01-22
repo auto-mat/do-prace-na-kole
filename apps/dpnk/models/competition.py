@@ -62,6 +62,7 @@ class Competition(models.Model):
         ("liberos", _("Liberos")),
         ("team", _("Týmy")),
         ("company", _("Soutěž organizací")),
+        ("subsidiary", _("Soutěž poboček")),
     )
 
     class Meta:
@@ -491,6 +492,7 @@ class Competition(models.Model):
             "liberos": _("liberos"),
             "team": _("týmů"),
             "company": _("organizací"),
+            "subsidiary": _("poboček"),
         }
         SEX_STRINGS = {
             "male": _("pro muže"),
