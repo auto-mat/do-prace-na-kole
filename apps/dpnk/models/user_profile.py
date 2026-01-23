@@ -260,6 +260,9 @@ class UserProfile(WithGalleryMixin, models.Model):
             else:
                 return self.user.username
 
+    def full_name(self):
+        return self.user.get_full_name()
+
     def name_for_trusted(self):
         if self.nickname:
             full_name = self.user.get_full_name()

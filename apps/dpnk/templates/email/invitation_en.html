@@ -11,7 +11,7 @@ Invitation to the challenge
 <p>
 Good news{% if invited %} {{ invited.userprofile.first_name_vokativ }}{% endif %}!
 </p><p>
-Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with you in the {{inviting.team.name}} team.
+Fellow colleague {{ inviting.userprofile.full_name }} wants to ride the bicycle with you in the {{inviting.team.name}} team.
 </p>
 
 {% if not invited %}
