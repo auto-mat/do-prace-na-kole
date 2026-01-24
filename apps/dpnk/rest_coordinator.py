@@ -515,6 +515,8 @@ class OrganizationAdminOrganizationUserAttendanceSerializer(
 ):
     id = serpy.IntField()
     name = serpy.StrField(call=True)
+    name_for_trusted = serpy.StrField(call=True)
+    full_name = serpy.StrField(call=True)
     nickname = RequestSpecificField(lambda ua, req: ua.userprofile.nickname)
     date_of_challenge_registration = serpy.Field(attr="created")
     email = RequestSpecificField(lambda ua, req: ua.userprofile.user.email)

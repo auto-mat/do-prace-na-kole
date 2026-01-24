@@ -206,6 +206,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def name_for_trusted(self):
         return self.userprofile.name_for_trusted()
 
+    def full_name(self):
+        return self.userprofile.full_name()
+
     name_for_trusted.admin_order_field = "userprofile__user__last_name"
     name_for_trusted.short_description = _("Jméno")
 
