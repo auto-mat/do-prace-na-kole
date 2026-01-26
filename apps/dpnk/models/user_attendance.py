@@ -320,10 +320,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if self.discount_coupon and self.discount_coupon.discount == 100:
             return "done"
         payment = self.representative_payment
-        if self.team and self.team.subsidiary and not self.has_admission_fee():
+        if not self.has_admission_fee():
             return "no_admission"
-        if self.admission_fee() == 0 and not payment:
-            return "done"
         if not payment:
             return "none"
         if payment.status in Payment.done_statuses:
