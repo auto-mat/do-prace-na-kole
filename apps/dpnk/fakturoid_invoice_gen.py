@@ -184,8 +184,6 @@ def create_or_update_subject(session, base_url, invoice):
                 invoice.company_admin_telephones().split(",")[0],
             ),
         )
-    if invoice.client_note:
-        fa_subject_data["note"] = invoice.client_note
     fa_subject_emails = invoice.company_admin_emails().split(",")
     if fa_subject_emails:
         fa_subject_data["email"] = fa_subject_emails[0]
@@ -290,6 +288,8 @@ def create_or_update_invoice(session, base_url, subject, invoice):
             "order_number": invoice.order_number,
             "lines": create_invoice_lines(invoice=invoice),
         }
+        if invoice.client_note:
+            fa_invoice_data["note"] = invoice.client_note
 
         if invoices:
             # Update existing invoice
