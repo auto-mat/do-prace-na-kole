@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import (
     mixins,
