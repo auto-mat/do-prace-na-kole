@@ -195,8 +195,8 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             )
             return Response(
                 {
-                    "message": _("Approved {} payments successfully").format(
-                        approved_count
+                    "message": _("Úspěšně schváleno {payments} plateb").format(
+                        payments=approved_count
                     ),
                     "approved_ids": [user.id for user in users],
                 },
@@ -265,8 +265,8 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
             )
             return Response(
                 {
-                    "message": _("Disapproved {} payments successfully").format(
-                        disapproved_count
+                    "message": _("Úspěšně zamítnuto {payments} plateb").format(
+                        payments=disapproved_count
                     ),
                     "approved_ids": [user.id for user in users],
                 },
