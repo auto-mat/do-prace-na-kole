@@ -623,10 +623,8 @@ msgid "Jste ve hře"
 msgstr "You're on Track"
 
 #: apps/dpnk/email.py:176
-#, fuzzy
-#| msgid "Vaším firemním koordinátorem je"
 msgid "Platba firemním koordinátorem společnosti zamítnuta"
-msgstr Payment rejected by company coordinator"
+msgstr "Payment was rejected by company coordinator"
 
 #: apps/dpnk/email.py:188 apps/dpnk/email.py:210
 msgid "Potvrzení registrace firemního koordinátora"
