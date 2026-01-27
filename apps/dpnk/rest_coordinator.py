@@ -195,7 +195,79 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             )
             return Response(
                 {
-                    "message": f"Approved {approved_count} payments successfully",
+                    "message": _("Approved {} payments successfully").format(
+                        approved_count
+                    ),
+                    "approved_ids": [user.id for user in users],
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DisapprovePaymentsDeserializer(ApprovePaymentsDeserializer):
+    pass
+
+
+class DisapprovePaymentsView(APIView, CompanyAdminMixin):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = DisapprovePaymentsDeserializer(data=request.data)
+        if serializer.is_valid():
+            ids = serializer.validated_data["ids"]
+
+            company_admin = self.ca()
+
+            users = UserAttendance.objects.filter(
+                id__in=list(map(int, ids.keys())),
+                team__subsidiary__company=company_admin.administrated_company,
+                campaign=company_admin.campaign,
+                userprofile__user__is_active=True,
+                representative_payment__pay_type="fc",
+            ).exclude(
+                payment_status="done",
+            )
+
+            disapproved_count = 0
+            payments = []
+            payu_ordered_products = []
+            for user in users:
+                payment = user.representative_payment
+                payment.status = Status.REJECTED
+                amount = ids[str(user.id)]
+                if payment.amount != amount:
+                    payment.amount = amount
+                    entry_fee = payment.payu_ordered_product.get(
+                        name__icontains="entry fee"
+                    )
+                    entry_fee.unit_price = amount
+                    payu_ordered_products.append(entry_fee)
+                else:
+                    payment.amount = user.company_admission_fee()
+                payment.description = (
+                    payment.description
+                    + "\nFA %s zamítnul dne %s"
+                    % (self.request.user.username, datetime.datetime.now())
+                )
+                payment.save()
+                # payments.append(payment)
+                disapproved_count += 1
+
+            # Payment.objects.bulk_update(
+            #     payments,
+            #     ["status", "amount", "description"],
+            # )
+            PayUOrderedProduct.objects.bulk_update(
+                payu_ordered_products,
+                ["unit_price"],
+            )
+            return Response(
+                {
+                    "message": _("Disapproved {} payments successfully").format(
+                        disapproved_count
+                    ),
                     "approved_ids": [user.id for user in users],
                 },
                 status=status.HTTP_200_OK,
