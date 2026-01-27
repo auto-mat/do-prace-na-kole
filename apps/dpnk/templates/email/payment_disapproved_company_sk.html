@@ -1,0 +1,10 @@
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p>
+<p>
+Firemní koordinátor ({{ company_admin_email }}) společnosti {{ company }} zamítnul vaši účast ve výzvě {{ user_attendance.campaign }} nezaplacením startovného.
+</p>
+{% endif %}
+{% endblock %}

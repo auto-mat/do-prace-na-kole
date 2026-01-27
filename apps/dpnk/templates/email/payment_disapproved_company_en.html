@@ -1,0 +1,10 @@
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Hello, {{ user_attendance.userprofile.first_name_vokativ }}
+</p>
+<p>
+The organization coordinator ({{ company_admin_email }}) of {{ company }} has rejected your participation in the {{ user_attendance.campaign }} challenge due to non-payment of the entry fee.
+</p>
+{% endif %}
+{% endblock %}

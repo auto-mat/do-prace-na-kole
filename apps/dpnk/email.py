@@ -161,6 +161,24 @@ def payment_confirmation_company_mail(user_attendance):
     )
 
 
+def payment_disapproved_company_mail(user_attendance, campaign_id):
+    company = user_attendance.team.subsidiary.company
+    context = {
+        "company": company
+        if user_attendance.team
+        else _("(není vybraná)", user_attendance.userprofile.language),
+        "company_admin_email": company.admin_emails(campaign=campaign_id)
+        if company
+        else "",
+    }
+    campaign_mail(
+        user_attendance,
+        _("Platba firemním koordinátorem společnosti zamítnuta"),
+        "payment_disapproved_company_%s.html",
+        context,
+    )
+
+
 def company_admin_register_competitor_mail(user_attendance):
     context = {
         "company": user_attendance.team.subsidiary.company,

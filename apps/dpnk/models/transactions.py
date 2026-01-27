@@ -34,7 +34,11 @@ from polymorphic.models import PolymorphicModel
 
 from .payu_ordered_product import PayUOrderedProduct
 from .. import mailing
-from ..email import payment_confirmation_company_mail, payment_confirmation_mail
+from ..email import (
+    payment_confirmation_mail,
+    payment_confirmation_company_mail,
+    payment_disapproved_company_mail,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -382,6 +386,17 @@ class Payment(Transaction):
             and self.status in statuses_company_ok
         ):
             payment_confirmation_company_mail(self.user_attendance)
+
+        statuses_company_rejected = (Status.REJECTED,)
+        if (
+            self.user_attendance
+            and (status_before_update not in statuses_company_rejected)
+            and self.status in statuses_company_rejected
+        ):
+            payment_disapproved_company_mail(
+                self.user_attendance,
+                campaign_id=self.payment_user_attendance().campaign.id,
+            )
 
         if self.id:
             payment = Payment.objects.filter(pk=self.id)
