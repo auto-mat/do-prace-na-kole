@@ -395,7 +395,7 @@ class Payment(Transaction):
         ):
             payment_disapproved_company_mail(
                 self.user_attendance,
-                campaign_id=self.payment_user_attendance().campaign.id,
+                campaign_id=self.payment_user_attendance.campaign.id,
             )
 
         if self.id:
