@@ -22,7 +22,6 @@ from rest_framework.decorators import action
 import drf_serpy as serpy
 
 from .models import (
-    UserAttendance,
     City,
     CompanyAdmin,
     Invoice,
@@ -33,6 +32,8 @@ from .models import (
     Subsidiary,
     Team,
     Campaign,
+    UserAttendance,
+    UserProfile,
 )
 from t_shirt_delivery.models import (
     BoxRequest,
@@ -54,21 +55,23 @@ from .rest import (
 from .middleware import get_or_create_userattendance
 
 
-class UserAttendanceMixin:
-    def ua(self):
+class UserProfileMixin:
+    def up(self):
         ua = self.request.user_attendance
         if not ua:
-            ua = get_or_create_userattendance(self.request, self.request.subdomain)
-        return ua
+            userprofile_pk = UserProfile.objects.get(user__id=self.request.user.id).pk
+        else:
+            userprofile_pk = ua.userprofile.pk
+        return userprofile_pk
 
 
-class CompanyAdminMixin(UserAttendanceMixin):
+class CompanyAdminMixin(UserProfileMixin):
     def ca(self):
 
         if not hasattr(self, "_company_admin") or self._company_admin is None:
             try:
                 self._company_admin = CompanyAdmin.objects.get(
-                    userprofile=self.ua().userprofile.pk,
+                    userprofile=self.up(),
                     campaign__slug=self.request.subdomain,
                     company_admin_approved="approved",
                 )
