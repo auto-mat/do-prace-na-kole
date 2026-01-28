@@ -97,21 +97,18 @@ class FeeApprovalSerializer(serpy.Serializer):
 
 class CompanyAdminDoesNotExist(serializers.ValidationError):
     status_code = 403
-    default_detail = {"company_admin": _("Uživatel není správcem společnosti")}
-    # "User is not company admin"
+    default_detail = {"company_admin": _("Uživatel není správcem společnosti.")}
 
 
 class TeamNotEmpty(APIException):
     status_code = 403
-    default_detail = _("Nelze smazat tým s aktivními členy")
-    # "Cannot delete a team with active members."
+    default_detail = _("Nelze smazat tým s aktivními členy.")
     default_code = "team_not_empty"
 
 
 class CompanyAdminUserAttendanceDoesNotExist:
     status_code = 400
-    default_detail = _("Správca společnosti není účastníkem aktuální výzvy")
-    # "Cannot delete a team with active members."
+    default_detail = _("Správce společnosti není účastníkem aktuální výzvy.")
 
 
 class FeeApprovalSet(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
@@ -211,7 +208,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             )
             return Response(
                 {
-                    "message": _("Úspěšně schváleno {payments} plateb").format(
+                    "message": _("Úspěšně schváleno {payments} plateb.").format(
                         payments=approved_count
                     ),
                     "approved_ids": [user.id for user in users],
@@ -281,7 +278,7 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
             )
             return Response(
                 {
-                    "message": _("Úspěšně zamítnuto {payments} plateb").format(
+                    "message": _("Úspěšně zamítnuto {payments} plateb.").format(
                         payments=disapproved_count
                     ),
                     "approved_ids": [user.id for user in users],
