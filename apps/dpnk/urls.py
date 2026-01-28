@@ -51,6 +51,7 @@ from .rest import (
 
 from .rest_coordinator import (
     ApprovePaymentsView,
+    ApproveCompanyAdminAsTeamMemberView,
     DisapprovePaymentsView,
     GetAttendanceView,
     BoxRequestView,
@@ -697,6 +698,11 @@ urlpatterns = [
         "rest/coordinator/approve-payments/",
         ApprovePaymentsView.as_view(),
         name="approve-payments",
+    ),
+    path(
+        "rest/coordinator/approve-company-admin-as-team-member/",
+        ApproveCompanyAdminAsTeamMemberView.as_view(),
+        name="approve-company-admin-as-team-member",
     ),
     path(
         "rest/coordinator/disapprove-payments/",

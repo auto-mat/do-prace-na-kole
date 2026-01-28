@@ -53,6 +53,10 @@ from .rest import (
     UserAttendancePaymentWithRewardSerializer,
 )
 from .middleware import get_or_create_userattendance
+from .tasks import (
+    team_membership_approval_mail,
+    team_membership_denial_mail,
+)
 
 
 class UserProfileMixin:
@@ -93,13 +97,21 @@ class FeeApprovalSerializer(serpy.Serializer):
 
 class CompanyAdminDoesNotExist(serializers.ValidationError):
     status_code = 403
-    default_detail = {"company_admin": "User is not company admin"}
+    default_detail = {"company_admin": _("Uživatel není správcem společnosti")}
+    # "User is not company admin"
 
 
 class TeamNotEmpty(APIException):
-    status_code = 400
-    default_detail = "Cannot delete a team with active members."
+    status_code = 403
+    default_detail = _("Nelze smazat tým s aktivními členy")
+    # "Cannot delete a team with active members."
     default_code = "team_not_empty"
+
+
+class CompanyAdminUserAttendanceDoesNotExist:
+    status_code = 400
+    default_detail = _("Správca společnosti není účastníkem aktuální výzvy")
+    # "Cannot delete a team with active members."
 
 
 class FeeApprovalSet(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
@@ -1025,6 +1037,59 @@ class MakeInvoiceVew(APIView, CompanyAdminMixin):
             )
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ApproveCompanyAdminAsTeamMemberView(APIView, CompanyAdminMixin):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user_attendance = UserAttendance.objects.get(
+                userprofile_id=self.ca().userprofile_id,
+                campaign__slug=self.request.subdomain,
+            )
+        except UserAttendance.DoesNotExist:
+            raise CompanyAdminUserAttendanceDoesNotExist
+        if (
+            user_attendance.team.member_count
+            >= user_attendance.campaign.max_team_members
+        ):
+            message = _(
+                "Tým je plný. Schválení do aktuálního týmu bylo zamítnuto."
+                " Vytvořte si nový tým nebo si změňte aktuální tým."
+            )
+            user_attendance.approved_for_team = "denied"
+            user_attendance.save()
+            # Send e-mail
+            team_membership_denial_mail.delay(
+                team_members=[
+                    {
+                        "user_attendance_id": user_attendance.id,
+                        "denier_id": user_attendance.userprofile.user.id,
+                        "reason": message,
+                    }
+                ]
+            )
+            return Response(
+                {
+                    "message": message,
+                },
+                status=status.HTTP_200_OK,
+            )
+        user_attendance.approved_for_team = "approved"
+        user_attendance.save()
+        # Send e-mail
+        team_membership_approval_mail.delay(
+            user_attendance_ids=[
+                user_attendance.id,
+            ],
+        )
+        return Response(
+            {
+                "message": _("Schválení do aktuálního týmu bylo úspěšné."),
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 router.register(r"coordinator/fee-approval", FeeApprovalSet, basename="fee-approval")
