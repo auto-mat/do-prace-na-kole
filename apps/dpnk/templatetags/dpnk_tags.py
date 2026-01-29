@@ -170,7 +170,7 @@ def change_lang(context, lang=None, *args, **kwargs):
         return "/%s" % lang
 
     path = context["request"].path
-    if lang == "sk" and "admin" in path:
+    if lang == "sk":
         lang = "cs"
     return translate_url(path, lang)
 
