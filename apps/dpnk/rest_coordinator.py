@@ -281,7 +281,7 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                     "message": _("Úspěšně zamítnuto {payments} plateb.").format(
                         payments=disapproved_count
                     ),
-                    "approved_ids": [user.id for user in users],
+                    "disapproved_ids": [user.id for user in users],
                 },
                 status=status.HTTP_200_OK,
             )
