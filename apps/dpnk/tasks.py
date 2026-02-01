@@ -443,3 +443,43 @@ def create_invoice(self, invoice_id):
     if fa_invoice:
         invoice.fakturoid_invoice_url = fa_invoice["public_html_url"]
         invoice.save(update_fields=["fakturoid_invoice_url"])
+
+
+@shared_task(bind=True)
+def payment_confirmation_mail(self, user_attendance_ids):
+    """Payment confirmation e-mail
+
+    :param list user_attendance_ids: List of user attendance IDs
+    """
+    user_attendances = UserAttendance.objects.filter(
+        id__in=user_attendance_ids,
+    )
+    for user_attendance in user_attendances:
+        email.payment_confirmation_mail(user_attendance)
+
+
+@shared_task(bind=True)
+def payment_confirmation_company_mail(self, user_attendance_ids):
+    """Organization admin payment confirmation e-mail
+
+    :param list user_attendance_ids: List of user attendance IDs
+    """
+    user_attendances = UserAttendance.objects.filter(
+        id__in=user_attendance_ids,
+    )
+    for user_attendance in user_attendances:
+        email.payment_confirmation_company_mail(user_attendance)
+
+
+@shared_task(bind=True)
+def payment_disapproved_company_mail(self, user_attendance_ids, campaign_id):
+    """Organization admin payment disapprove e-mail
+
+    :param list user_attendance_ids: List of user attendance IDs
+    :param int campaign_id: Campaign ID
+    """
+    user_attendances = UserAttendance.objects.filter(
+        id__in=user_attendance_ids,
+    )
+    for user_attendance in user_attendances:
+        email.payment_disapproved_company_mail(user_attendance, campaign_id)

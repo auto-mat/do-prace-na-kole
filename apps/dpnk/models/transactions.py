@@ -34,11 +34,6 @@ from polymorphic.models import PolymorphicModel
 
 from .payu_ordered_product import PayUOrderedProduct
 from .. import mailing
-from ..email import (
-    payment_confirmation_mail,
-    payment_confirmation_company_mail,
-    payment_disapproved_company_mail,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -360,6 +355,12 @@ class Payment(Transaction):
         return self.status
 
     def save(self, *args, **kwargs):
+        from ..tasks import (
+            payment_confirmation_mail,
+            payment_confirmation_company_mail,
+            payment_disapproved_company_mail,
+        )
+
         status_before_update = None
         if self.id:
             status_before_update = Payment.objects.get(pk=self.id).status
@@ -379,13 +380,13 @@ class Payment(Transaction):
             and (status_before_update != Status.DONE)
             and self.status == Status.DONE
         ):
-            payment_confirmation_mail(self.user_attendance)
+            payment_confirmation_mail.delay([self.user_attendance.id])
         elif (
             self.user_attendance
             and (status_before_update not in statuses_company_ok)
             and self.status in statuses_company_ok
         ):
-            payment_confirmation_company_mail(self.user_attendance)
+            payment_confirmation_company_mail.delay([self.user_attendance.id])
 
         statuses_company_rejected = (Status.REJECTED,)
         if (
@@ -393,8 +394,8 @@ class Payment(Transaction):
             and (status_before_update not in statuses_company_rejected)
             and self.status in statuses_company_rejected
         ):
-            payment_disapproved_company_mail(
-                self.user_attendance,
+            payment_disapproved_company_mail.delay(
+                [self.user_attendance.id],
                 campaign_id=self.payment_user_attendance.campaign.id,
             )
 
