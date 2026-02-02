@@ -133,7 +133,7 @@ def get_competitions(user_attendance):
 
     competitions = competitions.filter(
         (
-            Q(competitor_type__in=("liberos", "team", "single_user"))
+            Q(competitor_type__in=("liberos", "team", "single_user", "subsidiary"))
             & (Q(company=None) | Q(company=(user_attendance.company())))
             & (Q(sex=None) | Q(sex=(user_attendance.userprofile.sex)))
             & (
