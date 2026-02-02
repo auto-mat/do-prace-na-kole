@@ -498,7 +498,12 @@ urlpatterns = [
     ),
     re_path(
         "rest/datareport-results/(?P<report_type>("
-        "regularity|team-regularity-city|performance-organization|performance-city|organizations-review))/",
+        "regularity|"
+        "team-regularity-city|"
+        "performance-organization|"
+        "performance-city|"
+        "organizations-review|"
+        "organization-coordinator))/",
         DataReportResults.as_view(),
         name="datareport-results-rest",
     ),
