@@ -105,6 +105,7 @@ from .util import (
     Cache,
     get_all_logged_in_users,
     get_api_version_from_request,
+    is_payment_with_reward,
     register_challenge_serializer_base_cache_key_name,
     today,
 )
@@ -2489,25 +2490,9 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
                         return False
                     else:
                         return True
-                price_levels = obj.campaign.pricelevel_set.filter(
-                    category__icontains="basic"
-                    if payment.pay_subject == "individual"
-                    else payment.pay_subject
-                ).values(
-                    "id",
-                    "price",
-                    "category",
-                )
-                return (
-                    True
-                    if list(
-                        filter(
-                            lambda x: x["price"] == entry_fee
-                            and "reward" in x["category"],
-                            price_levels,
-                        )
-                    )
-                    else False
+                return is_payment_with_reward(
+                    user_attendance=obj,
+                    entry_fee=entry_fee,
                 )
 
 

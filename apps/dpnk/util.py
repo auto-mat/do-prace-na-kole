@@ -289,3 +289,33 @@ class Cache:
 
 
 register_challenge_serializer_base_cache_key_name = "register-challenge:serializer:"
+
+
+def is_payment_with_reward(user_attendance, entry_fee):
+    """Check if payment is with reward
+
+    :param UserAttendance user_attendance: UserAttendance model instance
+    :param int entry_fee: Entry fee amount
+
+    :return bool: True if entry fee amount is with reward otherwise False
+    """
+    payment = user_attendance.representative_payment
+    price_levels = user_attendance.campaign.pricelevel_set.filter(
+        category__icontains="basic"
+        if payment.pay_subject == "individual"
+        else payment.pay_subject
+    ).values(
+        "id",
+        "price",
+        "category",
+    )
+    return (
+        True
+        if list(
+            filter(
+                lambda x: x["price"] == entry_fee and "reward" in x["category"],
+                price_levels,
+            )
+        )
+        else False
+    )

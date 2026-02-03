@@ -39,6 +39,7 @@ from t_shirt_delivery.models import (
     BoxRequest,
     PackageTransaction,
     SubsidiaryBox,
+    TShirtSize,
 )
 from .models.company import CompanyInCampaign
 from .rest import (
@@ -57,6 +58,7 @@ from .tasks import (
     team_membership_approval_mail,
     team_membership_denial_mail,
 )
+from .util import is_payment_with_reward
 
 
 class UserProfileMixin:
@@ -176,10 +178,22 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             approved_count = 0
             payments = []
             payu_ordered_products = []
+            user_attendances = []
             for user in users:
                 payment = user.representative_payment
                 payment.status = Status.COMPANY_ACCEPTS
                 amount = ids[str(user.id)]
+                payment = user.representative_payment
+                # Set "nic" t-shirt size if payment is without reward
+                if not is_payment_with_reward(
+                    user_attendance=user,
+                    entry_fee=amount,
+                ):
+                    user.t_shirt_size = TShirtSize.objects.get(
+                        code="nic",
+                        campaign=company_admin.campaign,
+                    )
+                    user_attendances.append(user)
                 if payment.amount != amount:
                     payment.amount = amount
                     entry_fee = payment.payu_ordered_product.get(
@@ -206,6 +220,11 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                 payu_ordered_products,
                 ["unit_price"],
             )
+            if user_attendances:
+                UserAttendance.objects.bulk_update(
+                    user_attendances,
+                    ["t_shirt_size"],
+                )
             return Response(
                 {
                     "message": _("Úspěšně schváleno {payments} plateb.").format(
@@ -246,10 +265,14 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
             disapproved_count = 0
             payments = []
             payu_ordered_products = []
+            user_attendances = []
             for user in users:
                 payment = user.representative_payment
                 payment.status = Status.REJECTED
                 amount = ids[str(user.id)]
+                # Set None t-shirt size if payment is without reward
+                user.t_shirt_size = None
+                user_attendances.append(user)
                 if payment.amount != amount:
                     payment.amount = amount
                     entry_fee = payment.payu_ordered_product.get(
@@ -276,6 +299,11 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                 payu_ordered_products,
                 ["unit_price"],
             )
+            if user_attendances:
+                UserAttendance.objects.bulk_update(
+                    user_attendances,
+                    ["t_shirt_size"],
+                )
             return Response(
                 {
                     "message": _("Úspěšně zamítnuto {payments} plateb.").format(
