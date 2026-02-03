@@ -1,6 +1,9 @@
 import datetime
 from collections import namedtuple
 
+import denorm
+import drf_serpy as serpy
+
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -18,8 +21,6 @@ from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-
-import drf_serpy as serpy
 
 from .models import (
     City,
@@ -194,15 +195,12 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                         campaign=company_admin.campaign,
                     )
                     user_attendances.append(user)
-                if payment.amount != amount:
-                    payment.amount = amount
-                    entry_fee = payment.payu_ordered_product.get(
-                        name__icontains="entry fee"
-                    )
-                    entry_fee.unit_price = amount
-                    payu_ordered_products.append(entry_fee)
-                else:
-                    payment.amount = user.company_admission_fee()
+                payment.amount = amount
+                entry_fee = payment.payu_ordered_product.get(
+                    name__icontains="entry fee"
+                )
+                entry_fee.unit_price = amount
+                payu_ordered_products.append(entry_fee)
                 payment.description = (
                     payment.description
                     + "\nFA %s odsouhlasil dne %s"
@@ -211,7 +209,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                 payment.save()
                 # payments.append(payment)
                 approved_count += 1
-
+            denorm.flush()
             # Payment.objects.bulk_update(
             #     payments,
             #     ["status", "amount", "description"],
@@ -273,15 +271,12 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                 # Set None t-shirt size if payment is without reward
                 user.t_shirt_size = None
                 user_attendances.append(user)
-                if payment.amount != amount:
-                    payment.amount = amount
-                    entry_fee = payment.payu_ordered_product.get(
-                        name__icontains="entry fee"
-                    )
-                    entry_fee.unit_price = amount
-                    payu_ordered_products.append(entry_fee)
-                else:
-                    payment.amount = user.company_admission_fee()
+                payment.amount = amount
+                entry_fee = payment.payu_ordered_product.get(
+                    name__icontains="entry fee"
+                )
+                entry_fee.unit_price = amount
+                payu_ordered_products.append(entry_fee)
                 payment.description = (
                     payment.description
                     + "\nFA %s zamítnul dne %s"
@@ -290,7 +285,7 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                 payment.save()
                 # payments.append(payment)
                 disapproved_count += 1
-
+            denorm.flush()
             # Payment.objects.bulk_update(
             #     payments,
             #     ["status", "amount", "description"],
