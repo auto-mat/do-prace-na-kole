@@ -44,6 +44,7 @@ from t_shirt_delivery.models import (
 )
 from .models.company import CompanyInCampaign
 from .rest import (
+    CompanyAdminMixin,
     CompaniesDeserializer,
     UserAttendanceSerializer,
     AddressSerializer,
@@ -60,31 +61,6 @@ from .tasks import (
     team_membership_denial_mail,
 )
 from .util import is_payment_with_reward
-
-
-class UserProfileMixin:
-    def up(self):
-        ua = self.request.user_attendance
-        if not ua:
-            userprofile_pk = UserProfile.objects.get(user__id=self.request.user.id).pk
-        else:
-            userprofile_pk = ua.userprofile.pk
-        return userprofile_pk
-
-
-class CompanyAdminMixin(UserProfileMixin):
-    def ca(self):
-
-        if not hasattr(self, "_company_admin") or self._company_admin is None:
-            try:
-                self._company_admin = CompanyAdmin.objects.get(
-                    userprofile=self.up(),
-                    campaign__slug=self.request.subdomain,
-                    company_admin_approved="approved",
-                )
-            except CompanyAdmin.DoesNotExist:
-                raise CompanyAdminDoesNotExist
-        return self._company_admin
 
 
 class FeeApprovalSerializer(serpy.Serializer):

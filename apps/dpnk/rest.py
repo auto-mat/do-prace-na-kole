@@ -116,8 +116,8 @@ from .tasks import (
 )
 from .templatetags.dpnk_tags import concat_all, concat_cities_into_url_param
 from .payu import PayU
-from .rest_permissions import IsOwnerOrSuperuser
 from .rest_auth import get_tokens_for_user, PayUNotifyOrderRequestAuthentification
+from .rest_permissions import IsOwnerOrSuperuser
 
 from photologue.models import Photo
 from stravasync.models import StravaAccount
@@ -138,6 +138,34 @@ from django.db import transaction
 logger = logging.getLogger(__name__)
 
 organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
+
+
+class UserProfileMixin:
+    def up(self):
+        ua = self.request.user_attendance
+        if not ua:
+            userprofile_pk = UserProfile.objects.get(user__id=self.request.user.id).pk
+        else:
+            userprofile_pk = ua.userprofile.pk
+        return userprofile_pk
+
+
+class CompanyAdminMixin(UserProfileMixin):
+    def ca(self, raise_company_admin_does_not_exists_error=True):
+
+        if not hasattr(self, "_company_admin") or self._company_admin is None:
+            try:
+                self._company_admin = CompanyAdmin.objects.get(
+                    userprofile=self.up(),
+                    campaign__slug=self.request.subdomain,
+                    company_admin_approved="approved",
+                )
+            except CompanyAdmin.DoesNotExist:
+                if raise_company_admin_does_not_exists_error:
+                    raise CompanyAdminDoesNotExist
+                else:
+                    self._company_admin = None
+        return self._company_admin
 
 
 class OptionalImageField(serpy.ImageField):
@@ -274,7 +302,9 @@ class NullStrField(serpy.Field):
 
 
 class UserAttendanceMixin:
-    def ua(self):
+    def ua(
+        self,
+    ):
         ua = self.request.user_attendance
         if not ua:
             ua = get_or_create_userattendance(self.request, self.request.subdomain)
@@ -3809,7 +3839,7 @@ class StravaDisconnect(APIView):
         )
 
 
-class DataReportResults(UserAttendanceMixin, APIView):
+class DataReportResults(CompanyAdminMixin, APIView):
     """Metabase data resuls report URL
 
     1. Organization regulariry (Company/City organizator),
@@ -3822,92 +3852,98 @@ class DataReportResults(UserAttendanceMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, report_type):
-        self.user_attendance = self.ua()
         url = None
+        company_admin = self.ca(
+            raise_company_admin_does_not_exists_error=False,
+        )
+        user_attendance = self.request.user_attendance
         if "regularity" == report_type:
             base_url = settings.METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL
             # Organization admin
-            if (
-                attrgetter_def_val(
-                    "related_company_admin.is_approved", self.user_attendance
-                )
-                or CompanyAdmin.objects.filter(
-                    userprofile=self.user_attendance.userprofile
-                )
-            ) and not self.user_attendance.userprofile.administrated_cities.all():
-                url = concat_all(
-                    base_url,
-                    "?org=",
-                    self.user_attendance.company(),
-                    "&campaign_year=",
-                    self.user_attendance.campaign.year,
-                )
+            if company_admin:
+                # Without user attendance
+                if not user_attendance:
+                    url = concat_all(
+                        base_url,
+                        "?org=",
+                        company_admin.administrated_company,
+                        "&campaign_year=",
+                        company_admin.campaign.year,
+                    )
+                # With user attendance and is not city admin
+                elif not user_attendance.userprofile.administrated_cities.all():
+                    url = concat_all(
+                        base_url,
+                        "?org=",
+                        user_attendance.company(),
+                        "&campaign_year=",
+                        user_attendance.campaign.year,
+                    )
             # City admin
-            elif self.user_attendance.userprofile.administrated_cities.all() and not (
-                attrgetter_def_val(
-                    "related_company_admin.is_approved", self.user_attendance
-                )
-                or CompanyAdmin.objects.filter(
-                    userprofile=self.user_attendance.userprofile
-                )
+            elif (
+                not company_admin
+                and user_attendance
+                and user_attendance.userprofile.administrated_cities.all()
             ):
                 url = concat_all(
                     base_url,
                     "?campaign_year=",
-                    self.user_attendance.campaign.year,
-                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                    user_attendance.campaign.year,
+                    concat_cities_into_url_param(user_attendance.userprofile),
                 )
             # Organization admin (registered/unregistered into challenge) or City admin
-            elif self.user_attendance.userprofile.administrated_cities.all() and (
-                attrgetter_def_val(
-                    "related_company_admin.is_approved", self.user_attendance
-                )
-                or CompanyAdmin.objects.filter(
-                    userprofile=self.user_attendance.userprofile
-                )
+            elif company_admin or (
+                user_attendance
+                and user_attendance.userprofile.administrated_cities.all()
             ):
                 url = concat_all(
                     base_url,
                     "?org=",
-                    self.user_attendance.company(),
-                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                    user_attendance.company()
+                    if user_attendance
+                    else company_admin.administrated_company,
+                    concat_cities_into_url_param(user_attendance.userprofile),
                     "&campaign_year=",
-                    self.user_attendance.campaign.year,
+                    user_attendance.campaign.year
+                    if user_attendance
+                    else company_admin.capaign.year,
                 )
             # Basic challenge member
             else:
                 url = concat_all(
                     base_url,
                     "?campaign_year=",
-                    self.user_attendance.campaign.year,
-                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                    user_attendance.campaign.year,
+                    concat_cities_into_url_param(user_attendance.userprofile),
                 )
         elif "team-regularity-city" == report_type:
             base_url = (
                 settings.METABASE_DPNK_TEAM_REGULARITY_CITY_RESULTS_DATA_REPORT_URL
             )
             # Organization admin (registered/unregistered into challenge) or City admin
-            if self.user_attendance.userprofile.administrated_cities.all() or (
-                attrgetter_def_val(
-                    "related_company_admin.is_approved", self.user_attendance
-                )
-                or CompanyAdmin.objects.filter(
-                    userprofile=self.user_attendance.userprofile
-                )
+            if company_admin or (
+                user_attendance
+                and user_attendance.userprofile.administrated_cities.all()
             ):
                 url = concat_all(
                     base_url,
                     "?campaign_year=",
-                    self.user_attendance.campaign.year,
-                    concat_cities_into_url_param(self.user_attendance.userprofile),
+                    user_attendance.campaign.year
+                    if user_attendance
+                    else company_admin.campaign.year,
+                    concat_cities_into_url_param(
+                        user_attendance.userprofile
+                        if user_attendance
+                        else company_admin.userprofile
+                    ),
                 )
             # Basic challenge member
             else:
                 url = concat_all(
                     base_url,
                     "?campaign_year=",
-                    self.user_attendance.campaign.year,
-                    f"&city={self.user_attendance.team.subsidiary.city.name}",
+                    user_attendance.campaign.year,
+                    f"&city={user_attendance.team.subsidiary.city.name}",
                 )
         elif "performance-organization" == report_type:
             base_url = (
@@ -3916,17 +3952,17 @@ class DataReportResults(UserAttendanceMixin, APIView):
             url = concat_all(
                 base_url,
                 "?org=",
-                self.user_attendance.company(),
+                user_attendance.company(),
                 "&campaign_year=",
-                self.user_attendance.campaign.year,
+                user_attendance.campaign.year,
             )
         elif "performance-city" == report_type:
             base_url = settings.METABASE_DPNK_PERFORMANCE_CITY_RESULTS_DATA_REPORT_URL
             url = concat_all(
                 base_url,
                 "?campaign_year=",
-                self.user_attendance.campaign.year,
-                concat_cities_into_url_param(self.user_attendance.userprofile),
+                user_attendance.campaign.year,
+                concat_cities_into_url_param(user_attendance.userprofile),
             )
         elif "organizations-review" == report_type:
             base_url = (
@@ -3941,12 +3977,16 @@ class DataReportResults(UserAttendanceMixin, APIView):
             )
             url = concat_all(
                 base_url,
+                "?organizace=",
+                user_attendance.company()
+                if user_attendance
+                else company_admin.administrated_company,
             )
 
         return Response({"data_report_url": url})
 
 
-class DataReportResultsByChallenge(UserAttendanceMixin, APIView):
+class DataReportResultsByChallenge(APIView):
     """Metabase data report results by challenge URL
 
     1. May challenge
@@ -3956,19 +3996,26 @@ class DataReportResultsByChallenge(UserAttendanceMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, challenge):
-        self.user_attendance = self.ua()
+        company_admin = self.ca(
+            raise_company_admin_does_not_exists_error=False,
+        )
+        user_attendance = self.request.user_attendance
         url = None
         if "may" == challenge:
             url = concat_all(
                 settings.METABASE_DPNK_MAY_CHALLENGE_DATA_REPORT_URL,
                 "?u%25C5%25BEivatelsk%25C3%25A9_jm%25C3%25A9no=",
-                self.user_attendance.userprofile.user.username,
+                user_attendance.userprofile.user.username
+                if user_attendance
+                else company_admin.userprofile.user.username,
                 "&organizace=",
-                self.user_attendance.company(),
+                user_attendance.company()
+                if user_attendance
+                else company_admin.administrated_company,
                 "&m%25C4%259Bsto=",
-                attrgetter_def_val("team.subsidiary.city", self.user_attendance),
+                attrgetter_def_val("team.subsidiary.city", user_attendance),
                 "&ro%25C4%258Dn%25C3%25ADk_v%25C3%25BDzvy=",
-                self.user_attendance.campaign.year,
+                user_attendance.campaign.year,
             )
         elif "september-january" == challenge:
             base_url = (
