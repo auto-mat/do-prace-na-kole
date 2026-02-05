@@ -619,6 +619,7 @@ class OrganizationAdminOrganizationUserAttendanceSerializer(
         required=False,
     )
     t_shirt_size = EmptyStrField()
+    t_shirt_size_updated = EmptyStrField()
     user_profile_id = RequestSpecificField(lambda ua, req: ua.userprofile.id)
 
 
