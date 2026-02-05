@@ -15,7 +15,7 @@ django-import-export = "*"
 django-import-export-celery = {git = "https://github.com/auto-mat/django-import-export-celery.git", rev = "compatible_with_django_2_version"}
 django-autocomplete-light = {git = "https://github.com/auto-mat/django-autocomplete-light.git", rev = "jquery"}
 django-smart-selects = {git = "https://github.com/Murakam1/django-smart-selects.git", rev = "patch-1"}
-psycopg2 = "*"
+psycopg2 = "2.8.6"
 python-memcached = "*"
 django-chart-tools = "*"
 django-extensions = "*"
