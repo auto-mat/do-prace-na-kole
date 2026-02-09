@@ -678,7 +678,8 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 member,
                 context={"request": req},
             ).data
-            for member in team.members.filter(
+            for member in team.all_members()
+            .filter(
                 userprofile__user__is_active=True,
             )
             .exclude(
