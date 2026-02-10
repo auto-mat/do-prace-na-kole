@@ -682,6 +682,10 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
             .filter(
                 userprofile__user__is_active=True,
             )
+            .exclude(
+                approved_for_team="approved",
+                discount_coupon__isnull=True,
+            )
             .select_related(
                 "userprofile__user",
                 "team__subsidiary__city",
