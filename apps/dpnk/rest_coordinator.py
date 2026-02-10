@@ -796,9 +796,7 @@ class OrganizationAdminOrganizationSerializer(serpy.Serializer):
             OrganizationAdminOrganizationSubsidiariesSerializer(
                 sub, context={"request": req}
             ).data
-            for sub in organization.subsidiaries.filter(
-                teams__campaign__slug=req.subdomain, active=True
-            ).distinct()
+            for sub in organization.subsidiaries.filter(active=True)
         ]
     )
 
