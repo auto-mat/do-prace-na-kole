@@ -148,10 +148,12 @@ organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
 
 
 class UserProfileMixin:
-    def up(self):
+    def up(self, request=None):
+        if not request:
+            request = self.request
         ua = self.request.user_attendance
         if not ua:
-            userprofile_pk = UserProfile.objects.get(user__id=self.request.user.id).pk
+            userprofile_pk = UserProfile.objects.get(user__id=request.user.id).pk
         else:
             userprofile_pk = ua.userprofile.pk
         return userprofile_pk
@@ -311,10 +313,13 @@ class NullStrField(serpy.Field):
 class UserAttendanceMixin:
     def ua(
         self,
+        request=None,
     ):
-        ua = self.request.user_attendance
+        if not request:
+            request = self.request
+        ua = request.user_attendance
         if not ua:
-            ua = get_or_create_userattendance(self.request, self.request.subdomain)
+            ua = get_or_create_userattendance(request, request.subdomain)
         return ua
 
 
@@ -759,7 +764,6 @@ class CompetitionSerializer(serpy.Serializer):
     results = serpy.MethodField()
 
     id = serpy.IntField()
-    company = EmptyStrField()
     name = serpy.StrField()
     slug = serpy.StrField()
     competitor_type = serpy.StrField()
@@ -785,7 +789,7 @@ class CompetitionSerializer(serpy.Serializer):
         )
 
 
-class CompetitionDeserializer(serializers.ModelSerializer):
+class CompetitionDeserializer(serializers.ModelSerializer, UserAttendanceMixin):
     name = serializers.CharField(
         validators=[UniqueValidator(queryset=Competition.objects.all())]
     )
@@ -799,23 +803,30 @@ class CompetitionDeserializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context["request"]
         data["campaign"] = request.campaign
+        user_attendance = self.ua(request=request)
+        if user_attendance.team:
+            data["company"] = user_attendance.team.subsidiary.company
+        else:
+            data["company"] = CompanyAdmin.objects.get(
+                campaign=request.campaign, userprofile__user=request.user
+            ).administrated_company
         data["slug"] = f"FA-{request.campaign.pk}-{slugify(data['name'])[0:30]}"
         if (
-                Competition.objects.filter(
-                    company_id=data["company"],
-                    campaign=request.campaign,
-                ).count() >= settings.MAX_COMPETITIONS_PER_COMPANY
+            Competition.objects.filter(
+                company=data["company"],
+                campaign=request.campaign,
+            ).count()
+            >= settings.MAX_COMPETITIONS_PER_COMPANY
         ):
             raise serializers.ValidationError(
-                    _("Překročen maximální počet soutěží pro organizaci."),
-                    code=status.HTTP_400_BAD_REQUEST,
+                _("Překročen maximální počet soutěží pro organizaci."),
+                code=status.HTTP_400_BAD_REQUEST,
             )
         return super().validate(data)
 
     class Meta:
         model = Competition
         fields = [
-            "company",
             "name",
             "url",
             "competition_type",
@@ -829,7 +840,19 @@ class CompetitionDeserializer(serializers.ModelSerializer):
 
 class CompetitionSet(UserAttendanceMixin, viewsets.ModelViewSet):
     def get_queryset(self):
-        return self.ua().get_competitions()
+        user_attendance = self.ua()
+        if user_attendance.team:
+            return Competition.objects.filter(
+                campaign=self.request.campaign,
+                company=user_attendance.team.subsidiary.company,
+            )
+        company = CompanyAdmin.objects.get(
+            campaign=self.request.campaign, userprofile__user=self.request.user
+        ).administrated_company
+        return Competition.objects.filter(
+            campaign=self.request.campaign,
+            company=company,
+        )
 
     def get_serializer_class(self):
         if self.action in ["retrieve", "list"]:
