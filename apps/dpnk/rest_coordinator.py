@@ -630,7 +630,8 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 member,
                 context={"request": req},
             ).data
-            for member in team.members.filter(
+            for member in team.all_members()
+            .filter(
                 userprofile__user__is_active=True,
                 representative_payment__pay_type="fc",
                 discount_coupon__isnull=True,
@@ -655,7 +656,8 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 member,
                 context={"request": req},
             ).data
-            for member in team.members.filter(
+            for member in team.all_members()
+            .filter(
                 userprofile__user__is_active=True,
                 representative_payment__pay_type="fc",
                 discount_coupon__isnull=True,
@@ -683,7 +685,7 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 userprofile__user__is_active=True,
             )
             .exclude(
-                approved_for_team="approved",
+                Q(payment_status="done") | Q(payment_status="waiting"),
                 discount_coupon__isnull=True,
             )
             .select_related(
