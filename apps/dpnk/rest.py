@@ -57,7 +57,14 @@ from notifications.models import Notification
 
 import photologue
 
-from rest_framework import mixins, permissions, routers, serializers, viewsets
+from rest_framework import (
+    mixins,
+    permissions,
+    routers,
+    serializers,
+    status,
+    viewsets,
+)
 from rest_framework.validators import UniqueTogetherValidator
 
 from rest_framework.reverse import reverse
@@ -793,6 +800,16 @@ class CompetitionDeserializer(serializers.ModelSerializer):
         request = self.context["request"]
         data["campaign"] = request.campaign
         data["slug"] = f"FA-{request.campaign.pk}-{slugify(data['name'])[0:30]}"
+        if (
+                Competition.objects.filter(
+                    company_id=data["company"],
+                    campaign=request.campaign,
+                ).count() >= settings.MAX_COMPETITIONS_PER_COMPANY
+        ):
+            raise serializers.ValidationError(
+                    _("Překročen maximální počet soutěží pro organizaci."),
+                    code=status.HTTP_400_BAD_REQUEST,
+            )
         return super().validate(data)
 
     class Meta:
