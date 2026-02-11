@@ -685,7 +685,11 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 userprofile__user__is_active=True,
             )
             .exclude(
-                Q(payment_status="done") | Q(payment_status="waiting"),
+                (Q(payment_status="done") & Q(representative_payment__pay_type="fc"))
+                | (
+                    Q(payment_status="waiting")
+                    & Q(representative_payment__pay_type="fc")
+                ),
                 discount_coupon__isnull=True,
             )
             .select_related(
