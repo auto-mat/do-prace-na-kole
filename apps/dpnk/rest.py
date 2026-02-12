@@ -2051,6 +2051,11 @@ class CompaniesDeserializer(serializers.HyperlinkedModelSerializer):
             "organization_type",
         )
 
+    def validate(self, data):
+        company = Company(**data)
+        company.clean()
+        return super().validate(data)
+
     def to_internal_value(self, data):
         if data.get("address"):
             address_data = data.pop("address")
