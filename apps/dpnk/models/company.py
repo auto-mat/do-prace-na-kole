@@ -169,11 +169,11 @@ class Company(WithGalleryMixin, models.Model):
             raise ValidationError(
                 {
                     "name": _(
-                        "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající."
+                        "Organizace s tímto názvem již existuje."
+                        " Nemusíte tedy zakládat novou, vyberte tu stávající."
                     )
                 }
             )
-
         allow_duplicate_ico = getattr(self, "allow_duplicate_ico", False)
         if (
             allow_duplicate_ico is not True
@@ -187,7 +187,10 @@ class Company(WithGalleryMixin, models.Model):
         ):
             raise ValidationError(
                 {
-                    "ico": "Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu"
+                    "ico": _(
+                        "Organizace s tímto IČO již existuje,"
+                        " nezakládemte prosím novou, ale vyberte jí prosím ze seznamu"
+                    )
                 }
             )
 
