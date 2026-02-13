@@ -333,7 +333,10 @@ class Invoice(StaleSyncMixin, AbstractOrder):
 
     @property
     def generate_fakturoid_invoice(self):
-        return self.created >= settings.FAKTUROID["date_from_create_invoices"]
+        return (
+            self.created.timestamp()
+            >= settings.FAKTUROID["date_from_create_invoices"].timestamp()
+        )
 
 
 def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):
