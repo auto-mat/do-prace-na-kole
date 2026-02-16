@@ -34,7 +34,7 @@ def _(string, locale=None):
     return gettext.translation(
         "django",
         os.path.join(os.path.dirname(__file__), "locale"),
-        languages=[locale],
+        languages=[locale if not locale == "sk" else "cs"],
         fallback=False,
     ).gettext(
         string,
@@ -279,20 +279,21 @@ def campaign_mail(
     user_attendance, subject, template_path, extra_context={}, email=None
 ):
     userprofile = user_attendance.userprofile
+    language = userprofile.language if not userprofile.language == "sk" else "cs"
     campaign = user_attendance.campaign
     if email is None:
         email = userprofile.user.email
-    subject = "[" + str(campaign) + "] " + _(subject, userprofile.language)
+    subject = "[" + str(campaign) + "] " + _(subject, language)
     context = {
         "user_attendance": user_attendance,
         "campaign": campaign,
         "absolute_uri": util.get_base_url(slug=campaign.slug),
         "email": email,
-        "lang_code": userprofile.language,
+        "lang_code": language,
         "subject": subject,
     }
     context.update(extra_context)
-    template = get_template("email/" + template_path % userprofile.language)
+    template = get_template("email/" + template_path % language)
     message = template.render(context)
 
     # Uncoment this to check to generate email files in dpnk-test-messages
