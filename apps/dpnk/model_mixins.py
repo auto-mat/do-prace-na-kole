@@ -11,7 +11,7 @@ class WithGalleryMixin:
             slug=title_slug,
             is_public=False,
         )
-        self.save()
+        self.save(update_fields=["gallery"])
         return self.gallery
 
     def gallery_slug(self):

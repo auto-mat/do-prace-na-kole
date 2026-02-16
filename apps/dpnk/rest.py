@@ -53,7 +53,6 @@ from donation_chooser.rest import organization_router
 from drf_extra_fields.geo_fields import PointField
 
 from memoize import mproperty
-from notifications.models import Notification
 
 import photologue
 
@@ -729,15 +728,20 @@ class ColleagueTripRangeSet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     """
 
     def get_queryset(self):
+        ua = self.ua()
         qs = (
             Trip.objects.filter(
-                user_attendance__team__subsidiary__company=self.ua().team.subsidiary.company.pk,
-                user_attendance__campaign=self.ua().campaign,
+                user_attendance__team__subsidiary__company=ua.team.subsidiary.company.pk,
+                user_attendance__campaign=ua.campaign,
             )
             .select_related(
                 "user_attendance",
                 "user_attendance__team",
                 "user_attendance__team__subsidiary",
+                "commute_mode",
+                "user_attendance__team__subsidiary__city",
+                "user_attendance__userprofile",
+                "user_attendance__userprofile__user",
             )
             .order_by("date")
         )
@@ -897,7 +901,9 @@ class CompanySerializer(serpy.Serializer):
             MinimalSubsidiarySerializer(sub, context={"request": req}).data
             for sub in company.subsidiaries.filter(
                 teams__campaign__slug=req.subdomain, active=True
-            ).distinct()
+            )
+            .select_related("city")
+            .distinct()
         ]
     )
     eco_trip_count = CompanyInCampaignField(
@@ -936,7 +942,11 @@ class CompanySet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
 class MyCompanySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return Company.objects.filter(pk=self.ua().team.subsidiary.company.pk)
+        queryset = Company.objects.filter(pk=self.ua().team.subsidiary.company.pk)
+        for company in queryset:
+            company_in_campaign = CompanyInCampaign(company, self.request.campaign)
+            company_in_campaign.calculate_subsidiary_metrics()
+        return queryset
 
     serializer_class = CompanySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -983,10 +993,11 @@ class MinimalSubsidiarySerializer(BaseSubsidiarySerializer):
 
 
 class SubsidiarySerializer(BaseSubsidiarySerializer):
+
     teams = SubsidiaryInCampaignField(
         lambda sic, req: [
             MinimalTeamSerializer(team, context={"request": req}).data
-            for team in sic.teams
+            for team in sic.teams.select_related("gallery")
         ]
     )
     id = serpy.IntField()
@@ -1011,7 +1022,15 @@ class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
 
 class MySubsidiarySet(UserAttendanceMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return Subsidiary.objects.filter(pk=self.ua().team.subsidiary.pk)
+        queryset = Subsidiary.objects.filter(
+            pk=self.ua().team.subsidiary.pk
+        ).select_related("gallery", "company", "city")
+        for subsidiary in queryset:
+            subsidiary_in_campaign = SubsidiaryInCampaign(
+                subsidiary, self.request.campaign
+            )
+            subsidiary_in_campaign.calculate_team_metrics()
+        return queryset
 
     serializer_class = SubsidiarySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -1160,7 +1179,9 @@ class TeamSerializer(BaseTeamSerializer):
 
     members = RequestSpecificField(
         lambda team, req: MinimalUserAttendanceSerializer(
-            team.members, context={"request": req}, many=True
+            team.members.select_related("userprofile__user"),
+            context={"request": req},
+            many=True,
         ).data
     )
 
@@ -1193,7 +1214,9 @@ class TeamWithAllMembersSerializer(TeamSerializer):
 
     members = RequestSpecificField(
         lambda team, req: MinimalUserAttendanceSerializer(
-            team.all_members(), context={"request": req}, many=True
+            team.all_members().select_related("userprofile__user"),
+            context={"request": req},
+            many=True,
         ).data
     )
 
@@ -1468,50 +1491,43 @@ class CityInCampaignSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
-class CitySerializer(serpy.Serializer):
-    competitor_count = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).competitor_count(),
-    )
-    trip_stats = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).distances(),
-    )
-    # frequency = RequestSpecificField(  TODO
-    #     lambda city, req: CityInCampaign.objects.get(city=city, campaign=req.campaign).distances()
-    # )
-    emissions = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).emissions(),
-    )
-    distance = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).distance(),
-    )
-    eco_trip_count = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).eco_trip_count(),
-    )
-    description = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).description(language=req.query_params.get("lang", "cs")),
-    )
-    organizer = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).organizer,
-    )
+class CityInCampaignField(RequestSpecificField):
+    def to_value(self, value):
+        object, context = value
+        try:
+            cic = object.__city_in_campaign
+        except AttributeError:
+            object.__city_in_campaign = CityInCampaign.objects.get(
+                city=object, campaign=context["request"].campaign
+            )
+            cic = object.__city_in_campaign
+        return self.method(cic, context["request"])
 
-    organizer_url = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).organizer_url,
+
+class CitySerializer(serpy.Serializer):
+    competitor_count = CityInCampaignField(
+        lambda cic, req: cic.competitor_count(),
+    )
+    trip_stats = CityInCampaignField(
+        lambda cic, req: cic.distances(),
+    )
+    emissions = CityInCampaignField(
+        lambda cic, req: cic.emissions(),
+    )
+    distance = CityInCampaignField(
+        lambda cic, req: cic.distance(),
+    )
+    eco_trip_count = CityInCampaignField(
+        lambda cic, req: cic.eco_trip_count(),
+    )
+    description = CityInCampaignField(
+        lambda cic, req: cic.description(language=req.query_params.get("lang", "cs")),
+    )
+    organizer = CityInCampaignField(
+        lambda cic, req: cic.organizer,
+    )
+    organizer_url = CityInCampaignField(
+        lambda cic, req: cic.organizer_url,
     )
     subsidiaries = RequestSpecificField(
         lambda city, req: [
@@ -2865,6 +2881,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             discount_coupon,
             approved_for_team,
         )
+
         payment_update_fields = self._create_organization_coordinator_payment_model(
             payment_subject,
             payment_amount,

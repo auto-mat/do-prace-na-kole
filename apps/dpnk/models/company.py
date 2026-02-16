@@ -35,6 +35,10 @@ from .subsidiary import SubsidiaryInCampaign
 from .. import util
 from ..model_mixins import WithGalleryMixin
 
+from dpnk.cache_middleware import get_request_cache
+
+from django.db.models import Sum, Avg, Count
+from .user_attendance import UserAttendance
 
 ICO_ERROR_MESSAGE = _(
     "IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva."
@@ -251,31 +255,118 @@ class CompanyInCampaign:
             subsidiaries.append(SubsidiaryInCampaign(subsidiary, self.campaign))
         return subsidiaries
 
-    @mproperty
+    @property
     def eco_trip_count(self):
-        return sum(subsidiary.eco_trip_count for subsidiary in self.subsidiaries)
+        return self._company_metrics.get("eco_trip_count")
 
-    @mproperty
-    def working_rides_base_count(self):
-        return sum(
-            subsidiary.working_rides_base_count for subsidiary in self.subsidiaries
+    @property
+    def _company_metrics(self):
+
+        cache = get_request_cache()
+        cache_key = f"company_metrics_{self.company.id}_{self.campaign.id}"
+
+        if cache_key in cache:
+            return cache[cache_key]
+
+        result = UserAttendance.objects.filter(
+            team__subsidiary__company=self.company,
+            team__campaign=self.campaign,
+            payment_status__in=("done", "no_admission"),
+            approved_for_team="approved",
+            userprofile__user__is_active=True,
+        ).aggregate(
+            total_working_rides=Sum("working_rides_base_count"),
+            total_distance=Sum("trip_length_total"),
+            avg_frequency=Avg("frequency"),
+            eco_trip_count=Sum("get_rides_count_denorm"),
         )
 
-    @mproperty
-    def frequency(self):
-        subsidiaries = self.subsidiaries
-        if subsidiaries:
-            return sum(subsidiary.frequency for subsidiary in subsidiaries) / len(
-                subsidiaries
+        company_metrics = {
+            "working_rides_base_count": result["total_working_rides"] or 0,
+            "distance": result["total_distance"] or 0,
+            "frequency": result["avg_frequency"] or 0,
+            "eco_trip_count": result["eco_trip_count"] or 0,
+        }
+
+        cache[cache_key] = company_metrics
+
+        return company_metrics
+
+    def calculate_subsidiary_metrics(self):
+
+        result = (
+            UserAttendance.objects.filter(
+                team__subsidiary__company=self.company,
+                team__campaign=self.campaign,
+                payment_status__in=("done", "no_admission"),
+                approved_for_team="approved",
+                userprofile__user__is_active=True,
             )
-        else:
-            return 0
+            .values("team__subsidiary")
+            .annotate(
+                member_count=Count("id"),
+                total_working_rides=Sum("working_rides_base_count"),
+                total_distance=Sum("trip_length_total"),
+                avg_frequency=Avg("frequency"),
+                eco_trip_count=Sum("get_rides_count_denorm"),
+            )
+        )
 
-    @mproperty
+        cache = get_request_cache()
+
+        company_metrics = {
+            "working_rides_base_count": 0,
+            "distance": 0,
+            "frequency": 0,
+            "eco_trip_count": 0,
+        }
+
+        members_count = 0
+        frequency_sum = 0
+
+        for item in result:
+
+            subsidiary_metrics = {
+                "working_rides_base_count": item["total_working_rides"] or 0,
+                "distance": item["total_distance"] or 0,
+                "frequency": item["avg_frequency"] or 0,
+                "eco_trip_count": item["eco_trip_count"] or 0,
+            }
+            company_metrics["working_rides_base_count"] += subsidiary_metrics[
+                "working_rides_base_count"
+            ]
+            company_metrics["distance"] += subsidiary_metrics["distance"]
+            frequency_sum += subsidiary_metrics["frequency"] * item["member_count"]
+            members_count += item["member_count"]
+            company_metrics["eco_trip_count"] += subsidiary_metrics["eco_trip_count"]
+
+            cache_key = (
+                f"subsidiary_metrics_{item['team__subsidiary']}_{self.campaign.id}"
+            )
+            cache[cache_key] = subsidiary_metrics
+
+        company_metrics["frequency"] = (
+            frequency_sum / members_count if members_count > 0 else 0
+        )
+
+        cache_key = f"company_metrics_{self.company.id}_{self.campaign.id}"
+        cache[cache_key] = company_metrics
+
+    @property
+    def working_rides_base_count(self):
+
+        return self._company_metrics.get("working_rides_base_count")
+
+    @property
+    def frequency(self):
+        return self._company_metrics.get("frequency")
+
+    @property
     def distance(self):
-        return sum(subsidiary.distance for subsidiary in self.subsidiaries)
 
-    @mproperty
+        return self._company_metrics.get("distance")
+
+    @property
     def emissions(self):
         return util.get_emissions(self.distance)
 
