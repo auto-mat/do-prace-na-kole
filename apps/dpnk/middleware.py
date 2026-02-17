@@ -17,8 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import logging
+
 from django.contrib.sites.models import Site
-from django.http import Http404
+from django.http import Http404, HttpResponse, JsonResponse
+from django.template.response import TemplateResponse
 from django.utils import translation
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import get_language
@@ -28,6 +31,9 @@ from sesame.middleware import AuthenticationMiddleware
 
 from .models import Campaign, UserAttendance, UserProfile
 from .tasks import flush_denorm
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_or_create_userattendance(request, campaign_slug):
@@ -139,3 +145,47 @@ class CeleryDenormMiddleware(MiddlewareMixin, object):
         except DatabaseError as e:
             logger.error(e)
         return response
+
+
+class ExceptionMiddleware:
+    """
+    Handle exceptions for REST API requests vs normal requests
+
+    https://betterstack.com/community/guides/scaling-python/error-handling-django/#creating-custom-exception-middleware
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_exception(self, request, exception):
+        # Log the exception
+        logger.error(f"Unhandled exception: {str(exception)}", exc_info=True)
+
+        # Check if this is an API request (based on URL or Accept header)
+        is_api_request = (
+            request.path.startswith("/rest/")
+            or request.headers.get("Accept") == "application/json"
+        )
+
+        # For API requests, return JSON responses
+        if is_api_request:
+            if isinstance(exception, ValueError):
+                return JsonResponse(
+                    {"status": "error", "message": str(exception)}, status=400
+                )
+
+            # Default to 500 for unexpected errors
+            return JsonResponse(
+                {"status": "error", "message": "An internal server error occurred."},
+                status=500,
+            )
+
+        # For regular requests, render appropriate error templates
+        if isinstance(exception, Http404):
+            return TemplateResponse(request, "404.html", status=404)
+
+        # Default to 500 page
+        return TemplateResponse(request, "500.html", status=500)
