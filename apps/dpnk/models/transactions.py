@@ -465,6 +465,3 @@ def assign_vouchers(sender, instance, created, **kwargs):
 def payment_set_realized_date(sender, instance, **kwargs):
     if instance.status in Payment.done_statuses and not instance.realized:
         instance.realized = datetime.datetime.now()
-        if instance.invoice:
-            instance.invoice.paid_date = instance.realized
-            instance.invoice.save(update_fields=["paid_date"])

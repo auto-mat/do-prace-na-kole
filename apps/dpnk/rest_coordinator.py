@@ -831,7 +831,6 @@ class OrganizationAdminPaymentSerializer(serpy.Serializer):
     payment_status = serpy.IntField()
     pay_type = serpy.StrField()
     pay_category = serpy.StrField()
-    realized = EmptyStrField()
 
 
 class OrganizationAdminInvoiceSerializer(serpy.Serializer):
