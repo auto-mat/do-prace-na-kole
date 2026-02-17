@@ -289,6 +289,7 @@ def create_or_update_invoice(session, base_url, subject, invoice):
             "custom_id": str(invoice.id),
             "subject_id": subject["id"],
             "order_number": invoice.order_number,
+            "variable_symbol": invoice.variable_symbol,
             "lines": create_invoice_lines(invoice=invoice),
         }
         if invoice.client_note:
