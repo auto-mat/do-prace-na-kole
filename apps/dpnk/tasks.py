@@ -442,7 +442,12 @@ def create_invoice(self, invoice_id):
     fa_invoice = fakturoid_invoice_gen.generate_invoice(invoice=invoice)
     if fa_invoice:
         invoice.fakturoid_invoice_url = fa_invoice["public_html_url"]
-        invoice.save(update_fields=["fakturoid_invoice_url"])
+        invoice.save(
+            update_fields=[
+                "fakturoid_invoice_url",
+                "total_amount",
+            ],
+        )
 
 
 @shared_task(bind=True)

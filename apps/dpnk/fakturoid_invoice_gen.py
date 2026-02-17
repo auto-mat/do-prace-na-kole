@@ -235,6 +235,7 @@ def create_invoice_lines(invoice):
     :return list lines: list of invoice line dictionaries
     """
     lines = []
+    total_amount = 0
     for payment in invoice.payment_set.order_by(
         "user_attendance__userprofile__user__last_name",
         "user_attendance__userprofile__user__first_name",
@@ -255,6 +256,8 @@ def create_invoice_lines(invoice):
                 "vat_rate": 0,
             }
         )
+        total_amount += amount
+    invoice.total_amount = total_amount
     return lines
 
 
