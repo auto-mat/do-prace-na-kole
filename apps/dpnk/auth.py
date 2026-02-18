@@ -107,9 +107,7 @@ class EnableCompanyCityAdminUsersAuthenticationForm(AuthenticationForm):
         )
         if not is_superuser:
             raise ValidationError(
-                _(
-                    "Přihlášení zamítnuto. Uživatel námá roli super uživatele."
-                ),
+                _("Přihlášení zamítnuto. Uživatel námá roli super uživatele."),
                 code="is_not_superuser",
             )
         if user_attendance:
