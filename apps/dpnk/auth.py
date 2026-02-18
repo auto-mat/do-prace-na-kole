@@ -105,6 +105,13 @@ class EnableCompanyCityAdminUsersAuthenticationForm(AuthenticationForm):
         user_attendance = user.userprofile.userattendance_set.filter(
             campaign__slug=self.campaign.slug
         )
+        if not is_superuser:
+            raise ValidationError(
+                _(
+                    "Přihlášení zamítnuto. Uživatel námá roli super uživatele."
+                ),
+                code="is_not_superuser",
+            )
         if user_attendance:
             is_company_admin = attrgetter_def_val(
                 attrs="related_company_admin.is_approved", instance=user_attendance[0]
