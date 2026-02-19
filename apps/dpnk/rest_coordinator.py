@@ -384,6 +384,11 @@ class SubsidiaryAddressDeserializer(CompaniesDeserializer):
             "box_addressee_email",
         )
 
+    def validate(self, data):
+        subsidiary = Subsidiary(**data)
+        subsidiary.clean()
+        return serializers.HyperlinkedModelSerializer.validate(self, data)
+
 
 class SubsidiaryView(
     mixins.UpdateModelMixin,
