@@ -890,6 +890,7 @@ class UserAttendanceAdmin(
         "representative_payment__status",
         "representative_payment__amount",
         "payment_status",
+        "team__subsidiary__company__organization_type",
         ("team__member_count", AllValuesComboFilter),
         (
             "transactions__packagetransaction__team_package__box__delivery_batch",
