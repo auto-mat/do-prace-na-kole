@@ -697,6 +697,7 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
                 | (
                     Q(payment_status="waiting")
                     & Q(representative_payment__pay_type="fc")
+                    & Q(t_shirt_size__isnull=False)
                 ),
                 discount_coupon__isnull=True,
             )
