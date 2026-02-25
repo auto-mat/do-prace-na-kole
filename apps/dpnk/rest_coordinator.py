@@ -243,16 +243,16 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
             for user in users:
                 payment = user.representative_payment
                 payment.status = Status.REJECTED
-                amount = ids[str(user.id)]
+                # amount = ids[str(user.id)]
                 # Set None t-shirt size if payment is without reward
                 user.t_shirt_size = None
                 user_attendances.append(user)
-                payment.amount = amount
-                entry_fee = payment.payu_ordered_product.get(
-                    name__icontains="entry fee"
-                )
-                entry_fee.unit_price = amount
-                payu_ordered_products.append(entry_fee)
+                # payment.amount = amount
+                # entry_fee = payment.payu_ordered_product.get(
+                #     name__icontains="entry fee"
+                # )
+                # entry_fee.unit_price = amount
+                # payu_ordered_products.append(entry_fee)
                 payment.description = (
                     payment.description
                     + "\nFA %s zamítnul dne %s"
@@ -266,10 +266,10 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
             #     payments,
             #     ["status", "amount", "description"],
             # )
-            PayUOrderedProduct.objects.bulk_update(
-                payu_ordered_products,
-                ["unit_price"],
-            )
+            # PayUOrderedProduct.objects.bulk_update(
+            #     payu_ordered_products,
+            #     ["unit_price"],
+            # )
             if user_attendances:
                 UserAttendance.objects.bulk_update(
                     user_attendances,
