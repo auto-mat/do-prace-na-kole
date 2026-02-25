@@ -637,6 +637,7 @@ class OrganizationAdminOrganizationTeamsSerializer(serpy.Serializer):
             ).data
             for member in team.all_members()
             .filter(
+                t_shirt_size__isnull=False,
                 userprofile__user__is_active=True,
                 representative_payment__pay_type="fc",
                 discount_coupon__isnull=True,
