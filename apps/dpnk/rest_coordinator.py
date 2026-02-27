@@ -798,7 +798,7 @@ class OrganizationAdminOrganizationSerializer(serpy.Serializer):
     recipient = EmptyStrField(attr="address.recipient")
     psc = EmptyStrField(attr="address.psc")
     city = EmptyStrField(attr="address.city")
-    ico = NullIntField()
+    ico = EmptyStrField()
     dic = EmptyStrField()
     active = serpy.BoolField()
     has_filled_contact_information = serpy.BoolField(
