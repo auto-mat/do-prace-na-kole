@@ -1052,3 +1052,26 @@ DPNK_MOBILE_APP_SIMPLE_JWT_TOKEN_CONFIG = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timezone.timedelta(hours=8),
 }
+
+MYGLS_API = {
+    "client_number": os.getenv("MYGLS_API_CLIENT_NUMBER"),
+    "username": os.getenv("MYGLS_API_USERNAME"),
+    "password": os.getenv("MYGLS_API_PASSWORD"),
+    "country_code": os.getenv("MYGLS_API_COUNTRY_CODE"),
+    "use_test_account": True
+    if os.getenv("MYGLS_API_USE_TEST_ACCOUNT") == "True"
+    else False,
+    "use_api": True if os.getenv("MYGLS_API_USE_API") == "True" else False,
+    "pickup_address": {
+        "City": os.getenv("MYGLS_API_PICKUP_ADDRESS_CITY"),
+        "ContactEmail": os.getenv("MYGLS_API_PICKUP_ADDRESS_CONTACT_EMAIL"),
+        "ContactName": os.getenv("MYGLS_API_PICKUP_ADDRESS_CONTACT_NAME"),
+        "ContactPhone": os.getenv("MYGLS_API_PICKUP_ADDRESS_CONTACT_PHONE"),
+        "CountryIsoCode": os.getenv("MYGLS_API_PICKUP_ADDRESS_COUNTRY_ISO_CODE"),
+        "HouseNumber": os.getenv("MYGLS_API_PICKUP_ADDRESS_HOUSE_NUMBER"),
+        "Name": os.getenv("MYGLS_API_PICKUP_ADDRESS_NAME"),
+        "Street": os.getenv("MYGLS_API_PICKUP_ADDRESS_STREET"),
+        "ZipCode": os.getenv("MYGLS_API_PICKUP_ADDRESS_ZIP_CODE"),
+        "HouseNumberInfo": os.getenv("MYGLS_API_PICKUP_ADDRESS_HOUSE_NUMBER_INFO"),
+    },
+}
