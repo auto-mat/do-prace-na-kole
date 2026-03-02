@@ -25,11 +25,13 @@ from io import StringIO
 
 from author.decorators import with_author
 
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk.models import Subsidiary
@@ -38,7 +40,7 @@ from .package_transaction import PackageTransaction, Status
 from .t_shirt_size import TShirtSize
 from .team_package import TeamPackage
 from .. import batch_csv, wellpack_csv
-from ..gls.generate_gls_pdf import generate_pdf
+from ..gls.generate_gls_pdf import generate_pdf, generate_mygls_pdf
 
 
 @with_author
@@ -47,7 +49,7 @@ class DeliveryBatch(models.Model):
 
     created = models.DateTimeField(
         verbose_name=_("Datum vytvoření"),
-        default=datetime.datetime.now,
+        default=timezone.now,
         null=False,
     )
     campaign = models.ForeignKey(
@@ -106,7 +108,7 @@ class DeliveryBatch(models.Model):
     )
     pickup_date = models.DateField(
         verbose_name=_("Datum vyzvednutí"),
-        default=datetime.datetime.now,
+        default=timezone.now,
         null=False,
     )
 
@@ -128,9 +130,13 @@ class DeliveryBatch(models.Model):
         return TeamPackage.objects.filter(box__delivery_batch=self).count()
 
     def submit_gls_order_pdf(self):
-        pdf_filename, pdf_ext = generate_pdf(self.tnt_order, self)
+        if settings.MYGLS_API["use_api"]:
+            pdf_filename, pdf_ext = generate_mygls_pdf(self.tnt_order, self)
+        else:
+            pdf_filename, pdf_ext = generate_pdf(self.tnt_order, self)
+
         with open(pdf_filename, "rb+") as f:
-            date_time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            date_time_str = timezone.now().strftime("%Y-%m-%d_%H-%M-%S")
             filename = f"batch_{self.id}_{date_time_str}.{pdf_ext}"
             self.order_pdf.save(filename, f)
         self.save()
@@ -270,7 +276,9 @@ def create_delivery_files(sender, instance, created, **kwargs):
             file_name="delivery_batch",
             instance=instance,
             instance_field="tnt_order",
-            generate_csv_func=batch_csv.generate_csv,
+            generate_csv_func=batch.generate_mygls_csv
+            if settings.MYGLS_API["use_api"]
+            else batch_csv.generate_csv,
         )
         instance.save()
 
