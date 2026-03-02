@@ -161,6 +161,18 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         t_shirt_count = self.get_t_shirt_count()
         return t_shirt_volume * t_shirt_count
 
+    def get_width(self):
+        campaign = self.delivery_batch.campaign
+        return campaign.package_width
+
+    def get_length(self):
+        campaign = self.delivery_batch.campaign
+        return campaign.package_depth
+
+    def get_height(self):
+        campaign = self.delivery_batch.campaign
+        return campaign.package_height
+
     def all_packages_dispatched(self):
         if hasattr(self, "dispatched_packages_count_annot"):
             return self.dispatched_packages_count_annot == self.packages_count()
