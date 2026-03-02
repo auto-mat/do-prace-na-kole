@@ -2423,17 +2423,20 @@ webtest = ">=1.3.3"
 [[package]]
 name = "django-wysiwyg-redactor"
 version = "0.5.1"
-description = ""
+description = "django-wysiwyg-redactor is a lightweight responsive wysiwyg editor for Django"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = []
 develop = false
 
+[package.dependencies]
+setuptools = "*"
+
 [package.source]
 type = "git"
 url = "https://github.com/adilkhash/django-wysiwyg-redactor"
-reference = "master"
+reference = "HEAD"
 resolved_reference = "b2c4ca33909ced447f3c1ee9bd01dab14d3a5ac2"
 
 [[package]]
@@ -3770,6 +3773,30 @@ type = "git"
 url = "https://github.com/auto-mat/model_mommy.git"
 reference = "issue-377"
 resolved_reference = "da80a03217c3fbab4c90b73bc00274fe67dc6c5a"
+
+[[package]]
+name = "mygls-rest-client"
+version = "1.0.0"
+description = "MyGLS REST API client"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = []
+develop = false
+
+[package.dependencies]
+pydantic = ">=1.10.2,<2.0.0"
+requests = ">=2.28.1,<3.0.0"
+
+[package.extras]
+dev = ["black (==22.10.0)", "pylint (==2.15.8)"]
+test = ["responses (>=0.22.0,<1.0.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/auto-mat/mygls-python.git"
+reference = "fix-and-update-mygls-api"
+resolved_reference = "96b21a0ffb962a87f5aff0cd622731cce635ec62"
 
 [[package]]
 name = "mypy-extensions"
@@ -5503,7 +5530,7 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/aquavitae/svg2rlg.git"
-reference = "master"
+reference = "HEAD"
 resolved_reference = "b9537b17877b5a182ed62088199b5b66c0e6db93"
 
 [[package]]
@@ -5984,4 +6011,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "a4a3f28ea3fb621782ccb268d83f27c604f4902b8ae64af1dc7f5d6900ae96b1"
+content-hash = "2e038fa76abf1cbf4554b18438f3d64d8a6ed3c3c6690ed0a6a14454ee887aff"
