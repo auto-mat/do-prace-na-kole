@@ -90,3 +90,82 @@ def generate_csv(csvfile, delivery_batch):
                 "",  # Typ zásilky",
             ]
         )
+
+
+def generate_mygls_csv(csvfile, delivery_batch):
+    spamwriter = csv.writer(csvfile, delimiter=";")
+    spamwriter.writerow(
+        [
+            "Číslo dokladu",
+            "GLS tracking ID",
+            "Příjemce - Název",
+            "Příjemce - Stát",
+            "Příjemce - Město",
+            "Příjemce - Ulice",
+            "Příjemce - Číslo ulice",
+            "Příjemce - PSČ",
+            "Přijemce - kontaktní osoba",
+            "Příjemce - kontaktní email",
+            "Přijemce - kontaktní telefon",
+            "Datum svozu",
+            "Reference",
+            "EXW",
+            "Dobírka (COD)",
+            "Hodnota dobírky",
+            "Variabilní symbol",
+            "Dĺžka",
+            "Širka",
+            "Výška",
+            "Hmotnost",
+            "Objem",
+            "Počet",
+            "Popis zboží",
+            "Druh obalu (zkratka)",
+            "Typ zásilky",
+        ]
+    )
+    for subsidiary_box in delivery_batch.subsidiarybox_set.all():
+        subsidiary = subsidiary_box.subsidiary
+        addressee = subsidiary_box.get_representative_addressee()
+        spamwriter.writerow(
+            [
+                "",  # Číslo dokladu",
+                ", ".join(
+                    list(
+                        set(
+                            subsidiary_box.teampackage_set.exclude(
+                                box__carrier_identification__isnull=True
+                            ).values_list(
+                                "box__carrier_identification",
+                                flat=True,
+                            )
+                        )
+                    )
+                ),  # GLS tracking ID
+                subsidiary.get_recipient_string(),
+                "CZ",
+                subsidiary.address_city,
+                f"{subsidiary.address_street}",
+                f"{subsidiary.address_street_number}",
+                subsidiary.address_psc,
+                addressee["name"],
+                addressee["email"],
+                addressee["telephone"],
+                "",  # Datum svozu",
+                "",  # Reference",
+                "",  # EXW",
+                "",  # Dobírka (COD)",
+                "",  # Hodnota dobírky",
+                subsidiary_box.id,
+                subsidiary_box.get_lenth(),
+                subsidiary_box.get_width(),
+                subsidiary_box.get_height(),
+                subsidiary_box.get_weight(),
+                subsidiary_box.get_volume(),
+                1,
+                "č. krab. %s Nezastihnete-li opakovaně adresáta, doručte balík na adresu výše."
+                % subsidiary_box.id,  # Popis zboží",
+                "",  # Druh obalu (zkratka)",
+                "",  # Typ zásilky",
+            ]
+        )
