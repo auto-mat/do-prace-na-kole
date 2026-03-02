@@ -21,6 +21,7 @@
 import datetime
 import io
 import os
+import re
 import subprocess
 
 from celery import shared_task
@@ -31,7 +32,8 @@ import pandas
 import tablib
 
 from dpnk.models import Campaign, UserAttendance
-from .models import DeliveryBatch, SubsidiaryBox
+
+from .gls.mygls import MyGLS
 
 
 @shared_task(bind=True)
@@ -58,6 +60,8 @@ def update_dispatched_boxes(self):
 
 @shared_task(bind=True)
 def delivery_batch_generate_pdf(self, ids):
+    from .models import DeliveryBatch
+
     batches = DeliveryBatch.objects.filter(pk__in=ids)
     for batch in batches:
         batch.submit_gls_order_pdf()
@@ -84,6 +88,8 @@ def save_filefield(filefield, directory):
 
 @shared_task(bind=True)
 def create_batch(self, campaign_slug, ids):
+    from .models import DeliveryBatch
+
     delivery_batch = DeliveryBatch()
     delivery_batch.campaign = Campaign.objects.get(slug=campaign_slug)
     delivery_batch.add_packages_on_save = False
@@ -96,6 +102,8 @@ def create_batch(self, campaign_slug, ids):
 
 @shared_task(bind=True)
 def delivery_batch_generate_pdf_for_opt(self, ids):
+    from .models import DeliveryBatch
+
     batches = DeliveryBatch.objects.filter(pk__in=ids)
     for batch in batches:
         subprocess.call(["rm", "tmp_pdf/", "-r"])
@@ -129,3 +137,64 @@ def send_tshirt_size_not_avail_notif(self, user_attendances):
 
     for user_attendance in user_attendances:
         tshirt_size_not_avail(user_attendance)
+
+
+@shared_task(bind=True)
+def update_subsidiary_box(self, print_from, print_to):
+    """Update subsidiaty box by MyGLS parcel status which was
+    printed (by printed date time range)
+
+    :param datetime print_from: Date time printed labels from
+    :param datetime print_to: Date time printed labels to
+
+    :return None
+    """
+    from .models import SubsidiaryBox
+
+    mygls = MyGLS()
+    parcels = mygls.get_parcels(
+        print_from=print_from,
+        print_to=print_to,
+    )
+
+    # Update subsidiary boxes carrier_identification field value
+    sub_box_ids = []
+    last_parcel_status_idx = -1
+    for parcel in parcels.PrintDataInfoList:
+        status_date = parcel.ParcelStatusList[last_parcel_status_idx].StatusDate
+        timestamp = re.search(r"([0-9]*)[\+|)]", date)
+        if timestamp:
+            status_date = datetime.datetime.fromtimestamp(timestamp.group(1) // 1000)
+
+        sub_box_ids.append(
+            {
+                "id": int(parcel.Parcel.ClientReference),
+                "carrier_identification": str(int(parcel.ParcelNumber)),
+                "status_code": int(
+                    parcel.ParcelStatusList[last_parcel_status_idx].StatusCode
+                ),
+                "status_description": parcel.ParcelStatusList[
+                    last_parcel_status_idx
+                ].StatusDescription,
+                "status_date": status_date,
+            }
+        )
+
+    sub_boxes = SubsidiaryBox.objects.filter(
+        id__in=[sub_box["id"] for sub_box in sub_box_ids]
+    )
+    update_sub_boxes = []
+    for sub_box in sub_boxes:
+        for box in sub_box_ids:
+            if box["id"] == sub_box.id:
+                break
+        sub_box.carrier_identification = box["carrier_identification"]
+        sub_box.status_code = box["status_code"]
+        sub_box.status_descrition = box["status_description"]
+        sub_box.status_date = box["status_date"]
+
+        update_sub_boxes.append(sub_box)
+
+    SubsidiaryBox.objects.bulk_update(
+        update_sub_boxes, fields=["carrier_identification"]
+    )
