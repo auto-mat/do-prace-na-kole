@@ -1,4 +1,3 @@
-import datetime
 from collections import namedtuple
 
 import denorm
@@ -8,6 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import (
@@ -180,7 +180,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                 payment.description = (
                     payment.description
                     + "\nFA %s odsouhlasil dne %s"
-                    % (self.request.user.username, datetime.datetime.now())
+                    % (self.request.user.username, timezone.now())
                 )
                 payment.save()
                 # payments.append(payment)
@@ -256,7 +256,7 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                 payment.description = (
                     payment.description
                     + "\nFA %s zamítnul dne %s"
-                    % (self.request.user.username, datetime.datetime.now())
+                    % (self.request.user.username, timezone.now())
                 )
                 payment.save()
                 # payments.append(payment)
