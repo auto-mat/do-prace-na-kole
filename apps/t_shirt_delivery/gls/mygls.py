@@ -1,5 +1,7 @@
 import gls
 
+from enum import Enum
+
 from django.conf import settings
 from django.utils import timezone
 from gls import (
@@ -8,6 +10,7 @@ from gls import (
     GLS,
     Parcel,
     ParcelProperty,
+    PrinterType,
     Settings,
 )
 
@@ -27,6 +30,15 @@ class MyGLS:
     :param int timeout_seconds: Request timeout in seconds, default
                                 value120 second
     """
+
+    class GetParcelStatusLangIsoCode(Enum):
+        EN = "EN"
+        HR = "HR"
+        CS = "CS"
+        HU = "HU"
+        RO = "RO"
+        SK = "SK"
+        SL = "SL"
 
     def __init__(self, webshop_engine="Auto*Mat RTWBB web app", timeout_seconds=120):
         self._parcels = []
@@ -98,12 +110,16 @@ class MyGLS:
             )
             self._parcels.append(parcel)
 
-    def print_label(self, pdf_path=None):
+    def print_label(self, pdf_path=None, printer_type=None):
         """Print parcel label
 
         :param str|None pdf_path: PDF label file path, default value
                                   is None (if None temporary PDF file path
                                   will be used)
+        :param str|None printer_type: Printer type according PrinterType enum,
+                                      default value is None (if None global
+                                      printer type settings MYGLS_API["printer_type"]
+                                      will be used)
 
         :return str pdf_path: PDF label file path
         """
@@ -112,9 +128,15 @@ class MyGLS:
 
             pdf_path = f"{tempfile.TemporaryDirectory().name}/labels.pdf"
 
+        if not printer_type:
+            printer_type = getattr(
+                PrinterType, settings.MYGLS_API["printer_type"], PrinterType.THERMO
+            )
+
         return self._gls.print_labels(
             pdf_path=pdf_path,
             parcels=self._parcels,
+            printer_type=printer_type,
         )
         return pdf_path
 
@@ -154,7 +176,7 @@ class MyGLS:
         self,
         parcel_number,
         return_pod=False,
-        language_iso_code="EN",
+        language_iso_code=None,
     ):
         """Get parcel status
 
@@ -162,14 +184,23 @@ class MyGLS:
         :paran bool return_pod: Return PDF file byte arrey (POD field),
                                 default value is False
         :param str language_iso_code: Language ISO 639-1 code, default
-                                      value is 'EN' (allowed options are
-                                      HR, CS, HU, RO, SK, SL)
+                                      value is None (if None global get
+                                      parcel status lang ISO code setting
+                                      MYGLS_API["get_parcel_status_lang_iso_code"]
+                                      will be used, allowed options are
+                                      EN, HR, CS, HU, RO, SK, SL)
 
         :return dict: Dict wih ParcelStatusList key which contains
                       parcel status list
         """
+        if not language_iso_code:
+            language_iso_code = getattr(
+                self.GetParcelStatusLangIsoCode,
+                settings.MYGLS_API["get_parcel_status_lang_iso_code"],
+                self.GetParcelStatusLangIsoCode.EN,
+            )
         return self._gls.parcel_status(
-            parcel_number,
-            return_pods,
-            language_iso_code,
+            parcel_number=parcel_number,
+            return_pods=return_pods,
+            language_iso_code=language_iso_code,
         )
