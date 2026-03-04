@@ -25,6 +25,8 @@ import re
 import sys
 import unicodedata
 
+from gls import PrinterType
+
 import django.conf.locale
 from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
@@ -37,6 +39,8 @@ from celery.schedules import crontab
 from model_utils import Choices
 
 from django.apps import AppConfig
+
+from apps.t_shirt_delivery.gls.mygls import MyGLS
 
 
 def normpath(*args):
@@ -1062,6 +1066,11 @@ MYGLS_API = {
     if os.getenv("MYGLS_API_USE_TEST_ACCOUNT") == "True"
     else False,
     "use_api": True if os.getenv("MYGLS_API_USE_API") == "True" else False,
+    "printer_type": os.getenv("MYGLS_API_PRINTER_TYPE", PrinterType.THERMO),
+    "get_parcel_status_lang_iso_code": os.getenv(
+        "MYGLS_API_GET_PARCEL_STATUS_LANG_ISO_CODE",
+        MyGLS.GetParcelStatusLangIsoCode.EN,
+    ),
     "pickup_address": {
         "City": os.getenv("MYGLS_API_PICKUP_ADDRESS_CITY"),
         "ContactEmail": os.getenv("MYGLS_API_PICKUP_ADDRESS_CONTACT_EMAIL"),
