@@ -113,6 +113,7 @@ from .util import (
     get_all_logged_in_users,
     get_api_version_from_request,
     is_payment_with_reward,
+    rebuild_denorm_models,
     register_challenge_serializer_base_cache_key_name,
     today,
 )
@@ -497,6 +498,7 @@ class TripDeserializer(TripBaseDeserializer):
             raise InactiveDayGPX
         return validated_data
 
+    @transaction.atomic
     def create(self, validated_data):
         try:
             Trip.objects.filter(
@@ -507,6 +509,7 @@ class TripDeserializer(TripBaseDeserializer):
             validated_data["user_attendance"] = self.user_attendance
             validated_data["from_application"] = True
             instance = Trip.objects.create(**validated_data)
+            rebuild_denorm_models([self.user_attendance])
         except ValidationError:
             raise GPXParsingFail
         except IntegrityError:
@@ -556,6 +559,7 @@ class TripsDeserializer(serializers.Serializer):
                     defaults=trip,
                 )
                 instances["trips"].append(instance)
+                rebuild_denorm_models([self.user_attendance])
         except ValidationError:
             raise GPXParsingFail
         except IntegrityError:
@@ -632,6 +636,7 @@ class TripUpdateDeserializer(TripDeserializer):
             )
             instance.from_application = True
             instance.save()
+            rebuild_denorm_models([self.user_attendance])
         except ValidationError:
             raise GPXParsingFail
         return instance
