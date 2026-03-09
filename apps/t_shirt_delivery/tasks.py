@@ -38,6 +38,8 @@ from .gls.mygls import MyGLS
 
 @shared_task(bind=True)
 def update_dispatched_boxes(self):
+    from .models import SubsidiaryBox
+
     my_env = os.environ.copy()
     my_env["password"] = settings.GLS_PASSWORD
     my_env["username"] = settings.GLS_USERNAME
