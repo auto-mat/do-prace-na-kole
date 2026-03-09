@@ -196,5 +196,11 @@ def update_subsidiary_box(self, print_from, print_to):
         update_sub_boxes.append(sub_box)
 
     SubsidiaryBox.objects.bulk_update(
-        update_sub_boxes, fields=["carrier_identification"]
+        update_sub_boxes,
+        fields=[
+            "carrier_identification",
+            "status_code",
+            "status_description",
+            "status_date",
+        ],
     )
