@@ -110,8 +110,8 @@ class MyGLS:
             )
             self._parcels.append(parcel)
 
-    def print_label(self, pdf_path=None, printer_type=None):
-        """Print parcel label
+    def print_labels(self, pdf_path=None, printer_type=None):
+        """Print parcel labels
 
         :param str|None pdf_path: PDF label file path, default value
                                   is None (if None temporary PDF file path
