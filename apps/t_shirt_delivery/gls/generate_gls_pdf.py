@@ -19,6 +19,12 @@ logger = logging.getLogger(__name__)
 
 
 def generate_mygls_pdf_part(csv_file, batch, pdf_file):
+    """Generate partial print labels PDF file via MyGLS REST API
+
+    :param file object csv_file: Opened file object
+    :param DeliveryBatch batch: DeliveryBatch model instance
+    :param str pdf_file: Printed labels PDF file path
+    """
     # Delivery address
     delivery_address = []
     # Parcel property
