@@ -83,11 +83,11 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         # Parcel property
         parcel_prop["PackageType"] = 2  # Box
 
-        package_length_idx = header.index("Dĺžka")
+        package_length_idx = header.index("Délka")
         package_length = line[package_length_idx]
         parcel_prop["Length"] = package_length
 
-        package_width_idx = header.index("Šírka")
+        package_width_idx = header.index("Šířka")
         package_width = line[package_width_idx]
         parcel_prop["Width"] = package_width
 
