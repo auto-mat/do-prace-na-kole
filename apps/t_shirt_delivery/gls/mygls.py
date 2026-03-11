@@ -49,7 +49,7 @@ class MyGLS:
             webshop_engine=webshop_engine,
             settings=Settings(
                 country=getattr(CountryCode, settings.MYGLS_API["country_code"]),
-                test=settings.MYGLS_API["test"],
+                test=settings.MYGLS_API["use_test_account"],
                 timeout_seconds=timeout_seconds,
             ),
         )
