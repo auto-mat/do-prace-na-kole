@@ -48,7 +48,7 @@ class MyGLS:
             password=settings.MYGLS_API["password"],
             webshop_engine=webshop_engine,
             settings=Settings(
-                country=getattr(CountryCode, setting.MYGLS_API["country_code"]),
+                country=getattr(CountryCode, settings.MYGLS_API["country_code"]),
                 test=settings.MYGLS_API["test"],
                 timeout_seconds=timeout_seconds,
             ),
