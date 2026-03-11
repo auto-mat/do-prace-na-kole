@@ -276,7 +276,7 @@ def create_delivery_files(sender, instance, created, **kwargs):
             file_name="delivery_batch",
             instance=instance,
             instance_field="tnt_order",
-            generate_csv_func=batch.generate_mygls_csv
+            generate_csv_func=batch_csv.generate_mygls_csv
             if settings.MYGLS_API["use_api"]
             else batch_csv.generate_csv,
         )
