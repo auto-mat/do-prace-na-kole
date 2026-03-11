@@ -140,8 +140,8 @@ class MyGLS:
         )
         return pdf_path
 
-    def get_parcel(self, print_from=None, print_to=None):
-        """Get parcel
+    def get_parcels(self, print_from=None, print_to=None):
+        """Get parcels
 
         :param datetime|None print_from: Parcel datetime print from,
                                          default value is None (if None
@@ -161,8 +161,8 @@ class MyGLS:
             print_to=print_to,
         )
 
-    def delete_label(self, parcel_id=[]):
-        """Delete label
+    def delete_labels(self, parcel_id=[]):
+        """Delete labels
 
         :param list|None parcel_id: Parcel id list, default value
                                     is empty list (if empty list,
