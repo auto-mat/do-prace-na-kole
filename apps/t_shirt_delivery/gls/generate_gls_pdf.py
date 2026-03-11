@@ -117,7 +117,10 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     datetime_before = timezone.now()
     mygls.create_parcel(
         delivery_address=delivery_address,
-        pickup_date=batch.pickup_date,
+        pickup_date=timezone.datetime.combine(
+            batch.pickup_date,
+            timezone.datetime.min.time(),
+        ),
         parcel_property=parcel_property,
         content=content,
         reference=reference,
