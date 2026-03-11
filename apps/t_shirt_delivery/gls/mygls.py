@@ -43,13 +43,13 @@ class MyGLS:
     def __init__(self, webshop_engine="Auto*Mat RTWBB web app", timeout_seconds=120):
         self._parcels = []
         self._gls = gls.GLS(
-            client_number=setting.MYGLS_API["client_number"],
-            username=setting.MYGLS_API["username"],
-            password=setting.MYGLS_API["password"],
+            client_number=settings.MYGLS_API["client_number"],
+            username=settings.MYGLS_API["username"],
+            password=settings.MYGLS_API["password"],
             webshop_engine=webshop_engine,
             settings=Settings(
                 country=getattr(CountryCode, setting.MYGLS_API["country_code"]),
-                test=setting.MYGLS_API["test"],
+                test=settings.MYGLS_API["test"],
                 timeout_seconds=timeout_seconds,
             ),
         )
