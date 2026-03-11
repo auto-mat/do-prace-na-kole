@@ -157,7 +157,7 @@ def generate_mygls_csv(csvfile, delivery_batch):
                 "",  # Dobírka (COD)",
                 "",  # Hodnota dobírky",
                 subsidiary_box.id,
-                subsidiary_box.get_lenth(),
+                subsidiary_box.get_length(),
                 subsidiary_box.get_width(),
                 subsidiary_box.get_height(),
                 subsidiary_box.get_weight(),
