@@ -31,88 +31,87 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     reference = []
 
     sep = ";"
-    with open(csv_file) as f:
-        csv_reader = csv.reader(f, delimiter=sep)
-        for line in csv_reader:
-            header = line
-            break
-        for line in csv_reader:
-            address = {}
-            parcel_prop = {}
+    csv_reader = csv.reader(csv_file, delimiter=sep)
+    for line in csv_reader:
+        header = line
+        break
+    for line in csv_reader:
+        address = {}
+        parcel_prop = {}
 
-            # Delivery address
-            city_idx = header.index("Příjemce - Město")
-            city = line[city_idx]
-            address["City"] = city
+        # Delivery address
+        city_idx = header.index("Příjemce - Město")
+        city = line[city_idx]
+        address["City"] = city
 
-            contact_email_idx = header.index("Příjemce - kontaktní email")
-            contact_email = line[contact_email_idx]
-            address["ContactEmail"] = contact_email
+        contact_email_idx = header.index("Příjemce - kontaktní email")
+        contact_email = line[contact_email_idx]
+        address["ContactEmail"] = contact_email
 
-            contact_name_idx = header.index("Přijemce - kontaktní osoba")
-            contact_name = line[contact_name_idx]
-            address["ContactName"] = contact_name
+        contact_name_idx = header.index("Přijemce - kontaktní osoba")
+        contact_name = line[contact_name_idx]
+        address["ContactName"] = contact_name
 
-            contact_phone_idx = header.index("Přijemce - kontaktní telefon")
-            contact_phone = line[contact_phone_idx]
-            address["ContactPhone"] = contact_phone
+        contact_phone_idx = header.index("Přijemce - kontaktní telefon")
+        contact_phone = line[contact_phone_idx]
+        address["ContactPhone"] = contact_phone
 
-            country_iso_code_idx = header.index("Příjemce - Stát")
-            country_iso_code = line[country_iso_code_idx]
-            address["CountryIsoCode"] = country_iso_code
+        country_iso_code_idx = header.index("Příjemce - Stát")
+        country_iso_code = line[country_iso_code_idx]
+        address["CountryIsoCode"] = country_iso_code
 
-            house_number_idx = header.index("Příjemce - Číslo ulice")
-            house_number = line[house_number_idx]
-            address["HouseNumber"] = house_number
+        house_number_idx = header.index("Příjemce - Číslo ulice")
+        house_number = line[house_number_idx]
+        address["HouseNumber"] = house_number
 
-            name_idx = header.index("Příjemce - Název")
-            name = line[name_idx]
-            address["Name"] = name
+        name_idx = header.index("Příjemce - Název")
+        name = line[name_idx]
+        address["Name"] = name
 
-            street_idx = header.index("Příjemce - Ulice")
-            street = line[street_idx]
-            address["Street"] = street
+        street_idx = header.index("Příjemce - Ulice")
+        street = line[street_idx]
+        address["Street"] = street
 
-            zip_code_idx = header.index("Příjemce - PSČ")
-            zip_code = line[zip_code_idx]
-            address["ZipCode"] = zip_code
+        zip_code_idx = header.index("Příjemce - PSČ")
+        zip_code = line[zip_code_idx]
+        address["ZipCode"] = zip_code
 
-            address["HouseNumberInfo"] = ""
+        address["HouseNumberInfo"] = ""
 
-            delivery_address.append(address)
+        delivery_address.append(address)
 
-            # Parcel property
-            parcel_prop["PackageType"] = 2  # Box
+        # Parcel property
+        parcel_prop["PackageType"] = 2  # Box
 
-            package_length_idx = header.index("Dĺžka")
-            package_length = line[package_length_idx]
-            parcel_prop["Length"] = package_length
+        package_length_idx = header.index("Dĺžka")
+        package_length = line[package_length_idx]
+        parcel_prop["Length"] = package_length
 
-            package_width_idx = header.index("Šírka")
-            package_width = line[package_width_idx]
-            parcel_prop["Width"] = package_width
+        package_width_idx = header.index("Šírka")
+        package_width = line[package_width_idx]
+        parcel_prop["Width"] = package_width
 
-            package_height_idx = header.index("Výška")
-            package_height = line[package_height_idx]
-            parcel_prop["Height"] = package_height
+        package_height_idx = header.index("Výška")
+        package_height = line[package_height_idx]
+        parcel_prop["Height"] = package_height
 
-            package_weight_idx = header.index("Hmotnost")
-            package_weight = line[package_weight_idx]
-            parcel_prop["Weight"] = round(float(package_weight), 2)
+        package_weight_idx = header.index("Hmotnost")
+        package_weight = line[package_weight_idx]
+        parcel_prop["Weight"] = round(float(package_weight), 2)
 
-            parcel_property.append(parcel_prop)
+        parcel_property.append(parcel_prop)
 
-            # Parcel content
-            content_idx = header.index("Popis zboží")
-            content.append(line[content_idx])
+        # Parcel content
+        content_idx = header.index("Popis zboží")
+        content.append(line[content_idx])
 
-            # Parcel count
-            count_idx = header.index("Počet")
-            count.append(int(line[count_idx]))
+        # Parcel count
+        count_idx = header.index("Počet")
+        count.append(int(line[count_idx]))
 
-            # Parcel reference
-            reference_idx = header.index("Variabilní symbol")
-            reference.append(line[reference_idx])
+        # Parcel reference
+        reference_idx = header.index("Variabilní symbol")
+        reference.append(line[reference_idx])
 
     mygls = MyGLS()
     datetime_before = timezone.now()
