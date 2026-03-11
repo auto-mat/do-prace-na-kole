@@ -126,7 +126,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         reference=reference,
         count=count,
     )
-    parcel_ids = mygls.print_labels(pdf_file=pdf_file)
+    parcel_ids = mygls.print_labels(pdf_path=pdf_file)
     datetime_after = timezone.now()
 
     update_subsidiary_box(
