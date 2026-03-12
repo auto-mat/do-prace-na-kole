@@ -83,7 +83,7 @@ class MyGLS:
         if not pickup_from_address:
             pickup_from_address = settings.MYGLS_API["pickup_address"]
         if not pickup_date:
-            pickup_date = timezone.now()
+            pickup_date = timezone.datetime.now()
 
         for idx, delivery_addr in enumerate(delivery_address):
 
@@ -152,9 +152,9 @@ class MyGLS:
         :return None
         """
         if not print_from:
-            print_from = timezone.now()
+            print_from = timezone.datetime.now()
         if not print_to:
-            print_to = timezone.now()
+            print_to = timezone.datetime.now()
 
         return self._gls.get_parcels(
             print_from=print_from,
