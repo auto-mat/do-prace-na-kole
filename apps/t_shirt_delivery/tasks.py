@@ -164,20 +164,29 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     """
     from .models import SubsidiaryBox
 
-    campaign = Campaign.objects.get(slug=campaign_slug)
-    competition_phase = campaign.phase(phase_type="competition")
+    campaign = Campaign.objects.filter(slug=campaign_slug)
+    if campaign:
+        campaign = campaign[0]
+        competition_phase = campaign.phase(phase_type="competition")
+
     if not print_from:
-        print_from = timezone.datetime.combine(
-            competitionm_phase.date_from,
-            timezone.datetime.min.time(),
-        )
+        if campaign:
+            print_from = timezone.datetime.combine(
+                competition_phase.date_from,
+                timezone.datetime.min.time(),
+            )
+        else:
+            print_from = timezone.datetime.now()
     else:
         print_from = timezone.datetime.fromtimestamp(print_from)
     if not print_to:
-        print_to = timezone.datetime.combine(
-            competition_phase.date_to,
-            timezone.datetime.min.time(),
-        )
+        if campaign:
+            print_to = timezone.datetime.combine(
+                competition_phase.date_to,
+                timezone.datetime.min.time(),
+            )
+        else:
+            print_to = timezone.datetime.now()
     else:
         print_to = timezone.datetime.fromtimestamp(print_to)
 
