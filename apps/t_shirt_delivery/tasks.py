@@ -25,6 +25,7 @@ import re
 import subprocess
 
 from celery import shared_task
+from celery.utils.log import get_task_logger
 
 from django.conf import settings
 
@@ -34,6 +35,9 @@ import tablib
 from dpnk.models import Campaign, UserAttendance
 
 from .gls.mygls import MyGLS
+
+
+logger = get_task_logger(__name__)
 
 
 @shared_task(bind=True)
@@ -158,7 +162,9 @@ def update_subsidiary_box(self, print_from, print_to):
         print_from=print_from,
         print_to=print_to,
     )
-
+    logger.debug(f"Get parcels printed from <{print_from}>.")
+    logger.debug(f"Get parcels printed to <{print_to}>.")
+    logger.debug(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
     # Update subsidiary boxes carrier_identification field value
     sub_box_ids = []
     last_parcel_status_idx = -1
@@ -202,6 +208,7 @@ def update_subsidiary_box(self, print_from, print_to):
 
         update_sub_boxes.append(sub_box)
 
+    logger.debug(f"Number of updated subsidiary boxes <{len(update_sub_boxes)}>.")
     SubsidiaryBox.objects.bulk_update(
         update_sub_boxes,
         fields=[
@@ -211,3 +218,4 @@ def update_subsidiary_box(self, print_from, print_to):
             "status_datetime",
         ],
     )
+    logger.info("Updated subsidiary boxes was successful.")
