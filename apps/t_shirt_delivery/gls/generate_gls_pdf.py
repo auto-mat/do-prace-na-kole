@@ -134,10 +134,10 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     parcel_ids = mygls.print_labels(pdf_path=pdf_file)
     datetime_after = timezone.now()
 
-    update_subsidiary_box(
+    update_subsidiary_box.delay(
         print_from=datetime_before,
         print_to=datetime_after,
-    ).delay()
+    )
 
 
 def generate_pdf_part(csv_file, batch):
