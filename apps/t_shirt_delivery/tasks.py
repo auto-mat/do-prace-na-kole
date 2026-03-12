@@ -167,7 +167,7 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     campaign = Campaign.objects.get(slug=campaign_slug)
     competition_phase = campaign.phase(phase_type="competition")
     if not print_from:
-        print_from = timezone.datetime.fromtimestamp(w
+        print_from = timezone.datetime.fromtimestamp(
             timezone.datetime.combine(
                 competitionm_phase.date_from,
                 timezone.datetime.min.time(),
