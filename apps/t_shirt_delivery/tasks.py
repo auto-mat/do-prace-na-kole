@@ -181,14 +181,14 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     else:
         print_to = timezone.datetime.fromtimestamp(print_to)
 
-    logger.debug(f"Get parcels printed from <{print_from}>.")
-    logger.debug(f"Get parcels printed to <{print_to}>.")
+    print(f"Get parcels printed from <{print_from}>.")
+    print(f"Get parcels printed to <{print_to}>.")
     mygls = MyGLS()
     parcels = mygls.get_parcels(
         print_from=print_from,
         print_to=print_to,
     )
-    logger.debug(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
+    print(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
     # Update subsidiary boxes carrier_identification field value
     sub_box_ids = []
     last_parcel_status_idx = -1
