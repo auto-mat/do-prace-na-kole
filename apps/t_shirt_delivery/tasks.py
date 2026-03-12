@@ -145,7 +145,14 @@ def send_tshirt_size_not_avail_notif(self, user_attendances):
         tshirt_size_not_avail(user_attendance)
 
 
-@shared_task(bind=True)
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_kwargs={
+        "max_retries": 3,
+        "countdown": 60 * 5,
+    },
+)
 def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="dpnk"):
     """Update subsidiaty box by MyGLS parcel status which was
     printed (by printed date time range)
@@ -190,24 +197,21 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     else:
         print_to = timezone.datetime.fromtimestamp(print_to)
 
-    print(f"Get parcels printed from <{print_from}>.")
-    print(f"Get parcels printed to <{print_to}>.")
+    logger.debug(f"Get parcels printed from <{print_from}>.")
+    logger.debug(f"Get parcels printed to <{print_to}>.")
     mygls = MyGLS()
     parcels = mygls.get_parcels(
         print_from=print_from,
         print_to=print_to,
     )
-    print(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
+    logger.debug(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
     # Update subsidiary boxes carrier_identification field value
     sub_box_ids = []
     last_parcel_status_idx = -1
     for parcel in parcels.PrintDataInfoList:
-        print(parcel)
-        print(parcel.ParcelNumber)
-        parcel_status = mygls.parcel_status(parcel_number=int(parcel.ParcelNumber))
-        print("Parcel status list")
-        print(parcel_status)
-        print(parcel_status.ParcelStatusList)
+        parcel_status = mygls.parcel_status(parcel_number=parcel.ParcelNumber)
+        if parcel_status.GetParcelStatusErrors:
+            raise Exception("Getting parcel number <{parcel.ParcelNumber}> fail.")
         status_datetime = parcel_status.ParcelStatusList[
             last_parcel_status_idx
         ].StatusDate
