@@ -611,13 +611,6 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
             "include_html": True,
         },
-        "celery": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": "celery.log",
-            "formatter": "simple",
-            "maxBytes": 1024 * 1024 * 100,  # 100 Mb
-        },
     },
     "root": {
         "level": "WARNING",
@@ -648,11 +641,6 @@ LOGGING = {
         "django.security.DisallowedHost": {
             "handlers": ["mail_admins", "sentry"],
             "level": "CRITICAL",
-            "propagate": False,
-        },
-        "celery": {
-            "handlers": ["celery", "console"],
-            "level": "INFO",
             "propagate": False,
         },
     },
