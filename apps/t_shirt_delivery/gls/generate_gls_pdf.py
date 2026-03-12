@@ -120,7 +120,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         reference.append(line[reference_idx])
 
     mygls = MyGLS()
-    datetime_before = timezone.now()
+    datetime_before = timezone.datetime.now()
     mygls.create_parcel(
         delivery_address=delivery_address,
         pickup_date=timezone.datetime.combine(
@@ -132,7 +132,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         count=count,
     )
     parcel_ids = mygls.print_labels(pdf_path=pdf_file)
-    datetime_after = timezone.now()
+    datetime_after = timezone.datetime.now()
 
     update_subsidiary_box.delay(
         print_from=datetime_before.timestamp(),

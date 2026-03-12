@@ -18,7 +18,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import datetime
 import io
 import os
 import re
@@ -130,7 +129,7 @@ def delivery_batch_generate_pdf_for_opt(self, ids):
         with open("tmp_pdf/combined_sheets-rotated.pdf", "rb+") as f:
             filename = "tmp_pdf/combined_sheets_rotated_%s_%s.pdf" % (
                 batch.pk,
-                datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+                timezone.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
             )
             batch.combined_opt_pdf.save(os.path.basename(filename), f)
             batch.save()
@@ -167,25 +166,19 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     campaign = Campaign.objects.get(slug=campaign_slug)
     competition_phase = campaign.phase(phase_type="competition")
     if not print_from:
-        print_from = timezone.datetime.fromtimestamp(
-            timezone.datetime.combine(
-                competitionm_phase.date_from,
-                timezone.datetime.min.time(),
-            ).timestamp(),
-            tz=timezone.utc,
+        print_from = timezone.datetime.combine(
+            competitionm_phase.date_from,
+            timezone.datetime.min.time(),
         )
     else:
-        print_from = timezone.datetime.fromtimestamp(print_from, tz=timezone.utc)
+        print_from = timezone.datetime.fromtimestamp(print_from)
     if not print_to:
-        print_to = timezone.datetime.fromtimestamp(
-            timezone.datetime.combine(
-                competition_phase.date_to,
-                timezone.datetime.min.time(),
-            ).timestamp(),
-            tz=timezone.utc,
+        print_to = timezone.datetime.combine(
+            competition_phase.date_to,
+            timezone.datetime.min.time(),
         )
     else:
-        print_to = timezone.datetime.fromtimestamp(print_to, tz=timezone.utc)
+        print_to = timezone.datetime.fromtimestamp(print_to)
 
     logger.debug(f"Get parcels printed from <{print_from}>.")
     logger.debug(f"Get parcels printed to <{print_to}>.")
@@ -205,9 +198,8 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
         ].StatusDate
         timestamp = re.search(r"([0-9]*)[\+|)]", status_datetime)
         if timestamp:
-            status_datetime = datetime.datetime.fromtimestamp(
+            status_datetime = timezone.datetime.fromtimestamp(
                 int(timestamp.group(1)) // 1000,
-                tz=timezone.utc,
             )
 
         sub_box_ids.append(
