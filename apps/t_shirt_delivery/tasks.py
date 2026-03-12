@@ -203,6 +203,8 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     last_parcel_status_idx = -1
     for parcel in parcels.PrintDataInfoList:
         parcel_status = mygls.parcel_status(parcel_number=parcel.ParcelNumber)
+        print("Parcel status list")
+        print(parcel_status.ParcelStatusList)
         status_datetime = parcel_status.ParcelStatusList[
             last_parcel_status_idx
         ].StatusDate
