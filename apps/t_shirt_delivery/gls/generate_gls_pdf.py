@@ -135,8 +135,8 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     datetime_after = timezone.now()
 
     update_subsidiary_box.delay(
-        print_from=datetime_before,
-        print_to=datetime_after,
+        print_from=datetime_before.timestamp(),
+        print_to=datetime_after.timestamp(),
     )
 
 

@@ -146,24 +146,54 @@ def send_tshirt_size_not_avail_notif(self, user_attendances):
 
 
 @shared_task(bind=True)
-def update_subsidiary_box(self, print_from, print_to):
+def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="dpnk"):
     """Update subsidiaty box by MyGLS parcel status which was
     printed (by printed date time range)
 
-    :param datetime print_from: Date time printed labels from
-    :param datetime print_to: Date time printed labels to
+    :param datetime print_from: Date time timestamp printed labels from,
+                                with default None value (value is assigned
+                                from the actual campaign date from competition
+                                phase)
+    :param datetime print_to: Date time timestamp printed labels to,
+                              with default None value (value is assigned
+                              from the actual campaign date to competition
+                              phase)
+    :param str campaign_slug: Actual campaing slug, with default "dpnk" value
 
     :return None
     """
     from .models import SubsidiaryBox
 
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    competition_phase = campaign.phase(phase_type="competition")
+    if not print_from:
+        print_from = timezone.datetime.fromtimestamp(w
+            timezone.datetime.combine(
+                competitionm_phase.date_from,
+                timezone.datetime.min.time(),
+            ).timestamp(),
+            tz=timezone.utc,
+        )
+    else:
+        print_from = timezone.datetime.fromtimestamp(print_from, tz=timezone.utc)
+    if not print_to:
+        print_to = timezone.datetime.fromtimestamp(
+            timezone.datetime.combine(
+                competition_phase.date_to,
+                timezone.datetime.min.time(),
+            ).timestamp(),
+            tz=timezone.utc,
+        )
+    else:
+        print_to = timezone.datetime.fromtimestamp(print_to, tz=timezone.utc)
+
+    logger.debug(f"Get parcels printed from <{print_from}>.")
+    logger.debug(f"Get parcels printed to <{print_to}>.")
     mygls = MyGLS()
     parcels = mygls.get_parcels(
         print_from=print_from,
         print_to=print_to,
     )
-    logger.debug(f"Get parcels printed from <{print_from}>.")
-    logger.debug(f"Get parcels printed to <{print_to}>.")
     logger.debug(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
     # Update subsidiary boxes carrier_identification field value
     sub_box_ids = []
@@ -176,7 +206,8 @@ def update_subsidiary_box(self, print_from, print_to):
         timestamp = re.search(r"([0-9]*)[\+|)]", status_datetime)
         if timestamp:
             status_datetime = datetime.datetime.fromtimestamp(
-                int(timestamp.group(1)) // 1000
+                int(timestamp.group(1)) // 1000,
+                tz=timezone.utc,
             )
 
         sub_box_ids.append(
