@@ -1066,10 +1066,10 @@ MYGLS_API = {
     if os.getenv("MYGLS_API_USE_TEST_ACCOUNT") == "True"
     else False,
     "use_api": True if os.getenv("MYGLS_API_USE_API") == "True" else False,
-    "printer_type": os.getenv("MYGLS_API_PRINTER_TYPE", PrinterType.THERMO),
+    "printer_type": os.getenv("MYGLS_API_PRINTER_TYPE", "SHIP_IT_THERMO_PDF"),
     "get_parcel_status_lang_iso_code": os.getenv(
         "MYGLS_API_GET_PARCEL_STATUS_LANG_ISO_CODE",
-        MyGLS.GetParcelStatusLangIsoCode.EN,
+        "EN",
     ),
     "pickup_address": {
         "City": os.getenv("MYGLS_API_PICKUP_ADDRESS_CITY"),
