@@ -199,8 +199,9 @@ class MyGLS:
                 settings.MYGLS_API["get_parcel_status_lang_iso_code"],
                 self.GetParcelStatusLangIsoCode.EN,
             )
+
         return self._gls.parcel_status(
-            parcel_number=parcel_number,
-            return_pods=return_pods,
+            parcel_id=parcel_number,
+            return_pod=return_pod,
             language_iso_code=language_iso_code,
         )
