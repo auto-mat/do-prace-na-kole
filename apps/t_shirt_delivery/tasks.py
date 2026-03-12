@@ -204,6 +204,8 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
         print_from=print_from,
         print_to=print_to,
     )
+    if parcels.r.GetParcelListErrors:
+        raise Exception("Getting parcels fail.")
     logger.debug(f"Number of parcels <{len(parcels.PrintDataInfoList)}>.")
     # Update subsidiary boxes carrier_identification field value
     sub_box_ids = []
