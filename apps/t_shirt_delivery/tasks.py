@@ -163,22 +163,27 @@ def update_subsidiary_box(self, print_from, print_to):
     sub_box_ids = []
     last_parcel_status_idx = -1
     for parcel in parcels.PrintDataInfoList:
-        status_date = parcel.ParcelStatusList[last_parcel_status_idx].StatusDate
-        timestamp = re.search(r"([0-9]*)[\+|)]", date)
+        parcel_status = mygls.parcel_status(parcel_number=parcel.ParcelNumber)
+        status_datetime = parcel_status.ParcelStatusList[
+            last_parcel_status_idx
+        ].StatusDate
+        timestamp = re.search(r"([0-9]*)[\+|)]", status_datetime)
         if timestamp:
-            status_date = datetime.datetime.fromtimestamp(timestamp.group(1) // 1000)
+            status_datetime = datetime.datetime.fromtimestamp(
+                int(timestamp.group(1)) // 1000
+            )
 
         sub_box_ids.append(
             {
                 "id": int(parcel.Parcel.ClientReference),
                 "carrier_identification": str(int(parcel.ParcelNumber)),
                 "status_code": int(
-                    parcel.ParcelStatusList[last_parcel_status_idx].StatusCode
+                    parcel_status.ParcelStatusList[last_parcel_status_idx].StatusCode
                 ),
-                "status_description": parcel.ParcelStatusList[
+                "status_description": parcel_status.ParcelStatusList[
                     last_parcel_status_idx
                 ].StatusDescription,
-                "status_date": status_date,
+                "status_datetime": status_datetime,
             }
         )
 
@@ -192,8 +197,8 @@ def update_subsidiary_box(self, print_from, print_to):
                 break
         sub_box.carrier_identification = box["carrier_identification"]
         sub_box.status_code = box["status_code"]
-        sub_box.status_descrition = box["status_description"]
-        sub_box.status_date = box["status_date"]
+        sub_box.status_description = box["status_description"]
+        sub_box.status_datetime = box["status_datetime"]
 
         update_sub_boxes.append(sub_box)
 
@@ -203,6 +208,6 @@ def update_subsidiary_box(self, print_from, print_to):
             "carrier_identification",
             "status_code",
             "status_description",
-            "status_date",
+            "status_datetime",
         ],
     )
