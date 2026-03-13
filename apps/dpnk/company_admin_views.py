@@ -24,8 +24,9 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.sites.models import Site
 from django.db.models import ExpressionWrapper, F, Func, CharField, Value
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -297,6 +298,12 @@ class CompanyAdminApplicationView(
         # Disable sending email
         # company_admin_register_no_competitor_mail(admin)
         return ret_val
+
+    def dispatch(self, request, *args, **kwargs):
+        current_site = Site.objects.get_current()
+        if not "lvh.me" in current_site.domain:
+            return redirect(settings.RTWBB_FRONTEND_APP_BASE_URL)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CompanyAdminView(
