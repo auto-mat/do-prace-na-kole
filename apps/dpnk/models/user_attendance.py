@@ -884,6 +884,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
                 del cache.data
         return super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.payments.all().delete()
+        super().delete(*args, **kwargs)
+
     @classmethod
     def export_resource_classes(cls):
         from ..resources import UserAttendanceResource
