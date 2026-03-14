@@ -885,7 +885,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        self.payments().delete()
+        self.payment_set.clear()
         super().delete(*args, **kwargs)
 
     @classmethod
