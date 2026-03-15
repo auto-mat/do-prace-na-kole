@@ -60,7 +60,7 @@ from .tasks import (
     team_membership_approval_mail,
     team_membership_denial_mail,
 )
-from .util import is_payment_with_reward, rebuild_denorm_models
+from .util import is_payment_with_reward
 
 
 class FeeApprovalSerializer(serpy.Serializer):
@@ -183,9 +183,9 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     % (self.request.user.username, timezone.now())
                 )
                 payment.save()
+                user.save()
                 # payments.append(payment)
                 approved_count += 1
-            rebuild_denorm_models(users)
             # Payment.objects.bulk_update(
             #     payments,
             #     ["status", "amount", "description"],
@@ -259,9 +259,9 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                     % (self.request.user.username, timezone.now())
                 )
                 payment.save()
+                user.save()
                 # payments.append(payment)
                 disapproved_count += 1
-            rebuild_denorm_models(users)
             # Payment.objects.bulk_update(
             #     payments,
             #     ["status", "amount", "description"],
