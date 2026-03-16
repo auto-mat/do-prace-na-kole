@@ -27,6 +27,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 
 from django.conf import settings
+from django.db.models import Q
 from django.utils import timezone
 
 import pandas
@@ -237,20 +238,23 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
             }
         )
 
+    # Status code 92 indicating 'The parcel has been delivered'
+    # according MyGLS REST API doc
     sub_boxes = SubsidiaryBox.objects.filter(
-        id__in=[sub_box["id"] for sub_box in sub_box_ids]
+        ~Q(status_code=92),
+        id__in=[sub_box["id"] for sub_box in sub_box_ids],
     )
     update_sub_boxes = []
     for sub_box in sub_boxes:
-        for box in sub_box_ids:
-            if box["id"] == sub_box.id:
-                break
-        sub_box.carrier_identification = box["carrier_identification"]
-        sub_box.status_code = box["status_code"]
-        sub_box.status_description = box["status_description"]
-        sub_box.status_datetime = box["status_datetime"]
+        box = [box for box in sub_box_ids if box["id"] == sub_box.id]
+        if box:
+            box = box[0]
+            sub_box.carrier_identification = box["carrier_identification"]
+            sub_box.status_code = box["status_code"]
+            sub_box.status_description = box["status_description"]
+            sub_box.status_datetime = box["status_datetime"]
 
-        update_sub_boxes.append(sub_box)
+            update_sub_boxes.append(sub_box)
 
     logger.debug(f"Number of updated subsidiary boxes <{len(update_sub_boxes)}>.")
     SubsidiaryBox.objects.bulk_update(
