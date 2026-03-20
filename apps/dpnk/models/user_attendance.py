@@ -279,7 +279,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return None
 
+        # Entry fee
         try:
+            # Entry fee done status
             return (
                 self.payments()
                 .filter(
@@ -289,31 +291,61 @@ class UserAttendance(StaleSyncMixin, models.Model):
                 .latest("id")
             )
         except Transaction.DoesNotExist:
-            pass
-
-        try:
-            return (
-                self.payments()
-                .filter(
-                    ~Q(payment__pay_category="donation"),
-                    status__in=Payment.waiting_statuses,
+            try:
+                # Entry fee waiting status
+                return (
+                    self.payments()
+                    .filter(
+                        ~Q(payment__pay_category="donation"),
+                        status__in=Payment.waiting_statuses,
+                    )
+                    .latest("id")
                 )
-                .latest("id")
-            )
-        except Transaction.DoesNotExist:
-            pass
-
-        try:
-            return (
-                self.payments()
-                .filter(
-                    ~Q(payment__pay_category="donation"),
-                )
-                .latest("id")
-            )
-        except Transaction.DoesNotExist:
-            pass
-
+            except Transaction.DoesNotExist:
+                try:
+                    # Entry fee with all statuses
+                    return (
+                        self.payments()
+                        .filter(
+                            ~Q(payment__pay_category="donation"),
+                        )
+                        .latest("id")
+                    )
+                except Transaction.DoesNotExist:
+                    # Donation
+                    try:
+                        # Donation with done status
+                        return (
+                            self.payments()
+                            .filter(
+                                payment__pay_category="donation",
+                                status__in=Payment.done_statuses,
+                            )
+                            .latest("id")
+                        )
+                    except Transaction.DoesNotExist:
+                        try:
+                            # Donation with waiting status
+                            return (
+                                self.payments()
+                                .filter(
+                                    payment__pay_category="donation",
+                                    status__in=Payment.waiting_statuses,
+                                )
+                                .latest("id")
+                            )
+                        except Transaction.DoesNotExist:
+                            try:
+                                # Donation with all statuses
+                                return (
+                                    self.payments()
+                                    .filter(
+                                        payment__pay_category="donation",
+                                    )
+                                    .latest("id")
+                                )
+                            except Transaction.DoesNotExist:
+                                pass
         return None
 
     PAYMENT_CHOICES = (
