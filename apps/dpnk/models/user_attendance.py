@@ -280,19 +280,37 @@ class UserAttendance(StaleSyncMixin, models.Model):
             return None
 
         try:
-            return self.payments().filter(status__in=Payment.done_statuses).latest("id")
-        except Transaction.DoesNotExist:
-            pass
-
-        try:
             return (
-                self.payments().filter(status__in=Payment.waiting_statuses).latest("id")
+                self.payments()
+                .filter(
+                    ~Q(payment__pay_category="donation"),
+                    status__in=Payment.done_statuses,
+                )
+                .latest("id")
             )
         except Transaction.DoesNotExist:
             pass
 
         try:
-            return self.payments().latest("id")
+            return (
+                self.payments()
+                .filter(
+                    ~Q(payment__pay_category="donation"),
+                    status__in=Payment.waiting_statuses,
+                )
+                .latest("id")
+            )
+        except Transaction.DoesNotExist:
+            pass
+
+        try:
+            return (
+                self.payments()
+                .filter(
+                    ~Q(payment__pay_category="donation"),
+                )
+                .latest("id")
+            )
         except Transaction.DoesNotExist:
             pass
 
