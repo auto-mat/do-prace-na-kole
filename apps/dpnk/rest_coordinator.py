@@ -46,6 +46,7 @@ from .models.company import CompanyInCampaign
 from .rest import (
     CompanyAdminMixin,
     CompaniesDeserializer,
+    CompaniesSerializer,
     UserAttendanceSerializer,
     AddressSerializer,
     EmptyStrField,
@@ -1102,6 +1103,46 @@ class ApproveCompanyAdminAsTeamMemberView(APIView, CompanyAdminMixin):
         )
 
 
+class OrganizationDeserializer(CompaniesDeserializer):
+    class Meta:
+        model = Company
+        fields = (
+            "ico",
+            "dic",
+            "address_street",
+            "address_street_number",
+            "address_psc",
+            "address_city",
+            "address_recipient",
+        )
+
+
+class OrganizationSet(
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+    CompanyAdminMixin,
+):
+    def get_queryset(self):
+
+        company_admin = self.ca()
+
+        queryset = Company.objects.filter(
+            id=company_admin.administrated_company.id,
+        )
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "list"]:
+            return CompaniesSerializer
+        else:
+            return OrganizationDeserializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+
 router.register(r"coordinator/fee-approval", FeeApprovalSet, basename="fee-approval")
 # router.register(r"approve-payments", ApprovePaymentsView, basename="approve-payments")
 # router.register(r"get-attendance", GetAttendanceView, basename="get-attendance")
@@ -1127,4 +1168,9 @@ router.register(
     "coordinator/invoices",
     OrganizationAdminInvoiceSet,
     basename="organization-coordinator-invoices",
+)
+router.register(
+    "coordinator/organization",
+    OrganizationSet,
+    basename="organization-coordinator-organization",
 )
