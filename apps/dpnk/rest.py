@@ -97,6 +97,7 @@ from .models import (
     Trip,
     UserAttendance,
     UserProfile,
+    Voucher,
 )
 from .models.company import CompanyInCampaign
 from .models.subsidiary import SubsidiaryInCampaign
@@ -178,13 +179,6 @@ class CompanyAdminMixin(UserProfileMixin):
         return self._company_admin
 
 
-class OptionalImageField(serpy.ImageField):
-    def to_value(self, value):
-        if not value:
-            return None
-        return super().to_value(value)
-
-
 class GeometryField(serpy.Field):
     def to_value(self, value):
         if value is None:
@@ -195,6 +189,34 @@ class GeometryField(serpy.Field):
         else:
             geojson = {"type": value.geom_type, "coordinates": []}
         return geojson
+
+
+class OptionalImageField(serpy.ImageField):
+    getter_takes_serializer = True
+
+    def __init__(self, ret=None, **kwargs):
+        self._ret = ret
+        super().__init__(**kwargs)
+
+    def as_getter(self, serializer_field_name, serializer_cls):
+        if self.attr == "":
+            getter = lambda instance: instance
+        else:
+            getter = serializer_cls.default_getter(self.attr or serializer_field_name)
+        return lambda serializer, instance: self.to_value(
+            (getter(instance), serializer.context)
+        )
+
+    def get_image_url(self, context, obj):
+        request = context.get("request")
+        if request:
+            if obj:
+                return request.build_absolute_uri(obj.url)
+        return self._ret
+
+    def to_value(self, value):
+        obj, context = value
+        return self.get_image_url(context, obj)
 
 
 class PointField(serpy.Field):
@@ -2578,6 +2600,18 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
                 )
 
 
+class ThirdPartyVoucher(serpy.Serializer):
+    token = EmptyStrField()
+    good_till = EmptyStrField()
+    amount = EmptyStrField()
+    voucher_type_name = EmptyStrField(attr="voucher_type1.name")
+    voucher_type_url = EmptyStrField(attr="voucher_type1.eshop_url")
+    voucher_type_image = OptionalImageField(
+        attr="voucher_type1.teaser_img",
+        ret="",
+    )
+
+
 class UserAttendanceSerializer(UserAttendancePaymentWithRewardSerializer):
     personal_data_opt_in = serpy.BoolField()
     discount_coupon = EmptyStrField()
@@ -2587,6 +2621,15 @@ class UserAttendanceSerializer(UserAttendancePaymentWithRewardSerializer):
     payment_amount = NullIntField(call=True)
     payment_category = EmptyStrField(call=True)
     approved_for_team = EmptyStrField()
+    thirdparty_voucher = RequestSpecificField(
+        lambda user_attendance, req: [
+            ThirdPartyVoucher(voucher, context={"request": req}).data
+            for voucher in Voucher.objects.filter(
+                user_attendance=user_attendance,
+                campaign__slug=req.subdomain,
+            )
+        ]
+    )
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
@@ -2613,7 +2656,8 @@ class RegisterChallengeSerializer(serpy.Serializer):
         lambda userprofile, req: PersonalDetailsUserSerializer(userprofile.user).data
         | PersonalDetailsUserProfileSerializer(userprofile).data
         | UserAttendanceSerializer(
-            userprofile.userattendance_set.get(campaign__slug=req.subdomain)
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+            context={"request": req},
         ).data
     )
     team_id = RequestSpecificField(
