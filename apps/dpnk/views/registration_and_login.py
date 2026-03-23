@@ -17,7 +17,6 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.sites.models import Site
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
@@ -98,12 +97,6 @@ class DPNKLoginView(
             return {"username": self.kwargs["initial_email"]}
         else:
             return {}
-
-    def dispatch(self, request, *args, **kwargs):
-        current_site = Site.objects.get_current()
-        if not "lvh.me" in current_site.domain:
-            return redirect(settings.RTWBB_FRONTEND_APP_BASE_URL)
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
