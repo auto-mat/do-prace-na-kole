@@ -19,8 +19,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import logging
 
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import translation
 from django.utils.deprecation import MiddlewareMixin
@@ -189,3 +191,25 @@ class ExceptionMiddleware:
 
         # Default to 500 page
         return TemplateResponse(request, "500.html", status=500)
+
+
+class RedirectToRtwbbUrlMiddleware(MiddlewareMixin):
+    """Redirect not REST API request (the exception is admin URLs)
+    to the new RTWBB frontend URL
+    """
+
+    def process_request(self, request):
+        if request.get_host() == "test.lvh.me:8021":
+            return
+
+        # Check if this is an API request (based on URL or Accept header)
+        is_api_request = (
+            request.path.startswith("/rest/")
+            or request.headers.get("Accept") == "application/json"
+        )
+
+        # Redirect not REST API request to the RTWBB frontend URL
+        if not is_api_request:
+            if request.path.startswith("/admin/"):
+                return
+            return redirect(settings.RTWBB_FRONTEND_APP_BASE_URL)

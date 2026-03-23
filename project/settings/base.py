@@ -204,6 +204,7 @@ MIDDLEWARE = [
     "dpnk.middleware.UserAttendanceMiddleware",
     "dpnk.middleware.MobileAppIntegration",
     "dpnk.middleware.ExceptionMiddleware",
+    "dpnk.middleware.RedirectToRtwbbUrlMiddleware",
     "dpnk.votes.SecretBallotUserMiddleware",
     "raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware",
 ]
