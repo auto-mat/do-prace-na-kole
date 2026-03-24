@@ -793,6 +793,7 @@ class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
 
 
 class OrganizationAdminOrganizationSerializer(serpy.Serializer):
+    id = serpy.IntField()
     name = serpy.StrField()
     street = EmptyStrField(attr="address.street")
     street_number = EmptyStrField(attr="address.street_number")
