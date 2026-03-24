@@ -3252,6 +3252,7 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             "payment_status",
             "payment_type",
             "payment_category",
+            "thirdparty_voucher",
         )
         data["personal_details"] = {}
         for field in personal_details_fields:
