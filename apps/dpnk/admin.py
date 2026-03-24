@@ -595,7 +595,11 @@ class UserAttendanceForm(forms.ModelForm):
         if "team" in self.cleaned_data:  # if not in merge form
             new_team = self.cleaned_data["team"]
 
-            if self.instance.payment_status == "done" and new_team is None:
+            if (
+                self.instance.payment_status == "done"
+                and new_team is None
+                and self.instance.team is not None
+            ):
                 self.add_error(
                     "team",
                     _(
