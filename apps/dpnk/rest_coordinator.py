@@ -1117,6 +1117,12 @@ class OrganizationDeserializer(CompaniesDeserializer):
             "address_recipient",
         )
 
+    def validate(self, data):
+        company = Company(**data)
+        company.pk = self.instance.pk
+        company.clean()
+        return data
+
 
 class OrganizationSet(
     mixins.UpdateModelMixin,
