@@ -150,24 +150,30 @@ organization_types = [org_type[0] for org_type in Company.ORGANIZATION_TYPE]
 
 
 class UserProfileMixin:
-    def up(self, request=None):
+    def get_user_profile(self, request=None):
         if not request:
             request = self.request
-        ua = self.request.user_attendance
-        if not ua:
+        user_attendance = self.request.user_attendance
+        if not user_attendance:
             userprofile_pk = UserProfile.objects.get(user__id=request.user.id).pk
         else:
             userprofile_pk = ua.userprofile.pk
         return userprofile_pk
 
+    def get_user_attendance(self, request=None):
+        user_profile = self.get_user_profile(request=request)
+        return UserAttendance.objects.get(
+            userprofile=user_profile,
+            campaign__slug=request.subdomain if request else self.request.subdomain,
+        )
+
 
 class CompanyAdminMixin(UserProfileMixin):
-    def ca(self, raise_company_admin_does_not_exists_error=True):
-
+    def get_company_admin(self, raise_company_admin_does_not_exists_error=True):
         if not hasattr(self, "_company_admin") or self._company_admin is None:
             try:
                 self._company_admin = CompanyAdmin.objects.get(
-                    userprofile=self.up(),
+                    userprofile=self.get_user_profile(),
                     campaign__slug=self.request.subdomain,
                     company_admin_approved="approved",
                 )
@@ -3951,10 +3957,10 @@ class DataReportResults(CompanyAdminMixin, APIView):
 
     def get(self, request, report_type):
         url = None
-        company_admin = self.ca(
+        company_admin = self.get_company_admin(
             raise_company_admin_does_not_exists_error=False,
         )
-        user_attendance = self.request.user_attendance
+        user_attendance = self.get_user_attendance()
         if "regularity" == report_type:
             base_url = settings.METABASE_DPNK_REGULARITY_RESULTS_DATA_REPORT_URL
             # Organization admin
@@ -4081,7 +4087,10 @@ class DataReportResults(CompanyAdminMixin, APIView):
                 else company_admin.administrated_company,
             )
         elif "city-coordinator" == report_type:
-            city = user_attendance.userprofile.administrated_cities.last()
+            if user_attendance:
+                city = user_attendance.userprofile.administrated_cities.last()
+            elif company_admin:
+                city = company_admin.userprofile.administrated_cities.last()
             if city:
                 base_url = (
                     settings.METABASE_DPNK_CITY_COORDINATOR_RESULTS_DATA_REPORT_URL
@@ -4095,7 +4104,7 @@ class DataReportResults(CompanyAdminMixin, APIView):
         return Response({"data_report_url": url})
 
 
-class DataReportResultsByChallenge(APIView):
+class DataReportResultsByChallenge(CompanyAdminMixin, APIView):
     """Metabase data report results by challenge URL
 
     1. May challenge
@@ -4105,10 +4114,10 @@ class DataReportResultsByChallenge(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, challenge):
-        company_admin = self.ca(
+        company_admin = self.get_company_admin(
             raise_company_admin_does_not_exists_error=False,
         )
-        user_attendance = self.request.user_attendance
+        user_attendance = self.get_user_attendance()
         url = None
         if "may" == challenge:
             url = concat_all(
@@ -4133,11 +4142,11 @@ class DataReportResultsByChallenge(APIView):
             url = concat_all(
                 base_url,
                 "?u%25C5%25BEivatelsk%25C3%25A9_jm%25C3%25A9no=",
-                self.user_attendance.userprofile.user.username,
+                user_attendance.userprofile.user.username,
                 "&m%25C4%259Bsto=",
-                attrgetter_def_val("team.subsidiary.city", self.user_attendance),
+                attrgetter_def_val("team.subsidiary.city", user_attendance),
                 "&ro%25C4%258Dn%25C3%25ADk_v%25C3%25BDzvy=",
-                self.user_attendance.campaign.year,
+                user_attendance.campaign.year,
             )
         return Response({"data_report_url": url})
 
