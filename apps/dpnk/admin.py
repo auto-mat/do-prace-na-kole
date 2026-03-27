@@ -104,7 +104,11 @@ from .filters import (
     PSCFilter,
     campaign_filter_generator,
 )
-from .util import CustomPaginator
+from .util import (
+    Cache,
+    CustomPaginator,
+    register_challenge_serializer_base_cache_key_name,
+)
 
 
 def admin_links(args_generator):
@@ -1723,6 +1727,20 @@ class VoucherAdmin(ImportExportMixin, admin.ModelAdmin):
         isnull_filter("user_attendance", _("Nemá účast v kampani")),
     ]
     actions = (make_pdfsandwich,)
+
+    def save_model(self, request, obj, form, change):
+        voucher = models.Voucher.objects.filter(id=obj.id)
+        if voucher:
+            user_attendance = voucher[0].user_attendance
+            if user_attendance and obj.user_attendance is None and obj.pk:
+                # Delete REST API cache
+                cache = Cache(
+                    key=f"{register_challenge_serializer_base_cache_key_name}"
+                    f"{user_attendance.userprofile.id}:{voucher[0].campaign.slug}"
+                )
+                if cache.data:
+                    del cache.data
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(models.VoucherType)

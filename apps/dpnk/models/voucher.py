@@ -25,6 +25,8 @@ from django.utils.translation import ugettext_lazy as _
 from smmapdfs.model_abcs import PdfSandwichABC, PdfSandwichFieldABC
 from smmapdfs.models import PdfSandwichType
 
+from .. import util
+
 
 class VoucherPDFField(PdfSandwichFieldABC):
     fields = {
@@ -115,6 +117,28 @@ class Voucher(models.Model):
         blank=False,
         default="rekola",
     )
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.user_attendance:
+            # Delete REST API cache
+            cache = util.Cache(
+                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                f"{self.user_attendance.userprofile.id}:{self.campaign.slug}"
+            )
+            if cache.data:
+                del cache.data
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.user_attendance:
+            # Delete REST API cache
+            cache = util.Cache(
+                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                f"{self.user_attendance.userprofile.id}:{self.campaign.slug}"
+            )
+            if cache.data:
+                del cache.data
+        return super().delete(*args, **kwargs)
 
 
 class VoucherType(models.Model):
