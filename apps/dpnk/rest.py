@@ -157,7 +157,7 @@ class UserProfileMixin:
         if not user_attendance:
             userprofile_pk = UserProfile.objects.get(user__id=request.user.id).pk
         else:
-            userprofile_pk = ua.userprofile.pk
+            userprofile_pk = user_attendance.userprofile.pk
         return userprofile_pk
 
     def get_user_attendance(self, request=None):
