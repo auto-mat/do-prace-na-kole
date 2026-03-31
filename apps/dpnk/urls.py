@@ -735,4 +735,9 @@ urlpatterns = [
         MakeInvoiceVew.as_view(),
         name="organization-coordinator-make-invoice",
     ),
+    re_path(
+        "rest/coordinator/organization/export/(?P<extension>csv|xls|ods)/",
+        company_admin_views.UserAttendanceExportView.as_view(),
+        name="organization-coordinator-organization-structure-export",
+    ),
 ]
