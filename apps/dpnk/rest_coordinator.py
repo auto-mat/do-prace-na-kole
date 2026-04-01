@@ -57,10 +57,12 @@ from .rest import (
     UserAttendancePaymentWithRewardSerializer,
 )
 from .middleware import get_or_create_userattendance
+from .resources import UserAttendanceResource
 from .tasks import (
     team_membership_approval_mail,
     team_membership_denial_mail,
 )
+from .views_mixins import ExportViewMixin
 from .util import is_payment_with_reward
 
 
@@ -1146,6 +1148,19 @@ class OrganizationSet(
             return CompaniesSerializer
         else:
             return OrganizationDeserializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class UserAttendanceExportView(APIView, CompanyAdminMixin, ExportViewMixin):
+    def get(self, request, extension="xls"):
+        company_admin = self.get_company_admin()
+        queryset = UserAttendance.objects.filter(
+            team__subsidiary__company=company_admin.administrated_company,
+            campaign=request.campaign,
+        )
+        export_data = UserAttendanceResource().export(queryset)
+        return self.generate_export(export_data, extension)
 
     permission_classes = [permissions.IsAuthenticated]
 

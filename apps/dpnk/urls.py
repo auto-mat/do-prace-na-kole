@@ -57,6 +57,7 @@ from .rest_coordinator import (
     BoxRequestView,
     BoxRequestRemoveView,
     MakeInvoiceVew,
+    UserAttendanceExportView,
     router as coordinator_router,
 )
 
@@ -737,7 +738,7 @@ urlpatterns = [
     ),
     re_path(
         "rest/coordinator/organization/export/(?P<extension>csv|xls|ods)/",
-        company_admin_views.UserAttendanceExportView.as_view(),
+        UserAttendanceExportView.as_view(),
         name="organization-coordinator-organization-structure-export",
     ),
 ]

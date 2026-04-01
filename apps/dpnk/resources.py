@@ -210,6 +210,7 @@ class UserAttendanceResource(resources.ModelResource):
             "approved_for_team",
             "t_shirt_size",
             "t_shirt_size__name",
+            "t_shirt_size_updated",
             "team__subsidiary__city__name",
             "userprofile",
             "userprofile__language",
