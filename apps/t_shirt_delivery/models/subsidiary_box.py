@@ -199,11 +199,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
 
     def tracking_link(self):
         if self.carrier_identification:
-            return format_html(
-                "<a target='_blank' href='https://gls-group.eu/CZ/cs/sledovani-zasilek?match={}'>{}</a>",
-                self.carrier_identification,
-                self.carrier_identification,
-            )
+            return f"https://gls-group.eu/CZ/cs/sledovani-zasilek?match={self.carrier_identification}"
 
     tracking_link.admin_order_field = "carrier_identification"
 
