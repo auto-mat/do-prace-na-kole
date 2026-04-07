@@ -168,7 +168,7 @@ class ExceptionMiddleware:
 
         # Check if this is an API request (based on URL or Accept header)
         is_api_request = (
-            request.path.startswith("/rest/")
+            "rest" in request.path
             or request.headers.get("Accept") == "application/json"
         )
 
