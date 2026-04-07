@@ -394,9 +394,20 @@ def generate_mygls_pdf(csv_file, batch):
             with open(csv_file_part) as f:
                 try:
                     generate_mygls_pdf_part(f, batch, pdf_file=f"{csv_file_part}.pdf")
-                except:
+                except Exception as e:
+                    if hasattr(e, "message"):
+                        logger.exception(e.message)
+                    else:
+                        logger.exception(e)
                     return csv_file_part + ".pdf", "pdf"
-    subprocess.call(
-        ["bash", "-c", "pdftk tmp_gls/*.pdf cat output tmp_gls/gls_sheet.pdf"]
+
+    p = Popen(
+        ["bash", "-c", "pdftk tmp_gls/*.pdf cat output tmp_gls/gls_sheet.pdf"],
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
     )
+    output, err = p.communicate()
+    if p.returncode != 0:
+        logger.exception(f"Concatenate GLS labels PDFs files error <{err}>.")
     return "tmp_gls/gls_sheet.pdf", "pdf"
