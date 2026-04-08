@@ -237,12 +237,13 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
             if p.Parcel.ClientReference in refs
         ],
     )
-    datetime_after = timezone.datetime.now()
+    if parcel_ids:
+        datetime_after = timezone.datetime.now()
 
-    update_subsidiary_box.delay(
-        print_from=datetime_before.timestamp(),
-        print_to=datetime_after.timestamp(),
-    )
+        update_subsidiary_box.delay(
+            print_from=datetime_before.timestamp(),
+            print_to=datetime_after.timestamp(),
+        )
     return None, None
 
 
@@ -521,4 +522,5 @@ def generate_mygls_pdf(csv_file, batch):
     output, err = p.communicate()
     if p.returncode != 0:
         logger.exception(f"Concatenate GLS labels PDFs files error <{err}>.")
+        return None, None
     return "tmp_gls/gls_sheet.pdf", "pdf"
