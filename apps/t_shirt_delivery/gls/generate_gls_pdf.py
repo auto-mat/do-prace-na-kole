@@ -150,12 +150,11 @@ def handle_prepare_labels_errors(csv_error_file, prepare_labels_errors):
         writer.writeheader()
 
         for err in prepare_labels_errors:
-            client_ref_list = "; ".join(err.ClientReferenceList)
             writer.writerow(
                 {
                     err_code: err.ErrorCode,
                     err_desc: err.ErrorDescription,
-                    client_ref_list: client_ref_list,
+                    client_ref_list: "; ".join(err.ClientReferenceList),
                 }
             )
     return csv_error_file, "csv"
