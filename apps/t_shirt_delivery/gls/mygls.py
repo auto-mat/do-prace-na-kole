@@ -110,7 +110,7 @@ class MyGLS:
             )
             self._parcels.append(parcel)
 
-    def print_labels(self, pdf_path=None, printer_type=None):
+    def print_labels(self, pdf_path=None, printer_type=None, addional_parcels=[]):
         """Print parcel labels
 
         :param str|None pdf_path: PDF label file path, default value
@@ -120,6 +120,8 @@ class MyGLS:
                                       default value is None (if None global
                                       printer type settings MYGLS_API["printer_type"]
                                       will be used)
+        :param list additional_parcels: Additional parcels object list, default value is empty
+                                        list
 
         :return str pdf_path: PDF label file path
         """
@@ -135,30 +137,32 @@ class MyGLS:
 
         return self._gls.print_labels(
             pdf_path=pdf_path,
-            parcels=self._parcels,
+            parcels=self._parcels + addional_parcels,
             printer_type=printer_type,
         )
         return pdf_path
 
-    def get_parcels(self, print_from=None, print_to=None):
+    def get_parcels(
+        self, print_from=None, print_to=None, pickup_from=None, pickup_to=None
+    ):
         """Get parcels
 
         :param datetime|None print_from: Parcel datetime print from,
-                                         default value is None (if None
-                                         actual datetime is used)
+                                         default value is None
         :param datetime|None print_to: Parcel datetime print to,
-                                       default value is None (if None
-                                       actual datetime is used)
+                                       default value is None
+        :param datetime|None pickup_from: Parcel datetime pickup from,
+                                          default value is None
+        :param datetime|None pickup_to: Parcel datetime pickup to,
+                                        default value is None
+
         :return None
         """
-        if not print_from:
-            print_from = timezone.datetime.now()
-        if not print_to:
-            print_to = timezone.datetime.now()
-
         return self._gls.get_parcels(
             print_from=print_from,
             print_to=print_to,
+            pickup_from=pickup_from,
+            pickup_to=pickup_to,
         )
 
     def delete_labels(self, parcel_id=[]):
