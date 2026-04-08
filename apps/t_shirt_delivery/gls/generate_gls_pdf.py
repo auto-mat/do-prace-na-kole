@@ -1,4 +1,5 @@
 import csv
+import io
 import logging
 import subprocess
 from subprocess import PIPE, Popen
