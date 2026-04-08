@@ -125,10 +125,11 @@ def get_mygls_parcel_label_data(csv_file):
     return delivery_address, parcel_property, content, reference, count
 
 
-def handle_prepare_labels_errors(csv_error_file):
+def handle_prepare_labels_errors(csv_error_file, prepare_labels_errors):
     """Handle prepare labels errors
 
     :param str csv_error_file: CSV prepare labels error file path
+    :param list prepare_labels_errors: List of prepare labels errors
 
     :return tuple (bytes, str): Tuple of CSV byte file content contains
                                 prepare labels validation errors and CSV
@@ -148,7 +149,7 @@ def handle_prepare_labels_errors(csv_error_file):
         )
         writer.writeheader()
 
-        for err in prepare_lables_response.PrepareLabelsError:
+        for err in prepare_labels_errors:
             client_ref_list = "; ".join(err.ClientReferenceList)
             writer.writerow(
                 {
@@ -199,7 +200,8 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     prepare_lables_response = mygls.prepare_labels()
     if prepare_lables_response.PrepareLabelsError:
         return handle_prepare_labels_errors(
-            csv_error_file=csv_file.name.replace(".csv", "_err.csv")
+            csv_error_file=csv_file.name.replace(".csv", "_err.csv"),
+            prepare_labels_errors=prepare_lables_response.PrepareLabelsError,
         )
     # Print labels
     parcel_ids = mygls.print_labels(pdf_path=pdf_file)
