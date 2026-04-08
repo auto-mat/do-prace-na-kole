@@ -1,7 +1,5 @@
 import csv
-import io
 import logging
-import os
 import subprocess
 from subprocess import PIPE, Popen
 
@@ -20,17 +18,15 @@ from ..tasks import update_subsidiary_box
 logger = logging.getLogger(__name__)
 
 
-def generate_mygls_pdf_part(csv_file, batch, pdf_file):
-    """Generate partial print labels PDF file via MyGLS REST API
+def get_mygls_parcel_label_data(csv_file):
+    """Get MyGLS create parcel data
 
     :param file object csv_file: Opened file object
-    :param DeliveryBatch batch: DeliveryBatch model instance
-    :param str pdf_file: Printed labels PDF file path
 
-    :return tuple (bytes, str): Tuple of CSV byte file content contains
-                                prepare labels validation errors and CSV
-                                format postfix, default value is (None, None)
-                                if no prepare labels validation errors are appear
+    :return tuple (list, list, list, list, list) delivery_address,
+           parcel_property, content, reference, count: Tuple of lists of parcel label
+                                                       delivery address, property,
+                                                       content, reference, and count
     """
     # Delivery address
     delivery_address = []
@@ -126,8 +122,69 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         reference_idx = header.index("Variabilní symbol")
         reference.append(line[reference_idx])
 
+    return delivery_address, parcel_property, content, reference, count
+
+
+def handle_prepare_labels_errors(csv_error_file):
+    """Handle prepare labels errors
+
+    :param str csv_error_file: CSV prepare labels error file path
+
+    :return tuple (bytes, str): Tuple of CSV byte file content contains
+                                prepare labels validation errors and CSV
+                                format postfix
+    """
+    err_code = "Error code"
+    err_desc = "Error description"
+    client_ref_list = "Client reference list (variable symbol)"
+    with open(csv_error_file, "w", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                err_code,
+                err_desc,
+                client_ref_list,
+            ],
+        )
+        writer.writeheader()
+
+        for err in prepare_lables_response.PrepareLabelsError:
+            client_ref_list = "; ".join(err.ClientReferenceList)
+            writer.writerow(
+                {
+                    err_code: err.ErrorCode,
+                    err_desc: err.ErrorDescription,
+                    client_ref_list: client_ref_list,
+                }
+            )
+    return csv_error_file, "csv"
+
+
+def generate_mygls_pdf_part(csv_file, batch, pdf_file):
+    """Generate partial print labels PDF file via MyGLS REST API
+
+    :param file object csv_file: Opened file object
+    :param DeliveryBatch batch: DeliveryBatch model instance
+    :param str pdf_file: Printed labels PDF file path
+
+    :return tuple (bytes, str): Tuple of CSV byte file content contains
+                                prepare labels validation errors and CSV
+                                format postfix, default value is (None, None)
+                                if no prepare labels validation errors are appear
+    """
+    # Get MyGLScreate parcel data
+    (
+        delivery_address,
+        parcel_property,
+        content,
+        reference,
+        count,
+    ) = get_mygls_parcel_label_data(csv_file)
+
     mygls = MyGLS()
     datetime_before = timezone.datetime.now()
+
+    # Create parcel
     mygls.create_parcel(
         delivery_address=delivery_address,
         pickup_date=timezone.datetime.combine(
@@ -141,18 +198,9 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     # Handle prepare labels validation errors
     prepare_lables_response = mygls.prepare_labels()
     if prepare_lables_response.PrepareLabelsError:
-        err_code = "Error code"
-        err_desc = "Error description"
-        client_ref_list = "Client reference list (variable symbol)"
-        sep = ","
-        csv_data = [f"{err_code}{sep}{err_desc}{sep}{client_ref_list}"]
-        for err in prepare_lables_response.PrepareLabelsError:
-            client_ref_list = "; ".join(err.ClientReferenceList)
-            csv_data.append(
-                f"{err.ErrorCode}{sep}{err.ErrorDescription}{sep}{client_ref_list}"
-            )
-        csv_file = io.StringIO(os.linesep.join(csv_data))
-        return csv_file.getvalue().encode(), "csv"
+        return handle_prepare_labels_errors(
+            csv_error_file=csv_file.name.replace(".csv", "_err.csv")
+        )
     # Print labels
     parcel_ids = mygls.print_labels(pdf_path=pdf_file)
     datetime_after = timezone.datetime.now()
