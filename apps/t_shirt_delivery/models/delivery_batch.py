@@ -134,12 +134,12 @@ class DeliveryBatch(models.Model):
             pdf_filename, pdf_ext = generate_mygls_pdf(self.tnt_order, self)
         else:
             pdf_filename, pdf_ext = generate_pdf(self.tnt_order, self)
-
-        with open(pdf_filename, "rb+") as f:
-            date_time_str = timezone.now().strftime("%Y-%m-%d_%H-%M-%S")
-            filename = f"batch_{self.id}_{date_time_str}.{pdf_ext}"
-            self.order_pdf.save(filename, f)
-        self.save()
+        if pdf_filename and pdf_ext:
+            with open(pdf_filename, "rb+") as f:
+                date_time_str = timezone.now().strftime("%Y-%m-%d_%H-%M-%S")
+                filename = f"batch_{self.id}_{date_time_str}.{pdf_ext}"
+                self.order_pdf.save(filename, f)
+            self.save()
         subprocess.call(["rm", "tmp_gls/", "-r"])
 
     def t_shirt_count(self):
