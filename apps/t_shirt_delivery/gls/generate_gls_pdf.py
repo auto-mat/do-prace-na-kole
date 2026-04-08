@@ -185,7 +185,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     datetime_before = timezone.datetime.now()
 
     # Prevent create parcels which are exist now
-    parcels = get_parcels(
+    parcels = mygls.get_parcels(
         pickup_from=timezone.datetime.combine(
             batch.pickup_date, timezone.datetime.min.time()
         ),
