@@ -184,32 +184,6 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     mygls = MyGLS()
     datetime_before = timezone.datetime.now()
 
-    # Prevent create parcels which are exist now
-    parcels = mygls.get_parcels(
-        pickup_from=timezone.datetime.combine(
-            batch.pickup_date, timezone.datetime.min.time()
-        ),
-        pickup_to=timezone.datetime.combine(
-            batch.pickup_date, timezone.datetime.min.time()
-        ),
-    )
-    # Variable symbol (Subsidiary box ID)
-    parcels_client_ref = [p.Parcel.ClientReference for p in parcels.PrintDataInfoList]
-    idxs = []
-    refs = []
-    for idx, ref in enumerate(reference):
-        if ref in parcels_client_ref:
-            refs.append(ref)
-            idxs.append(idx)
-
-    # Remove existed parcels from the creating list
-    for idx in sorted(idxs, reverse=True):
-        del delivery_address[idx]
-        del parcel_property[idx]
-        del content[idx]
-        del reference[idx]
-        del count[idx]
-
     # Create parcel
     mygls.create_parcel(
         delivery_address=delivery_address,
@@ -231,19 +205,13 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     # Print labels
     parcel_ids = mygls.print_labels(
         pdf_path=pdf_file,
-        additional_parcels=[
-            p.Parcel
-            for p in parcels.PrintDataInfoList
-            if p.Parcel.ClientReference in refs
-        ],
     )
-    if parcel_ids:
-        datetime_after = timezone.datetime.now()
+    datetime_after = timezone.datetime.now()
 
-        update_subsidiary_box.delay(
-            print_from=datetime_before.timestamp(),
-            print_to=datetime_after.timestamp(),
-        )
+    update_subsidiary_box.delay(
+        print_from=datetime_before.timestamp(),
+        print_to=datetime_after.timestamp(),
+    )
     return None, None
 
 
