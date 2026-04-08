@@ -124,7 +124,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         reference_idx = header.index("Variabilní symbol")
         reference.append(line[reference_idx])
 
-    mygls = MyGLS(timeout_seconds=900)
+    mygls = MyGLS()
     datetime_before = timezone.datetime.now()
     mygls.create_parcel(
         delivery_address=delivery_address,
