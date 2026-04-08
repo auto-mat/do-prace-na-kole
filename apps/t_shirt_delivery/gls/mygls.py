@@ -190,8 +190,8 @@ class MyGLS:
                                       will be used, allowed options are
                                       EN, HR, CS, HU, RO, SK, SL)
 
-        :return dict: Dict wih ParcelStatusList key which contains
-                      parcel status list
+        :return object: ParcelStatusResponse object wih ParcelStatusList key
+                        which contains parcel status list
         """
         if not language_iso_code:
             language_iso_code = getattr(
@@ -204,4 +204,18 @@ class MyGLS:
             parcel_id=parcel_number,
             return_pod=return_pod,
             language_iso_code=language_iso_code,
+        )
+
+    def prepare_labels(
+        self,
+        parcels=[],
+    ):
+        """Prepare labels
+
+        :param list parcel: List of parcels
+
+        :return object: PrepareLabelsResponse object
+        """
+        return self._gls.prepare_labels(
+            parcels=self._parcels if not parcels else parcels,
         )
