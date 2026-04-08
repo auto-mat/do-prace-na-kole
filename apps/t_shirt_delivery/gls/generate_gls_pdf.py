@@ -24,6 +24,11 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     :param file object csv_file: Opened file object
     :param DeliveryBatch batch: DeliveryBatch model instance
     :param str pdf_file: Printed labels PDF file path
+
+    :return tuple (bytes, str): Tuple of CSV byte file content contains
+                                prepare labels validation errors and CSV
+                                format postfix, default value is (None, None)
+                                if no prepare labels validation errors are appear
     """
     # Delivery address
     delivery_address = []
@@ -131,6 +136,22 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         reference=reference,
         count=count,
     )
+    # Handle prepare labels validation errors
+    prepare_lables_response = mygls.prepare_labels()
+    if prepare_lables_response.PrepareLabelsError:
+        err_code = "Error code"
+        err_desc = "Error description"
+        client_ref_list = "Client reference list (variable symbol)"
+        sep = ","
+        csv_data = [f"{err_code}{sep}{err_desc}{sep}{client_ref_list}"]
+        for err in prepare_lables_response.PrepareLabelsError:
+            client_ref_list = "; ".join(err.ClientReferenceList)
+            csv_data.append(
+                f"{err.ErrorCode}{sep}{err.ErrorDescription}{sep}{client_ref_list}"
+            )
+        csv_file = io.StringIO(os.linesep.join(csv_data))
+        return csv_file.getvalue().encode(), "csv"
+    # Print labels
     parcel_ids = mygls.print_labels(pdf_path=pdf_file)
     datetime_after = timezone.datetime.now()
 
@@ -138,6 +159,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         print_from=datetime_before.timestamp(),
         print_to=datetime_after.timestamp(),
     )
+    return None, None
 
 
 def generate_pdf_part(csv_file, batch):
@@ -393,13 +415,18 @@ def generate_mygls_pdf(csv_file, batch):
         if csv_file_part:
             with open(csv_file_part) as f:
                 try:
-                    generate_mygls_pdf_part(f, batch, pdf_file=f"{csv_file_part}.pdf")
+                    csv_error_part, csv_ext = generate_mygls_pdf_part(
+                        f,
+                        batch,
+                        pdf_file=f"{csv_file_part}.pdf",
+                    )
+                    if csv_error_part:
+                        return csv_error_part, csv_ext
                 except Exception as e:
                     if hasattr(e, "message"):
                         logger.exception(e.message)
                     else:
                         logger.exception(e)
-                    return csv_file_part + ".pdf", "pdf"
 
     p = Popen(
         ["bash", "-c", "pdftk tmp_gls/*.pdf cat output tmp_gls/gls_sheet.pdf"],
