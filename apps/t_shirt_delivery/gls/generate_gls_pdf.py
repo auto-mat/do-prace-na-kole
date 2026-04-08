@@ -200,7 +200,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
     for idx, ref in enumerate(reference):
         if ref in parcels_client_ref:
             refs.append(ref)
-            idx.append(idx)
+            idxs.append(idx)
 
     # Remove existed parcels from the creating list
     for idx in sorted(idxs, reverse=True):
