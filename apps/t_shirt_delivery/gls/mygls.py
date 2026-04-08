@@ -123,7 +123,8 @@ class MyGLS:
         :param list additional_parcels: Additional parcels object list, default value is empty
                                         list
 
-        :return str pdf_path: PDF label file path
+        :return str pdf_path|None: PDF label file path or None if input parcels is
+                                   empty list
         """
         if not pdf_path:
             import tempfile
@@ -134,6 +135,9 @@ class MyGLS:
             printer_type = getattr(
                 PrinterType, settings.MYGLS_API["printer_type"], PrinterType.THERMO
             )
+
+        if not self._parcels + additional_parcels:
+            return
 
         return self._gls.print_labels(
             pdf_path=pdf_path,
