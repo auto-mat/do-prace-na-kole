@@ -505,7 +505,8 @@ urlpatterns = [
         "performance-city|"
         "organizations-review|"
         "organization-coordinator|"
-        "city-coordinator))/",
+        "city-coordinator|"
+        "tachometers))/",
         DataReportResults.as_view(),
         name="datareport-results-rest",
     ),

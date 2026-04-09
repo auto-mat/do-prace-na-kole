@@ -937,6 +937,14 @@ METABASE_DPNK_CITY_COORDINATOR_RESULTS_DATA_REPORT_URL = "{}{}".format(
     ),
 )
 
+METABASE_DPNK_TACHOMETERS_RESULTS_DATA_REPORT_URL = "{}{}".format(
+    METABASE_APP_DOMAIN,
+    os.getenv(
+        "METABASE_DPNK_TACHOMETERS_RESULTS_DATA_REPORT_URL",
+        "",
+    ),
+)
+
 
 def get_formatted_date(name):
     """Get formatted date global variable
