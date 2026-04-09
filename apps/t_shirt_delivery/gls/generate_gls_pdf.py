@@ -181,7 +181,7 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         count,
     ) = get_mygls_parcel_label_data(csv_file)
 
-    mygls = MyGLS()
+    mygls = MyGLS(timeout_seconds=900)
     datetime_before = timezone.datetime.now()
 
     # Create parcel
