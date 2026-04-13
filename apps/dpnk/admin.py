@@ -770,6 +770,7 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
     list_display = (
         "username",
         "email",
+        "email_verified",
         "first_name",
         "last_name",
         "userprofile__telephone",
@@ -828,6 +829,14 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
     def userprofile_administrated_cities(self, obj):
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
+
+    def email_verified(self, obj):
+        email = obj.emailaddress_set.last()
+        if email:
+            return email.verified
+
+    email_verified.boolean = True
+    email_verified.short_description = _("E-mail ověřen")
 
 
 class TripAdminInline(admin.TabularInline):
