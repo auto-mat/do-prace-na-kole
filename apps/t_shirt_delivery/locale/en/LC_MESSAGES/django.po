@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-11 10:37+0100\n"
+"POT-Creation-Date: 2026-04-13 14:59+0200\n"
 "PO-Revision-Date: 2020-01-13 19:51+0100\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -153,7 +153,7 @@ msgstr "Package/box was not found"
 msgid "Zařadit balíky k sestavení"
 msgstr "Mark packages as assembled"
 
-#: t_shirt_delivery/filters.py:26 t_shirt_delivery/models/subsidiary_box.py:157
+#: t_shirt_delivery/filters.py:26 t_shirt_delivery/models/subsidiary_box.py:183
 msgid "Všechny balíčky vyřízeny"
 msgstr "All packages assembled"
 
@@ -204,58 +204,63 @@ msgid "Chci pouze dostat zprávu o stavu balíčku a registrace."
 msgstr ""
 "I want to get information only about my team package status and registration."
 
-#: t_shirt_delivery/models/delivery_batch.py:49
+#: t_shirt_delivery/models/box_request.py:15
+#: t_shirt_delivery/models/subsidiary_box.py:80
+msgid "Pobočka"
+msgstr "Subsidiary"
+
+#: t_shirt_delivery/models/delivery_batch.py:51
 #: t_shirt_delivery/models/delivery_batch_deadline.py:24
 msgid "Datum vytvoření"
 msgstr "Created"
 
-#: t_shirt_delivery/models/delivery_batch.py:55
+#: t_shirt_delivery/models/delivery_batch.py:57
 #: t_shirt_delivery/models/delivery_batch_deadline.py:31
 #: t_shirt_delivery/models/t_shirt_size.py:52
 msgid "Kampaň"
 msgstr "Campaign"
 
-#: t_shirt_delivery/models/delivery_batch.py:61
+#: t_shirt_delivery/models/delivery_batch.py:63
 #: t_shirt_delivery/models/subsidiary_box.py:72
 msgid "Zákaznické listy"
 msgstr "Customer sheets"
 
-#: t_shirt_delivery/models/delivery_batch.py:68
+#: t_shirt_delivery/models/delivery_batch.py:70
 msgid "CSV objednávka"
 msgstr "CSV order"
 
-#: t_shirt_delivery/models/delivery_batch.py:75
+#: t_shirt_delivery/models/delivery_batch.py:77
 msgid "Wellpack CSV tabulka"
 msgstr "Wellpack CSV table"
 
-#: t_shirt_delivery/models/delivery_batch.py:82
+#: t_shirt_delivery/models/delivery_batch.py:84
 msgid "PDF objednávky"
 msgstr "Order PDF"
 
-#: t_shirt_delivery/models/delivery_batch.py:89
+#: t_shirt_delivery/models/delivery_batch.py:91
 msgid "Kombinované PDF pro OPT"
 msgstr "Combined PDF for OPT"
 
-#: t_shirt_delivery/models/delivery_batch.py:96
+#: t_shirt_delivery/models/delivery_batch.py:98
 msgid "Vyřízeno"
 msgstr "Dispatched"
 
-#: t_shirt_delivery/models/delivery_batch.py:102
+#: t_shirt_delivery/models/delivery_batch.py:104
 msgid "Krátká poznámka"
 msgstr "Short note"
 
-#: t_shirt_delivery/models/delivery_batch.py:108
+#: t_shirt_delivery/models/delivery_batch.py:110
 #, fuzzy
 #| msgid "Datum vytvoření"
 msgid "Datum vyzvednutí"
 msgstr "Created"
 
-#: t_shirt_delivery/models/delivery_batch.py:114
+#: t_shirt_delivery/models/delivery_batch.py:116
 #: t_shirt_delivery/models/subsidiary_box.py:66
 msgid "Dávka objednávek"
 msgstr "Delivery batch"
 
-#: t_shirt_delivery/models/delivery_batch.py:115
+#: t_shirt_delivery/models/delivery_batch.py:117
 msgid "Dávky objednávek"
 msgstr "Delivery batches"
 
@@ -294,10 +299,6 @@ msgstr "Box for subsidiary"
 msgid "Krabice pro pobočky"
 msgstr "Box for subsidiaries"
 
-#: t_shirt_delivery/models/subsidiary_box.py:80
-msgid "Pobočka"
-msgstr "Subsidiary"
-
 #: t_shirt_delivery/models/subsidiary_box.py:86
 msgid "Krabice evidována u dopravce"
 msgstr "Your package has been accepted by the shipping firm"
@@ -306,16 +307,32 @@ msgstr "Your package has been accepted by the shipping firm"
 msgid "Identifikace u dopravce"
 msgstr "Identification by carrier"
 
-#: t_shirt_delivery/models/subsidiary_box.py:105
+#: t_shirt_delivery/models/subsidiary_box.py:98
+#, fuzzy
+#| msgid "Kód v skladu"
+msgid "Kód stavu"
+msgstr "Warehouse code"
+
+#: t_shirt_delivery/models/subsidiary_box.py:102
+#, fuzzy
+#| msgid "Popis"
+msgid "Popis stavu"
+msgstr "Description"
+
+#: t_shirt_delivery/models/subsidiary_box.py:108
+msgid "Datum stavu"
+msgstr ""
+
+#: t_shirt_delivery/models/subsidiary_box.py:119
 #, python-format
 msgid "Krabice pro pobočku %s"
 msgstr "Box for subsidiary %s"
 
-#: t_shirt_delivery/models/subsidiary_box.py:168
+#: t_shirt_delivery/models/subsidiary_box.py:194
 msgid "Počet vyřízených balíků"
 msgstr "Number of processed packages"
 
-#: t_shirt_delivery/models/subsidiary_box.py:205
+#: t_shirt_delivery/models/subsidiary_box.py:227
 msgid "Přegenerovat PDF"
 msgstr "Recreate PDF"
 
