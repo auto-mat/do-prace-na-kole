@@ -55,6 +55,8 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from allauth.account.models import EmailAddress
+
 from daterange_filter.filter import DateRangeFilter
 
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
@@ -755,9 +757,15 @@ class UserForm(UserChangeForm):
         return ret_val
 
 
+class EmailAddressAdminInline(NestedStackedInline):
+    model = EmailAddress
+    fields = ("verified",)
+    extra = 0
+
+
 @admin.register(models.User)
 class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmin):
-    inlines = (UserProfileAdminInline,)
+    inlines = (UserProfileAdminInline, EmailAddressAdminInline)
     form = UserForm
     list_display = (
         "username",
