@@ -167,14 +167,18 @@ class DiscountCoupon(models.Model):
     get_pdf.short_description = _("PDF")
 
     def available(self):
-        # Checking lifetime
+        user_count = self.userattendance_set.count()
+        # Checking lifetime and number of usage
         if self.coupon_type.valid_until:
-            return self.coupon_type.valid_until > timezone.now().date()
+            return (
+                self.coupon_type.valid_until > timezone.now().date()
+                and user_count < self.user_attendance_number
+            )
+        else:
+            return user_count < self.user_attendance_number
         # Checking number of usage
         if self.user_attendance_number is None:
             return True
-        user_count = self.userattendance_set.count()
-        return self.user_attendance_number > user_count
 
     def get_sandwich_type(self):
         return self.coupon_type.sandwich_type
