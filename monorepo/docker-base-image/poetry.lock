@@ -944,13 +944,18 @@ description = "Retrieve payments from Fio bank API (through fiobank package) and
 optional = false
 python-versions = "*"
 groups = ["main"]
-files = [
-    {file = "dj-fiobank-payments-0.3.0.tar.gz", hash = "sha256:a46e9395b7325b1534f9473f43ed6eda5367289402821440751f9611c9821220"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 django-model-utils = ">=2.0"
 fiobank = "*"
+
+[package.source]
+type = "git"
+url = "https://github.com/auto-mat/dj-fiobank-payments.git"
+reference = "HEAD"
+resolved_reference = "b181eec3d3ff0bd27c6949f2b00b4570192ce4ba"
 
 [[package]]
 name = "dj-rest-auth"
@@ -2754,22 +2759,19 @@ testing = ["covdefaults (>=2.2)", "coverage (>=6.4.2)", "pytest (>=7.1.2)", "pyt
 
 [[package]]
 name = "fiobank"
-version = "3.0.0"
-description = "Fio Bank API in Python"
+version = "4.1.1"
+description = "Fio Bank API in Python (unofficial)"
 optional = false
-python-versions = "*"
+python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "fiobank-3.0.0-py2.py3-none-any.whl", hash = "sha256:6b335210f92be648342ee879a1156e8fb450ff1d059f6e8757c857611a55ef26"},
-    {file = "fiobank-3.0.0.tar.gz", hash = "sha256:ecc13d37046bc2f36f50c9ee563e389eedab955c158b6c7293e00d5ee0c39bb3"},
+    {file = "fiobank-4.1.1-py3-none-any.whl", hash = "sha256:2de62834f1779cfd44bfb9319e7624f9751309c01eca0e26ecf3c2e23e9b2760"},
+    {file = "fiobank-4.1.1.tar.gz", hash = "sha256:bff4ea5299558bf5fac4e2c83d998914ebb8b53dd515ca8cd32d5e02446fb65e"},
 ]
 
 [package.dependencies]
-requests = "*"
-
-[package.extras]
-release = ["python-semantic-release"]
-tests = ["coveralls", "mock", "pylama", "pytest", "pytest-cov", "pytest-runner", "responses"]
+requests = ">=2.28.2,<3.0.0"
+tenacity = ">=9.0.0"
 
 [[package]]
 name = "fiona"
@@ -5813,6 +5815,40 @@ xlsx = ["openpyxl (>=2.6.0)"]
 yaml = ["pyyaml"]
 
 [[package]]
+name = "tenacity"
+version = "9.1.2"
+description = "Retry code until it succeeds"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "python_version == \"3.9\""
+files = [
+    {file = "tenacity-9.1.2-py3-none-any.whl", hash = "sha256:f77bf36710d8b73a50b2dd155c97b870017ad21afe6ab300326b0371b3b05138"},
+    {file = "tenacity-9.1.2.tar.gz", hash = "sha256:1169d376c297e7de388d18b4481760d478b0e99a777cad3a9c86e556f4b697cb"},
+]
+
+[package.extras]
+doc = ["reno", "sphinx"]
+test = ["pytest", "tornado (>=4.5)", "typeguard"]
+
+[[package]]
+name = "tenacity"
+version = "9.1.4"
+description = "Retry code until it succeeds"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version >= \"3.10\""
+files = [
+    {file = "tenacity-9.1.4-py3-none-any.whl", hash = "sha256:6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55"},
+    {file = "tenacity-9.1.4.tar.gz", hash = "sha256:adb31d4c263f2bd041081ab33b498309a57c77f9acf2db65aadf0898179cf93a"},
+]
+
+[package.extras]
+doc = ["reno", "sphinx"]
+test = ["pytest", "tornado (>=4.5)", "typeguard"]
+
+[[package]]
 name = "tinycss2"
 version = "1.1.1"
 description = "A tiny CSS parser"
@@ -6276,4 +6312,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "e520b189ae35a1211c6e5cf0fe14aedda1e85a42320abc9025040c66f483871c"
+content-hash = "1ff02354339f84783df4cfa74db46ad0263e761dc28b017a9a5d6ff64ab8ef43"
