@@ -175,7 +175,7 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
     campaign = Campaign.objects.filter(slug=campaign_slug)
     if campaign:
         campaign = campaign[0]
-        competition_phase = campaign.phase(phase_type="competition")
+        competition_phase = campaign.phase(phase_type="registration")
 
     if not print_from:
         if campaign:
