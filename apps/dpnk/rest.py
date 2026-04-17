@@ -4105,15 +4105,15 @@ class DataReportResults(CompanyAdminMixin, APIView):
                 )
         elif "tachometers" == report_type:
             if user_attendance:
-                email = user_attendance.userprofile.user.email
+                username = user_attendance.userprofile.user.username
             elif company_admin:
-                email = company_admin.userprofile.user.email
-            if email:
+                username = company_admin.userprofile.user.username
+            if username:
                 base_url = settings.METABASE_DPNK_TACHOMETERS_RESULTS_DATA_REPORT_URL
                 url = concat_all(
                     base_url,
-                    "?email=",
-                    email,
+                    "?username=",
+                    username,
                 )
 
         return Response({"data_report_url": url})
