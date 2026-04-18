@@ -63,7 +63,11 @@ from .tasks import (
     team_membership_denial_mail,
 )
 from .views_mixins import ExportViewMixin
-from .util import is_payment_with_reward
+from .util import (
+    is_payment_with_reward,
+    register_challenge_serializer_base_cache_key_name,
+    Cache,
+)
 
 
 class FeeApprovalSerializer(serpy.Serializer):
@@ -173,7 +177,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                         code="nic",
                         campaign=company_admin.campaign,
                     )
-                    user_attendances.append(user)
+                user_attendances.append(user)
                 payment.amount = amount
                 entry_fee = payment.payu_ordered_product.get(
                     name__icontains="entry fee"
@@ -185,14 +189,12 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     + "\nFA %s odsouhlasil dne %s"
                     % (self.request.user.username, timezone.now())
                 )
-                payment.save()
-                user.save()
-                # payments.append(payment)
+                payments.append(payment)
                 approved_count += 1
-            # Payment.objects.bulk_update(
-            #     payments,
-            #     ["status", "amount", "description"],
-            # )
+            Payment.objects.bulk_update(
+                payments,
+                ["status", "amount", "description"],
+            )
             PayUOrderedProduct.objects.bulk_update(
                 payu_ordered_products,
                 ["unit_price"],
@@ -202,6 +204,16 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     user_attendances,
                     ["t_shirt_size"],
                 )
+                for user_attendance in user_attendances:
+                    # Delete REST API cache, because user attendance save method
+                    # is not called, bulk update is used
+                    cache = Cache(
+                        key=f"{register_challenge_serializer_base_cache_key_name}"
+                        f"{user_attendance.userprofile.id}:{user_attendance.campaign.slug}"
+                    )
+                    if cache.data:
+                        del cache.data
+
             return Response(
                 {
                     "message": _("Úspěšně schváleno {payments} plateb.").format(
@@ -246,38 +258,34 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
             for user in users:
                 payment = user.representative_payment
                 payment.status = Status.REJECTED
-                # amount = ids[str(user.id)]
                 # Set None t-shirt size if payment is without reward
                 user.t_shirt_size = None
                 user_attendances.append(user)
-                # payment.amount = amount
-                # entry_fee = payment.payu_ordered_product.get(
-                #     name__icontains="entry fee"
-                # )
-                # entry_fee.unit_price = amount
-                # payu_ordered_products.append(entry_fee)
                 payment.description = (
                     payment.description
                     + "\nFA %s zamítnul dne %s"
                     % (self.request.user.username, timezone.now())
                 )
-                payment.save()
-                user.save()
-                # payments.append(payment)
+                payments.append(payment)
                 disapproved_count += 1
-            # Payment.objects.bulk_update(
-            #     payments,
-            #     ["status", "amount", "description"],
-            # )
-            # PayUOrderedProduct.objects.bulk_update(
-            #     payu_ordered_products,
-            #     ["unit_price"],
-            # )
+            Payment.objects.bulk_update(
+                payments,
+                ["status", "amount", "description"],
+            )
             if user_attendances:
                 UserAttendance.objects.bulk_update(
                     user_attendances,
                     ["t_shirt_size"],
                 )
+                for user_attendance in user_attendances:
+                    # Delete REST API cache, because user attendance save method
+                    # is not called, bulk update is used
+                    cache = Cache(
+                        key=f"{register_challenge_serializer_base_cache_key_name}"
+                        f"{user_attendance.userprofile.id}:{user_attendance.campaign.slug}"
+                    )
+                    if cache.data:
+                        del cache.data
             return Response(
                 {
                     "message": _("Úspěšně zamítnuto {payments} plateb.").format(
