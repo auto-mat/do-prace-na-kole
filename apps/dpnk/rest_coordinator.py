@@ -177,7 +177,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                         code="nic",
                         campaign=company_admin.campaign,
                     )
-                user_attendances.append(user)
+                    user_attendances.append(user)
                 payment.amount = amount
                 entry_fee = payment.payu_ordered_product.get(
                     name__icontains="entry fee"
@@ -190,6 +190,14 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     % (self.request.user.username, timezone.now())
                 )
                 payments.append(payment)
+                # Delete REST API cache, because user attendance save method
+                # is not called, bulk update is used
+                cache = Cache(
+                    key=f"{register_challenge_serializer_base_cache_key_name}"
+                    f"{user.userprofile.id}:{user.campaign.slug}"
+                )
+                if cache.data:
+                    del cache.data
                 approved_count += 1
             Payment.objects.bulk_update(
                 payments,
@@ -204,15 +212,6 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     user_attendances,
                     ["t_shirt_size"],
                 )
-                for user_attendance in user_attendances:
-                    # Delete REST API cache, because user attendance save method
-                    # is not called, bulk update is used
-                    cache = Cache(
-                        key=f"{register_challenge_serializer_base_cache_key_name}"
-                        f"{user_attendance.userprofile.id}:{user_attendance.campaign.slug}"
-                    )
-                    if cache.data:
-                        del cache.data
             return Response(
                 {
                     "message": _("Úspěšně schváleno {payments} plateb.").format(
@@ -266,6 +265,14 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                     % (self.request.user.username, timezone.now())
                 )
                 payments.append(payment)
+                # Delete REST API cache, because user attendance save method
+                # is not called, bulk update is used
+                cache = Cache(
+                    key=f"{register_challenge_serializer_base_cache_key_name}"
+                    f"{user.userprofile.id}:{user.campaign.slug}"
+                )
+                if cache.data:
+                    del cache.data
                 disapproved_count += 1
             Payment.objects.bulk_update(
                 payments,
@@ -276,15 +283,6 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                     user_attendances,
                     ["t_shirt_size"],
                 )
-                for user_attendance in user_attendances:
-                    # Delete REST API cache, because user attendance save method
-                    # is not called, bulk update is used
-                    cache = Cache(
-                        key=f"{register_challenge_serializer_base_cache_key_name}"
-                        f"{user_attendance.userprofile.id}:{user_attendance.campaign.slug}"
-                    )
-                    if cache.data:
-                        del cache.data
             return Response(
                 {
                     "message": _("Úspěšně zamítnuto {payments} plateb.").format(
