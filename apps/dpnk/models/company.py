@@ -161,6 +161,7 @@ class Company(WithGalleryMixin, models.Model):
         return ", ".join([a.userprofile.telephone for a in admins])
 
     def clean(self, *args, **kwargs):
+        CompanyAddress.clean(self.address, self, Company)
         if (
             Company.objects.filter(name__unaccent__iexact=self.name)
             .exclude(pk=self.pk)

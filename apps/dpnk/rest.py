@@ -2175,6 +2175,11 @@ class SubsidiariesDeserializer(serializers.HyperlinkedModelSerializer):
             "box_addressee_email",
         )
 
+    def validate(self, data):
+        subsidiary = Subsidiary(**data)
+        subsidiary.clean()
+        return super().validate(data)
+
     def to_internal_value(self, data):
         address_data = data.pop("address")
         data["address_street"] = address_data.get("street")
