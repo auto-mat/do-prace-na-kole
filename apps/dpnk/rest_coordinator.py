@@ -213,7 +213,6 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     )
                     if cache.data:
                         del cache.data
-
             return Response(
                 {
                     "message": _("Úspěšně schváleno {payments} plateb.").format(
@@ -1081,7 +1080,7 @@ class ApproveCompanyAdminAsTeamMemberView(APIView, CompanyAdminMixin):
                 " Vytvořte si nový tým nebo si změňte aktuální tým."
             )
             user_attendance.approved_for_team = "denied"
-            user_attendance.save()
+            user_attendance.save(update_fields=["approved_for_team"])
             # Send e-mail
             team_membership_denial_mail.delay(
                 team_members=[
@@ -1099,7 +1098,7 @@ class ApproveCompanyAdminAsTeamMemberView(APIView, CompanyAdminMixin):
                 status=status.HTTP_200_OK,
             )
         user_attendance.approved_for_team = "approved"
-        user_attendance.save()
+        user_attendance.save(update_fields=["approved_for_team"])
         # Send e-mail
         team_membership_approval_mail.delay(
             user_attendance_ids=[
