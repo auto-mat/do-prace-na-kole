@@ -3279,8 +3279,10 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
     def validate_discount_coupon(self, discount_coupon):
         if discount_coupon:
+            request = self.context["request"]
+            campaign_slug = getattr(request, "subdomain")
             discount_coupon_exist = DiscountCoupon.objects.filter(
-                coupon_type__campaign__slug=self.context["request"].subdomain,
+                coupon_type__campaign__slug=campaign_slug,
                 token=discount_coupon.split("-")[-1],
             ).only("token")
             if not discount_coupon_exist:
@@ -3289,7 +3291,22 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                     % {"coupon": discount_coupon},
                 )
             else:
-                if not discount_coupon_exist[0].available():
+                has_user_attendance_discount_coupon = False
+                user = getattr(request, "user")
+                if user:
+                    has_user_attendance_discount_coupon = (
+                        True
+                        if UserAttendance.objects.filter(
+                            userprofile__user__username=user,
+                            campaign__slug=campaign_slug,
+                            discount_coupon=discount_coupon_exist[0],
+                        )
+                        else False
+                    )
+                if (
+                    not has_user_attendance_discount_coupon
+                    and not discount_coupon_exist[0].available()
+                ):
                     raise serializers.ValidationError(
                         _("Slevový kupón <%(coupon)s> je neplatný.")
                         % {"coupon": discount_coupon},
