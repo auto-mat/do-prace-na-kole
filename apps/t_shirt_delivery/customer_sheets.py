@@ -55,9 +55,9 @@ def make_customer_sheets_pdf(outfile, subsidiary_box):
 
 
 def make_sheet(subsidiary_box, canvas):
-    package_count = subsidiary_box.teampackage_set.count()
+    package_count = subsidiary_box.teampackage_set.filter(team__isnull=False).count()
     page_number = 1
-    for team_package in subsidiary_box.teampackage_set.all():
+    for team_package in subsidiary_box.teampackage_set.filter(team__isnull=False):
         package_counter = "%s/%s" % (page_number, package_count)
         make_team_sheet(team_package, canvas, package_counter)
         canvas.showPage()
