@@ -103,6 +103,7 @@ from .filters import (
     EmailFilter,
     HasReactionFilter,
     ICOFilter,
+    PrimaryKeyInFilter,
     PSCFilter,
     campaign_filter_generator,
 )
@@ -382,6 +383,7 @@ class SubsidiaryAdmin(
         "city",
         "active",
         ActiveCityFilter,
+        PrimaryKeyInFilter,
     )
     search_fields = (
         f"address_recipient__{settings.ADMIN_SEARCH_FIELD_LOOKUP}",

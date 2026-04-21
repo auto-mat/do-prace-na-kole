@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
@@ -234,3 +236,40 @@ class ActiveCityFilter(SimpleListFilter):
                 return queryset.filter(**active_city_kwargs)
             if self.value() == "no":
                 return queryset.exclude(**active_city_kwargs)
+
+
+class InputFilter(SimpleListFilter):
+    """
+    SimpleListFilter changed to TextInput (Search field)
+    """
+
+    template = "admin/input_filter.html"
+
+    def lookups(self, request, model_admin):
+        return ((),)
+
+    def choices(self, changelist):
+        all_choice = next(super().choices(changelist))
+
+        all_choice["query_parts"] = (
+            (k, v)
+            for k, v in changelist.get_filters_params().items()
+            if k != self.parameter_name
+        )
+        yield all_choice
+
+
+class PrimaryKeyInFilter(InputFilter):
+    title = _("Primární klíč")
+    parameter_name = "pk"
+    val_sep = ","
+    placeholder = "1,5,10"
+
+    def queryset(self, request, queryset):
+        # Get the selected values from the query string
+        selected_ids = request.GET.getlist(self.parameter_name, [""])[0]
+        if selected_ids:
+            return queryset.filter(
+                pk__in=map(int, selected_ids.split(self.val_sep)),
+            )
+        return queryset
