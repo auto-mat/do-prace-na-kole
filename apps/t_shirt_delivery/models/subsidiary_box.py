@@ -97,6 +97,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     status_code = models.PositiveIntegerField(
         verbose_name=_("Kód stavu"),
         null=True,
+        blank=True,
     )
     status_description = models.CharField(
         verbose_name=_("Popis stavu"),
@@ -107,6 +108,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     status_datetime = models.DateTimeField(
         verbose_name=_("Datum stavu"),
         null=True,
+        blank=True,
     )
 
     def identifier(self):
