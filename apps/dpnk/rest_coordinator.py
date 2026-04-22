@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 from collections import namedtuple
 
 import denorm
@@ -753,7 +754,7 @@ class OrganizationAdminOrganizationTeamPackageSerializer(serpy.Serializer):
 class OrganizationAdminOrganizationSubsidiaryBoxSerializer(serpy.Serializer):
     dispatched = serpy.BoolField()
     carrier_identification = EmptyStrField()
-    tracking_link = EmptyStrField(call=True)
+    tracking_link = serpy.MethodField()
     modified = serpy.StrField()
     team_packages = RequestSpecificField(
         lambda subsidiary_box, req: [
@@ -763,6 +764,13 @@ class OrganizationAdminOrganizationSubsidiaryBoxSerializer(serpy.Serializer):
             for team_package in subsidiary_box.teampackage_set.all()
         ]
     )
+
+    def get_tracking_link(self, obj):
+        html_link = obj.tracking_link()
+        if html_link:
+            soup = BeautifulSoup(html_link)
+            return soup.find("a").get("href")
+        return ""
 
 
 class OrganizationAdminOrganizationSubsidiariesSerializer(serpy.Serializer):
