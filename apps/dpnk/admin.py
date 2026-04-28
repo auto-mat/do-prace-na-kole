@@ -517,6 +517,7 @@ class CompetitionAdmin(
     ]
     prepopulated_fields = {"slug": ("name",)}
     list_max_show_all = 10000
+    autocomplete_fields = ("company",)
     form = models.CompetitionForm
 
     def get_readonly_fields(self, request, obj=None):
