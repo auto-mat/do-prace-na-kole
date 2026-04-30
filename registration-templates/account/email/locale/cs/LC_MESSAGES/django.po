@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 13:28+0200\n"
+"POT-Creation-Date: 2026-04-30 14:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -240,15 +240,17 @@ msgstr ""
 "</p>\n"
 "<p>\n"
 "Pokud jste to nebyli vy, můžete tento e-mail ignorovat.\n"
+"</p>\n"
 "<p>\n"
 "Pokud ano, klikněte na odkaz níže pro změnu vašeho hesla.\n"
 "</p>\n"
 
-#: account/email/password_reset_key_message.html:22
+#: account/email/password_reset_key_message.html:23
 msgid "Reset your password"
 msgstr "Obnovte si heslo"
 
-#: account/email/password_reset_key_message.html:26
+#: account/email/password_reset_key_message.html:27
+#, python-format
 msgid ""
 "\n"
 "<p>In case you forgot, your e-mail is %(email)s.</p>\n"
