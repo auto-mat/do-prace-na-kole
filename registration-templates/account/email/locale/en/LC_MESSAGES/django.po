@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 16:18+0100\n"
+"POT-Creation-Date: 2026-04-30 11:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: account_already_exists_message.txt:4
+#: account/email/account_already_exists_message.txt:4
 #, python-format
 msgid ""
 "You are receiving this e-mail because you or someone else tried to signup "
@@ -36,27 +36,27 @@ msgid ""
 "%(password_reset_url)s"
 msgstr ""
 
-#: account_already_exists_subject.txt:3
+#: account/email/account_already_exists_subject.txt:3
 msgid "Account Already Exists"
 msgstr ""
 
-#: base_message.txt:1
+#: account/email/base_message.txt:1
 #, python-format
 msgid "Hello from %(site_name)s!"
 msgstr ""
 
-#: base_message.txt:5
+#: account/email/base_message.txt:5
 #, python-format
 msgid ""
 "Thank you for using %(site_name)s!\n"
 "%(site_domain)s"
 msgstr ""
 
-#: email_confirmation_message.html:12
+#: account/email/email_confirmation_message.html:12
 msgid "Confirm email address\n"
 msgstr ""
 
-#: email_confirmation_message.html:17
+#: account/email/email_confirmation_message.html:17
 #, python-format
 msgid ""
 "\n"
@@ -69,11 +69,11 @@ msgid ""
 "\n"
 msgstr ""
 
-#: email_confirmation_message.html:25
+#: account/email/email_confirmation_message.html:25
 msgid "Confirm email address"
 msgstr ""
 
-#: email_confirmation_message.html:30
+#: account/email/email_confirmation_message.html:30
 #, python-format
 msgid ""
 "\n"
@@ -118,7 +118,7 @@ msgid ""
 "</p>\n"
 msgstr ""
 
-#: email_confirmation_message.txt:6
+#: account/email/email_confirmation_message.txt:6
 #, python-format
 msgid ""
 "\n"
@@ -162,28 +162,33 @@ msgid ""
 "%(campaign_contact_email)s."
 msgstr ""
 
-#: email_confirmation_subject.html:3 email_confirmation_subject.txt:3
+#: account/email/email_confirmation_subject.html:3
+#: account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr ""
 
-#: password_reset_key_message.txt:4
+#: account/email/password_reset_key_message.html:4
+#: account/email/password_reset_key_message.txt:4
 msgid ""
 "You're receiving this e-mail because you or someone else has requested a "
-"password for your user account.\n"
+"password for your Bike to Work user account.\n"
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
 
-#: password_reset_key_message.txt:9
+#: account/email/password_reset_key_message.html:9
+#: account/email/password_reset_key_message.txt:9
 #, python-format
-msgid "In case you forgot, your username is %(username)s."
+msgid "In case you forgot, your e-mail is %(email)s."
 msgstr ""
 
-#: password_reset_key_subject.txt:3 unknown_account_subject.txt:3
+#: account/email/password_reset_key_subject.html:3
+#: account/email/password_reset_key_subject.txt:3
+#: account/email/unknown_account_subject.txt:3
 msgid "Password Reset E-mail"
 msgstr ""
 
-#: unknown_account_message.txt:4
+#: account/email/unknown_account_message.txt:4
 #, python-format
 msgid ""
 "You are receiving this e-mail because you or someone else has requested a\n"

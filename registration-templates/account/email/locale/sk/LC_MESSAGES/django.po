@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 16:18+0100\n"
+"POT-Creation-Date: 2026-04-30 11:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
 ">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 
-#: account_already_exists_message.txt:4
+#: account/email/account_already_exists_message.txt:4
 #, python-format
 msgid ""
 "You are receiving this e-mail because you or someone else tried to signup "
@@ -37,16 +37,16 @@ msgid ""
 "%(password_reset_url)s"
 msgstr ""
 
-#: account_already_exists_subject.txt:3
+#: account/email/account_already_exists_subject.txt:3
 msgid "Account Already Exists"
 msgstr ""
 
-#: base_message.txt:1
+#: account/email/base_message.txt:1
 #, python-format
 msgid "Hello from %(site_name)s!"
 msgstr "Zdravíme z %(site_name)s!"
 
-#: base_message.txt:5
+#: account/email/base_message.txt:5
 #, python-format
 msgid ""
 "Thank you for using %(site_name)s!\n"
@@ -55,11 +55,11 @@ msgstr ""
 "Ďakujeme že používate %(site_name)s!\n"
 "%(site_domain)s"
 
-#: email_confirmation_message.html:12
+#: account/email/email_confirmation_message.html:12
 msgid "Confirm email address\n"
 msgstr "Potvrdenie e-mailovej adresy\n"
 
-#: email_confirmation_message.html:17
+#: account/email/email_confirmation_message.html:17
 #, python-format
 msgid ""
 "\n"
@@ -80,10 +80,12 @@ msgstr ""
 "</p>\n"
 "\n"
 
-#: email_confirmation_message.html:25
+#: account/email/email_confirmation_message.html:25
 msgid "Confirm email address"
 msgstr "Potvrdiť e-mailovú adresu"
 
+#: account/email/email_confirmation_message.html:30
+#, python-format
 msgid ""
 "\n"
 "<p>\n"
@@ -128,8 +130,8 @@ msgid ""
 msgstr ""
 "\n"
 "<p>\n"
-"Keď potvrdíme adresu, venujte chvíľku vypočutiu desiatich "
-"odporúčaní pred začiatkom:\n"
+"Keď potvrdíme adresu, venujte chvíľku vypočutiu desiatich odporúčaní pred "
+"začiatkom:\n"
 "</p>\n"
 "\n"
 "<ul>\n"
@@ -140,25 +142,23 @@ msgstr ""
 "</li><li>\n"
 "Zapamätajte si svoj prihlasovací e-mail <b>%(email)s</b>.\n"
 "</li><li>\n"
-"Nezabudnite, že výzva začína %(campaign_competition_phase_date_from)s "
-"a končí %(campaign_competition_phase_date_to)s.\n"
+"Nezabudnite, že výzva začína %(campaign_competition_phase_date_from)s a "
+"končí %(campaign_competition_phase_date_to)s.\n"
 "</li><li>\n"
 "Pravidelne si zaznamenávajte svoje jazdy do svojho <a "
 "href=\"%(routes_calendar_url)s\">profil</a>.\n"
 "</li><li>\n"
-"Nastavte si vo svojom profile svoju typickú trasu a nahrávanie bude rýchlejšie ako Janova "
-"Kavalírova jazda.\n"
+"Nastavte si vo svojom profile svoju typickú trasu a nahrávanie bude "
+"rýchlejšie ako Janova Kavalírova jazda.\n"
 "</li><li>\n"
-"Nezabudnite <a href=\"%(profile_details_url)s\">pozvať kolegov</a> do "
-"svojho tímu.\n"
+"Nezabudnite <a href=\"%(profile_details_url)s\">pozvať kolegov</a> do svojho "
+"tímu.\n"
 "</li><li>\n"
-"Nahrávanie jázd pomocou smartfónu je hračka, ak si stiahnete jednu "
-"z odporúčaných <a href=\"%(campaign_campaign_type_web)s/apps\">aplikácií</"
-"a>.\n"
+"Nahrávanie jázd pomocou smartfónu je hračka, ak si stiahnete jednu z "
+"odporúčaných <a href=\"%(campaign_campaign_type_web)s/apps\">aplikácií</a>.\n"
 "</li><li>\n"
-"Ak ste naozaj súťaživý typ, sledujte správy a najnovšie "
-"súťaže z vášho mesta na našej <a "
-"href=\"%(campaign_campaign_type_web)s\">webová stránka</a>.\n"
+"Ak ste naozaj súťaživý typ, sledujte správy a najnovšie súťaže z vášho mesta "
+"na našej <a href=\"%(campaign_campaign_type_web)s\">webová stránka</a>.\n"
 "</li>\n"
 "</ul>\n"
 "\n"
@@ -167,7 +167,7 @@ msgstr ""
 "%(campaign_campaign_type_contact_email)s\">%(campaign_contact_email)s</a>.\n"
 "</p>\n"
 
-#: email_confirmation_message.txt:6
+#: account/email/email_confirmation_message.txt:6
 #, python-format
 msgid ""
 "\n"
@@ -248,28 +248,37 @@ msgstr ""
 "- Radi odpovieme na akékoľvek ďalšie otázky na adrese "
 "%(campaign_contact_email)s."
 
-#: email_confirmation_subject.html:3 email_confirmation_subject.txt:3
+#: account/email/email_confirmation_subject.html:3
+#: account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr "Potvrďte svoju e-mailovú adresu"
 
-#: password_reset_key_message.txt:4
+#: account/email/password_reset_key_message.html:4
+#: account/email/password_reset_key_message.txt:4
 msgid ""
 "You're receiving this e-mail because you or someone else has requested a "
-"password for your user account.\n"
+"password for your Bike to Work user account.\n"
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
+"Tento e-mail jste obdrželi, protože jste vy nebo někdo jiný požádal o "
+"heslo k vašemu uživatelskému účtu Do práce na bicykli.\n"
+"Pokud jste nepožádali o resetování hesla, můžete jej bezpečně ignorovat. Klikněte na "
+"odkaz níže a heslo si resetujte."
 
-#: password_reset_key_message.txt:9
+#: account/email/password_reset_key_message.html:9
+#: account/email/password_reset_key_message.txt:9
 #, python-format
-msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgid "In case you forgot, your e-mail is %(email)s."
+msgstr "Ak ste zabudli, váš e-mail je %(email)s."
 
-#: password_reset_key_subject.txt:3 unknown_account_subject.txt:3
+#: account/email/password_reset_key_subject.html:3
+#: account/email/password_reset_key_subject.txt:3
+#: account/email/unknown_account_subject.txt:3
 msgid "Password Reset E-mail"
-msgstr ""
+msgstr "E-mail na obnovenie hesla"
 
-#: unknown_account_message.txt:4
+#: account/email/unknown_account_message.txt:4
 #, python-format
 msgid ""
 "You are receiving this e-mail because you or someone else has requested a\n"

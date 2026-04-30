@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 16:18+0100\n"
+"POT-Creation-Date: 2026-04-30 11:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
 "<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
-#: account_already_exists_message.txt:4
+#: account/email/account_already_exists_message.txt:4
 #, python-format
 msgid ""
 "You are receiving this e-mail because you or someone else tried to signup "
@@ -37,27 +37,27 @@ msgid ""
 "%(password_reset_url)s"
 msgstr ""
 
-#: account_already_exists_subject.txt:3
+#: account/email/account_already_exists_subject.txt:3
 msgid "Account Already Exists"
 msgstr ""
 
-#: base_message.txt:1
+#: account/email/base_message.txt:1
 #, python-format
 msgid "Hello from %(site_name)s!"
 msgstr ""
 
-#: base_message.txt:5
+#: account/email/base_message.txt:5
 #, python-format
 msgid ""
 "Thank you for using %(site_name)s!\n"
 "%(site_domain)s"
 msgstr ""
 
-#: email_confirmation_message.html:12
+#: account/email/email_confirmation_message.html:12
 msgid "Confirm email address\n"
 msgstr "Potvrdit e-mailovou adresu\n"
 
-#: email_confirmation_message.html:17
+#: account/email/email_confirmation_message.html:17
 #, python-format
 msgid ""
 "\n"
@@ -78,11 +78,11 @@ msgstr ""
 "</p>\n"
 "\n"
 
-#: email_confirmation_message.html:25
+#: account/email/email_confirmation_message.html:25
 msgid "Confirm email address"
 msgstr "Potvrdit e-mailovou adresu"
 
-#: email_confirmation_message.html:30
+#: account/email/email_confirmation_message.html:30
 #, python-format
 msgid ""
 "\n"
@@ -128,8 +128,8 @@ msgid ""
 msgstr ""
 "\n"
 "<p>\n"
-"Jakmile potvrdíme adresu, věnujte prosím chvilku poslechu deseti "
-"doporučení před zahájením:\n"
+"Jakmile potvrdíme adresu, věnujte prosím chvilku poslechu deseti doporučení "
+"před zahájením:\n"
 "</p>\n"
 "\n"
 "<ul>\n"
@@ -140,25 +140,24 @@ msgstr ""
 "</li><li>\n"
 "Zapamatujte si svůj přihlašovací e-mail <b>%(email)s</b>.\n"
 "</li><li>\n"
-"Nezapomeňte, že výzva začíná %(campaign_competition_phase_date_from)s "
-"a končí %(campaign_competition_phase_date_to)s.\n"
+"Nezapomeňte, že výzva začíná %(campaign_competition_phase_date_from)s a "
+"končí %(campaign_competition_phase_date_to)s.\n"
 "</li><li>\n"
 "Pravidelně zaznamenávejte své jízdy do svého <a "
 "href=\"%(routes_calendar_url)s\">profil</a>.\n"
 "</li><li>\n"
-"Nastavte si ve svém profilu typickou trasu a nahrávání bude rychlejší než u Janovy "
-"Kavalírovy jízdy.\n"
+"Nastavte si ve svém profilu typickou trasu a nahrávání bude rychlejší než u "
+"Janovy Kavalírovy jízdy.\n"
 "</li><li>\n"
-"Nezapomeňte <a href=\"%(profile_details_url)s\">pozvat kolegy</a> do "
-"svého týmu.\n"
+"Nezapomeňte <a href=\"%(profile_details_url)s\">pozvat kolegy</a> do svého "
+"týmu.\n"
 "</li><li>\n"
-"Nahrávání jízd pomocí smartphonu je hračka, pokud si stáhnete jednu "
-"z doporučených <a href=\"%(campaign_campaign_type_web)s/apps\">aplikací</"
-"a>.\n"
+"Nahrávání jízd pomocí smartphonu je hračka, pokud si stáhnete jednu z "
+"doporučených <a href=\"%(campaign_campaign_type_web)s/apps\">aplikací</a>.\n"
 "</li><li>\n"
-"Pokud jste opravdu soutěživý typ, sledujte novinky a nejnovější "
-"soutěže z vašeho města na našem <a "
-"href=\"%(campaign_campaign_type_web)s\">webové stránky</a>.\n"
+"Pokud jste opravdu soutěživý typ, sledujte novinky a nejnovější soutěže z "
+"vašeho města na našem <a href=\"%(campaign_campaign_type_web)s\">webové "
+"stránky</a>.\n"
 "</li>\n"
 "</ul>\n"
 "\n"
@@ -167,7 +166,7 @@ msgstr ""
 "%(campaign_campaign_type_contact_email)s\">%(campaign_contact_email)s</a>.\n"
 "</p>\n"
 
-#: email_confirmation_message.txt:6
+#: account/email/email_confirmation_message.txt:6
 #, python-format
 msgid ""
 "\n"
@@ -211,32 +210,37 @@ msgid ""
 "%(campaign_contact_email)s."
 msgstr ""
 
-#: email_confirmation_subject.html:3 email_confirmation_subject.txt:3
+#: account/email/email_confirmation_subject.html:3
+#: account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr "Potvrďte prosím svou e-mailovou adresu"
 
-#: password_reset_key_message.txt:4
+#: account/email/password_reset_key_message.html:4
+#: account/email/password_reset_key_message.txt:4
 msgid ""
 "You're receiving this e-mail because you or someone else has requested a "
-"password for your user account.\n"
+"password for your Bike to Work user account.\n"
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
 "Tento e-mail jste obdrželi protože jste vy nebo někdo jiný zažádal o změnu "
-"hesla uživatelského účtu.\n"
+"hesla uživatelského účtu Do práce na kole.\n"
 "Pokud jste to nebyli vy, můžete tento e-mail ignorovat. Pokud ano, klikněte "
 "na odkaz níže pro změnu vašeho hesla."
 
-#: password_reset_key_message.txt:9
+#: account/email/password_reset_key_message.html:9
+#: account/email/password_reset_key_message.txt:9
 #, python-format
-msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgid "In case you forgot, your e-mail is %(email)s."
+msgstr "Pro případ, že byste zapomněli, váš e-mail je %(email)s."
 
-#: password_reset_key_subject.txt:3 unknown_account_subject.txt:3
+#: account/email/password_reset_key_subject.html:3
+#: account/email/password_reset_key_subject.txt:3
+#: account/email/unknown_account_subject.txt:3
 msgid "Password Reset E-mail"
-msgstr ""
+msgstr "E-mail pro obnovení hesla"
 
-#: unknown_account_message.txt:4
+#: account/email/unknown_account_message.txt:4
 #, python-format
 msgid ""
 "You are receiving this e-mail because you or someone else has requested a\n"
