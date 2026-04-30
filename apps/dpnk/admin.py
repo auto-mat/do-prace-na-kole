@@ -762,7 +762,7 @@ class UserForm(UserChangeForm):
 
 class EmailAddressAdminInline(NestedStackedInline):
     model = EmailAddress
-    fields = ("verified",)
+    fields = ("verified", "email")
     extra = 0
 
 
