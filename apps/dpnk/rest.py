@@ -18,9 +18,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import base64
-import time
 import hashlib
 import logging
+import re
+import time
 
 from enum import Enum
 
@@ -2679,12 +2680,7 @@ class RegisterChallengeSerializer(serpy.Serializer):
             campaign__slug=req.subdomain
         ).team_id
     )
-    organization_id = RequestSpecificField(
-        lambda userprofile, req: attrgetter_def_val(
-            "team.subsidiary.company_id",
-            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
-        )
-    )
+    organization_id = serpy.MethodField()
     subsidiary_id = RequestSpecificField(
         lambda userprofile, req: attrgetter_def_val(
             "team.subsidiary_id",
@@ -2714,6 +2710,35 @@ class RegisterChallengeSerializer(serpy.Serializer):
             userprofile.userattendance_set.get(campaign__slug=req.subdomain),
         )
     )
+
+    def get_organization_id(self, obj):
+        user_attendance = obj.userattendance_set.get(
+            campaign__slug=self.context["request"].subdomain
+        )
+        payment = user_attendance.representative_payment
+        # If organization coordinator allowed payment for user attendance
+        # and after that user attendance doesn't have assigned team (means
+        # existed assigned team is full), we must get organization ID from the
+        # payment model description field where is organization coordinator
+        # username information (to allow choose new subidiary and team in
+        # the challenge registration process)
+        if (
+            payment
+            and user_attendance.payment_status == "done"
+            and not user_attendance.team
+        ):
+            if payment.pay_type == "fc" and payment.description:
+                username = re.search(r"FA (.*?) odsouhlasil", payment.description)
+                if username:
+                    username = username.group(1)
+                    return CompanyAdmin.objects.get(
+                        userprofile__user__username=username,
+                        campaign__slug=self.context["request"].subdomain,
+                    ).administrated_company.id
+        return attrgetter_def_val(
+            "team.subsidiary.company_id",
+            user_attendance,
+        )
 
 
 class RequestSpecificFieldDeserializer(serializers.Field):
