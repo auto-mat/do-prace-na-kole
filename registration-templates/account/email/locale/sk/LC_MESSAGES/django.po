@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 11:25+0200\n"
+"POT-Creation-Date: 2026-04-30 13:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -253,7 +253,47 @@ msgstr ""
 msgid "Please Confirm Your E-mail Address"
 msgstr "Potvrďte svoju e-mailovú adresu"
 
-#: account/email/password_reset_key_message.html:4
+#: account/email/password_reset_key_message.html:6
+msgid "Reset your password\n"
+msgstr "Obnovte si heslo\n"
+
+#: account/email/password_reset_key_message.html:11
+msgid ""
+"\n"
+"<p>\n"
+"You're receiving this e-mail because you or someone else has requested a "
+"password for your Bike to Work user account.\n"
+"</p>\n"
+"<p>\n"
+"It can be safely ignored if you did not request a password reset.\n"
+"</p>\n"
+"<p>\n"
+"Click the link below to reset your password.\n"
+"</p>\n"
+msgstr ""
+"\n"
+"<p>\n"
+"Tento e-mail jste obdrželi, protože jste vy nebo někdo jiný požádal o heslo "
+"k vašemu uživatelskému účtu Do práce na bicykli.\n"
+"</p>\n"
+"<p>\n"
+"Pokud jste nepožádali o resetování hesla, můžete jej bezpečně ignorovat.\n"
+"<p>\n"
+"Klikněte na odkaz níže a heslo si resetujte.\n"
+"</p>\n"
+
+#: account/email/password_reset_key_message.html:22
+msgid "Reset your password"
+msgstr "Obnovte si heslo"
+
+#: account/email/password_reset_key_message.html:26
+msgid ""
+"\n"
+"<p>In case you forgot, your e-mail is %(email)s.</p>\n"
+msgstr ""
+"\n"
+"<p>Ak ste zabudli, váš e-mail je %(email)s.</p>\n"
+
 #: account/email/password_reset_key_message.txt:4
 msgid ""
 "You're receiving this e-mail because you or someone else has requested a "
@@ -261,12 +301,11 @@ msgid ""
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
-"Tento e-mail jste obdrželi, protože jste vy nebo někdo jiný požádal o "
-"heslo k vašemu uživatelskému účtu Do práce na bicykli.\n"
-"Pokud jste nepožádali o resetování hesla, můžete jej bezpečně ignorovat. Klikněte na "
-"odkaz níže a heslo si resetujte."
+"Tento e-mail jste obdrželi, protože jste vy nebo někdo jiný požádal o heslo "
+"k vašemu uživatelskému účtu Do práce na bicykli.\n"
+"Pokud jste nepožádali o resetování hesla, můžete jej bezpečně ignorovat. "
+"Klikněte na odkaz níže a heslo si resetujte."
 
-#: account/email/password_reset_key_message.html:9
 #: account/email/password_reset_key_message.txt:9
 #, python-format
 msgid "In case you forgot, your e-mail is %(email)s."
