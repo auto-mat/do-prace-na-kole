@@ -2717,7 +2717,7 @@ class RegisterChallengeSerializer(serpy.Serializer):
         )
         payment = user_attendance.representative_payment
         # If organization coordinator allowed payment for user attendance
-        # and after that user attendance doesn't have assigned team (means
+        # and after that user attendance doesn't have assigned team (that means
         # existed assigned team is full), we must get organization ID from the
         # payment model description field where is organization coordinator
         # username information (to allow choose new subidiary and team in
