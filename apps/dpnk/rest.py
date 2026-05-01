@@ -4160,7 +4160,7 @@ class DataReportResults(CompanyAdminMixin, APIView):
                 base_url = settings.METABASE_DPNK_TACHOMETERS_RESULTS_DATA_REPORT_URL
                 url = concat_all(
                     base_url,
-                    "?username=",
+                    "?u%25C5%25BEivatelsk%25C3%25A9_jm%25C3%25A9no=",
                     username,
                 )
 
