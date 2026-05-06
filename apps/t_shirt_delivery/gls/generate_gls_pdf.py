@@ -13,7 +13,6 @@ from django.utils import timezone
 import requests
 
 from .mygls import MyGLS
-from ..tasks import update_subsidiary_box
 
 logger = logging.getLogger(__name__)
 
@@ -207,6 +206,8 @@ def generate_mygls_pdf_part(csv_file, batch, pdf_file):
         pdf_path=pdf_file,
     )
     datetime_after = timezone.datetime.now()
+
+    from t_shirt_delivery.tasks import update_subsidiary_box
 
     update_subsidiary_box.delay(
         print_from=datetime_before.timestamp(),
