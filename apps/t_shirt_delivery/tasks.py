@@ -43,6 +43,8 @@ logger = get_task_logger(__name__)
 
 @shared_task(bind=True)
 def update_dispatched_boxes(self):
+    from .models import SubsidiaryBox
+
     my_env = os.environ.copy()
     my_env["password"] = settings.GLS_PASSWORD
     my_env["username"] = settings.GLS_USERNAME
@@ -65,6 +67,8 @@ def update_dispatched_boxes(self):
 
 @shared_task(bind=True)
 def delivery_batch_generate_pdf(self, ids):
+    from .models import DeliveryBatch
+
     batches = DeliveryBatch.objects.filter(pk__in=ids)
     for batch in batches:
         batch.submit_gls_order_pdf()
@@ -91,6 +95,8 @@ def save_filefield(filefield, directory):
 
 @shared_task(bind=True)
 def create_batch(self, campaign_slug, ids):
+    from .models import DeliveryBatch
+
     delivery_batch = DeliveryBatch()
     delivery_batch.campaign = Campaign.objects.get(slug=campaign_slug)
     delivery_batch.add_packages_on_save = False
@@ -103,6 +109,8 @@ def create_batch(self, campaign_slug, ids):
 
 @shared_task(bind=True)
 def delivery_batch_generate_pdf_for_opt(self, ids):
+    from .models import DeliveryBatch
+
     batches = DeliveryBatch.objects.filter(pk__in=ids)
     for batch in batches:
         subprocess.call(["rm", "tmp_pdf/", "-r"])
@@ -162,6 +170,8 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
 
     :return None
     """
+    from .models import SubsidiaryBox
+
     campaign = Campaign.objects.filter(slug=campaign_slug)
     if campaign:
         campaign = campaign[0]
