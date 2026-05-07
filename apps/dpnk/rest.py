@@ -2595,6 +2595,12 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
     is_payment_with_reward = serpy.MethodField()
 
     def get_is_payment_with_reward(self, obj):
+        def discount_coupon_with_reward(user_attendance):
+            if "NRWD" in obj.discount_coupon.name():
+                return False
+            else:
+                return True
+
         payment = obj.representative_payment
         if payment:
             if payment.pay_category == "entry_fee-donation":
@@ -2605,14 +2611,13 @@ class UserAttendancePaymentWithRewardSerializer(serpy.Serializer):
                 entry_fee = payment.amount
             if payment.pay_subject:
                 if payment.pay_subject == "voucher" and obj.discount_coupon:
-                    if "NOREWARD" in obj.discount_coupon.name():
-                        return False
-                    else:
-                        return True
+                    return discount_coupon_with_reward(user_attendance=obj)
                 return is_payment_with_reward(
                     user_attendance=obj,
                     entry_fee=entry_fee,
                 )
+        if obj.discount_coupon:
+            return discount_coupon_with_reward(user_attendance=obj)
 
 
 class ThirdPartyVoucher(serpy.Serializer):
