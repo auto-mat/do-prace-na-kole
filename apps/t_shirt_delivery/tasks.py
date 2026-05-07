@@ -244,6 +244,7 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
             sub_box.status_code = box["status_code"]
             sub_box.status_description = box["status_description"]
             sub_box.status_datetime = box["status_datetime"]
+            sub_box.dispatched = True
 
             update_sub_boxes.append(sub_box)
 
@@ -255,6 +256,7 @@ def update_subsidiary_box(self, print_from=None, print_to=None, campaign_slug="d
             "status_code",
             "status_description",
             "status_datetime",
+            "dispatched",
         ],
     )
     logger.info("Updated subsidiary boxes was successful.")
