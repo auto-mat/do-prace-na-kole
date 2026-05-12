@@ -361,6 +361,21 @@ def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     else:
         instance.approved_for_team = "undecided"
 
+    if old and new:
+        team = Team.objects.get(pk=old)
+        all_members = team.all_members().exclude(id=instance.id)
+        # If not any others team members are approved for team,
+        # we must approve first undecided team member automatically
+        # to allow approve/deny other team members
+        if all(
+            member == "undecided"
+            for member in all_members.values_list("approved_for_team", flat=True)
+        ):
+            first_undecided_member = all_members.first()
+            if first_undecided_member:
+                first_undecided_member.approved_for_team = "approved"
+                first_undecided_member.save(update_fields=["approved_for_team"])
+
 
 def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     from .. import results
