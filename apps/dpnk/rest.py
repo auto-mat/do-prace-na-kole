@@ -1445,6 +1445,7 @@ class MyTeamSet(UserAttendanceMixin, viewsets.ModelViewSet):
 class CompetitionResultSerializer(serpy.Serializer):
     user_attendance = serpy.StrField(required=False)
     company = HyperlinkedField("company-detail")
+    subsidiary = HyperlinkedField("subsidiary-detail")
     place = serpy.IntField()
     name = serpy.StrField(attr="__str__", call=True)
     icon_url = RequestSpecificField(lambda a, b: "")

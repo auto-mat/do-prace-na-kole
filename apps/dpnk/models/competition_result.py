@@ -55,6 +55,14 @@ class CompetitionResult(models.Model):
         default=None,
         on_delete=models.CASCADE,
     )
+    subsidiary = models.ForeignKey(
+        Company,
+        related_name="subsidiary_results",
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.CASCADE,
+    )
     company = models.ForeignKey(
         Company,
         related_name="company_results",

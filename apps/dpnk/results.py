@@ -78,6 +78,17 @@ def _filter_query_company(competition):
     return filter_query
 
 
+def _filter_query_subsidiary(competition):
+    filter_query = {}
+    if competition.city:
+        cities = competition.city.all()
+        if cities:
+            filter_query["city__in"] = cities
+    if competition.company:
+        filter_query["company"] = competition.company
+    return filter_query
+
+
 def _get_competitors_without_admission(competition):
     if (
         competition.competitor_type == "single_user"
@@ -88,6 +99,8 @@ def _get_competitors_without_admission(competition):
         return Team.objects.filter(**_filter_query_team(competition))
     elif competition.competitor_type == "company":
         return Company.objects.filter(**_filter_query_company(competition))
+    elif competition.competitor_type == "subsidiary":
+        return Subsidiary.objects.filter(**_filter_query_subsidiary(competition))
 
 
 def get_competitors(competition):
@@ -346,6 +359,11 @@ def recalculate_result_competitor_nothread(user_attendance):
             recalculate_result(competition, user_attendance)
         elif competition.competitor_type == "company":
             recalculate_result(competition, user_attendance.company())
+        elif competition.competitor_type == "company":
+            recalculate_result(competition, user_attendance.company())
+        elif competition.competitor_type == "subsidiary":
+            if user_attendance.team:
+                recalculate_result(competition, user_attendance.team.subsidiary)
 
 
 def recalculate_result_competitor(user_attendance):
@@ -468,6 +486,36 @@ def recalculate_result(competition, competitor):  # noqa
 
         competition_result, created = CompetitionResult.objects.get_or_create(
             company=company, competition=competition
+        )
+
+        if competition.competition_type == "questionnaire":
+            competition_result.result = points_questionnaire(
+                user_attendances, competition
+            )
+        elif competition.competition_type == "length":
+            competition_result.result = get_userprofile_length(
+                user_attendances, competition
+            )
+        elif competition.competition_type == "frequency":
+            (
+                competition_result.result_divident,
+                competition_result.result_divisor,
+                competition_result.result,
+            ) = get_team_frequency(user_attendances, competition)
+
+    elif competition.competitor_type == "subsidiary":
+        subsidiary = competitor
+        user_attendances = UserAttendance.objects.filter(
+            team__subsidiary=subsidiary, campaign=competition.campaign
+        )
+        if not user_attendances:
+            CompetitionResult.objects.filter(
+                subsidiary=subsidiary, competition=competition
+            ).delete()
+            return
+
+        competition_result, created = CompetitionResult.objects.get_or_create(
+            subsidiary=subsidiary, competition=competition
         )
 
         if competition.competition_type == "questionnaire":
