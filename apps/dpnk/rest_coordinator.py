@@ -66,6 +66,7 @@ from .tasks import (
 from .views_mixins import ExportViewMixin
 from .util import (
     is_payment_with_reward,
+    rebuild_denorm_models,
     register_challenge_serializer_base_cache_key_name,
     Cache,
 )
@@ -178,7 +179,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                         code="nic",
                         campaign=company_admin.campaign,
                     )
-                    user_attendances.append(user)
+                user_attendances.append(user)
                 payment.amount = amount
                 entry_fee = payment.payu_ordered_product.get(
                     name__icontains="entry fee"
@@ -213,6 +214,7 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     user_attendances,
                     ["t_shirt_size"],
                 )
+                rebuild_denorm_models(models=user_attendances)
             return Response(
                 {
                     "message": _("Úspěšně schváleno {payments} plateb.").format(
@@ -284,6 +286,7 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
                     user_attendances,
                     ["t_shirt_size"],
                 )
+                rebuild_denorm_models(models=user_attendances)
             return Response(
                 {
                     "message": _("Úspěšně zamítnuto {payments} plateb.").format(
