@@ -16,6 +16,7 @@ from django.urls import reverse
 from dpnk.forms import FullTripForm
 from dpnk.models.phase import Phase
 from dpnk.models.trip import Trip
+from dpnk.util import rebuild_denorm_models
 
 from notifications.signals import notify
 
@@ -242,6 +243,10 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         if trip_form.is_valid():
             trip_form.save()
             stats["new_trips"] += 1
+            rebuild_denorm_models(
+                models=[user_attendance],
+                async_denorm_flush=True,
+            )
         else:
             logger.error("Form error:")
             logger.error(trip_form.errors)
