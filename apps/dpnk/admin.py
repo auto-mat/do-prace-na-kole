@@ -1393,6 +1393,7 @@ class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
         "id",
         "user_attendance",
         "team",
+        "subsidiary",
         "company",
         "result",
         "result_divident",

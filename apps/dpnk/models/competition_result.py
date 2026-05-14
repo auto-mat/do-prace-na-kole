@@ -212,7 +212,12 @@ class CompetitionResult(models.Model):
         return get_emissions(self.distance)
 
     def competitor_attr(
-        self, team_getter, company_getter, user_attendance_getter, default=""
+        self,
+        team_getter,
+        subsidiary_getter,
+        company_getter,
+        user_attendance_getter,
+        default="",
     ):
         if self.competition.competitor_type == "team":
             if self.team:
@@ -220,6 +225,9 @@ class CompetitionResult(models.Model):
         elif self.competition.competitor_type == "company":
             if self.company:
                 return company_getter(self.company)
+        elif self.competition.competitor_type == "subsidiary":
+            if self.subsidiary:
+                return subsidiary_getter(self.subsidiary)
         else:
             if self.user_attendance:
                 return user_attendance_getter(self.user_attendance)
@@ -235,6 +243,7 @@ class CompetitionResult(models.Model):
     def __str__(self):
         return self.competitor_attr(
             lambda team: "%s" % team.name,
+            lambda subsidiary: "%s" % subsidiary.name(),
             lambda company: "%s" % company.name,
             lambda user_attendance: "%s" % user_attendance.userprofile.name(),
         )
@@ -248,6 +257,8 @@ class CompetitionResult(models.Model):
             return [self.user_attendance]
         elif competition.competitor_type == "team":
             return self.team.members
+        elif competition.competitor_type == "subsidiary":
+            return UserAttendance.objects.filter(team__subsidiary=self.subsidiary)
         elif competition.competitor_type == "company":
             return UserAttendance.objects.filter(team__subsidiary__company=self.company)
 
