@@ -540,7 +540,10 @@ class TripDeserializer(TripBaseDeserializer):
             validated_data["user_attendance"] = self.user_attendance
             validated_data["from_application"] = True
             instance = Trip.objects.create(**validated_data)
-            rebuild_denorm_models([self.user_attendance])
+            rebuild_denorm_models(
+                models=[self.user_attendance],
+                async_denorm_flush=True,
+            )
         except ValidationError:
             raise GPXParsingFail
         except IntegrityError:

@@ -142,7 +142,9 @@ def format_psc(integer):
 
 
 # TODO: move this to denorm application
-def rebuild_denorm_models(models):
+def rebuild_denorm_models(models, async_denorm_flush=False):
+    from dpnk.tasks import flush_denorm
+
     for model in models:
         content_type = contenttypes.models.ContentType.objects.get_for_model(
             model.__class__
@@ -151,7 +153,10 @@ def rebuild_denorm_models(models):
             content_type=content_type,
             object_id=model.pk,
         )
-        denorm.flush()
+        if async_denorm_flush:
+            flush_denorm.delay()
+        else:
+            flush_denorm()
 
 
 def parse_date(date):
