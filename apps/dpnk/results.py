@@ -30,6 +30,7 @@ from .models import (
     Company,
     Competition,
     CompetitionResult,
+    Subsidiary,
     Team,
     Trip,
     UserAttendance,
