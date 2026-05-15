@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-21 12:38+0200\n"
+"POT-Creation-Date: 2026-05-15 09:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -161,92 +161,92 @@ msgstr ""
 msgid "Není vnitrofiremní soutěž?"
 msgstr ""
 
-#: dpnk/admin.py:550 dpnk/views/results_and_competitions.py:151
+#: dpnk/admin.py:551 dpnk/views/results_and_competitions.py:151
 #: dpnk/views_results.py:53
 msgid "Výsledky soutěže"
 msgstr ""
 
-#: dpnk/admin.py:564 dpnk/models/questionnaire.py:230
+#: dpnk/admin.py:565 dpnk/models/questionnaire.py:230
 msgid "Odpovědi"
 msgstr ""
 
-#: dpnk/admin.py:573 dpnk/models/competition.py:57
+#: dpnk/admin.py:574 dpnk/models/competition.py:57
 msgid "Dotazník"
 msgstr ""
 
-#: dpnk/admin.py:586 dpnk/views/results_and_competitions.py:677
+#: dpnk/admin.py:587 dpnk/views/results_and_competitions.py:677
 msgid "Losování"
 msgstr ""
 
-#: dpnk/admin.py:614
+#: dpnk/admin.py:615
 msgid "Není možné odstranit tým učastníkovi kampaně, který již zaplatil"
 msgstr ""
 
-#: dpnk/admin.py:753
+#: dpnk/admin.py:754
 msgid "Tento e-mail je již v systému použit."
 msgstr ""
 
-#: dpnk/admin.py:799
+#: dpnk/admin.py:800
 msgid "Nemá uživatelský profil?"
 msgstr ""
 
-#: dpnk/admin.py:816
+#: dpnk/admin.py:817
 msgid "Permissions"
 msgstr ""
 
-#: dpnk/admin.py:841
+#: dpnk/admin.py:842
 msgid "E-mail ověřen"
 msgstr ""
 
-#: dpnk/admin.py:929
+#: dpnk/admin.py:930
 msgid "Nemá přiřazené vouchery?"
 msgstr ""
 
-#: dpnk/admin.py:930
+#: dpnk/admin.py:931
 msgid "Nemá žádné cesty?"
 msgstr ""
 
-#: dpnk/admin.py:931
+#: dpnk/admin.py:932
 msgid "Uživatel nemá zvolený tým?"
 msgstr ""
 
-#: dpnk/admin.py:944
+#: dpnk/admin.py:945
 msgid "Datum realizace platby"
 msgstr ""
 
-#: dpnk/admin.py:947
+#: dpnk/admin.py:948
 msgid "Posílá se triko?"
 msgstr ""
 
-#: dpnk/admin.py:1014
+#: dpnk/admin.py:1015
 msgid "Uživatel"
 msgstr ""
 
-#: dpnk/admin.py:1102
+#: dpnk/admin.py:1103
 msgid "Členové"
 msgstr ""
 
-#: dpnk/admin.py:1254
+#: dpnk/admin.py:1255
 msgid "Spravovat otázky"
 msgstr ""
 
-#: dpnk/admin.py:1300
+#: dpnk/admin.py:1301
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: dpnk/admin.py:1601
+#: dpnk/admin.py:1603
 msgid "Nemá účast v kampani?"
 msgstr ""
 
-#: dpnk/admin.py:1673
+#: dpnk/admin.py:1675
 msgid "Nezaplacené faktury"
 msgstr ""
 
-#: dpnk/admin.py:1718
+#: dpnk/admin.py:1720
 msgid "Fakturoid faktura"
 msgstr ""
 
-#: dpnk/admin.py:1746
+#: dpnk/admin.py:1748
 msgid "Nemá účast v kampani"
 msgstr ""
 
@@ -534,7 +534,7 @@ msgstr ""
 msgid "Nedostatečné oprávnění"
 msgstr ""
 
-#: dpnk/company_admin_views.py:419 dpnk/rest.py:857
+#: dpnk/company_admin_views.py:419 dpnk/rest.py:861
 msgid "Překročen maximální počet soutěží pro organizaci."
 msgstr ""
 
@@ -1602,7 +1602,7 @@ msgstr ""
 msgid "Výkonnost"
 msgstr ""
 
-#: dpnk/models/competition.py:56 dpnk/models/competition_result.py:105
+#: dpnk/models/competition.py:56 dpnk/models/competition_result.py:113
 #: dpnk/models/diploma.py:18 dpnk/models/team_diploma.py:10
 #: dpnk/templates/dpnk/company.html:25 dpnk/templates/dpnk/diplomas.html:11
 #: dpnk/templates/dpnk/diplomas.html:35 dpnk/templates/dpnk/rides.html:48
@@ -1910,30 +1910,30 @@ msgstr ""
 msgid "Výsledky soutěží"
 msgstr ""
 
-#: dpnk/models/competition_result.py:74
+#: dpnk/models/competition_result.py:82
 msgid "Výsledek"
 msgstr ""
 
-#: dpnk/models/competition_result.py:83
+#: dpnk/models/competition_result.py:91
 msgid "Dělenec"
 msgstr ""
 
-#: dpnk/models/competition_result.py:89
+#: dpnk/models/competition_result.py:97
 msgid "Dělitel"
 msgstr ""
 
-#: dpnk/models/competition_result.py:95 dpnk/models/gpxfile.py:143
+#: dpnk/models/competition_result.py:103 dpnk/models/gpxfile.py:143
 #: dpnk/models/invoice.py:69 dpnk/models/trip.py:207
 #: dpnk/models/user_attendance.py:156
 msgid "Datum vytvoření"
 msgstr ""
 
-#: dpnk/models/competition_result.py:100 dpnk/models/gpxfile.py:148
+#: dpnk/models/competition_result.py:108 dpnk/models/gpxfile.py:148
 #: dpnk/models/trip.py:212 dpnk/models/user_attendance.py:161
 msgid "Datum poslední změny"
 msgstr ""
 
-#: dpnk/models/competition_result.py:111
+#: dpnk/models/competition_result.py:119
 msgid "Vzdalenost"
 msgstr ""
 
@@ -2999,107 +2999,111 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1354
+#: dpnk/rest.py:1358
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr ""
 
-#: dpnk/rest.py:1365
+#: dpnk/rest.py:1369
 #, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
 "tým."
 msgstr ""
 
-#: dpnk/rest.py:1386
+#: dpnk/rest.py:1390
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
 "ID <%(user_attendance_id)s> není členem vašeho týmu."
 msgstr ""
 
-#: dpnk/rest.py:1416
+#: dpnk/rest.py:1420
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
 "hodnota <null>. Změnit tým není povoleno."
 msgstr ""
 
-#: dpnk/rest.py:1932
+#: dpnk/rest.py:1938
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: dpnk/rest.py:1934
+#: dpnk/rest.py:1940
 msgid "API limit vyčerpan."
 msgstr ""
 
-#: dpnk/rest.py:2270
+#: dpnk/rest.py:2276
 msgid ""
 "Tým se zadaným názvem již v systému existuje, zkuste ten váš přejmenovat "
 "(systém umí rozeznat malá a velká písmena)."
 msgstr ""
 
-#: dpnk/rest.py:2474
+#: dpnk/rest.py:2480
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: dpnk/rest.py:2498
+#: dpnk/rest.py:2504
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis "
 "<%(signature)s>."
 msgstr ""
 
-#: dpnk/rest.py:2527
+#: dpnk/rest.py:2533
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2563
+#: dpnk/rest.py:2569
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav "
 "<%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2576
+#: dpnk/rest.py:2582
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:3290
+#: dpnk/rest.py:3325
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3311
+#: dpnk/rest.py:3346
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr ""
 
-#: dpnk/rest.py:3323
+#: dpnk/rest.py:3358
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
 
-#: dpnk/rest.py:3852
+#: dpnk/rest.py:3376
+msgid "Změna týmu není aktuálně povolena."
+msgstr ""
+
+#: dpnk/rest.py:3901
 #, python-format
 msgid "ID aplikace <%(app_id)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3904
+#: dpnk/rest.py:3953
 #, python-format
 msgid "Chybějící Strava API autorizační kód <%(code)s>."
 msgstr ""
 
-#: dpnk/rest.py:3948
+#: dpnk/rest.py:3997
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3962
+#: dpnk/rest.py:4011
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
 msgstr ""
@@ -3124,35 +3128,35 @@ msgstr ""
 msgid "Neplatné uživatelské jméno nebo heslo."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:86
+#: dpnk/rest_coordinator.py:88
 msgid "Uživatel není správcem společnosti."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:91
+#: dpnk/rest_coordinator.py:93
 msgid "Nelze smazat tým s aktivními členy."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:97
+#: dpnk/rest_coordinator.py:99
 msgid "Správce společnosti není účastníkem aktuální výzvy."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:217
+#: dpnk/rest_coordinator.py:220
 #, python-brace-format
 msgid "Úspěšně schváleno {payments} plateb."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:288
+#: dpnk/rest_coordinator.py:292
 #, python-brace-format
 msgid "Úspěšně zamítnuto {payments} plateb."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:1077
+#: dpnk/rest_coordinator.py:1088
 msgid ""
 "Tým je plný. Schválení do aktuálního týmu bylo zamítnuto. Vytvořte si nový "
 "tým nebo si změňte aktuální tým."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:1108
+#: dpnk/rest_coordinator.py:1119
 msgid "Schválení do aktuálního týmu bylo úspěšné."
 msgstr ""
 
@@ -4531,7 +4535,7 @@ msgstr ""
 msgid "Města které koordinujete"
 msgstr ""
 
-#: dpnk/util.py:161
+#: dpnk/util.py:166
 msgid "Datum není platné."
 msgstr ""
 
