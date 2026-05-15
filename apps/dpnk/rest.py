@@ -3362,6 +3362,20 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
             )
         return email
 
+    def validate_team_id(self, team_id):
+        campaign = Campaign.objects.get(
+            slug=self.context["request"].subdomain,
+        )
+        registration_phase = campaign.phase(phase_type="registration")
+        competition_phase = campaign.phase(phase_type="competition")
+
+        if (
+            registration_phase.date_to == competition_phase.date_to
+            and timezone.datetime.now().date() > competition_phase.date_to
+        ):
+            raise serializers.ValidationError(_("Změna týmu není aktuálně povolena."))
+        return team_id
+
     def get_payment_status(self, obj):
         ua = obj.get("user_attendance")
         return self._empty_string if not ua else ua.payment_status
