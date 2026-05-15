@@ -26,6 +26,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from .company import Company
+from .subsidiary import Subsidiary
 from .team import Team
 from .user_attendance import UserAttendance
 from .util import disable_for_loaddata
@@ -56,7 +57,7 @@ class CompetitionResult(models.Model):
         on_delete=models.CASCADE,
     )
     subsidiary = models.ForeignKey(
-        Company,
+        Subsidiary,
         related_name="subsidiary_results",
         null=True,
         blank=True,
