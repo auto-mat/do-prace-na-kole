@@ -163,7 +163,6 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
 
             approved_count = 0
             payments = []
-            payu_ordered_products = []
             user_attendances = []
             for user in users:
                 payment = user.representative_payment
@@ -181,11 +180,6 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
                     )
                 user_attendances.append(user)
                 payment.amount = amount
-                entry_fee = payment.payu_ordered_product.get(
-                    name__icontains="entry fee"
-                )
-                entry_fee.unit_price = amount
-                payu_ordered_products.append(entry_fee)
                 payment.description = (
                     payment.description
                     + "\nFA %s odsouhlasil dne %s"
@@ -204,10 +198,6 @@ class ApprovePaymentsView(APIView, CompanyAdminMixin):
             Payment.objects.bulk_update(
                 payments,
                 ["status", "amount", "description"],
-            )
-            PayUOrderedProduct.objects.bulk_update(
-                payu_ordered_products,
-                ["unit_price"],
             )
             if user_attendances:
                 UserAttendance.objects.bulk_update(
@@ -254,7 +244,6 @@ class DisapprovePaymentsView(APIView, CompanyAdminMixin):
 
             disapproved_count = 0
             payments = []
-            payu_ordered_products = []
             user_attendances = []
             for user in users:
                 payment = user.representative_payment
