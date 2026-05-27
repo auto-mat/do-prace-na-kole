@@ -264,16 +264,37 @@ def get_working_trips_count_without_minimum(
         day = util.today()
     non_working_days = util.non_working_days(competition, day)
     working_days = util.working_days(competition, day)
+
+    if isinstance(competition, models.Phase):
+        trips_in_non_working_day_query = {
+            "user_attendance": user_attendance,
+            "commute_mode__does_count": True,
+            "date__in": non_working_days,
+        }
+        non_working_rides_in_working_day_query = {
+            "user_attendance": user_attendance,
+            "commute_mode__does_count": False,
+            "date__in": working_days,
+            "direction__in": ("trip_to", "trip_from"),
+        }
+    else:
+        trips_in_non_working_day_query = {
+            "user_attendance": user_attendance,
+            "commute_mode__in": competition.commute_modes.all(),
+            "date__in": non_working_days,
+        }
+        non_working_rides_in_working_day_query = {
+            "user_attendance": user_attendance,
+            "commute_mode__in": competition.commute_modes.all(),
+            "date__in": working_days,
+            "direction__in": ("trip_to", "trip_from"),
+        }
+
     trips_in_non_working_day = Trip.objects.filter(
-        user_attendance=user_attendance,
-        commute_mode__does_count=True,
-        date__in=non_working_days,
+        **trips_in_non_working_day_query
     ).count()
     non_working_rides_in_working_day = Trip.objects.filter(
-        user_attendance=user_attendance,
-        commute_mode__does_count=False,
-        date__in=working_days,
-        direction__in=("trip_to", "trip_from"),
+        **non_working_rides_in_working_day_query
     ).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = (
