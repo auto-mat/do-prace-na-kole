@@ -655,7 +655,7 @@ def test_get_userprofile_frequency(ua1, ua2, campaign, results_trips, may_fifth)
     assert result == 2
 
     result = results.get_working_trips_count(ua1, competition)
-    assert result == 47
+    assert result == 49
 
     result = results.get_working_trips_count(ua2, competition)
     assert result == 48
@@ -664,10 +664,10 @@ def test_get_userprofile_frequency(ua1, ua2, campaign, results_trips, may_fifth)
     assert result == 95
 
     result = results.get_userprofile_frequency(ua1, competition)
-    assert result == (2, 47, 2 / 47.0)
+    assert result == (2, 49, 2 / 49.0)
 
     result = results.get_team_frequency(ua1.team.members, competition)
-    assert result == (2, 95, 2 / 95.0)
+    assert result == (2, 97, 2 / 97.0)
 
 
 def test_get_userprofile_length_by_foot(ua1, campaign, results_trips, may_fifth):
