@@ -593,7 +593,10 @@ class TripsDeserializer(serializers.Serializer):
                     defaults=trip,
                 )
                 instances["trips"].append(instance)
-                rebuild_denorm_models([self.user_attendance])
+                rebuild_denorm_models(
+                    [self.user_attendance],
+                    async_denorm_flush=True,
+                )
         except ValidationError:
             raise GPXParsingFail
         except IntegrityError:
@@ -670,7 +673,10 @@ class TripUpdateDeserializer(TripDeserializer):
             )
             instance.from_application = True
             instance.save()
-            rebuild_denorm_models([self.user_attendance])
+            rebuild_denorm_models(
+                [self.user_attendance],
+                async_denorm_flush=True,
+            )
         except ValidationError:
             raise GPXParsingFail
         return instance
