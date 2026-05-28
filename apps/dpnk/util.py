@@ -149,15 +149,14 @@ def rebuild_denorm_models(models, async_denorm_flush=False):
         content_type = contenttypes.models.ContentType.objects.get_for_model(
             model.__class__
         )
-        _, created = denorm.models.DirtyInstance.objects.get_or_create(
+        denorm.models.DirtyInstance.objects.create(
             content_type=content_type,
             object_id=model.pk,
         )
-        if created:
-            if async_denorm_flush:
-                flush_denorm.delay()
-            else:
-                flush_denorm()
+        if async_denorm_flush:
+            flush_denorm.delay()
+        else:
+            flush_denorm()
 
 
 def parse_date(date):
