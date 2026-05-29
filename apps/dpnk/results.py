@@ -28,6 +28,7 @@ from .models import (
     Choice,
     City,
     Company,
+    CommuteMode,
     Competition,
     CompetitionResult,
     Subsidiary,
@@ -233,7 +234,7 @@ def get_trips(user_attendances, competition, day=None, recreational=False):
         )
     else:
         trip_query = trip_query.filter(
-            commute_mode__in=competition.commute_modes.all().exclude(slug="no_work")
+            commute_mode__in=competition.commute_modes.all(),
         )
         if competition.recreational:
             recreational = True
@@ -282,12 +283,15 @@ def get_working_trips_count_without_minimum(
     else:
         trips_in_non_working_day_query = {
             "user_attendance": user_attendance,
-            "commute_mode__in": competition.commute_modes.all().exclude(slug="no_work"),
+            "commute_mode__in": competition.commute_modes.all(),
             "date__in": non_working_days,
         }
+        commute_modes = CommuteMode.objects.exclude(
+            id__in=[competition.commute_modes.all().values_list("id", flat=True)]
+        )
         non_working_rides_in_working_day_query = {
             "user_attendance": user_attendance,
-            "commute_mode__in": competition.commute_modes.filter(slug="no_work"),
+            "commute_mode__in": commute_modes,
             "date__in": working_days,
             "direction__in": ("trip_to", "trip_from"),
         }
