@@ -3376,7 +3376,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         competition_phase = campaign.phase(phase_type="competition")
 
         if (
-            registration_phase.date_to == competition_phase.date_to
+            (registration_phase and competition_phase)
+            and registration_phase.date_to == competition_phase.date_to
             and timezone.datetime.now().date() > competition_phase.date_to
         ):
             raise serializers.ValidationError(_("Změna týmu není aktuálně povolena."))
