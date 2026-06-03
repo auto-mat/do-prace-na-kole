@@ -387,8 +387,6 @@ def recalculate_result_competitor_nothread(user_attendance):
             recalculate_result(competition, user_attendance)
         elif competition.competitor_type == "company":
             recalculate_result(competition, user_attendance.company())
-        elif competition.competitor_type == "company":
-            recalculate_result(competition, user_attendance.company())
         elif competition.competitor_type == "subsidiary":
             if user_attendance.team:
                 recalculate_result(competition, user_attendance.team.subsidiary)
