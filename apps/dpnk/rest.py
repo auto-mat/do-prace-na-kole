@@ -3496,6 +3496,27 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
         userprofile = get_object_or_404(UserProfile.objects.all(), pk=pk)
         self.check_object_permissions(request, userprofile)
         request_data = request.data.copy()
+        campaign = Campaign.objects.get(
+            slug=request.subdomain,
+        )
+        # Disable update some fields after campaign entry enabled phase end
+        entry_enabled_phase = campaign.phase(phase_type="entry_enabled")
+        if (
+            entry_enabled_phase
+            and timezone.datetime.now().date() > entry_enabled_phase.date_to
+        ):
+            for field in (
+                "email",
+                "nickname",
+                "sex",
+                "newsletter",
+                "telephone",
+                "telephone_opt_in",
+            ):
+                if field in request_data:
+                    return Response(
+                        status=status.HTTP_405_METHOD_NOT_ALLOWED,
+                    )
         serializer = self.get_serializer(
             UserProfile.objects.get(id=pk),
             data=request_data,
