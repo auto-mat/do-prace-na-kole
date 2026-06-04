@@ -3514,9 +3514,11 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
                 "telephone_opt_in",
             ):
                 if field in request_data:
-                    return Response(
-                        status=status.HTTP_405_METHOD_NOT_ALLOWED,
+                    validation_error = serializers.ValidationError(
+                        _("Aktualizace není povolena."),
                     )
+                    validation_error.status_code = status.HTTP_405_METHOD_NOT_ALLOWED
+                    raise validation_error
         serializer = self.get_serializer(
             UserProfile.objects.get(id=pk),
             data=request_data,
