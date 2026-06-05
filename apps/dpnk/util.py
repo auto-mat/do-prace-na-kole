@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import datetime
+import decimal
 import logging
 from operator import attrgetter
 from itertools import tee
@@ -323,4 +324,29 @@ def is_payment_with_reward(user_attendance, entry_fee):
             )
         )
         else False
+    )
+
+
+def decimal_round(number, decimal_precision="1", rounding=decimal.ROUND_HALF_UP):
+    """Decimal rounding
+
+    Round issue with standard round() func:
+
+    In [47]: round(56.5)
+    Out[47]: 56
+
+    In [48]: Decimal("56.5").quantize(Decimal(1), rounding=ROUND_HALF_UP)
+    Out[48]: Decimal('57')
+
+    :param int|float number: input number
+    :param str decimal: defines the required precision,
+                        default value is 1 (without decimal point)
+    :param str rounding: specifies how to round the number,
+                         default values is ROUND_HALF_UP
+                         (normal rounding 1.25 to 1.3)
+
+    :return Decimal: rounded decimal number
+    """
+    return decimal.Decimal(number).quantize(
+        decimal.Decimal(decimal_precision), rounding=rounding
     )

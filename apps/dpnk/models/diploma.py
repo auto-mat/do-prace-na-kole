@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from smmapdfs.model_abcs import PdfSandwichABC, PdfSandwichFieldABC
 
+from ..util import decimal_round
+
 
 class DiplomaField(PdfSandwichFieldABC):
     fields = {
@@ -16,18 +18,27 @@ class DiplomaField(PdfSandwichFieldABC):
         _("Jméno v plném změní"): (lambda ua: ua.name_for_trusted()),
         _("Jméno vokativ"): (lambda ua: ua.name(cs_vokativ=True)),
         _("Pravidelnost"): (
-            lambda ua: "{0:d}%".format(int(round(ua.get_frequency_percentage())))
+            lambda ua: "{0:d}%".format(
+                int(decimal_round(ua.get_frequency_percentage()))
+            )
         ),
-        _("Újetých kilometrů"): (lambda ua: str(round(ua.trip_length_total_rounded()))),
+        _("Újetých kilometrů"): (
+            lambda ua: str(decimal_round(ua.trip_length_total_rounded()))
+        ),
         _("Újetych kilometrů vč. výlety"): (
-            lambda ua: str(round(ua.trip_length_total_including_recreational_rounded()))
+            lambda ua: str(
+                decimal_round(ua.trip_length_total_including_recreational_rounded())
+            )
         ),
         _("Ušetřeno oxidu uhličitého"): (
             lambda ua: intcomma(ua.get_emissions()["co2"]) + " CO2"
         ),
         _("Počet eko cest"): (lambda ua: intcomma(ua.get_rides_count_denorm)),
         _("Pravidelnost týmu"): (
-            lambda ua: (intcomma(round(ua.team.get_frequency_percentage(), 2)) + "%")
+            lambda ua: (
+                intcomma(decimal_round(ua.team.get_frequency_percentage(), "0.01"))
+                + "%"
+            )
             if ua.team
             else ""
         ),
