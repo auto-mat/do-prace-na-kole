@@ -31,7 +31,7 @@ import django.conf.locale
 from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
 from celery.schedules import crontab
@@ -789,7 +789,7 @@ AVATAR_PROVIDERS = (
 
 def photologue_path(instance, filename):
     fn = (
-        unicodedata.normalize("NFKD", force_text(filename))
+        unicodedata.normalize("NFKD", force_str(filename))
         .encode("ascii", "ignore")
         .decode("ascii")
     )
