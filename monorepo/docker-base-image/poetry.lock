@@ -2087,12 +2087,17 @@ description = "Adds time limited price levels to your model."
 optional = false
 python-versions = "*"
 groups = ["main"]
-files = [
-    {file = "django-price-level-1.0.0.tar.gz", hash = "sha256:c26dfb3358717974159cdc949e665cc18a42376311f960f71fa287988ded9963"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 django-model-utils = ">=2.0"
+
+[package.source]
+type = "git"
+url = "https://github.com/auto-mat/django-price-level.git"
+reference = "compatibility-with-django-5"
+resolved_reference = "2f32633b25587b35b48ed03780bdd8f77f413370"
 
 [[package]]
 name = "django-rank-query"
@@ -6348,4 +6353,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "a83bf1ab9400496165bd03c26ac2f2027cddfa5d93993d018f6983244f38dffa"
+content-hash = "d3d14c8431be43cc4362dd42298b7e3c5df19b3d4657b2978711b7559a7ad8ba"
