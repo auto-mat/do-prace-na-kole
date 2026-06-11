@@ -23,7 +23,7 @@ from django.contrib.gis.db import models
 from django.db.models import Sum
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .company import Company
 from .subsidiary import Subsidiary

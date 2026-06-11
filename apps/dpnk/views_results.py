@@ -23,7 +23,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import Case, CharField, Q, Value, When
 from django.shortcuts import get_object_or_404
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateView, View
 
 from django_datatables_view.base_datatable_view import BaseDatatableView

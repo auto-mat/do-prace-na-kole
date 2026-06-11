@@ -22,7 +22,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from psc.models import PSC
 

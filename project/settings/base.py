@@ -32,7 +32,7 @@ from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from celery.schedules import crontab
 

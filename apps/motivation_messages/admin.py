@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import Q
 from django.utils.html import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from dpnk.models import CampaignType
 from import_export.admin import ImportExportMixin
 

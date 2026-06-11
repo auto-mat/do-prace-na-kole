@@ -26,7 +26,7 @@ from braces.views import LoginRequiredMixin
 
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormView
 
 from dpnk.views import RegistrationViewMixin

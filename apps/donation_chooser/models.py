@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 from django.utils.html import escape, format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from dpnk.models.trip import Trip, distance_all_modes
 from redactor.widgets import RedactorEditor
 

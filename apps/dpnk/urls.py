@@ -20,7 +20,7 @@
 from django.conf.urls import url, include
 from django.urls import path, re_path
 from django.contrib.auth import views as django_views
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from . import auth
 from . import company_admin_views

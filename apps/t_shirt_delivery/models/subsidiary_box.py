@@ -25,7 +25,7 @@ from django.db.models import Case, IntegerField, Sum, When
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from dpnk.models import UserAttendance
 
