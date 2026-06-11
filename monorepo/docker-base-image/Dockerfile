@@ -1,4 +1,4 @@
-from python:3.9-bookworm
+from python:3.10-trixie
 
 maintainer Automat
 
