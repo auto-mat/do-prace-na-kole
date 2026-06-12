@@ -2351,8 +2351,8 @@ django-colorfield = "*"
 [package.source]
 type = "git"
 url = "https://git@github.com/auto-mat/smmapdfs.git"
-reference = "master"
-resolved_reference = "a14d52b0ea5ca5ffb9cbc426c2f2322a797685fe"
+reference = "compatibile-with-django-5"
+resolved_reference = "e12088f2316ea270fd57eef4486e60a2897ed172"
 
 [[package]]
 name = "django-softhyphen"
@@ -6342,4 +6342,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "a74bc0b5dee2ed17800be5f4a2d555de144aa3eeb7856dcfd4ba66bf4e874fd0"
+content-hash = "e3302f838ea7ce4f5be4dcb9700d71672bbb923e4f0a7f80a2df7e5d00b0ff8f"
