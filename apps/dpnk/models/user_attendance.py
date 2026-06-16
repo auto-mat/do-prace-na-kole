@@ -850,7 +850,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.trip_points_total or 0
 
     def points_display(self):
-        from django.utils.translation import ugettext as _
+        from django.utils.translation import gettext as _
 
         return str(round(self.points)) + " " + _("bodů")
 

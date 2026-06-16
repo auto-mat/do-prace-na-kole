@@ -127,7 +127,7 @@ class CommuteMode(models.Model):
 
     def points_display(self):
         if self.points > 0:
-            from django.utils.translation import ugettext as _
+            from django.utils.translation import gettext as _
 
             return str(round(self.points)) + " " + _("bodů")
         else:

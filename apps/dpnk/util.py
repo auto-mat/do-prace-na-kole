@@ -38,7 +38,7 @@ from django.db import connection, OperationalError, transaction
 from django.utils import timezone
 from django.utils.functional import cached_property, lazy
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 import geopy.distance
 
