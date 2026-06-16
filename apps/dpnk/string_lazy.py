@@ -17,19 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.utils import six  # Python 3 compatibility
 from django.utils.functional import lazy
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-mark_safe_lazy = lazy(mark_safe, six.text_type)
+mark_safe_lazy = lazy(mark_safe, str)
 
 
 def format_lazy(string, *args, **kwargs):
     return string.format(*args, **kwargs)
 
 
-format_lazy = lazy(format_lazy, six.text_type)
+format_lazy = lazy(format_lazy, str)
 
 
-format_html_lazy = lazy(format_html, six.text_type)
+format_html_lazy = lazy(format_html, str)

@@ -35,7 +35,7 @@ from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.db import connection, OperationalError, transaction
-from django.utils import timezone, six
+from django.utils import timezone
 from django.utils.functional import cached_property, lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
@@ -48,7 +48,7 @@ from . import exceptions
 
 logger = logging.getLogger(__name__)
 
-mark_safe_lazy = lazy(mark_safe, six.text_type)
+mark_safe_lazy = lazy(mark_safe, str)
 
 DAYS_EXCLUDE = (
     datetime.date(year=2016, day=5, month=7),
