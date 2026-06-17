@@ -141,6 +141,7 @@ drf-serpy = "^0.5.0"
 djangorestframework-simplejwt = "4.8.0"
 mygls-rest-client = {git = "https://github.com/auto-mat/mygls-python.git", rev = "fix-and-update-mygls-api"}
 ipython = "8.15"
+cached-property = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
