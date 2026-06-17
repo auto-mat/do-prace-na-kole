@@ -22,7 +22,7 @@ import datetime
 import babel
 
 from babel.dates import format_date
-from cache_utils.decorators import cached
+from cached_property import cached_property_with_ttl
 from colorfield.fields import ColorField
 from denorm import denormalized, depend_on_related
 
@@ -352,7 +352,7 @@ class Campaign(Pricable, models.Model):
     def possible_vacation_days(self):
         """Return days, that can be added as vacation"""
 
-        @cached(60)
+        @cached_property_with_ttl(60)
         def get_days(pk):
             competition_phase = self.competition_phase()
             return [
@@ -427,7 +427,7 @@ class Campaign(Pricable, models.Model):
         @phase_type Type of phase.
         """
 
-        @cached(60)
+        @cached_property_with_ttl(60)
         def get_phase(pk, phase_type):
             try:
                 return self.phase_set.get(phase_type=phase_type)
