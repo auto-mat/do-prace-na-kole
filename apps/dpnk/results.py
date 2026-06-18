@@ -339,13 +339,23 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
     return rides_count, working_trips_count, float(rides_count) / working_trips_count
 
 
-def get_userprofile_length(user_attendances, competition, recreational=False):
-    return (
-        get_trips(user_attendances, competition, recreational=recreational).aggregate(
-            Sum("distance")
-        )["distance__sum"]
-        or 0
-    )
+def get_userprofile_length(
+    user_attendances, competition, recreational=False, filter_by_commute_mode_slug=None
+):
+    if filter_by_commute_mode_slug:
+        return (
+            get_trips(user_attendances, competition, recreational=recreational)
+            .filter(commute_mode__slug__in=filter_by_commute_mode_slug)
+            .aggregate(Sum("distance"))["distance__sum"]
+            or 0
+        )
+    else:
+        return (
+            get_trips(
+                user_attendances, competition, recreational=recreational
+            ).aggregate(Sum("distance"))["distance__sum"]
+            or 0
+        )
 
 
 def get_userprofile_frequency(user_attendance, competition=None, day=None):

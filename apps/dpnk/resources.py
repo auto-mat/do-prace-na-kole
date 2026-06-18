@@ -7,6 +7,8 @@ from import_export import fields, resources
 from import_export.fields import Field
 
 from . import models
+from .results import get_userprofile_length
+from .util import decimal_round
 
 
 class CompanyResource(resources.ModelResource):
@@ -245,6 +247,44 @@ class UserAttendanceResource(resources.ModelResource):
         readonly=True, attribute="representative_payment__amount"
     )
     company_admin_emails = fields.Field(readonly=True, attribute="company_admin_emails")
+    sum_bicycle_km = fields.Field(column_name=_("Ujetých km na kole"), readonly=True)
+    sum_walk_km = fields.Field(column_name=_("Ujetých km pěšky"), readonly=True)
+    sum_bicycle_percent = fields.Field(
+        column_name=_("Ujetých % na kole"), readonly=True
+    )
+
+    def dehydrate_sum_bicycle_km(self, user_attendance):
+        return decimal_round(
+            get_userprofile_length(
+                [user_attendance],
+                user_attendance.campaign.phase("competition"),
+                filter_by_commute_mode_slug=["bicycle"],
+            ),
+            decimal_precision="0.01",
+        )
+
+    def dehydrate_sum_walk_km(self, user_attendance):
+        return decimal_round(
+            get_userprofile_length(
+                [user_attendance],
+                user_attendance.campaign.phase("competition"),
+                filter_by_commute_mode_slug=["by_foot"],
+            ),
+            decimal_precision="0.01",
+        )
+
+    def dehydrate_sum_bicycle_percent(self, user_attendance):
+        sum_length = get_userprofile_length(
+            [user_attendance], user_attendance.campaign.phase("competition")
+        )
+        sum_bicycle_length = get_userprofile_length(
+            [user_attendance],
+            user_attendance.campaign.phase("competition"),
+            filter_by_commute_mode_slug=["bicycle"],
+        )
+        return decimal_round(
+            (sum_bicycle_length / sum_length if sum_length else 0) * 100,
+        )
 
 
 class AnswerResource(resources.ModelResource):
