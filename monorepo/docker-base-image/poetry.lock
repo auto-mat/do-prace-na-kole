@@ -2007,7 +2007,7 @@ nose = ">=1.2.1"
 
 [[package]]
 name = "django-notifications-hq"
-version = "1.4.0"
+version = "1.9.0"
 description = "GitHub notifications alike app for Django."
 optional = false
 python-versions = "*"
@@ -2016,17 +2016,17 @@ files = []
 develop = false
 
 [package.dependencies]
-django = ">=1.7"
-django-model-utils = ">=2.0.3"
-jsonfield = ">=1.0.3"
-pytz = "*"
+django = ">=4.2,<5.3"
+django-model-utils = ">=3.1.0"
+jsonfield = ">=2.1.0"
+packaging = "*"
 swapper = "*"
 
 [package.source]
 type = "git"
-url = "https://github.com/auto-mat/django-notifications.git"
-reference = "list_all"
-resolved_reference = "c8112963271769e4c3c35d6ba4db45d597a962d2"
+url = "https://github.com/django-notifications/django-notifications.git"
+reference = "HEAD"
+resolved_reference = "4c44bcea2504d9a3fcd26366b232a13732a08f2a"
 
 [[package]]
 name = "django-nvd3"
@@ -6353,4 +6353,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "90c2db367570f9b1b15c03fcc975aec9b22ffd473672aca7ff5cc6626cdb4447"
+content-hash = "bc9c7794297d634882f075db7451239c3e69c8f4c628f4ac76b35e4796ea678e"
