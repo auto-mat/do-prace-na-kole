@@ -1,7 +1,7 @@
 import notifications.base.models as n
 
 
-class DpnkNotificationTemplate(n.AbstractNotificationTemplate):
-    class Meta(n.AbstractNotificationTemplate.Meta):
+class DpnkNotificationTemplate(n.AbstractNotification):
+    class Meta(n.AbstractNotification.Meta):
         abstract = False
         app_label = "dpnk"
