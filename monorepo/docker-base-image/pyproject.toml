@@ -14,7 +14,6 @@ Django = ">=2.2.6"
 django-import-export = "*"
 django-import-export-celery = {git = "https://github.com/auto-mat/django-import-export-celery.git", rev = "compatible_with_django_2_version"}
 django-autocomplete-light = {git = "https://github.com/auto-mat/django-autocomplete-light.git", rev = "jquery"}
-django-smart-selects = {git = "https://github.com/Murakam1/django-smart-selects.git", rev = "patch-1"}
 psycopg2 = "2.8.6"
 python-memcached = "*"
 django-chart-tools = "*"
@@ -142,6 +141,7 @@ djangorestframework-simplejwt = "4.8.0"
 mygls-rest-client = {git = "https://github.com/auto-mat/mygls-python.git", rev = "fix-and-update-mygls-api"}
 ipython = "8.15"
 cached-property = "^2.0.1"
+django-smart-selects = "^1.7.2"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
