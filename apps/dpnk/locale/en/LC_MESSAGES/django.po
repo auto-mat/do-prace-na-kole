@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 06:11+0200\n"
+"POT-Creation-Date: 2026-06-18 15:56+0200\n"
 "PO-Revision-Date: 2021-02-02 15:50+0100\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -379,23 +379,23 @@ msgstr "Amount"
 
 #: dpnk/company_admin_forms.py:62 dpnk/company_admin_forms.py:240
 #: dpnk/forms.py:338 dpnk/forms.py:1053 dpnk/models/city.py:37
-#: dpnk/models/diploma.py:11 dpnk/models/questionnaire.py:52
+#: dpnk/models/diploma.py:13 dpnk/models/questionnaire.py:52
 #: dpnk/models/questionnaire.py:108 dpnk/models/user_attendance.py:204
 #: dpnk/models/user_attendance.py:213 dpnk/models/voucher.py:150
-#: dpnk/resources.py:370 dpnk/templates/company_admin/competitions.html:7
+#: dpnk/resources.py:410 dpnk/templates/company_admin/competitions.html:7
 #: dpnk/templates/company_admin/select_users_pay_for.html:26
 #: dpnk/templates/dpnk/team_member_card.html:33
 msgid "Jméno"
 msgstr "Name"
 
 #: dpnk/company_admin_forms.py:63 dpnk/company_admin_forms.py:245
-#: dpnk/models/diploma.py:13 dpnk/resources.py:371
+#: dpnk/models/diploma.py:15 dpnk/resources.py:411
 #: dpnk/templates/company_admin/select_users_pay_for.html:27
 msgid "Příjmení"
 msgstr "Surname"
 
-#: dpnk/company_admin_forms.py:64 dpnk/models/diploma.py:14
-#: dpnk/models/user_profile.py:83 dpnk/resources.py:369
+#: dpnk/company_admin_forms.py:64 dpnk/models/diploma.py:16
+#: dpnk/models/user_profile.py:83 dpnk/resources.py:409
 #: dpnk/templates/company_admin/select_users_pay_for.html:28
 msgid "Přezdívka"
 msgstr "Nickname"
@@ -786,7 +786,7 @@ msgid "Adresa společnosti nebo pobočky"
 msgstr "Address of the company or its branch"
 
 #: dpnk/forms.py:382 dpnk/models/competition.py:442 dpnk/models/team.py:55
-#: dpnk/models/user_attendance.py:118 dpnk/resources.py:373
+#: dpnk/models/user_attendance.py:118 dpnk/resources.py:413
 #: dpnk/templates/dpnk/base_generic.html:70
 msgid "Tým"
 msgstr "Team"
@@ -1453,7 +1453,7 @@ msgid "Identifikátor"
 msgstr "Identifier"
 
 #: dpnk/models/commute_mode.py:43 dpnk/models/questionnaire.py:144
-#: dpnk/resources.py:376
+#: dpnk/resources.py:416
 msgid "Pořadí"
 msgstr "Order"
 
@@ -1549,7 +1549,7 @@ msgstr ""
 
 #: dpnk/models/company.py:54 dpnk/models/company.py:55
 #: dpnk/models/company.py:59 dpnk/models/invoice.py:131
-#: dpnk/models/transactions.py:251 dpnk/resources.py:374
+#: dpnk/models/transactions.py:251 dpnk/resources.py:414
 msgid "Organizace"
 msgstr "Organization"
 
@@ -1689,7 +1689,7 @@ msgid "Výkonnost"
 msgstr "Performance"
 
 #: dpnk/models/competition.py:56 dpnk/models/competition_result.py:114
-#: dpnk/models/diploma.py:18 dpnk/models/team_diploma.py:10
+#: dpnk/models/diploma.py:20 dpnk/models/team_diploma.py:10
 #: dpnk/templates/dpnk/company.html:25 dpnk/templates/dpnk/diplomas.html:11
 #: dpnk/templates/dpnk/diplomas.html:35 dpnk/templates/dpnk/rides.html:48
 #: dpnk/views/results_and_competitions.py:77
@@ -2048,47 +2048,47 @@ msgstr "Last change date"
 msgid "Vzdalenost"
 msgstr "Distance"
 
-#: dpnk/models/diploma.py:12
+#: dpnk/models/diploma.py:14
 msgid "Křestní jméno"
 msgstr "First name"
 
-#: dpnk/models/diploma.py:15
+#: dpnk/models/diploma.py:17
 msgid "Jméno a příjmení"
 msgstr "First and last name"
 
-#: dpnk/models/diploma.py:16
+#: dpnk/models/diploma.py:18
 msgid "Jméno v plném změní"
 msgstr "Full name"
 
-#: dpnk/models/diploma.py:17
+#: dpnk/models/diploma.py:19
 msgid "Jméno vokativ"
 msgstr "Name, vokativ (cs)"
 
-#: dpnk/models/diploma.py:21
+#: dpnk/models/diploma.py:25
 msgid "Újetých kilometrů"
 msgstr "Kilometers traveled"
 
-#: dpnk/models/diploma.py:22
+#: dpnk/models/diploma.py:28
 msgid "Újetych kilometrů vč. výlety"
 msgstr "Kilometers traveled incl. recreational trips"
 
-#: dpnk/models/diploma.py:25
+#: dpnk/models/diploma.py:33
 msgid "Ušetřeno oxidu uhličitého"
 msgstr "CO2 saved"
 
-#: dpnk/models/diploma.py:28
+#: dpnk/models/diploma.py:36
 msgid "Počet eko cest"
 msgstr "Number of low carbon trips"
 
-#: dpnk/models/diploma.py:29
+#: dpnk/models/diploma.py:37
 msgid "Pravidelnost týmu"
 msgstr "Team diligence"
 
-#: dpnk/models/diploma.py:34 dpnk/models/team.py:61
+#: dpnk/models/diploma.py:45 dpnk/models/team.py:61
 msgid "Název týmu"
 msgstr "Team name"
 
-#: dpnk/models/diploma.py:35 dpnk/models/team_diploma.py:12
+#: dpnk/models/diploma.py:46 dpnk/models/team_diploma.py:12
 msgid "Název firmy"
 msgstr "Company name"
 
@@ -2396,7 +2396,7 @@ msgstr "Type of comment"
 msgid "Povolit přílohu"
 msgstr "Allow attachment"
 
-#: dpnk/models/questionnaire.py:150 dpnk/resources.py:372
+#: dpnk/models/questionnaire.py:150 dpnk/resources.py:412
 msgid "Soutěž"
 msgstr "Competition"
 
@@ -2477,7 +2477,7 @@ msgstr ""
 msgid "Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho telefon"
 msgstr ""
 
-#: dpnk/models/team.py:68 dpnk/resources.py:375
+#: dpnk/models/team.py:68 dpnk/resources.py:415
 msgid "Pobočka"
 msgstr "Subsidiary"
 
@@ -3147,7 +3147,19 @@ msgstr ""
 msgid "Teaser image"
 msgstr ""
 
-#: dpnk/resources.py:329
+#: dpnk/resources.py:250
+msgid "Ujetých km na kole"
+msgstr "Kilometers traveled by bike"
+
+#: dpnk/resources.py:251
+msgid "Ujetých km pěšky"
+msgstr "Kilometers traveled by foot"
+
+#: dpnk/resources.py:253
+msgid "Ujetých % na kole"
+msgstr "Percent kilometers traveled by bike"
+
+#: dpnk/resources.py:369
 msgid "campaign_name"
 msgstr ""
 
@@ -3235,45 +3247,45 @@ msgstr ""
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr "Non-existent payment with order id <%(order_id)s>."
 
-#: dpnk/rest.py:3331
+#: dpnk/rest.py:3332
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr "Discount voucher <%(coupon)s> does not exists."
 
-#: dpnk/rest.py:3352
+#: dpnk/rest.py:3353
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr "Discount voucher <%(coupon)s> is invalid."
 
-#: dpnk/rest.py:3364
+#: dpnk/rest.py:3365
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr "Email address <%(email)s> exists. Use another email address, please."
 
-#: dpnk/rest.py:3383
+#: dpnk/rest.py:3384
 msgid "Změna týmu není aktuálně povolena."
 msgstr "Team changes are currently not allowed."
 
-#: dpnk/rest.py:3518
+#: dpnk/rest.py:3519
 msgid "Aktualizace není povolena."
 msgstr "Update is not allowed."
 
-#: dpnk/rest.py:3931
+#: dpnk/rest.py:3932
 #, python-format
 msgid "ID aplikace <%(app_id)s> neexistuje."
 msgstr "Application ID <%(app_id)s> does not exist."
 
-#: dpnk/rest.py:3983
+#: dpnk/rest.py:3984
 #, python-format
 msgid "Chybějící Strava API autorizační kód <%(code)s>."
 msgstr "Missing Strava API authorization code <%(code)s>."
 
-#: dpnk/rest.py:4027
+#: dpnk/rest.py:4028
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> neexistuje."
 msgstr "Strava user account <%(user)s> does not exist."
 
-#: dpnk/rest.py:4041
+#: dpnk/rest.py:4042
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
 msgstr "The user account <%(user)s> has been successfully deleted."
@@ -3291,14 +3303,14 @@ msgstr "Decode Authorization Basic header <%(auth_header)s> header failed."
 #: dpnk/rest_auth.py:41
 #, fuzzy
 #| msgid ""
-#| "Nesprávný formát Authorization Basic záhlaví. Použijte <username:"
-#| "password> formát, prosím."
+#| "Nesprávný formát Authorization Basic záhlaví. Použijte "
+#| "<username:password> formát, prosím."
 msgid ""
-"Nesprávný formát Authorization Basic záhlaví. Prosím použijte <username:"
-"password> formát."
+"Nesprávný formát Authorization Basic záhlaví. Prosím použijte "
+"<username:password> formát."
 msgstr ""
-"Incorrect format of Authorization Basic header. Please use <username:"
-"password> formát."
+"Incorrect format of Authorization Basic header. Please use "
+"<username:password> formát."
 
 #: dpnk/rest_auth.py:57
 msgid "Neplatné uživatelské jméno nebo heslo."
@@ -3357,9 +3369,10 @@ msgid ""
 "Došlo k chybě. O této události jsme dostali hlášení, takže se je možné, že "
 "se v tuto chvíli už pokoušíme problém opravit. Je také možné, že problém je "
 "pouze dočasný a za pár minut již vše bude fungovat správně. Pokud chyba "
-"přetrvává delší dobu, prosíme obraťte se na <a href='mailto:"
-"kontakt@dopracenakole.cz?subject=Chybová stránka'>kontakt@dopracenakole.cz</"
-"a> s podrobným popisem, jak tato chyba nastala."
+"přetrvává delší dobu, prosíme obraťte se na <a "
+"href='mailto:kontakt@dopracenakole.cz?subject=Chybová "
+"stránka'>kontakt@dopracenakole.cz</a> s podrobným popisem, jak tato chyba "
+"nastala."
 msgstr ""
 "System error occurred. We have been informed about this event, so it is "
 "possible, that we are solving the problem right now. It is also possible, "
@@ -4420,9 +4433,9 @@ msgstr ""
 "  </ul>\n"
 "  Routes are used to measure distance travel and help us better determine "
 "the needs of cyclists in your city.\n"
-"  <br/>You can see a heatmap of all trips on our map <a href=\"https://mapa."
-"prahounakole.cz/?zoom=13&lat=50.08741&lon=14.4211&layers=_Wgt\">Prahou na "
-"kole</a>.\n"
+"  <br/>You can see a heatmap of all trips on our map <a href=\"https://"
+"mapa.prahounakole.cz/?zoom=13&lat=50.08741&lon=14.4211&layers=_Wgt\">Prahou "
+"na kole</a>.\n"
 "\n"
 "  "
 
@@ -4439,13 +4452,13 @@ msgstr "More help"
 #| "  "
 msgid ""
 "\n"
-"  Chcete mluvit s živým člověkem? <a target='_blank' href=\"https://www."
-"dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
+"  Chcete mluvit s živým člověkem? <a target='_blank' href=\"https://"
+"www.dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
 "  "
 msgstr ""
 "\n"
-"Do you want to speak with a human being?  <a href=\"https://www."
-"dopracenakole.cz/en/contact\">call the helpdesk</a>.\n"
+"Do you want to speak with a human being?  <a href=\"https://"
+"www.dopracenakole.cz/en/contact\">call the helpdesk</a>.\n"
 "  "
 
 #: dpnk/templates/dpnk/landing.html:28
@@ -5046,7 +5059,7 @@ msgstr "Help"
 msgid "Města které koordinujete"
 msgstr ""
 
-#: dpnk/util.py:166
+#: dpnk/util.py:167
 msgid "Datum není platné."
 msgstr "Date not valid."
 
@@ -5476,18 +5489,18 @@ msgstr ""
 #| "soutěžit, staňte se firemním koordinátorem. </p><p>Pomáhejte kolegům ze "
 #| "svého týmu se všemi náležitostmi ohledně uhrazení startovného.</p><p>Vaší "
 #| "úlohou bude požádat zaměstnavatele, aby startovné za Váš tým uhradil. "
-#| "Poté zajistíte hromadnou platbu přes fakturu. <a href='http://www."
-#| "dopracenakole.cz/firemni-koordinator'>Jak na to?</a>.</p><p>Nezůstanete "
-#| "bez odměny. Těšit se můžete na vděk svých kolegů a <a href='http://www."
-#| "dopracenakole.cz/firemni-koordinator'>velkou moc</a>, se kterou přichází "
-#| "velká zodpovědost.</p>"
+#| "Poté zajistíte hromadnou platbu přes fakturu. <a href='http://"
+#| "www.dopracenakole.cz/firemni-koordinator'>Jak na to?</a>.</"
+#| "p><p>Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a <a "
+#| "href='http://www.dopracenakole.cz/firemni-koordinator'>velkou moc</a>, se "
+#| "kterou přichází velká zodpovědost.</p>"
 msgid ""
 "<p>Chcete se stát velitelem svého firemního týmu? Nemusíte aktivně soutěžit, "
 "staňte se firemním koordinátorem. </p><p>Pomáhejte kolegům ze svého týmu se "
 "všemi náležitostmi ohledně uhrazení startovného.</p><p>Vaší úlohou bude "
 "požádat zaměstnavatele, aby startovné za Váš tým uhradil. Poté zajistíte "
-"hromadnou platbu přes fakturu.<a target='_blank' href='http://www."
-"dopracenakole.cz/pro-firmy/firemni-koordinator'>Jak na to?</a>.</"
+"hromadnou platbu přes fakturu.<a target='_blank' href='http://"
+"www.dopracenakole.cz/pro-firmy/firemni-koordinator'>Jak na to?</a>.</"
 "p><p>Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a <a "
 "target='_blank' href='http://www.dopracenakole.cz/pro-firmy/firemni-"
 "koordinator'>velkou moc</a>, se kterou přichází velká zodpovědost.</p>"
@@ -5522,8 +5535,8 @@ msgstr "Team membership denied, <a href=\"%s\">choose a different team</a>"
 #, fuzzy, python-brace-format
 #| msgid ""
 #| "<b>Pořádek dělá přátele.</b><br/>Vaše platba ({payment_type}) je stále v "
-#| "řízení. Počkejte prosím na její schválení. Nebo si <a "
-#| "href=\"{url}\">vyberte jiný způsob platby</a>."
+#| "řízení. Počkejte prosím na její schválení. Nebo si <a href=\"{url}"
+#| "\">vyberte jiný způsob platby</a>."
 msgid ""
 "<p><b>Pořádek dělá přátele.</b><p/>Vaše platba ({payment_type}) je stále v "
 "řízení. Počkejte prosím, až ji váš firemní koordinátor schválí.Nebo si <a "
@@ -5755,9 +5768,8 @@ msgstr ""
 #~ "href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> "
 #~ "obnovu hesla</a>."
 #~ msgstr ""
-#~ "This e-mail address is already being used. If it is yours, <a "
-#~ "href='%(login)s'>log in</a> or <a href='%(password)s'>reset your "
-#~ "password</a>. "
+#~ "This e-mail address is already being used. If it is yours, <a href='%"
+#~ "(login)s'>log in</a> or <a href='%(password)s'>reset your password</a>. "
 
 #~ msgid ""
 #~ "Vyplňte pouze pokud má Vaše pobočka kromě vlastní adresy také své "
@@ -5819,17 +5831,16 @@ msgstr ""
 #~ "href=\"%s\">review their membership</a>."
 
 #~ msgid ""
-#~ "<b>Opusťte svoji pevnost osamění.</b><br/>Když <a "
-#~ "href=\"{invite_url}\">nepozvete parťáky do týmu</a>, zůstanete na ocet "
-#~ "s možností účastnit se pouze v soutěžích jednotlivců. Také se můžete <a "
-#~ "href=\"{join_team_url}\">přidat k jinému týmu</a>. Čím víc členů, tím víc "
-#~ "zábavy!"
+#~ "<b>Opusťte svoji pevnost osamění.</b><br/>Když <a href=\"{invite_url}"
+#~ "\">nepozvete parťáky do týmu</a>, zůstanete na ocet s možností účastnit "
+#~ "se pouze v soutěžích jednotlivců. Také se můžete <a href=\"{join_team_url}"
+#~ "\">přidat k jinému týmu</a>. Čím víc členů, tím víc zábavy!"
 #~ msgstr ""
-#~ "<b>Burn Your fortress of solitude.</b><br/><a "
-#~ "href=\"{invite_url}\">Invite other members to Your team</a>. If you fly "
-#~ "solo You will be able to participate only in individual competitions. You "
-#~ "can also <a href=\"{join_team_url}\">join another team</a>. The fun comes "
-#~ "with more team members!"
+#~ "<b>Burn Your fortress of solitude.</b><br/><a href=\"{invite_url}"
+#~ "\">Invite other members to Your team</a>. If you fly solo You will be "
+#~ "able to participate only in individual competitions. You can also <a "
+#~ "href=\"{join_team_url}\">join another team</a>. The fun comes with more "
+#~ "team members!"
 
 #~ msgid "Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!"
 #~ msgstr ""
@@ -5929,9 +5940,9 @@ msgstr ""
 
 #~ msgid ""
 #~ "\n"
-#~ "      Zatímco se budete těšit si prosím pořádně prohlédněte a <a "
-#~ "href=\"%(profile_url)s\">doplňte profil</a> a <a "
-#~ "href=\"%(invitation_url)s\">pozvěte kolegy do svého týmu</a>.\n"
+#~ "      Zatímco se budete těšit si prosím pořádně prohlédněte a <a href=\"%"
+#~ "(profile_url)s\">doplňte profil</a> a <a href=\"%"
+#~ "(invitation_url)s\">pozvěte kolegy do svého týmu</a>.\n"
 #~ "      "
 #~ msgstr ""
 #~ "\n"
@@ -5963,24 +5974,23 @@ msgstr ""
 #, fuzzy
 #~ msgid ""
 #~ "Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v "
-#~ "kategoriích určených pro jednotlivce! <ul><li><a "
-#~ "href=\"{invite_url}\">Pozvěte</a> své kolegy do Vašeho týmu, pokud jste "
-#~ "tak již učinil/a, vyčkejte na potvrzující e-mail a schvalte jejich "
-#~ "členství v týmu.</li><li>Můžete se pokusit <a "
-#~ "href=\"{join_team_url}\">přidat se k jinému týmu</a>.</li><li>Pokud "
-#~ "nemůžete sehnat spolupracovníky,  <a href=\"https://www.dopracenakole.cz/"
-#~ "locations/{city}/seznamka\" target=\"_blank\">najděte si cykloparťáka</a>."
-#~ "</li></ul>"
+#~ "kategoriích určených pro jednotlivce! <ul><li><a href=\"{invite_url}"
+#~ "\">Pozvěte</a> své kolegy do Vašeho týmu, pokud jste tak již učinil/a, "
+#~ "vyčkejte na potvrzující e-mail a schvalte jejich členství v týmu.</"
+#~ "li><li>Můžete se pokusit <a href=\"{join_team_url}\">přidat se k jinému "
+#~ "týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky,  <a "
+#~ "href=\"https://www.dopracenakole.cz/locations/{city}/seznamka\" "
+#~ "target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
 #~ msgstr ""
 #~ "You are alone in your team. This means that you will only be able to "
-#~ "participate in categories for individuals!<ul><li><a "
-#~ "href=\"{invite_url}\">Invite</a> your colleagues to your team and if "
-#~ "you've already done so, please wait for the confirmation e-mail and "
-#~ "approve your colleagues' membership.</li>\n"
+#~ "participate in categories for individuals!<ul><li><a href=\"{invite_url}"
+#~ "\">Invite</a> your colleagues to your team and if you've already done so, "
+#~ "please wait for the confirmation e-mail and approve your colleagues' "
+#~ "membership.</li>\n"
 #~ "<li>You can also try <a href=\"{join_team_url}\">to join another team</a>."
 #~ "</li>\n"
-#~ "<li>If you can't gather other team members, use <a href=\"https://www."
-#~ "dopracenakole.cz/locations/{city}/seznamka\" target=\"_blank\">the "
+#~ "<li>If you can't gather other team members, use <a href=\"https://"
+#~ "www.dopracenakole.cz/locations/{city}/seznamka\" target=\"_blank\">the "
 #~ "'lonely hearts'</a> section.</li></ul>"
 
 #~ msgid "Např.: „130 00“"
@@ -6034,9 +6044,8 @@ msgstr ""
 #~ "href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> "
 #~ "obnovu hesla</a>."
 #~ msgstr ""
-#~ "This e-mail address is already being used. If it is yours, <a "
-#~ "href='%(login)s'>log in</a> or use <a href='%(password)s'> password reset "
-#~ "</a>. "
+#~ "This e-mail address is already being used. If it is yours, <a href='%"
+#~ "(login)s'>log in</a> or use <a href='%(password)s'> password reset </a>. "
 
 #, fuzzy
 #~ msgid "Do vašeho týmu můžete pozvat ještě {} členů."
@@ -6154,9 +6163,9 @@ msgstr ""
 #, fuzzy
 #~ msgid ""
 #~ "Vaše platba typu {payment_type} ještě nebyla vyřízena. Počkejte prosím na "
-#~ "její schválení. Pokud schválení není možné, můžete <a "
-#~ "href=\"{url}\">zadat jiný typ platby</a>. Po schválení bude registrace "
-#~ "dokončena a my Vám tuto skutečnost potvrdíme e-mailem."
+#~ "její schválení. Pokud schválení není možné, můžete <a href=\"{url}"
+#~ "\">zadat jiný typ platby</a>. Po schválení bude registrace dokončena a my "
+#~ "Vám tuto skutečnost potvrdíme e-mailem."
 #~ msgstr ""
 #~ "Your {payment_type} payment is pending. Please wait for its approval. If "
 #~ "the approval is not possible, you can <a href=\"{url}\">enter another "
@@ -6332,9 +6341,9 @@ msgstr ""
 
 #~ msgid ""
 #~ "Následně vyčkejte, až se k vám někdo do týmu připojí (tato informace vám "
-#~ "přijde e-mailem, stav vašeho týmu můžete sledovat na <a "
-#~ "href=\"{}\">stránce se členy vašeho týmu</a>, tamtéž můžete i potvrdit "
-#~ "členství vašich kolegů)."
+#~ "přijde e-mailem, stav vašeho týmu můžete sledovat na <a href=\"{}"
+#~ "\">stránce se členy vašeho týmu</a>, tamtéž můžete i potvrdit členství "
+#~ "vašich kolegů)."
 #~ msgstr ""
 #~ "Then wait until someone joins your team (you will receive this "
 #~ "information via e-mail. You can follow the status of your team on <a "

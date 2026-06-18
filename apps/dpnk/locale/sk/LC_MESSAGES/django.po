@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 06:11+0200\n"
+"POT-Creation-Date: 2026-06-18 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -361,23 +361,23 @@ msgstr ""
 
 #: dpnk/company_admin_forms.py:62 dpnk/company_admin_forms.py:240
 #: dpnk/forms.py:338 dpnk/forms.py:1053 dpnk/models/city.py:37
-#: dpnk/models/diploma.py:11 dpnk/models/questionnaire.py:52
+#: dpnk/models/diploma.py:13 dpnk/models/questionnaire.py:52
 #: dpnk/models/questionnaire.py:108 dpnk/models/user_attendance.py:204
 #: dpnk/models/user_attendance.py:213 dpnk/models/voucher.py:150
-#: dpnk/resources.py:370 dpnk/templates/company_admin/competitions.html:7
+#: dpnk/resources.py:410 dpnk/templates/company_admin/competitions.html:7
 #: dpnk/templates/company_admin/select_users_pay_for.html:26
 #: dpnk/templates/dpnk/team_member_card.html:33
 msgid "Jméno"
 msgstr ""
 
 #: dpnk/company_admin_forms.py:63 dpnk/company_admin_forms.py:245
-#: dpnk/models/diploma.py:13 dpnk/resources.py:371
+#: dpnk/models/diploma.py:15 dpnk/resources.py:411
 #: dpnk/templates/company_admin/select_users_pay_for.html:27
 msgid "Příjmení"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:64 dpnk/models/diploma.py:14
-#: dpnk/models/user_profile.py:83 dpnk/resources.py:369
+#: dpnk/company_admin_forms.py:64 dpnk/models/diploma.py:16
+#: dpnk/models/user_profile.py:83 dpnk/resources.py:409
 #: dpnk/templates/company_admin/select_users_pay_for.html:28
 msgid "Přezdívka"
 msgstr ""
@@ -757,7 +757,7 @@ msgid "Adresa společnosti nebo pobočky"
 msgstr ""
 
 #: dpnk/forms.py:382 dpnk/models/competition.py:442 dpnk/models/team.py:55
-#: dpnk/models/user_attendance.py:118 dpnk/resources.py:373
+#: dpnk/models/user_attendance.py:118 dpnk/resources.py:413
 #: dpnk/templates/dpnk/base_generic.html:70
 msgid "Tým"
 msgstr ""
@@ -1386,7 +1386,7 @@ msgid "Identifikátor"
 msgstr ""
 
 #: dpnk/models/commute_mode.py:43 dpnk/models/questionnaire.py:144
-#: dpnk/resources.py:376
+#: dpnk/resources.py:416
 msgid "Pořadí"
 msgstr ""
 
@@ -1473,7 +1473,7 @@ msgstr ""
 
 #: dpnk/models/company.py:54 dpnk/models/company.py:55
 #: dpnk/models/company.py:59 dpnk/models/invoice.py:131
-#: dpnk/models/transactions.py:251 dpnk/resources.py:374
+#: dpnk/models/transactions.py:251 dpnk/resources.py:414
 msgid "Organizace"
 msgstr ""
 
@@ -1603,7 +1603,7 @@ msgid "Výkonnost"
 msgstr ""
 
 #: dpnk/models/competition.py:56 dpnk/models/competition_result.py:114
-#: dpnk/models/diploma.py:18 dpnk/models/team_diploma.py:10
+#: dpnk/models/diploma.py:20 dpnk/models/team_diploma.py:10
 #: dpnk/templates/dpnk/company.html:25 dpnk/templates/dpnk/diplomas.html:11
 #: dpnk/templates/dpnk/diplomas.html:35 dpnk/templates/dpnk/rides.html:48
 #: dpnk/views/results_and_competitions.py:77
@@ -1937,47 +1937,47 @@ msgstr ""
 msgid "Vzdalenost"
 msgstr ""
 
-#: dpnk/models/diploma.py:12
+#: dpnk/models/diploma.py:14
 msgid "Křestní jméno"
 msgstr ""
 
-#: dpnk/models/diploma.py:15
+#: dpnk/models/diploma.py:17
 msgid "Jméno a příjmení"
 msgstr ""
 
-#: dpnk/models/diploma.py:16
+#: dpnk/models/diploma.py:18
 msgid "Jméno v plném změní"
 msgstr ""
 
-#: dpnk/models/diploma.py:17
+#: dpnk/models/diploma.py:19
 msgid "Jméno vokativ"
 msgstr ""
 
-#: dpnk/models/diploma.py:21
+#: dpnk/models/diploma.py:25
 msgid "Újetých kilometrů"
 msgstr ""
 
-#: dpnk/models/diploma.py:22
+#: dpnk/models/diploma.py:28
 msgid "Újetych kilometrů vč. výlety"
 msgstr ""
 
-#: dpnk/models/diploma.py:25
+#: dpnk/models/diploma.py:33
 msgid "Ušetřeno oxidu uhličitého"
 msgstr ""
 
-#: dpnk/models/diploma.py:28
+#: dpnk/models/diploma.py:36
 msgid "Počet eko cest"
 msgstr ""
 
-#: dpnk/models/diploma.py:29
+#: dpnk/models/diploma.py:37
 msgid "Pravidelnost týmu"
 msgstr ""
 
-#: dpnk/models/diploma.py:34 dpnk/models/team.py:61
+#: dpnk/models/diploma.py:45 dpnk/models/team.py:61
 msgid "Název týmu"
 msgstr ""
 
-#: dpnk/models/diploma.py:35 dpnk/models/team_diploma.py:12
+#: dpnk/models/diploma.py:46 dpnk/models/team_diploma.py:12
 msgid "Název firmy"
 msgstr ""
 
@@ -2283,7 +2283,7 @@ msgstr ""
 msgid "Povolit přílohu"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:150 dpnk/resources.py:372
+#: dpnk/models/questionnaire.py:150 dpnk/resources.py:412
 msgid "Soutěž"
 msgstr ""
 
@@ -2361,7 +2361,7 @@ msgstr ""
 msgid "Pokud vyplňujete adresáta krabice, vyplňte prosím i jeho telefon"
 msgstr ""
 
-#: dpnk/models/team.py:68 dpnk/resources.py:375
+#: dpnk/models/team.py:68 dpnk/resources.py:415
 msgid "Pobočka"
 msgstr ""
 
@@ -2995,7 +2995,19 @@ msgstr ""
 msgid "Teaser image"
 msgstr ""
 
-#: dpnk/resources.py:329
+#: dpnk/resources.py:250
+msgid "Ujetých km na kole"
+msgstr ""
+
+#: dpnk/resources.py:251
+msgid "Ujetých km pěšky"
+msgstr ""
+
+#: dpnk/resources.py:253
+msgid "Ujetých % na kole"
+msgstr ""
+
+#: dpnk/resources.py:369
 msgid "campaign_name"
 msgstr ""
 
@@ -3069,45 +3081,45 @@ msgstr ""
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:3331
+#: dpnk/rest.py:3332
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3352
+#: dpnk/rest.py:3353
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr ""
 
-#: dpnk/rest.py:3364
+#: dpnk/rest.py:3365
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
 
-#: dpnk/rest.py:3383
+#: dpnk/rest.py:3384
 msgid "Změna týmu není aktuálně povolena."
 msgstr ""
 
-#: dpnk/rest.py:3518
+#: dpnk/rest.py:3519
 msgid "Aktualizace není povolena."
 msgstr "Aktualizácia nie je povolená."
 
-#: dpnk/rest.py:3931
+#: dpnk/rest.py:3932
 #, python-format
 msgid "ID aplikace <%(app_id)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3983
+#: dpnk/rest.py:3984
 #, python-format
 msgid "Chybějící Strava API autorizační kód <%(code)s>."
 msgstr ""
 
-#: dpnk/rest.py:4027
+#: dpnk/rest.py:4028
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:4041
+#: dpnk/rest.py:4042
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
 msgstr ""
@@ -3124,8 +3136,8 @@ msgstr ""
 
 #: dpnk/rest_auth.py:41
 msgid ""
-"Nesprávný formát Authorization Basic záhlaví. Prosím použijte <username:"
-"password> formát."
+"Nesprávný formát Authorization Basic záhlaví. Prosím použijte "
+"<username:password> formát."
 msgstr ""
 
 #: dpnk/rest_auth.py:57
@@ -3182,9 +3194,10 @@ msgid ""
 "Došlo k chybě. O této události jsme dostali hlášení, takže se je možné, že "
 "se v tuto chvíli už pokoušíme problém opravit. Je také možné, že problém je "
 "pouze dočasný a za pár minut již vše bude fungovat správně. Pokud chyba "
-"přetrvává delší dobu, prosíme obraťte se na <a href='mailto:"
-"kontakt@dopracenakole.cz?subject=Chybová stránka'>kontakt@dopracenakole.cz</"
-"a> s podrobným popisem, jak tato chyba nastala."
+"přetrvává delší dobu, prosíme obraťte se na <a "
+"href='mailto:kontakt@dopracenakole.cz?subject=Chybová "
+"stránka'>kontakt@dopracenakole.cz</a> s podrobným popisem, jak tato chyba "
+"nastala."
 msgstr ""
 
 #: dpnk/templates/admin/draw.html:40
@@ -3995,8 +4008,8 @@ msgstr ""
 #: dpnk/templates/dpnk/help.html:38
 msgid ""
 "\n"
-"  Chcete mluvit s živým člověkem? <a target='_blank' href=\"https://www."
-"dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
+"  Chcete mluvit s živým člověkem? <a target='_blank' href=\"https://"
+"www.dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
 "  "
 msgstr ""
 
@@ -4539,7 +4552,7 @@ msgstr ""
 msgid "Města které koordinujete"
 msgstr ""
 
-#: dpnk/util.py:166
+#: dpnk/util.py:167
 msgid "Datum není platné."
 msgstr ""
 
@@ -4931,8 +4944,8 @@ msgid ""
 "staňte se firemním koordinátorem. </p><p>Pomáhejte kolegům ze svého týmu se "
 "všemi náležitostmi ohledně uhrazení startovného.</p><p>Vaší úlohou bude "
 "požádat zaměstnavatele, aby startovné za Váš tým uhradil. Poté zajistíte "
-"hromadnou platbu přes fakturu.<a target='_blank' href='http://www."
-"dopracenakole.cz/pro-firmy/firemni-koordinator'>Jak na to?</a>.</"
+"hromadnou platbu přes fakturu.<a target='_blank' href='http://"
+"www.dopracenakole.cz/pro-firmy/firemni-koordinator'>Jak na to?</a>.</"
 "p><p>Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a <a "
 "target='_blank' href='http://www.dopracenakole.cz/pro-firmy/firemni-"
 "koordinator'>velkou moc</a>, se kterou přichází velká zodpovědost.</p>"
