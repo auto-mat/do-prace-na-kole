@@ -108,7 +108,7 @@ Unidecode = "*"
 easy-thumbnails = "*"
 SQLAlchemy = "*"
 django_celery_beat = "*"
-django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", rev = "mergeup"}
+django-stdnumfield = {git = "https://github.com/auto-mat/django-stdnumfield.git", rev = "compatibile-with-django-5"}
 PyPDF2 = "*"
 django-bootstrap4 = "==0.0.8"
 html2text = "*"

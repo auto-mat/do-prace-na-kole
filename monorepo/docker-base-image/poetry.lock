@@ -2395,7 +2395,7 @@ files = [
 [[package]]
 name = "django-stdnumfield"
 version = "0.1.5"
-description = ""
+description = "Simple Django form and model fields for working with stdnum fields."
 optional = false
 python-versions = "*"
 groups = ["main"]
@@ -2407,9 +2407,9 @@ python-stdnum = ">=1.5,<1.6"
 
 [package.source]
 type = "git"
-url = "https://github.com/PetrDlouhy/django-stdnumfield.git"
-reference = "mergeup"
-resolved_reference = "65fe751779ab222c396bbd31fd9f64d42aac8c3e"
+url = "https://github.com/auto-mat/django-stdnumfield.git"
+reference = "compatibile-with-django-5"
+resolved_reference = "dea6da320ed894bd152ff59028752541ecdacc1e"
 
 [[package]]
 name = "django-storages"
@@ -6354,4 +6354,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "cf5c7a94ef358d335262f5e90a85500e5ae8a13ae8f28d6fc455905c2f77d9cf"
+content-hash = "f2c15ecafe399a4374f63ed4ca340f166c1e715508605a3c61f2c25c7dbb438e"
