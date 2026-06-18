@@ -26,8 +26,6 @@ import string
 
 from author.decorators import with_author
 
-from cache_utils.decorators import cached
-
 from denorm import denormalized, depend_on_related
 
 from django import forms
