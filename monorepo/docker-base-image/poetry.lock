@@ -2531,9 +2531,9 @@ setuptools = "*"
 
 [package.source]
 type = "git"
-url = "https://github.com/adilkhash/django-wysiwyg-redactor"
-reference = "HEAD"
-resolved_reference = "b2c4ca33909ced447f3c1ee9bd01dab14d3a5ac2"
+url = "https://github.com/auto-mat/django-wysiwyg-redactor.git"
+reference = "compatibility-with-django-5"
+resolved_reference = "7df0971901a17a4d9645b18e95297ac203ddfa32"
 
 [[package]]
 name = "djangorestframework"
@@ -6353,4 +6353,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "241702eadd50173bc922a1595090995368b83cff2af58cadd4d0632974e011f3"
+content-hash = "8fbf85f8cb00afefe53a9873e18462cd2e0302baee2df79e582b5986f6466c1e"
