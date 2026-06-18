@@ -1226,23 +1226,20 @@ resolved_reference = "58dc8a5c050866c61d9e28d88e4c268e483c6f40"
 
 [[package]]
 name = "django-avatar"
-version = "7.0.0"
+version = "9.0.0"
 description = "A Django app for handling user avatars"
 optional = false
 python-versions = "*"
 groups = ["main"]
-files = []
-develop = false
+files = [
+    {file = "django_avatar-9.0.0-py3-none-any.whl", hash = "sha256:9bb33525eaa64d19bab1a1d9c305f9185663a5db1ce3cc61195ffa131363c33a"},
+    {file = "django_avatar-9.0.0.tar.gz", hash = "sha256:55a816df3adc02891aaa11dae1ad72a9f281a586b0a1f703ebaf9cc3a2b0f46d"},
+]
 
 [package.dependencies]
 django-appconf = ">=1.0.5"
-Pillow = ">=8.4.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/tmszi/django-avatar.git"
-reference = "check-if-img-is-not-corrupter"
-resolved_reference = "a8e11966c541008c7f75041c70ebc57c81122fe0"
+dnspython = ">=2.3.0"
+Pillow = ">=10.0.1"
 
 [[package]]
 name = "django-betterforms"
@@ -2604,6 +2601,50 @@ files = [
 [package.dependencies]
 Django = ">=1.8"
 python_memcached = "*"
+
+[[package]]
+name = "dnspython"
+version = "2.7.0"
+description = "DNS toolkit"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "python_version == \"3.9\""
+files = [
+    {file = "dnspython-2.7.0-py3-none-any.whl", hash = "sha256:b4c34b7d10b51bcc3a5071e7b8dee77939f1e878477eeecc965e9835f63c6c86"},
+    {file = "dnspython-2.7.0.tar.gz", hash = "sha256:ce9c432eda0dc91cf618a5cedf1a4e142651196bbcd2c80e89ed5a907e5cfaf1"},
+]
+
+[package.extras]
+dev = ["black (>=23.1.0)", "coverage (>=7.0)", "flake8 (>=7)", "hypercorn (>=0.16.0)", "mypy (>=1.8)", "pylint (>=3)", "pytest (>=7.4)", "pytest-cov (>=4.1.0)", "quart-trio (>=0.11.0)", "sphinx (>=7.2.0)", "sphinx-rtd-theme (>=2.0.0)", "twine (>=4.0.0)", "wheel (>=0.42.0)"]
+dnssec = ["cryptography (>=43)"]
+doh = ["h2 (>=4.1.0)", "httpcore (>=1.0.0)", "httpx (>=0.26.0)"]
+doq = ["aioquic (>=1.0.0)"]
+idna = ["idna (>=3.7)"]
+trio = ["trio (>=0.23)"]
+wmi = ["wmi (>=1.5.1)"]
+
+[[package]]
+name = "dnspython"
+version = "2.8.0"
+description = "DNS toolkit"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version >= \"3.10\""
+files = [
+    {file = "dnspython-2.8.0-py3-none-any.whl", hash = "sha256:01d9bbc4a2d76bf0db7c1f729812ded6d912bd318d3b1cf81d30c0f845dbf3af"},
+    {file = "dnspython-2.8.0.tar.gz", hash = "sha256:181d3c6996452cb1189c4046c61599b84a5a86e099562ffde77d26984ff26d0f"},
+]
+
+[package.extras]
+dev = ["black (>=25.1.0)", "coverage (>=7.0)", "flake8 (>=7)", "hypercorn (>=0.17.0)", "mypy (>=1.17)", "pylint (>=3)", "pytest (>=8.4)", "pytest-cov (>=6.2.0)", "quart-trio (>=0.12.0)", "sphinx (>=8.2.0)", "sphinx-rtd-theme (>=3.0.0)", "twine (>=6.1.0)", "wheel (>=0.45.0)"]
+dnssec = ["cryptography (>=45)"]
+doh = ["h2 (>=4.2.0)", "httpcore (>=1.0.0)", "httpx (>=0.28.0)"]
+doq = ["aioquic (>=1.2.0)"]
+idna = ["idna (>=3.10)"]
+trio = ["trio (>=0.30)"]
+wmi = ["wmi (>=1.5.1) ; platform_system == \"Windows\""]
 
 [[package]]
 name = "docopt"
@@ -6376,4 +6417,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "92040b67c1ab633e12c0f85f648ff08f6fcaca2e5289c982af6b406792847bee"
+content-hash = "2542d5ba352fc95cef9f808a7679a0b93067ab845383971a56274f3643b7f84e"
