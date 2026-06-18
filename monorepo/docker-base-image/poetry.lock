@@ -969,8 +969,8 @@ fiobank = "*"
 [package.source]
 type = "git"
 url = "https://github.com/auto-mat/dj-fiobank-payments.git"
-reference = "HEAD"
-resolved_reference = "b181eec3d3ff0bd27c6949f2b00b4570192ce4ba"
+reference = "compatibility-with-django-5"
+resolved_reference = "a9e5c378e6cf0be73c05de5603d158adaf891112"
 
 [[package]]
 name = "dj-rest-auth"
@@ -6353,4 +6353,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "8fbf85f8cb00afefe53a9873e18462cd2e0302baee2df79e582b5986f6466c1e"
+content-hash = "90c2db367570f9b1b15c03fcc975aec9b22ffd473672aca7ff5cc6626cdb4447"
