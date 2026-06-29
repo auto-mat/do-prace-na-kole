@@ -67,4 +67,5 @@ NotificationTemplate = swapper.load_model("notifications", "NotificationTemplate
 class NotificationTemplateOptions(TranslationOptions):
     fields = (
         "verb",
+        "url",
     )
