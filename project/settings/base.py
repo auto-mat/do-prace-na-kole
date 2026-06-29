@@ -382,7 +382,7 @@ INSTALLED_APPS = [
     "selectable",
     "raven.contrib.django.raven_compat",
     "bootstrap4",
-    "daterange_filter",
+    "rangefilter",
     "storages",
     "favicon",
     "adminactions",
