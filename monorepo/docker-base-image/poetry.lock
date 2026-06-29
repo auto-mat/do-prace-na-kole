@@ -1212,31 +1212,6 @@ files = [
 setuptools-git = "*"
 
 [[package]]
-name = "django-autocomplete-light"
-version = "3.5.0"
-description = ""
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = []
-develop = false
-
-[package.dependencies]
-six = "*"
-
-[package.extras]
-genericm2m = ["django-generic-m2m"]
-gfk = ["django-querysetsequence (>=0.11)"]
-nested = ["django-nested-admin (>=3.0.21)"]
-tags = ["django-taggit"]
-
-[package.source]
-type = "git"
-url = "https://github.com/auto-mat/django-autocomplete-light.git"
-reference = "jquery"
-resolved_reference = "58dc8a5c050866c61d9e28d88e4c268e483c6f40"
-
-[[package]]
 name = "django-avatar"
 version = "9.0.0"
 description = "A Django app for handling user avatars"
@@ -6415,4 +6390,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "c058541eb17a22db33a5a98e10096e455abba0335ecb6a0ffee0258571036801"
+content-hash = "244ef2aa60acf5ebfcf5fab8d8ee231ea3d7267e4d6f6709fca8e56225149d1e"
