@@ -55,7 +55,6 @@ django-extra-views = "*"
 raven = "*"
 celery = "<=4.4.5"
 flower = "*"
-django-daterange-filter = "*"
 django-smmapdfs = {git = "https://git@github.com/auto-mat/smmapdfs.git", rev = "compatibile-with-django-5"}
 django-storages = "*"
 django-model-utils = "*"
