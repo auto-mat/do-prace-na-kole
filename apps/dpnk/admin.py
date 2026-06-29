@@ -57,7 +57,7 @@ from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-from daterange_filter.filter import DateRangeFilter
+from rangefilter.filters import DateRangeFilterBuilder
 
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
@@ -1349,7 +1349,7 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         campaign_filter_generator("user_attendance__campaign"),
         "direction",
         "commute_mode",
-        ("date", DateRangeFilter),
+        ("date", DateRangeFilterBuilder()),
         "user_attendance__team__subsidiary__city",
         "source_application",
         "user_attendance__payment_status",
