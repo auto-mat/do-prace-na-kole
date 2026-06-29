@@ -1056,6 +1056,18 @@ djcacheutils = ">=3.0.0"
 python-dateutil = "*"
 
 [[package]]
+name = "django-admin-rangefilter"
+version = "0.13.5"
+description = "django-admin-rangefilter app, add the filter by a custom date range on the admin UI."
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
+groups = ["main"]
+files = [
+    {file = "django_admin_rangefilter-0.13.5-py2.py3-none-any.whl", hash = "sha256:7fdcd1ee9007e2b76a5bd35bc017e785bdc7b17a24b8a36aef4ce80741356c47"},
+    {file = "django_admin_rangefilter-0.13.5.tar.gz", hash = "sha256:3134e9e877f59ccad5949cd25cd2db9bf20d170fd8070be584875fdca96d3a14"},
+]
+
+[[package]]
 name = "django-admin-smoke-tests"
 version = "0.3.0"
 description = "Runs some quick tests on your admin site objects to make sure there aren't non-existant fields listed, etc."
@@ -6403,4 +6415,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "c0134bae2afb663972048cdfe7aeab4d5092a96259b876315b1cf5eb9549934a"
+content-hash = "8ca86bdf5b6ea079749c14e896ccefec9029ac3b1b6b00fce33c605c97496de6"

@@ -141,6 +141,7 @@ ipython = "8.15"
 cached-property = "^2.0.1"
 django-smart-selects = "^1.7.2"
 django-adminfilters = "2.4.3"
+django-admin-rangefilter = "^0.13.5"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
