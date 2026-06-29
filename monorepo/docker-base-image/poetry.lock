@@ -2019,9 +2019,9 @@ swapper = "*"
 
 [package.source]
 type = "git"
-url = "https://github.com/django-notifications/django-notifications.git"
-reference = "HEAD"
-resolved_reference = "4c44bcea2504d9a3fcd26366b232a13732a08f2a"
+url = "https://github.com/auto-mat/django-notifications.git"
+reference = "list_all_compatibile_with_django_5"
+resolved_reference = "e066354d507a4885d55034ced831786160dc485c"
 
 [[package]]
 name = "django-nvd3"
@@ -6415,4 +6415,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "8ca86bdf5b6ea079749c14e896ccefec9029ac3b1b6b00fce33c605c97496de6"
+content-hash = "c058541eb17a22db33a5a98e10096e455abba0335ecb6a0ffee0258571036801"
