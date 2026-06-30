@@ -393,7 +393,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "dj_fiobank_payments",
     "smmapdfs",
-    "secretballot",
+    # "secretballot",
     "sitetree",
     "sitetree_modeltranslation",
     # "likes",
