@@ -41,6 +41,7 @@ class ChoiceType(models.Model):
         verbose_name = _("Typ volby")
         verbose_name_plural = _("Typ volby")
         unique_together = (("competition", "name"),)
+        ordering = ("competition", "name")
 
     competition = models.ForeignKey(
         Competition,
