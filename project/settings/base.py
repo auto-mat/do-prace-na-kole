@@ -198,6 +198,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "dpnk.middleware.SesameAuthenticationMiddleware",
     "dpnk.middleware.CeleryDenormMiddleware",
     "author.middlewares.AuthorDefaultBackendMiddleware",
