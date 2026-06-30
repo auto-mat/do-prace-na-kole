@@ -1179,7 +1179,7 @@ class ChoiceInline(SortableInlineAdminMixin, admin.TabularInline):
 
 
 @admin.register(models.ChoiceType)
-class ChoiceTypeAdmin(admin.ModelAdmin):
+class ChoiceTypeAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = ("name", "competition", "universal")
     inlines = [ChoiceInline]
     list_filter = (
