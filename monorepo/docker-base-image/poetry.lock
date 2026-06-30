@@ -1005,22 +1005,23 @@ resolved_reference = "a9e5c378e6cf0be73c05de5603d158adaf891112"
 
 [[package]]
 name = "dj-rest-auth"
-version = "4.0.1"
+version = "7.2.0"
 description = "Authentication and Registration in Django Rest Framework"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "dj-rest-auth-4.0.1.tar.gz", hash = "sha256:ec87f934c83b520217399f4793506e36cccccc84e899623510ee9c7289f80573"},
+    {file = "dj_rest_auth-7.2.0.tar.gz", hash = "sha256:f77af37da5cf6ee28f03f283a378a2f5761860e72d1d6f2fa3d50e6286000482"},
 ]
 
 [package.dependencies]
-Django = ">=2.0"
-django-allauth = {version = ">=0.40.0,<0.55.0", optional = true, markers = "extra == \"with_social\""}
-djangorestframework = ">=3.7.0"
+Django = ">=4.2"
+django-allauth = {version = ">=64.0.0", extras = ["socialaccount"], optional = true, markers = "extra == \"with-social\""}
+djangorestframework = ">=3.13.0"
 
 [package.extras]
-with-social = ["django-allauth (>=0.40.0,<0.55.0)"]
+with-mfa = ["pyotp (>=2.9.0)"]
+with-social = ["django-allauth[socialaccount] (>=64.0.0)"]
 
 [[package]]
 name = "django"
@@ -1174,21 +1175,29 @@ test = ["coveralls", "factory-boy (==2.12.0)", "pycodestyle (==2.5.0)", "pytest-
 
 [[package]]
 name = "django-allauth"
-version = "0.54.0"
+version = "65.9.0"
 description = "Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "django-allauth-0.54.0.tar.gz", hash = "sha256:120e265f802b65738899c6cb627b827fde46a4d03067034c633f516c2adf3e3e"},
+    {file = "django_allauth-65.9.0.tar.gz", hash = "sha256:a06bca9974df44321e94c33bcf770bb6f924d1a44b57defbce4d7ec54a55483e"},
 ]
 
 [package.dependencies]
-Django = ">=2.0"
-pyjwt = {version = ">=1.7", extras = ["crypto"]}
-python3-openid = ">=3.0.8"
-requests = "*"
-requests-oauthlib = ">=0.3.0"
+asgiref = ">=3.8.1"
+Django = ">=4.2.16"
+pyjwt = {version = ">=2.0,<3", extras = ["crypto"], optional = true, markers = "extra == \"socialaccount\""}
+requests = {version = ">=2.0.0,<3", optional = true, markers = "extra == \"socialaccount\""}
+requests-oauthlib = {version = ">=0.3.0", optional = true, markers = "extra == \"socialaccount\""}
+
+[package.extras]
+idp-oidc = ["oauthlib (>=3.2.2,<4)", "pyjwt[crypto] (>=2.0,<3)"]
+mfa = ["fido2 (>=1.1.2,<3)", "qrcode (>=7.0.0,<9)"]
+openid = ["python3-openid (>=3.0.8,<4)"]
+saml = ["python3-saml (>=1.15.0,<2.0.0)"]
+socialaccount = ["pyjwt[crypto] (>=2.0,<3)", "requests (>=2.0.0,<3)", "requests-oauthlib (>=0.3.0)"]
+steam = ["python3-openid (>=3.0.8,<4)"]
 
 [[package]]
 name = "django-appconf"
