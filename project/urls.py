@@ -49,7 +49,6 @@ urlpatterns = [
     re_path(r"^su/", include("django_su.urls")),
     re_path(r"^selectable/", include("selectable.urls")),
     re_path(r"^oauth2/", include("oauth2_provider.urls", namespace="oauth2_provider")),
-    path("admin_tools_stats/", include("admin_tools_stats.urls")),
     re_path(r"^photologue/", include("photologue.urls", namespace="photologue")),
     re_path(r"^redactor/", include("redactor.urls")),
     re_path(r"^nested_admin/", include("nested_admin.urls")),
