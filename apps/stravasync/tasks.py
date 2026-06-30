@@ -10,7 +10,7 @@ from celery import shared_task
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.urls import reverse
 
 from dpnk.forms import FullTripForm

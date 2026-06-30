@@ -33,7 +33,7 @@ from dal import autocomplete
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.widgets import HiddenInput

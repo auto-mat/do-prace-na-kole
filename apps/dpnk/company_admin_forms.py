@@ -21,7 +21,7 @@ from crispy_forms.layout import HTML, Layout
 
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
