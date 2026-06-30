@@ -106,7 +106,7 @@ SQLAlchemy = "*"
 django_celery_beat = "*"
 django-stdnumfield = {git = "https://github.com/auto-mat/django-stdnumfield.git", rev = "compatibile-with-django-5"}
 PyPDF2 = "*"
-django-bootstrap4 = "==0.0.8"
+django-bootstrap4 = "^26.1"
 html2text = "*"
 tornado = "<7"
 dj_anonymizer = "*"
@@ -144,6 +144,7 @@ django-admin-rangefilter = "^0.13.5"
 line-profiler = "^5.0.2"
 django-autocomplete-light = "^5.0.0"
 psycopg = "^3.3.4"
+bootstrap4 = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

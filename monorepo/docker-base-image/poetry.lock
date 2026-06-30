@@ -274,6 +274,17 @@ css = ["tinycss2 (>=1.1.0,<1.2)"]
 dev = ["Sphinx (==4.3.2)", "black (==22.3.0) ; implementation_name == \"cpython\"", "build (==0.8.0)", "flake8 (==4.0.1)", "hashin (==0.17.0)", "mypy (==0.961) ; implementation_name == \"cpython\"", "pip-tools (==6.6.2)", "pytest (==7.1.2)", "tox (==3.25.0)", "twine (==4.0.1)", "wheel (==0.37.1)"]
 
 [[package]]
+name = "bootstrap4"
+version = "0.1.0"
+description = "Bootstrap 4, packaged for Python."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "bootstrap4-0.1.0.tar.gz", hash = "sha256:f768f9a2760c4765682a7cd26f2d1662e8f82d5e773e325c386709abeb2dd3ae"},
+]
+
+[[package]]
 name = "boto3"
 version = "1.24.93"
 description = "The AWS SDK for Python"
@@ -1297,14 +1308,19 @@ Django = ">=1.11"
 
 [[package]]
 name = "django-bootstrap4"
-version = "0.0.8"
-description = "Bootstrap support for Django projects"
+version = "26.1"
+description = "Bootstrap 4 for Django"
 optional = false
-python-versions = "*"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "django-bootstrap4-0.0.8.tar.gz", hash = "sha256:9f115534ae8d052d397201f3d716c10d7c9832b422e44dd7382418c6f274df18"},
+    {file = "django_bootstrap4-26.1-py3-none-any.whl", hash = "sha256:e0fa98c9e613e3f3f2fe3c394486899f62c1a11c77f5bf11653c6bcc8c0a4267"},
+    {file = "django_bootstrap4-26.1.tar.gz", hash = "sha256:164ff10d7f21c627301bca9b5186f0b0478a2c5647d35147283f3a125bc98018"},
 ]
+
+[package.dependencies]
+beautifulsoup4 = ">=4.10.0"
+django = ">=4.2,<7.0"
 
 [[package]]
 name = "django-bower"
@@ -6357,4 +6373,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "e88e833162f4455b713e0c3e85a6d306cb44b6857dbb8c60044530de5098d6f0"
+content-hash = "14696ce381101ade5478d19b7acdc421a525a042f337a788f02cc361163c1235"
