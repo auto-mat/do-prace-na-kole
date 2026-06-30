@@ -396,7 +396,7 @@ INSTALLED_APPS = [
     "secretballot",
     "sitetree",
     "sitetree_modeltranslation",
-    "likes",
+    # "likes",
     "colorfield",
     "social_django",
     "fm",
