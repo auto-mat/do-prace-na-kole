@@ -351,7 +351,6 @@ INSTALLED_APPS = [
     "composite_field",
     "softhyphen",
     "django_extensions",
-    "chart_tools",
     "import_export",
     "import_export_celery",
     "polymorphic",
