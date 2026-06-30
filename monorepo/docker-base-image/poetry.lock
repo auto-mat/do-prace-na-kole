@@ -1181,6 +1181,26 @@ files = [
 setuptools-git = "*"
 
 [[package]]
+name = "django-autocomplete-light"
+version = "5.0.0"
+description = "Fresh autocompletes for Django"
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "django_autocomplete_light-5.0.0-py3-none-any.whl", hash = "sha256:6fa30efa43e87ff17266e638de04accb11543186e332b09ae43cbccb10e804bb"},
+    {file = "django_autocomplete_light-5.0.0.tar.gz", hash = "sha256:115ee3541ee4a7ddd1b92396ea75d0f38d0b91899b0dc17259310975c728b32e"},
+]
+
+[package.dependencies]
+django = ">=5.2"
+
+[package.extras]
+gfk = ["django-querysetsequence (>=0.11)"]
+nested = ["django-nested-admin (>=3.0.21)"]
+tags = ["django-taggit"]
+
+[[package]]
 name = "django-avatar"
 version = "9.0.0"
 description = "A Django app for handling user avatars"
@@ -6253,4 +6273,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "7695f8d9496500c896ab02a74827b8d570984d523a3ac57f8dcdcc7cbbc6b365"
+content-hash = "d6e92ff6cc55e32d34b14e0ee84f81a5c8cca517f021af04c10d0f1ea8935f45"

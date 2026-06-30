@@ -142,6 +142,7 @@ django-smart-selects = "^1.7.2"
 django-adminfilters = "2.4.3"
 django-admin-rangefilter = "^0.13.5"
 line-profiler = "^5.0.2"
+django-autocomplete-light = "^5.0.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
