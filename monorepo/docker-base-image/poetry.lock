@@ -1419,17 +1419,6 @@ django = ">=2.2"
 django-appconf = "*"
 
 [[package]]
-name = "django-chart-tools"
-version = "1.0"
-description = "A thin wrapper around Google Chart API that tries not to invent a new language for describing charts."
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "django-chart-tools-1.0.tar.gz", hash = "sha256:bd7dc65709272471aee3355db1072d607f15965ec8e25b9be8f40e83381e9938"},
-]
-
-[[package]]
 name = "django-class-based-auth-views"
 version = "0.4"
 description = "A reimplementation of django.contrib.auth.views as class based views."
@@ -6374,4 +6363,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "14696ce381101ade5478d19b7acdc421a525a042f337a788f02cc361163c1235"
+content-hash = "c1e9b072ca19ecc6d172a2ba764cc4eb54aafc658c13949687605e797ea0ca64"
