@@ -52,7 +52,7 @@ django-cors-headers = "*"
 django-denorm = {git = "https://github.com/auto-mat/django-denorm.git", rev = "develop"}
 django-extra-views = "*"
 raven = "*"
-celery = "<=4.4.5"
+celery = "^5.6.3"
 flower = "*"
 django-smmapdfs = {git = "https://git@github.com/auto-mat/smmapdfs.git", rev = "compatibile-with-django-5"}
 django-storages = "*"
