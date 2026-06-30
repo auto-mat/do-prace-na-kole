@@ -465,7 +465,11 @@ class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
 
 @admin.register(models.Competition)
 class CompetitionAdmin(
-    FormRequestMixin, CityAdminMixin, ImportExportMixin, RelatedFieldAdmin
+    FormRequestMixin,
+    CityAdminMixin,
+    ImportExportMixin,
+    RelatedFieldAdmin,
+    SortableAdminMixin,
 ):
     list_display = (
         "name",
