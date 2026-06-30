@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.urls import path, re_path
 from django.contrib.auth import views as django_views
 from django.utils.translation import gettext_lazy as _
@@ -75,165 +75,165 @@ from allauth.account.views import confirm_email
 
 
 urlpatterns = [
-    url(
+    re_path(
         r"^tym/$",
         views.ChangeTeamView.as_view(),
         name="zmenit_tym",
     ),
-    url(
+    re_path(
         r"^company-autocomplete/$",
         CompanyAutocomplete.as_view(),
         name="company_autocomplete",
     ),
-    url(
+    re_path(
         r"^subsidiary-autocomplete/$",
         SubsidiaryAutocomplete.as_view(),
         name="subsidiary_autocomplete",
     ),
-    url(
+    re_path(
         r"^team-autocomplete/$",
         TeamAutocomplete.as_view(),
         name="team_autocomplete",
     ),
-    url(
+    re_path(
         r"^registrovat_spolecnost/$",
         views.RegisterCompanyView.as_view(),
         name="register_company",
     ),
-    url(
+    re_path(
         r"^registrovat_pobocku/(?P<company_id>\d*)$",
         views.RegisterSubsidiaryView.as_view(),
         name="register_subsidiary",
     ),
-    url(
+    re_path(
         r"^registrovat_tym/(?P<subsidiary_id>\d*)$",
         views.RegisterTeamView.as_view(),
         name="register_team",
     ),
-    url(
+    re_path(
         r"^upravit_tym/$",
         views.UpdateTeam.as_view(),
         name="edit_team",
     ),
-    url(
+    re_path(
         r"^upload_team_photo/$",
         views.UploadTeamPhoto.as_view(),
         name="upload_team_photo",
     ),
-    url(
+    re_path(
         r"^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>\S+@\S+\.\w+)/$$",
         views.ConfirmTeamInvitationView.as_view(),
         name="change_team_invitation",
     ),
-    url(
+    re_path(
         r"^registrace/$",
         views.RegistrationView.as_view(),
         {"success_url": "typ_platby"},
         name="registrace",
     ),
-    url(
+    re_path(
         r"^registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>\S+@\S+\.\w+)/$$",
         views.RegistrationView.as_view(),
         {"success_url": "typ_platby"},
         name="registrace",
     ),
-    url(
+    re_path(
         r"^registrace/(?P<initial_email>\S+@\S+\.\w+)/$$",
         views.RegistrationView.as_view(),
         {"success_url": "typ_platby"},
         name="registrace",
     ),
-    url(
+    re_path(
         r"^registrace_pristup/$",
         views.RegistrationAccessView.as_view(),
         name="registration_access",
     ),
-    url(
+    re_path(
         r"^pozvanky/$",
         views.InviteView.as_view(),
         {"success_url": "typ_platby"},
         name="pozvanky",
     ),
-    url(
+    re_path(
         r"^zaslat_zadost_clenstvi/$",
         views.TeamApprovalRequest.as_view(),
         name="zaslat_zadost_clenstvi",
     ),
-    url(
+    re_path(
         r"^registration_complete/$",
         views.RegistrationCompleteView.as_view(),
         name="dpnk_registration_complete",
     ),
-    url(
+    re_path(
         r"^jizdy$",
         views.RidesView.as_view(),
         name="rides",
     ),
-    url(
+    re_path(
         r"^jizdy-podrobne/$",
         views.RidesDetailsView.as_view(),
         name="rides_details",
     ),
-    url(
+    re_path(
         r"^kalendar/$",
         views.CalendarView.as_view(),
         name="calendar",
     ),
-    url(
+    re_path(
         r"^mapa/$",
         views.MapView.as_view(),
         name="map",
     ),
-    url(
+    re_path(
         r"^nekompletni$",
         views.RegistrationUncompleteForm.as_view(),
         name="registration_uncomplete",
     ),
-    url(
+    re_path(
         r"^dalsi_clenove/$",
         views.TeamMembers.as_view(),
         name="team_members",
     ),
-    url(
+    re_path(
         r"^dalsi_clenove_vysledky/$",
         views.OtherTeamMembers.as_view(
             template_name="dpnk/team_members_results.html",
         ),
         name="other_team_members_results",
     ),
-    url(
+    re_path(
         r"^spolecnost/$",
         views.Company.as_view(),
         name="company",
     ),
-    url(
+    re_path(
         r"^pravidelnost/$",
         views.FrequencyView.as_view(),
         name="team_frequency",
     ),
-    url(
+    re_path(
         r"^souteze_vykonnostni/$",
         views.LengthCompetitionsView.as_view(),
         name="length_competitions",
     ),
-    url(
+    re_path(
         r"^souteze_pravidelnostni/$",
         views.FrequencyCompetitionsView.as_view(),
         name="competitions",
     ),
-    url(
+    re_path(
         r"^dotaznikove_souteze/$",
         views.QuestionareCompetitionsView.as_view(),
         name="questionnaire_competitions",
     ),
-    url(
+    re_path(
         r"^souteze/pravidla/(?P<city_slug>[^&]+)/$",
         views.CompetitionsRulesView.as_view(
             template_name="dpnk/competitions_rules.html",
         ),
         name="competition-rules-city",
     ),
-    url(
+    re_path(
         r"^souteze/vysledky/(?P<city_slug>[^&]+)/$",
         views.CompetitionsRulesView.as_view(
             title_base=_("Výsledky soutěží"),
@@ -241,134 +241,134 @@ urlpatterns = [
         ),
         name="competition-results-city",
     ),
-    url(
+    re_path(
         r"^vysledky_souteze/(?P<competition_slug>[^&/]+)/$",
         views_results.CompetitionResultsView.as_view(),
         name="competition_results",
     ),
-    url(
+    re_path(
         r"^export_vysledky_souteze/(?P<competition_slug>[^&/]+)/(?P<extension>[0-9A-Za-z_\-]+)$",
         views_results.ExportCompetitionResults.as_view(),
         name="export_competition_results",
     ),
-    url(
+    re_path(
         r"^export_vysledky_souteze/(?P<competition_slug>[^&/]+)/(?P<extension>[0-9A-Za-z_\-]+)/(?P<organization>[0-9]+)$",
         views_results.ExportCompetitionResults.as_view(),
         name="export_competition_results",
     ),
-    url(
+    re_path(
         r"^vysledky_souteze_json/(?P<competition_slug>[^&/]+)/$",
         views_results.CompetitionResultListJson.as_view(),
         name="competition_result_list_json",
     ),
-    url(
+    re_path(
         r"^questionnaire_answers/(?P<competition_slug>[^&/]+)/$",
         views.QuestionnaireAnswersAllView.as_view(),
         name="questionnaire_answers_all",
     ),
-    url(
+    re_path(
         r"^otazka/(?P<questionnaire_slug>[0-9A-Za-z_\-]+)/$",
         views.QuestionnaireView.as_view(),
         name="questionnaire",
     ),
-    url(
+    re_path(
         r"^vytvorit_profil/$",
         views.RegistrationProfileView.as_view(),
         name="upravit_profil",
     ),
-    url(
+    re_path(
         r"^upravit_profil/$",
         views.UpdateProfileView.as_view(),
         name="edit_profile_detailed",
     ),
-    url(
+    re_path(
         r"^typ_platby/$",
         views.PaymentTypeView.as_view(),
         name="typ_platby",
     ),
-    url(
+    re_path(
         r"^platba/$",
         views.PaymentView.as_view(),
         name="payment",
     ),
-    url(
+    re_path(
         r"^platba-beneficni/$",
         views.BeneficiaryPaymentView.as_view(),
         name="payment_beneficiary",
     ),
-    url(
+    re_path(
         r"^diplomas/$",
         views.DiplomasView.as_view(),
         name="diplomas",
     ),
-    url(
+    re_path(
         r"^statistika/$",
         views.statistics,
     ),
-    url(
+    re_path(
         r"^denni-graf/$",
         views.daily_chart,
     ),
-    url(
+    re_path(
         r"^denni-vzdalenost/$",
         views.daily_distance_extra_json,
     ),
-    url(
+    re_path(
         r"^denni-vzdalenost-extra/$",
         views.daily_distance_extra_json,
     ),
-    url(
+    re_path(
         r"^pocty-soutezicich/$",
         views.CompetitorCountView.as_view(),
         name="competitor_counts",
     ),
-    # url(
+    # re_path(
     #     r'^cykloservis/$',
     #     views.BikeRepairView.as_view(),
     #     name="bike_repair",
     # ),
-    url(
+    re_path(
         r"^package/$",
         views.PackageView.as_view(),
         name="package",
     ),
-    url(
+    re_path(
         r"^aplikace/$",
         views.ApplicationView.as_view(),
         name="application",
     ),
-    url(
+    re_path(
         r"^open-app-with-rest-token/(?P<app_id>[0-9]+)/$",
         views.OpenApplicationWithRestTokenView.as_view(),
         name="open-application-with-rest-token",
     ),
-    url(
+    re_path(
         r"^address/$",
         views.UserAttendanceView.as_view(
             template_name="dpnk/address.html",
         ),
     ),
-    url(
+    re_path(
         r"^trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$",
         views.view_edit_trip,
         name="trip",
     ),
-    url(
+    re_path(
         r"^view_trip/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$",
         views.TripView.as_view(),
         name="view_trip",
     ),
-    url(
+    re_path(
         r"^trip_geojson/(?P<date>[^&/]+)/(?P<direction>[^&/]+)$",
         views.TripGeoJsonView.as_view(),
         name="trip_geojson",
     ),
-    url(
+    re_path(
         r"^third_party_routes/$",
         views.ThirdPartyRoutesView.as_view(),
         name="third_party_routes",
     ),
-    url(
+    re_path(
         r"^emisni_kalkulacka/$",
         views.UserAttendanceView.as_view(
             template_name="dpnk/emission_calculator.html",
@@ -376,7 +376,7 @@ urlpatterns = [
         ),
         name="emission_calculator",
     ),
-    url(
+    re_path(
         r"^help/$",
         views.UserAttendanceView.as_view(
             template_name="dpnk/help.html",
@@ -384,21 +384,21 @@ urlpatterns = [
         ),
         name="help",
     ),
-    url(
+    re_path(
         r"^$",
         views.LandingView.as_view(),
         name="profil",
     ),
-    url(
+    re_path(
         r"^status/$",
         views.status,
     ),
-    url(
+    re_path(
         r"^switch_lang/$",
         views.SwitchLang.as_view(),
         name="switch_lang",
     ),
-    url(
+    re_path(
         r"^switch_rides_view/$",
         views.SwitchRidesView.as_view(),
         name="switch_rides_view",
@@ -520,70 +520,70 @@ urlpatterns = [
         CompetitionFieldsValues.as_view(),
         name="competition-fields-choices",
     ),
-    url(r"^account/", include("allauth.urls")),
+    re_path(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
     # company admin:
-    url(
+    re_path(
         r"^spolecnost/oficialni_souteze/$",
         company_admin_views.RelatedCompetitionsView.as_view(),
         name="company_admin_related_competitions",
     ),
-    url(
+    re_path(
         r"^spolecnost/zadost_admina/$",
         company_admin_views.CompanyAdminView.as_view(),
         name="company_admin_application",
     ),
-    url(
+    re_path(
         r"^spolecnost/soutez/(?P<competition_slug>[^&/]+)/$",
         company_admin_views.CompanyCompetitionView.as_view(),
         name="company_admin_competition",
     ),
-    url(
+    re_path(
         r"^upravit_pobocku/(?P<pk>[0-9]+)/$",
         company_admin_views.EditSubsidiaryView.as_view(),
         name="edit_subsidiary",
     ),
-    url(
+    re_path(
         r"^spolecnost/soutez/$",
         company_admin_views.CompanyCompetitionView.as_view(),
         name="company_admin_competition",
     ),
-    url(
+    re_path(
         r"^spolecnost/struktura/$",
         company_admin_views.CompanyStructure.as_view(),
         name="company_structure",
     ),
-    url(
+    re_path(
         r"^spolecnost/struktura/export/(?P<extension>csv|xls|ods)/$",
         company_admin_views.UserAttendanceExportView.as_view(),
         name="company_export",
     ),
-    url(
+    re_path(
         r"^spolecnost/souteze/$",
         company_admin_views.CompanyCompetitionsShowView.as_view(),
         name="company_admin_competitions",
     ),
-    url(
+    re_path(
         r"^faktury/$",
         company_admin_views.InvoicesView.as_view(),
         name="invoices",
     ),
-    url(
+    re_path(
         r"^zaplatit_za_uzivatele/$",
         company_admin_views.SelectUsersPayView.as_view(),
         name="company_admin_pay_for_users",
     ),
-    url(
+    re_path(
         r"^spolecnost/editovat_spolecnost/$",
         company_admin_views.CompanyEditView.as_view(),
         name="edit_company",
     ),
-    url(
+    re_path(
         r"^spolecnost/registrace_admina/$",
         company_admin_views.CompanyAdminApplicationView.as_view(),
         name="register_admin",
     ),
-    url(
+    re_path(
         r"^login/(?P<initial_email>[^&]+)/$$",
         views.DPNKLoginView.as_view(
             form_class=auth.AuthenticationFormDPNK,
@@ -591,7 +591,7 @@ urlpatterns = [
         ),
         name="login",
     ),
-    url(
+    re_path(
         r"^login/?$",
         views.DPNKLoginView.as_view(
             form_class=auth.AuthenticationFormDPNK,
@@ -599,65 +599,65 @@ urlpatterns = [
         ),
         name="login",
     ),
-    url(
+    re_path(
         r"^logout/$",
         django_views.LogoutView.as_view(),
         name="logout",
     ),
-    url(
+    re_path(
         r"^platba_status$",
         views.payment_status,
         name="payment_status",
     ),
-    url(
+    re_path(
         r"^platba_uspesna/(?P<trans_id>[0-9]+)/(?P<session_id>[0-9A-Za-z\-]+)/(?P<pay_type>[0-9A-Za-z]+)/$$",
         views.PaymentResult.as_view(),
         {"success": True},
         name="payment_successfull",
     ),
-    url(
+    re_path(
         r"^platba_neuspesna/(?P<trans_id>[0-9]*)/(?P<session_id>[0-9A-Za-z\-]+)/(?P<pay_type>[0-9A-Za-z]*)/(?P<error>[^&]+)/$$",
         views.PaymentResult.as_view(),
         {"success": False},
         name="payment_unsuccessfull",
     ),
-    url(
+    re_path(
         r"^zapomenute_heslo/$",
         django_views.PasswordResetView.as_view(form_class=auth.PasswordResetForm),
         name="password_reset",
     ),
-    url(
+    re_path(
         r"^zapomenute_heslo/odeslano/$",
         django_views.PasswordResetDoneView.as_view(),
         name="password_reset_done",
     ),
-    url(
+    re_path(
         r"^zapomenute_heslo/zmena/(?P<uidb64>[=0-9A-Za-z_]+)-(?P<token>.+)/$",
         django_views.PasswordResetConfirmView.as_view(form_class=auth.SetPasswordForm),
         name="password_reset_confirm",
     ),
-    url(
+    re_path(
         r"^zapomenute_heslo/dokonceno/$",
         django_views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
-    url(
+    re_path(
         r"^zmena_hesla/$",
         auth.PasswordChangeView.as_view(),
         name="password_change",
     ),
-    url(
+    re_path(
         r"^zmena_hesla_hotovo/$",
         django_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
-    url(
+    re_path(
         r"^test_errors/$",
         views.test_errors,
         name="test_errors",
     ),
     # city coordinator urls
-    url(
+    re_path(
         r"^coordinators/$",
         views.VueView.as_view(
             title=_("Města které koordinujete"),
@@ -665,32 +665,32 @@ urlpatterns = [
         name="company_coordinator",
     ),
     # admin urls
-    url(
+    re_path(
         r"^admin/answers/$",
         answers,
         name="admin_answers",
     ),
-    url(
+    re_path(
         r"^admin/questions/$",
         questions,
         name="admin_questions",
     ),
-    url(
+    re_path(
         r"^admin/dotaznik_odpovedi/(?P<competition_slug>[^&/]+)$",
         questionnaire_answers,
         name="admin_questionnaire_answers",
     ),
-    url(
+    re_path(
         r"^admin/dotaznik/(?P<competition_slug>[^&/]+)/$",
         questionnaire_results,
         name="admin_questionnaire_results",
     ),
-    url(
+    re_path(
         r"^admin/losovani/(?P<competition_slug>[^&/]+)/$",
         views.DrawResultsView.as_view(),
         name="admin_draw_results",
     ),
-    url(
+    re_path(
         r"^admin/logged-in-user-list/$",
         views.LoggedInUsersListView.as_view(),
         name="logged_in_user_list",

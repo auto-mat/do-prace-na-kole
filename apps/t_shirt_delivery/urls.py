@@ -19,19 +19,19 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import admin_views, views
 
 
 urlpatterns = [
-    url(
+    re_path(
         r"^zmenit_triko/$",
         views.tshirt_view,
         {"success_url": "typ_platby"},
         name="zmenit_triko",
     ),
-    url(
+    re_path(
         r"^admin/dispatch/$",
         admin_views.DispatchView.as_view(),
         name="dispatch",
