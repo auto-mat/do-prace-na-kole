@@ -12,7 +12,6 @@ from dpnk.rest import router, PhotoURLGet
 import notifications.urls
 
 import rest_framework.authtoken.views
-from rest_framework.documentation import include_docs_urls
 
 admin.autodiscover()
 
@@ -61,7 +60,6 @@ urlpatterns = [
     re_path(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api-token-auth/", rest_framework.authtoken.views.obtain_auth_token),
     path("dj-rest-auth/", include("dj_rest_auth.urls")),
-    re_path(r"^rest-docs/", include_docs_urls(title="Do práce na kole API")),
     re_path(r"^", include("dpnk.urls")),
     re_path(r"^coupons/", include("coupons.urls")),
     re_path(r"^donation/", include("donation_chooser.urls")),
