@@ -2261,13 +2261,14 @@ test = ["pytest", "pytest-cov", "pytest-django"]
 
 [[package]]
 name = "django-selectable"
-version = "1.3.0"
+version = "1.5.0"
 description = "Auto-complete selection widgets using Django and jQuery UI."
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "django-selectable-1.3.0.tar.gz", hash = "sha256:1a293b7a67bc4e0126762308131a7f51be28587014aea738d4f642a5e8493c4c"},
+    {file = "django_selectable-1.5.0-py3-none-any.whl", hash = "sha256:88a9a5d28c748e93bde8d68e8f73beaf77ca9689517515268e624af5baa9c2bc"},
+    {file = "django_selectable-1.5.0.tar.gz", hash = "sha256:515495dba2a9e47fee7be3570885ba5f70e55654d082fc529fd9ba662021972f"},
 ]
 
 [[package]]
