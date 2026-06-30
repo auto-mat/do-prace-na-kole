@@ -2535,19 +2535,18 @@ resolved_reference = "7df0971901a17a4d9645b18e95297ac203ddfa32"
 
 [[package]]
 name = "djangorestframework"
-version = "3.13.1"
+version = "3.17.1"
 description = "Web APIs for Django, made easy."
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "djangorestframework-3.13.1-py3-none-any.whl", hash = "sha256:24c4bf58ed7e85d1fe4ba250ab2da926d263cd57d64b03e8dcef0ac683f8b1aa"},
-    {file = "djangorestframework-3.13.1.tar.gz", hash = "sha256:0c33407ce23acc68eca2a6e46424b008c9c02eceb8cf18581921d0092bc1f2ee"},
+    {file = "djangorestframework-3.17.1-py3-none-any.whl", hash = "sha256:c3c74dd3e83a5a3efc37b3c18d92bd6f86a6791c7b7d4dff62bb068500e76457"},
+    {file = "djangorestframework-3.17.1.tar.gz", hash = "sha256:a6def5f447fe78ff853bff1d47a3c59bf38f5434b031780b351b0c73a62db1a5"},
 ]
 
 [package.dependencies]
-django = ">=2.2"
-pytz = "*"
+django = ">=4.2"
 
 [[package]]
 name = "djangorestframework-gis"
@@ -6348,4 +6347,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "12f26c61205734aa7aa76f6f7ce3bd36caa88b1912e6f5d2794d053f76f3b238"
+content-hash = "696cd994bcba517c45b93ef067190a3208810efa37ab822e6c1a5b799c40ef8d"
