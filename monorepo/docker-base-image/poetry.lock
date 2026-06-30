@@ -2686,18 +2686,18 @@ validation = ["swagger-spec-validator (>=2.1.0)"]
 
 [[package]]
 name = "easy-thumbnails"
-version = "2.8.3"
+version = "2.10.1"
 description = "Easy thumbnails for Django"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "easy-thumbnails-2.8.3.tar.gz", hash = "sha256:8a3ec61bb8c72fac7f75e811a96e3cd7942ac89cab55ab16549d6d2ce9cdeaa5"},
-    {file = "easy_thumbnails-2.8.3-py3-none-any.whl", hash = "sha256:fc697845103b65279df6c5c0834b0c165bdef07edd6220a06a7a05ca934d582c"},
+    {file = "easy_thumbnails-2.10.1-py3-none-any.whl", hash = "sha256:24462d63dd31543ef1585538b2bfefe0db96d3409bb431c70b81548fb2cfc5be"},
+    {file = "easy_thumbnails-2.10.1.tar.gz", hash = "sha256:a50aa5f99387546c35ab5ba1ea9b3cbbc5658e65601cd34949f62137c32c222e"},
 ]
 
 [package.dependencies]
-django = ">=2.2"
+django = ">=4.2"
 pillow = "*"
 
 [package.extras]
@@ -6357,4 +6357,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "50937336d94d290f02d21fb854d5491983e3de052b0009d2249d3fb237f3133d"
+content-hash = "e88e833162f4455b713e0c3e85a6d306cb44b6857dbb8c60044530de5098d6f0"

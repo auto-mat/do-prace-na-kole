@@ -101,7 +101,7 @@ django-braces = "*"
 django-modeltranslation = "==0.17.7"
 django_polymorphic = "*"
 Unidecode = "*"
-easy-thumbnails = "*"
+easy-thumbnails = "^2.10.1"
 SQLAlchemy = "*"
 django_celery_beat = "*"
 django-stdnumfield = {git = "https://github.com/auto-mat/django-stdnumfield.git", rev = "compatibile-with-django-5"}
