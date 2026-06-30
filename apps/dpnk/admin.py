@@ -1458,7 +1458,12 @@ class CampaignTypeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Campaign)
-class CampaignAdmin(ImportExportMixin, TranslationAdmin, admin.ModelAdmin):
+class CampaignAdmin(
+        ImportExportMixin,
+        TranslationAdmin,
+        SortableAdminMixin,
+        admin.ModelAdmin,
+):
     list_display = (
         "year",
         "campaign_type",
