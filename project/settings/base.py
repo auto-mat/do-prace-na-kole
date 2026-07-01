@@ -359,7 +359,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "adminsortable2",
     "reportlab",
-    "report_builder",
     "dbbackup",
     "related_admin",
     "easy_thumbnails",
