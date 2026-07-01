@@ -28,7 +28,7 @@ from django.utils.translation import gettext_lazy as _
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
-from table_select_widget import TableSelectMultiple
+# from table_select_widget import TableSelectMultiple
 
 from . import models
 from .forms import (
@@ -56,20 +56,20 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         label=_("Vyberte týmové hráče, za které Vaše společnost zaplatí startovné."),
         required=False,
         help_text=_("Ceny jsou uváděny bez DPH"),
-        widget=TableSelectMultiple(
-            item_attrs=[
-                ("company_admission_fee_intcomma", _("Částka")),
-                ("userprofile__user__first_name", _("Jméno")),
-                ("userprofile__user__last_name", _("Příjmení")),
-                ("userprofile__nickname", _("Přezdívka")),
-                ("userprofile__user__email", _("E-mail")),
-                ("team__subsidiary__city", _("Město")),
-                ("created", _("Čas registrace")),
-            ],
-            enable_shift_select=True,
-            enable_datatables=True,
-            bootstrap_style=True,
-        ),
+        # widget=TableSelectMultiple(
+        #     item_attrs=[
+        #         ("company_admission_fee_intcomma", _("Částka")),
+        #         ("userprofile__user__first_name", _("Jméno")),
+        #         ("userprofile__user__last_name", _("Příjmení")),
+        #         ("userprofile__nickname", _("Přezdívka")),
+        #         ("userprofile__user__email", _("E-mail")),
+        #         ("team__subsidiary__city", _("Město")),
+        #         ("created", _("Čas registrace")),
+        #     ],
+        #     enable_shift_select=True,
+        #     enable_datatables=True,
+        #     bootstrap_style=True,
+        # ),
     )
 
     def __init__(self, request=None, *args, **kwargs):

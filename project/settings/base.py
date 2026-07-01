@@ -379,7 +379,7 @@ INSTALLED_APPS = [
     "denorm",
     "subdomains",
     "redactor",
-    "selectable",
+    # "selectable", # Django django-table-select-widget app
     "raven.contrib.django.raven_compat",
     "bootstrap4",
     "rangefilter",
