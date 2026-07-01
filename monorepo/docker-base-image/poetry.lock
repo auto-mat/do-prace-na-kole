@@ -2179,24 +2179,6 @@ files = [
 six = "*"
 
 [[package]]
-name = "django-report-builder"
-version = "6.4.2"
-description = "Query and Report builder for Django ORM"
-optional = false
-python-versions = ">=3.3"
-groups = ["main"]
-files = [
-    {file = "django-report-builder-6.4.2.tar.gz", hash = "sha256:a483731993a20e7a20703c8dc7f1c1be32dee5cd0ba8a8b0664ae18af0d960b3"},
-    {file = "django_report_builder-6.4.2-py2.py3-none-any.whl", hash = "sha256:aa2bab36fe7937c374939ee35216c28934b70d70dbe6052d775338585e12ec84"},
-]
-
-[package.dependencies]
-djangorestframework = ">=3.8.0"
-openpyxl = ">=2.2.1"
-python-dateutil = "*"
-six = "*"
-
-[[package]]
 name = "django-reversion"
 version = "5.0.2"
 description = "An extension to the Django web framework that provides version control for model instances."
@@ -6362,4 +6344,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "c1e9b072ca19ecc6d172a2ba764cc4eb54aafc658c13949687605e797ea0ca64"
+content-hash = "26cb832162892905269ed227f1f42e0dbb5468f37a5e7f837867d5fba7b8da53"

@@ -124,7 +124,6 @@ django-debug-toolbar-template-timings = "*"
 django-debug-toolbar-request-history = "*"
 django-silk = "*"
 pre-commit = "*"
-django-report-builder = "*"
 dj-rest-auth = {version = "*", extras = ["with_social"]}
 memoize = "^1.0.0"
 fakturoid = "^1.5.1"
