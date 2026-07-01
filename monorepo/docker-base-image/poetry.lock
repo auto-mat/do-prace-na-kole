@@ -1502,19 +1502,18 @@ files = [
 
 [[package]]
 name = "django-datatables-view"
-version = "1.19.1"
+version = "1.20.0"
 description = "Django datatables view"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 groups = ["main"]
 files = [
-    {file = "django-datatables-view-1.19.1.tar.gz", hash = "sha256:22f9920008bb11eb2a2ac7886ff2151f749a86a08c9cbf999571f32255da3621"},
-    {file = "django_datatables_view-1.19.1-py2-none-any.whl", hash = "sha256:03a0fe265c16078e579d152f1fed77a51d1d4ea917aaf732a152bc022a1a6a60"},
-    {file = "django_datatables_view-1.19.1-py3-none-any.whl", hash = "sha256:89fca7fc3a5be02fb0c9302f3cf11558bd0adccb3f398df389d6ab8af6db30c3"},
+    {file = "django-datatables-view-1.20.0.tar.gz", hash = "sha256:ec5c2918de4f474213f8b69a466353be81414bff51a2574aff0fdc2eaea172f3"},
+    {file = "django_datatables_view-1.20.0-py3-none-any.whl", hash = "sha256:988c941f0c0e8bad308fe21c0456defc7a1e2bec6ce189bdafb586af38eb965d"},
 ]
 
 [package.dependencies]
-setuptools = "*"
+django = ">=3.0"
 
 [[package]]
 name = "django-dbbackup"
