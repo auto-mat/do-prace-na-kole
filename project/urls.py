@@ -54,7 +54,6 @@ urlpatterns = [
     re_path(r"^nested_admin/", include("nested_admin.urls")),
     re_path(r"^rest/", include(router.urls)),
     re_path(r"^rest/photo-url/(?P<photo_url>.+)", PhotoURLGet.as_view()),
-    re_path(r"^likes/", include("likes.urls")),
     re_path(r"^avatar/", include("avatar.urls")),
     re_path(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api-token-auth/", rest_framework.authtoken.views.obtain_auth_token),
