@@ -20,6 +20,7 @@
 
 import datetime
 import decimal
+import time
 import logging
 from operator import attrgetter
 from itertools import tee
@@ -350,3 +351,22 @@ def decimal_round(number, decimal_precision="1", rounding=decimal.ROUND_HALF_UP)
     return decimal.Decimal(number).quantize(
         decimal.Decimal(decimal_precision), rounding=rounding
     )
+
+
+class memoize_with_expiry:
+    def __init__(self, expiry_time=0):
+        self.cache = {}
+        self.expiry_time = expiry_time
+
+    def __call__(self, func):
+        def wrapped(*args):
+            current_time = time.time()
+            if args in self.cache:
+                result, timestamp = self.cache[args]
+                if current_time - timestamp < self.expiry_time:
+                    return result
+
+            result = func(*args)
+            self.cache[args] = (result, current_time)
+            return result
+        return wrapped
