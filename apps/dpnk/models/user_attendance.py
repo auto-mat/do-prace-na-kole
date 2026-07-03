@@ -762,8 +762,10 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return results.get_unanswered_questionnaires(self)
 
     @denormalized(
-        models.NullBooleanField,
+        models.BooleanField,
         default=None,
+        null=True,
+        blank=True,
         skip={"created", "updated", "last_sync_time"},
     )
     @depend_on_related("Answer")

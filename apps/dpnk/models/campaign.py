@@ -122,7 +122,7 @@ class Campaign(Pricable, models.Model):
         default=False,
         null=False,
     )
-    mailing_list_enabled = models.NullBooleanField(
+    mailing_list_enabled = models.BooleanField(
         verbose_name=_("Povolit mailing list"),
         default=None,
         null=True,

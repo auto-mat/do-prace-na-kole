@@ -105,9 +105,11 @@ class UserProfile(WithGalleryMixin, models.Model):
         ],
         help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
-    telephone_opt_in = models.NullBooleanField(
+    telephone_opt_in = models.BooleanField(
         verbose_name=_("Povolení telefonovat"),
         default=None,
+        null=True,
+        blank=True,
     )
     language = models.CharField(
         verbose_name=_("Jazyk e-mailové komunikace"),
@@ -164,10 +166,12 @@ class UserProfile(WithGalleryMixin, models.Model):
         related_name="city_admins",
         blank=True,
     )
-    mailing_opt_in = models.NullBooleanField(
+    mailing_opt_in = models.BooleanField(
         verbose_name=_("Soutěžní e-maily"),
         help_text=_("Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
+        null=True,
+        blank=True,
     )
     occupation = models.ForeignKey(
         Occupation,
