@@ -325,18 +325,6 @@ urllib3 = ">=1.25.4,<1.27"
 crt = ["awscrt (==0.14.0)"]
 
 [[package]]
-name = "cached-property"
-version = "2.0.1"
-description = "A decorator for caching properties in classes."
-optional = false
-python-versions = ">=3.8"
-groups = ["main"]
-files = [
-    {file = "cached_property-2.0.1-py3-none-any.whl", hash = "sha256:f617d70ab1100b7bcf6e42228f9ddcb78c676ffa167278d9f730d1c2fba69ccb"},
-    {file = "cached_property-2.0.1.tar.gz", hash = "sha256:484d617105e3ee0e4f1f58725e72a8ef9e93deee462222dbd51cd91230897641"},
-]
-
-[[package]]
 name = "celery"
 version = "5.6.3"
 description = "Distributed Task Queue."
@@ -6336,4 +6324,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "00e77e58920dc11fbc440a8ee73e39a387d0a9a01ebac17934e6447278956104"
+content-hash = "42057fbdc4c28bf76e6339926849baed42e1a5996cb64e1db57e2b1c45bd7b05"
