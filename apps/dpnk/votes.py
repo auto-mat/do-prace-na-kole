@@ -19,8 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.dispatch import receiver
 
-from likes.exceptions import CannotVoteException
-from likes.signals import can_vote_test
+# from likes.exceptions import CannotVoteException
+# from likes.signals import can_vote_test
 
 from secretballot.middleware import SecretBallotIpUseragentMiddleware
 
@@ -33,7 +33,7 @@ class SecretBallotUserMiddleware(SecretBallotIpUseragentMiddleware):
             return None
 
 
-@receiver(can_vote_test)
-def can_vote(instance, request, **kwargs):
-    if not instance.question.competition.is_actual():
-        raise CannotVoteException
+# @receiver(can_vote_test)
+# def can_vote(instance, request, **kwargs):
+#     if not instance.question.competition.is_actual():
+#         raise CannotVoteException
