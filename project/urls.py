@@ -72,7 +72,6 @@ urlpatterns = [
     re_path(
         "^inbox/notifications/", include(notifications.urls, namespace="notifications")
     ),
-    re_path(r"^report_builder/", include("report_builder.urls")),
     re_path(
         r"^" + settings.LOADER_IO_KEY + "/",
         lambda r: HttpResponse(settings.LOADER_IO_KEY, content_type="text/plain"),
