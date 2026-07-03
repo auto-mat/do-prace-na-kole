@@ -2456,9 +2456,9 @@ django = "*"
 
 [package.source]
 type = "git"
-url = "https://github.com/PetrDlouhy/django-subdomains"
-reference = "django20"
-resolved_reference = "4096c2dc82f9f5e511e8c8f78d31e804ac028b5d"
+url = "https://github.com/auto-mat/django-subdomains.git"
+reference = "compatibile-with-django-5"
+resolved_reference = "c64d1df9f987a0331efff0837e4ab8023f78df94"
 
 [[package]]
 name = "django-table-select-widget"
@@ -6344,4 +6344,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "26cb832162892905269ed227f1f42e0dbb5468f37a5e7f837867d5fba7b8da53"
+content-hash = "858bb1fb7a5cc1748394a30e9a0d5f27778329c384a81a6d78af98f897ca1f8b"

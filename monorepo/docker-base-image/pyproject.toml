@@ -90,7 +90,7 @@ sqlparse = "*"
 django-appconf = "*"
 social-auth-app-django = "*"
 svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git"}
-django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains", rev = "django20"}
+django-subdomains = {git = "https://github.com/auto-mat/django-subdomains.git", rev = "compatibile-with-django-5"}
 django-advanced-filters = "*"
 stravalib = {git = "https://github.com/hozn/stravalib", rev = "main"}
 django-wysiwyg-redactor = {git = "https://github.com/auto-mat/django-wysiwyg-redactor.git", rev = "compatibility-with-django-5"}
