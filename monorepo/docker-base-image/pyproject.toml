@@ -13,7 +13,7 @@ six = "*"
 Django = ">=2.2.6"
 django-import-export = "*"
 django-import-export-celery = {git = "https://github.com/auto-mat/django-import-export-celery.git", rev = "compatible_with_django_2_version"}
-psycopg2 = "2.8.6"
+psycopg2 = "^2.9.12"
 python-memcached = "*"
 django-extensions = "*"
 django-softhyphen = "*"
