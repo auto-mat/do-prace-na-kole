@@ -126,6 +126,8 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def member_count(self):
+        if not self.pk:
+            return None
         member_count = self.members.count()
         if self.campaign.too_much_members(member_count):
             logger.error("Too many members in team", extra={"team": self})
@@ -142,6 +144,8 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def paid_member_count(self):
+        if not self.pk:
+            return None
         member_count = self.paid_members().count()
         return member_count
 
@@ -160,6 +164,8 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def unapproved_member_count(self):
+        if not self.pk:
+            return None
         member_count = self.unapproved_members().count()
         return member_count
 
@@ -195,6 +201,8 @@ class Team(WithGalleryMixin, models.Model):
     @denormalized(models.IntegerField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def get_rides_count_denorm(self):
+        if not self.pk:
+            return None
         rides_count = 0
         for member in self.members:
             rides_count += member.get_rides_count()
@@ -260,6 +268,8 @@ class Team(WithGalleryMixin, models.Model):
     @denormalized(models.FloatField, null=True, skip={"updated", "created"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def frequency(self):
+        if not self.pk:
+            return None
         return self.get_frequency()
 
     def get_frequency_percentage(self):
@@ -271,6 +281,8 @@ class Team(WithGalleryMixin, models.Model):
     @denormalized(models.TextField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def name_with_members(self):
+        if not self.pk:
+            return None
         members = self.members
         if members:
             names = [u.userprofile.name() for u in members]
