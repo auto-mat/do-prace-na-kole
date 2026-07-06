@@ -1107,17 +1107,21 @@ Django = ">=4.2"
 
 [[package]]
 name = "django-admin-views"
-version = "0.8.0"
+version = "1.0.3"
 description = "django-admin-views is a simple way to add custom admin views and direct URLs to the Django admin"
 optional = false
-python-versions = "*"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django-admin-views-0.8.0.tar.gz", hash = "sha256:cf3f54c030cb20f1e11f42e80d68022ba020326438c44fcb15edb11487934fb8"},
+    {file = "django-admin-views-1.0.3.tar.gz", hash = "sha256:52a8a67b25c3b246dcef75175e354afb8555212c94776a87aaaae042e0db4e60"},
+    {file = "django_admin_views-1.0.3-py3-none-any.whl", hash = "sha256:84b36b62fc56c9f5e9b256320bc7bddcafc92d0616001aab67648243c3a6df26"},
 ]
 
 [package.dependencies]
-django = ">=1.6"
+django = ">=3.2"
+
+[package.extras]
+dev = ["black", "bumpver", "isort"]
 
 [[package]]
 name = "django-adminactions"
