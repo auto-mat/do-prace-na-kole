@@ -27,6 +27,7 @@ from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
 from vokativ import vokativ
@@ -306,8 +307,8 @@ class UserProfile(WithGalleryMixin, models.Model):
             logger.error("Mailing id %s is already used" % self.mailing_id)
 
         if self.pk is None:
-            self.ecc_password = User.objects.make_random_password()
-            self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
+            self.ecc_password = get_random_string(length=10)
+            self.ecc_email = f"{get_random_string(length=10)}@dopracenakole.cz"
 
         super().save(force_insert, force_update, *args, **kwargs)
 
