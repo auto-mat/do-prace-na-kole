@@ -315,7 +315,7 @@ class DjRESTAuthRegistrationConfig(AppConfig):
 INSTALLED_APPS = [
     "modeltranslation",
     "django_nvd3",
-    "admin_views",
+    # "admin_views",
     "dal",
     "dal_select2",
     "django_su",
