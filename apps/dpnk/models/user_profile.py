@@ -224,6 +224,8 @@ class UserProfile(WithGalleryMixin, models.Model):
     @depend_on_related("CompanyAdmin")
     # This is here to update related_admin property on UserAttendance model
     def company_admin_count(self):
+        if not self.pk:
+            return 0
         return self.company_admin.count()
 
     def get_sesame_token(self):
