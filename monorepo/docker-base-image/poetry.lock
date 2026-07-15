@@ -1795,24 +1795,21 @@ tablib = {version = ">=3.0.0", extras = ["html", "ods", "xls", "xlsx", "yaml"]}
 
 [[package]]
 name = "django-import-export-celery"
-version = "1.3"
+version = "1.7.1"
 description = "Process long running django imports and exports in celery"
 optional = false
 python-versions = "*"
 groups = ["main"]
-files = []
-develop = false
+files = [
+    {file = "django_import_export_celery-1.7.1-py3-none-any.whl", hash = "sha256:4897ff63a2fc5ca85b4f2fb4e01a3937af9ad3881f2b9106411def72dad77232"},
+    {file = "django_import_export_celery-1.7.1.tar.gz", hash = "sha256:a4cc086ae24384e4640bdcd262d5933a162775d272546194840d98c2af6b3500"},
+]
 
 [package.dependencies]
 Django = "*"
 django-author = "*"
 django-import-export = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/auto-mat/django-import-export-celery.git"
-reference = "compatible_with_django_2_version"
-resolved_reference = "272cbcb941243308be2b6301f489308073d9dc6e"
+html2text = "*"
 
 [[package]]
 name = "django-initial-field"
@@ -6328,4 +6325,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "42057fbdc4c28bf76e6339926849baed42e1a5996cb64e1db57e2b1c45bd7b05"
+content-hash = "d3d1226d3e4eacad432e62f4c1a36921a2e046de0ad33a047391ffdf770529ce"
