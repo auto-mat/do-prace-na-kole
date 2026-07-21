@@ -114,11 +114,15 @@ if "rosetta" in settings.INSTALLED_APPS:
     ]
 
 try:
-    import debug_toolbar
+    from .settings.base import str_to_bool
 
-    urlpatterns += [
-        re_path(r"^__debug__/", include(debug_toolbar.urls)),
-    ]
+    DEBUG_TOOLBAR = str_to_bool(os.environ.get("DPNK_DEBUG_TOOLBAR", False))
+    if DEBUG_TOOLBAR:
+        import debug_toolbar
+
+        urlpatterns += [
+            re_path(r"^__debug__/", include(debug_toolbar.urls)),
+        ]
 except ImportError:
     pass
 
