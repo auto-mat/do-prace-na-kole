@@ -1557,19 +1557,19 @@ django-appconf = ">=0.4"
 
 [[package]]
 name = "django-debug-toolbar"
-version = "3.2.4"
+version = "7.0.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "django-debug-toolbar-3.2.4.tar.gz", hash = "sha256:644bbd5c428d3283aa9115722471769cac1bec189edf3a0c855fd8ff870375a9"},
-    {file = "django_debug_toolbar-3.2.4-py3-none-any.whl", hash = "sha256:6b633b6cfee24f232d73569870f19aa86c819d750e7f3e833f2344a9eb4b4409"},
+    {file = "django_debug_toolbar-7.0.0-py3-none-any.whl", hash = "sha256:656161388ce48384276342eeb16d532113ec670816fa1546cc3753730aa51b3d"},
+    {file = "django_debug_toolbar-7.0.0.tar.gz", hash = "sha256:ef7494c5b459c149e87cc2da88d86e944064945e86bd7b2d879093586b5fefbf"},
 ]
 
 [package.dependencies]
-Django = ">=2.2"
-sqlparse = ">=0.2.0"
+django = ">=5.2"
+sqlparse = ">=0.2"
 
 [[package]]
 name = "django-debug-toolbar-line-profiler"
