@@ -1896,20 +1896,18 @@ resolved_reference = "ffe8a2b421415d0e1ff29dc84b3db997dd3f1e24"
 
 [[package]]
 name = "django-livereload-server"
-version = "0.4"
+version = "0.5.1"
 description = "LiveReload functionality integrated with your Django development environment"
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "django-livereload-server-0.4.tar.gz", hash = "sha256:60ed030085ca53671d25704b10ec7aa3cc94a16da437b727a8dcce42471b4c65"},
-    {file = "django_livereload_server-0.4-py2.py3-none-any.whl", hash = "sha256:136c231e7ad3ba7a4db65426632dfa9b964ac04e8fa5f3808166447f016a4a91"},
+    {file = "django-livereload-server-0.5.1.tar.gz", hash = "sha256:e1fecca2a74ec87235bbfdf8b63365499324d9a87017427e5d297711d1cd532d"},
+    {file = "django_livereload_server-0.5.1-py2.py3-none-any.whl", hash = "sha256:e03bd65d1679ef1b4a5e22e2a77d11d3cfb0e3d21ae25afba49e280924ba6f58"},
 ]
 
 [package.dependencies]
-beautifulsoup4 = ">=4.3.2"
 django = ">=1.8"
-six = "*"
 tornado = "*"
 
 [[package]]
