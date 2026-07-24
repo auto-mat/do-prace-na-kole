@@ -2301,14 +2301,14 @@ formatting = ["autopep8"]
 
 [[package]]
 name = "django-sitetree"
-version = "1.17.3"
-description = "This reusable Django app introduces site tree, menu and breadcrumbs navigation elements"
+version = "1.18.1"
+description = "This reusable Django app introduces site tree, menu and breadcrumbs navigation elements."
 optional = false
-python-versions = "*"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "django-sitetree-1.17.3.tar.gz", hash = "sha256:9a33acc9c50c014a3c014b698b7078660aa61b22af1cb226c706fca34bc52a36"},
-    {file = "django_sitetree-1.17.3-py3-none-any.whl", hash = "sha256:a00508b03d34afebb8bdf817732498ca4311e011c7c617e88a07918b74c4b37a"},
+    {file = "django_sitetree-1.18.1-py3-none-any.whl", hash = "sha256:37daf127ef6da7c4c40784ce374aad1022cb8e8bc67a6615d1c874c12e89ff63"},
+    {file = "django_sitetree-1.18.1.tar.gz", hash = "sha256:b6a7bf8086e04bda9aaa9bac47e6aff1699d143bd640104229052de02c27b8e4"},
 ]
 
 [[package]]
