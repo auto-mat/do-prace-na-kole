@@ -1972,14 +1972,14 @@ django = ">=1.4"
 
 [[package]]
 name = "django-nested-admin"
-version = "4.0.0"
+version = "4.1.6"
 description = "Django admin classes that allow for nested inlines"
 optional = false
 python-versions = ">=3.6"
 groups = ["main"]
 files = [
-    {file = "django-nested-admin-4.0.0.tar.gz", hash = "sha256:f488933265d0fb429e98a627087d1e78ce1f58d17cd9a7cbf6b3e458660f6c0f"},
-    {file = "django_nested_admin-4.0.0-py3-none-any.whl", hash = "sha256:4de8e97b445be65c4ac7952fa1b3a62b2f4333051dd97b8c960a37790ccdeee4"},
+    {file = "django_nested_admin-4.1.6-py3-none-any.whl", hash = "sha256:ae3e1d910631e6cc3b5815d80129f18c6c081b7dd7f775bf392d9bb1ac88ef93"},
+    {file = "django_nested_admin-4.1.6.tar.gz", hash = "sha256:0222475cc343e7b8813d7a5db583cddef15f5c0f44dbe17b91b4d682db7bd73a"},
 ]
 
 [package.dependencies]
