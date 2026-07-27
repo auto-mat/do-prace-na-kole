@@ -14,12 +14,20 @@ Good news{% if invited %} {{ invited.userprofile.first_name_vokativ }}{% endif %
 Fellow colleague {{ inviting.userprofile.full_name }} wants to ride the bicycle with you in the {{inviting.team.name}} team.
 </p>
 
-{% if not invited %}
+{% if not registered %}
+<p>
+You are not registered, please register first.
+</p>
 {% get_app_base_url 'register' as button_link %}
-{% else %}
-{% get_app_base_url 'profile/details' as button_link %}
+{% include "./button.html" with button_text="Registrace" %}
 {% endif %}
+
+{% get_app_base_url 'register-challenge' '?invitationToken='|add:token as button_link %}
 {% include "./button.html" with button_text="Let's Ride" %}
+
+{% if invited %}
+<p>You are currently part of the {{ invited }} team.</p>
+{% endif %}
 
 <p>
 Need more information? Respond directly to your fellow colleague at <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.

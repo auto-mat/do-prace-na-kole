@@ -369,4 +369,28 @@ class memoize_with_expiry:
             result = func(*args)
             self.cache[args] = (result, current_time)
             return result
+
         return wrapped
+
+
+def create_token(payload, expiration, secret_key=None, algorithm="HS256"):
+    """Create JWT token
+
+    :param dict payload: Payload
+    :param datetime expiration: Token expiration date time
+    :param str secret_key: Token secret key
+    :param str algorithm: Create token algorithm,
+                          default value is HS256
+
+    :return str: encoded JWT token string
+    """
+    import jwt
+
+    if not secret_key:
+        secret_key = settings.SECRET_KEY
+
+    token_payload = {
+        **payload,
+        "exp": expiration,
+    }
+    return jwt.encode(token_payload, secret_key, algorithm=algorithm)

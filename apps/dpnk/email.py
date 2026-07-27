@@ -98,10 +98,38 @@ def team_created_mail(user_attendance, team_name):
     )
 
 
-def invitation_mail(user_attendance, email, invited=None):
+def invitation_mail(
+    user_attendance, email, token_expiration=None, invited=None, registered=None
+):
+    """Send team invitation e-mail
+
+    :param UserAttendance user_attendance: User attendance model instance
+    :param str email: E-mail address
+    :param datetime token_expiration: JWT token expiration date time
+    :param Bool|None|str invited: Team name if user has assigned team,
+                                  otherwise False
+    :param Bool|None registered: True if user is registered,
+                                 otherwise False
+    """
+    from .util import create_token
+
+    if not token_expiration:
+        from django.utils import timezone
+
+        token_expiration = timezone.now() + timezone.timedelta(hours=1)
+
     context = {
         "inviting": user_attendance,
         "invited": invited,
+        "registered": registered,
+        "token": create_token(
+            payload={
+                "team_id": user_attendance.team.id,
+                "subsidiary_id": user_attendance.team.subsidiary.id,
+                "company_id": user_attendance.team.subsidiary.company.id,
+            },
+            expiration=token_expiration,
+        ),
     }
     campaign_mail(
         user_attendance,

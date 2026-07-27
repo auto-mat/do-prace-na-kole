@@ -33,7 +33,7 @@ from django.conf import settings
 from django.contrib import contenttypes
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext as _
 
 from notifications.signals import notify
@@ -417,17 +417,37 @@ def team_membership_denial_mail(self, team_members):
 
 
 @shared_task(bind=True)
-def team_membership_invitation_mail(self, user_attendance_id, emails):
+def team_membership_invitation_mail(self, user_attendance_id, emails, campaign):
     """Send team membership invitation mail
 
     :param int user_attendance_id: UserAttendance model ID
     :param list emails: Emails addresses where team membership invitation
                         email will be sended
+    :param Campaign campaign: Campaign model instance
     """
+    User = get_user_model()
     for email_address in emails:
+        invited = False
+        registered = False
+        user = User.objects.filter(email=email_address)
+        if user:
+            registered = True
+            user_attendance = UserAttendance.objects.filter(
+                userprofile__user=user[0],
+                campaign=campaign,
+            )
+            if user_attendance and user_attendance[0].team:
+                invited = user_attendance[0].team.name
+
         email.invitation_mail(
             user_attendance=UserAttendance.objects.get(id=user_attendance_id),
             email=email_address,
+            invited=invited,
+            registered=registered,
+            token_expiration=timezone.datetime.combine(
+                campaign.phase("competition").date_to,
+                timezone.datetime.min.time(),
+            ),
         )
 
 
