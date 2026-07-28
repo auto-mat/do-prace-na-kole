@@ -127,7 +127,7 @@ class Team(WithGalleryMixin, models.Model):
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def member_count(self):
         if not self.pk:
-            return None
+            return 0
         member_count = self.members.count()
         if self.campaign.too_much_members(member_count):
             logger.error("Too many members in team", extra={"team": self})
