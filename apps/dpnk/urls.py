@@ -47,6 +47,7 @@ from .rest import (
     StravaAuth,
     StravaConnect,
     StravaDisconnect,
+    UserProfileAgeGroups,
     ValidateChallengeTeamInvitationEmailPost,
 )
 
@@ -528,6 +529,11 @@ urlpatterns = [
     ),
     re_path(r"^account/", include("allauth.urls")),
     path("rest/auth/registration/", include("dj_rest_auth.registration.urls")),
+    path(
+        "rest/user-profile-age-groups/",
+        UserProfileAgeGroups.as_view(),
+        name="user-profile-age-groups",
+    ),
     # company admin:
     re_path(
         r"^spolecnost/oficialni_souteze/$",

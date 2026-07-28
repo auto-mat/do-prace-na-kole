@@ -4321,6 +4321,15 @@ class ValidateChallengeTeamInvitationEmailPost(APIView):
         )
 
 
+class UserProfileAgeGroups(APIView):
+    """User profile age groups options"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return JsonResponse(UserProfile.AGE_GROUP, safe=False)
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
