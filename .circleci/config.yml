@@ -69,7 +69,7 @@ jobs:
          name: Start PostGIS container
          command: |
            if scripts/test_changes --invert-match docs/ ; then
-            docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis:9.6
+            docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password postgis/postgis:18-3.6
            fi
       - run:
          name: Start RabbitMQ container
