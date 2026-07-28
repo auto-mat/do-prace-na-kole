@@ -3907,9 +3907,11 @@ class SendChallengeTeamInvitationEmailPost(UserAttendanceMixin, APIView):
             )
 
         ua = self.ua()
-        team_membership_invitation_mail.delay(
+        # team_membership_invitation_mail.delay(
+        team_membership_invitation_mail(
             user_attendance_id=ua.id,
             emails=deserialized_data.data["email"],
+            campaign=request.campaign,
         )
         return Response(
             {"team_membership_invitation_email_sended": deserialized_data.data["email"]}
@@ -4266,6 +4268,57 @@ class DataReportResultsByChallenge(CompanyAdminMixin, APIView):
                 user_attendance.campaign.year,
             )
         return Response({"data_report_url": url})
+
+
+class ValidateChallengeTeamInvitationEmailDeserializer(serializers.Serializer):
+    """Validate challenge team invitation e-mail URL token argument serializer"""
+
+    token = serializers.CharField(required=True)
+
+    def validate_token(self, token):
+        try:
+            from jwt.exceptions import (
+                DecodeError,
+                ExpiredSignatureError,
+                InvalidSignatureError,
+            )
+
+            from .util import decode_token
+
+            data = decode_token(token)
+        except (DecodeError, InvalidSignatureError):
+            raise serializers.ValidationError(_("Pozvánka je neplatná."))
+        except ExpiredSignatureError:
+            raise serializers.ValidationError(
+                _("Vypršel čas platnosti. Pozvánka je neplatná.")
+            )
+
+        team = Team.objects.filter(id=data["team_id"], campaign__id=data["campaign_id"])
+        if not team:
+            raise serializers.ValidationError(_("Tým neexistuje."))
+        if team[0].is_full():
+            raise serializers.ValidationError(_("Tým je obsazen."))
+        return data
+
+
+class ValidateChallengeTeamInvitationEmailPost(APIView):
+    """Validate challenge team invitation e-mail URL token argument"""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ValidateChallengeTeamInvitationEmailDeserializer
+
+    def post(self, request):
+        deserialized_data = ValidateChallengeTeamInvitationEmailDeserializer(
+            data=request.data
+        )
+        if not deserialized_data.is_valid():
+            return Response(
+                {"error": deserialized_data.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            deserialized_data.validated_data,
+        )
 
 
 router = routers.DefaultRouter()

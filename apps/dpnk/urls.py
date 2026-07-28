@@ -47,6 +47,7 @@ from .rest import (
     StravaAuth,
     StravaConnect,
     StravaDisconnect,
+    ValidateChallengeTeamInvitationEmailPost,
 )
 
 from .rest_coordinator import (
@@ -476,6 +477,11 @@ urlpatterns = [
         "rest/send-team-membership-invitation-email/",
         SendChallengeTeamInvitationEmailPost.as_view(),
         name="send-team-membership-invitation-email",
+    ),
+    path(
+        "rest/validate-team-membership-invitation-email/",
+        ValidateChallengeTeamInvitationEmailPost.as_view(),
+        name="validate-team-membership-invitation-email",
     ),
     path(
         "rest/open-app-with-rest-token/<int:app_id>/",

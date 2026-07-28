@@ -394,3 +394,21 @@ def create_token(payload, expiration, secret_key=None, algorithm="HS256"):
         "exp": expiration,
     }
     return jwt.encode(token_payload, secret_key, algorithm=algorithm)
+
+
+def decode_token(token, secret_key=None, algorithms=["HS256"]):
+    """Decode JWT token
+
+    :param str token: JWT Token
+    :param str secret_key: Token secret key
+    :param list algorithms: Create token algorithm,
+                            default value is HS256
+
+    :return dict: decoded JWT token dictionary
+    """
+    import jwt
+
+    if not secret_key:
+        secret_key = settings.SECRET_KEY
+
+    return jwt.decode(token, secret_key, algorithms=algorithms)
