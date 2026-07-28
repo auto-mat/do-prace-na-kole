@@ -27,8 +27,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.text import format_lazy
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import gettext_lazy as _
 
 from rank import Rank, UpperRank
 
@@ -507,7 +506,7 @@ class Competition(models.Model):
 
         cities = self.city.all()
         if cities:
-            city_string = ungettext_lazy(
+            city_string = _(
                 "ve městě %(cities)s",
                 "ve městech %(cities)s",
                 len(cities),

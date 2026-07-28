@@ -34,7 +34,7 @@ from django.contrib import contenttypes
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from notifications.signals import notify
 

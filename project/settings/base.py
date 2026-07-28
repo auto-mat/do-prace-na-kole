@@ -31,8 +31,8 @@ import django.conf.locale
 from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 
 from celery.schedules import crontab
 
@@ -112,7 +112,7 @@ if DPNK_CACHE_REDIS_LOCATION is not None:
 else:
     CACHES = {
         "default": {
-            "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
             "LOCATION": "127.0.0.1:11211",
             "KEY_PREFIX": "dpnkch",
         },
@@ -139,7 +139,7 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = "cs"
 MODELTRANSLATION_LANGUAGES = ("en", "cs", "dsnkcs")
 MODELTRANSLATION_FALLBACK_LANGUAGES = ("cs", "dsnkcs", "en")
 MODELTRANSLATION_ENABLE_FALLBACKS = True
-SITE_ID = os.environ.get("DPNK_SITE_ID", 1)
+SITE_ID = int(os.environ.get("DPNK_SITE_ID", 1))
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -198,6 +198,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "dpnk.middleware.SesameAuthenticationMiddleware",
     "dpnk.middleware.CeleryDenormMiddleware",
     "author.middlewares.AuthorDefaultBackendMiddleware",
@@ -313,9 +314,8 @@ class DjRESTAuthRegistrationConfig(AppConfig):
 
 INSTALLED_APPS = [
     "modeltranslation",
-    "admin_tools_stats",
     "django_nvd3",
-    "admin_views",
+    # "admin_views",
     "dal",
     "dal_select2",
     "django_su",
@@ -351,7 +351,6 @@ INSTALLED_APPS = [
     "composite_field",
     "softhyphen",
     "django_extensions",
-    "chart_tools",
     "import_export",
     "import_export_celery",
     "polymorphic",
@@ -360,7 +359,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "adminsortable2",
     "reportlab",
-    "report_builder",
     "dbbackup",
     "related_admin",
     "easy_thumbnails",
@@ -380,10 +378,10 @@ INSTALLED_APPS = [
     "denorm",
     "subdomains",
     "redactor",
-    "selectable",
+    # "selectable", # Django django-table-select-widget app
     "raven.contrib.django.raven_compat",
     "bootstrap4",
-    "daterange_filter",
+    "rangefilter",
     "storages",
     "favicon",
     "adminactions",
@@ -393,10 +391,10 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "dj_fiobank_payments",
     "smmapdfs",
-    "secretballot",
+    # "secretballot",
     "sitetree",
     "sitetree_modeltranslation",
-    "likes",
+    # "likes",
     "colorfield",
     "social_django",
     "fm",
@@ -438,7 +436,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.openapi.AutoSchema",
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "DEFAULT_VERSION": "v1",
     "ALLOWED_VERSIONS": ["v1", "v2"],
@@ -789,7 +787,7 @@ AVATAR_PROVIDERS = (
 
 def photologue_path(instance, filename):
     fn = (
-        unicodedata.normalize("NFKD", force_text(filename))
+        unicodedata.normalize("NFKD", force_str(filename))
         .encode("ascii", "ignore")
         .decode("ascii")
     )

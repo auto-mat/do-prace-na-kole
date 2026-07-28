@@ -22,7 +22,6 @@ import datetime
 import babel
 
 from babel.dates import format_date
-from cache_utils.decorators import cached
 from colorfield.fields import ColorField
 from denorm import denormalized, depend_on_related
 
@@ -31,7 +30,7 @@ from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
 from django.utils.html import escape
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 
 from price_level.models import Pricable
 
@@ -122,7 +121,7 @@ class Campaign(Pricable, models.Model):
         default=False,
         null=False,
     )
-    mailing_list_enabled = models.NullBooleanField(
+    mailing_list_enabled = models.BooleanField(
         verbose_name=_("Povolit mailing list"),
         default=None,
         null=True,
@@ -352,7 +351,7 @@ class Campaign(Pricable, models.Model):
     def possible_vacation_days(self):
         """Return days, that can be added as vacation"""
 
-        @cached(60)
+        @util.memoize_with_expiry(expiry_time=60)
         def get_days(pk):
             competition_phase = self.competition_phase()
             return [
@@ -390,7 +389,7 @@ class Campaign(Pricable, models.Model):
         )
 
     def get_complementary_school_campaign(self):
-        @cached(60)
+        @util.memoize_with_expiry(expiry_time=60)
         def get_campaign(pk):
             try:
                 return Campaign.objects.get(year=self.year, campaign_type__slug="skoly")
@@ -419,6 +418,8 @@ class Campaign(Pricable, models.Model):
         "t_shirt_delivery.TShirtSize", type="backward", foreign_key="campaign"
     )
     def has_any_tshirt(self):
+        if not self.pk:
+            return True
         return self.tshirtsize_set.exists()
 
     def phase(self, phase_type):
@@ -427,7 +428,7 @@ class Campaign(Pricable, models.Model):
         @phase_type Type of phase.
         """
 
-        @cached(60)
+        @util.memoize_with_expiry(expiry_time=60)
         def get_phase(pk, phase_type):
             try:
                 return self.phase_set.get(phase_type=phase_type)

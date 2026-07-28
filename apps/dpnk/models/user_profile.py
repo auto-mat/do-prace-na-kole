@@ -27,7 +27,8 @@ from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 
 from vokativ import vokativ
 
@@ -105,9 +106,11 @@ class UserProfile(WithGalleryMixin, models.Model):
         ],
         help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
-    telephone_opt_in = models.NullBooleanField(
+    telephone_opt_in = models.BooleanField(
         verbose_name=_("Povolení telefonovat"),
         default=None,
+        null=True,
+        blank=True,
     )
     language = models.CharField(
         verbose_name=_("Jazyk e-mailové komunikace"),
@@ -164,10 +167,12 @@ class UserProfile(WithGalleryMixin, models.Model):
         related_name="city_admins",
         blank=True,
     )
-    mailing_opt_in = models.NullBooleanField(
+    mailing_opt_in = models.BooleanField(
         verbose_name=_("Soutěžní e-maily"),
         help_text=_("Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
+        null=True,
+        blank=True,
     )
     occupation = models.ForeignKey(
         Occupation,
@@ -219,6 +224,8 @@ class UserProfile(WithGalleryMixin, models.Model):
     @depend_on_related("CompanyAdmin")
     # This is here to update related_admin property on UserAttendance model
     def company_admin_count(self):
+        if not self.pk:
+            return 0
         return self.company_admin.count()
 
     def get_sesame_token(self):
@@ -302,8 +309,8 @@ class UserProfile(WithGalleryMixin, models.Model):
             logger.error("Mailing id %s is already used" % self.mailing_id)
 
         if self.pk is None:
-            self.ecc_password = User.objects.make_random_password()
-            self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
+            self.ecc_password = get_random_string(length=10)
+            self.ecc_email = f"{get_random_string(length=10)}@dopracenakole.cz"
 
         super().save(force_insert, force_update, *args, **kwargs)
 

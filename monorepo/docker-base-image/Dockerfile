@@ -1,4 +1,4 @@
-from python:3.10-trixie
+from python:3.11-trixie
 
 maintainer Automat
 

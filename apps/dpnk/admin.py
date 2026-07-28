@@ -53,11 +53,11 @@ from django.forms import Textarea
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-from daterange_filter.filter import DateRangeFilter
+from rangefilter.filters import DateRangeFilterBuilder
 
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
@@ -465,7 +465,11 @@ class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
 
 @admin.register(models.Competition)
 class CompetitionAdmin(
-    FormRequestMixin, CityAdminMixin, ImportExportMixin, RelatedFieldAdmin
+    FormRequestMixin,
+    CityAdminMixin,
+    ImportExportMixin,
+    RelatedFieldAdmin,
+    SortableAdminMixin,
 ):
     list_display = (
         "name",
@@ -1175,7 +1179,7 @@ class ChoiceInline(SortableInlineAdminMixin, admin.TabularInline):
 
 
 @admin.register(models.ChoiceType)
-class ChoiceTypeAdmin(admin.ModelAdmin):
+class ChoiceTypeAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = ("name", "competition", "universal")
     inlines = [ChoiceInline]
     list_filter = (
@@ -1349,7 +1353,7 @@ class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin)
         campaign_filter_generator("user_attendance__campaign"),
         "direction",
         "commute_mode",
-        ("date", DateRangeFilter),
+        ("date", DateRangeFilterBuilder()),
         "user_attendance__team__subsidiary__city",
         "source_application",
         "user_attendance__payment_status",
@@ -1454,7 +1458,12 @@ class CampaignTypeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Campaign)
-class CampaignAdmin(ImportExportMixin, TranslationAdmin, admin.ModelAdmin):
+class CampaignAdmin(
+        ImportExportMixin,
+        TranslationAdmin,
+        SortableAdminMixin,
+        admin.ModelAdmin,
+):
     list_display = (
         "year",
         "campaign_type",

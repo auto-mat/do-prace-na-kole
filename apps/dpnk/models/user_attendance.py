@@ -38,7 +38,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import activate, get_language
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from motivation_messages.models import MotivationMessage
 
@@ -276,7 +276,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         "Payment", foreign_key="payment_user_attendance", skip={"updated", "created"}
     )
     def representative_payment(self):
-        if self.team and self.team.subsidiary and not self.has_admission_fee():
+        if self.team and self.team.subsidiary and not self.has_admission_fee() or not self.pk:
             return None
 
         # Entry fee
@@ -446,6 +446,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
     )
     @depend_on_related("Trip", foreign_key="user_attendance")
     def get_rides_count_denorm(self):
+        if not self.pk:
+            return None
         return self.get_rides_count()
 
     def get_frequency(self, day=None):
@@ -463,6 +465,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
     )
     @depend_on_related("Trip", foreign_key="user_attendance")
     def frequency(self):
+        if not self.pk:
+            return None
         return self.get_frequency()
 
     def get_frequency_percentage(self, day=None):
@@ -499,6 +503,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         """
         from .. import results
 
+        if not self.pk:
+            return None
         try:
             return results.get_userprofile_length(
                 [self], self.campaign.phase("competition")
@@ -516,6 +522,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def total_trip_length_including_recreational(self):
         from .. import results
 
+        if not self.pk:
+            return None
         try:
             return results.get_userprofile_length(
                 [self], self.campaign.phase("competition"), recreational=True
@@ -534,6 +542,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         """Return number of rides, that should be acomplished to this date"""
         from .. import results
 
+        if not self.pk:
+            return None
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
 
     def get_working_rides_base_count(self):
@@ -762,12 +772,16 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return results.get_unanswered_questionnaires(self)
 
     @denormalized(
-        models.NullBooleanField,
+        models.BooleanField,
         default=None,
+        null=True,
+        blank=True,
         skip={"created", "updated", "last_sync_time"},
     )
     @depend_on_related("Answer")
     def has_unanswered_questionnaires(self):
+        if not self.pk:
+            return None
         return self.unanswered_questionnaires().exists()
 
     def get_asociated_company_admin(self):
@@ -838,6 +852,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
         """
         Total trip points. Ignores recreational trips.
         """
+        if not self.pk:
+            return 0
         return (
             Trip.objects.filter(user_attendance=self).aggregate(
                 Sum("commute_mode__points")
@@ -850,7 +866,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         return self.trip_points_total or 0
 
     def points_display(self):
-        from django.utils.translation import ugettext as _
+        from django.utils.translation import gettext as _
 
         return str(round(self.points)) + " " + _("bodů")
 

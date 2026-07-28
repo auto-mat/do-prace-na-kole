@@ -25,7 +25,7 @@ from django.conf import settings
 from django.urls import reverse, translate_url
 from django.utils.formats import get_format
 from django.utils.translation import get_language
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import requests
 

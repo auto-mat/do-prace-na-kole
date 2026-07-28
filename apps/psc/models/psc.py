@@ -22,7 +22,7 @@ from author.decorators import with_author
 
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.utils.translation import ugettext_lazy as _, pgettext_lazy
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 
 @with_author

@@ -8,16 +8,12 @@ license = "GPL-3.0-or-later"
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 six = "*"
 Django = ">=2.2.6"
 django-import-export = "*"
-django-import-export-celery = {git = "https://github.com/auto-mat/django-import-export-celery.git", rev = "compatible_with_django_2_version"}
-django-autocomplete-light = {git = "https://github.com/auto-mat/django-autocomplete-light.git", rev = "jquery"}
-django-smart-selects = {git = "https://github.com/Murakam1/django-smart-selects.git", rev = "patch-1"}
-psycopg2 = "2.8.6"
-python-memcached = "*"
-django-chart-tools = "*"
+django-import-export-celery = "^1.7.1"
+psycopg2 = "^2.9.12"
 django-extensions = "*"
 django-softhyphen = "*"
 django-composite-field = "*"
@@ -40,33 +36,31 @@ django-class-based-auth-views = "*"
 slumber = "*"
 geopy = "==1.22.0"
 gunicorn = "*"
-djcacheutils = "*"
 django-settings-context-processor = "*"
 django-rosetta = "*"
 django-oauth-toolkit = "*"
-djangorestframework = "*"
+djangorestframework = "^3.17.1"
 django-leaflet = "*"
 gpxpy = "*"
 lxml = "*"
 django-gpxpy = "*"
-django-cachalot = {git = "https://github.com/federicobond/django-cachalot.git", rev = "django-2.2"}
+django-cachalot = "^2.9.0"
 django-bulk-update = "*"
 django-cors-headers = "*"
 django-denorm = {git = "https://github.com/auto-mat/django-denorm.git", rev = "develop"}
 django-extra-views = "*"
 raven = "*"
-celery = "<=4.4.5"
+celery = "^5.6.3"
 flower = "*"
-django-daterange-filter = "*"
-django-smmapdfs = {git = "https://git@github.com/auto-mat/smmapdfs.git", rev = "master"}
+django-smmapdfs = {git = "https://git@github.com/auto-mat/smmapdfs.git", rev = "compatibile-with-django-5"}
 django-storages = "*"
 django-model-utils = "*"
-django-price-level = "*"
+django-price-level = {git = "https://github.com/auto-mat/django-price-level.git", rev = "compatibility-with-django-5"}
 django-datatables-view = "*"
 django-rank-query = "*"
 django-adminactions = "1.12.0"
-django-avatar = {git = "https://github.com/tmszi/django-avatar.git", rev = "check-if-img-is-not-corrupter"}
-django-photologue = "3.16"
+django-avatar = "^9.0.0"
+django-photologue = "^3.18"
 boto3 = "*"
 django-google-tag-manager = "*"
 django-ses = "*"
@@ -90,58 +84,64 @@ vokativ = "*"
 django-fm = {git = "https://github.com/auto-mat/django-fm.git", rev = "fix-jquery-ajax-deprecated-methods"}
 django-initial-field = "*"
 django-betterforms = "*"
-django-adminfilters = "==1.0.0"
 django-bleach = "*"
 sqlparse = "*"
 django-appconf = "*"
 social-auth-app-django = "*"
 svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git"}
-django-subdomains = {git = "https://github.com/PetrDlouhy/django-subdomains", rev = "django20"}
+django-subdomains = {git = "https://github.com/auto-mat/django-subdomains.git", rev = "compatibile-with-django-5"}
 django-advanced-filters = "*"
 stravalib = {git = "https://github.com/hozn/stravalib", rev = "main"}
-django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor"}
+django-wysiwyg-redactor = {git = "https://github.com/auto-mat/django-wysiwyg-redactor.git", rev = "compatibility-with-django-5"}
 django-selectable = "*"
 django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", rev = "develop"}
 django-braces = "*"
 django-modeltranslation = "==0.17.7"
 django_polymorphic = "*"
 Unidecode = "*"
-easy-thumbnails = "*"
+easy-thumbnails = "^2.10.1"
 SQLAlchemy = "*"
 django_celery_beat = "*"
-django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", rev = "mergeup"}
+django-stdnumfield = {git = "https://github.com/auto-mat/django-stdnumfield.git", rev = "compatibile-with-django-5"}
 PyPDF2 = "*"
-django-bootstrap4 = "==0.0.8"
+django-bootstrap4 = "^26.1"
 html2text = "*"
 tornado = "<7"
 dj_anonymizer = "*"
 faker = "*"
 django-colorfield = "*"
-dj-fiobank-payments = {git = "https://github.com/auto-mat/dj-fiobank-payments.git"}
+dj-fiobank-payments = {git = "https://github.com/auto-mat/dj-fiobank-payments.git", rev = "compatibility-with-django-5"}
 asgiref = "*"
 django-dbtemplates = "*"
 django-reversion = "*"
 django-admin-charts = "<1.2.0" # https://github.com/PetrDlouhy/django-admin-charts/commit/758b5809483872eb81e83491ae0617019c87fd42#r87232967
 django-inline-static = "*"
-django-notifications-hq = {git = "https://github.com/auto-mat/django-notifications.git", rev = "list_all"}
+django-notifications-hq = {git = "https://github.com/auto-mat/django-notifications.git", rev = "list_all_compatibile_with_django_5"}
 django-extra-fields = "*"
 django-debug-toolbar = "*"
 django-debug-toolbar-template-timings = "*"
 django-debug-toolbar-request-history = "*"
 django-silk = "*"
 pre-commit = "*"
-django-report-builder = "*"
 dj-rest-auth = {version = "*", extras = ["with_social"]}
 memoize = "^1.0.0"
 fakturoid = "^1.5.1"
 pytest-cov = "^3.0.0"
 coveragepy-lcov = "^0.1.2"
 osmnx = "^1.2.1"
-pillow = "9.5.0"
+pillow = "11.0.0"
 drf-serpy = "^0.5.0"
-djangorestframework-simplejwt = "4.8.0"
+djangorestframework-simplejwt = "^5.5.1"
 mygls-rest-client = {git = "https://github.com/auto-mat/mygls-python.git", rev = "fix-and-update-mygls-api"}
 ipython = "8.15"
+django-smart-selects = "^1.7.2"
+django-adminfilters = "2.4.3"
+django-admin-rangefilter = "^0.13.5"
+line-profiler = "^5.0.2"
+django-autocomplete-light = "^5.0.0"
+psycopg = "^3.3.4"
+bootstrap4 = "^0.1.0"
+pymemcache = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

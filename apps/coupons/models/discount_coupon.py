@@ -22,14 +22,14 @@ from author.decorators import with_author
 
 from coupons.models.discount_coupon_type import DiscountCouponType
 
-from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 
 import smmapdfs
 import smmapdfs.model_abcs
@@ -211,7 +211,7 @@ class DiscountCoupon(models.Model):
 
     def save(self, *args, **kwargs):
         if self.token is None or self.token == "":
-            self.token = User.objects.make_random_password(
+            self.token = get_random_string(
                 # black
                 length=6,
                 allowed_chars="ABCDEFGHJKLMNPQRSTUVWXYZ",

@@ -26,7 +26,7 @@ from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import secretballot
 
@@ -41,6 +41,7 @@ class ChoiceType(models.Model):
         verbose_name = _("Typ volby")
         verbose_name_plural = _("Typ volby")
         unique_together = (("competition", "name"),)
+        ordering = ("competition", "name")
 
     competition = models.ForeignKey(
         Competition,

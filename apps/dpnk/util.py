@@ -20,6 +20,7 @@
 
 import datetime
 import decimal
+import time
 import logging
 from operator import attrgetter
 from itertools import tee
@@ -35,10 +36,10 @@ from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.db import connection, OperationalError, transaction
-from django.utils import timezone, six
+from django.utils import timezone
 from django.utils.functional import cached_property, lazy
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 import geopy.distance
 
@@ -48,7 +49,7 @@ from . import exceptions
 
 logger = logging.getLogger(__name__)
 
-mark_safe_lazy = lazy(mark_safe, six.text_type)
+mark_safe_lazy = lazy(mark_safe, str)
 
 DAYS_EXCLUDE = (
     datetime.date(year=2016, day=5, month=7),
@@ -350,3 +351,22 @@ def decimal_round(number, decimal_precision="1", rounding=decimal.ROUND_HALF_UP)
     return decimal.Decimal(number).quantize(
         decimal.Decimal(decimal_precision), rounding=rounding
     )
+
+
+class memoize_with_expiry:
+    def __init__(self, expiry_time=0):
+        self.cache = {}
+        self.expiry_time = expiry_time
+
+    def __call__(self, func):
+        def wrapped(*args):
+            current_time = time.time()
+            if args in self.cache:
+                result, timestamp = self.cache[args]
+                if current_time - timestamp < self.expiry_time:
+                    return result
+
+            result = func(*args)
+            self.cache[args] = (result, current_time)
+            return result
+        return wrapped

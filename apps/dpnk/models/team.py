@@ -26,15 +26,13 @@ import string
 
 from author.decorators import with_author
 
-from cache_utils.decorators import cached
-
 from denorm import denormalized, depend_on_related
 
 from django import forms
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from memoize import mproperty
 
@@ -128,6 +126,8 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def member_count(self):
+        if not self.pk:
+            return 0
         member_count = self.members.count()
         if self.campaign.too_much_members(member_count):
             logger.error("Too many members in team", extra={"team": self})
@@ -144,6 +144,8 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def paid_member_count(self):
+        if not self.pk:
+            return None
         member_count = self.paid_members().count()
         return member_count
 
@@ -162,6 +164,8 @@ class Team(WithGalleryMixin, models.Model):
     )
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def unapproved_member_count(self):
+        if not self.pk:
+            return None
         member_count = self.unapproved_members().count()
         return member_count
 
@@ -197,6 +201,8 @@ class Team(WithGalleryMixin, models.Model):
     @denormalized(models.IntegerField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def get_rides_count_denorm(self):
+        if not self.pk:
+            return None
         rides_count = 0
         for member in self.members:
             rides_count += member.get_rides_count()
@@ -248,7 +254,10 @@ class Team(WithGalleryMixin, models.Model):
         count = len(members)
         if count == 0:
             return 0, 0
-        return sum([mem.frequency for mem in members]) / count, count
+        mem_freq = [mem.frequency for mem in members]
+        if mem_freq.count(None) == len(mem_freq):
+            return None, count
+        return sum(mem_freq) / count, count
 
     def get_frequency(self):
         return self.get_frequency_()[0]
@@ -262,6 +271,8 @@ class Team(WithGalleryMixin, models.Model):
     @denormalized(models.FloatField, null=True, skip={"updated", "created"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def frequency(self):
+        if not self.pk:
+            return None
         return self.get_frequency()
 
     def get_frequency_percentage(self):
@@ -273,6 +284,8 @@ class Team(WithGalleryMixin, models.Model):
     @denormalized(models.TextField, null=True, skip={"invitation_token"})
     @depend_on_related("UserAttendance", skip={"created", "updated"})
     def name_with_members(self):
+        if not self.pk:
+            return None
         members = self.members
         if members:
             names = [u.userprofile.name() for u in members]

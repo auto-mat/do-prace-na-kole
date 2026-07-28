@@ -30,7 +30,7 @@ from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFi
 
 from advanced_filters.admin import AdminAdvancedFiltersMixin
 
-from daterange_filter.filter import DateRangeFilter
+from rangefilter.filters import DateRangeFilterBuilder
 
 from django import forms
 from django.conf import settings
@@ -40,7 +40,7 @@ from django.forms import Textarea
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from dpnk.admin_mixins import FormRequestMixin
 from dpnk.filters import CampaignFilter, campaign_filter_generator
@@ -224,7 +224,7 @@ class SubsidiaryBoxAdmin(
         "teampackage__packagetransaction__t_shirt_size__name",
         "subsidiary__city",
         filters.AllPackagesDispatched,
-        ("delivery_batch__created", DateRangeFilter),
+        ("delivery_batch__created", DateRangeFilterBuilder()),
         "delivery_batch__id",
     ]
     readonly_fields = (
@@ -278,7 +278,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin, NestedModelAdmin):
         campaign_filter_generator("box__delivery_batch__campaign"),
         "dispatched",
         "box__dispatched",
-        ("box__delivery_batch__created", DateRangeFilter),
+        ("box__delivery_batch__created", DateRangeFilterBuilder()),
         "box__delivery_batch__id",
     )
     raw_id_fields = (

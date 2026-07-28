@@ -1,7 +1,7 @@
 # Django imports
 from braces.views import LoginRequiredMixin
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _  # noqa
+from django.utils.translation import gettext_lazy as _  # noqa
 from django.views.generic.base import TemplateView
 
 # Local imports

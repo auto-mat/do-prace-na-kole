@@ -74,7 +74,7 @@ services:
  redis:
   image: redis
  postgres:
-  image: mdillon/postgis:9.6-alpine
+  image: postgis/postgis:18-3.6
   volumes:
-   - ./db:/var/lib/postgresql/data
+   - ./db:/var/lib/postgresql/
   env_file: docker.env

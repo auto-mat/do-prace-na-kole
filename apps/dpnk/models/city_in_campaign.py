@@ -19,10 +19,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from cache_utils.decorators import cached
-
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
 from dpnk.util import get_emissions
@@ -31,6 +29,8 @@ from .city import City
 from .city_in_campaign_diploma import CityInCampaignDiploma
 from .trip import Trip, distance_all_modes
 from .user_attendance import UserAttendance
+
+from ..util import memoize_with_expiry
 
 
 class CityInCampaign(models.Model):
@@ -90,7 +90,7 @@ class CityInCampaign(models.Model):
         return self.city.name
 
     def competitors(self):
-        @cached(60)
+        @memoize_with_expiry(expiry_time=60)
         def actually_get_competitors(pk):
             return UserAttendance.objects.filter(
                 campaign=self.campaign,
@@ -104,7 +104,7 @@ class CityInCampaign(models.Model):
         return len(self.competitors())
 
     def distances(self):
-        @cached(60)
+        @memoize_with_expiry(expiry_time=60)
         def actually_get_distances(pk):
             competition_phase = self.campaign.competition_phase()
             return distance_all_modes(

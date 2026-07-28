@@ -22,7 +22,7 @@ from crispy_forms.layout import Submit
 
 from django import forms
 from django.core.validators import RegexValidator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 IDENTIFIER_REGEXP = r"^[TS][0-9]+$"

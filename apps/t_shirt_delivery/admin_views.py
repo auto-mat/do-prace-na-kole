@@ -22,7 +22,7 @@ from braces.views import StaffuserRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse, reverse_lazy
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormView
 
 from .admin_forms import DispatchForm
