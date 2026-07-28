@@ -418,6 +418,8 @@ class Campaign(Pricable, models.Model):
         "t_shirt_delivery.TShirtSize", type="backward", foreign_key="campaign"
     )
     def has_any_tshirt(self):
+        if not self.pk:
+            return True
         return self.tshirtsize_set.exists()
 
     def phase(self, phase_type):
