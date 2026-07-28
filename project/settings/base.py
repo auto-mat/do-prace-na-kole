@@ -112,7 +112,7 @@ if DPNK_CACHE_REDIS_LOCATION is not None:
 else:
     CACHES = {
         "default": {
-            "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
             "LOCATION": "127.0.0.1:11211",
             "KEY_PREFIX": "dpnkch",
         },
