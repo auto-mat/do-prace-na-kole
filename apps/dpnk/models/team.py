@@ -254,7 +254,10 @@ class Team(WithGalleryMixin, models.Model):
         count = len(members)
         if count == 0:
             return 0, 0
-        return sum([mem.frequency for mem in members]) / count, count
+        mem_freq = [mem.frequency for mem in members]
+        if mem_freq.count(None) == len(mem_freq):
+            return None, count
+        return sum(mem_freq) / count, count
 
     def get_frequency(self):
         return self.get_frequency_()[0]
