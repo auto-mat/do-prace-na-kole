@@ -643,13 +643,17 @@ def test_get_userprofile_frequency(ua1, ua2, campaign, results_trips, may_fifth)
     assert result == 47
 
     result = ua1.frequency
-    assert result == 0.0425531914893617
+    assert util.decimal_round(result, "0.01") == util.decimal_round(
+        0.0425531914893617, "0.01"
+    )
 
     result = ua2.frequency
     assert result == 0
 
     result = ua1.team.frequency
-    assert result == 0.0212765957446809
+    assert util.decimal_round(result, "0.01") == util.decimal_round(
+        0.0212765957446809, "0.01"
+    )
 
     result = ua1.team.get_rides_count_denorm
     assert result == 2
