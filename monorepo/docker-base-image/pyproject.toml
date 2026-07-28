@@ -141,6 +141,7 @@ line-profiler = "^5.0.2"
 django-autocomplete-light = "^5.0.0"
 psycopg = "^3.3.4"
 bootstrap4 = "^0.1.0"
+pymemcache = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
