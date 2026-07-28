@@ -276,7 +276,12 @@ class UserAttendance(StaleSyncMixin, models.Model):
         "Payment", foreign_key="payment_user_attendance", skip={"updated", "created"}
     )
     def representative_payment(self):
-        if self.team and self.team.subsidiary and not self.has_admission_fee() or not self.pk:
+        if (
+            self.team
+            and self.team.subsidiary
+            and not self.has_admission_fee()
+            or not self.pk
+        ):
             return None
 
         # Entry fee
