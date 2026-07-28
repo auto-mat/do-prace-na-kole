@@ -48,6 +48,7 @@ from .rest import (
     StravaConnect,
     StravaDisconnect,
     UserProfileAgeGroups,
+    UserProfileOccupations,
     ValidateChallengeTeamInvitationEmailPost,
 )
 
@@ -533,6 +534,11 @@ urlpatterns = [
         "rest/user-profile-age-groups/",
         UserProfileAgeGroups.as_view(),
         name="user-profile-age-groups",
+    ),
+    path(
+        "rest/user-profile-occupations/",
+        UserProfileOccupations.as_view(),
+        name="user-profile-occupations",
     ),
     # company admin:
     re_path(

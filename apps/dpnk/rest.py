@@ -4330,6 +4330,18 @@ class UserProfileAgeGroups(APIView):
         return JsonResponse(UserProfile.AGE_GROUP, safe=False)
 
 
+class UserProfileOccupations(APIView):
+    """User profile occupations options"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return JsonResponse(
+            list(Occupation.objects.all().values_list("id", "name")),
+            safe=False,
+        )
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
