@@ -2025,7 +2025,7 @@ swapper = "*"
 type = "git"
 url = "https://github.com/auto-mat/django-notifications.git"
 reference = "list_all_compatibile_with_django_5"
-resolved_reference = "e066354d507a4885d55034ced831786160dc485c"
+resolved_reference = "64cb8533e9c7fafd640dba355adb54b3a575451a"
 
 [[package]]
 name = "django-nvd3"
