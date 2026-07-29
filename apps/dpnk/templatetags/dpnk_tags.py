@@ -257,8 +257,10 @@ def get_app_base_url(context, url=None, url_params=None):
     """
     rtwbb_frontend_app_base_url = getattr(settings, "RTWBB_FRONTEND_APP_BASE_URL", None)
     if rtwbb_frontend_app_base_url:
-        if url:
+        if url and not url_params:
             return f"{rtwbb_frontend_app_base_url}{url}"
+        elif url and url_params:
+            return f"{rtwbb_frontend_app_base_url}{url}{url_params}"
         return rtwbb_frontend_app_base_url
     if url:
         params = {}
