@@ -176,6 +176,30 @@ class UserAttendance(StaleSyncMixin, models.Model):
         except Diploma.DoesNotExist:
             return None
 
+    def get_all_campaign_diplomas_pdf_urls(self):
+        diplomas = []
+        for diploma in Diploma.objects.filter(
+            obj__id__in=self.campaign.__class__.objects.filter(
+                userattendance__in=UserAttendance.objects.filter(
+                    userprofile=self.userprofile
+                ).values_list(
+                    "id",
+                )
+            )
+            .order_by("year")
+            .values_list("userattendance", flat=True)
+        ).order_by("obj__campaign__year"):
+            diplomas.append(
+                {
+                    "year": diploma.obj.campaign.year,
+                    "name": diploma.obj.campaign.display_name(),
+                    "url": diploma.pdf.url
+                    if re.match(r"http:|https", settings.MEDIA_URL)
+                    else f"{setting.MEDIA_URL}{diploma.pdf.url}",
+                }
+            )
+        return diplomas
+
     def get_diploma_pdf_url(self):
         diploma = self.diploma()
         if diploma:

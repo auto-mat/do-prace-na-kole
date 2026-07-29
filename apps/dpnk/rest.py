@@ -2661,6 +2661,7 @@ class UserAttendanceSerializer(UserAttendancePaymentWithRewardSerializer):
         ]
     )
     diploma = EmptyStrField(call=True, attr="get_diploma_pdf_url")
+    diplomas = serpy.Field(call=True, attr="get_all_campaign_diplomas_pdf_urls")
 
 
 class PersonalDetailsUserSerializer(serpy.Serializer):
