@@ -47,7 +47,7 @@ services:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: poetry run celery worker -A project.celery -ldebug
+  entrypoint: poetry run celery -A project.celery worker -ldebug
   links:
    - postgres
    - redis
@@ -61,7 +61,7 @@ services:
   build:
    context: .
    dockerfile: DockerfileDev
-  entrypoint: poetry run celery beat -A project.celery -ldebug
+  entrypoint: poetry run celery -A project.celery beat -ldebug
   links:
    - postgres
    - redis
