@@ -5,7 +5,7 @@ The DPNK django application was developed to power the [Do Práce na Kole](https
 
 This readme file is intended to document how to develop and deploy the code.
 
-Do práce na kole is designed to use Python 3.4+ and Django 2.1
+Do práce na kole is designed to use Python 3.11+ and Django 5.2
 
 Dependencies
 ------------
@@ -33,7 +33,7 @@ Create a docker.env file
 
     $ cp docker.env.sample docker.env
     $ $EDITOR docker.env
-    
+
 Building the docker images
 --------------------------
 
@@ -93,7 +93,7 @@ Then copy db folder
 Deployment
 ------------
 
-Every time you push changes to github, new builds will be built. In this case, a build is a docker image. 
+Every time you push changes to github, new builds will be built. In this case, a build is a docker image.
 
 In order to deploy to production you should first deploy to test, then, after testing a bit, look at the build number on test. Deployment is done by updating build numbers in [the kubernetes config](https://github.com/auto-mat/k8s).  The build number can be found at the bottom of the menu. It is in a format like ` 2021.1212 . 2021.24 ` which stands for `<backend-build-number> . <frontend-build-number>`.
 
