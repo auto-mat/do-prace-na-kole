@@ -2683,20 +2683,23 @@ class PersonalDetailsUserProfileSerializer(serpy.Serializer):
     newsletter = EmptyStrField()
 
     def get_occupation(self, obj):
-        return {
-            "id": obj.occupation_id,
-            "value": obj.occupation.name,
-        }
+        if obj.occupation:
+            return {
+                "id": obj.occupation_id,
+                "value": obj.occupation.name,
+            }
+        return None
 
     def get_age_group(self, obj):
-        for age_group in obj.AGE_GROUP:
-            if obj.age_group in age_group:
-                break
-
-        return {
-            "id": age_group[0],
-            "value": age_group[1],
-        }
+        if obj.age_group:
+            for age_group in obj.AGE_GROUP:
+                if obj.age_group in age_group:
+                    break
+            return {
+                "id": age_group[0],
+                "value": age_group[1],
+            }
+        return None
 
 
 class RegisterChallengeSerializer(serpy.Serializer):
@@ -3441,12 +3444,12 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
                 timeout=self._cache_timeout,
             )
             cached_data = cache.data
-        if not cached_data:
-            queryset = self.filter_queryset(self.get_queryset())
-            serializer = self.get_serializer(queryset, many=True)
-            cached_data = serializer.data
-            if cache:
-                cache.data = cached_data
+        # if not cached_data:
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        cached_data = serializer.data
+        # if cache:
+        #     cache.data = cached_data
         return Response(
             {
                 "count": len(cached_data),
