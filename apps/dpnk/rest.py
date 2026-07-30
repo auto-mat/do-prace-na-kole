@@ -2678,9 +2678,25 @@ class PersonalDetailsUserProfileSerializer(serpy.Serializer):
     telephone = EmptyStrField()
     telephone_opt_in = serpy.BoolField()
     language = EmptyStrField()
-    occupation = EmptyStrField()
-    age_group = NullIntField()
+    occupation = serpy.MethodField()
+    age_group = serpy.MethodField()
     newsletter = EmptyStrField()
+
+    def get_occupation(self, obj):
+        return {
+            "id": obj.occupation_id,
+            "value": obj.occupation.name,
+        }
+
+    def get_age_group(self, obj):
+        for age_group in obj.AGE_GROUP:
+            if obj.age_group in age_group:
+                break
+
+        return {
+            "id": age_group[0],
+            "value": age_group[1],
+        }
 
 
 class RegisterChallengeSerializer(serpy.Serializer):
