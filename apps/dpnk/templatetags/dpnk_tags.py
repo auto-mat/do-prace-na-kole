@@ -282,3 +282,16 @@ def get_var_value(value):
     :return str|int|float|dict|list|set|tuple: template variable value
     """
     return value
+
+
+@register.filter("has_group")
+def has_group(user, group_name):
+    """Check if user has permission group
+
+    :param str group_name: Permission group name
+
+    :return bool: True if user has permission group,
+                  otherwise False
+    """
+    groups = user.groups.all().values_list("name", flat=True)
+    return True if group_name in groups else False

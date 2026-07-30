@@ -50,6 +50,7 @@ from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
 from django.db.models import Count, Sum, TextField
 from django.forms import Textarea
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
@@ -111,6 +112,7 @@ from .util import (
     Cache,
     CustomPaginator,
     register_challenge_serializer_base_cache_key_name,
+    get_user_tokens,
 )
 
 
@@ -772,6 +774,7 @@ class EmailAddressAdminInline(NestedStackedInline):
 
 @admin.register(models.User)
 class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmin):
+    change_form_template = "admin/auth/user/change_form.html"
     inlines = (UserProfileAdminInline, EmailAddressAdminInline)
     form = UserForm
     list_display = (
@@ -844,6 +847,22 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
     email_verified.boolean = True
     email_verified.short_description = _("E-mail ověřen")
+
+    def get_urls(self):
+        from django.urls import path
+
+        urls = super().get_urls()
+        my_urls = [
+            path("<int:pk>/loginas/", self.admin_site.admin_view(self.loginas_view)),
+        ]
+        return my_urls + urls
+
+    def loginas_view(self, request, pk):
+        user = self.model.objects.get(pk=pk)
+        refresh_token, access_token = get_user_tokens(user.username)
+        return redirect(
+            f"{settings.RTWBB_FRONTEND_APP_BASE_URL}login?refreshToken={refresh_token}&accessToken={access_token}"
+        )
 
 
 class TripAdminInline(admin.TabularInline):

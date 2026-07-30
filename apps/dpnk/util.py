@@ -412,3 +412,21 @@ def decode_token(token, secret_key=None, algorithms=["HS256"]):
         secret_key = settings.SECRET_KEY
 
     return jwt.decode(token, secret_key, algorithms=algorithms)
+
+
+def get_user_tokens(username):
+    """Get user JWT refresh, access tokens
+
+    :param str username: User name
+
+    :return tuple: Refresh, access token
+    """
+    from django.contrib.auth import get_user_model
+    from rest_framework_simplejwt.tokens import RefreshToken
+
+    User = get_user_model()
+    user = User.objects.get(username=username)
+
+    # Generate JWT tokens
+    refresh = RefreshToken.for_user(user)
+    return refresh, refresh.access_token
