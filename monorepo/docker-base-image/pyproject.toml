@@ -129,7 +129,7 @@ fakturoid = "^1.5.1"
 pytest-cov = "^3.0.0"
 coveragepy-lcov = "^0.1.2"
 osmnx = "^1.2.1"
-pillow = "11.0.0"
+pillow = "12.3.0"
 drf-serpy = "^0.5.0"
 djangorestframework-simplejwt = "^5.5.1"
 mygls-rest-client = {git = "https://github.com/auto-mat/mygls-python.git", rev = "fix-and-update-mygls-api"}
