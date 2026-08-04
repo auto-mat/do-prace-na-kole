@@ -3261,6 +3261,35 @@ class RegisterChallengeSetTest(TestCase):
             UserProfile.objects.get(pk=2)
 
 
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class UserProfileAgeGroupsTest(TestCase):
+    fixtures = [
+        "dump",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient(
+            HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer"
+        )
+        self.client.force_login(
+            User.objects.get(pk=1), settings.AUTHENTICATION_BACKENDS[0]
+        )
+        self.maxDiff = None
+
+    def test_get(self):
+        address = reverse("user-profile-age-groups")
+        response = self.client.get(address)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            json.dumps(UserProfileOcuupationsTest),
+        )
+
+
 # @override_settings(
 #     SITE_ID=2,
 #     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
