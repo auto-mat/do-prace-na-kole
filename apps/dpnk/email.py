@@ -127,6 +127,7 @@ def invitation_mail(
                 "team_id": user_attendance.team.id,
                 "subsidiary_id": user_attendance.team.subsidiary.id,
                 "company_id": user_attendance.team.subsidiary.company.id,
+                "company_type": user_attendance.team.subsidiary.company.organization_type,
                 "campaign_id": user_attendance.campaign.id,
             },
             expiration=token_expiration,
