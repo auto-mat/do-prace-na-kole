@@ -244,9 +244,9 @@ class RidesDetailsView(
         trips = list(trips) + uncreated_trips
         trips = sorted(
             trips,
-            key=lambda trip: trip.direction
-            if type(trip) == Trip
-            else trip["get_direction_display"],
+            key=lambda trip: (
+                trip.direction if type(trip) == Trip else trip["get_direction_display"]
+            ),
             reverse=True,
         )
         trips = sorted(

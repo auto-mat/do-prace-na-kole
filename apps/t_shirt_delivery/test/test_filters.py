@@ -31,11 +31,11 @@ class TestAllPackagesDispatchedFilter(TestCase):
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"
 
-        mommy.make("TeamPackage", dispatched=False),
-        mommy.make("TeamPackage", dispatched=True),
+        (mommy.make("TeamPackage", dispatched=False),)
+        (mommy.make("TeamPackage", dispatched=True),)
         subsidiary_box = mommy.make("SubsidiaryBox")
-        mommy.make("TeamPackage", box=subsidiary_box, dispatched=False),
-        mommy.make("TeamPackage", box=subsidiary_box, dispatched=True),
+        (mommy.make("TeamPackage", box=subsidiary_box, dispatched=False),)
+        (mommy.make("TeamPackage", box=subsidiary_box, dispatched=True),)
 
     def test_yes(self):
         f = filters.AllPackagesDispatched(

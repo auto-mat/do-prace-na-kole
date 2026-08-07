@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 """Import all models."""
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save

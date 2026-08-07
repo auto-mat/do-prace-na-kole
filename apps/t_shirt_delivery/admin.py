@@ -234,7 +234,9 @@ class SubsidiaryBoxAdmin(
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.select_related("subsidiary__city",).prefetch_related(
+        return queryset.select_related(
+            "subsidiary__city",
+        ).prefetch_related(
             "teampackage_set",
         )
 
@@ -563,7 +565,10 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.select_related("author", "campaign",).annotate(
+        return queryset.select_related(
+            "author",
+            "campaign",
+        ).annotate(
             dispatched_count=Count(
                 Case(
                     When(subsidiarybox__dispatched=True, then=1),

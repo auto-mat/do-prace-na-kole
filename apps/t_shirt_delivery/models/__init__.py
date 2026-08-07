@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 """Import all models."""
+
 from .delivery_batch import DeliveryBatch
 from .delivery_batch_deadline import DeliveryBatchDeadline
 from .package_transaction import PackageTransaction

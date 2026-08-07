@@ -206,10 +206,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
-            "<div>"
-            "<label>Trik k odeslání:</label>"
-            "<div class='readonly'>0</div>"
-            "</div>",
+            "<div><label>Trik k odeslání:</label><div class='readonly'>0</div></div>",
             html=True,
         )
         self.assertContains(
@@ -233,10 +230,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
-            "<div>"
-            "<label>Trik k odeslání:</label>"
-            "<div class='readonly'>1</div>"
-            "</div>",
+            "<div><label>Trik k odeslání:</label><div class='readonly'>1</div></div>",
             html=True,
         )
         self.assertContains(

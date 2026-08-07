@@ -180,7 +180,9 @@ class Team(WithGalleryMixin, models.Model):
 
     def undenied_members(self):
         """Return approved members of this team."""
-        return self.users.filter(userprofile__user__is_active=True,).exclude(
+        return self.users.filter(
+            userprofile__user__is_active=True,
+        ).exclude(
             approved_for_team="denied",
         )
 

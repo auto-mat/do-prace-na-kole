@@ -86,7 +86,6 @@ class MyGLS:
             pickup_date = timezone.datetime.now()
 
         for idx, delivery_addr in enumerate(delivery_address):
-
             if isinstance(pickup_from_address, (list, tuple)):
                 pickup_addr = pickup_from_address[idx]
             else:

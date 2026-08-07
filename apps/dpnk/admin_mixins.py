@@ -30,9 +30,9 @@ class CityAdminMixin(object):
         kwargs = {
             self.queryset_city_param: request.user.userprofile.administrated_cities.all()
         }
-        return queryset.filter(
-            **kwargs
-        ).distinct()  # The distinct is necessarry here for city admins, that have more cities
+        return (
+            queryset.filter(**kwargs).distinct()
+        )  # The distinct is necessarry here for city admins, that have more cities
 
 
 def city_admin_mixin_generator(queryset_city):

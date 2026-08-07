@@ -86,7 +86,6 @@ class FeeApprovalSetTest(TestCase):
     FAKE_DATE=datetime.date(year=2025, month=1, day=10),
 )
 class ApprovePaymentsViewTest(TestCase):
-
     fixtures = [
         "dump",
     ]

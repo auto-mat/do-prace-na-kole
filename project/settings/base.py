@@ -857,9 +857,7 @@ DPNK_MOBILE_APP_URLS = os.environ.get(
     "https://cyclers.app/competitions.php?c={campaign_slug_identifier}&u={auth_token} "  # noqa
     "dpnk://social_login?access_token={auth_token} "
     "https://nakoleprahou.cz/competitions.php?c={campaign_slug_identifier}&u={auth_token}",
-).split(
-    " "
-)  # noqa
+).split(" ")  # noqa
 
 TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES = os.environ.get(
     "TESTING_FAST_REGISTRATION_PASSTRHOUGH_SOURCES", "ios-app"

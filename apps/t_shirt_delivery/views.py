@@ -47,9 +47,7 @@ class TShirtDeliveryView(RegistrationViewMixin, LoginRequiredMixin, TemplateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            batch_created = (
-                self.user_attendance.package_shipped().team_package.box.delivery_batch.created
-            )
+            batch_created = self.user_attendance.package_shipped().team_package.box.delivery_batch.created
             context["batch_created"] = batch_created
             batch_delivery = DeliveryBatchDeadline.objects.previous(
                 batch_created, campaign=self.user_attendance.campaign

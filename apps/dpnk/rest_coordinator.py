@@ -134,7 +134,6 @@ class FeeApprovalSet(viewsets.ReadOnlyModelViewSet, CompanyAdminMixin):
 
 
 class ApprovePaymentsDeserializer(serializers.Serializer):
-
     ids = serializers.DictField(
         child=serializers.IntegerField(),
         required=True,

@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('price_level', '0001_initial'),
+        ("price_level", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pricelevel',
-            name='category',
-            field=models.CharField(choices=[('basic', 'Základní'), ('company', 'Pro firmy'), ('school', 'Pro školy')], default='basic', max_length=20, verbose_name='Category'),
+            model_name="pricelevel",
+            name="category",
+            field=models.CharField(
+                choices=[
+                    ("basic", "Základní"),
+                    ("company", "Pro firmy"),
+                    ("school", "Pro školy"),
+                ],
+                default="basic",
+                max_length=20,
+                verbose_name="Category",
+            ),
         ),
     ]

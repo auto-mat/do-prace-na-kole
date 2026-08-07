@@ -156,9 +156,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         response = self.client.get(reverse("invoices"))
         self.assertContains(
             response,
-            "<div class='alert alert-danger'>"
-            "Vystavování faktur nemáte povoleno"
-            "</div>",
+            "<div class='alert alert-danger'>Vystavování faktur nemáte povoleno</div>",
             html=True,
             status_code=403,
         )

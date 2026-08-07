@@ -124,10 +124,10 @@ class RelatedCompetitionsView(
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data[
-            "competitions"
-        ] = self.company_admin.administrated_company.get_related_competitions(
-            self.company_admin.campaign
+        context_data["competitions"] = (
+            self.company_admin.administrated_company.get_related_competitions(
+                self.company_admin.campaign
+            )
         )
         context_data["registration_phase"] = "competitions"
         return context_data
@@ -441,10 +441,10 @@ class CompanyCompetitionsShowView(
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data[
-            "competitions"
-        ] = self.company_admin.administrated_company.competition_set.filter(
-            campaign=self.company_admin.campaign
+        context_data["competitions"] = (
+            self.company_admin.administrated_company.competition_set.filter(
+                campaign=self.company_admin.campaign
+            )
         )
         return context_data
 
@@ -482,10 +482,10 @@ class InvoicesView(
         context["payments"] = payments
         context["company"] = self.company_admin.administrated_company
 
-        context[
-            "invoices"
-        ] = self.company_admin.administrated_company.invoice_set.filter(
-            campaign=self.company_admin.campaign
+        context["invoices"] = (
+            self.company_admin.administrated_company.invoice_set.filter(
+                campaign=self.company_admin.campaign
+            )
         )
         context["fakturoid_date_from_create_invoices"] = settings.FAKTUROID[
             "date_from_create_invoices"
@@ -495,9 +495,7 @@ class InvoicesView(
     def dispatch(self, request, *args, **kwargs):
         ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:
-            if (
-                not self.company_admin.administrated_company.has_filled_contact_information()
-            ):
+            if not self.company_admin.administrated_company.has_filled_contact_information():
                 raise exceptions.TemplatePermissionDenied(
                     mark_safe(
                         _("Před vystavením faktury %s.")

@@ -27,6 +27,7 @@ Via ``settings.configure`` you will be able to set all necessary settings
 for your app and run the tests as if you were calling ``./manage.py test``.
 
 """
+
 import sys
 
 from django.conf import settings
@@ -48,5 +49,5 @@ def runtests(*test_args, **test_kwargs):
     sys.exit(failures)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runtests(*sys.argv[1:])

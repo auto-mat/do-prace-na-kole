@@ -137,7 +137,7 @@ class AuthenticationFormDPNK(
         "invalid_login": {
             "password": format_html_lazy(
                 # black
-                "{}" "<br/>" '<a href="{}">{}</a>',
+                '{}<br/><a href="{}">{}</a>',
                 _(
                     "Problém na trase! Sesedněte z kola a zkontrolujte si heslo. "
                     "Dejte pozor na malá a velká písmena.",
@@ -209,7 +209,8 @@ class AuthenticationFormDPNK(
                     #         )
                     #     )
                     # )
-                    if disable_registration_btn else "",
+                    if disable_registration_btn
+                    else "",
                 ),
             ),
             HTML(

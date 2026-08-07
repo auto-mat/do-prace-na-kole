@@ -11,8 +11,8 @@ def get_text_of_pdf(filename):
 def identify_sheet(filename):
     lines = get_text_of_pdf(filename).splitlines()
     regexes = {
-        "gls": r'č. krab. ([0-9]*).*',
-        "team": r'.*Do krab. č.: ([0-9]*).*',
+        "gls": r"č. krab. ([0-9]*).*",
+        "team": r".*Do krab. č.: ([0-9]*).*",
     }
     for line in lines:
         for stype, regex in regexes.items():
@@ -24,9 +24,5 @@ def identify_sheet(filename):
 def rename_sheet(filename):
     stype, num = identify_sheet(filename)
     os.rename(
-        filename,
-        os.path.join(
-            os.path.dirname(filename),
-            num + "-" + stype + ".pdf"
-        )
+        filename, os.path.join(os.path.dirname(filename), num + "-" + stype + ".pdf")
     )

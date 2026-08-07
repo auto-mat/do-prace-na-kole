@@ -36,7 +36,6 @@ schema_view = get_schema_view(
 
 
 class OldLanguageRedirectView(RedirectView):
-
     permanent = True
 
     def get_redirect_url(self):

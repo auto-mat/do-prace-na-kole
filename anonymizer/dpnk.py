@@ -30,12 +30,19 @@ class UserAnonym(AnonymBase):
         queryset = User.objects.exclude(id=1)
         # list of fields which will not be changed
         exclude_fields = [
-            "groups", "user_permissions", "is_active",
-            "is_superuser", "last_login", "date_joined",
-            "is_staff", "password",
+            "groups",
+            "user_permissions",
+            "is_active",
+            "is_superuser",
+            "last_login",
+            "date_joined",
+            "is_staff",
+            "password",
         ]
 
 
-register_anonym([
-    (User, UserAnonym),
-])
+register_anonym(
+    [
+        (User, UserAnonym),
+    ]
+)

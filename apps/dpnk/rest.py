@@ -818,11 +818,13 @@ class CompetitionSerializer(serpy.Serializer):
     date_from = serpy.StrField(required=False)
     date_to = serpy.StrField(required=False)
     commute_modes = RequestSpecificField(
-        lambda competition, req: CommuteModeMinimalSerializer(
-            competition.commute_modes.all(),
-            context={"request": req},
-            many=True,
-        ).data
+        lambda competition, req: (
+            CommuteModeMinimalSerializer(
+                competition.commute_modes.all(),
+                context={"request": req},
+                many=True,
+            ).data
+        )
     )
     description = EmptyStrField()
 
@@ -1124,7 +1126,9 @@ class UserAttendanceSerializer(BaseUserAttendanceSerializer):
         lambda ua, req: ua.entered_competition(),
     )
     gallery = RequestSpecificField(
-        lambda ua, req: HyperlinkedField("gallery-detail",).get_url(
+        lambda ua, req: HyperlinkedField(
+            "gallery-detail",
+        ).get_url(
             ua.userprofile.get_gallery(),
             req,
         ),
@@ -1204,9 +1208,11 @@ class TeamSerializer(BaseTeamSerializer):
     """Only approved team members"""
 
     members = RequestSpecificField(
-        lambda team, req: MinimalUserAttendanceSerializer(
-            team.members, context={"request": req}, many=True
-        ).data
+        lambda team, req: (
+            MinimalUserAttendanceSerializer(
+                team.members, context={"request": req}, many=True
+            ).data
+        )
     )
 
     icon = HyperlinkedField("photo-detail")
@@ -1237,9 +1243,11 @@ class TeamWithAllMembersSerializer(TeamSerializer):
     """All team members"""
 
     members = RequestSpecificField(
-        lambda team, req: MinimalUserAttendanceSerializer(
-            team.all_members(), context={"request": req}, many=True
-        ).data
+        lambda team, req: (
+            MinimalUserAttendanceSerializer(
+                team.all_members(), context={"request": req}, many=True
+            ).data
+        )
     )
 
 
@@ -1549,15 +1557,15 @@ class CitySerializer(serpy.Serializer):
         ).description(language=req.query_params.get("lang", "cs")),
     )
     organizer = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).organizer,
+        lambda city, req: (
+            CityInCampaign.objects.get(city=city, campaign=req.campaign).organizer
+        ),
     )
 
     organizer_url = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).organizer_url,
+        lambda city, req: (
+            CityInCampaign.objects.get(city=city, campaign=req.campaign).organizer_url
+        ),
     )
     subsidiaries = RequestSpecificField(
         lambda city, req: [
@@ -1626,9 +1634,11 @@ def get_data_export_url(city, campaign):
 
 class CoordinatedCitySerializer(CitySerializer):
     data_export_password = RequestSpecificField(
-        lambda city, req: CityInCampaign.objects.get(
-            city=city, campaign=req.campaign
-        ).data_export_password,
+        lambda city, req: (
+            CityInCampaign.objects.get(
+                city=city, campaign=req.campaign
+            ).data_export_password
+        ),
     )
 
     data_export_url = RequestSpecificField(
@@ -2162,7 +2172,6 @@ class SubsidiariesSerializer(serpy.Serializer):
 
 
 class SubsidiariesDeserializer(serializers.HyperlinkedModelSerializer):
-
     city_id = serializers.PrimaryKeyRelatedField(
         queryset=City.objects.all(), source="city"
     )
@@ -2252,9 +2261,11 @@ class TeamsSerializer(serpy.Serializer):
     name = serpy.StrField(required=False)
 
     members = RequestSpecificField(
-        lambda team, req: MinimalUserAttendanceSerializer(
-            team.members, context={"request": req}, many=True
-        ).data
+        lambda team, req: (
+            MinimalUserAttendanceSerializer(
+                team.members, context={"request": req}, many=True
+            ).data
+        )
     )
 
 
@@ -2266,9 +2277,11 @@ class TeamsDeserializer(serializers.HyperlinkedModelSerializer):
         queryset=Subsidiary.objects.all(), source="subsidiary"
     )
     members = RequestSpecificField(
-        lambda team, req: MinimalUserAttendanceSerializer(
-            team.members, context={"request": req}, many=True
-        ).data
+        lambda team, req: (
+            MinimalUserAttendanceSerializer(
+                team.members, context={"request": req}, many=True
+            ).data
+        )
     )
 
     class Meta:
@@ -2704,17 +2717,19 @@ class PersonalDetailsUserProfileSerializer(serpy.Serializer):
 
 class RegisterChallengeSerializer(serpy.Serializer):
     personal_details = RequestSpecificField(
-        lambda userprofile, req: PersonalDetailsUserSerializer(userprofile.user).data
-        | PersonalDetailsUserProfileSerializer(userprofile).data
-        | UserAttendanceSerializer(
-            userprofile.userattendance_set.get(campaign__slug=req.subdomain),
-            context={"request": req},
-        ).data
+        lambda userprofile, req: (
+            PersonalDetailsUserSerializer(userprofile.user).data
+            | PersonalDetailsUserProfileSerializer(userprofile).data
+            | UserAttendanceSerializer(
+                userprofile.userattendance_set.get(campaign__slug=req.subdomain),
+                context={"request": req},
+            ).data
+        )
     )
     team_id = RequestSpecificField(
-        lambda userprofile, req: userprofile.userattendance_set.get(
-            campaign__slug=req.subdomain
-        ).team_id
+        lambda userprofile, req: (
+            userprofile.userattendance_set.get(campaign__slug=req.subdomain).team_id
+        )
     )
     organization_id = serpy.MethodField()
     subsidiary_id = RequestSpecificField(
@@ -2724,9 +2739,11 @@ class RegisterChallengeSerializer(serpy.Serializer):
         )
     )
     t_shirt_size_id = RequestSpecificField(
-        lambda userprofile, req: userprofile.userattendance_set.get(
-            campaign__slug=req.subdomain
-        ).t_shirt_size_id
+        lambda userprofile, req: (
+            userprofile.userattendance_set.get(
+                campaign__slug=req.subdomain
+            ).t_shirt_size_id
+        )
     )
     organization_type = RequestSpecificFieldEmptyStrVal(
         lambda userprofile, req: attrgetter_def_val(
@@ -3103,9 +3120,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
         user_attendance_update_fields = {}
         if personal_data_opt_in:
             self.user_attendance.personal_data_opt_in = personal_data_opt_in
-            user_attendance_update_fields[
-                "personal_data_opt_in"
-            ] = self.user_attendance.personal_data_opt_in
+            user_attendance_update_fields["personal_data_opt_in"] = (
+                self.user_attendance.personal_data_opt_in
+            )
 
         if team_id:
             if team_id == "null":
@@ -3115,9 +3132,9 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
 
         if t_shirt_size_id:
             self.user_attendance.t_shirt_size_id = t_shirt_size_id
-            user_attendance_update_fields[
-                "t_shirt_size_id"
-            ] = self.user_attendance.t_shirt_size_id
+            user_attendance_update_fields["t_shirt_size_id"] = (
+                self.user_attendance.t_shirt_size_id
+            )
 
         if discount_coupon is not None:
             if discount_coupon:
@@ -3133,15 +3150,15 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
                 else self.user_attendance.discount_coupon
             )
             self.user_attendance.discount_coupon_used = timezone.now()
-            user_attendance_update_fields[
-                "discount_coupon_used"
-            ] = self.user_attendance.discount_coupon_used
+            user_attendance_update_fields["discount_coupon_used"] = (
+                self.user_attendance.discount_coupon_used
+            )
 
         if approved_for_team:
             self.user_attendance.approved_for_team = approved_for_team
-            user_attendance_update_fields[
-                "approved_for_team"
-            ] = self.user_attendance.approved_for_team
+            user_attendance_update_fields["approved_for_team"] = (
+                self.user_attendance.approved_for_team
+            )
 
         return user_attendance_update_fields
 
@@ -3625,7 +3642,6 @@ class UserProfileSerializer(serpy.Serializer):
 
 
 class RegisterCoordinatorDeserializer(serializers.HyperlinkedModelSerializer):
-
     user_profile = UserProfileDeserializer(source="userprofile")
     user_attendance = UserAttendanceDeserializer(required=False)
 
@@ -3742,9 +3758,9 @@ class RegisterCoordinatorDeserializer(serializers.HyperlinkedModelSerializer):
 class RegisterCoordinatorSerializer(serpy.Serializer):
     user_profile = UserProfileSerializer(attr="userprofile")
     user_attendance = RequestSpecificField(
-        lambda _, req: RegisterCoordinatorUserAttendanceSerializer(
-            req.user_attendance
-        ).data
+        lambda _, req: (
+            RegisterCoordinatorUserAttendanceSerializer(req.user_attendance).data
+        )
     )
     organizationId = NullIntField(attr="administrated_company_id")
     jobTitle = serpy.Field(attr="motivation_company_admin")

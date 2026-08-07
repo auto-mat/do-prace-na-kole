@@ -18,8 +18,9 @@ class NonHtmlDebugToolbarMiddleware(MiddlewareMixin):
         if request.GET.get("debug") == "":
             if response["Content-Type"] == "application/octet-stream":
                 new_content = (
-                    "<html><body>Binary Data, "
-                    "Length: {}</body></html>".format(len(response.content))
+                    "<html><body>Binary Data, Length: {}</body></html>".format(
+                        len(response.content)
+                    )
                 )
                 response = HttpResponse(new_content)
             elif response["Content-Type"] != "text/html":
@@ -33,6 +34,6 @@ class NonHtmlDebugToolbarMiddleware(MiddlewareMixin):
                 except ValueError:
                     pass
                 response = HttpResponse(
-                    "<html><body><pre>{}" "</pre></body></html>".format(content),
+                    "<html><body><pre>{}</pre></body></html>".format(content),
                 )
         return response

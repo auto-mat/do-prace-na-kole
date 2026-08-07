@@ -327,6 +327,7 @@ class Payment(Transaction):
         help_text=_("PayU objednávaný produkt(y) - RTWBB startovné, RTWBB dar"),
         blank=True,
     )
+
     # TODO: This is a hack which allows making denorms dependend only on Payment and not on any other type of transaction.
     # Better would be to add some kind of conditions to denorms
     @denormalized(

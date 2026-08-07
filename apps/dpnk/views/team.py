@@ -228,10 +228,10 @@ class Company(
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data[
-            "company"
-        ] = self.user_attendance.team.subsidiary.company.company_in_campaign(
-            self.user_attendance.campaign
+        context_data["company"] = (
+            self.user_attendance.team.subsidiary.company.company_in_campaign(
+                self.user_attendance.campaign
+            )
         )
         return context_data
 

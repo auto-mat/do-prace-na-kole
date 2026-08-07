@@ -36,11 +36,13 @@ class DiplomaField(PdfSandwichFieldABC):
         _("Počet eko cest"): (lambda ua: intcomma(ua.get_rides_count_denorm)),
         _("Pravidelnost týmu"): (
             lambda ua: (
-                intcomma(decimal_round(ua.team.get_frequency_percentage(), "0.01"))
-                + "%"
+                (
+                    intcomma(decimal_round(ua.team.get_frequency_percentage(), "0.01"))
+                    + "%"
+                )
+                if ua.team
+                else ""
             )
-            if ua.team
-            else ""
         ),
         _("Název týmu"): (lambda ua: ua.team.name if ua.team else ""),
         _("Název firmy"): (

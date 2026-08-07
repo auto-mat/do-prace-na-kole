@@ -618,7 +618,7 @@ class AdminTests(TestCase):
         response = self.client.get(address)
         self.assertContains(
             response,
-            "3. tah: Tým Testing User 1" "<br/>" "ujetá vzdálenost 16 190&nbsp;km",
+            "3. tah: Tým Testing User 1<br/>ujetá vzdálenost 16 190&nbsp;km",
             html=True,
         )
 
@@ -630,7 +630,7 @@ class AdminTests(TestCase):
         response = self.client.get(address)
         self.assertContains(
             response,
-            "<li> 2. tah: Tým Testing User 1" "<br/>" "1 620&nbsp;bodů" "</li>",
+            "<li> 2. tah: Tým Testing User 1<br/>1 620&nbsp;bodů</li>",
             html=True,
         )
 

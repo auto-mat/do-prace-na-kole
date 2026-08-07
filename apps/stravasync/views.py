@@ -48,9 +48,8 @@ class AboutStrava(RegistrationCompleteMixin, TemplateView):
         try:
             stravaaccount = self.request.user.stravaaccount
             if (
-                (self.sync or (stravaaccount.last_sync_time is None))
-                and stravaaccount.user_sync_count < settings.STRAVA_MAX_USER_SYNC_COUNT
-            ):
+                self.sync or (stravaaccount.last_sync_time is None)
+            ) and stravaaccount.user_sync_count < settings.STRAVA_MAX_USER_SYNC_COUNT:
                 try:
                     context["sync_outcome"] = tasks.sync(
                         self.request.user.stravaaccount.id
