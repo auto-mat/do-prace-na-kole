@@ -1,11 +1,9 @@
 #!/bin/bash -e
 
-# Start Gunicorn processes
+echo Running ruff format --check
+poetry run ruff format --check apps
+poetry run ruff format --check project
 echo Starting tests
 echo Running tests
 poetry run pytest apps
 #poetry run ./runtests.sh
-echo Running black check
-poetry run black --check --exclude migrations apps
-poetry run black --check project
-
