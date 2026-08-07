@@ -178,3 +178,6 @@ beautifulsoup4 = "^4.9.3"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.ruff]
+exclude = ["migrations", " price_level_migrations", "pyenv"]
