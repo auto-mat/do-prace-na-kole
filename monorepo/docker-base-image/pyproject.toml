@@ -181,3 +181,8 @@ build-backend = "poetry.masonry.api"
 
 [tool.ruff]
 exclude = ["migrations", " price_level_migrations", "pyenv"]
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.16.1,<0.17.0)"
+]
