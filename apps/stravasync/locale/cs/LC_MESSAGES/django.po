@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 14:59+0200\n"
+"POT-Creation-Date: 2026-08-10 15:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,8 +78,8 @@ msgstr ""
 #: stravasync/templates/stravasync/about.html:51
 msgid ""
 "\n"
-"    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
-"dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
+"    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://"
+"www.dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
 "    "
 msgstr ""
 
@@ -125,18 +125,18 @@ msgid ""
 "Bohužel vás ale musíme informovat o možné komplikaci s přenosem dat ze "
 "Stravy - žádost o zvýšení limitu připojení stále nebyla na straně Stravy "
 "schválena a je tak možné, že se vám nějaké jízdy v systému neobjeví hned. "
-"Pro radu, jak postupovat dále, prosíme navštivte <a href=\"https://www."
-"dopracenakole.cz/o-vyzve/faq\">Často kladené otázky (FAQ)</a>\n"
+"Pro radu, jak postupovat dále, prosíme navštivte <a href=\"https://"
+"www.dopracenakole.cz/o-vyzve/faq\">Často kladené otázky (FAQ)</a>\n"
 msgstr ""
 
 #: stravasync/views.py:26
 msgid "Propojení se Stravou"
 msgstr ""
 
-#: stravasync/views.py:59
+#: stravasync/views.py:58
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: stravasync/views.py:61
+#: stravasync/views.py:60
 msgid "API limit vyčerpan."
 msgstr ""

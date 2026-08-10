@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 14:59+0200\n"
+"POT-Creation-Date: 2026-08-10 15:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,63 +51,63 @@ msgstr ""
 msgid "Tento slevový kupón neexistuje, nebo již byl použit"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:80
+#: coupons/models/discount_coupon.py:84
 msgid "typ voucheru"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:88
+#: coupons/models/discount_coupon.py:92
 msgid "token"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:94
+#: coupons/models/discount_coupon.py:98
 msgid "sleva (v procentech)"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:101
+#: coupons/models/discount_coupon.py:105
 msgid "Počet možných využití"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:102
+#: coupons/models/discount_coupon.py:106
 msgid "Pokud se nevyplní, bude počet využití neomezený"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:109
+#: coupons/models/discount_coupon.py:113
 msgid "poznámka"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:116
+#: coupons/models/discount_coupon.py:120
 msgid "příjemce"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:123
+#: coupons/models/discount_coupon.py:127
 msgid "jméno příjemce"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:130
+#: coupons/models/discount_coupon.py:134
 msgid "Datum vytvoření"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:136
+#: coupons/models/discount_coupon.py:140
 msgid "Datum poslední změny"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:142 coupons/models/discount_coupon.py:148
+#: coupons/models/discount_coupon.py:146 coupons/models/discount_coupon.py:152
 msgid "DEPRECATED"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:163
+#: coupons/models/discount_coupon.py:167
 msgid "PDF file"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:167
+#: coupons/models/discount_coupon.py:171
 msgid "PDF"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:187
+#: coupons/models/discount_coupon.py:191
 msgid "Slevový kupón"
 msgstr ""
 
-#: coupons/models/discount_coupon.py:188
+#: coupons/models/discount_coupon.py:192
 msgid "Slevové kupóny"
 msgstr ""
 

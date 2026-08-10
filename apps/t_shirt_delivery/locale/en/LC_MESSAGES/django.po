@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 14:59+0200\n"
+"POT-Creation-Date: 2026-08-10 15:15+0200\n"
 "PO-Revision-Date: 2020-01-13 19:51+0100\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -85,37 +85,37 @@ msgstr ""
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr "Mark packages/boxes as done"
 
-#: t_shirt_delivery/admin.py:273 t_shirt_delivery/admin.py:339
+#: t_shirt_delivery/admin.py:275 t_shirt_delivery/admin.py:341
 msgid "ID krabice"
 msgstr "Box ID"
 
-#: t_shirt_delivery/admin.py:275 t_shirt_delivery/models/team_package.py:43
+#: t_shirt_delivery/admin.py:277 t_shirt_delivery/models/team_package.py:43
 msgid "Tým"
 msgstr "Team"
 
-#: t_shirt_delivery/admin.py:276 t_shirt_delivery/models/team_package.py:36
+#: t_shirt_delivery/admin.py:278 t_shirt_delivery/models/team_package.py:36
 msgid "Krabice"
 msgstr "Box"
 
-#: t_shirt_delivery/admin.py:496
+#: t_shirt_delivery/admin.py:498
 msgid "Trik k odeslání"
 msgstr "T-shirts for sending"
 
-#: t_shirt_delivery/admin.py:505
+#: t_shirt_delivery/admin.py:507
 msgid "Velikosti trik"
 msgstr "T-shirt sizes"
 
-#: t_shirt_delivery/admin.py:527
+#: t_shirt_delivery/admin.py:529
 #, fuzzy
 #| msgid "Týmový balíček"
 msgid "Týmových balíčků k odeslání"
 msgstr "Team package"
 
-#: t_shirt_delivery/admin.py:597
+#: t_shirt_delivery/admin.py:602
 msgid "Uživatel na dávku objednávek"
 msgstr "User for delivery batch"
 
-#: t_shirt_delivery/admin.py:598
+#: t_shirt_delivery/admin.py:603
 msgid "Uživatelé na dávku objednávek"
 msgstr "Users for delivery batch"
 
@@ -153,7 +153,7 @@ msgstr "Package/box was not found"
 msgid "Zařadit balíky k sestavení"
 msgstr "Mark packages as assembled"
 
-#: t_shirt_delivery/filters.py:26 t_shirt_delivery/models/subsidiary_box.py:183
+#: t_shirt_delivery/filters.py:26 t_shirt_delivery/models/subsidiary_box.py:185
 msgid "Všechny balíčky vyřízeny"
 msgstr "All packages assembled"
 
@@ -313,26 +313,26 @@ msgstr "Identification by carrier"
 msgid "Kód stavu"
 msgstr "Warehouse code"
 
-#: t_shirt_delivery/models/subsidiary_box.py:102
+#: t_shirt_delivery/models/subsidiary_box.py:103
 #, fuzzy
 #| msgid "Popis"
 msgid "Popis stavu"
 msgstr "Description"
 
-#: t_shirt_delivery/models/subsidiary_box.py:108
+#: t_shirt_delivery/models/subsidiary_box.py:109
 msgid "Datum stavu"
 msgstr ""
 
-#: t_shirt_delivery/models/subsidiary_box.py:119
+#: t_shirt_delivery/models/subsidiary_box.py:121
 #, python-format
 msgid "Krabice pro pobočku %s"
 msgstr "Box for subsidiary %s"
 
-#: t_shirt_delivery/models/subsidiary_box.py:194
+#: t_shirt_delivery/models/subsidiary_box.py:196
 msgid "Počet vyřízených balíků"
 msgstr "Number of processed packages"
 
-#: t_shirt_delivery/models/subsidiary_box.py:227
+#: t_shirt_delivery/models/subsidiary_box.py:233
 msgid "Přegenerovat PDF"
 msgstr "Recreate PDF"
 
@@ -519,30 +519,30 @@ msgstr "You can track your package using the following tracking number"
 msgid "Vaše triko je již na cestě"
 msgstr "Your shirt is on the way"
 
-#: t_shirt_delivery/views.py:68
+#: t_shirt_delivery/views.py:66
 msgid "Uložili jsme si Vaší velikost"
 msgstr "We've saved your selected size"
 
-#: t_shirt_delivery/views.py:75
+#: t_shirt_delivery/views.py:73
 msgid "Změňte velikost a typ soutěžního trička"
 msgstr "Change the size and type of your reward"
 
-#: t_shirt_delivery/views.py:77
+#: t_shirt_delivery/views.py:75
 #, fuzzy
 #| msgid "Vyberte velikost soutěžního trička"
 msgid "Vyberte velikost a typ soutěžního trička"
 msgstr "Choose the size and type of the reward"
 
-#: t_shirt_delivery/views.py:129
+#: t_shirt_delivery/views.py:127
 #, python-brace-format
 msgid "Nejdříve se {join_team} a pak si vyberte tričko."
 msgstr "{join_team} and then select a T-shirt"
 
-#: t_shirt_delivery/views.py:133
+#: t_shirt_delivery/views.py:131
 msgid "přidejte k týmu"
 msgstr "Join the team"
 
-#: t_shirt_delivery/views.py:137
+#: t_shirt_delivery/views.py:135
 msgid "Buďte týmovým hráčem!"
 msgstr "Be a team player!"
 

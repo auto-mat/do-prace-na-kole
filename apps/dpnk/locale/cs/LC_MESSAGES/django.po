@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 14:25+0200\n"
+"POT-Creation-Date: 2026-08-10 15:15+0200\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -303,7 +303,7 @@ msgstr ""
 msgid "Přihlásit"
 msgstr ""
 
-#: dpnk/auth.py:178 dpnk/auth.py:228
+#: dpnk/auth.py:178 dpnk/auth.py:229
 msgid "Obnovit heslo"
 msgstr ""
 
@@ -314,26 +314,26 @@ msgid ""
 "href=\"%(url)s\">Do Práce Na Kole</a>."
 msgstr ""
 
-#: dpnk/auth.py:219
+#: dpnk/auth.py:220
 msgid "Registrovat firemního koordinátora"
 msgstr ""
 
-#: dpnk/auth.py:223 dpnk/filters.py:158 dpnk/forms.py:1055
+#: dpnk/auth.py:224 dpnk/filters.py:158 dpnk/forms.py:1055
 #: dpnk/models/invoice.py:182
 #: dpnk/templates/company_admin/select_users_pay_for.html:29
 #: dpnk/templates/dpnk/team_member_card.html:35
 msgid "E-mail"
 msgstr ""
 
-#: dpnk/auth.py:243
+#: dpnk/auth.py:244
 msgid "Zadejte e-mail"
 msgstr ""
 
-#: dpnk/auth.py:256
+#: dpnk/auth.py:257
 msgid "V případě registrace přes sociální sítě nechte pole prázdné."
 msgstr ""
 
-#: dpnk/auth.py:259 dpnk/forms.py:631
+#: dpnk/auth.py:260 dpnk/forms.py:631
 msgid "Heslo musí mít minimálně 6 znaků a obsahovat alespoň jedno písmeno."
 msgstr ""
 
@@ -510,7 +510,7 @@ msgstr "K editování této kategorie výzvy nemáte oprávnění."
 msgid "Nedostatečné oprávnění"
 msgstr ""
 
-#: dpnk/company_admin_views.py:419 dpnk/rest.py:867
+#: dpnk/company_admin_views.py:419 dpnk/rest.py:871
 msgid "Překročen maximální počet soutěží pro organizaci."
 msgstr "Překročen maximální počet kategorií výzvy pro organizaci."
 
@@ -526,20 +526,20 @@ msgstr "Firemní kategorie výzvy"
 msgid "Faktury"
 msgstr ""
 
-#: dpnk/company_admin_views.py:503
+#: dpnk/company_admin_views.py:501
 #, python-format
 msgid "Před vystavením faktury %s."
 msgstr ""
 
-#: dpnk/company_admin_views.py:507
+#: dpnk/company_admin_views.py:505
 msgid "prosím vyplňte údaje o Vaší společnosti"
 msgstr ""
 
-#: dpnk/company_admin_views.py:511
+#: dpnk/company_admin_views.py:509
 msgid "Řekněte nám něco o sobě"
 msgstr ""
 
-#: dpnk/company_admin_views.py:515
+#: dpnk/company_admin_views.py:513
 msgid "Vystavování faktur nemáte povoleno"
 msgstr ""
 
@@ -563,55 +563,55 @@ msgstr ""
 msgid "Máte nový tým"
 msgstr ""
 
-#: dpnk/email.py:137
+#: dpnk/email.py:138
 msgid "Pozvánka"
 msgstr ""
 
-#: dpnk/email.py:147
+#: dpnk/email.py:148
 msgid "Děkujeme za podporu udržitelné mobility. Společně máme na víc."
 msgstr ""
 
-#: dpnk/email.py:149
+#: dpnk/email.py:150
 msgid "Startovné je uhrazeno."
 msgstr ""
 
-#: dpnk/email.py:183 dpnk/email.py:198
+#: dpnk/email.py:184 dpnk/email.py:199
 msgid "(není vybraná)"
 msgstr ""
 
-#: dpnk/email.py:187
+#: dpnk/email.py:188
 msgid "Jste ve hře"
 msgstr ""
 
-#: dpnk/email.py:205
+#: dpnk/email.py:206
 msgid "Platba firemním koordinátorem společnosti zamítnuta"
 msgstr ""
 
-#: dpnk/email.py:217 dpnk/email.py:239
+#: dpnk/email.py:218 dpnk/email.py:240
 msgid "Potvrzení registrace firemního koordinátora"
 msgstr ""
 
-#: dpnk/email.py:247
+#: dpnk/email.py:248
 msgid "Jste firemní koordinátor"
 msgstr ""
 
-#: dpnk/email.py:255
+#: dpnk/email.py:256
 msgid "Špatné zprávy"
 msgstr ""
 
-#: dpnk/email.py:263
+#: dpnk/email.py:264
 msgid "Poslední šance doplnit jízdy"
 msgstr ""
 
-#: dpnk/email.py:272
+#: dpnk/email.py:273
 msgid "Nová faktura vystavena"
 msgstr ""
 
-#: dpnk/email.py:280
+#: dpnk/email.py:281
 msgid "Nezaplacená faktura"
 msgstr ""
 
-#: dpnk/email.py:302
+#: dpnk/email.py:303
 msgid "Vámi vybraná předchozí velikost trička již není dostupná"
 msgstr ""
 
@@ -1981,11 +1981,11 @@ msgstr ""
 msgid "Pravidelnost týmu"
 msgstr ""
 
-#: dpnk/models/diploma.py:45 dpnk/models/team.py:59
+#: dpnk/models/diploma.py:47 dpnk/models/team.py:59
 msgid "Název týmu"
 msgstr ""
 
-#: dpnk/models/diploma.py:46 dpnk/models/team_diploma.py:12
+#: dpnk/models/diploma.py:48 dpnk/models/team_diploma.py:12
 msgid "Název firmy"
 msgstr ""
 
@@ -3031,132 +3031,136 @@ msgstr ""
 msgid "campaign_name"
 msgstr ""
 
-#: dpnk/rest.py:1364
+#: dpnk/rest.py:922
+msgid "Nemáte oprávnění k odstranění tohoto objektu."
+msgstr ""
+
+#: dpnk/rest.py:1389
 #, python-format
 msgid "Účastník kampaně <%(email)s> nemá přiřazený tým."
 msgstr ""
 
-#: dpnk/rest.py:1375
+#: dpnk/rest.py:1400
 #, python-format
 msgid ""
 "Sám sobě účastníkový kamapane s ID <%(id)s> není možné odstranit přiřazený "
 "tým."
 msgstr ""
 
-#: dpnk/rest.py:1396
+#: dpnk/rest.py:1421
 #, python-format
 msgid ""
 "Pouze členové vašeho týmu mohou být povoleni <%(team_members)s>, účastník s "
 "ID <%(user_attendance_id)s> není členem vašeho týmu."
 msgstr ""
 
-#: dpnk/rest.py:1426
+#: dpnk/rest.py:1451
 #, python-format
 msgid ""
 "Pro odstranení týmu účastníka kampane s ID <%(id)s> je povolena pouze "
 "hodnota <null>. Změnit tým není povoleno."
 msgstr ""
 
-#: dpnk/rest.py:1944
+#: dpnk/rest.py:1971
 msgid "Aplikace Strava není dostupná."
 msgstr ""
 
-#: dpnk/rest.py:1946
+#: dpnk/rest.py:1973
 msgid "API limit vyčerpan."
 msgstr ""
 
-#: dpnk/rest.py:2282
+#: dpnk/rest.py:2312
 msgid ""
 "Tým se zadaným názvem již v systému existuje, zkuste ten váš přejmenovat "
 "(systém umí rozeznat malá a velká písmena)."
 msgstr ""
 
-#: dpnk/rest.py:2486
+#: dpnk/rest.py:2516
 msgid "Chybějící OpenPayu-Signature záhlaví request objektu."
 msgstr ""
 
-#: dpnk/rest.py:2510
+#: dpnk/rest.py:2540
 #, python-format
 msgid ""
 "Proces ověření podpisu request objektu selhal, nesprávny podpis "
 "<%(signature)s>."
 msgstr ""
 
-#: dpnk/rest.py:2539
+#: dpnk/rest.py:2569
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> se nezměnil pre platobní stav "
 "objednávky <%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2575
+#: dpnk/rest.py:2605
 #, python-format
 msgid ""
 "Platobní stav pre objednávku ID <%(order_id)s> byl změněn na stav "
 "<%(order_status)s>."
 msgstr ""
 
-#: dpnk/rest.py:2588
+#: dpnk/rest.py:2618
 #, python-format
 msgid "Neexistující platba s ID objednávky <%(order_id)s>."
 msgstr ""
 
-#: dpnk/rest.py:3349
+#: dpnk/rest.py:3386
 #, python-format
 msgid "Slevový kupón <%(coupon)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:3370
+#: dpnk/rest.py:3407
 #, python-format
 msgid "Slevový kupón <%(coupon)s> je neplatný."
 msgstr ""
 
-#: dpnk/rest.py:3382
+#: dpnk/rest.py:3419
 #, python-format
 msgid "E-mail adresa <%(email)s> existuje. Použijte jinou e-mailovou adresu."
 msgstr ""
 
-#: dpnk/rest.py:3401
+#: dpnk/rest.py:3438
 msgid "Změna týmu není aktuálně povolena."
 msgstr ""
 
-#: dpnk/rest.py:3536
+#: dpnk/rest.py:3573
 msgid "Aktualizace není povolena."
 msgstr ""
 
-#: dpnk/rest.py:3951
+#: dpnk/rest.py:3987
 #, python-format
 msgid "ID aplikace <%(app_id)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:4003
+#: dpnk/rest.py:4039
 #, python-format
 msgid "Chybějící Strava API autorizační kód <%(code)s>."
 msgstr ""
 
-#: dpnk/rest.py:4047
+#: dpnk/rest.py:4083
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:4061
+#: dpnk/rest.py:4097
 #, python-format
 msgid "Strava užívateľský účet <%(user)s> bol úspěšně odstraněn."
 msgstr ""
 
-#: dpnk/rest.py:4307
+#: dpnk/rest.py:4343
 msgid "Pozvánka je neplatná."
 msgstr ""
 
-#: dpnk/rest.py:4310
+#: dpnk/rest.py:4346
 msgid "Vypršel čas platnosti. Pozvánka je neplatná."
 msgstr ""
 
-#: dpnk/rest.py:4315
+#: dpnk/rest.py:4351
 msgid "Tým neexistuje."
 msgstr ""
 
-#: dpnk/rest.py:4317
+#: dpnk/rest.py:4353
 msgid "Tým je obsazen."
 msgstr ""
 
@@ -3192,23 +3196,23 @@ msgstr ""
 msgid "Správce společnosti není účastníkem aktuální výzvy."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:210
+#: dpnk/rest_coordinator.py:209
 #, python-brace-format
 msgid "Úspěšně schváleno {payments} plateb."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:281
+#: dpnk/rest_coordinator.py:280
 #, python-brace-format
 msgid "Úspěšně zamítnuto {payments} plateb."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:1077
+#: dpnk/rest_coordinator.py:1076
 msgid ""
 "Tým je plný. Schválení do aktuálního týmu bylo zamítnuto. Vytvořte si nový "
 "tým nebo si změňte aktuální tým."
 msgstr ""
 
-#: dpnk/rest_coordinator.py:1108
+#: dpnk/rest_coordinator.py:1107
 msgid "Schválení do aktuálního týmu bylo úspěšné."
 msgstr ""
 
