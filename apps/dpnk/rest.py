@@ -857,7 +857,9 @@ class CompetitionDeserializer(serializers.ModelSerializer, UserAttendanceMixin):
             data["company"] = CompanyAdmin.objects.get(
                 campaign=request.campaign, userprofile__user=request.user
             ).administrated_company
-        data["slug"] = f"FA-{request.campaign.pk}-{slugify(data['name'])[0:30]}"
+        data["slug"] = (
+            f"FA-{request.campaign.pk}-{data['company'].pk}-{slugify(data['name'])}"
+        )
         if (
             Competition.objects.filter(
                 company=data["company"],
