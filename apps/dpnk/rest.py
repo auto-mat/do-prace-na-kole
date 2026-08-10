@@ -909,6 +909,21 @@ class CompetitionSet(UserAttendanceMixin, viewsets.ModelViewSet):
         else:
             return CompetitionDeserializer
 
+    def destroy(self, request, *args, **kwargs):
+        competition = self.get_object()
+        organization_admin = CompanyAdmin.objects.filter(
+            userprofile__user=request.user,
+            campaign=request.campaign,
+            company_admin_approved="approved",
+            administrated_company=competition.company,
+        )
+        if not organization_admin:
+            return Response(
+                {"detail": _("Nemáte oprávnění k odstranění tohoto objektu.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().destroy(request, *args, **kwargs)
+
     permission_classes = [permissions.IsAuthenticated]
 
 
