@@ -44,7 +44,7 @@ from avatar.templatetags.avatar_tags import avatar
 
 
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
@@ -859,6 +859,8 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
     def loginas_view(self, request, pk):
         user = self.model.objects.get(pk=pk)
+        if not user.is_active:
+            messages.add_message(request, messages.INFO, _("Uživatel není aktivní."))
         refresh_token, access_token = get_user_tokens(user.username)
         return redirect(
             f"{settings.RTWBB_FRONTEND_APP_BASE_URL}login?refreshToken={refresh_token}&accessToken={access_token}"
