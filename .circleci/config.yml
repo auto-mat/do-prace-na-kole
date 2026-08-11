@@ -1,11 +1,14 @@
 version: 2.1
 jobs:
   build:
+    environment:
+      CIRCLE_COMPARE_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<<pipeline.git.revision>>
     docker:
       - image: circleci/buildpack-deps:stretch
 
     steps:
       - checkout
+      - run: echo $CIRCLE_COMPARE_URL
       - run: echo "$(date +%Y).${CIRCLE_BUILD_NUM}" > apps/dpnk/static/version.txt
       - run: echo "$(git rev-parse HEAD)" > apps/dpnk/static/git-commit.txt
       - run: |
