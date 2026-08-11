@@ -56,6 +56,8 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+import drf_serpy as serpy
+
 from allauth.account.models import EmailAddress
 
 from rangefilter.filters import DateRangeFilterBuilder
@@ -863,9 +865,22 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
             messages.add_message(request, messages.INFO, _("Uživatel není aktivní."))
             return
         refresh_token, access_token = get_user_tokens(user.username)
+        user_serializer = self.get_user_serializer(user)
+        refresh_token["user"] = user_serializer.data
+        access_token["user"] = user_serializer.data
         return redirect(
             f"{settings.RTWBB_FRONTEND_APP_BASE_URL}login?refreshToken={refresh_token}&accessToken={access_token}"
         )
+
+    def get_user_serializer(self, data):
+        class UserSerializer(serpy.Serializer):
+            pk = serpy.IntField()
+            username = serpy.StrField()
+            email = serpy.StrField()
+            first_name = serpy.StrField()
+            last_name = serpy.StrField()
+
+        return UserSerializer(data)
 
 
 class TripAdminInline(admin.TabularInline):
