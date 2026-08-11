@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-10 15:15+0200\n"
+"POT-Creation-Date: 2026-08-11 14:35+0200\n"
 "PO-Revision-Date: 2023-04-13 17:22+0200\n"
 "Last-Translator: b'Petr111 Dlouhy1 <petr.dlouhy@email.cz>'\n"
 "Language-Team: \n"
@@ -198,55 +198,59 @@ msgstr ""
 msgid "E-mail ověřen"
 msgstr ""
 
-#: dpnk/admin.py:953
-msgid "Nemá přiřazené vouchery?"
-msgstr ""
-
-#: dpnk/admin.py:954
-msgid "Nemá žádné cesty?"
+#: dpnk/admin.py:863
+msgid "Uživatel není aktivní."
 msgstr ""
 
 #: dpnk/admin.py:955
+msgid "Nemá přiřazené vouchery?"
+msgstr ""
+
+#: dpnk/admin.py:956
+msgid "Nemá žádné cesty?"
+msgstr ""
+
+#: dpnk/admin.py:957
 msgid "Uživatel nemá zvolený tým?"
 msgstr ""
 
-#: dpnk/admin.py:968
+#: dpnk/admin.py:970
 msgid "Datum realizace platby"
 msgstr ""
 
-#: dpnk/admin.py:971
+#: dpnk/admin.py:973
 msgid "Posílá se triko?"
 msgstr ""
 
-#: dpnk/admin.py:1038
+#: dpnk/admin.py:1040
 msgid "Uživatel"
 msgstr ""
 
-#: dpnk/admin.py:1126
+#: dpnk/admin.py:1128
 msgid "Členové"
 msgstr ""
 
-#: dpnk/admin.py:1278
+#: dpnk/admin.py:1280
 msgid "Spravovat otázky"
 msgstr ""
 
-#: dpnk/admin.py:1324
+#: dpnk/admin.py:1326
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: dpnk/admin.py:1631
+#: dpnk/admin.py:1633
 msgid "Nemá účast v kampani?"
 msgstr ""
 
-#: dpnk/admin.py:1703
+#: dpnk/admin.py:1705
 msgid "Nezaplacené faktury"
 msgstr ""
 
-#: dpnk/admin.py:1748
+#: dpnk/admin.py:1750
 msgid "Fakturoid faktura"
 msgstr ""
 
-#: dpnk/admin.py:1776
+#: dpnk/admin.py:1778
 msgid "Nemá účast v kampani"
 msgstr ""
 
