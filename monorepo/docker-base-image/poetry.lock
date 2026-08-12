@@ -3447,18 +3447,6 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=0.29.7)"]
 
 [[package]]
-name = "markuppy"
-version = "1.14"
-description = "An HTML/XML generator"
-optional = false
-python-versions = ">=2.7"
-groups = ["main"]
-files = [
-    {file = "MarkupPy-1.14.tar.gz", hash = "sha256:1adee2c0a542af378fe84548ff6f6b0168f3cb7f426b46961038a2bcfaad0d5f"},
-    {file = "markuppy-1.14-py3-none-any.whl", hash = "sha256:dc893880c5551d8388b688eef1d425dd48bb0b7d5bc74414fae86764ff4660ee"},
-]
-
-[[package]]
 name = "markupsafe"
 version = "2.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -5349,18 +5337,17 @@ files = [
 
 [[package]]
 name = "tablib"
-version = "3.2.1"
-description = "Format agnostic tabular data library (XLS, JSON, YAML, CSV)"
+version = "3.10.0"
+description = "Format agnostic tabular data library (XLS, JSON, YAML, CSV, etc.)"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "tablib-3.2.1-py3-none-any.whl", hash = "sha256:870d7e688f738531a14937a055e8bba404fbc388e77d4d500b2c904075d1019c"},
-    {file = "tablib-3.2.1.tar.gz", hash = "sha256:a57f2770b8c225febec1cb1e65012a69cf30dd28be810e0ff98d024768c7d0f1"},
+    {file = "tablib-3.10.0-py3-none-any.whl", hash = "sha256:5721bf3a52d491f8f843628a3a3200db164f6ad9e92fb6eaa64dc3f945f30ad9"},
+    {file = "tablib-3.10.0.tar.gz", hash = "sha256:781cfa9a42de8f33c52aff857fd0a04e483de4fd1c53eaaa9a6aeac62bad11de"},
 ]
 
 [package.dependencies]
-markuppy = {version = "*", optional = true, markers = "extra == \"html\""}
 odfpy = {version = "*", optional = true, markers = "extra == \"ods\""}
 openpyxl = {version = ">=2.6.0", optional = true, markers = "extra == \"xlsx\""}
 pyyaml = {version = "*", optional = true, markers = "extra == \"yaml\""}
@@ -5368,9 +5355,8 @@ xlrd = {version = "*", optional = true, markers = "extra == \"xls\""}
 xlwt = {version = "*", optional = true, markers = "extra == \"xls\""}
 
 [package.extras]
-all = ["markuppy", "odfpy", "openpyxl (>=2.6.0)", "pandas", "pyyaml", "tabulate", "xlrd", "xlwt"]
+all = ["odfpy", "openpyxl (>=2.6.0)", "pandas", "pyyaml", "tabulate", "xlrd", "xlwt"]
 cli = ["tabulate"]
-html = ["markuppy"]
 ods = ["odfpy"]
 pandas = ["pandas"]
 xls = ["xlrd", "xlwt"]
