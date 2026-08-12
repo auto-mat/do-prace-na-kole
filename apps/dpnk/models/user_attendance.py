@@ -191,6 +191,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         ).order_by("obj__campaign__year"):
             diplomas.append(
                 {
+                    "id": diploma.id,
                     "year": diploma.obj.campaign.year,
                     "name": diploma.obj.campaign.display_name(),
                     "url": diploma.pdf.url
