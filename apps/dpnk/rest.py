@@ -2870,6 +2870,8 @@ class RegisterChallengeDeserializer(serializers.ModelSerializer):
     occupation_id = serializers.ChoiceField(
         choices=[],
         required=False,
+        allow_blank=True,
+        allow_null=True,
     )
     age_group = serializers.ChoiceField(
         choices=UserProfile.AGE_GROUP,
