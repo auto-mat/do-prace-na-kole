@@ -41,6 +41,9 @@ class AccountAdapter(DefaultAccountAdapter):
         context["campaign_competition_phase_date_to"] = (
             campaign.competition_phase().date_to
         )
+        context["campaign_entry_enabled_phase_date_to"] = (
+            campaign.entry_enabled_end()
+        )
         context["campaign_campaign_type_web"] = campaign.campaign_type.web
         context["campaign_contact_email"] = campaign.contact_email
         return super().render_mail(template_prefix, email, context, headers)

@@ -22,7 +22,9 @@ Once we confirm your address, please take a moment and listen to the Ten Recomme
 
 - Record your rides regularly in your {{ routes_calendar_url }} profile.
 
-- Set up your typical route in your profile and logging will be faster than Jan Kavalír's ride.
+- The last possible day to register trips is {{ campaign_entry_enabled_phase_date_to }}.
+
+- Upload your usual route to your profile as a GPX file, then recording every day will be easier.
 
 - Don't forget to {{ profile_details_url }} invite your colleagues to your team.
 
