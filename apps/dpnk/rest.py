@@ -895,12 +895,14 @@ class CompetitionSet(UserAttendanceMixin, viewsets.ModelViewSet):
                 campaign=self.request.campaign,
                 company=user_attendance.team.subsidiary.company,
             )
-        company = CompanyAdmin.objects.get(
+        company_admin = CompanyAdmin.objects.filter(
             campaign=self.request.campaign, userprofile__user=self.request.user
-        ).administrated_company
+        )
+        if not company_admin:
+            return Competition.objects.none()
         return Competition.objects.filter(
             campaign=self.request.campaign,
-            company=company,
+            company=company_admin[0].administrated_company,
         )
 
     def get_serializer_class(self):
