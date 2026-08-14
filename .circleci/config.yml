@@ -60,6 +60,7 @@ jobs:
               docker tag dopracenakole:latest auto0mat/dopracenakole:$TAG
               docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker push auto0mat/dopracenakole:$TAG
+              echo "auto0mat/dopracenakole:${TAG}"
             fi
            fi
       - run:
