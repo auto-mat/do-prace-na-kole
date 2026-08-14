@@ -161,7 +161,6 @@ flake8-builtins = "*"
 pudb = "*"
 coveralls = "*"
 ddt = "*"
-model_mommy = {git = "https://github.com/auto-mat/model_mommy.git", rev = "issue-377"}
 django_coverage_plugin = "*"
 flake8_strict = "*"
 django-livereload-server = "*"
@@ -184,5 +183,6 @@ exclude = ["migrations", " price_level_migrations", "pyenv"]
 
 [dependency-groups]
 dev = [
-    "ruff (>=0.16.1,<0.17.0)"
+    "ruff (>=0.16.1,<0.17.0)",
+    "model-mommy (>=2.0.0,<3.0.0)"
 ]
