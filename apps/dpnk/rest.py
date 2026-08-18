@@ -2510,6 +2510,7 @@ class PayUPaymentNotifyPost(APIView):
         CANCELED = Status.CANCELED
 
     def post(self, request):
+        request_body = request.body
         payu_signature_header = request.headers.get("OpenPayu-Signature")
         logger.info("Receive posted PayU notification order data <%s>.", request.data)
         if not payu_signature_header:
@@ -2523,7 +2524,7 @@ class PayUPaymentNotifyPost(APIView):
             i.split("=")[-1] for i in payu_signature_header if "signature" in i
         ][0]
         request_body_payu_second_key = (
-            request.body.decode("utf-8")
+            request_body.decode("utf-8")
             + settings.PAYU_CONF["PAYU_REST_API_SECOND_KEY_MD5"]
         )
         expected_signature = hashlib.md5(
