@@ -2549,12 +2549,12 @@ class PayUPaymentNotifyPost(APIView):
             )
         data = request.data
         order = data.get("order")
-        order_status = order.get("status")
         pay_completed_order_status = "COMPLETED"
         pay_canceled_order_status = "CANCELED"
 
         # Update Payment model status
         if order:
+            order_status = order.get("status")
             payment = Payment.objects.filter(order_id=order.get("extOrderId"))
             if payment:
                 payment = payment[0]
