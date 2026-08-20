@@ -170,6 +170,9 @@ if AWS_ACCESS_KEY_ID:
         "default": {
             "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+        },
     }
     THUMBNAIL_DEFAULT_STORAGE = "storages.backends.s3boto.S3BotoStorage"
     EMAIL_BACKEND = os.environ.get("DPNK_CELERY_EMAIL_BACKEND", "django_ses.SESBackend")
