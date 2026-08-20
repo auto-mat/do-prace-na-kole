@@ -168,15 +168,24 @@ AWS_QUERYSTRING_EXPIRE = os.environ.get(
 AWS_DEFAULT_ACL = "private"
 
 if AWS_ACCESS_KEY_ID:
+    DPNK_STATIC_PARSED_URL = urlparse(os.environ.get("DPNK_STATIC_URL"))
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         },
         "staticfiles": {
             "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                "bucket_name": AWS_STORAGE_BUCKET_NAME,
+                "region_name": AWS_S3_REGION_NAME,
+                "location": "static",
+                "custom_domain": DPNK_STATIC_PARSED_URL.netloc,
+                "url_protocol": f"{DPNK_STATIC_PARSED_URL.scheme}:",
+                "querystring_auth": AWS_QUERYSTRING_AUTH,
+                "default_acl": AWS_DEFAULT_ACL,
+            },
         },
     }
-    AWS_S3_CUSTOM_DOMAIN = urlparse(os.environ.get("DPNK_STATIC_URL")).netloc
     THUMBNAIL_DEFAULT_STORAGE = "storages.backends.s3boto.S3BotoStorage"
     EMAIL_BACKEND = os.environ.get("DPNK_CELERY_EMAIL_BACKEND", "django_ses.SESBackend")
     AWS_SES_REGION_NAME = "eu-west-1"
