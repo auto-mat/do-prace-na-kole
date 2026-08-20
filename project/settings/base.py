@@ -166,8 +166,15 @@ AWS_QUERYSTRING_EXPIRE = os.environ.get(
 AWS_DEFAULT_ACL = "private"
 
 if AWS_ACCESS_KEY_ID:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+        },
+    }
     THUMBNAIL_DEFAULT_STORAGE = "storages.backends.s3boto.S3BotoStorage"
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     EMAIL_BACKEND = os.environ.get("DPNK_CELERY_EMAIL_BACKEND", "django_ses.SESBackend")
     AWS_SES_REGION_NAME = "eu-west-1"
     AWS_SES_REGION_ENDPOINT = "email.eu-west-1.amazonaws.com"
