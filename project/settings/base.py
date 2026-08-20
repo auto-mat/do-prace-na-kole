@@ -25,6 +25,8 @@ import re
 import sys
 import unicodedata
 
+from urllib.parse import urlparse
+
 from gls import PrinterType
 
 import django.conf.locale
@@ -174,6 +176,7 @@ if AWS_ACCESS_KEY_ID:
             "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
         },
     }
+    AWS_S3_CUSTOM_DOMAIN = urlparse(os.environ.get("DPNK_STATIC_URL")).netloc
     THUMBNAIL_DEFAULT_STORAGE = "storages.backends.s3boto.S3BotoStorage"
     EMAIL_BACKEND = os.environ.get("DPNK_CELERY_EMAIL_BACKEND", "django_ses.SESBackend")
     AWS_SES_REGION_NAME = "eu-west-1"
