@@ -4400,6 +4400,49 @@ class UserProfileOccupations(APIView):
         )
 
 
+class ValidateJWTTokenDeserializer(serializers.Serializer):
+    """Validate JWT token deserializer"""
+
+    token = serializers.CharField(required=True)
+
+    def validate_token(self, token):
+        try:
+            from jwt.exceptions import (
+                DecodeError,
+                ExpiredSignatureError,
+                InvalidSignatureError,
+            )
+
+            from .util import decode_token
+
+            data = decode_token(token)
+        except (DecodeError, InvalidSignatureError):
+            raise serializers.ValidationError(_("Token je neplatný."))
+        except ExpiredSignatureError:
+            raise serializers.ValidationError(
+                _("Vypršel čas platnosti. Token je neplatný.")
+            )
+        return data
+
+
+class DecodeJWTTokenPost(APIView):
+    """Decode JWT token"""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ValidateJWTTokenDeserializer
+
+    def post(self, request):
+        deserialized_data = ValidateJWTTokenDeserializer(data=request.data)
+        if not deserialized_data.is_valid():
+            return Response(
+                {"error": deserialized_data.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            deserialized_data.validated_data,
+        )
+
+
 router = routers.DefaultRouter()
 router.register(r"gpx", TripSet, basename="gpxfile")
 router.register(r"trips", TripRangeSet, basename="trip")
