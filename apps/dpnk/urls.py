@@ -542,7 +542,7 @@ urlpatterns = [
         name="user-profile-occupations",
     ),
     path(
-        "rest/auth/decode-jwt-token",
+        "rest/auth/decode-jwt-token/",
         DecodeJWTTokenPost.as_view(),
         name="decode-jwt-token",
     ),
