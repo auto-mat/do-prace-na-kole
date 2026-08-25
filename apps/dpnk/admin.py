@@ -866,7 +866,6 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
             return
         refresh_token, access_token = get_user_tokens(user.username)
         user_serializer = self.get_user_serializer(user)
-        refresh_token["user"] = user_serializer.data
         access_token["user"] = user_serializer.data
         return redirect(
             f"{settings.RTWBB_FRONTEND_APP_BASE_URL}login?refreshToken={refresh_token}&accessToken={access_token}"
