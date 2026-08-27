@@ -5,7 +5,7 @@
 {% if request.user|has_group:'podpora' or request.user.is_superuser %}
 {% block object-tools-items %}
     <li>
-        <a href="../loginas/">{% trans "Přihlásit se jako" %}</a>
+        <a href="../loginas/" target="_blank">{% trans "Přihlásit se jako" %}</a>
     </li>
     {{ block.super }}
 {% endblock %}
