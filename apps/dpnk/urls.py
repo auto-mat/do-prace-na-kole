@@ -34,7 +34,6 @@ from .rest import (
     CompetitionFieldsValues,
     DataReportResults,
     DataReportResultsByChallenge,
-    DecodeJWTTokenPost,
     HasOrganizationAdmin,
     HasUserVerifiedEmailAddress,
     IsUserOrganizationAdmin,
@@ -540,11 +539,6 @@ urlpatterns = [
         "rest/user-profile-occupations/",
         UserProfileOccupations.as_view(),
         name="user-profile-occupations",
-    ),
-    path(
-        "rest/auth/decode-jwt-token",
-        DecodeJWTTokenPost.as_view(),
-        name="decode-jwt-token",
     ),
     # company admin:
     re_path(
