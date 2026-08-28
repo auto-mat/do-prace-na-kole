@@ -9,7 +9,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     username = None  # Remove the username field
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
+        if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError(
                 _("Uživatel s touto e-mail adresou %(email)s je již registrován.")
                 % {"email": value}
