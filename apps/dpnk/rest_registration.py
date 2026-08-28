@@ -1,9 +1,20 @@
-from dj_rest_auth.registration.serializers import RegisterSerializer
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
+
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from rest_framework import serializers
 
 
 class CustomRegisterSerializer(RegisterSerializer):
     username = None  # Remove the username field
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                _("Uživatel s touto e-mail adresou %(email)s je již registrován.")
+                % {"email": value}
+            )
+        return value
 
     def save(self, request):
         user = super().save(request)
