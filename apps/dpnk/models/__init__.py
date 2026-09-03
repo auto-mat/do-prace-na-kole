@@ -23,9 +23,10 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
+from photologue.models import Photo
 from rest_framework.authtoken.models import Token
 
 from .address import Address, get_address_string
@@ -177,3 +178,27 @@ def clean_cache(sender, instance=None, created=False, **kwargs):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+@receiver(post_save, sender=Photo)
+@receiver(pre_delete, sender=Photo)
+def clean_cache_if_user_photo_change(sender, instance, **kwargs):
+    if "ua" in instance.slug:
+        user_attendance_id = int(instance.slug.split("-")[0][2:])
+        user_attendance = UserAttendance.objects.filter(id=user_attendance_id)
+        campaigns = (
+            UserAttendance.objects.filter(id=user_attendance_id)
+            .distinct("campaign__slug")
+            .values_list(
+                "campaign__slug",
+                flat=True,
+            )
+        )
+        for campaign in campaigns:
+            # Delete REST API cache
+            cache = util.Cache(
+                key=f"{util.register_challenge_serializer_base_cache_key_name}"
+                f"{user_attendance.first().userprofile.id}:{campaign}"
+            )
+            if cache.data:
+                del cache.data
