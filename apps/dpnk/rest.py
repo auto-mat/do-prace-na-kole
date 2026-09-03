@@ -3500,12 +3500,11 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
                 timeout=self._cache_timeout,
             )
             cached_data = cache.data
-        # if not cached_data:
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        cached_data = serializer.data
-        # if cache:
-        #     cache.data = cached_data
+        if not cached_data:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            cached_data = serializer.data
+            cache.data = cached_data
         return Response(
             {
                 "count": len(cached_data),
