@@ -3504,6 +3504,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             cached_data = serializer.data
+        if cache:
             cache.data = cached_data
         return Response(
             {
@@ -3530,6 +3531,7 @@ class RegisterChallengeSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             cached_data = serializer.data
+        if cache:
             cache.data = cached_data
         return Response(
             {
