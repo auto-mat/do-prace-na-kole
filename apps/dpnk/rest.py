@@ -2714,7 +2714,6 @@ class PersonalDetailsUserProfileSerializer(serpy.Serializer):
     occupation = serpy.MethodField()
     age_group = serpy.MethodField()
     newsletter = EmptyStrField()
-    photo = serpy.MethodField()
 
     def get_occupation(self, obj):
         if obj.occupation:
@@ -2735,28 +2734,12 @@ class PersonalDetailsUserProfileSerializer(serpy.Serializer):
             }
         return None
 
-    def get_photo(self, obj):
-        gallery = obj.get_gallery()
-        if gallery:
-            last_photo = gallery.photos.last()
-            if last_photo:
-                return {
-                    "id": last_photo.id,
-                    "url": self.context["request"].build_absolute_uri(
-                        last_photo.image.url
-                    ),
-                }
-        return None
-
 
 class RegisterChallengeSerializer(serpy.Serializer):
     personal_details = RequestSpecificField(
         lambda userprofile, req: (
             PersonalDetailsUserSerializer(userprofile.user).data
-            | PersonalDetailsUserProfileSerializer(
-                userprofile,
-                context={"request": req},
-            ).data
+            | PersonalDetailsUserProfileSerializer(userprofile).data
             | UserAttendanceSerializer(
                 userprofile.userattendance_set.get(campaign__slug=req.subdomain),
                 context={"request": req},
