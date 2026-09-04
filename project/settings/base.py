@@ -1116,3 +1116,4 @@ MYGLS_API = {
         "HouseNumberInfo": os.getenv("MYGLS_API_PICKUP_ADDRESS_HOUSE_NUMBER_INFO"),
     },
 }
+API_AVATAR_CHANGE_IMAGE = True
