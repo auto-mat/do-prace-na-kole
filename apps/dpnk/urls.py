@@ -540,6 +540,7 @@ urlpatterns = [
         UserProfileOccupations.as_view(),
         name="user-profile-occupations",
     ),
+    path("rest/user-profile-avatar/", include("avatar.api.urls")),
     # company admin:
     re_path(
         r"^spolecnost/oficialni_souteze/$",
