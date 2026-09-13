@@ -200,7 +200,10 @@ def get_custom_fields(user_attendance):
             ("Firemni_spravce", company_admin_approved),
             ("Stav_platby", payment_status),
             ("Aktivni", user.is_active),
-            ("Auth_token", user.auth_token.key),
+            (
+                "Auth_token",
+                user.auth_token.key if hasattr(user, "auth_token") else none_str,
+            ),
             ("Id", user.pk),
             ("Novacek", is_new_user),
             ("Kampan", user_attendance.campaign.pk),
