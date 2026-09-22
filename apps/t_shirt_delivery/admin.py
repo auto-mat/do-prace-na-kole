@@ -484,7 +484,9 @@ class DeliveryBatchAdmin(ExportMixin, FormRequestMixin, NestedModelAdmin):
                 )
                 return package_transactions.filter(
                     t_shirt_size__pk=t_size_id
-                ).aggregate(Count("t_shirt_size"))["t_shirt_size__count"]
+                ).aggregate(t_shirt_size_count=Count("t_shirt_size"))[
+                    "t_shirt_size_count"
+                ]
 
             t_shirt_size.short_description = t_size.name
             setattr(self, field_name, t_shirt_size)
