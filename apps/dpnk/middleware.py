@@ -210,11 +210,6 @@ class RedirectToRtwbbUrlMiddleware(MiddlewareMixin):
 
         # Redirect not REST API request to the RTWBB frontend URL
         if not is_api_request:
-            if (
-                request.path.startswith("/admin/")
-                or request.path.startswith("/vysledky_souteze/")
-                or request.path.startswith("/export_vysledky_souteze/")
-                or request.path.startswith("/vysledky_souteze_json/")
-            ):
+            if request.path.startswith("/admin/"):
                 return
             return redirect(settings.RTWBB_FRONTEND_APP_BASE_URL)
