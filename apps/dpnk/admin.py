@@ -551,10 +551,20 @@ class CompetitionAdmin(
 
     def competition_results_link(self, obj):
         if obj.slug:
-            return format_html(
-                '<a href="{}">výsledky</a>',
-                (reverse("competition_results", kwargs={"competition_slug": obj.slug})),
-            )
+            if hasattr(settings, "RTWBB_FRONTEND_APP_COMPETITION_RESULTS_URL"):
+                return format_html(
+                    '<a href="{}">výsledky</a>',
+                    (settings.RTWBB_FRONTEND_APP_COMPETITION_RESULTS_URL),
+                )
+            else:
+                return format_html(
+                    '<a href="{}">výsledky</a>',
+                    (
+                        reverse(
+                            "competition_results", kwargs={"competition_slug": obj.slug}
+                        )
+                    ),
+                )
 
     competition_results_link.short_description = _("Výsledky soutěže")
 
