@@ -553,7 +553,7 @@ class CompetitionAdmin(
         if obj.slug:
             if hasattr(settings, "RTWBB_FRONTEND_APP_COMPETITION_RESULTS_URL"):
                 return format_html(
-                    '<a href="{}">výsledky</a>',
+                    '<a href="{}" target="_blank" rel="noopener noreferrer">výsledky</a>',
                     (settings.RTWBB_FRONTEND_APP_COMPETITION_RESULTS_URL),
                 )
             else:
