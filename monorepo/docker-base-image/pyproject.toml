@@ -174,6 +174,7 @@ django-webtest = "^1.9.7"
 django-dynamic-fixture = "^3.1.1"
 selenium = "^3.141.0"
 beautifulsoup4 = "^4.9.3"
+ruff = "^0.17.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
