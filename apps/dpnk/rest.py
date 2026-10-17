@@ -48,7 +48,9 @@ from django.views.decorators.cache import cache_page
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from allauth.account.utils import has_verified_email, send_email_confirmation
+from allauth.account.models import EmailAddress, EmailConfirmation
+from allauth.account.adapter import get_adapter
+from allauth.account.utils import has_verified_email
 from donation_chooser.rest import organization_router
 
 from drf_extra_fields.geo_fields import PointField
@@ -3883,7 +3885,12 @@ class SendRegistrationConfirmationEmail(APIView):
     def post(self, request):
         send_email = False
         if not has_verified_email(request.user):
-            send_email_confirmation(request, request.user, request.user.email)
+            adapter = get_adapter(request)
+            email_address = EmailAddress.objects.get(
+                user=request.user, email=request.user.email
+            )
+            email_confirmation = EmailConfirmation.create(email_address)
+            adapter.send_confirmation_mail(request, email_confirmation, signup=False)
             send_email = True
 
         return Response(
