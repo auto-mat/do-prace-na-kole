@@ -143,7 +143,7 @@ bootstrap4 = "^0.1.0"
 pymemcache = "^4.0.0"
 stravalib = "1.7"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 coverage = "*"
 freezegun = "*"
 django-admin-smoke-tests = "*"
@@ -182,7 +182,7 @@ build-backend = "poetry.masonry.api"
 [tool.ruff]
 exclude = ["migrations", " price_level_migrations", "pyenv"]
 
-[dependency-groups]
-dev = [
-    "ruff (>=0.16.3,<0.17.0)"
-]
+# [dependency-groups]
+# dev = [
+#     "ruff (>=0.16.3,<0.17.0)"
+# ]
