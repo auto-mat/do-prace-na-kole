@@ -91,7 +91,6 @@ social-auth-app-django = "*"
 svg2rlg = {git = "https://github.com/aquavitae/svg2rlg.git"}
 django-subdomains = {git = "https://github.com/auto-mat/django-subdomains.git", rev = "compatibile-with-django-5"}
 django-advanced-filters = "*"
-stravalib = {git = "https://github.com/hozn/stravalib", rev = "main"}
 django-wysiwyg-redactor = {git = "https://github.com/auto-mat/django-wysiwyg-redactor.git", rev = "compatibility-with-django-5"}
 django-selectable = "*"
 django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", rev = "develop"}
@@ -142,6 +141,7 @@ django-autocomplete-light = "^5.0.0"
 psycopg = "^3.3.4"
 bootstrap4 = "^0.1.0"
 pymemcache = "^4.0.0"
+stravalib = "1.7"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
