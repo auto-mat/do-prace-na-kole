@@ -196,7 +196,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
                     "name": diploma.obj.campaign.display_name(),
                     "url": diploma.pdf.url
                     if re.match(r"http:|https", settings.MEDIA_URL)
-                    else f"{setting.MEDIA_URL}{diploma.pdf.url}",
+                    else f"{settings.MEDIA_URL}{diploma.pdf.url}",
                 }
             )
         return diplomas
@@ -207,7 +207,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
             if re.match(r"http:|https", settings.MEDIA_URL):
                 return diploma.pdf.url
             else:
-                return f"{setting.MEDIA_URL}{diploma.pdf.url}"
+                return f"{settings.MEDIA_URL}{diploma.pdf.url}"
         return diploma
 
     def get_sandwich_type(self):
