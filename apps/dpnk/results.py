@@ -255,6 +255,8 @@ def get_rides_count(user_attendance, competition, day=None, recreational=False):
 def get_minimum_rides_base_proportional(competition, day):
     days_count = util.days_count(competition, competition.date_to)
     days_count_till_now = util.days_count(competition, day)
+    if not days_count or not days_count_till_now:
+        return 0
     return int(
         competition.get_minimum_rides_base() * (days_count_till_now / days_count)
     )
