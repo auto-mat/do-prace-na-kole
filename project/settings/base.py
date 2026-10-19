@@ -1117,3 +1117,5 @@ MYGLS_API = {
     },
 }
 API_AVATAR_CHANGE_IMAGE = True
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
