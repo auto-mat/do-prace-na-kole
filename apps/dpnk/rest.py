@@ -1715,6 +1715,12 @@ class CampaignTypeSerializer(serpy.Serializer):
         ]
     )
     frontend_url = serpy.StrField()
+    contact_email = serpy.StrField()
+    organization_coordinator_contact_email = serpy.StrField()
+    city_coordinator_contact_email = serpy.StrField()
+    billing_details = serpy.StrField()
+    faq_url = serpy.StrField()
+    faq_organization_coordinator_url = serpy.StrField()
 
 
 class CampaignTypeDeserializer(serializers.HyperlinkedModelSerializer):
