@@ -58,6 +58,38 @@ class CampaignType(models.Model):
     tagline = models.TextField(
         default="Na kole, pěšky či poklusem. Celostátní výzva v lednu %s",
     )
+    organization_coordinator_contact_email = models.CharField(
+        verbose_name=_("Kontaktní e-mail koordinátora organizace"),
+        default="firmy@dopracenakole.cz",
+        max_length=80,
+        blank=False,
+    )
+    city_coordinator_contact_email = models.CharField(
+        verbose_name=_("Kontaktní e-mail koordinátora města"),
+        default="mesta@dopracenakole.cz",
+        max_length=80,
+        blank=False,
+    )
+    billing_details = models.CharField(
+        verbose_name=_("Fakturační údaje"),
+        default=(
+            "Auto*Mat, z. s., Slezská 2033/11, 120 00 Praha 2,"
+            " IČ: 22670319 / DIČ: CZ22670319, Číslo účtu: 2601085491/2010 (Fio Banka),"
+            " IBAN: CZ57 2010 0000 0026 0108 5491, BIC/SWIFT: FIOBCZPPXXX"
+        ),
+        max_length=350,
+        blank=False,
+    )
+    faq_url = models.URLField(
+        verbose_name=_("Často kladené dotazy"),
+        default="https://dopracenakole.cz/o-vyzve/faq",
+        blank=False,
+    )
+    faq_organization_coordinator_url = models.URLField(
+        verbose_name=_("Často kladené dotazy koordinátorů organizacií"),
+        default="https://dopracenakole.cz/casto-kladene-dotazy-firemnich-koordinatoru-faq",
+        blank=False,
+    )
 
     def __str__(self):
         return self.name
