@@ -57,7 +57,11 @@ class CampaignTranslationOptions(TranslationOptions):
 
 @register(CampaignType)
 class CampaignTypeTranslationOptions(TranslationOptions):
-    fields = ("name",)
+    fields = (
+        "name",
+        "faq_url",
+        "faq_organization_coordinator_url",
+    )
 
 
 NotificationTemplate = swapper.load_model("notifications", "NotificationTemplate")
