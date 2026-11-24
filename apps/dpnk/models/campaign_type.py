@@ -3,6 +3,19 @@ from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+def get_default_billing_details():
+    return {
+        "name": "Auto*Mat, z. s.",
+        "address": "Slezská 2033/11, 120 00 Praha 2",
+        "company_id": "22670319",
+        "vat_number": "CZ22670319",
+        "bank_account_number": "2601085491/2010",
+        "bank_name": "Fio Banka",
+        "iban": "CZ57 2010 0000 0026 0108 5491",
+        "bic_swift": "FIOBCZPPXXX",
+    }
+
+
 class CampaignType(models.Model):
     name = models.CharField(
         unique=True,
@@ -70,15 +83,9 @@ class CampaignType(models.Model):
         max_length=80,
         blank=False,
     )
-    billing_details = models.CharField(
+    billing_details = models.JSONField(
         verbose_name=_("Fakturační údaje"),
-        default=(
-            "Auto*Mat, z. s., Slezská 2033/11, 120 00 Praha 2,"
-            " IČ: 22670319 / DIČ: CZ22670319, Číslo účtu: 2601085491/2010 (Fio Banka),"
-            " IBAN: CZ57 2010 0000 0026 0108 5491, BIC/SWIFT: FIOBCZPPXXX"
-        ),
-        max_length=350,
-        blank=False,
+        default=get_default_billing_details,
     )
     faq_url = models.URLField(
         verbose_name=_("Často kladené dotazy"),
