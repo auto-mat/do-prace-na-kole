@@ -48,7 +48,7 @@ from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
-from django.db.models import Count, Sum, TextField
+from django.db.models import Count, Sum, TextField, JSONField
 from django.forms import Textarea
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -93,6 +93,7 @@ from smmapdfs.actions import make_pdfsandwich
 from smmapdfs.admin_abcs import PdfSandwichAdmin, PdfSandwichFieldAdmin
 
 from stale_notifications.admin_mixins import StaleSyncMixin
+from django_json_widget.widgets import JSONEditorWidget
 
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
@@ -1501,6 +1502,9 @@ class CampaignTypeAdmin(TranslationAdmin, admin.ModelAdmin):
         "name",
         "slug",
     )
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditorWidget},
+    }
 
 
 @admin.register(models.Campaign)
