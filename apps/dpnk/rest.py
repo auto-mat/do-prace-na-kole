@@ -1718,7 +1718,7 @@ class CampaignTypeSerializer(serpy.Serializer):
     contact_email = serpy.StrField()
     organization_coordinator_contact_email = serpy.StrField()
     city_coordinator_contact_email = serpy.StrField()
-    billing_details = serpy.StrField()
+    billing_details = serpy.Field()
     faq_url = serpy.StrField()
     faq_organization_coordinator_url = serpy.StrField()
 
