@@ -142,6 +142,7 @@ psycopg = "^3.3.4"
 bootstrap4 = "^0.1.0"
 pymemcache = "^4.0.0"
 stravalib = "1.7"
+django-json-widget = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "*"
