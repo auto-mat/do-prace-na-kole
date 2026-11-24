@@ -425,6 +425,7 @@ INSTALLED_APPS = [
     "inline_static",
     "notifications",
     "drf_yasg",
+    "django_json_widget",
 ]
 
 # DBTEMPLATES_USE_REVERSION = True
