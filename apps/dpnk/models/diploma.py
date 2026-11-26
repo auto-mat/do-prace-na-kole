@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db import models
 from django.urls import reverse
@@ -65,10 +66,17 @@ class Diploma(PdfSandwichABC):
         return [self.obj.userprofile.user.email]
 
     def get_context(self, base_url=""):
+        rtwbb_frontend_app_base_url = getattr(
+            settings, "RTWBB_FRONTEND_APP_BASE_URL", None
+        )
+        if rtwbb_frontend_app_base_url:
+            diplomas_page_url = get_app_base_url(None, url="diplomas")
+        else:
+            diplomas_page_url = base_url + reverse("diplomas")
         return {
             "name": self.obj.name(),
             "name_vocative": self.obj.name(cs_vokativ=True),
-            "diplomas_page": get_app_base_url(None, url="diplomas"),
+            "diplomas_page": diplomas_page_url,
         }
 
     def get_language(self):
