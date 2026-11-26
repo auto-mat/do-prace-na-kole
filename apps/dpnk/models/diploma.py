@@ -68,7 +68,7 @@ class Diploma(PdfSandwichABC):
         return {
             "name": self.obj.name(),
             "name_vocative": self.obj.name(cs_vokativ=True),
-            "diplomas_page": base_url + reverse("diplomas"),
+            "diplomas_page": get_app_base_url(None, url="diplomas"),
         }
 
     def get_language(self):
