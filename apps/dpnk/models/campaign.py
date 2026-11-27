@@ -517,7 +517,6 @@ class Campaign(Pricable, models.Model):
             start=competition_phase.date_from,
             end=competition_phase.date_to,
             locale=locale,
-            skeleton="yMd",
         )
         registration_phase_start_date = babel.dates.format_date(
             date=registration_phase.date_from,
