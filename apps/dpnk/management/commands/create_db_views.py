@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     materialized_views = ("data_core_reporting",)
-    views = ("data_dpnk_core_reporting",)
+    views = ("data_dpnk_core_reporting", "data_core_distance")
     all_views = materialized_views + views
     help = f"Creates, refreshes, dropes the DB {', '.join(all_views)} views."
 
@@ -72,6 +72,7 @@ class Command(BaseCommand):
         """Create the views"""
         self.create_data_core_reporting_materialized_view()
         self.create_data_core_reporting_view()
+        self.create_data_core_distance_view()
 
     def create_data_core_reporting_view(self, view="data_dpnk_core_reporting"):
         """Create the data_dpnk_core_reporting view"""
@@ -89,6 +90,34 @@ class Command(BaseCommand):
                city_id
         FROM data_core_reporting dcr
         WHERE true AND slug::text = 'dpnk'::text AND team_id IS NOT NULL;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            logger.info(f"View <{view}> created successfully.")
+
+    def create_data_core_distance_view(self, view="data_core_distance"):
+        """Create the data_core_distance view"""
+        sql = f"""
+        CREATE VIEW {view} AS
+        SELECT
+            ua.campaign_id,
+            ua.id AS ua_id,
+            SUM(tr.distance) AS distance
+        FROM dpnk_userattendance AS ua
+        JOIN dpnk_trip AS tr
+            ON ua.id = tr.user_attendance_id
+        JOIN dpnk_commutemode AS cm
+            ON tr.commute_mode_id = cm.id
+        JOIN dpnk_phase AS ph
+            ON ua.campaign_id = ph.campaign_id
+        WHERE ph.phase_type::text = 'competition'::text
+          AND tr.date >= ph.date_from
+          AND tr.date <= ph.date_to
+          AND tr.commute_mode_id IN (1, 2)
+        GROUP BY
+            ua.campaign_id,
+            ua.id;
         """
 
         with connection.cursor() as cursor:
